@@ -62,7 +62,7 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "BAffiliatePosPods",
   props: {

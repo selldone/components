@@ -118,7 +118,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import BProductsAdvancedOptionsFixArticles from "../../product/advanced-options/fix-articles/BProductsAdvancedOptionsFixArticles.vue";
 import BProductsAdvancedOptionsGoogleSheet from "../../product/advanced-options/google-sheet/BProductsAdvancedOptionsGoogleSheet.vue";
 

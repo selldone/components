@@ -47,7 +47,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UChipChange from "../../../../../ui/chip/change/UChipChange.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 

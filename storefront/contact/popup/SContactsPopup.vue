@@ -73,7 +73,7 @@
     <v-scale-transition origin="center center">
       <v-btn
         v-if="!show"
-        :color="SaminColorDark"
+        :color="ThemeColorDark"
         class="chat-btn"
         height="60"
         icon
@@ -86,16 +86,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SContactsList from "../list/SContactsList.vue";
 import SShopLogin from "../../../storefront/login/SShopLogin.vue";
 import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 /**
  * <s-contacts-popup>
  */
 export default {
   name: "SContactsPopup",
+  mixins: [TemplateMixin],
+
   components: { URatingEmoji, SShopLogin, SContactsList },
   inject: ["$shop"],
   props: {

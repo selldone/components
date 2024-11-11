@@ -32,7 +32,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "UPodsPanel",
   props: {

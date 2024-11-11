@@ -84,7 +84,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "CPostPoll",
   emits: ["click:item", "update:modelValue"],

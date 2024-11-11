@@ -170,7 +170,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CCategoryCard from "../../../community/category/card/CCategoryCard.vue";
 import CommunityStatistic from "../../statistic/CommunityStatistic.vue";

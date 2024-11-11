@@ -69,7 +69,6 @@
 
           <u-currency-input
             v-model="currency"
-            :color="SaminColorLight"
             :disabled="discountCode !== null && !cloneMode"
             :messages="$t('discount_codes.dialog.currency_input_message')"
             :return-object="false"
@@ -310,7 +309,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import UDateInput from "../../../ui/date/input/UDateInput.vue";

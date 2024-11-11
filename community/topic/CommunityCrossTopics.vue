@@ -92,7 +92,7 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 
 export default {

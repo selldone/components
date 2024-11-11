@@ -358,7 +358,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BGatewayBlockchain from "../../gateway/blockchain/BGatewayBlockchain.vue";
 import UTextValueBox from "../../../ui/text/value-box/UTextValueBox.vue";
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
@@ -373,6 +373,7 @@ import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
 import UPriceInput from "@selldone/components-vue/ui/price/input/UPriceInput.vue";
+import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "BGatewayAdd",
@@ -414,6 +415,8 @@ export default {
   },
 
   data: () => ({
+    ProductType: ProductType,
+
     public_val: {},
     private_val: {},
     enable: true,

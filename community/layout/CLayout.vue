@@ -136,7 +136,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CommunityUserProfileDialog from "../../community/global/CommunityUserProfileDialog.vue";
 import CommunityShareDialog from "../../community/global/CommunityShareDialog.vue";
 import CommunityPostReactionsDialog from "../../community/global/CommunityPostReactionsDialog.vue";

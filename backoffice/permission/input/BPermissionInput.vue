@@ -53,7 +53,7 @@
   </v-select>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopPermissions } from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {

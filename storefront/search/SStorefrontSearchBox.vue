@@ -16,7 +16,7 @@
   <div :class="{ block: block }" class="s--storefront-search-box">
     <v-btn
       v-if="isMobile && !force_show"
-      :color="color ? color : SaminColorLight"
+      :color="color ? color : 'primary'"
       class="collapse-button"
       size="small"
       variant="flat"

@@ -110,7 +110,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { NumberHelper } from "@selldone/core-js/helper/number/NumberHelper";
 
 export default {

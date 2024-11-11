@@ -47,7 +47,7 @@
   </v-combobox>
 </template>
 
-<script>
+<script lang="ts">
 import { CampaignLink } from "@selldone/core-js";
 
 export default {

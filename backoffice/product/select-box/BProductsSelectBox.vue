@@ -254,7 +254,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemMini from "../../../storefront/product/variant/VariantItemMini.vue";
 import ProductVariantsView from "../../../storefront/product/variant/ProductVariantsView.vue";
 import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue";

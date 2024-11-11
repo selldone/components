@@ -49,7 +49,7 @@
   </ul>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "UCountDown",
   emits: ["end"],

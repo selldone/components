@@ -473,7 +473,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BAccountInput from "../account/input/BAccountInput.vue";
 import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense";
 import UTimeProgressBar from "../../ui/time/progress-bar/UTimeProgressBar.vue";

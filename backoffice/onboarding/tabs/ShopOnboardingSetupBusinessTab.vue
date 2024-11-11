@@ -54,7 +54,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import BusinessModelView from "../../business-model/BusinessModelView.vue";
 
 export default {

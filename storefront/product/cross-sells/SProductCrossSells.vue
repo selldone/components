@@ -163,6 +163,7 @@ import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import CrossSellActionType from "@selldone/core-js/enums/product/CrossSellActionType";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
+import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "SProductCrossSells",
@@ -175,6 +176,8 @@ export default {
   },
 
   data: () => ({
+    ProductType: ProductType,
+
     index: 0,
 
     busy_add: null,

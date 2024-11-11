@@ -157,7 +157,7 @@
   </v-sheet>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "SWidget",
   props: {

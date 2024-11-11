@@ -100,7 +100,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Language } from "@selldone/core-js/enums/language/Language";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import ULanguagesDialog from "../dialog/ULanguagesDialog.vue";

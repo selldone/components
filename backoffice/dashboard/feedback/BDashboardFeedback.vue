@@ -181,7 +181,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../ui/widget/box/SWidgetBox.vue";
 import UChartBar from "../../../ui/chart/bar/UChartBar.vue";
 import UpDownIcon from "../../../ui/icon/UpDownIcon.vue";

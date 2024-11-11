@@ -514,7 +514,7 @@
   </s-widget>
 </template>
 
-<script>
+<script lang="ts">
 import CircleImage from "../../../../../ui/image/CircleImage.vue";
 import UTimeProgressBar from "../../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import ProductVariantsView from "../../../../../storefront/product/variant/ProductVariantsView.vue";
@@ -522,14 +522,12 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
 import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import BNoteButton from "../../../../note/button/BNoteButton.vue";
-import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 
 export default {
   name: "BProductWindowProductLarge",
   components: {
     UPriceInvalid,
-    UCurrencyIcon,
     BNoteButton,
     ProductVariantsView,
     UTimeProgressBar,
@@ -630,6 +628,8 @@ export default {
 
   data() {
     return {
+      ProductType: ProductType,
+
       show_price_detail: false,
       ProductCondition: ProductCondition,
     };

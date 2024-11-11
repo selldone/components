@@ -36,7 +36,7 @@
     </v-sheet>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import UCube from "../../../ui/cube/UCube.vue";
 

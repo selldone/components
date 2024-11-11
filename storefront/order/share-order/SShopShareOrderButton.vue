@@ -15,7 +15,7 @@
 <template>
   <div>
     <v-btn
-      :color="SaminColorDarkDeep"
+      :color="ThemeColorDeepDark"
       :loading="busy_share"
       class="tnt"
       rounded
@@ -92,9 +92,12 @@
 <script lang="ts">
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SShopShareOrderButton",
+  mixins: [TemplateMixin],
+
   components: { USmartSwitch, UTextCopyBox },
   inject: ["$shop"],
   props: {

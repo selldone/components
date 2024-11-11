@@ -656,7 +656,7 @@
     >
       <v-card
         v-if="contract"
-        :color="SaminColorDarkDeep"
+        :color="ThemeColorDeepDark"
         rounded="t-xl"
         class="text-start"
       >
@@ -780,7 +780,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
 import { ShopPermissions } from "@selldone/core-js/enums/permission/ShopPermissions";
@@ -791,9 +791,12 @@ import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import UTasksEditor from "../../../ui/task/editor/UTasksEditor.vue";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "ExpertContractView",
+  mixins: [TemplateMixin],
+
   components: {
     UCurrencyIcon,
     BPermissionInput,

@@ -59,7 +59,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UTextValueDashed from "../../../ui/text/value-dashed/UTextValueDashed.vue";
 import VariantItemViewMicro from "../variant/VariantItemViewMicro.vue";
 

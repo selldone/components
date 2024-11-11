@@ -21,7 +21,7 @@
     max-width="98vw"
     scrollable
   >
-    <v-card :color="SaminColorDarkDeep" class="text-start" rounded="t-xl">
+    <v-card :color="ThemeColorDeepDark" class="text-start" rounded="t-xl">
       <v-card-title>
         {{ $t("send_gift_dialog.title") }}
       </v-card-title>
@@ -98,13 +98,15 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import BAccountInput from "../../../account/input/BAccountInput.vue";
 import SUserInput from "../../../user/input/SUserInput.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BAccountGiftSend",
+  mixins: [TemplateMixin],
   components: { SUserInput, BAccountInput, UPriceInput },
   emits: ["update:modelValue"],
   props: {

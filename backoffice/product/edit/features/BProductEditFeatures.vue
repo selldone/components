@@ -49,7 +49,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BProductBadgesManage from "../../../product/badges/manage/BProductBadgesManage.vue";
 import BProductTagsInput from "../../../product/tags/input/BProductTagsInput.vue";
 import BProductRatingInput from "../../../product/rating/input/BProductRatingInput.vue";

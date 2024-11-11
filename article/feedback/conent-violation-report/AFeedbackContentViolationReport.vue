@@ -100,7 +100,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { ArticleReport } from "@selldone/core-js";
 
 export default {

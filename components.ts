@@ -15,22 +15,35 @@
 //―――――――――――――― Js & Components――――――――――――――
 //█████████████████████████████████████████████████████████████
 
-
-
 import "@selldone/core-js/utils/console/ConsoleStyle";
 
 //█████████████████████████████████████████████████████████████
 //――――――――――――――――― Style ―――――――――――――――――
 //█████████████████████████████████████████████████████████████
-
 import "./style/components.scss";
 
 //█████████████████████████████████████████████████████████████
 //――――――――――― Selldone ® Business OS™ ―――――――――――
 //█████████████████████████████████████████████████████████████
-
 // ━━━ Selldone Core (gapi,...) ━━━
-import { SelldoneCore } from "@selldone/core-js";
+import { BackofficeLocalStorages, SelldoneCore } from "@selldone/core-js";
+//█████████████████████████████████████████████████████████████
+//―――――――――――――――― Interfaces ―――――――――――――――
+//█████████████████████████████████████████████████████████████
+import type { ILanguage } from "@selldone/core-js/enums/language/Language";
+// Initial global language object:
+import { Language } from "@selldone/core-js/enums/language/Language";
+//█████████████████████████████████████████████████████████████
+//――――――――――――――――― Mixin ―――――――――――――――――
+//█████████████████████████████████████████████████████████████
+import CoreMixin from "./mixin/CoreMixin";
+
+//―――――――――――――――――――――― SEO ――――――――――――――――――――
+import { SEO } from "@selldone/core-js/helper/seo/SEO";
+import { App } from "vue";
+import { installGlobalComponents } from "./components-mandetory";
+import { installGlobalDirectives } from "./directives-mandetory";
+import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules.ts";
 
 SelldoneCore.Setup();
 
@@ -70,29 +83,7 @@ console.log(
 // @ts-ignore
 window.SERACH_THROTTLE = 1500; //ms; //TODO: Should remove!
 
-// Initial global language object:
-import { Language } from "@selldone/core-js/enums/language/Language";
-
 window.$language = Language.en;
-
-//█████████████████████████████████████████████████████████████
-//――――――――――――――――― Mixin ―――――――――――――――――
-//█████████████████████████████████████████████████████████████
-import CoreMixin from "./mixin/CoreMixin";
-
-
-
-
-//―――――――――――――――――――――― SEO ――――――――――――――――――――
-import { SEO } from "@selldone/core-js/helper/seo/SEO";
-
-//█████████████████████████████████████████████████████████████
-//―――――――――――――――― Interfaces ―――――――――――――――
-//█████████████████████████████████████████████████████████████
-import type { ILanguage } from "@selldone/core-js/enums/language/Language";
-import { App } from "vue";
-import { installGlobalComponents } from "./components-mandetory";
-import { installGlobalDirectives } from "./directives-mandetory";
 
 declare global {
   interface Window {
@@ -112,7 +103,6 @@ declare global {
   interface HTMLElement {
     loadedScripts?: string[] /** {@see DynamicScriptDirective} */;
   }
-
 
   /**
    * The `standalone` property indicates if the browser is running in standalone mode.
@@ -150,6 +140,21 @@ export function createComponents(options: {
     for (const key in components) {
       app.component(key, components[key]);
     }
+
+    // Initial global constants:
+    app.config.globalProperties.SUB_TOOLBAR_CONFIG = {
+      flat: true,
+      color: "transparent",
+      class: "overflow-x-auto overflow-y-hidden thin-scroll pb-4",
+      minHeight: "84px",
+    };
+    //――― Images ―――
+    app.config.globalProperties.IMAGE_SIZE_SMALL =
+      BackofficeLocalStorages.IMAGE_SIZE_SMALL;
+    app.config.globalProperties.IMAGE_SIZE_BLOG = 256;
+
+    //――― Validation Rules ―――
+    app.config.globalProperties.GlobalRules = GlobalRules;
   };
   return {
     install,

@@ -117,6 +117,7 @@
 
 <script lang="ts">
 import { Notifications } from "@kyvg/vue3-notification";
+import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 
 export default {
   name: "UNotificationSide",
@@ -135,7 +136,7 @@ export default {
     //█████████████████████████████████████████████████████████████
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
-    this.EventBus.$on(
+    EventBus.$on(
       "alert-dialog",
       ({ title, message, accept, reject, callback, color }) => {
         this.alert_dialog_title = title;
@@ -150,7 +151,7 @@ export default {
   },
 
   beforeUnmount() {
-    this.EventBus.$off("alert-dialog");
+    EventBus.$off("alert-dialog");
   },
   methods: {
     onAccept() {

@@ -70,7 +70,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
@@ -117,7 +117,6 @@ export default {
           type: "area",
           stacked: true,
           background: "transparent",
-          //    background: this.SaminColorDarkDeep,
           fontFamily: "var(--font)",
         },
         colors: ["#388E3C", "#FFA000"],
@@ -173,7 +172,6 @@ export default {
 
         grid: {
           show: true,
-          //borderColor: this.SaminColorLight,
           strokeDashArray: [2, 3],
           position: "back",
           xaxis: {

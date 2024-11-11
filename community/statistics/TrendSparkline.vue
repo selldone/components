@@ -32,7 +32,7 @@
   </u-sparkline>
 </template>
 
-<script>
+<script lang="ts">
 import USparkline from "../../ui/chart/sparkline/USparkline.vue";
 
 export default {

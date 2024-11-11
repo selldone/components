@@ -370,7 +370,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CommunityTopicCard from "../../../community/topic/CommunityTopicCard.vue";
 import CPostEditor from "../../../community/post/editor/CPostEditor.vue";

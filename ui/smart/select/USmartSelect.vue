@@ -109,7 +109,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 
 export default {

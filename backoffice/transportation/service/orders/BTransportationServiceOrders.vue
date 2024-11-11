@@ -355,7 +355,7 @@
     </v-data-table-server>
   </div>
 </template>
-<script>
+<script lang="ts">
 import BOrderButtonBasket from "../../../order/button/basket/BOrderButtonBasket.vue";
 import DeliveryServiceFulfilledButton from "../../../transportation/DeliveryServiceFulfilledButton.vue";
 import UButtonWhatsapp from "../../../../ui/button/whatsapp/UButtonWhatsapp.vue";

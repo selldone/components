@@ -117,6 +117,7 @@ import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCu
 import { ShopOptionsHelper } from "@selldone/core-js";
 import BasketTopMenu from "@selldone/components-vue/storefront/order/basket/BasketTopMenu.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import {EventBus} from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "SHeaderSectionButtons",
@@ -170,7 +171,7 @@ export default {
   mounted() {
     //▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Event Bus ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆
 
-    this.EventBus.$on("side-cart-menu-open", ({ open, type }) => {
+    EventBus.$on("side-cart-menu-open", ({ open, type }) => {
       this.show_basket = open;
       if (type)
         // Select corresponding type:
@@ -178,7 +179,7 @@ export default {
     });
   },
   beforeUnmount() {
-    this.EventBus.$off("side-cart-menu-open");
+    EventBus.$off("side-cart-menu-open");
   },
 
   methods: {},

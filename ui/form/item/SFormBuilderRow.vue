@@ -233,7 +233,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 
 export default {

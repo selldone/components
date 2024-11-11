@@ -456,7 +456,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import UTimeSpan from "../../../../ui/time/span/UTimeSpan.vue";
 import UChartFunnelSimple from "../../../../ui/chart/funnel/simple/UChartFunnelSimple.vue";

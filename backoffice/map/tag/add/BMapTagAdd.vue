@@ -224,7 +224,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import UMapViewPin from "../../../../ui/map/view/market/UMapViewPin.vue";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";

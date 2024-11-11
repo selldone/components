@@ -85,7 +85,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import SWidgetBox from "../../../../../ui/widget/box/SWidgetBox.vue";
@@ -307,7 +307,6 @@ export default {
 
         grid: {
           show: true,
-          //borderColor: this.SaminColorLight,
           strokeDashArray: [2, 3],
           position: "back",
           xaxis: {

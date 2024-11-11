@@ -42,7 +42,7 @@
   ></b-cluster-input>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import SArticleCategoryShopBlogInput from "../../../article/category/shop-blog/SArticleCategoryShopBlogInput.vue";

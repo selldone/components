@@ -266,7 +266,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SFormBuilder from "../../../ui/form/SFormBuilder.vue";
 import { Scopes } from "@selldone/core-js/enums/permission/Scopes";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
@@ -294,6 +294,8 @@ export default {
   },
 
   data: () => ({
+    Scopes: Scopes,
+
     busy: false,
 
     mode: Application.AppMode.TEST.code,

@@ -57,7 +57,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
 import {isString} from "lodash-es";

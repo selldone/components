@@ -127,7 +127,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import BInventoryWarehouse from "../../inventory/warehouse/BInventoryWarehouse.vue";
 
 export default {

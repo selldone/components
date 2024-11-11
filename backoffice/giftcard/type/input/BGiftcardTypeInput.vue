@@ -71,7 +71,7 @@
   </v-select>
 </template>
 
-<script>
+<script lang="ts">
 import BGiftcardTypeIcon from "../icon/BGiftcardTypeIcon.vue";
 
 export default {

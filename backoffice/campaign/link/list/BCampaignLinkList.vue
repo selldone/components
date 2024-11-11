@@ -147,7 +147,7 @@
   </v-data-table>
 </template>
 
-<script>
+<script lang="ts">
 import BCampaignSourceIcon from "../../../campaign/source/icon/BCampaignSourceIcon.vue";
 import BCampaignMediumIcon from "../../../campaign/medium/icon/BCampaignMediumIcon.vue";
 import { CampaignHelper } from "@selldone/core-js/helper/campaign/CampaignHelper";

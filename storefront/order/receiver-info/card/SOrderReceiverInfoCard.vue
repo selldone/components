@@ -97,7 +97,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UMapGeoButton from "../../../../ui/map/geo-button/UMapGeoButton.vue";
 
 export default {

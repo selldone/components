@@ -305,6 +305,8 @@ export default {
   data: function () {
     return {
       PhysicalOrderStates: Basket.PhysicalOrderStates,
+
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
       force_show_items: false,
       busy: false,
     };

@@ -213,9 +213,9 @@
 
             <v-sheet
               :style="{
-                '--color-bg-1': colorBill ? colorBill : SaminColorDarkDeep,
+                '--color-bg-1': colorBill ? colorBill : ThemeColorDeepDark,
                 '--color-bg-2': ShadeColor(
-                  colorBill ? colorBill : SaminColorDarkDeep,
+                  colorBill ? colorBill : ThemeColorDeepDark,
                   -30,
                 ),
                 background: lightCheckout
@@ -318,15 +318,18 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 import UTextValueDashed from "./../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import UColorSelector from "./../../../../ui/color/selector/UColorSelector.vue";
 import { ShadeColor } from "@selldone/core-js/helper/color/ColorGenerator";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default defineComponent({
   name: "BShopThemeColors",
+  mixins: [TemplateMixin],
+
   components: { UColorSelector, UTextValueDashed, USmartSwitch },
   props: {
     shop: {

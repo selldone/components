@@ -202,7 +202,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import UMapViewPin from "../../../../ui/map/view/market/UMapViewPin.vue";
 import BMapTagInput from "../../../map/tag/input/BMapTagInput.vue";

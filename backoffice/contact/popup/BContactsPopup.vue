@@ -23,7 +23,6 @@
         <v-btn
           v-if="!selected_contact"
           class="absolute-top-end"
-
           icon
           @click="show = false"
         >
@@ -81,14 +80,14 @@
           class="chats thin-scroll"
           is-small
         ></b-contacts-list>
-        <s-shop-login v-else  class="chat-login"></s-shop-login>
+        <s-shop-login v-else class="chat-login"></s-shop-login>
       </div>
     </v-slide-y-reverse-transition>
 
     <v-scale-transition origin="center center">
       <v-btn
         v-if="!show"
-        :color="SaminColorDark"
+        :color="ThemeColorDark"
         class="chat-btn"
         height="60"
         icon
@@ -101,13 +100,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopLogin from "../../../storefront/login/SShopLogin.vue";
 import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 import BContactsList from "../../contact/list/BContactsList.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BContactsPopup",
+  mixins: [TemplateMixin],
+
   components: { URatingEmoji, SShopLogin, BContactsList },
   props: {
     shop: {

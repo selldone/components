@@ -321,7 +321,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {
   ShopLicense,
   ShopLicenseLimits,

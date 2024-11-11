@@ -21,7 +21,7 @@
       'scrollable-element-light': light,
       '-dark': !light,
     }"
-    :color="light ? '#fafafa' : SaminColorDarkDeep"
+    :color="light ? '#fafafa' : ThemeColorDeepDark"
     :expand-on-hover="expandOnHover"
     :floating="!$vuetify.display.smAndDown"
     :rail="miniVariant"
@@ -251,12 +251,15 @@ import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import { GetNameOfColor } from "@selldone/core-js/helper";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 /**
  *
  */
 export default {
   name: "SCategoryFilter",
+  mixins: [TemplateMixin],
+
   components: { UPrice, USmartToggle, SCategoryFilterSelector },
   emits: ["change-filter", "change-height", "update:modelValue"],
   inject: ["$shop"],

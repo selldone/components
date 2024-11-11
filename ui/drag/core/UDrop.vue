@@ -10,7 +10,7 @@
   </component>
 </template>
 
-<script>
+<script lang="ts">
 import transferDataStore from "./transferDataStore";
 import { events } from "./constants";
 

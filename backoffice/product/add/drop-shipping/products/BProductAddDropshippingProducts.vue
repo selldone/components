@@ -383,7 +383,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { throttle } from "lodash-es";
 import UTimeProgressBar from "@selldone/components-vue/ui/time/progress-bar/UTimeProgressBar.vue";
 import VariantItemMini from "@selldone/components-vue/storefront/product/variant/VariantItemMini.vue";

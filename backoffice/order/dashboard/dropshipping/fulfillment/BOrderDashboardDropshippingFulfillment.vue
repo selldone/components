@@ -198,7 +198,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BOrderCart from "../../../cart/BOrderCart.vue";
 import SOrderDeliveryStatusStepper from "../../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import { Basket } from "@selldone/core-js";
@@ -224,6 +224,7 @@ export default {
 
   data: function () {
     return {
+
       PhysicalOrderStates: Basket.PhysicalOrderStates,
       force_show_items: false,
       busy: false,

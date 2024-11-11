@@ -56,7 +56,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {

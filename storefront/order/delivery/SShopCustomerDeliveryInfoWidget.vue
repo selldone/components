@@ -335,7 +335,7 @@
           v-model="receiver_info_edit"
           v-model:center="center_edit"
           :address-type="$t('global.receiver_info.map.address_type')"
-          :color="SaminColorDark"
+          :color="ThemeColorDark"
           :confirm-text="$t('global.receiver_info.map.confirm')"
           :delay-load="1000"
           :hide="!map_dialog"
@@ -366,9 +366,12 @@ import UMapGeoButton from "../../../ui/map/geo-button/UMapGeoButton.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import { Basket } from "@selldone/core-js";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
+  mixins: [TemplateMixin],
+
   components: {
     UMapView,
     USmartToggle,
@@ -387,6 +390,7 @@ export default {
 
   data: function () {
     return {
+
       PhysicalOrderStates: Basket.PhysicalOrderStates,
 
       center: { lat: 0, lng: 0 },

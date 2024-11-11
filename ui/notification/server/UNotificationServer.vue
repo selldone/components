@@ -66,7 +66,7 @@
   </v-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import UTimeLaps from "../../../ui/time/lapse/UTimeLaps.vue";
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
 

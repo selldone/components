@@ -179,7 +179,7 @@
   </u-fade-scroll>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import UFadeScroll from "../../../../ui/fade-scroll/UFadeScroll.vue";
 

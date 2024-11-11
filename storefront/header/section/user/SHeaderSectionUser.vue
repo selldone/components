@@ -31,7 +31,7 @@
     <v-btn
       v-if="!busy_user && USER()"
       key="kav1"
-      :color="!dark ? '#ddd' : SaminColorDarkDeep"
+      :color="!dark ? '#ddd' : ThemeColorDeepDark"
       :loading="busy_logout"
       class="me-1 mt-1 hover-shadow"
       height="42"
@@ -40,7 +40,7 @@
     >
       <v-icon :color="!dark ? '#222' : '#fff'" start>menu</v-icon>
       <v-avatar
-        :color="!dark ? '#fff' : SaminColorDarkDeep"
+        :color="!dark ? '#fff' : ThemeColorDeepDark"
         class="me-n3"
         size="32"
       >
@@ -220,7 +220,7 @@
     <v-btn
       v-else-if="!busy_user"
       key="kav2"
-      :color="SaminInfoColor"
+      :color="ThemeColorInfo"
       :icon="!$shop"
       :loading="!$shop"
       class="s--storefront-primary-header-login-button"
@@ -241,11 +241,14 @@
   </v-slide-y-reverse-transition>
 </template>
 
-<script>
+<script lang="ts">
 import SShopUserMenuList from "@selldone/components-vue/storefront/menu/user/SShopUserMenuList.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SHeaderSectionUser",
+  mixins: [TemplateMixin],
+
   components: {
     SShopUserMenuList,
   },

@@ -140,7 +140,7 @@
   </tr>
 </template>
 
-<script>
+<script lang="ts">
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 
 export default {

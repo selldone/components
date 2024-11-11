@@ -173,7 +173,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import UChartRadialBar from "../../../../ui/chart/radial/bar/UChartRadialBar.vue";
 

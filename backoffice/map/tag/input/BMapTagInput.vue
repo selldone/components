@@ -86,7 +86,7 @@
   </v-autocomplete>
 </template>
 
-<script>
+<script lang="ts">
 import threads from "@selldone/core-js/utils/thread/threads";
 
 export default {

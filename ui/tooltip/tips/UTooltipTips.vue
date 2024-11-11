@@ -35,7 +35,7 @@
   </v-btn>
 </template>
 
-<script>
+<script lang="ts">
 /**
  * Using this in v-inputs.
  */

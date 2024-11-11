@@ -179,7 +179,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";

@@ -147,7 +147,7 @@
   </v-autocomplete>
 </template>
 
-<script>
+<script lang="ts">
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UCurrencyIcon from "../icon/UCurrencyIcon.vue";
 

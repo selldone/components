@@ -51,7 +51,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Basket } from "@selldone/core-js";
 
 export default {

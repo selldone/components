@@ -90,7 +90,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSelect from "../../ui/smart/select/USmartSelect.vue";
 
 export default {

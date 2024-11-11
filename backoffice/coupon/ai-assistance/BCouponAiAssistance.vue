@@ -37,7 +37,7 @@
   </b-ai-assistance>
 </template>
 
-<script>
+<script lang="ts">
 import { RouteMixin } from "../../../mixin/RouteMixin";
 import BAiAssistance from "../../ai/assistance/BAiAssistance.vue";
 

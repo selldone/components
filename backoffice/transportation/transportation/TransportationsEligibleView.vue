@@ -64,7 +64,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import BTransportationOverview from "../../transportation/overview/BTransportationOverview.vue";
 import { delay } from "lodash-es";

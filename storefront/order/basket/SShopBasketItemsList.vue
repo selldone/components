@@ -351,7 +351,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import SShopBasketItemReturnForm from "../../../storefront/order/return/SShopBasketItemReturnForm.vue";
 import BasketItemUserMessageForm from "../../../storefront/order/product-input/BasketItemUserMessageForm.vue";

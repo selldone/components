@@ -145,7 +145,7 @@
   </v-combobox>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "CUserInput",
   emits: ["update:modelValue", "update:user-id", "update:user"],

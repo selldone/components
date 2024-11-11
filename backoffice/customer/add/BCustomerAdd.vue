@@ -183,7 +183,6 @@
               <v-col cols="6" sm="6">
                 <v-text-field
                   v-model="address.no"
-                  :color="SaminColorLight"
                   :label="$t('global.map_view.building_number')"
                   prepend-inner-icon="apartment"
                   variant="underlined"
@@ -192,7 +191,6 @@
               <v-col cols="6" sm="6">
                 <v-text-field
                   v-model="address.unit"
-                  :color="SaminColorLight"
                   :label="$t('global.map_view.building_unit')"
                   prepend-inner-icon="roofing"
                   variant="underlined"
@@ -202,7 +200,6 @@
               <v-col cols="12">
                 <v-text-field
                   v-model="address.name"
-                  :color="SaminColorLight"
                   :label="$t('global.commons.name')"
                   prepend-inner-icon="perm_identity"
                   variant="underlined"
@@ -238,7 +235,6 @@
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="address.postal"
-                  :color="SaminColorLight"
                   :label="$t('global.map_view.postal_code')"
                   prepend-inner-icon="markunread_mailbox"
                   variant="underlined"
@@ -249,7 +245,6 @@
               <v-col cols="12">
                 <v-textarea
                   v-model="address.message"
-                  :color="SaminColorLight"
                   :label="$t('global.map_view.more_detail_input')"
                   :rows="1"
                   auto-grow
@@ -312,6 +307,7 @@ import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 import BCustomerSegmentInput from "../../customer/segment/input/BCustomerSegmentInput.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import { defineAsyncComponent } from "vue";
+import { SetupService } from "@selldone/core-js";
 
 export default {
   name: "BCustomerAdd",
@@ -369,7 +365,7 @@ export default {
 
   computed: {
     defaultCountry() {
-      return this.SetupService.DefaultCountry();
+      return SetupService.DefaultCountry();
     },
 
     countries() {

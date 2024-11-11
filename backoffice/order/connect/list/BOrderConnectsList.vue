@@ -40,7 +40,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BOrderConnectItem from "../../../order/connect/item/BOrderConnectItem.vue";
 
 export default {

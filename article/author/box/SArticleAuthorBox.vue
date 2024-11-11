@@ -203,6 +203,7 @@ import {
   PermissionLevels,
   PermissionNames,
 } from "@selldone/core-js/enums/admin";
+import {SetupService} from "@selldone/core-js/server";
 
 export default defineComponent({
   name: "SArticleAuthorBox",
@@ -218,6 +219,8 @@ export default defineComponent({
 
   data() {
     return {
+      SetupService: SetupService,
+
       dialog_report: false,
 
       busy_follow: false,

@@ -147,7 +147,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import UTimeSpan from "../../ui/time/span/UTimeSpan.vue";
 import UChartArea from "../../ui/chart/area/UChartArea.vue";
 import UChartLine from "../../ui/chart/line/UChartLine.vue";

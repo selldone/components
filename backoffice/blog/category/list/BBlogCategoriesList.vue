@@ -264,7 +264,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import threads from "@selldone/core-js/utils/thread/threads";
 import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";

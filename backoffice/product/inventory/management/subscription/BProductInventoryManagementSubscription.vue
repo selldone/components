@@ -84,7 +84,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import USmartMenu from "../../../../../ui/smart/menu/USmartMenu.vue";
 import BProductSubscriptionPricingAdd from "../../../../product/subscription/pricing/add/BProductSubscriptionPricingAdd.vue";

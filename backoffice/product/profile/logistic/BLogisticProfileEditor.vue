@@ -136,7 +136,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
 import BAiAutoTranslate from "../../../ai/auto-translate/BAiAutoTranslate.vue";

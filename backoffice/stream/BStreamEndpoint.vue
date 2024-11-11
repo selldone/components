@@ -75,7 +75,7 @@ document.getElementById("form").addEventListener("submit", function(event) {
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import UTextCopyBox from "../../ui/text/copy-box/UTextCopyBox.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 

@@ -144,7 +144,7 @@
   </v-menu>
 </template>
 
-<script>
+<script lang="ts">
 import UProgressScore from "../../ui/progress/score/UProgressScore.vue";
 import numeral from "numeral";
 

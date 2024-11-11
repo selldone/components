@@ -26,7 +26,7 @@
       v-model:center="center"
       :address-type="$t('global.map.address')"
       :can-select-address="!view_only"
-      :color="SaminColorDark"
+      :color="ThemeColorDark"
       :confirm-text="$t('global.map.confirm')"
       :has-address-book="!view_only"
       :receptor-type="$t('global.map.receptor')"
@@ -45,11 +45,14 @@
 </template>
 
 <script lang="ts">
-import { EventName } from "@selldone/core-js/events/EventBus";
+import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
 import { defineAsyncComponent } from "vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "UMapDialog",
+  mixins: [TemplateMixin],
+
   components: {
     UMapView: defineAsyncComponent(
       () => import("@selldone/components-vue/ui/map/view/UMapView.vue"),
@@ -94,7 +97,7 @@ export default {
    * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
    */
   created() {
-    this.EventBus.$on(
+    EventBus.$on(
       EventName.SHOW_MAP,
       ({ center, mode, location, selectCallback, viewOnly }) => {
         this.map_load = true;
@@ -106,7 +109,7 @@ export default {
         this.view_only = viewOnly;
       },
     );
-    this.EventBus.$on(EventName.HIDE_MAP, () => {
+    EventBus.$on(EventName.HIDE_MAP, () => {
       this.map_dialog = false;
       setTimeout(() => {
         this.map_load = false;
@@ -115,8 +118,8 @@ export default {
   },
   mounted() {},
   beforeUnmount() {
-    this.EventBus.$off(EventName.SHOW_MAP);
-    this.EventBus.$off(EventName.HIDE_MAP);
+    EventBus.$off(EventName.SHOW_MAP);
+    EventBus.$off(EventName.HIDE_MAP);
   },
 
   methods: {},

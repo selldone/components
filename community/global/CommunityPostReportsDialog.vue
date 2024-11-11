@@ -61,9 +61,10 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { ArticleReport } from "@selldone/core-js";
+import { EventBus } from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "CommunityPostReportsDialog",
@@ -125,7 +126,7 @@ export default {
     //――――――――――――――― Event Bus ――――――――――――――――
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
-    this.EventBus.$on("community:show-post-reports", ({ post }) => {
+    EventBus.$on("community:show-post-reports", ({ post }) => {
       this.post = post;
       this.dialog = true;
       this.reports = null;
@@ -133,7 +134,7 @@ export default {
     });
   },
   beforeUnmount() {
-    this.EventBus.$off("community:show-post-reports");
+    EventBus.$off("community:show-post-reports");
   },
 };
 </script>

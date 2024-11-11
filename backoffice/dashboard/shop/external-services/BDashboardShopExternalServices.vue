@@ -136,7 +136,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";
 import { EmailProviders } from "@selldone/core-js/enums/email/EmailProviders";

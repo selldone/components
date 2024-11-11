@@ -228,7 +228,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce";

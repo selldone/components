@@ -12,16 +12,13 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {SetupService} from "@selldone/core-js/server/SetupService";
 import {ProductType} from "@selldone/core-js/enums/product/ProductType";
 import {DateConverter} from "@selldone/core-js/helper/date/DateConverter";
 import type {ICurrency} from "@selldone/core-js/enums/payment/Currency";
 import {Currency} from "@selldone/core-js/enums/payment/Currency";
 import {type ILanguage, Language,} from "@selldone/core-js/enums/language/Language";
 import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense";
-import {Scopes} from "@selldone/core-js/enums/permission/Scopes";
 import {FileExtensions} from "@selldone/core-js/enums/file/FileExtensions";
-import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
 import {SocialNetwork} from "@selldone/core-js/enums/social/SocialNetwork";
 import {ShopURLs} from "@selldone/core-js/helper/url/ShopURLs";
 import {CurrencyHelper} from "@selldone/core-js/helper/currency/CurrencyHelper.ts";
@@ -66,47 +63,7 @@ function isString(value: any): value is string {
 
 const CoreMixin = {
   data() {
-    return {
-      // Customizable theme:
-      SaminColorLight: window.CUSTOME_TEMPLATE
-        ? window.CUSTOME_TEMPLATE.color_light
-        : SetupService.ColorThemeLight(), //"#70557e"
-      SaminColorDark: window.CUSTOME_TEMPLATE
-        ? window.CUSTOME_TEMPLATE.color_dark
-        : SetupService.ColorThemeDark(), //"#3a2c41"
-      SaminColorDarkDeep: window.CUSTOME_TEMPLATE
-        ? window.CUSTOME_TEMPLATE.color_deep
-        : SetupService.ColorThemeDeepDark(), //"#261b2d"
-      SaminInfoColor: window.CUSTOME_TEMPLATE
-        ? window.CUSTOME_TEMPLATE.color_info
-        : SetupService.ColorThemeInfo(), //   "#9964e3"
-
-      EventBus: EventBus,
-
-      ProductType: ProductType,
-
-      PhysicalOrderStates: Basket.PhysicalOrderStates,
-
-      Scopes: Scopes,
-
-      //  CONFIGS:
-      /** @deprecated This data property is deprecated. */
-      SUB_TOOLBAR_CONFIG: {
-        flat: true,
-        color: "transparent",
-        class: "overflow-x-auto overflow-y-hidden thin-scroll  pb-4",
-        "min-height": "84px",
-      },
-
-      //――― Images ―――
-      IMAGE_SIZE_SMALL: BackofficeLocalStorages.IMAGE_SIZE_SMALL,
-      IMAGE_SIZE_BLOG: 256,
-
-      //――― Validation Rules ―――
-      GlobalRules: GlobalRules,
-
-      SetupService: SetupService,
-    };
+    return {};
   },
   computed: {
     is_standalone() {
@@ -185,8 +142,8 @@ const CoreMixin = {
     },
 
     /*  convertLocalTimeToUTC: function convertLocalTimeToUTC(datetimeStr) {
-                                                                                          return DateConverter.convertLocalTimeToUTC(datetimeStr);
-                                                                                        },*/
+                                                                                                  return DateConverter.convertLocalTimeToUTC(datetimeStr);
+                                                                                                },*/
 
     getLocalTimeStringSmall: function getLocalTimeStringSmall(
       datetimeStr: string | number,
@@ -352,8 +309,8 @@ const CoreMixin = {
     //―――――――――――――――――――――― 🌍 Number ――――――――――――――――――――
 
     /* ConvertNumberToPlainText(number) {
-                                                                                          return Num2persian(number);
-                                                                                        },*/
+                                                                                                  return Num2persian(number);
+                                                                                                },*/
     ConvertNumberToPersian: function ConvertNumberToPersian(
       digit: string | number,
     ) {
@@ -554,7 +511,7 @@ const CoreMixin = {
       callback: () => void,
       color: string = "red",
     ) {
-      this.EventBus.$emit("alert-dialog", {
+      EventBus.$emit("alert-dialog", {
         title,
         message,
         accept,
@@ -570,7 +527,7 @@ const CoreMixin = {
       accept: string,
       callback: () => void,
     ) {
-      this.EventBus.$emit("alert-dialog", {
+      EventBus.$emit("alert-dialog", {
         title,
         message,
         accept,
@@ -596,7 +553,7 @@ const CoreMixin = {
       const message = this.$t("global.dialogs.delete.message");
       const accept = this.$t("global.dialogs.delete.action");
 
-      this.EventBus.$emit("alert-dialog", {
+      EventBus.$emit("alert-dialog", {
         title,
         message,
         accept,
@@ -1162,7 +1119,7 @@ const CoreMixin = {
       selectCallback: () => void,
       viewOnly: boolean = false,
     ) {
-      this.EventBus.$emit(EventName.SHOW_MAP, {
+      EventBus.$emit(EventName.SHOW_MAP, {
         center,
         mode,
         location,
@@ -1171,7 +1128,7 @@ const CoreMixin = {
       });
     },
     closeMap() {
-      this.EventBus.$emit(EventName.HIDE_MAP);
+      EventBus.$emit(EventName.HIDE_MAP);
     },
 
     generateFullAddress(info_object: Order.IAddress) {
@@ -1179,7 +1136,7 @@ const CoreMixin = {
     },
 
     NeedLogin() {
-      this.EventBus.$emit("need-login", true);
+      EventBus.$emit("need-login", true);
     },
 
     BlurApp(blur: boolean) {
@@ -1190,12 +1147,12 @@ const CoreMixin = {
 
     // Fullscreen by animation
     showFullscreen(event: MouseEvent) {
-      this.EventBus.$emit("show:fullscreen", event);
+      EventBus.$emit("show:fullscreen", event);
     },
 
     //―――――――――――――――――――――― Community global ――――――――――――――――――――
     showCommunityUserProfile(profile: UserProfile) {
-      this.EventBus.$emit("community:show-profile", { profile });
+      EventBus.$emit("community:show-profile", { profile });
     },
     showCommunitySharePost(
       activator: Element,
@@ -1203,7 +1160,7 @@ const CoreMixin = {
       topic: CommunityTopic,
       post: CommunityPost,
     ) {
-      this.EventBus.$emit("community:share:post", {
+      EventBus.$emit("community:share:post", {
         activator,
         shop,
         topic,
@@ -1212,11 +1169,11 @@ const CoreMixin = {
     },
 
     showCommunityPostReactions(post: CommunityPost, reaction: string) {
-      this.EventBus.$emit("community:show-post-reactions", { post, reaction });
+      EventBus.$emit("community:show-post-reactions", { post, reaction });
     },
 
     showCommunityPostInsights(post: CommunityPost) {
-      this.EventBus.$emit("community:show-post-insights", { post });
+      EventBus.$emit("community:show-post-insights", { post });
     },
 
     showCommunityPostActionsMenu(
@@ -1225,7 +1182,7 @@ const CoreMixin = {
       post: CommunityPost,
       delete_callback: () => void,
     ) {
-      this.EventBus.$emit("community:post-actions-menu", {
+      EventBus.$emit("community:post-actions-menu", {
         activator,
         topic,
         post,
@@ -1234,7 +1191,7 @@ const CoreMixin = {
     },
 
     showCommunityPostReportsMenu(post: CommunityPost) {
-      this.EventBus.$emit("community:show-post-reports", { post });
+      EventBus.$emit("community:show-post-reports", { post });
     },
 
     showCommunityCommentActionsMenu(
@@ -1244,7 +1201,7 @@ const CoreMixin = {
       comment: CommunityComment,
       delete_callback: () => void,
     ) {
-      this.EventBus.$emit("community:comment-actions-menu", {
+      EventBus.$emit("community:comment-actions-menu", {
         activator,
         shop,
         post,
@@ -1254,29 +1211,29 @@ const CoreMixin = {
     },
 
     showCommunityCommentReportsMenu(comment: CommunityComment) {
-      this.EventBus.$emit("community:show-comment-reports", { comment });
+      EventBus.$emit("community:show-comment-reports", { comment });
     },
     //―――――――――――――――――――――― Community global >Analytics ――――――――――――――――――――
 
     onCommunityPostImpression(topic: CommunityTopic, post: CommunityPost) {
-      this.EventBus.$emit("community:analytics:post:impression", {
+      EventBus.$emit("community:analytics:post:impression", {
         topic,
         post,
       });
     },
     onCommunityPostShare(topic: CommunityTopic, post: CommunityPost) {
-      this.EventBus.$emit("community:analytics:post:share", { topic, post });
+      EventBus.$emit("community:analytics:post:share", { topic, post });
     },
     onCommunityPostEmbed(topic: CommunityTopic, post: CommunityPost) {
-      this.EventBus.$emit("community:analytics:post:embed", { topic, post });
+      EventBus.$emit("community:analytics:post:embed", { topic, post });
     },
     onCommunityPostView(topic: CommunityTopic, post: CommunityPost) {
-      this.EventBus.$emit("community:analytics:post:view", { topic, post });
+      EventBus.$emit("community:analytics:post:view", { topic, post });
     },
 
     //―――――――――――――――――――――― Guild global ――――――――――――――――――――
     showGuildSharePost(activator: Element, guild: Guild) {
-      this.EventBus.$emit("guild:share", { activator, guild });
+      EventBus.$emit("guild:share", { activator, guild });
     },
 
     //―――――――――――――――――――――― Logistic > Basket Helpers ――――――――――――――――――――
@@ -1330,8 +1287,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                                                                          PushNotification.AskForPermission();
-                                                                                        },*/
+                                                                                                  PushNotification.AskForPermission();
+                                                                                                },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 

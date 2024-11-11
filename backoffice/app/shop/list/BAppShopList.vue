@@ -50,7 +50,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BAppShopIcon from "../../../app/shop/icon/BAppShopIcon.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 

@@ -28,7 +28,7 @@
           v-model:sort-key="sortBy[0].key"
           v-model:sort-order="sortBy[0].order"
           :base-items-count="6"
-          :color="isSmall ? SaminColorDark : undefined"
+          :color="isSmall ? ThemeColorDark : undefined"
           :dark="isSmall"
           :sort-keys="keys"
           class="flex-grow-0"
@@ -69,7 +69,7 @@
                 v-for="item in items"
                 :key="item.raw.id"
                 :class="{ '-active': item === selectedContact }"
-                :color="item === selectedContact ? SaminColorDark : ''"
+                :color="item === selectedContact ? ThemeColorDark : ''"
                 :dark="item === selectedContact"
                 class="support-item text-nowrap"
                 @click="showContact(item.raw)"
@@ -291,19 +291,22 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
 import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 import SContactConversation from "../conversation/SContactConversation.vue";
 import { throttle } from "lodash-es";
 import SDataIteratorToolbar from "../../../ui/toolbar/SDataIteratorToolbar.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 /**
  * <s-contacts-list>
  */
 export default {
   name: "SContactsList",
+  mixins: [TemplateMixin],
+
   components: {
     ULoadingEllipsis,
     SDataIteratorToolbar,

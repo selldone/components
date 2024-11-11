@@ -155,7 +155,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import {

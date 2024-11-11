@@ -208,7 +208,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopPermissions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import ExpertContractView from "../../../expert/contract/ExpertContractView.vue";
 

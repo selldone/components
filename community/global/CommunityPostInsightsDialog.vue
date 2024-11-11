@@ -70,9 +70,10 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { CommunityPost } from "@selldone/core-js";
 import { CommunityPostReaction } from "@selldone/core-js/models";
+import { EventBus } from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "CommunityPostInsightsDialog",
@@ -104,13 +105,13 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
-    this.EventBus.$on("community:show-post-insights", ({ post }) => {
+    EventBus.$on("community:show-post-insights", ({ post }) => {
       this.post = post;
       this.dialog = true;
     });
   },
   beforeUnmount() {
-    this.EventBus.$off("community:show-post-insights");
+    EventBus.$off("community:show-post-insights");
   },
 };
 </script>

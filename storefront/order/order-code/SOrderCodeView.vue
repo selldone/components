@@ -21,7 +21,7 @@
   </span>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { Basket } from "@selldone/core-js";
 

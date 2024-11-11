@@ -92,7 +92,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UCurrencyIcon from "../../ui/currency/icon/UCurrencyIcon.vue";

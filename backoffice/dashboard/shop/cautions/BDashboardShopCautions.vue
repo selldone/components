@@ -29,7 +29,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import BAlertCation from "../../../alert/cation/BAlertCation.vue";
 import { ShopCautionHelper } from "@selldone/core-js/helper/shop/ShopCautionHelper";

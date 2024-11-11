@@ -18,10 +18,10 @@
       v-for="(item, index) in list"
       :key="item.code"
       :title="$t(item.name)"
-      class="flex-grow-1 d-flex"
+      class="flex-grow-1 d-flex align-center"
     >
       <span :title="$t(item.name)" class="flex-grow-1">
-        <v-icon class="me-1" size="small"> {{ item.icon }}</v-icon>
+        <v-icon class="me-1" size="16"> {{ item.icon }}</v-icon>
         <b>
           {{ numeralFormat(getQueCountBasketsByType(item.code), "0,0") }}
         </b>
@@ -29,10 +29,11 @@
 
       <v-icon
         v-if="index !== list.length - 1"
-        :color="dark ? '#fff' : SaminColorLight"
-        class="flex-grow-1 op-0-5"
+        :color="dark ? '#fff' : '#000'"
+        class="flex-grow-1 op-0-7 flip-rtl"
+        size="16"
       >
-        {{ $t("icons.chevron_next") }}
+        trending_flat
       </v-icon>
     </div>
 
@@ -43,7 +44,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { Basket } from "@selldone/core-js";
 

@@ -124,7 +124,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 
 export default {

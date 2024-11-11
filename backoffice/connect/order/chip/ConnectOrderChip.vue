@@ -123,7 +123,7 @@
   </v-chip>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "ConnectOrderChip",
   props: {

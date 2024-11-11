@@ -327,7 +327,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ShopOnboardingProductTab from "../onboarding/tabs/ShopOnboardingProductTab.vue";
 import ShopOnboardingShippingTab from "../onboarding/tabs/ShopOnboardingShippingTab.vue";
 import ShopOnboardingDomainTab from "../onboarding/tabs/ShopOnboardingDomainTab.vue";

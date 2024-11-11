@@ -147,7 +147,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import { VCalendar } from 'vuetify/labs/VCalendar'

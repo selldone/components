@@ -56,7 +56,7 @@
   </v-text-field>
 </template>
 
-<script>
+<script lang="ts">
 import { NumberHelper } from "@selldone/core-js/helper/number/NumberHelper";
 
 function tryParseFloat(str, defaultValue) {

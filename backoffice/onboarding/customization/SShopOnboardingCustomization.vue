@@ -123,7 +123,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import LTemplateCard from "@selldone/page-builder/components/templates/card/LTemplateCard.vue";
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";

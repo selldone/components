@@ -132,7 +132,7 @@
     </div>
   </v-container>
 </template>
-<script>
+<script lang="ts">
 import BVendorPayoutPods from "../../../../vendor/payout/pods/BVendorPayoutPods.vue";
 import { throttle } from "lodash-es";
 

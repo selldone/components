@@ -268,7 +268,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import URatingBar from "../../ui/rating/bar/URatingBar.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 

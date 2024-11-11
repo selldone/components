@@ -33,7 +33,7 @@
         <v-text-field
           v-model="card_number"
           v-mask="`####-####-####-####`"
-          :color="SaminColorLight"
+          color="primary"
           :label="$t('user_gift_cards.add_card_dialog.card_number_input')"
           class="mt-3"
           messages="XXXX-XXXX-XXXX-XXXX"
@@ -42,7 +42,7 @@
         <v-text-field
           v-model="card_cvv"
           v-mask="`XXXX`"
-          :color="SaminColorLight"
+          color="primary"
           class="mt-3"
           label="CVV"
           messages="XXXX"
@@ -76,7 +76,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "SGiftcardAdd",
   emits: ["update:modelValue", "add"],

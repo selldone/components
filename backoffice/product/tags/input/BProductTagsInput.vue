@@ -45,7 +45,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { debounce } from "lodash-es";
 import { BackofficeLocalStorages } from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import UChipTag from "@selldone/components-vue/ui/chip/tag/UChipTag.vue";

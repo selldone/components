@@ -439,7 +439,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
 import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";

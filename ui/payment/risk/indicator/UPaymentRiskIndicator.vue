@@ -22,7 +22,7 @@
   </v-avatar>
 </template>
 
-<script>
+<script lang="ts">
 import chroma from "chroma-js";
 
 export default {

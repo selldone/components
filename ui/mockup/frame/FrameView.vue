@@ -17,7 +17,7 @@
     <v-img v-if="src" :src="src" class="view"  eager>
       <template v-slot:placeholder>
         <v-row align="center" justify="center" no-gutters>
-          <v-progress-circular :color="SaminColorLight" indeterminate />
+          <v-progress-circular color="primary" indeterminate />
         </v-row>
       </template>
     </v-img>
@@ -29,13 +29,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "FrameView",
   props: {
     src: {},
     type: {
-      // macbook : NOT WORK ! depricated!
+      // macbook : NOT WORK ! deprecated!
       type: String,
       default: "iphone",
     },

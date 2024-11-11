@@ -13,7 +13,7 @@
  */
 
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-import { EventBus } from "@selldone/core-js/events/EventBus";
+import {EventBus} from "@selldone/core-js/events/EventBus";
 
 const EventBusMixin = {
   data() {

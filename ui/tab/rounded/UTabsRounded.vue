@@ -70,7 +70,7 @@
   </u-fade-scroll>
 </template>
 
-<script>
+<script lang="ts">
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 
 export default {

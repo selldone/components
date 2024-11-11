@@ -72,7 +72,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BProductInventoryManagementVirtual from "../../../product/inventory/management/virtual/BProductInventoryManagementVirtual.vue";
 import BProductInventoryManagementPhysical from "../../../product/inventory/management/physical/BProductInventoryManagementPhysical.vue";

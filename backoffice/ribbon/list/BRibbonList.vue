@@ -271,7 +271,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";

@@ -33,7 +33,7 @@
 
     <s-shop-login
       v-model:show="show_dialog"
-      :color="SaminColorDarkDeep"
+      :color="ThemeColorDeepDark"
       class="rounded-0"
     ></s-shop-login>
 
@@ -57,12 +57,16 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import SShopLogin from "../../storefront/login/SShopLogin.vue";
 import { throttle } from "lodash-es";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 
 export default {
   name: "SStorefrontNeedLoginDialog",
+  mixins: [TemplateMixin],
+
   components: { SShopLogin },
   inject: ["$shop"],
   props: {},
@@ -85,7 +89,7 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
 
-    this.EventBus.$on(
+    EventBus.$on(
       "need-login",
       throttle((show) => {
         this.show_dialog = show;

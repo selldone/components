@@ -62,7 +62,7 @@
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
 import {
   CreateSocialConnectLink,
   SocialNetwork,

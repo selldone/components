@@ -49,7 +49,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ResizeSensor from "./ResizeSensor";
 
 export default {

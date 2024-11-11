@@ -226,7 +226,7 @@
   </tr>
 </template>
 
-<script>
+<script lang="ts">
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";

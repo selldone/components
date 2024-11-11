@@ -124,7 +124,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import BLogisticProfileInput from "../../../logistic/profile/input/BLogisticProfileInput.vue";

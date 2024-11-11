@@ -129,7 +129,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import SChartFunnelFinance from "../../../chart/funnel/finance/SChartFunnelFinance.vue";
 import FinanceInlineChart from "../../../chart/FinanceInlineChart.vue";

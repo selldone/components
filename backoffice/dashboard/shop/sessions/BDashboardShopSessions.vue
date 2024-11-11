@@ -21,7 +21,7 @@
   ></b-sessions-map>
 </template>
 
-<script>
+<script lang="ts">
 import BSessionsMap from "../../../session/map/BSessionsMap.vue";
 
 export default {

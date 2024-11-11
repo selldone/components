@@ -114,7 +114,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 
 import UChartArea from "../../../../ui/chart/area/UChartArea.vue";

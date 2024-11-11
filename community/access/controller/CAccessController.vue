@@ -180,7 +180,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UDenseCirclesUsers from "../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import CUserInput from "../../../community/user/input/CUserInput.vue";
 import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";

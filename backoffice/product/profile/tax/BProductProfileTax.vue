@@ -115,7 +115,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import BTaxProfileInput from "../../../tax/profile/input/BTaxProfileInput.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";

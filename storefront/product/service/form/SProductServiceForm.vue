@@ -106,7 +106,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UTimeWeekPicker from "../../../../ui/time/week-picker/UTimeWeekPicker.vue";
 import { throttle } from "lodash-es";

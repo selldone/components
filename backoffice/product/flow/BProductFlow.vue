@@ -193,7 +193,10 @@ export default {
   props: {},
 
   data: function () {
-    return {};
+    return {
+      ProductType: ProductType,
+
+    };
   },
 
   computed: {

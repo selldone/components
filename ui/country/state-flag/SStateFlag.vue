@@ -37,7 +37,7 @@
   >
 </template>
 
-<script>
+<script lang="ts">
 import USState from "./assets/us/USState";
 import CanadaState from "./assets/ca/CanadaState";
 import IndiaState from "./assets/in/IndiaState";

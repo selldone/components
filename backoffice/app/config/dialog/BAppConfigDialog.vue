@@ -33,7 +33,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import BAppDetail from "../../detail/BAppDetail.vue";
 
 export default {

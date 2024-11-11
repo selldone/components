@@ -75,7 +75,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../ui/widget/box/SWidgetBox.vue";
 import SExportFormatSelect from "../../../ui/file/export-format-select/SExportFormatSelect.vue";
 

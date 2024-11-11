@@ -24,7 +24,7 @@
   >
     <v-card
       v-if="receipt_number"
-      :color="SaminColorDark"
+      :color="ThemeColorDark"
       class="scrollable-element-dark text-start"
       min-height="360px"
       theme="dark"
@@ -62,9 +62,13 @@ import BAccountTransactionForm from "../../../../account/transaction/form/BAccou
 import ULoadingEllipsis from "../../../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
 import UCurrencyIcon from "../../../../../ui/currency/icon/UCurrencyIcon.vue";
 import { throttle } from "lodash-es";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import { EventBus } from "@selldone/core-js/events/EventBus.ts";
 
 export default {
   name: "BAccountReceiptPaymentDialog",
+  mixins: [TemplateMixin],
+
   components: { UCurrencyIcon, ULoadingEllipsis, BAccountTransactionForm },
   props: {},
 
@@ -80,7 +84,7 @@ export default {
   watch: {},
 
   created() {
-    this.EventBus.$on(
+    EventBus.$on(
       "receipt-payment-dialog",
       throttle((receipt_number) => {
         this.receipt_number = receipt_number;
@@ -91,7 +95,7 @@ export default {
     );
   },
   beforeUnmount() {
-    this.EventBus.$off("receipt-payment-dialog");
+    EventBus.$off("receipt-payment-dialog");
   },
 
   methods: {

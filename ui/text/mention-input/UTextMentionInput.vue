@@ -50,7 +50,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Tribute from "tributejs";
 import UTextHtmlInput from "../html-input/UTextHtmlInput.vue";
 import EmojiPicker from "vue3-emoji-picker";

@@ -16,7 +16,7 @@
   <img :height="size" :src="icon" :title="value" />
 </template>
 
-<script>
+<script lang="ts">
 import { CampaignLink } from "@selldone/core-js";
 
 export default {

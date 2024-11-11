@@ -47,7 +47,7 @@
     </s-export-format-select>
   </div>
 </template>
-<script>
+<script lang="ts">
 import UDateInput from "../../../../ui/date/input/UDateInput.vue";
 import SExportFormatSelect from "../../../../ui/file/export-format-select/SExportFormatSelect.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";

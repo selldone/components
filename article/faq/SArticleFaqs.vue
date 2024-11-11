@@ -139,7 +139,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { InlineEditorMixin } from "../../mixin/InlineEditorMixin";
 
 /**

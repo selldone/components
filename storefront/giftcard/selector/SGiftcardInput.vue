@@ -150,7 +150,7 @@
   </v-select>
 </template>
 
-<script>
+<script lang="ts">
 import SGiftcardAdd from "../../../storefront/giftcard/add/SGiftcardAdd.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import BGiftcardTypeIcon from "@selldone/components-vue/backoffice/giftcard/type/icon/BGiftcardTypeIcon.vue";

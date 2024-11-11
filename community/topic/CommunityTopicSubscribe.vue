@@ -78,7 +78,7 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 import { CommunityTopic } from "@selldone/core-js";
 
 export default {

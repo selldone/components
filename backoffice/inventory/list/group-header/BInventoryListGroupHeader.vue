@@ -133,7 +133,7 @@
   </tr>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import ProductVariantsView from "../../../../storefront/product/variant/ProductVariantsView.vue";
 import UAvatarFolder from "../../../../ui/avatar/folder/UAvatarFolder.vue";

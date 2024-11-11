@@ -52,7 +52,7 @@
   </u-drop>
 </template>
 
-<script>
+<script lang="ts">
 import UDrop from "../../../ui/drag/core/UDrop.vue";
 import UDrag from "../../../ui/drag/core/UDrag.vue";
 

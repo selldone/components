@@ -12,7 +12,7 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
-<script>
+<script lang="ts">
 const CONFIG = {
   HOUR_TOKENS: ["HH", "H", "hh", "h", "kk", "k"],
   MINUTE_TOKENS: ["mm", "m"],

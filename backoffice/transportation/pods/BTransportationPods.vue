@@ -47,7 +47,7 @@
     <u-pod-node icon="group" title="Customers"></u-pod-node>
   </u-pods-panel>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";

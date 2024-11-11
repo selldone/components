@@ -118,7 +118,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import BTaxProfileInput from "../../../tax/profile/input/BTaxProfileInput.vue";

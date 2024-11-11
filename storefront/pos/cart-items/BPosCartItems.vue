@@ -142,7 +142,7 @@
   </v-fade-transition>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";

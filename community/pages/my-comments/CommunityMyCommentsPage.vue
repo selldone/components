@@ -54,7 +54,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CCommentWidget from "../../../community/comment/widget/CCommentWidget.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";

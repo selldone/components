@@ -161,7 +161,7 @@
     </v-row>
   </v-container>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import ShopLicenseView from "../../../shop/license/view/ShopLicenseView.vue";
 import { ShopQuotaHelper } from "@selldone/core-js/enums/shop/quota/ShopQuota";

@@ -183,7 +183,7 @@
   </v-menu>
 </template>
 
-<script>
+<script lang="ts">
 import { NotificationRepositoryType } from "@selldone/core-js/enums/notification/NotificationRepositoryType";
 import ProductsDenseImagesCirclesLinks from "../../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCirclesLinks.vue";
 import { NotificationHelper } from "@selldone/core-js/enums/notification/NotificationHelper";

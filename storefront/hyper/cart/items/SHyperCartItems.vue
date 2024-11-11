@@ -66,7 +66,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
 import { Basket } from "@selldone/core-js";
 

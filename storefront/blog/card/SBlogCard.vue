@@ -101,7 +101,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import SBlogCardAuthorCategory from "../../../storefront/blog/card/author-category/SBlogCardAuthorCategory.vue";
 
 export default {

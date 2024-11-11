@@ -88,7 +88,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import Seasons from "./Seasons.ts";
 import { isObject } from "lodash-es";

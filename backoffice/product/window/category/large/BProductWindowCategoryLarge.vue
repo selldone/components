@@ -16,14 +16,14 @@
   <div
     :category-id="category.id"
     :class="{ disabled: loading }"
-    :style="{ '--card-color': isEmpty?'#959c9f':SaminColorDarkDeep }"
+    :style="{ '--card-color': isEmpty?'#959c9f':ThemeColorDeepDark }"
     class="widget-folder-root"
     @click="$emit('select')"
   >
     <div class="box">
       <s-widget
         :class="{ 'm-1': small, compact: compactMode }"
-        :color="isEmpty?'#959c9f':SaminColorDarkDeep"
+        :color="isEmpty?'#959c9f':ThemeColorDeepDark"
         :title="`<h5 class='align-items-center pb-1 text-white '  style='font-size: 1.16rem;font-weight: 500'>    <span class=' ${star_class} mr-sm text-warning' style='font-size: 12px;'></span>  ${category.title}  </h5>`"
         body-class="p-0 mt"
         class="text-start card"
@@ -68,7 +68,7 @@
         >
           <div class="w-50 border-end p-1 text-center">
             <v-avatar
-              :color="SaminColorDarkDeep"
+              :color="ThemeColorDeepDark"
               :size="70"
               class="folder-icon"
               drop-image="true"
@@ -76,7 +76,7 @@
               <v-img :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)">
                 <template v-slot:placeholder>
                   <v-progress-circular
-                    :color="SaminColorDark"
+                    :color="ThemeColorDark"
                     class="center-absolute"
                     indeterminate
                   />
@@ -162,11 +162,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CircleImage from "../../../../../ui/image/CircleImage.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BProductWindowCategoryLarge",
+  mixins: [TemplateMixin],
+
   components: { CircleImage },
   props: {
     category: {

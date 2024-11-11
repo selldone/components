@@ -257,7 +257,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import USmartDraggable from "../../../../ui/smart/draggable/USmartDraggable.vue";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import { throttle } from "lodash-es";

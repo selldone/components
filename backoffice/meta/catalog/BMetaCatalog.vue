@@ -100,7 +100,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import UPodsPanel from "@selldone/components-vue/ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";

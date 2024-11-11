@@ -115,7 +115,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import {
   OverrideCustomVariantsName,

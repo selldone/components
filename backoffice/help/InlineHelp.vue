@@ -136,7 +136,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 //―――――――――――――――――――――― Scrollbar Styler ――――――――――――――――――――
 
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper";

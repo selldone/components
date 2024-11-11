@@ -259,7 +259,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";

@@ -63,7 +63,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UVariantAssetImage from "../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
 

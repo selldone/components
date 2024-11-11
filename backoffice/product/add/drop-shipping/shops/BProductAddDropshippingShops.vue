@@ -190,7 +190,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService";
 
 import { throttle } from "lodash-es";

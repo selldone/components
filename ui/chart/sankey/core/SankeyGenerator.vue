@@ -2,7 +2,7 @@
   <div :class="['vue-d2b-container', `vue-d2b-${name}`]"></div>
 </template>
 
-<script>
+<script lang="ts">
 import { select, selectAll } from "d3-selection";
 import "d3-transition";
 import { IdGenerator } from "./id.js";

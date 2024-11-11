@@ -76,7 +76,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ProductVariantsView from "../../../storefront/product/variant/ProductVariantsView.vue";
 import UChipDiscount from "../../../ui/chip/discount/UChipDiscount.vue";
 

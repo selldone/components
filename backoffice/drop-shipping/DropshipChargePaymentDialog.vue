@@ -67,7 +67,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UPaymentForm from "../../ui/payment/form/UPaymentForm.vue";
 

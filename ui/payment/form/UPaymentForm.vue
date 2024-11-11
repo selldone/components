@@ -770,6 +770,7 @@ import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import SWalletInput from "@selldone/components-vue/storefront/wallet/SWalletInput.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
+import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 
 export default {
   name: "UPaymentForm",
@@ -1011,7 +1012,7 @@ export default {
     this.fetchGiftCards();
 
     // Global listener: Reset form
-    this.EventBus.$on("PaymentMethodsForm:reset", () => {
+    EventBus.$on("PaymentMethodsForm:reset", () => {
       this.reset();
     });
 
@@ -1023,7 +1024,7 @@ export default {
 
   beforeUnmount() {
     this.stopIntervalPaymentStatus();
-    this.EventBus.$off("PaymentMethodsForm:reset");
+    EventBus.$off("PaymentMethodsForm:reset");
   },
 
   methods: {

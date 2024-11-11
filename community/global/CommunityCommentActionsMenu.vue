@@ -87,11 +87,12 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import AFeedbackContentViolationReport from "../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import { delay } from "lodash-es";
 import { ArticleReport } from "@selldone/core-js";
+import { EventBus } from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "CommunityCommentActionsMenu",
@@ -312,7 +313,7 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
-    this.EventBus.$on(
+    EventBus.$on(
       "community:comment-actions-menu",
       ({ activator, shop, post, comment, delete_callback }) => {
         this.activator = activator;
@@ -336,7 +337,7 @@ export default {
     );
   },
   beforeUnmount() {
-    this.EventBus.$off("community:comment-actions-menu");
+    EventBus.$off("community:comment-actions-menu");
   },
 };
 </script>

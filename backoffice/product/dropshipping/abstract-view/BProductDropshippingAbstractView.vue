@@ -152,7 +152,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import BProductVariantsTable from "../../variants/table/BProductVariantsTable.vue";
 import SCountrySelect from "../../../../ui/country/select/SCountrySelect.vue";

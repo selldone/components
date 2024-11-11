@@ -44,7 +44,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { nativeSectionEvents } from "./utils/events";
 import defaultColors from "./utils/colors";
 import { placement, placementStyles, sectionValidator } from "./utils/misc";

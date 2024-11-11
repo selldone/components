@@ -432,11 +432,12 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopProductRatingView from "../../../storefront/product/rating/SShopProductRatingView.vue";
 import SShopBuyButton from "../../../storefront/product/button/SShopBuyButton.vue";
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
+import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 /**
  * <s-comparison-list>
@@ -464,6 +465,8 @@ export default {
   },
 
   data: () => ({
+    ProductType: ProductType,
+
     selected_index: 0,
   }),
 

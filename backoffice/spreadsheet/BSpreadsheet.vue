@@ -211,7 +211,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SArticleEditor from "../../article/SArticleEditor.vue";
 import SArticleFaqs from "../../article/faq/SArticleFaqs.vue";
 import SArticleStructuredData from "../../article/SArticleStructuredData.vue";

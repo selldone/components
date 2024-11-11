@@ -16,7 +16,7 @@
   <v-sheet
     v-if="!disabled"
     :class="{ '-dark': dark, '-rtl': $vuetify.locale.isRtl }"
-    :color="dark ? SaminColorDarkDeep : '#fff'"
+    :color="dark ? ThemeColorDeepDark : '#fff'"
     :style="{
       '--color-link': dark ? '#fff' : '#000',
       '--color-hover-bg': dark ? '#00000033' : '#fafafa',
@@ -148,9 +148,12 @@ import SFooterSectionBox from "@selldone/components-vue/storefront/footer/sectio
 import SFooterSectionMenu from "@selldone/components-vue/storefront/footer/section/menu/SFooterSectionMenu.vue";
 import SFooterSectionContact from "@selldone/components-vue/storefront/footer/section/contact/SFooterSectionContact.vue";
 import SFooterSectionCopyright from "@selldone/components-vue/storefront/footer/section/copyright/SFooterSectionCopyright.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SFooterSection",
+  mixins: [TemplateMixin],
+
   components: {
     SFooterSectionCopyright,
     SFooterSectionContact,

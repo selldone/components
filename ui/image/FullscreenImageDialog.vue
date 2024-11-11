@@ -32,6 +32,8 @@
 </template>
 
 <script lang="ts">
+import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+
 export default {
   name: "FullscreenImageDialog",
   components: {},
@@ -45,13 +47,13 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
-    this.EventBus.$on("fullscreen-image", (image) => {
+    EventBus.$on("fullscreen-image", (image) => {
       this.image = image;
       this.dialog = true;
     });
   },
   beforeUnmount() {
-    this.EventBus.$off("fullscreen-image");
+    EventBus.$off("fullscreen-image");
   },
 };
 </script>

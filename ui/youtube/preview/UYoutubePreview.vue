@@ -44,7 +44,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
 
 export default {

@@ -154,7 +154,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import UTimeInput from "../../../ui/time/input/UTimeInput.vue";
 
 export default {

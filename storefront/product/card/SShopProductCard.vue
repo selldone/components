@@ -509,7 +509,7 @@
   </component>
 </template>
 
-<script>
+<script lang="ts">
 import ProductVariantsView from "../variant/ProductVariantsView.vue";
 import UPrice from "../../../ui/price/UPrice.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
@@ -582,6 +582,8 @@ export default {
   },
   data() {
     return {
+      ProductType: ProductType,
+
       rating_test: 4.5,
       rnd: null,
       current_variant: null,

@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
 

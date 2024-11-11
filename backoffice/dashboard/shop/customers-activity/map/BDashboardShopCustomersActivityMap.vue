@@ -77,7 +77,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UMapCountriesHeatmap from "../../../../../ui/map/countries/heatmap/UMapCountriesHeatmap.vue";
 import ULoadingEllipsis from "../../../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { UserActivityKeys } from "@selldone/core-js/enums/user/UserActivityKeys";

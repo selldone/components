@@ -340,7 +340,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import ULanguageInput from "../../../../../ui/language/input/ULanguageInput.vue";
 import USmartSelect from "../../../../../ui/smart/select/USmartSelect.vue";
 import { SmsTemplateMode } from "@selldone/core-js/enums/sms/SmsTemplateMode";

@@ -92,7 +92,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BasketItemUserMessageForm from "../../../storefront/order/product-input/BasketItemUserMessageForm.vue";
 import UTextValueBox from "../../../ui/text/value-box/UTextValueBox.vue";
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";

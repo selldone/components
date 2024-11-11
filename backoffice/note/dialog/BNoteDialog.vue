@@ -124,7 +124,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "BNoteDialog",
 

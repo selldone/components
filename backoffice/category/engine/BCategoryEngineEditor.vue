@@ -112,7 +112,7 @@
   </v-card-text>
 </template>
 
-<script>
+<script lang="ts">
 import UChipTag from "../../../ui/chip/tag/UChipTag.vue";
 import BCategoryInput from "../input/BCategoryInput.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";

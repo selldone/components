@@ -135,7 +135,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import LanguagesRepository from "@selldone/translate/repository/LanguagesRepository.ts";
 import BLanguageOverrideTable from "../../../language/override/table/BLanguageOverrideTable.vue";
 import SDropZone from "../../../../ui/uploader/SDropZone.vue";

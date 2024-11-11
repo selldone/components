@@ -384,7 +384,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 import USmartToggle from "../../../../../ui/smart/toggle/USmartToggle.vue";

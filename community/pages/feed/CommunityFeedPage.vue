@@ -62,7 +62,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CPostWidget from "../../post/widget/CPostWidget.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";

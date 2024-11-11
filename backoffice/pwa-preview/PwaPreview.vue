@@ -97,7 +97,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import './style/devices.scss'
 export default {
   name: "PwaPreview",

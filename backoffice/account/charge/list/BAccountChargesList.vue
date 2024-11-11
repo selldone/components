@@ -162,7 +162,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import UPaymentRiskIndicator from "../../../../ui/payment/risk/indicator/UPaymentRiskIndicator.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";

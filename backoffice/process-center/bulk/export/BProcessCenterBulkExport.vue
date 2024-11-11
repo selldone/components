@@ -164,7 +164,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SExportFormatSelect from "../../../../ui/file/export-format-select/SExportFormatSelect.vue";
 import UDateInput from "../../../../ui/date/input/UDateInput.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";

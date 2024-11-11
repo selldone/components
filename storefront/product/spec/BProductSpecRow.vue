@@ -207,7 +207,7 @@
   </li>
 </template>
 
-<script>
+<script lang="ts">
 // ―――――――――――――――― A set of vue mixins to turn any list into an animated sortable list ――――――――――――――――
 
 export default {

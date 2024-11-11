@@ -140,7 +140,7 @@
 
       <v-progress-circular
         v-if="loading_address"
-        :color="SaminColorLight"
+        color="primary"
         class="loading"
         indeterminate
         size="24"
@@ -284,7 +284,6 @@
               <v-col cols="6" sm="6">
                 <v-text-field
                   v-model="details_number"
-                  :color="SaminColorLight"
                   :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.building_number')"
                   :readonly="viewOnly"
@@ -297,7 +296,6 @@
               <v-col cols="6" sm="6">
                 <v-text-field
                   v-model="details_unit"
-                  :color="SaminColorLight"
                   :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.building_unit')"
                   :readonly="viewOnly"
@@ -310,7 +308,6 @@
               <v-col cols="12">
                 <v-text-field
                   v-model="details_full_name"
-                  :color="SaminColorLight"
                   :density="isMobile ? 'compact' : undefined"
                   :label="
                     $t('global.map_view.full_name_input', {
@@ -379,7 +376,6 @@
               <v-col v-if="has_postcode" cols="12" sm="6">
                 <v-text-field
                   v-model="postal"
-                  :color="SaminColorLight"
                   :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.postal_code')"
                   :readonly="viewOnly"
@@ -400,7 +396,6 @@
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="phone_number"
-                  :color="SaminColorLight"
                   :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.phone_input')"
                   :readonly="viewOnly"
@@ -421,7 +416,6 @@
               <v-col cols="12">
                 <v-textarea
                   v-model="details_message"
-                  :color="SaminColorLight"
                   :density="isMobile ? 'compact' : undefined"
                   :label="$t('global.map_view.more_detail_input')"
                   :readonly="viewOnly"

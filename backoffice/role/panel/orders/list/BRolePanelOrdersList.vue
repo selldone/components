@@ -144,7 +144,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderStatusesSelect from "../../../../../storefront/order/status-select/SOrderStatusesSelect.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SOrderDeliveryStatusStepper from "../../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";

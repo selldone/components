@@ -263,7 +263,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import CPostWidget from "../../post/widget/CPostWidget.vue";
 import CPostEditor from "../../../community/post/editor/CPostEditor.vue";
 import CPostsFilter from "../../../community/post/filter/CPostsFilter.vue";

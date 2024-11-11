@@ -217,7 +217,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import UYoutubePlayer from "../../../ui/youtube/player/UYoutubePlayer.vue";

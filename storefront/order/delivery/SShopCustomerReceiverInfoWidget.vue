@@ -117,7 +117,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 import UMapViewPin from "../../../ui/map/view/market/UMapViewPin.vue";
 

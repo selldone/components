@@ -12,8 +12,8 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import { EventBus, EventName } from "@selldone/core-js/events/EventBus";
-import { Language } from "@selldone/core-js/enums/language/Language";
+import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
+import {Language} from "@selldone/core-js/enums/language/Language";
 
 export const ArticleMixin = {
   props: {},
@@ -39,7 +39,7 @@ export const ArticleMixin = {
       tab = null,
       masterId = null /*Point which dialog open!*/,
     ) {
-      this.EventBus.$emit(EventName.ARTICLE_COMPARE_IMAGES_SHOW, {
+      EventBus.$emit(EventName.ARTICLE_COMPARE_IMAGES_SHOW, {
         pack,
         callback,
         deleteCallback,
@@ -64,7 +64,7 @@ export const ArticleMixin = {
       tab = null,
       masterId = null /*Point which dialog open!*/,
     ) {
-      this.EventBus.$emit(EventName.ARTICLE_FLIP_BOOK_SHOW, {
+      EventBus.$emit(EventName.ARTICLE_FLIP_BOOK_SHOW, {
         pack,
         callback,
         deleteCallback,
@@ -90,7 +90,7 @@ export const ArticleMixin = {
       deleteCallback: () => void,
       masterId = null /*Point which dialog open!*/,
     ) {
-      this.EventBus.$emit(EventName.ARTICLE_CODE_EDITOR_SHOW, {
+      EventBus.$emit(EventName.ARTICLE_CODE_EDITOR_SHOW, {
         code,
         language,
         callback,

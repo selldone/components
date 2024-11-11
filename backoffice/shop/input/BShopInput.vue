@@ -111,7 +111,7 @@
   </v-select>
 </template>
 
-<script>
+<script lang="ts">
 import ShopLicenseView from "../../shop/license/view/ShopLicenseView.vue";
 
 export default {

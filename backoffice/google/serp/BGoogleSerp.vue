@@ -30,7 +30,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BGoogleSerpConnect from "../../google/serp-connect/BGoogleSerpConnect.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 

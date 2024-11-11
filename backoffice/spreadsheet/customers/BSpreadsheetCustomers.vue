@@ -49,7 +49,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BSpreadsheet from "../BSpreadsheet.vue";
 import ImportInvalidCharacterErrorDialog from "../../spreadsheet/dialog/ImportInvalidCharacterErrorDialog.vue";
 import {

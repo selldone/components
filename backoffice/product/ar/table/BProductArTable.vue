@@ -59,7 +59,7 @@
   </v-table>
 </template>
 
-<script>
+<script lang="ts">
 import BProductArTableRow from "../../../product/ar/table/row/BProductArTableRow.vue";
 import { Eligible as ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense";
 

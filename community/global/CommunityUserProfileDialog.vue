@@ -158,10 +158,11 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import UTextValueBox from "../../ui/text/value-box/UTextValueBox.vue";
+import { EventBus } from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "CommunityUserProfileDialog",
@@ -267,14 +268,14 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
-    this.EventBus.$on("community:show-profile", ({ profile }) => {
+    EventBus.$on("community:show-profile", ({ profile }) => {
       this.profile = profile;
       this.getFullUserProfile();
       this.dialog = true;
     });
   },
   beforeUnmount() {
-    this.EventBus.$off("community:show-profile");
+    EventBus.$off("community:show-profile");
   },
 };
 </script>

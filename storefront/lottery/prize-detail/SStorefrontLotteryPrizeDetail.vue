@@ -89,7 +89,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopProductCard from "../../../storefront/product/card/SShopProductCard.vue";
 
 export default {

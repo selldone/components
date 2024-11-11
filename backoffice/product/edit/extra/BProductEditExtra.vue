@@ -144,10 +144,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BProductExtraInput from "../../extra/input/BProductExtraInput.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "BProductEditExtra",
@@ -163,6 +164,8 @@ export default {
     },
   },
   data: () => ({
+    ProductType: ProductType,
+
     busy: false,
     bulk: false,
 

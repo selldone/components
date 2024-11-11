@@ -88,8 +88,9 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { CommunityPostReaction } from "@selldone/core-js";
+import {EventBus} from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "CommunityPostReactionsDialog",
@@ -237,7 +238,7 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
-    this.EventBus.$on("community:show-post-reactions", ({ post, reaction }) => {
+    EventBus.$on("community:show-post-reactions", ({ post, reaction }) => {
       this.post = post;
       this.reaction = reaction;
       this.dialog = true;
@@ -246,7 +247,7 @@ export default {
     });
   },
   beforeUnmount() {
-    this.EventBus.$off("community:show-post-reactions");
+    EventBus.$off("community:show-post-reactions");
   },
 };
 </script>

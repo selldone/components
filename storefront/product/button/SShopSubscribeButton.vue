@@ -203,7 +203,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopCustomerReceiverInfoWidget from "../../../storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
 import SSubscriptionPriceSelect from "../../../storefront/order/subscription/SSubscriptionPriceSelect.vue";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";

@@ -15,7 +15,7 @@
 <template>
   <div class="discount-code-row">
     <v-btn
-      :color="show_discount_code_input ? SaminColorLight : SaminColorDark"
+      :color="show_discount_code_input ? ThemeColorLight : ThemeColorDark"
       :icon="show_discount_code_input"
       :loading="busy"
       :rounded="show_discount_code_input ? 'circle' : 'pill'"
@@ -75,12 +75,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { throttle } from "lodash-es";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SDiscountCodeInput",
-
+  mixins: [TemplateMixin],
   emits: ["update:modelValue", "loading"],
   props: {
     modelValue: {},

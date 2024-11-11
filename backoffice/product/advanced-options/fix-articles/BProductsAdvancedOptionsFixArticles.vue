@@ -64,7 +64,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 
 export default {

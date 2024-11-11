@@ -116,7 +116,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 
 export default {

@@ -665,7 +665,7 @@
   </b-customer-segment-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import BOrderButtonBasket from "../../order/button/basket/BOrderButtonBasket.vue";
 import BOrderButtonPos from "../../order/button/pos/BOrderButtonPos.vue";
 import { UserActivityKeys } from "@selldone/core-js/enums/user/UserActivityKeys";

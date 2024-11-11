@@ -128,7 +128,7 @@ ${affiliate.name}
   </s-widget>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import UTextValueDashed from "../../../ui/text/value-dashed/UTextValueDashed.vue";

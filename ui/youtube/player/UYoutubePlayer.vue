@@ -1,7 +1,7 @@
 <template>
   <div></div>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 
 const player = require("youtube-player");

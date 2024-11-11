@@ -182,7 +182,7 @@
   </b-map-tag-add>
 </template>
 
-<script>
+<script lang="ts">
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import { throttle } from "lodash-es";
 import BMapTagAdd from "../../../map/tag/add/BMapTagAdd.vue";

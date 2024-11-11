@@ -15,7 +15,7 @@
 <template>
   <s-widget-box
     :active="true"
-    :color="SaminColorDarkDeep"
+    :color="ThemeColorDeepDark"
     :icon-to="{ name: 'BPageShopCrmReport' }"
     :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mx-sm' style='font-size: 6px;'></span> ${$t(
       'admin_shop.dashboard.customers.title',
@@ -187,9 +187,11 @@ import numeral from "numeral";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UpDownIcon from "../../../../ui/icon/UpDownIcon.vue";
 import { Club } from "@selldone/core-js";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BDashboardShopCustomers",
+  mixins: [TemplateMixin],
   components: {
     UpDownIcon,
     SWidgetBox,
@@ -292,7 +294,7 @@ export default {
         colors: ["#ffffff", "#8BC34A"],
 
         chart: {
-          background: this.SaminColorDarkDeep,
+          background: this.ThemeColorDeepDark,
 
           stacked: false,
 
@@ -480,7 +482,7 @@ export default {
         ],
         grid: {
           show: true,
-          borderColor: this.SaminColorLight,
+          borderColor: this.ThemeColorLight,
           strokeDashArray: [2, 3],
           position: "back",
           xaxis: {

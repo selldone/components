@@ -144,7 +144,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderReceiverInfoCard from "../../../../../storefront/order/receiver-info/card/SOrderReceiverInfoCard.vue";
 import SOrderBillCard from "../../../../../storefront/order/billing/card/SOrderBillCard.vue";
 import UButtonWhatsapp from "../../../../../ui/button/whatsapp/UButtonWhatsapp.vue";

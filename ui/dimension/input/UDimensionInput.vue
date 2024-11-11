@@ -101,7 +101,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import UDimensionInputUnit from "./unit/UDimensionInputUnit.vue";
 import { isString } from "lodash-es";

@@ -166,7 +166,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import BAppConfigDialog from "../../config/dialog/BAppConfigDialog.vue";
 import BAppShopStoreIcon from "../../../app/shop/store/icon/BAppShopStoreIcon.vue";
 import { Application } from "@selldone/core-js";

@@ -108,7 +108,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import numeral from "numeral";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 

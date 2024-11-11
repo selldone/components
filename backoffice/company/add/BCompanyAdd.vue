@@ -197,7 +197,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import SImageUploader from "../../../ui/uploader/SImageUploader.vue";
 
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";

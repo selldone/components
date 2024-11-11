@@ -184,7 +184,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { LRUCache } from "@selldone/core-js/helper/cache/LRUCache";
 import { StorefrontDebugLogType } from "@selldone/core-js/enums/debug/StorefrontDebugLogType.ts";
 import { StorefrontDebugEvents } from "@selldone/core-js/enums/debug/StorefrontDebugEvents.ts";

@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderShippingStoreOptions from "@selldone/components-vue/storefront/order/shipping/store/SOrderShippingStoreOptions.vue";
 
 export default {

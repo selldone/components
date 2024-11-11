@@ -62,7 +62,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UChipChange from "../../../../../ui/chip/change/UChipChange.vue";
 import TimeSeriesInlineChart from "../../../../chart/TimeSeriesInlineChart.vue";
 import { isEmpty } from "lodash-es";

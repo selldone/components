@@ -45,7 +45,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UChartSankey from "../../../ui/chart/sankey/UChartSankey.vue";
 
 export default {

@@ -141,7 +141,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BOrderButton from "../../order/button/BOrderButton.vue";
@@ -160,6 +160,8 @@ export default {
 
   data: function () {
     return {
+      ProductType: ProductType,
+
       busy_fetch: false,
 
       return_requests: [],

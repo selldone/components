@@ -138,7 +138,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import UTextValueDashed from "../../../../../ui/text/value-dashed/UTextValueDashed.vue";
 

@@ -187,7 +187,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import {MapHelper} from "@selldone/core-js/helper/index";
 
 export default {

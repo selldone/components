@@ -38,7 +38,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import AAddonCanvasEditor from "../../../article/add-on/canvas/editor/AAddonCanvasEditor.vue";
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 

@@ -61,7 +61,7 @@
   </swiper>
 </template>
 
-<script>
+<script lang="ts">
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import EffectMaterial from "../../../../ui/swiper/effects/material/effect-material.esm.js";

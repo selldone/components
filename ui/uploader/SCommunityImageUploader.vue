@@ -43,7 +43,7 @@
   </c-image-view>
 </template>
 
-<script>
+<script lang="ts">
 import CImageView from "../../community/image/view/CImageView.vue";
 
 export default {

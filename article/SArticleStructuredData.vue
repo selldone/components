@@ -200,7 +200,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import UButtonAdd from "../ui/button/add/UButtonAdd.vue";
 import SStructureDataInput from "./SStructureDataInput.vue";
 import SWidgetButtons from "../ui/widget/buttons/SWidgetButtons.vue";

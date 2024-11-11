@@ -309,7 +309,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import BSpreadsheetVirtualItems from "../../../../spreadsheet/virtual-items/BSpreadsheetVirtualItems.vue";
 
 import BProductVariantInput from "../../../../product/variants/input/BProductVariantInput.vue";

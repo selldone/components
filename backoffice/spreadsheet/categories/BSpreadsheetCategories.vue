@@ -45,7 +45,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {
   CategoriesCsvFormat,
   CategoriesCsvHeaders,

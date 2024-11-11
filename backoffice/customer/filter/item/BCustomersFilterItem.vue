@@ -90,7 +90,7 @@
   </span>
 </template>
 
-<script>
+<script lang="ts">
 import { Customer } from "@selldone/core-js";
 
 export default {

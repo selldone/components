@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UChartFunnel from "../../../../ui/chart/funnel/UChartFunnel.vue";
 
 export default {

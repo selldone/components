@@ -193,7 +193,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import SImageUploader from "../../../ui/uploader/SImageUploader.vue";

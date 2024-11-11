@@ -58,7 +58,7 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "ColorSelectSlider",
   emits: ["open", "close", "select"],

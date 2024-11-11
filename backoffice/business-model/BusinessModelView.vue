@@ -571,7 +571,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UPodNode from "../../ui/pod/node/UPodNode.vue";
 
 export default {

@@ -109,7 +109,7 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "CPostsFilter",
 

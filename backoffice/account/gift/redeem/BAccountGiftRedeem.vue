@@ -19,7 +19,7 @@
     content-class="rounded-t-xl"
     max-width="98vw"
   >
-    <v-card v-if="selectedGift" :color="SaminColorDarkDeep" rounded="t-xl">
+    <v-card v-if="selectedGift" :color="ThemeColorDeepDark" rounded="t-xl">
       <v-card-title class="dialog-title">
         <v-icon class="me-1">card_giftcard</v-icon>
         {{ $t("get_gift_dialog.title") }}
@@ -110,13 +110,16 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import BAccountInput from "../../../account/input/BAccountInput.vue";
 import { GiftStatus } from "@selldone/core-js/enums/wallet/gift/GiftStatus";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BAccountGiftRedeem",
+  mixins:[TemplateMixin],
+
   components: { ULottie, BAccountInput },
   emits: ["update:modelValue", "update"],
   props: {

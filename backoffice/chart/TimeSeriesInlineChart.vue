@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import numeral from "numeral";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 

@@ -451,6 +451,10 @@ export default {
   data: function () {
     return {
       PhysicalOrderStates: Basket.PhysicalOrderStates,
+
+      ProductType: ProductType,
+
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
       center: { lat: 0, lng: 0 },
       location: null,
 

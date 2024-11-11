@@ -93,7 +93,7 @@
   </component>
 </template>
 
-<script>
+<script lang="ts">
 import CircleImage from "../../../ui/image/CircleImage.vue";
 import UTimeProgressBar from "../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import UChartBar from "../../../ui/chart/bar/UChartBar.vue";

@@ -24,7 +24,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "UVoiceRecorder",
   emits: ["error", "stop"],

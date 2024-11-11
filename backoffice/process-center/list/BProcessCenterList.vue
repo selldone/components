@@ -791,7 +791,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderDeliveryStatusStepper from "../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import SOrderStatusesSelect from "../../../storefront/order/status-select/SOrderStatusesSelect.vue";
 import ReturnRequestButtonBadge from "../../../storefront/order/order-return/ReturnRequestButtonBadge.vue";
@@ -905,6 +905,8 @@ export default {
 
   data: function () {
     return {
+      ProductType: ProductType,
+
       BasketStatus: Basket.Status,
       ProductType: ProductType,
 

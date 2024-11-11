@@ -259,7 +259,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
 import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";

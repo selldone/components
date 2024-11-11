@@ -67,7 +67,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ServiceBillingItem from "../../../../storefront/order/billing/ServiceBillingItem.vue";
 import { Basket } from "@selldone/core-js";
 

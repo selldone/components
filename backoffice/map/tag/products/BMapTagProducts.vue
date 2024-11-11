@@ -152,7 +152,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import { throttle } from "lodash-es";
 

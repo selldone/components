@@ -607,7 +607,7 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import UButtonShareGroup from "../../ui/button/share/group/UButtonShareGroup.vue";
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";

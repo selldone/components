@@ -138,7 +138,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
 import { ArticleMixin } from "../../../../mixin/ArticleMixin";
 

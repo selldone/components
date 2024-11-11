@@ -99,7 +99,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import { RouteMixin } from "../../../mixin/RouteMixin";
 import UVoiceBox from "../../../community/voice/box/UVoiceBox.vue";
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";

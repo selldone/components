@@ -34,7 +34,7 @@
           <small>{{ $t("user_dashboard.shops.shop_card.page_views") }}</small>
 
           <u-chart-donut
-            :background="dark ? SaminColorDark : '#fff'"
+            :background="dark ? ThemeColorDark : '#fff'"
             :has-legend="false"
             :sections="pie_values"
             :size="24"
@@ -63,11 +63,14 @@
   </v-menu>
 </template>
 
-<script>
+<script lang="ts">
 import UChartDonut from "../../../../ui/chart/donut/UChartDonut.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BShopCardVisitors",
+  mixins: [TemplateMixin],
+
   components: { UChartDonut },
   props: {
     lastData: {

@@ -74,7 +74,7 @@
           }"
           :dark="getId($route.params.basket_id) === basket.id"
           :to="
-          /*  getDeliveryServiceID(basket) &&
+            /*  getDeliveryServiceID(basket) &&
             getShopTransportationForBasketDeliveryTypeID(basket)
               ? {
                   name: 'BPageTransportationServiceDashboard',
@@ -84,7 +84,7 @@
                     delivery_service_id: getDeliveryServiceID(basket),
                   },
                 }
-              : */getBasketOrderProcessTo(basket)
+              : */ getBasketOrderProcessTo(basket)
           "
           class="border-bottom bg-white text-start"
           ripple
@@ -102,7 +102,8 @@
                 :location="basket.receiver_info.location"
                 :only-one="true"
                 :transportation-type="basket.delivery_info.type"
-                @click.stop  class="ma-1"
+                @click.stop
+                class="ma-1"
               ></u-map-geo-button>
 
               <v-btn
@@ -177,7 +178,7 @@
             >
               {{ numeralFormat(basket.delivery_info.distance, "0,0.[0]") }}
 
-              <span class="small">{{distance_unit}}</span>
+              <span class="small">{{ distance_unit }}</span>
             </v-chip>
           </div>
 
@@ -277,13 +278,23 @@
           lines="two"
         >
           <v-list-item
-            v-for="transportation_service in geTransportationServices(selected_basket_service)"
+            v-for="transportation_service in geTransportationServices(
+              selected_basket_service,
+            )"
             :key="transportation_service.id"
-            :prepend-avatar="getShopImagePath(transportation_service.delivery_service.icon)"
+            :prepend-avatar="
+              getShopImagePath(transportation_service.delivery_service.icon)
+            "
             :subtitle="transportation_service.delivery_service.description"
             :title="transportation_service.delivery_service.name"
             class="row-hover"
-            @click="setDeliveryServiceID(selected_basket_service,transportation_service.id, transportation_service.delivery_service.id)"
+            @click="
+              setDeliveryServiceID(
+                selected_basket_service,
+                transportation_service.id,
+                transportation_service.delivery_service.id,
+              )
+            "
           >
           </v-list-item>
         </v-list>
@@ -304,7 +315,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { ImageStore } from "@selldone/core-js/enums/logistic/ImageStore";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import BOrderButtonBasket from "../../../order/button/basket/BOrderButtonBasket.vue";
@@ -312,6 +323,7 @@ import UMapGeoButton from "../../../../ui/map/geo-button/UMapGeoButton.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import UDrag from "../../../../ui/drag/core/UDrag.vue";
+import { EventBus } from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "BTransportationServiceQue",
@@ -425,7 +437,7 @@ export default {
 
     //――――――――――――――――――――――― Filter ―――――――――――――――――――――――
 
-    this.EventBus.$on(
+    EventBus.$on(
       "transportation.set-filter",
       ({ type, delivery_service_id }) => {
         console.log("transportation.set-filter", type, delivery_service_id);
@@ -436,21 +448,21 @@ export default {
 
     //――――――――――――――――――――――― Add Item ―――――――――――――――――――――――
 
-    this.EventBus.$on("transportation.add-new-sending", ({ basket }) => {
+    EventBus.$on("transportation.add-new-sending", ({ basket }) => {
       this.AddLogisticSendingOrderQue(basket);
     });
 
     //――――――――――――――――――――――― Delete Item ―――――――――――――――――――――――
 
-    this.EventBus.$on("transportation.delete-sending", ({ basket }) => {
+    EventBus.$on("transportation.delete-sending", ({ basket }) => {
       this.deleteItemFromLogisticSendingOrderQue(basket);
     });
   },
 
   beforeUnmount() {
-    this.EventBus.$off("transportation.set-filter");
-    this.EventBus.$off("transportation.add-new-sending");
-    this.EventBus.$off("transportation.delete-sending");
+    EventBus.$off("transportation.set-filter");
+    EventBus.$off("transportation.add-new-sending");
+    EventBus.$off("transportation.delete-sending");
   },
 
   methods: {
@@ -491,21 +503,25 @@ export default {
       const transportation =
         this.getShopTransportationForBasketDeliveryType(basket);
 
-      return  transportation?.transportation_services
+      return transportation?.transportation_services;
 
-    /*  const service_ids =
-        transportation && transportation.info
-          ? transportation.info.service_ids
-          : [];
-
-      return this.delivery_services.filter((i) => service_ids.includes(i.id));*/
+      /*  const service_ids =
+          transportation && transportation.info
+            ? transportation.info.service_ids
+            : [];
+  
+        return this.delivery_services.filter((i) => service_ids.includes(i.id));*/
     },
 
     getDeliveryServiceID(basket) {
       if (!basket) return null;
       return basket.delivery_service_id; // Assign when add to que
     },
-    setDeliveryServiceID(basket, transportation_service_id,delivery_service_id) {
+    setDeliveryServiceID(
+      basket,
+      transportation_service_id,
+      delivery_service_id,
+    ) {
       basket.delivery_service_id = delivery_service_id;
       basket.transportation_service_id = transportation_service_id;
 

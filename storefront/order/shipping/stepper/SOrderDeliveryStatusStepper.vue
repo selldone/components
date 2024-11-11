@@ -17,7 +17,7 @@
     :class="{ dark: dark }"
     :style="{
       '--step-color': dark ? '#000' : color,
-      '--step-color-dark': darkColor ? darkColor : SaminColorDarkDeep,
+      '--step-color-dark': darkColor ? darkColor : ThemeColorDeepDark,
     }"
   >
     <div :class="{ 'mt-5': hasSubscription }" class="container-stepper">
@@ -33,7 +33,7 @@
         :style="`height: 2px;width: ${(activeIndex * 100) / length}%;left: ${
           50 / length
         }%;top: 15px;background-color: ${
-          dark ? '#fff' : SaminColorDarkDeep
+          dark ? '#fff' : ThemeColorDeepDark
         };position: absolute;z-index:2`"
       ></div>
 
@@ -119,9 +119,13 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+
 export default {
   name: "SOrderDeliveryStatusStepper",
+  mixins: [TemplateMixin],
+
   emits: ["mouseEnterToCustomer"],
   props: {
     dark: {

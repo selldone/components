@@ -120,12 +120,13 @@
     ></a-feedback-content-violation-report>
   </div>
 </template>
-<script>
+<script lang="ts">
 import CPostEditor from "../../community/post/editor/CPostEditor.vue";
 import AFeedbackContentViolationReport from "../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import { delay } from "lodash-es";
 import { ArticleReport } from "@selldone/core-js";
+import {EventBus} from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "CommunityPostActionsMenu",
@@ -436,7 +437,7 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
-    this.EventBus.$on(
+    EventBus.$on(
       "community:post-actions-menu",
       ({ activator, topic, post, delete_callback }) => {
         if (this.busy) return;
@@ -460,7 +461,7 @@ export default {
     );
   },
   beforeUnmount() {
-    this.EventBus.$off("community:post-actions-menu");
+    EventBus.$off("community:post-actions-menu");
   },
 };
 </script>

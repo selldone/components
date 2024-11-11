@@ -53,7 +53,7 @@
   </v-navigation-drawer>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import BEmailMarketingEditorSectionRow from "../../../email-marketing/editor/section/row/BEmailMarketingEditorSectionRow.vue";
 

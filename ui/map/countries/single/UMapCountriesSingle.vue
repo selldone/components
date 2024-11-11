@@ -26,7 +26,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UMapCountriesHeatmap from "../../../../ui/map/countries/heatmap/UMapCountriesHeatmap.vue";
 
 export default {

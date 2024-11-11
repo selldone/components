@@ -286,7 +286,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UButtonFeature from "../../../../ui/button/feature/UButtonFeature.vue";
 import { throttle } from "lodash-es";
 

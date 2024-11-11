@@ -498,7 +498,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import UDateInput from "../../../ui/date/input/UDateInput.vue";

@@ -56,7 +56,7 @@
   </v-select>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "UDimensionInputUnit",
   emits: ["update:modelValue", "change", "click:clear"],

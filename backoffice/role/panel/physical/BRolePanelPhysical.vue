@@ -159,7 +159,7 @@
     </v-card>
   </v-dialog>
 </template>
-<script>
+<script lang="ts">
 import BRolePanelOrdersList from "../orders/list/BRolePanelOrdersList.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ShopRoles } from "@selldone/core-js/enums/staff/ShopRoles";
@@ -205,6 +205,8 @@ export default {
   },
   data() {
     return {
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
+
       ProductType: ProductType,
       ShopRoles: ShopRoles,
 

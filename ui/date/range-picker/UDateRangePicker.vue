@@ -61,7 +61,7 @@
   </v-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import UDateInput from "../../../ui/date/input/UDateInput.vue";
 

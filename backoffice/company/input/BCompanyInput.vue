@@ -183,7 +183,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import BCompanyAdd from "../../company/add/BCompanyAdd.vue";
 import threads from "@selldone/core-js/utils/thread/threads";
 import { Country } from "@selldone/core-js/models/general/country/country.model";

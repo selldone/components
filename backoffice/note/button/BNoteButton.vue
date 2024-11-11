@@ -60,7 +60,7 @@
   </span>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "BNoteButton",
   props: {

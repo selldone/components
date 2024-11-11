@@ -229,7 +229,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";

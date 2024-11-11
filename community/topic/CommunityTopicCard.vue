@@ -177,7 +177,7 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import CImageView from "../../community/image/view/CImageView.vue";
 import URibbon from "../../ui/ribbon/URibbon.vue";

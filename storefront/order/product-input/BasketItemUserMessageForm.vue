@@ -101,7 +101,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SBasketProductInputs from "./SBasketProductInputs.vue";
 import {
   FORM_BUILDER_TAGS,

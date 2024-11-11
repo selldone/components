@@ -19,7 +19,7 @@
   </span>
 </template>
 
-<script>
+<script lang="ts">
 import { TaxRegionTypes } from "@selldone/core-js/enums/tax/TaxRegionTypes";
 
 export default {

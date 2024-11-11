@@ -319,7 +319,7 @@
   ></b-product-variants-bulk-add>
 </template>
 
-<script>
+<script lang="ts">
 import BProductVariantItem from "../../../variants/item/BProductVariantItem.vue";
 import BProductVariantAdd from "../../../variants/add/BProductVariantAdd.vue";
 import UNumberInput from "../../../../../ui/number/input/UNumberInput.vue";

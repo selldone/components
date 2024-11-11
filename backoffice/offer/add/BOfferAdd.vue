@@ -33,7 +33,6 @@
 
           <v-text-field
             v-model="title"
-            :color="SaminColorLight"
             :counter="48"
             :hint="$t('offer_edit.title_input_hint')"
             :label="$t('offer_edit.title_input') + '*'"
@@ -350,7 +349,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import UDateInput from "../../../ui/date/input/UDateInput.vue";

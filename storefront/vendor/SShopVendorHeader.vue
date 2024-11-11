@@ -36,7 +36,7 @@
   </v-expand-transition>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "SShopVendorHeader",
   inject: ["$shop"],

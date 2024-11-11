@@ -125,7 +125,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import { throttle } from "lodash-es";

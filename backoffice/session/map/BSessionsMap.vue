@@ -240,7 +240,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UMapCountriesHeatmap from "../../../ui/map/countries/heatmap/UMapCountriesHeatmap.vue";
 import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";

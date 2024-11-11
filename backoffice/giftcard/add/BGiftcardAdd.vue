@@ -116,7 +116,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import UTextValueBox from "../../../ui/text/value-box/UTextValueBox.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";

@@ -269,7 +269,7 @@
   </s-widget>
 </template>
 
-<script>
+<script lang="ts">
 import UChartFunnelConversion from "../../../ui/chart/funnel/conversion/UChartFunnelConversion.vue";
 import BSessionChartSankey from "../../session/chart/sankey/BSessionChartSankey.vue";
 import BSessionDevicesPie from "../../session/devices/pie/BSessionDevicesPie.vue";

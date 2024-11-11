@@ -67,7 +67,7 @@
       }"
       :completed-steps="item.progress"
       :diameter="size"
-      :inner-stroke-color="SaminColorDark"
+      :inner-stroke-color="ThemeColorDark"
       :loading="busy_loading_payment === item.id"
       :stroke-width="size / 6"
       :style="{ top: `${index * 55 + 120}px` }"
@@ -119,7 +119,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UPaymentForm from "../../ui/payment/form/UPaymentForm.vue";
 import UProgressRadial from "../../ui/progress/radial/UProgressRadial.vue";
@@ -131,9 +131,13 @@ import { delay, throttle } from "lodash-es";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 
 export default {
   name: "SStorefrontMasterPaymentDialog",
+  mixins: [TemplateMixin],
+
   components: {ULoadingEllipsis, UProgressRadial, UPaymentForm },
 
   inject: ["$shop"],
@@ -242,7 +246,7 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
 
-    this.EventBus.$on(
+    EventBus.$on(
       "payment-form-basket",
       throttle(
         ({
@@ -268,7 +272,7 @@ export default {
 
           this.currency = this.GetUserSelectedCurrency();
 
-          this.EventBus.$emit("PaymentMethodsForm:reset", null);
+          EventBus.$emit("PaymentMethodsForm:reset", null);
 
           this.order = order; // Basket
 
@@ -308,7 +312,7 @@ export default {
     );
     //―――――――――――――――――――――― 🎗️ Subscription ――――――――――――――――――――
 
-    this.EventBus.$on(
+    EventBus.$on(
       "payment-form-subscription",
       throttle(({ currency, bill, gateway_codes, callback, order }) => {
         // Based on delivery methods support COD!
@@ -320,7 +324,7 @@ export default {
 
         this.currency = Currency[currency];
 
-        this.EventBus.$emit("PaymentMethodsForm:reset", null);
+        EventBus.$emit("PaymentMethodsForm:reset", null);
 
         this.order = order; // Basket
 
@@ -342,7 +346,7 @@ export default {
     /**
      * @param order_id        Only use for guest payment! 🥶 Guest (order_id: in payment que) (order_id: in transactions and pending transactions)
      */
-    this.EventBus.$on(
+    EventBus.$on(
       "try-to-pay",
       throttle(({ gateway, transaction_id, order_id, force_reset_payment }) => {
         // console.log("====== TRY TO PAY ======", gateway, transaction_id);
@@ -357,7 +361,7 @@ export default {
     );
 
     // Payment of bill:
-    this.EventBus.$on(
+    EventBus.$on(
       "payment-form-bill",
       throttle(({ code /*🥶 Guest*/, bill, callback, order }) => {
         // Reset previous data:
@@ -369,7 +373,7 @@ export default {
 
         this.currency = Currency[bill.currency];
 
-        this.EventBus.$emit("PaymentMethodsForm:reset", null);
+        EventBus.$emit("PaymentMethodsForm:reset", null);
 
         this.order = order; // Basket
 
@@ -399,7 +403,7 @@ export default {
     );
 
     // Payment of avocado:
-    this.EventBus.$on(
+    EventBus.$on(
       "payment-form-avocado",
       throttle(({ avocado, callback }) => {
         // Reset previous data:
@@ -411,7 +415,7 @@ export default {
 
         this.currency = Currency[avocado.currency];
 
-        this.EventBus.$emit("PaymentMethodsForm:reset", null);
+        EventBus.$emit("PaymentMethodsForm:reset", null);
 
         this.order = avocado; // Basket
 
@@ -441,7 +445,7 @@ export default {
     );
 
     // Payment of hyper:
-    this.EventBus.$on(
+    EventBus.$on(
       "payment-form-hyper",
       throttle(({ hyper, callback }) => {
         // Reset previous data:
@@ -452,7 +456,7 @@ export default {
 
         this.currency = Currency[hyper.currency];
 
-        this.EventBus.$emit("PaymentMethodsForm:reset", null);
+        EventBus.$emit("PaymentMethodsForm:reset", null);
 
         this.order = hyper; // Basket
 
@@ -513,8 +517,8 @@ export default {
   beforeUnmount() {
     if (this.interval) clearInterval(this.interval);
 
-    this.EventBus.$off("payment-form-basket");
-    this.EventBus.$off("try-to-pay");
+    EventBus.$off("payment-form-basket");
+    EventBus.$off("try-to-pay");
   },
   methods: {
     buy({ gateway, amount_check, gift_cards, params, callback_paypal }) {

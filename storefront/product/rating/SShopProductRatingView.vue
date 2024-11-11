@@ -117,7 +117,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import URatingBar from "../../../ui/rating/bar/URatingBar.vue";
 import URatingInput from "../../../ui/rating/input/URatingInput.vue";
 

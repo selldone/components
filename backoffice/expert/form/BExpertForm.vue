@@ -241,7 +241,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import SUserInput from "../../user/input/SUserInput.vue";
 import SImageUploader from "../../../ui/uploader/SImageUploader.vue";
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";

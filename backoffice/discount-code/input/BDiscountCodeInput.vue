@@ -67,7 +67,7 @@
   </v-combobox>
 </template>
 
-<script>
+<script lang="ts">
 import { throttle } from "lodash-es";
 
 export default {

@@ -74,7 +74,7 @@
   <small v-else>Not set!</small>
 </template>
 
-<script>
+<script lang="ts">
 import UButtonWhatsapp from "../../../ui/button/whatsapp/UButtonWhatsapp.vue";
 import { RouteMixin } from "../../../mixin/RouteMixin";
 

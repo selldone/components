@@ -106,7 +106,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CImageView from "../../../community/image/view/CImageView.vue";
 import TrendSparkline from "../../../community/statistics/TrendSparkline.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries.ts";

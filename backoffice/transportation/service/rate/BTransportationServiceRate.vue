@@ -63,7 +63,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
 export default {

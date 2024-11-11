@@ -4,7 +4,7 @@
   <component :is="tag" ref="qrcodeElement"></component>
 </template>
 
-<script>
+<script lang="ts">
 import { toCanvas, toDataURL, toString } from "qrcode";
 
 export default {

@@ -905,6 +905,8 @@ export default {
 
   data: function () {
     return {
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
+
       dialog_received_by_customer: false,
 
       PhysicalOrderStates: Basket.PhysicalOrderStates,

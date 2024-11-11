@@ -79,7 +79,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UNumberInput from "../../../../../ui/number/input/UNumberInput.vue";
 import UCalendarView from "../../../../../ui/calendar/clendar-view/UCalendarView.vue";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";

@@ -83,7 +83,7 @@
   </v-expand-transition>
 </template>
 
-<script>
+<script lang="ts">
 import UChartRadialBar from "../../../ui/chart/radial/bar/UChartRadialBar.vue";
 
 export default {

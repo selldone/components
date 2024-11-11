@@ -154,9 +154,9 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
-import { EventName } from "@selldone/core-js/events/EventBus";
+import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
 import UTabsRounded from "../../../../ui/tab/rounded/UTabsRounded.vue";
 
 export default {
@@ -214,7 +214,7 @@ export default {
   },
 
   mounted() {
-    this.EventBus.$on(
+    EventBus.$on(
       EventName.ARTICLE_COMPARE_IMAGES_SHOW,
 
       ({ pack, callback, deleteCallback, tab, masterId }) => {
@@ -235,7 +235,7 @@ export default {
     );
   },
   beforeUnmount() {
-    this.EventBus.$off(EventName.ARTICLE_COMPARE_IMAGES_SHOW);
+    EventBus.$off(EventName.ARTICLE_COMPARE_IMAGES_SHOW);
   },
 
   methods: {

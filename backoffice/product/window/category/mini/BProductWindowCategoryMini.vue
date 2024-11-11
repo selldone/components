@@ -98,7 +98,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CircleImage from "../../../../../ui/image/CircleImage.vue";
 
 export default {

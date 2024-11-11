@@ -522,7 +522,7 @@
   </b-inventory-bulk-discount>
 </template>
 
-<script>
+<script lang="ts">
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import BProductEditPrice from "../../product/edit/price/BProductEditPrice.vue";
@@ -566,6 +566,8 @@ export default {
   },
   data: function () {
     return {
+      ProductType: ProductType,
+
       ProductStatus: ProductStatus,
 
       tab: "list",

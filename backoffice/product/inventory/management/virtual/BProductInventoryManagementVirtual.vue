@@ -393,7 +393,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BOrderButtonBasket from "../../../../order/button/basket/BOrderButtonBasket.vue";
 
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";

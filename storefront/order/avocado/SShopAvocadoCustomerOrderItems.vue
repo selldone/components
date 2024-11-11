@@ -122,7 +122,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { AvocadoItem, Basket } from "@selldone/core-js";
 
 export default {

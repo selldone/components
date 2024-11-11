@@ -16,7 +16,7 @@
   <div ref="lavContainer" :style="style" />
 </template>
 
-<script>
+<script lang="ts">
 import lottie from "lottie-web/build/player/lottie_light";
 
 export default {

@@ -19,7 +19,7 @@
       '-hide': (!showNavbar && !search_mode) || force_hide_navigation,
       '-top': search_mode,
     }"
-    :color="SaminColorDark"
+    :color="ThemeColorDark"
     :height="76"
     :model-value="tab"
     background-color="#fafafa"
@@ -224,11 +224,14 @@
   </v-bottom-navigation>
 </template>
 
-<script>
+<script lang="ts">
 import SStorefrontSearchBox from "../../../storefront/search/SStorefrontSearchBox.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SFooterNavigation",
+  mixins: [TemplateMixin],
+
   components: { SStorefrontSearchBox },
 
   /**

@@ -20,11 +20,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Language } from "@selldone/core-js/enums/language/Language";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "UPaymentMercadopago",
+  mixins:[TemplateMixin],
 
   props: {
     publicKey: {
@@ -78,8 +80,8 @@ export default {
         autoOpen: true, // Allow the Checkout Pro to open automatically
 
         theme: {
-          elementsColor: this.SaminColorLight,
-          headerColor: this.SaminColorDarkDeep,
+          elementsColor: this.ThemeColorLight,
+          headerColor: this.ThemeColorDeepDark,
         },
       });
     },

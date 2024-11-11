@@ -44,7 +44,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BOptionsLoginMethodRow from "../../../shop/options/login-methods/row/BOptionsLoginMethodRow.vue";
 
 export default {

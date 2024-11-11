@@ -745,6 +745,8 @@ export default {
   },
 
   data: () => ({
+    ProductType: ProductType,
+
     MapHelper: MapHelper,
     ProductStatus: ProductStatus,
     selected_shipping_country: null,

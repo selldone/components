@@ -171,7 +171,7 @@
         v-model="map_location"
         v-model:center="center"
         :address-type="$t('shop_warehouse_edit.address_name')"
-        :color="SaminColorDark"
+        :color="ThemeColorDark"
         :confirm-text="$t('shop_warehouse_edit.confirm_action')"
         :receptor-type="$t('shop_warehouse_edit.person_name')"
         :startup-mode="startup_mode_map_dialog"
@@ -189,12 +189,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BInventoryWarehouse",
+  mixins: [TemplateMixin],
+
   components: { UMapView },
   emits: ["update:warehouse"],
   props: {

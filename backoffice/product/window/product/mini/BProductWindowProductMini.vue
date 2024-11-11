@@ -369,6 +369,8 @@ export default {
   },
   data() {
     return {
+      ProductType: ProductType,
+
       ProductStatus: ProductStatus,
       clicked: false,
     };

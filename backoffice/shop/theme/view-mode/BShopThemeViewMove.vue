@@ -42,7 +42,7 @@
   </v-btn-toggle>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 

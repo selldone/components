@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService";
 
 export default {

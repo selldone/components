@@ -1411,7 +1411,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import EmailSectionStructures from "./section/structure/EmailSectionStructures";
 import BCustomersFunnel from "../../customer/funnel/BCustomersFunnel.vue";
 import BEmailMarketingTrackSpot from "../../email-marketing/track-spot/BEmailMarketingTrackSpot.vue";

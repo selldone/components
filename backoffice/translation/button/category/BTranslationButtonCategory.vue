@@ -42,7 +42,7 @@
   ></b-translation-button>
 </template>
 
-<script>
+<script lang="ts">
 import BTranslationButton from "../../../translation/button/BTranslationButton.vue";
 
 export default {

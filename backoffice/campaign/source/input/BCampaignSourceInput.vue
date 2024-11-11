@@ -47,7 +47,7 @@
   </v-combobox>
 </template>
 
-<script>
+<script lang="ts">
 import { Brands } from "@selldone/core-js/enums/social/Brands";
 
 export default {

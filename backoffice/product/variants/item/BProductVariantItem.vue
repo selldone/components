@@ -390,7 +390,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import ExtraPricingLevels from "../../../extra-pricing/ExtraPricingLevels.vue";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";

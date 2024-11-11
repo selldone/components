@@ -65,7 +65,7 @@
   </v-item-group>
 </template>
 
-<script>
+<script lang="ts">
 import { Club } from "@selldone/core-js";
 
 export default {

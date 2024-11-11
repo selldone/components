@@ -244,7 +244,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CircleImage from "../../../../ui/image/CircleImage.vue";
 import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";

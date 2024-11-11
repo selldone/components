@@ -250,7 +250,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 import USmartToggle from "../../../../../ui/smart/toggle/USmartToggle.vue";

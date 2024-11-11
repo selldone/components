@@ -12,7 +12,7 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
-<script>
+<script lang="ts">
 import SankeyGenerator from "./core/SankeyGenerator.vue";
 import chartSankey from "./core/sankey.js";
 

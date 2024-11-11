@@ -145,7 +145,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
@@ -377,7 +377,6 @@ export default {
           type: "area",
           stacked: false,
           background: 'transparent', // Set the background to transparent
-          //    background: this.SaminColorDarkDeep,
           fontFamily: "var(--font)",
 
           /*  events:
@@ -466,7 +465,6 @@ export default {
 
         grid: {
           show: true,
-          //borderColor: this.SaminColorLight,
           strokeDashArray: [2, 3],
           position: "back",
           xaxis: {

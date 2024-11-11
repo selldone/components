@@ -44,7 +44,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import BProductVendorAbstractViewItem from "../../../product/vendor/abstract-view/item/BProductVendorAbstractViewItem.vue";
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 

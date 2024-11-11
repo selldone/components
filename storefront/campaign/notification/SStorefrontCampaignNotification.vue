@@ -94,7 +94,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 
 export default {

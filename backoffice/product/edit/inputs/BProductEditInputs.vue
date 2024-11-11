@@ -64,7 +64,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SFormBuilder from "../../../../ui/form/SFormBuilder.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 

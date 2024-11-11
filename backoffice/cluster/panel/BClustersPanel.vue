@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="b--cluster-panel">
     <v-btn
-      :color="SaminColorDark"
+      :color="ThemeColorDark"
       class="b--cluster-panel-button tnt"
       @click="dialog = true"
       :stacked="$vuetify.display.xs"
@@ -263,9 +263,13 @@ import BClusterFolder from "../../cluster/folder/BClusterFolder.vue";
 import BClusterResource from "../../cluster/resource/BClusterResource.vue";
 import { throttle } from "lodash-es";
 import { Cluster } from "@selldone/core-js";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 
 export default {
   name: "BClustersPanel",
+  mixins: [TemplateMixin],
+
   components: { BClusterResource, BClusterFolder },
   props: {
     shop: {
@@ -327,11 +331,11 @@ export default {
     this.fetchResources();
   },
   beforeUnmount() {
-    this.EventBus.$off("show:ClustersPanel");
+    EventBus.$off("show:ClustersPanel");
   },
 
   mounted() {
-    this.EventBus.$on(
+    EventBus.$on(
       "show:ClustersPanel",
 
       ({ cluster, toggle_view = false }) => {

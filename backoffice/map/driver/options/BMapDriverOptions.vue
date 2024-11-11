@@ -29,7 +29,7 @@
   </v-expansion-panels>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import BMapDriverMapboxOptions from "../../../map/driver/mapbox/options/BMapDriverMapboxOptions.vue";
 import { Map } from "@selldone/core-js";

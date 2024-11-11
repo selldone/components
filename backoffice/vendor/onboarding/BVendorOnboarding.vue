@@ -688,7 +688,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
 import SCountrySelect from "@selldone/components-vue/ui/country/select/SCountrySelect.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";

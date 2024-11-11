@@ -135,7 +135,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import SShopProductFilesList from "../../../../../storefront/product/file/SShopProductFilesList.vue";
 import SFilesGroup from "../../../../../ui/file/group/SFilesGroup.vue";
 import { throttle } from "lodash-es";

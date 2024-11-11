@@ -139,7 +139,7 @@
   </s-grid-draggable-view>
 </template>
 
-<script>
+<script lang="ts">
 import SImageUploader from "./SImageUploader.vue";
 import SGridDraggableView from "../../ui/grid/draggable-view/SGridDraggableView.vue";
 

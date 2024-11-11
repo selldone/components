@@ -20,7 +20,7 @@
       v-model:sort-key="sortBy[0].key"
       v-model:sort-order="sortBy[0].order"
       :base-items-count="6"
-      :color="isSmall ? SaminColorDark : undefined"
+      :color="isSmall ? ThemeColorDark : undefined"
       :dark="isSmall"
       :sort-keys="keys"
       dense
@@ -104,7 +104,7 @@
                 v-for="item in items"
                 :key="item.raw.id"
                 :class="{ '-active': item === selectedContact }"
-                :color="item === selectedContact ? SaminColorDark : ''"
+                :color="item === selectedContact ? ThemeColorDark : undefined"
                 :dark="item === selectedContact"
                 class="support-item text-nowrap"
                 @click="showContact(item.raw)"
@@ -299,9 +299,12 @@ import { throttle } from "lodash-es";
 import BContactConversation from "../../contact/conversation/BContactConversation.vue";
 import SDataIteratorToolbar from "../../../ui/toolbar/SDataIteratorToolbar.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BContactsList",
+  mixins: [TemplateMixin],
+
   components: {
     ULoadingEllipsis,
     SDataIteratorToolbar,

@@ -163,7 +163,7 @@ export default {
           ? "transparent"
           : this.is_light_header
             ? "var(--background)"
-            : this.SaminColorDark;
+            : this.ThemeColorDark;
     },
 
     globalStyle() {

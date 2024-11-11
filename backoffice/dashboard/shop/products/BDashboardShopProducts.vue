@@ -80,7 +80,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import BShopProductsImportProcessing from "../../../product/importer/processing/BShopProductsImportProcessing.vue";
 
 import UChartBar from "../../../../ui/chart/bar/UChartBar.vue";

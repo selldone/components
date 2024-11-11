@@ -87,7 +87,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import SImageUploader from "../../../ui/uploader/SImageUploader.vue";
 import { throttle } from "lodash-es";
 

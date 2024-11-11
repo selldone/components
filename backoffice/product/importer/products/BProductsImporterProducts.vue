@@ -116,8 +116,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import threads from "@selldone/core-js/utils/thread/threads";
+import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "BProductsImporterProducts",
@@ -130,6 +131,8 @@ export default {
 
   data: function () {
     return {
+      ProductType: ProductType,
+
       busy_fetch: false,
 
       products: [],

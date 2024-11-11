@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Muuri from "muuri";
 
 let self = null;

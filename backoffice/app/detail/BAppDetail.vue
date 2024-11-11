@@ -474,7 +474,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import BAppComments from "../comments/BAppComments.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import BAppDetailGallery from "../../app/detail/gallery/BAppDetailGallery.vue";

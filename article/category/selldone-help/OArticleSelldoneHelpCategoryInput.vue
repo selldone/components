@@ -29,7 +29,7 @@
   </v-select>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import { HelpCategories } from "@selldone/core-js/enums/admin/help/HelpCategories";
 

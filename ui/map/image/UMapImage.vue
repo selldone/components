@@ -31,7 +31,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 
 export default {

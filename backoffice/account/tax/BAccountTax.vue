@@ -133,7 +133,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BCompanyInput from "../../company/input/BCompanyInput.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 

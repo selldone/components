@@ -66,7 +66,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SFormBuilderRow from "../../ui/form/item/SFormBuilderRow.vue";
 import { defineAsyncComponent } from "vue";
 

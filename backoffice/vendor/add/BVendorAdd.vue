@@ -1144,7 +1144,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import SUserInput from "../../user/input/SUserInput.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import SImageUploader from "../../../ui/uploader/SImageUploader.vue";

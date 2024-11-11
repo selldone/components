@@ -14,7 +14,7 @@
 
 <template>
   <s-widget-box
-    :color="SaminColorDark"
+    :color="ThemeColorDark"
     :sub-title="$t('product_admin.dashboard.orders.title_small')"
     :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-amber mr-sm' style='font-size: 6px;'></span>  ${$t(
       'product_admin.dashboard.orders.title',
@@ -69,14 +69,17 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import OrdersQue from "../../../order-que/OrdersQue.vue";
 import TimeSeriesInlineChart from "../../../chart/TimeSeriesInlineChart.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BProductOrdersAbstractView",
+  mixins: [TemplateMixin],
+
   components: { TimeSeriesInlineChart, OrdersQue, SWidgetBox },
   props: {
     product: {
@@ -94,7 +97,8 @@ export default {
     },
   },
 
-  data: () => ({}),
+  data: () => ({      ProductType: ProductType,
+  }),
 
   computed: {
     productType() {

@@ -32,7 +32,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CommunityStatisticView from "../../../community/statistics/CommunityStatisticView.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries.ts";
 import CommunityStatisticViewSkeleton from "../../../community/statistics/CommunityStatisticViewSkeleton.vue";

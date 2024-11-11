@@ -228,7 +228,7 @@
   </v-list-item>
 </template>
 
-<script>
+<script lang="ts">
 import BIncludeItemInput from "../../../include-item/input/BIncludeItemInput.vue";
 import BIncludeItemAdd from "../../../include-item/add/BIncludeItemAdd.vue";
 

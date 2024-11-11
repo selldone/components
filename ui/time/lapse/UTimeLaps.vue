@@ -25,7 +25,7 @@
   </v-progress-circular>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "UTimeLaps",
   props: {

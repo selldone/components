@@ -363,7 +363,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import VueJsonPretty from "vue-json-pretty";
 import "vue-json-pretty/lib/styles.css";
 import USmartToggle from "../../../../../ui/smart/toggle/USmartToggle.vue";

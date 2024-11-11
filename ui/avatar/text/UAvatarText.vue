@@ -25,7 +25,7 @@
   </v-avatar>
 </template>
 
-<script>
+<script lang="ts">
 import { StringToColour } from "@selldone/core-js/helper/color/ColorGenerator";
 
 export default {

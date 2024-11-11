@@ -450,6 +450,7 @@ import { XapiAuthSMSVerifyOtpTypes } from "@selldone/sdk-storefront";
 import { defineAsyncComponent } from "vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
+import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 
 export default {
   name: "SShopLogin",
@@ -548,10 +549,10 @@ export default {
   created() {
     this.email = this.predefine_email;
 
-    this.EventBus.$on("get-me:error", this.resetState);
+    EventBus.$on("get-me:error", this.resetState);
   },
   beforeUnmount() {
-    this.EventBus.$off("get-me:error");
+    EventBus.$off("get-me:error");
   },
   methods: {
     tick() {

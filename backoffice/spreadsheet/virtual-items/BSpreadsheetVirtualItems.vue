@@ -46,7 +46,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BSpreadsheet from "../BSpreadsheet.vue";
 import SpreadsheetMixin from "../../spreadsheet/mixins/SpreadsheetMixin";
 

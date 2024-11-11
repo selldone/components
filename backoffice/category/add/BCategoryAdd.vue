@@ -376,7 +376,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import BCategoryFilterEditor from "../../category/filter/BCategoryFilterEditor.vue";
 import CircleImage from "../../../ui/image/CircleImage.vue";
 import SImageUploader from "../../../ui/uploader/SImageUploader.vue";

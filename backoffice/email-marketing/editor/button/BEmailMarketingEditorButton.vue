@@ -72,7 +72,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BEmailMarketingTrackSpot from "../../../email-marketing/track-spot/BEmailMarketingTrackSpot.vue";
 import { EmailOptionsHelper } from "../section/options/EmailOptionsHelper.ts";
 

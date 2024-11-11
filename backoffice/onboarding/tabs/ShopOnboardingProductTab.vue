@@ -103,7 +103,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import BProductImporterSampleDialog from "../../product/importer/sample-dialog/BProductImporterSampleDialog.vue";
 
 export default {

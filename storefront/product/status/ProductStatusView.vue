@@ -24,7 +24,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 
 export default {

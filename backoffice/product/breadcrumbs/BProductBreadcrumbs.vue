@@ -23,7 +23,7 @@
   />
 </template>
 
-<script>
+<script lang="ts">
 import UBreadcrumb from "../../../ui/breadcrumb/UBreadcrumb.vue";
 import { BProductBreadcrumbsHelper } from "./helper/BProductBreadcrumbsHelper";
 

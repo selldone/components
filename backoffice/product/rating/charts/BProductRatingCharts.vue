@@ -117,7 +117,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import SShopProductRatingView from "../../../../storefront/product/rating/SShopProductRatingView.vue";
 

@@ -74,7 +74,7 @@
   </u-fade-scroll>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";

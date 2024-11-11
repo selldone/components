@@ -48,7 +48,7 @@
 
         <v-col cols="12" md="3" order="3" order-md="3" order-sm="3" sm="6">
           <v-sheet
-            :color="SaminColorDarkDeep"
+            :color="ThemeColorDeepDark"
             :style="{
               fontSize: statement_size,
             }"
@@ -121,9 +121,11 @@ import SArticleComments from "../../../article/comment/SArticleComments.vue";
 import SShopProductRatingView from "../../../storefront/product/rating/SShopProductRatingView.vue";
 import { FontSizeHelper } from "@selldone/core-js/helper/style/FontSizeHelper";
 import SShopLogin from "../../../storefront/login/SShopLogin.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SProductComments",
+  mixins: [TemplateMixin],
 
   inject: ["$shop", "$product"],
 

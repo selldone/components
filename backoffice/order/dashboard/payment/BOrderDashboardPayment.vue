@@ -778,7 +778,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import UPaymentRiskIndicator from "../../../../ui/payment/risk/indicator/UPaymentRiskIndicator.vue";
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import UPaymentBillingDetails from "../../../../ui/payment/billing-details/UPaymentBillingDetails.vue";
@@ -850,6 +850,8 @@ export default {
 
   data: function () {
     return {
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
+
       TransactionStatus: TransactionStatus,
 
       ProductType: ProductType,

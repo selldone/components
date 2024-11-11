@@ -92,8 +92,9 @@
   </v-select>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
+import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "BInventoryFilter",
@@ -113,6 +114,8 @@ export default {
   },
   data: function () {
     return {
+      ProductType: ProductType,
+
       ProductStatus: ProductStatus,
     };
   },

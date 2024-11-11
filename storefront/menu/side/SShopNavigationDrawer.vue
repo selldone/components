@@ -260,7 +260,7 @@
   </teleport>
 </template>
 
-<script>
+<script lang="ts">
 import SShopUserMenuList from "../user/SShopUserMenuList.vue";
 import MenuCategories from "../../../storefront/menu/header/MenuCategories.vue";
 import UCurrencySelector from "../../../ui/currency/selector/UCurrencySelector.vue";

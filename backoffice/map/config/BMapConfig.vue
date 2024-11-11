@@ -124,7 +124,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import BMapDriverOptions from "../../map/driver/options/BMapDriverOptions.vue";

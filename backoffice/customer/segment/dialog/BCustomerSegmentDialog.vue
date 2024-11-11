@@ -67,7 +67,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import BCustomerSegmentInput from "../../../customer/segment/input/BCustomerSegmentInput.vue";
 import BShopCustomerBox from "../../../customer/box/BShopCustomerBox.vue";
 

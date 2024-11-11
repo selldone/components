@@ -248,7 +248,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import USmartToggle from "../../../../../ui/smart/toggle/USmartToggle.vue";
 import USmartImage from "../../../../../ui/smart/image/USmartImage.vue";
 import SWidgetButtons from "../../../../../ui/widget/buttons/SWidgetButtons.vue";

@@ -54,7 +54,7 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 import CCommentsList from "../list/CCommentsList.vue";
 import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
 

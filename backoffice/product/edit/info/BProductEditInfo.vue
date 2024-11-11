@@ -1082,6 +1082,8 @@ export default {
 
   data: function () {
     return {
+      ProductType: ProductType,
+
       category_id: null,
 
       conditions: Object.values(ProductCondition),

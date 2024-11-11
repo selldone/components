@@ -92,7 +92,7 @@ import "prismjs/themes/prism.css";
 
 import "vue-prism-editor/dist/prismeditor.min.css";
 
-import { EventName } from "@selldone/core-js/events/EventBus";
+import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
 import { PrismEditor } from "vue-prism-editor";
 
 export default {
@@ -123,7 +123,7 @@ export default {
   },
 
   mounted() {
-    this.EventBus.$on(
+    EventBus.$on(
       EventName.ARTICLE_CODE_EDITOR_SHOW,
 
       ({ code, language, callback, deleteCallback, masterId }) => {
@@ -143,7 +143,7 @@ export default {
     );
   },
   beforeUnmount() {
-    this.EventBus.$off(EventName.ARTICLE_CODE_EDITOR_SHOW);
+    EventBus.$off(EventName.ARTICLE_CODE_EDITOR_SHOW);
   },
 
   methods: {

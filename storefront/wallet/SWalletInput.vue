@@ -34,7 +34,7 @@
   </v-scale-transition>
 </template>
 
-<script>
+<script lang="ts">
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 
 export default {

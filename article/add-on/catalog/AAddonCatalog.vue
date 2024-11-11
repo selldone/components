@@ -46,7 +46,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Flipbook from "flipbook-vue";
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { defineComponent } from "vue";

@@ -61,7 +61,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import WebhookTypes from "@selldone/core-js/enums/webhook/WebhookTypes";
 
 export default {

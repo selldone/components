@@ -22,7 +22,7 @@
     <v-chip
       v-for="item in list"
       :key="item"
-      :color="light ? '#fff' : SaminColorDark"
+      :color="light ? '#fff' : ThemeColorDark"
       :value="item"
       filter
       size="small"
@@ -49,10 +49,13 @@
 <script lang="ts">
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
-import {GetNameOfColor} from "@selldone/core-js/helper";
+import { GetNameOfColor } from "@selldone/core-js/helper";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SCategoryFilterSelector",
+  mixins: [TemplateMixin],
+
   components: { UVariantAssetImage, UColorCircle },
   emits: ["update:modelValue", "change"],
   inject: ["$shop"],

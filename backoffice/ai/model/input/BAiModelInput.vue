@@ -50,7 +50,7 @@
   </v-select>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "BAiModelInput",
   emits: ["update:modelValue"],

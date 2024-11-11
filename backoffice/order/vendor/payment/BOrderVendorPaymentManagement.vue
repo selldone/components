@@ -270,7 +270,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import BVendorPayoutReverse from "../../../vendor/payout/reverse/BVendorPayoutReverse.vue";
 import BVendorOrderRefund from "../../../vendor/order/refund/BVendorOrderRefund.vue";
 import UPodsPanel from "../../../../ui/pod/panel/UPodsPanel.vue";

@@ -99,7 +99,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UVoiceRecorder from "../recorder/UVoiceRecorder.vue";
 import UVoiceSpectrum from "../spectrum/UVoiceSpectrum.vue";
 

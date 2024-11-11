@@ -59,7 +59,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SFormBuilder from "../../../../ui/form/SFormBuilder.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BProductServiceManage from "../../service/manage/BProductServiceManage.vue";

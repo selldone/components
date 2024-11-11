@@ -27,7 +27,7 @@
   </v-chip>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "BTaxProfileChip",
   props: {

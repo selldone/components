@@ -138,7 +138,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import { throttle } from "lodash-es";
 

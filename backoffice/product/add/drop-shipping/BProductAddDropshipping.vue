@@ -31,7 +31,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BProductAddDropshippingShops from "@selldone/components-vue/backoffice/product/add/drop-shipping/shops/BProductAddDropshippingShops.vue";
 import BProductAddDropshippingProducts from "@selldone/components-vue/backoffice/product/add/drop-shipping/products/BProductAddDropshippingProducts.vue";
 

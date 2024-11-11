@@ -45,7 +45,7 @@
   </u-currency-selector>
 </template>
 
-<script>
+<script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UCurrencySelector from "../../../ui/currency/selector/UCurrencySelector.vue";
 

@@ -37,7 +37,7 @@
   </v-toolbar>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "AAddonToolbar",
   props: {

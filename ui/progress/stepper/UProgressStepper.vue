@@ -68,7 +68,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import TWEEN from "@tweenjs/tween.js";
 
 export default {

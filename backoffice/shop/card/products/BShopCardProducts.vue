@@ -41,7 +41,7 @@
   </v-menu>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default {

@@ -200,7 +200,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SShopBuyButton from "../../../../storefront/product/button/SShopBuyButton.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SShopProductFilesList from "../../../../storefront/product/file/SShopProductFilesList.vue";

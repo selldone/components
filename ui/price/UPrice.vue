@@ -71,7 +71,7 @@
   </span>
 </template>
 
-<script>
+<script lang="ts">
 import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper";
 
 export default {

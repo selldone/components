@@ -109,7 +109,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import USmartMenu from "../menu/USmartMenu.vue";
 import { defineAsyncComponent } from "vue";
 

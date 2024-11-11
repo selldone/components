@@ -162,7 +162,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
 

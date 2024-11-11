@@ -64,7 +64,7 @@
   </span>
 </template>
 
-<script>
+<script lang="ts">
 import UTimeProgressBar from "../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import { Basket } from "@selldone/core-js";
 

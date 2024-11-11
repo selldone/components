@@ -74,7 +74,7 @@
     <v-text-field
       v-model="account_to"
       v-mask="`####-####-####-####`"
-      :color="SaminColorLight"
+      color="primary"
       :disabled="!!receipt"
       :error="account_to_error"
       :label="`${$t('transaction_form.to_input')}*`"

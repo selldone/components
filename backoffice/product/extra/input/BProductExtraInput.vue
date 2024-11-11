@@ -158,7 +158,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UCube from "../../../../ui/cube/UCube.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";

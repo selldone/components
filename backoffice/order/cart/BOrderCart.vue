@@ -570,7 +570,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
@@ -580,6 +580,7 @@ import { OrderTypeCode } from "@selldone/core-js/enums/order/OrderTypeCode";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
 import { BasketItemReturn } from "@selldone/core-js";
 import UTooltipTips from "@selldone/components-vue/ui/tooltip/tips/UTooltipTips.vue";
+import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "BOrderCart",
@@ -621,6 +622,8 @@ export default {
 
   data: function () {
     return {
+      ProductType: ProductType,
+
       BillingPeriod: BillingPeriod,
       selected: [],
 

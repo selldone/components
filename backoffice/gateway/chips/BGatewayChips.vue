@@ -46,7 +46,7 @@
   </v-chip>
 </template>
 
-<script>
+<script lang="ts">
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 
 export default {

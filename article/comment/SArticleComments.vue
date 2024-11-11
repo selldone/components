@@ -164,7 +164,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SArticleComment from "./SArticleComment.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 

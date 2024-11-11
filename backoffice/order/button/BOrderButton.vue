@@ -94,7 +94,7 @@
   </small>
 </template>
 
-<script>
+<script lang="ts">
 import BOrderButtonPos from "./pos/BOrderButtonPos.vue";
 import BOrderButtonBill from "./bill/BOrderButtonBill.vue";
 import BOrderButtonBasket from "./basket/BOrderButtonBasket.vue";

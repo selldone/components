@@ -68,7 +68,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
 
 export default {

@@ -165,7 +165,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView";
 import { throttle } from "lodash-es";
 

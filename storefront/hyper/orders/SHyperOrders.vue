@@ -119,7 +119,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SOrderStatusView from "../../../storefront/order/order-status/SOrderStatusView.vue";
 import SOrderDeliveryStatusStepper from "../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";

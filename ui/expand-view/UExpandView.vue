@@ -50,7 +50,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { debounce } from "lodash-es";
 
 export default {

@@ -62,7 +62,7 @@
   </draggable>
 </template>
 
-<script>
+<script lang="ts">
 import { defineAsyncComponent } from "vue";
 
 export default {

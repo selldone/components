@@ -315,7 +315,7 @@
   </v-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BProductInventoryManagement from "../../inventory/management/BProductInventoryManagement.vue";
 import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
@@ -361,6 +361,8 @@ export default {
 
   data: function () {
     return {
+      ProductType: ProductType,
+
       show_article: true, // For refresh article!
 
       article_type: Article.Types.Product,

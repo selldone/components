@@ -66,7 +66,7 @@
   </v-select>
 </template>
 
-<script>
+<script lang="ts">
 import { User } from "@selldone/core-js";
 
 export default {

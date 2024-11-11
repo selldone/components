@@ -245,7 +245,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
 import BPageInput from "../../page/input/BPageInput.vue";
 import LAugmentForm from "@selldone/page-builder/components/augment/form/LAugmentForm.vue";

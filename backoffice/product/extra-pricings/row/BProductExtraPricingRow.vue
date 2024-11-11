@@ -80,7 +80,7 @@
   </tr>
 </template>
 
-<script>
+<script lang="ts">
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 
 export default {

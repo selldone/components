@@ -56,7 +56,7 @@
     <u-pod-node icon="account_balance" title="Vendor Bank"></u-pod-node>
   </u-pods-panel>
 </template>
-<script>
+<script lang="ts">
 import UPodsPanel from "../../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../../ui/pod/wire/UPodWire.vue";

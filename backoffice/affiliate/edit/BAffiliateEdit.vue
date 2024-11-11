@@ -430,7 +430,7 @@
     </v-card-actions>
   </v-card>
 </template>
-<script>
+<script lang="ts">
 import BProductsSelectBox from "../../../backoffice/product/select-box/BProductsSelectBox.vue";
 import SUserInput from "../../user/input/SUserInput.vue";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";

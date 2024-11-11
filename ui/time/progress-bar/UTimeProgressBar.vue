@@ -20,7 +20,6 @@
 
     <v-tooltip
       v-if="has_progress_to_end"
-      :color="SaminColorDarkDeep"
       dark
       location="bottom"
     >
@@ -47,7 +46,6 @@
 
     <v-tooltip
       v-if="has_progress_to_start"
-      :color="SaminColorDarkDeep"
       dark
       location="bottom"
     >
@@ -80,7 +78,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
 export default {

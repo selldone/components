@@ -281,7 +281,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import BOrderButton from "../../../order/button/BOrderButton.vue";
 import SOrderDeliveryStatusStepper from "../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";

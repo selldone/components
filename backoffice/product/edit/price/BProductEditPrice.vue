@@ -539,7 +539,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";

@@ -25,14 +25,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
 import numeral from "numeral";
 import { ChartAnnotations } from "../helper/ChartAnnotations.ts";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "UChartLine",
+  mixins:[TemplateMixin],
   props: {
     type: {
       required: false,
@@ -201,7 +203,7 @@ export default {
 
         grid: {
           show: this.hasGrid,
-          borderColor: this.SaminColorLight,
+          borderColor: this.ThemeColorLight,
           strokeDashArray: [2, 3],
           position: "back",
           xaxis: {

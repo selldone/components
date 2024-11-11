@@ -31,7 +31,7 @@
     style="width: max-content"
   ></u-chart-funnel>
 </template>
-<script>
+<script lang="ts">
 import UChartFunnel from "../../../../ui/chart/funnel/UChartFunnel.vue";
 
 export default {

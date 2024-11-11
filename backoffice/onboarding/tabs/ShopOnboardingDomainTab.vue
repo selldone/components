@@ -52,7 +52,7 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
 import BDomainAdd from "../../domain/add/BDomainAdd.vue";
 
 export default {

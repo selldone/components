@@ -16,7 +16,9 @@
   <div></div>
 </template>
 
-<script>
+<script lang="ts">
+import {EventBus} from "@selldone/core-js/events/EventBus";
+
 function safeIncrementProperty(obj, key, count) {
   if (!key) return;
   obj[key] = obj[key] ? obj[key] + count : count;
@@ -125,7 +127,7 @@ export default {
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
     Object.keys(this.signals).forEach((key) => {
-      this.EventBus.$on(key, (data) => {
+      EventBus.$on(key, (data) => {
         this.signals[key](data);
       });
     });
@@ -139,7 +141,7 @@ export default {
     }
 
     Object.keys(this.signals).forEach((key) => {
-      this.EventBus.$off(key);
+      EventBus.$off(key);
     });
 
     this.sendData(); // Send remains data.

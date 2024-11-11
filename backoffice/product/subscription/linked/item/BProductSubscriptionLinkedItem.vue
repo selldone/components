@@ -76,7 +76,7 @@
   </v-list-item>
 </template>
 
-<script>
+<script lang="ts">
 import ProductVariantsView from "../../../../../storefront/product/variant/ProductVariantsView.vue";
 import UNumberInput from "../../../../../ui/number/input/UNumberInput.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";

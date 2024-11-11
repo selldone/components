@@ -161,7 +161,7 @@
   </v-autocomplete>
 </template>
 
-<script>
+<script lang="ts">
 import CircleImage from "../../../ui/image/CircleImage.vue";
 import BCategoryParent from "../../category/parent/BCategoryParent.vue";
 import threads from "@selldone/core-js/utils/thread/threads";

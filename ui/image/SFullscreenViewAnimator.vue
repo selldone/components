@@ -32,6 +32,8 @@
 </template>
 
 <script lang="ts">
+import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+
 export default {
   name: "SFullscreenViewAnimator",
   data() {
@@ -104,12 +106,12 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
-    this.EventBus.$on("show:fullscreen", (event) => {
+    EventBus.$on("show:fullscreen", (event) => {
       this.selectImage(event);
     });
   },
   beforeUnmount() {
-    this.EventBus.$off("show:fullscreen");
+    EventBus.$off("show:fullscreen");
   },
 };
 </script>

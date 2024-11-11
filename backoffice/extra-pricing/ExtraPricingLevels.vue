@@ -99,7 +99,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { standardDesignColor } from "@selldone/core-js/helper/color/ColorGenerator";
 
 export default {

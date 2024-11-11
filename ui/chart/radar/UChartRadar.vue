@@ -24,7 +24,7 @@
   />
 </template>
 
-<script>
+<script lang="ts">
 import numeral from "numeral";
 
 export default {

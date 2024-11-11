@@ -78,7 +78,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import TimeSeriesInlineChart from "../../../../chart/TimeSeriesInlineChart.vue";
 import UChipChange from "../../../../../ui/chip/change/UChipChange.vue";
 import UCurrencyInput from "../../../../../ui/currency/input/UCurrencyInput.vue";

@@ -110,7 +110,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UButtonAiSmall from "../../button/ai/small/UButtonAiSmall.vue";
 
 export default {

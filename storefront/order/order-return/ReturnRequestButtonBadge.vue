@@ -95,7 +95,7 @@
   </v-chip>
 </template>
 
-<script>
+<script lang="ts">
 import { BasketItemReturn } from "@selldone/core-js";
 
 export default {

@@ -21,7 +21,7 @@
       :class="{ 'force-on-top': show, 'is-mobile': isMobile }"
       :completed-steps="products.length"
       :diameter="84"
-      :inner-stroke-color="SaminColorDarkDeep"
+      :inner-stroke-color="ThemeColorDeepDark"
       :stroke-width="10"
       :total-steps="10"
       class="widget-hover s--storefront-products-comparison-circle-progress"

@@ -73,7 +73,7 @@
   </s-widget-box>
 </template>
 
-<script>
+<script lang="ts">
 import BDashboardShopPerformancePayments from "../../../dashboard/shop/performance/payments/BDashboardShopPerformancePayments.vue";
 import BDashboardShopPerformanceOrders from "../../../dashboard/shop/performance/orders/BDashboardShopPerformanceOrders.vue";
 import BDashboardShopPerformanceUsers from "../../../dashboard/shop/performance/users/BDashboardShopPerformanceUsers.vue";

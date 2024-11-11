@@ -63,7 +63,7 @@
 
       <template v-else-if="connect_shipping_option.options?.length">
         <u-smart-select
-          :background-color="!light_checkout ? SaminColorDark : '#fafafa'"
+          :background-color="!light_checkout ? ThemeColorDark : '#fafafa'"
           :dark="!light_checkout"
           :items="connect_shipping_option.options"
           :model-value="
@@ -93,9 +93,12 @@
 <script lang="ts">
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import ProductsDenseImagesCircles from "../../../product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "SShopConnectShippingOptions",
+  mixins: [TemplateMixin],
+
   components: { ProductsDenseImagesCircles, USmartSelect },
   inject: ["$shop"],
   props: {

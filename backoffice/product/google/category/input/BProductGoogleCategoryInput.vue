@@ -50,7 +50,7 @@
   </v-autocomplete>
 </template>
 
-<script>
+<script lang="ts">
 import { throttle } from "lodash-es";
 import { User } from "@selldone/core-js";
 

@@ -237,7 +237,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
 import BSpreadsheetCustomers from "../../spreadsheet/customers/BSpreadsheetCustomers.vue";
 import ShopLicenseView from "../../shop/license/view/ShopLicenseView.vue";

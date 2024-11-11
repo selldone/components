@@ -118,7 +118,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "BProductImporterSampleDialog",
   emits: ["update:modelValue"],

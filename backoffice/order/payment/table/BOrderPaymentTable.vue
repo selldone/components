@@ -1380,7 +1380,7 @@
   </v-bottom-sheet>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import ProductsDenseImagesCircles from "../../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";

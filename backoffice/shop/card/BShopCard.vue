@@ -19,9 +19,9 @@
     class="s--shop-card"
   >
     <v-sheet
-      :color="dark ? SaminColorDarkDeep : '#fff'"
+      :color="dark ? ThemeColorDeepDark : '#fff'"
       :dark="dark"
-      :style="{ '--background': dark ? SaminColorDarkDeep : '#fff' }"
+      :style="{ '--background': dark ? ThemeColorDeepDark : '#fff' }"
       class="x--shop-card"
     >
       <v-list-item class="py-3">
@@ -339,7 +339,7 @@
             </div>
             <div
               :style="{
-                backgroundColor: dark ? SaminColorDarkDeep : undefined,
+                backgroundColor: dark ? ThemeColorDeepDark : undefined,
               }"
               class="d-flex justify-content-between align-items-center px-3 mx-n2 mx-sm-n3 rounded py-2 mt-2"
             >
@@ -517,7 +517,7 @@
   </router-link>
 </template>
 
-<script>
+<script lang="ts">
 import { ShopPermissions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import URibbon from "../../../ui/ribbon/URibbon.vue";
 import BShopCardProducts from "../../shop/card/products/BShopCardProducts.vue";
@@ -525,9 +525,13 @@ import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import BShopCardVisitors from "../../shop/card/visitors/BShopCardVisitors.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "BShopCard",
+  mixins: [TemplateMixin],
+
   components: {
     BShopCardVisitors,
     UCurrencyIcon,
@@ -567,6 +571,8 @@ export default {
 
   data() {
     return {
+      ProductType: ProductType,
+
       options_visitors: {
         chart: {
           fontFamily: "var(--font)",

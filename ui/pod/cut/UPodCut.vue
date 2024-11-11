@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";
 
 export default {

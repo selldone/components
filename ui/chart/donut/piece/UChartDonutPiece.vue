@@ -31,7 +31,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { nativeSectionEvents } from "../utils/events";
 import { defaultColor } from "../utils/misc";
 

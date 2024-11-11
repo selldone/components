@@ -156,7 +156,7 @@
   </v-col>
 </template>
 
-<script>
+<script lang="ts">
 import TextSelectSlider from "./TextSelectSlider.vue";
 import ColorSelectSlider from "./ColorSelectSlider.vue";
 

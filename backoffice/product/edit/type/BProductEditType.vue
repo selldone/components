@@ -538,7 +538,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import InlineHelp from "../../../help/InlineHelp.vue";
 import OrderTypeMinimalFlow from "../../../product/widgets/OrderTypeMinimalFlow.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
@@ -585,6 +585,8 @@ export default {
   },
   data: function () {
     return {
+      ProductType: ProductType,
+
       expanded_type: null,
 
       add_by_sku: false,

@@ -42,9 +42,10 @@
   </component>
 </template>
 
-<script>
+<script lang="ts">
 import UButtonShareGroup from "../../ui/button/share/group/UButtonShareGroup.vue";
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
+import { EventBus } from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "CommunityShareDialog",
@@ -94,22 +95,19 @@ export default {
     //――――――――――――――――――――――――― Event Bus ―――――――――――――――――――――――――
     //█████████████████████████████████████████████████████████████
     // Listen for show loading data from server
-    this.EventBus.$on(
-      "community:share:post",
-      ({ activator, shop, topic, post }) => {
-        this.activator = activator;
-        this.shop = shop;
-        this.topic = topic;
-        this.post = post;
+    EventBus.$on("community:share:post", ({ activator, shop, topic, post }) => {
+      this.activator = activator;
+      this.shop = shop;
+      this.topic = topic;
+      this.post = post;
 
-        this.$nextTick(() => {
-          this.value = true;
-        });
-      },
-    );
+      this.$nextTick(() => {
+        this.value = true;
+      });
+    });
   },
   beforeUnmount() {
-    this.EventBus.$off("community:share:post");
+    EventBus.$off("community:share:post");
   },
 };
 </script>

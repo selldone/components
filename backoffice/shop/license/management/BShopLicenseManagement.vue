@@ -317,7 +317,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import ShopSubscriptionList from "../../../subscription/ShopSubscriptionList.vue";
 import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense";
 import BShopLicenseSubscriptionDetail from "../../../shop/license/subscription/detail/BShopLicenseSubscriptionDetail.vue";

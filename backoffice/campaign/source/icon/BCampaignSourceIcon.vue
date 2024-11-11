@@ -16,7 +16,7 @@
   <img :height="size" :src="icon" :title="value" :width="size" />
 </template>
 
-<script>
+<script lang="ts">
 import { Brands } from "@selldone/core-js/enums/social/Brands";
 
 export default {

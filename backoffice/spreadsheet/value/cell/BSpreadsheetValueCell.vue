@@ -255,7 +255,7 @@
   <span v-else-if="modelValue"> {{ ("" + modelValue).substring(0, 30) }}</span>
 </template>
 
-<script>
+<script lang="ts">
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
 import UColorSelector from "../../../../ui/color/selector/UColorSelector.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";

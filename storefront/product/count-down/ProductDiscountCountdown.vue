@@ -30,7 +30,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
 
 export default {

@@ -84,7 +84,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "UColorSelector",
   emits: ["update:modelValue", "change", "clear"],

@@ -60,7 +60,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SInviteFriends from "../../../invite/friends/SInviteFriends.vue";
 
 export default {

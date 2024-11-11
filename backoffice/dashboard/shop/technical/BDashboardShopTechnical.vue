@@ -56,7 +56,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense";
 import { ShopBadges } from "@selldone/core-js/enums/shop/ShopBadges";

@@ -492,7 +492,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";

@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import BAccountGiftRedeem from "../../../account/gift/redeem/BAccountGiftRedeem.vue";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 

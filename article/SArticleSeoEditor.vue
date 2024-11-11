@@ -158,7 +158,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UProgressScore from "../ui/progress/score/UProgressScore.vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 

@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-avatar
     :class="{ 'hover-scale': scaleOnHover }"
-    :color="transparent ? 'transparent' : dark ? SaminColorDarkDeep : '#fafafa'"
+    :color="transparent ? 'transparent' : dark ? ThemeColorDeepDark : '#fafafa'"
     :size="size"
     @error="loading = false"
     @load="loading = false"
@@ -38,9 +38,12 @@
   </v-avatar>
 </template>
 
-<script>
+<script lang="ts">
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+
 export default {
   name: "CircleImage",
+  mixins: [TemplateMixin],
 
   data: () => ({
     loading: true,

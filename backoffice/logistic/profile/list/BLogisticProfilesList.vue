@@ -109,7 +109,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import { throttle } from "lodash-es";
 

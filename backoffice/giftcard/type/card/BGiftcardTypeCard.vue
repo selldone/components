@@ -93,14 +93,14 @@
     </div>
 
     <v-progress-linear
-      :color="SaminColorLight"
+      color="primary"
       :model-value="(giftCardType.used * 100) / giftCardType.count"
       class="mt-3"
     />
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CircleImage from "../../../../ui/image/CircleImage.vue";
 import BShopLicenseBlockIcon from "../../../shop/license/block/icon/BShopLicenseBlockIcon.vue";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";

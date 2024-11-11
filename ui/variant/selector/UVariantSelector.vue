@@ -45,7 +45,7 @@
   </v-menu>
 </template>
 
-<script>
+<script lang="ts">
 import VariantItemMini from "../../../storefront/product/variant/VariantItemMini.vue";
 
 export default {

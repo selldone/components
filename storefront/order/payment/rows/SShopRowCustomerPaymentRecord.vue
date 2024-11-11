@@ -66,7 +66,7 @@
   </tr>
 </template>
 
-<script>
+<script lang="ts">
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import UPaymentBillingDetails from "../../../../ui/payment/billing-details/UPaymentBillingDetails.vue";
 import UMapCountriesSingle from "../../../../ui/map/countries/single/UMapCountriesSingle.vue";

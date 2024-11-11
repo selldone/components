@@ -41,7 +41,7 @@
   </v-img>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "SImage",
   components: {},

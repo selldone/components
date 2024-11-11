@@ -65,7 +65,6 @@
       </v-list-subheader>
       <v-text-field
         v-model="title"
-        :color="SaminColorLight"
         :counter="30"
         :label="`${$t('add_shop.title_input')}*`"
         hint="Enter your business name."
@@ -255,7 +254,6 @@
 
       <v-textarea
         v-model="description"
-        :color="SaminColorLight"
         :counter="600"
         :label="$t('add_shop.description_input')"
         :messages="$t('add_shop.description_input_message')"
@@ -340,7 +338,6 @@
 
       <v-text-field
         v-model="info.region"
-        :color="SaminColorLight"
         :hint="$t('add_shop.region_input_message')"
         :label="$t('add_shop.region_input')"
         append-inner-icon="place"
@@ -350,7 +347,6 @@
 
       <v-text-field
         v-model="info.locality"
-        :color="SaminColorLight"
         :hint="$t('add_shop.locality_input_message')"
         :label="$t('add_shop.locality_input')"
         append-inner-icon="near_me"
@@ -360,7 +356,6 @@
 
       <v-textarea
         v-model="info.address"
-        :color="SaminColorLight"
         :counter="600"
         :hint="$t('add_shop.address_input_message')"
         :label="$t('add_shop.address_input')"
@@ -373,7 +368,6 @@
 
       <v-text-field
         v-model="info.postal_code"
-        :color="SaminColorLight"
         :hint="$t('add_shop.postal_code_input_message')"
         :label="$t('add_shop.postal_code_input')"
         append-inner-icon="local_convenience_store"
@@ -383,7 +377,6 @@
 
       <v-text-field
         v-model="info.phone"
-        :color="SaminColorLight"
         :hint="$t('add_shop.phone_input_message')"
         :label="$t('add_shop.phone_input')"
         append-inner-icon="fa:fas fa-phone"
@@ -398,7 +391,6 @@
 
       <v-text-field
         v-model="info.email"
-        :color="SaminColorLight"
         :hint="$t('add_shop.email_input_message')"
         :label="$t('add_shop.email_input')"
         append-inner-icon="fa:fas fa-envelope"
@@ -561,7 +553,7 @@
       v-model="map_location"
       v-model:center="center"
       :address-type="$t('add_shop.map.address')"
-      :color="SaminColorDark"
+      :color="ThemeColorDark"
       :confirm-text="$t('add_shop.map.confirm')"
       :receptor-type="$t('add_shop.map.receptor')"
       :startup-mode="startup_mode_map_dialog"
@@ -604,10 +596,11 @@ import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
 import { UMixinConfetti } from "@selldone/components-vue/mixin/confetti/UMixinConfetti.ts";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "BShopAdd",
-  mixins: [UMixinConfetti],
+  mixins: [UMixinConfetti, TemplateMixin],
   components: {
     UMapView,
     UWidgetHeader,

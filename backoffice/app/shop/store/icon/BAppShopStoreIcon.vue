@@ -49,7 +49,7 @@
     /></v-avatar>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 import { Application } from "@selldone/core-js";
 

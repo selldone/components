@@ -156,7 +156,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { interpolate } from "polymorph-js";
 import TWEEN from "@tweenjs/tween.js";
 import numeral from "numeral";

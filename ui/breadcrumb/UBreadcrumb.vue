@@ -29,7 +29,7 @@
           :to="item.to"
         >
           <span class="font-weight-medium">
-            <v-icon v-if="item.icon" :color="SaminInfoColor" class="me-1">{{
+            <v-icon v-if="item.icon" :color="ThemeColorInfo" class="me-1">{{
               item.icon
             }}</v-icon>
             <circle-image
@@ -61,7 +61,13 @@
 
     <!--  Small screen -->
     <div v-else-if="hierarchyItems.length > 0">
-      <v-btn class="w-100" size="x-large" variant="text" @click="dialog = true" :prepend-icon="prependIcon">
+      <v-btn
+        class="w-100"
+        size="x-large"
+        variant="text"
+        @click="dialog = true"
+        :prepend-icon="prependIcon"
+      >
         {{ $t("global.commons.category") }}
         <v-icon :class="{ 'rotate-180': dialog }" class="t-all-400" end
           >expand_more
@@ -119,12 +125,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import CircleImage from "../../ui/image/CircleImage.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 export default {
   name: "UBreadcrumb",
+  mixins: [TemplateMixin],
+
   components: { UAvatarFolder, CircleImage },
   props: {
     hierarchyItems: {
@@ -147,7 +156,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    prependIcon:{}
+    prependIcon: {},
   },
   data: function () {
     return {

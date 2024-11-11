@@ -198,7 +198,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import BProductVariantValueInput from "../../../product/variants/value-input/BProductVariantValueInput.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";

@@ -178,7 +178,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import UPriceInput from "../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../ui/currency/input/UCurrencyInput.vue";
 import UDateInput from "../ui/date/input/UDateInput.vue";

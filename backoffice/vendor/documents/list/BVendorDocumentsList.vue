@@ -279,7 +279,7 @@
   </v-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
 import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentType";

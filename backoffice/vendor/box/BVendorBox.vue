@@ -61,7 +61,7 @@
   <small v-else>Not set!</small>
 </template>
 
-<script>
+<script lang="ts">
 import { RouteMixin } from "../../../mixin/RouteMixin";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 

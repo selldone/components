@@ -80,7 +80,7 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService.ts";
 
 export default {
