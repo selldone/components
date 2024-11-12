@@ -78,10 +78,11 @@
 <script lang="ts">
 import { throttle } from "lodash-es";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SDiscountCodeInput",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin,CurrencyMixin],
   emits: ["update:modelValue", "loading"],
   props: {
     modelValue: {},

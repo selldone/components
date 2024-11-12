@@ -128,9 +128,11 @@ import UTabsRounded from "../../../ui/tab/rounded/UTabsRounded.vue";
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import { GetNameOfColor } from "@selldone/core-js/helper";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BProductBarcode",
+  mixins: [CurrencyMixin],
   emits: ["update:modelValue"],
   components: { UTextCopyBox, VariantItemViewMicro, UTabsRounded },
   props: {

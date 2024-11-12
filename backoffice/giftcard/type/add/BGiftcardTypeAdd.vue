@@ -242,9 +242,11 @@ import SGiftcardView from "../../../../storefront/giftcard/view/SGiftcardView.vu
 import BClusterInput from "../../../cluster/input/BClusterInput.vue";
 import BTranslationButtonGiftcard from "../../../translation/button/giftcard/BTranslationButtonGiftcard.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BGiftcardTypeAdd",
+  mixins: [CurrencyMixin],
 
   components: {
     SWidgetButtons,

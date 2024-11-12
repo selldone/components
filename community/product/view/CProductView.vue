@@ -56,9 +56,11 @@ import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper.ts";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce.ts";
 import UProductSpecTable from "../../../ui/product/spec/table/UProductSpecTable.vue";
 import {computed} from "vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "CProductView",
+  mixins: [CurrencyMixin],
   components: { UProductSpecTable, SProductOverview },
   props: {
     shop: {

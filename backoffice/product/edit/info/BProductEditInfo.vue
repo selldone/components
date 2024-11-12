@@ -1041,9 +1041,12 @@ import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense.ts";
 import { ProductExternal } from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
 import SDenseImagesCircles from "@selldone/components-vue/ui/image/SDenseImagesCircles.vue";
 import SProductSectionValuation from "@selldone/components-vue/storefront/product/section/valuation/SProductSectionValuation.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BProductEditInfo",
+  mixins: [ProductMixin],
+
   components: {
     SProductSectionValuation,
     SDenseImagesCircles,

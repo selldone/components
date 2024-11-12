@@ -73,9 +73,11 @@
 
 <script lang="ts">
 import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "UPrice",
+  mixins: [CurrencyMixin],
   props: {
     amount: {},
     currency: {}, // null: apply user selected currency (+ Accept currency object / string code)

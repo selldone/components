@@ -252,13 +252,14 @@ import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import { GetNameOfColor } from "@selldone/core-js/helper";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 /**
  *
  */
 export default {
   name: "SCategoryFilter",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin,CurrencyMixin],
 
   components: { UPrice, USmartToggle, SCategoryFilterSelector },
   emits: ["change-filter", "change-height", "update:modelValue"],

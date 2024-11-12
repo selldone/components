@@ -523,9 +523,12 @@ import { ProductCondition } from "@selldone/core-js/enums/product/ProductConditi
 import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import BNoteButton from "../../../../note/button/BNoteButton.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BProductWindowProductLarge",
+  mixins: [ProductMixin],
+
   components: {
     UPriceInvalid,
     BNoteButton,

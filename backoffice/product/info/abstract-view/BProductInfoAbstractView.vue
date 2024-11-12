@@ -707,10 +707,11 @@ import { ProductExternal } from "@selldone/components-vue/storefront/product/ext
 import UChipDiscount from "@selldone/components-vue/ui/chip/discount/UChipDiscount.vue";
 import { defineAsyncComponent } from "vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BProductInfoAbstractView",
-  mixins: [DateMixin],
+  mixins: [DateMixin,ProductMixin],
 
   components: {
     UChipDiscount,

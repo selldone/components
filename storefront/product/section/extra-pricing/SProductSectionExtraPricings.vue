@@ -52,9 +52,12 @@
 import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import { ExtraPricingHelper } from "@selldone/core-js/helper/shop/ExtraPricingHelper";
 import numeral from "numeral";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "SProductSectionExtraPricings",
+  mixins: [ProductMixin],
+
   components: {},
   inject: ["$shop", "$product"],
 

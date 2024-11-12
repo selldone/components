@@ -518,9 +518,12 @@ import UCountDown from "../../../ui/count-down/UCountDown.vue";
 import { PriceHelper } from "@selldone/core-js";
 import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "SShopProductCard",
+  mixins: [ProductMixin],
+
   components: {
     UPriceInvalid,
     UCurrencyIcon,
@@ -600,7 +603,7 @@ export default {
     },
 
     endOfDiscountDate() {
-      return this.GetEndOfDiscountDate(this.product, null);
+      return PriceHelper.GetEndOfDiscountDate(this.product, null);
     },
     //----------------------------------------
 

@@ -743,9 +743,12 @@ import { standardDesignColor } from "@selldone/core-js/helper/color/ColorGenerat
 import { PriceHelper } from "@selldone/core-js/helper/price/PriceHelper.ts";
 import VPricingInput from "../../../../storefront/pricing/VPricingInput.vue";
 import { DateConverter } from "@selldone/core-js";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BProductVendorAdd",
+  mixins: [ProductMixin],
+
   components: {
     BProductExtraPricingRow,
     UTabsFloating,

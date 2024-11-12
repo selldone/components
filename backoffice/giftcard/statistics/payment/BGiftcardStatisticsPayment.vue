@@ -118,9 +118,12 @@
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 
 import UChartArea from "../../../../ui/chart/area/UChartArea.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BGiftcardStatisticsPayment",
+  mixins: [CurrencyMixin],
+
   components: { UChartArea, SWidgetBox },
   props: {
     giftCardType: {

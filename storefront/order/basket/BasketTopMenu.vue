@@ -123,11 +123,13 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import SShopBasketItem from "../../../storefront/order/basket/SShopBasketItem.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BasketTopMenu",
+  mixins: [CurrencyMixin],
   components: { SWidgetButtons, SShopBasketItem },
-  inject:['$shop'],
+  inject: ["$shop"],
   props: {},
   data: () => ({
     menu: false,
@@ -143,7 +145,6 @@ export default {
     MapHelper() {
       return MapHelper;
     },
-
 
     filtered_types() {
       return Object.values(ProductType).filter((type) => {

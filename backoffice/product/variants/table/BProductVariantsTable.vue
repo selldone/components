@@ -318,9 +318,12 @@ import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAsset
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 import UChipDiscount from "../../../../ui/chip/discount/UChipDiscount.vue";
 import { defineAsyncComponent } from "vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BProductVariantsTable",
+  mixins: [ProductMixin],
+
   components: {
     UChipDiscount,
     UColorCircle,

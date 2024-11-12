@@ -258,9 +258,12 @@ import SShopBasketItemCountSelect from "./SShopBasketItemCountSelect.vue";
 import SProductServiceForm from "../../../storefront/product/service/form/SProductServiceForm.vue";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "SShopBasketItem",
+  mixins: [CurrencyMixin, ProductMixin],
   components: {
     SProductServiceForm,
     SShopBasketItemCountSelect,

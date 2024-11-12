@@ -553,9 +553,11 @@ import BProductExtraPricingRow from "../../../product/extra-pricings/row/BProduc
 import { standardDesignColor } from "@selldone/core-js/helper/color/ColorGenerator";
 import { PriceHelper } from "@selldone/core-js/helper/price/PriceHelper";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BProductEditPrice",
+  mixins: [CurrencyMixin],
   components: {
     SWidgetButtons,
     BProductExtraPricingRow,

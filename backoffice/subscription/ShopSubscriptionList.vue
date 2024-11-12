@@ -237,7 +237,10 @@
 
             <div v-if="!voucher_selected" class="py-5">
               <div class="widget-box mb-5">
-                <u-widget-header icon="looks_one" :title="$t('shop_license.add_dialog.wallet.title')">
+                <u-widget-header
+                  icon="looks_one"
+                  :title="$t('shop_license.add_dialog.wallet.title')"
+                >
                   <template v-slot:append-title>
                     <v-icon
                       v-if="!account_selected"
@@ -249,8 +252,7 @@
                   </template>
                 </u-widget-header>
                 <v-list-subheader>
-                  {{$t('shop_license.add_dialog.wallet.subtitle')}}
-
+                  {{ $t("shop_license.add_dialog.wallet.subtitle") }}
                 </v-list-subheader>
 
                 <b-account-input v-model="account_selected"></b-account-input>
@@ -326,15 +328,19 @@
                 <u-widget-header
                   class=""
                   icon="settings_applications"
-                  :title="$t('shop_license.add_dialog.options.title') "
+                  :title="$t('shop_license.add_dialog.options.title')"
                 ></u-widget-header>
 
                 <u-smart-toggle
                   v-model="renewal"
-                  :true-title="$t('shop_license.add_dialog.auto_renewal.true_title')"
+                  :true-title="
+                    $t('shop_license.add_dialog.auto_renewal.true_title')
+                  "
                   class="my-3"
                   false-gray
-                  :true-description="$t('shop_license.add_dialog.auto_renewal.true_description') "
+                  :true-description="
+                    $t('shop_license.add_dialog.auto_renewal.true_description')
+                  "
                   true-icon="autorenew"
                 ></u-smart-toggle>
               </div>
@@ -483,10 +489,11 @@ import USmartSelect from "../../ui/smart/select/USmartSelect.vue";
 import USmartToggle from "../../ui/smart/toggle/USmartToggle.vue";
 import USmartVerify from "../../ui/smart/verify/USmartVerify.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "ShopSubscriptionList",
-  mixins: [DateMixin],
+  mixins: [DateMixin, CurrencyMixin],
 
   components: {
     USmartVerify,

@@ -14,9 +14,7 @@
 
 <template>
   <div>
-    <div
-      v-if="hasInsufficientData"
-    >
+    <div v-if="hasInsufficientData">
       <u-chart-funnel
         id="fun-data"
         :animated="true"
@@ -45,10 +43,11 @@
 <script lang="ts">
 import UChartFunnel from "../../../../ui/chart/funnel/UChartFunnel.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SChartFunnelData",
-  mixins: [DateMixin],
+  mixins: [DateMixin, CurrencyMixin],
   components: { UChartFunnel },
   props: {
     timeSeries: {

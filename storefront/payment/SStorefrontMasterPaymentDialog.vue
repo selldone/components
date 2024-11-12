@@ -132,13 +132,14 @@ import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+import { EventBus } from "@selldone/core-js/events/EventBus.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SStorefrontMasterPaymentDialog",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin, CurrencyMixin],
 
-  components: {ULoadingEllipsis, UProgressRadial, UPaymentForm },
+  components: { ULoadingEllipsis, UProgressRadial, UPaymentForm },
 
   inject: ["$shop"],
 

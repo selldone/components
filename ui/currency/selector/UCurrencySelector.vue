@@ -156,6 +156,7 @@
 <script lang="ts">
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 /**
  * Change currency
@@ -163,6 +164,7 @@ import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
  */
 export default {
   name: "UCurrencySelector",
+  mixins: [CurrencyMixin],
   components: { UCurrencyIcon },
   emits: ["change"],
   props: {
@@ -215,7 +217,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    rounded: { },
+    rounded: {},
     loading: { default: false, type: Boolean },
     maxWidth: {
       default: "220px",
@@ -301,7 +303,7 @@ export default {
 
   methods: {
     selectCurrency(currency) {
-      console.log("currency", currency,'save',this.saveLocalStorage);
+      console.log("currency", currency, "save", this.saveLocalStorage);
 
       if (this.saveLocalStorage) {
         if (this.SetUserSelectedCurrency)

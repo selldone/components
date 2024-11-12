@@ -364,9 +364,12 @@ import BTranslationButtonOffer from "../../translation/button/offer/BTranslation
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import { Club } from "@selldone/core-js";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BOfferAdd",
+  mixins: [CurrencyMixin],
+
   components: {
     UWidgetHeader,
     SWidgetButtons,

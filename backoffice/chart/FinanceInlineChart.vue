@@ -35,8 +35,11 @@
 </template>
 
 <script lang="ts">
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+
 export default {
   name: "FinanceInlineChart",
+  mixins: [CurrencyMixin],
   props: {
     timeSeries: {
       required: true,

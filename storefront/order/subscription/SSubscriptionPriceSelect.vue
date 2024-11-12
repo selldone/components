@@ -118,9 +118,11 @@
 
 <script lang="ts">
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SSubscriptionPriceSelect",
+  mixins: [CurrencyMixin],
   emits: ["update:modelValue", "change"],
   props: {
     modelValue: {},

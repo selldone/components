@@ -23,9 +23,12 @@
 <script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService.ts";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "UPaymentStripeSplit",
+  mixins: [CurrencyMixin, ProductMixin],
   components: {},
   inject: ["$shop", "$product"],
 

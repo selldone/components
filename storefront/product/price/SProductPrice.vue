@@ -21,8 +21,12 @@
 </template>
 
 <script lang="ts">
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+
 export default {
   name: "SProductPrice",
+  mixins: [CurrencyMixin, ProductMixin],
   inject: ["$shop"],
   props: {
     product: {

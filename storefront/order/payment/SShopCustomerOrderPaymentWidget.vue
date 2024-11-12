@@ -709,10 +709,11 @@ import { Basket, Bill, PriceHelper } from "@selldone/core-js";
 import SOrderPaymentRowWallet from "@selldone/components-vue/storefront/order/payment/rows/SOrderPaymentRowWallet.vue";
 import SOrderPaymentRowCashback from "@selldone/components-vue/storefront/order/payment/rows/SOrderPaymentRowCashback.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import CoreMixin from "@selldone/components-vue/mixin/CoreMixin.ts";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",
-  mixins: [DateMixin],
+  mixins: [DateMixin,CoreMixin],
 
   components: {
     SOrderPaymentRowCashback,

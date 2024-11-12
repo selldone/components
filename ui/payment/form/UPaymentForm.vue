@@ -771,9 +771,11 @@ import SWalletInput from "@selldone/components-vue/storefront/wallet/SWalletInpu
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
 import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "UPaymentForm",
+  mixins: [CurrencyMixin],
   components: {
     ULoadingEllipsis,
     SWalletInput,

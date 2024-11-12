@@ -137,9 +137,11 @@ import SStorefrontCouponView from "../view/SStorefrontCouponView.vue";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import { throttle } from "lodash-es";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SStorefrontCouponsList",
+  mixins: [CurrencyMixin],
   components: { UFadeScroll, SStorefrontCouponView },
   emits: ["update:modelValue", "loading"],
   props: {

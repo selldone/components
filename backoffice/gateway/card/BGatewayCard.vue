@@ -313,9 +313,11 @@ import InlineChartByDiffDays from "../../chart/InlineChartByDiffDays.vue";
 import BGatewayNetworkStatus from "../../gateway/network-status/BGatewayNetworkStatus.vue";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BGatewayCard",
+  mixins: [CurrencyMixin],
   components: {
     UCurrencyIcon,
     BGatewayNetworkStatus,

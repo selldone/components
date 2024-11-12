@@ -352,9 +352,11 @@ import { debounce } from "lodash-es";
 import { computed, defineAsyncComponent } from "vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 import { SProductBreadcrumbHelper } from "./helper/SProductBreadcrumbHelper";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SProductsListing",
+  mixins: [CurrencyMixin],
   components: {
     UFadeScroll,
     LPageViewer: defineAsyncComponent(

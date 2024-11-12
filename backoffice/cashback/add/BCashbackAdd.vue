@@ -43,16 +43,15 @@
           />
 
           <u-smart-toggle
-              v-model="boosted"
-              :false-title="$t('cashback_edit.boosted_input.false_title')"
-              :true-title="$t('cashback_edit.boosted_input.true_title')"
-              :true-description="$t('cashback_edit.boosted_input.true_msg')"
-              :false-description="$t('cashback_edit.boosted_input.false_msg')"
-              true-icon="local_fire_department"
-              false-gray
-              color="#D32F2F"
+            v-model="boosted"
+            :false-title="$t('cashback_edit.boosted_input.false_title')"
+            :true-title="$t('cashback_edit.boosted_input.true_title')"
+            :true-description="$t('cashback_edit.boosted_input.true_msg')"
+            :false-description="$t('cashback_edit.boosted_input.false_msg')"
+            true-icon="local_fire_department"
+            false-gray
+            color="#D32F2F"
           ></u-smart-toggle>
-
 
           <u-currency-input
             v-model="currency"
@@ -309,7 +308,6 @@
         </div>
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
       </v-form>
-
     </v-card-text>
     <v-card-actions>
       <s-widget-buttons :auto-fixed-position="!hasClose">
@@ -336,7 +334,7 @@
         </v-btn>
 
         <v-btn
-            v-else
+          v-else
           :loading="busy_set"
           color="primary"
           size="x-large"
@@ -357,7 +355,6 @@ import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import UDateInput from "../../../ui/date/input/UDateInput.vue";
 import UTimeProgressBar from "../../../ui/time/progress-bar/UTimeProgressBar.vue";
-import BShopLicenseBlockOverlay from "../../shop/license/block/overlay/BShopLicenseBlockOverlay.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import BClubConstraint from "../../club/constraint/BClubConstraint.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
@@ -368,9 +365,11 @@ import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import { Club } from "@selldone/core-js";
 import BTranslationButtonCashback from "@selldone/components-vue/backoffice/translation/button/cashback/BTranslationButtonCashback.vue";
 import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BCashbackAdd",
+  mixins: [CurrencyMixin],
   components: {
     USmartToggle,
     BTranslationButtonCashback,
@@ -400,15 +399,13 @@ export default {
       required: true,
       type: Object,
     },
-
   },
 
   data: () => ({
     CustomerClubLevels: Club.Levels,
 
     enable: false,
-    boosted:false,
-
+    boosted: false,
 
     max: 200,
     percent: 5,
@@ -473,10 +470,8 @@ export default {
 
       axios
         .post(window.API.POST_SHOP_CASHBACK_ADD(this.shop.id), {
-
           enable: this.enable,
           boosted: this.boosted,
-
 
           max: this.max,
           percent: this.percent,
@@ -532,7 +527,6 @@ export default {
         .put(
           window.API.PUT_SHOP_CASHBACK_EDIT(this.shop.id, this.cashback.id),
           {
-
             enable: this.enable,
             boosted: this.boosted,
 

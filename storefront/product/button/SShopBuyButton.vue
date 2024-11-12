@@ -241,9 +241,11 @@ import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import { BuyButtonHelper } from "@selldone/core-js/helper/shop/BuyButtonHelper";
 import { debounce, delay } from "lodash-es";
 import SProductExternalButton from "@selldone/components-vue/storefront/product/external/button/SProductExternalButton.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SShopBuyButton",
+  mixins: [CurrencyMixin],
   components: {
     SProductExternalButton,
     SShopSubscribeButton,

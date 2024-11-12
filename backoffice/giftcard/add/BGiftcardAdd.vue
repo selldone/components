@@ -120,9 +120,12 @@
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import UTextValueBox from "../../../ui/text/value-box/UTextValueBox.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BGiftcardAdd",
+  mixins: [CurrencyMixin],
+
   emits: ["close", "save"],
   components: { USmartToggle, UTextValueBox, UNumberInput },
   props: {

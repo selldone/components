@@ -49,10 +49,11 @@ import UChartFunnel from "@selldone/components-vue/ui/chart/funnel/UChartFunnel.
 import { Brands } from "@selldone/core-js/enums/social/Brands.ts";
 import { colorSet3, ShadeColor } from "@selldone/core-js/helper";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BDashboardShopChannels",
-  mixins: [DateMixin],
+  mixins: [DateMixin, CurrencyMixin],
   components: {
     UChartFunnel,
     SWidgetBox,

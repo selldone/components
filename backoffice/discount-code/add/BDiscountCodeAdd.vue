@@ -322,9 +322,12 @@ import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import BTranslationButtonDiscountCode from "../../translation/button/discount-code/BTranslationButtonDiscountCode.vue";
 import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BDiscountCodeAdd",
+  mixins: [CurrencyMixin],
+
   components: {
     SWidgetButtons,
     UWidgetHeader,

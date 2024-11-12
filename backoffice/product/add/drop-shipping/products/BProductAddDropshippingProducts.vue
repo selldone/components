@@ -390,9 +390,11 @@ import VariantItemMini from "@selldone/components-vue/storefront/product/variant
 import ProductVariantsView from "@selldone/components-vue/storefront/product/variant/ProductVariantsView.vue";
 import UPriceInput from "@selldone/components-vue/ui/price/input/UPriceInput.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BProductAddDropshippingProducts",
+  mixins: [ProductMixin],
   components: {
     UAvatarFolder,
     UPriceInput,

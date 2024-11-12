@@ -279,10 +279,11 @@ import { CampaignHelper } from "@selldone/core-js/helper/campaign/CampaignHelper
 import UMapCountriesHeatmap from "../../../ui/map/countries/heatmap/UMapCountriesHeatmap.vue";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BCampaignOverview",
-  mixins: [DateMixin],
+  mixins: [DateMixin,CurrencyMixin],
   components: {
     UCurrencyIcon,
     UMapCountriesHeatmap,

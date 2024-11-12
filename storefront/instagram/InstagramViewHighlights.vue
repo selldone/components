@@ -308,10 +308,11 @@ import UVariantSelector from "../../ui/variant/selector/UVariantSelector.vue";
 import SShopBuyButton from "../../storefront/product/button/SShopBuyButton.vue";
 import { throttle } from "lodash-es";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "InstagramViewHighlights",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin,ProductMixin],
   components: {
     SShopBuyButton,
     UVariantSelector,

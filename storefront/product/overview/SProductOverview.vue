@@ -361,9 +361,11 @@ import SProductSectionBadges from "../section/badges/SProductSectionBadges.vue";
 import SProductSectionVariants from "../section/variants/SProductSectionVariants.vue";
 import SProductSectionCashback from "@selldone/components-vue/storefront/product/section/cashback/SProductSectionCashback.vue";
 import SProductSectionIncentivise from "@selldone/components-vue/storefront/product/section/incentivise/SProductSectionIncentivise.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SProductOverview",
+  mixins: [CurrencyMixin],
   components: {
     SProductSectionIncentivise,
     SProductSectionCashback,

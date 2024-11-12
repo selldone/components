@@ -139,9 +139,12 @@
 import UVariantSelector from "../../../ui/variant/selector/UVariantSelector.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { defineAsyncComponent } from "vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "SHyperProduct",
+  mixins: [ProductMixin],
+
   components: {
     UScanner: defineAsyncComponent(
       () => import("@selldone/components-vue/ui/scanner/UScanner.vue"),

@@ -32,9 +32,12 @@
 
 <script lang="ts">
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import { PriceHelper } from "@selldone/core-js/helper";
 
 export default {
   name: "ProductDiscountCountdown",
+  mixins: [ProductMixin],
   components: { UCountDown },
 
   props: {
@@ -46,10 +49,16 @@ export default {
 
   computed: {
     hasDiscountCountDown() {
-      return this.HasDiscountCountDownMode(this.product, this.currentVariant);
+      return PriceHelper.HasDiscountCountDownMode(
+        this.product,
+        this.currentVariant,
+      );
     },
     endOfDiscountDate() {
-      return this.GetEndOfDiscountDate(this.product, this.currentVariant);
+      return PriceHelper.GetEndOfDiscountDate(
+        this.product,
+        this.currentVariant,
+      );
     },
   },
 };

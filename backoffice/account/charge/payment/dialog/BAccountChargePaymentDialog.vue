@@ -139,7 +139,11 @@
         >shield
       </v-icon>
       Payments are secured by
-      <img height="16" src="../../../../../assets/trademark/stripe.svg"  alt="Stripe" />
+      <img
+        height="16"
+        src="../../../../../assets/trademark/stripe.svg"
+        alt="Stripe"
+      />
     </div>
 
     <!-- ████████████████████████ PAYMENT > Start ████████████████████████ -->
@@ -218,9 +222,11 @@ import UPodNode from "../../../../../ui/pod/node/UPodNode.vue";
 
 import BAccountTax from "../../../../account/tax/BAccountTax.vue";
 import { delay } from "lodash-es";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BAccountChargePaymentDialog",
+  mixins: [CurrencyMixin],
   components: {
     BAccountTax,
 
@@ -347,11 +353,11 @@ export default {
           if (!data.error) {
             // Payment succeeded:
             /* if (data.success) {
-                    this.showSuccessAlert(
-                      "Payment confirmed",
-                      "Your payment received and processing now."
-                    );
-                  } else {*/
+                      this.showSuccessAlert(
+                        "Payment confirmed",
+                        "Your payment received and processing now."
+                      );
+                    } else {*/
 
             // Fill payment form:
             this.fillPaymentForm(data);
@@ -388,8 +394,8 @@ export default {
             if (data.address && data.amount && data.qr_code) {
               // 1. Set time out to remove QR code: Time out in form!
               /*  this.timeout_instance = setTimeout(() => {
-                      this.delayedHide();
-                    }, this.timeout);*/
+                        this.delayedHide();
+                      }, this.timeout);*/
 
               // 2. Show success alert:
               this.showSuccessAlert(

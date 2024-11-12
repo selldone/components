@@ -74,9 +74,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import ProductVariantsView from "@selldone/components-vue/storefront/product/variant/ProductVariantsView.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default defineComponent({
   name: "SProductRelatedProductCard",
+  mixins: [ProductMixin],
+
   components: { ProductVariantsView },
   props: {
     product: {

@@ -15,13 +15,10 @@
 <template>
   <v-card color="transparent" flat>
     <v-card-text>
-
-
       <u-widget-header
-          :title="$t('onboarding.payment.step1.title')"
-          icon="price_change"
+        :title="$t('onboarding.payment.step1.title')"
+        icon="price_change"
       ></u-widget-header>
-
 
       <p class="typo-body">
         {{ $t("onboarding.payment.step1.msg") }}
@@ -53,13 +50,10 @@
 
       <hr class="my-5" />
 
-
-
       <u-widget-header
-          :title="$t('onboarding.payment.step2.title')"
-          icon="payment"
+        :title="$t('onboarding.payment.step2.title')"
+        icon="payment"
       ></u-widget-header>
-
 
       <div class="d-flex align-center">
         <p class="typo-body flex-grow-1">
@@ -143,7 +137,8 @@
       <h2 class="mt-5 mb-2">
         <img
           :src="require('../../../assets/trademark/stripe.svg')"
-          height="32"  alt="Stripe"
+          height="32"
+          alt="Stripe"
         />
       </h2>
       <p class="typo-body" v-html="$t('onboarding.payment.step3.msg')"></p>
@@ -174,9 +169,12 @@
 import SVGs from "@selldone/core-js/enums/payment/stripe/SVGs";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import BGatewayChips from "../../gateway/chips/BGatewayChips.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "ShopOnboardingPaymentTab",
+  mixins: [CurrencyMixin],
+
   components: {
     BGatewayChips,
     UCurrencyIcon,

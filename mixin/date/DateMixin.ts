@@ -12,10 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {DateConverter} from "@selldone/core-js/helper/date/DateConverter"; //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-//―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-
-//―――――――――――――――――――――― Country ――――――――――――――――――――
+import {DateConverter} from "@selldone/core-js/helper/date/DateConverter";
 
 const DateMixin = {
   methods: {

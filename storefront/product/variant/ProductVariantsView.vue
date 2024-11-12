@@ -20,8 +20,8 @@
       dark: dark,
       'text-center': center,
       '-small': small,
-      '-single-line':singleLine,
-      '-ultra-dense': isUltraDense(colors)
+      '-single-line': singleLine,
+      '-ultra-dense': isUltraDense(colors),
     }"
     :justify="center ? 'center' : null"
     class="product-variant-view"
@@ -30,10 +30,16 @@
   >
     <div
       v-if="colors.length"
-      :class="{ dense: dense,'flex-wrap':!singleLine }"
-      class="-var-row  align-center"
+      :class="{ dense: dense, 'flex-wrap': !singleLine }"
+      class="-var-row align-center"
     >
-      <v-icon v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center"> palette</v-icon>
+      <v-icon
+        v-if="!hideIcon"
+        :color="icon_color"
+        class="me-1 align-self-center"
+      >
+        palette</v-icon
+      >
 
       <u-color-circle
         v-for="color in colors"
@@ -55,11 +61,16 @@
 
     <div
       v-if="volumes.length"
-      :class="{ dense: dense, 'flex-wrap':!singleLine }"
-      class="-var-row    "
-
+      :class="{ dense: dense, 'flex-wrap': !singleLine }"
+      class="-var-row"
     >
-      <v-icon v-if="!hideIcon" :color="icon_color" class="me-1 align-self-center" > equalizer</v-icon>
+      <v-icon
+        v-if="!hideIcon"
+        :color="icon_color"
+        class="me-1 align-self-center"
+      >
+        equalizer</v-icon
+      >
 
       <span
         v-for="volume in volumes"
@@ -77,15 +88,20 @@
       </span>
 
       <v-icon v-if="volumes_more">more_horiz</v-icon>
-
     </div>
 
     <div
       v-if="packs.length"
-      :class="{ dense: dense,'flex-wrap':!singleLine  }"
-      class="-var-row    "
+      :class="{ dense: dense, 'flex-wrap': !singleLine }"
+      class="-var-row"
     >
-      <v-icon v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center" > all_inbox</v-icon>
+      <v-icon
+        v-if="!hideIcon"
+        :color="icon_color"
+        class="me-1 align-self-center"
+      >
+        all_inbox</v-icon
+      >
 
       <span
         v-for="pack in packs"
@@ -95,23 +111,23 @@
         dir="auto"
         @click="onSelect('pack', pack)"
       >
-        <u-variant-asset-image
-          :size="16"
-          :value="pack"
-        ></u-variant-asset-image>
+        <u-variant-asset-image :size="16" :value="pack"></u-variant-asset-image>
         {{ pack?.removeVariantAsset() }}<span class="text-muted">x</span>
       </span>
 
       <v-icon v-if="packs_more">more_horiz</v-icon>
-
     </div>
 
     <div
       v-if="weights.length"
-      :class="{ dense: dense,'flex-wrap':!singleLine  }"
-      class="-var-row    "
+      :class="{ dense: dense, 'flex-wrap': !singleLine }"
+      class="-var-row"
     >
-      <v-icon v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center" >
+      <v-icon
+        v-if="!hideIcon"
+        :color="icon_color"
+        class="me-1 align-self-center"
+      >
         fa:fas fa-weight-hanging
       </v-icon>
 
@@ -130,15 +146,18 @@
         {{ weight?.removeVariantAsset() }}
       </span>
       <v-icon v-if="weights_more">more_horiz</v-icon>
-
     </div>
 
     <div
       v-if="types.length"
-      :class="{ dense: dense, 'flex-wrap':!singleLine }"
-      class="-var-row   "
+      :class="{ dense: dense, 'flex-wrap': !singleLine }"
+      class="-var-row"
     >
-      <v-icon v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center" >
+      <v-icon
+        v-if="!hideIcon"
+        :color="icon_color"
+        class="me-1 align-self-center"
+      >
         fa:fas fa-toolbox
       </v-icon>
       <span
@@ -149,23 +168,25 @@
         dir="auto"
         @click="onSelect('type', type)"
       >
-        <u-variant-asset-image
-          :size="16"
-          :value="type"
-        ></u-variant-asset-image>
+        <u-variant-asset-image :size="16" :value="type"></u-variant-asset-image>
         {{ type?.removeVariantAsset() }}
       </span>
 
       <v-icon v-if="types_more">more_horiz</v-icon>
-
     </div>
 
     <div
       v-if="styles.length"
-      :class="{ dense: dense, 'flex-wrap':!singleLine  }"
-      class="-var-row   "
+      :class="{ dense: dense, 'flex-wrap': !singleLine }"
+      class="-var-row"
     >
-      <v-icon  v-if="!hideIcon"  :color="icon_color" class="me-1 align-self-center"> style</v-icon>
+      <v-icon
+        v-if="!hideIcon"
+        :color="icon_color"
+        class="me-1 align-self-center"
+      >
+        style</v-icon
+      >
 
       <span
         v-for="style in styles"
@@ -182,13 +203,12 @@
         {{ style?.removeVariantAsset() }}
       </span>
       <v-icon v-if="styles_more">more_horiz</v-icon>
-
     </div>
 
     <div
       v-if="!small && variants && variants.some((v) => v.price && v.currency)"
-      :class="{ dense: dense ,'flex-wrap':!singleLine }"
-      class="-var-row   "
+      :class="{ dense: dense, 'flex-wrap': !singleLine }"
+      class="-var-row"
     >
       <p class="m-0">
         {{ $t("variants_view.prices") }}
@@ -210,8 +230,8 @@
 
     <div
       v-if="!small && quantitys && variants.some((v) => v.quantity || v === 0)"
-      :class="{ dense: dense,'flex-wrap':!singleLine  }"
-      class="-var-row   "
+      :class="{ dense: dense, 'flex-wrap': !singleLine }"
+      class="-var-row"
     >
       <p class="m-0">
         {{ $t("variants_view.inventory") }}
@@ -232,9 +252,12 @@
 import { GetArrayOfValuesInVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import UVariantAssetImage from "../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "ProductVariantsView",
+  mixins: [CurrencyMixin],
+
   components: { UColorCircle, UVariantAssetImage },
   props: {
     variants: {
@@ -271,9 +294,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    singleLine:Boolean,
-    hideIcon:Boolean,
-    forceUltraDense:Boolean
+    singleLine: Boolean,
+    hideIcon: Boolean,
+    forceUltraDense: Boolean,
   },
   data() {
     return {
@@ -292,58 +315,58 @@ export default {
       return this.getItemsInArray(this.variants, "color").limit(this.limit);
     },
     colors_more() {
-      return this.getItemsInArray(this.variants, "color").length>this.limit;
+      return this.getItemsInArray(this.variants, "color").length > this.limit;
     },
     weights() {
       return this.getItemsInArray(this.variants, "weight").limit(this.limit);
     },
     weights_more() {
-      return this.getItemsInArray(this.variants, "weight").length>this.limit;
+      return this.getItemsInArray(this.variants, "weight").length > this.limit;
     },
 
     volumes() {
       return this.getItemsInArray(this.variants, "volume").limit(this.limit);
     },
     volumes_more() {
-      return this.getItemsInArray(this.variants, "volume").length>this.limit;
+      return this.getItemsInArray(this.variants, "volume").length > this.limit;
     },
 
     styles() {
       return this.getItemsInArray(this.variants, "style").limit(this.limit);
     },
     styles_more() {
-      return this.getItemsInArray(this.variants, "style").length>this.limit;
+      return this.getItemsInArray(this.variants, "style").length > this.limit;
     },
 
     packs() {
       return this.getItemsInArray(this.variants, "pack").limit(this.limit);
     },
     packs_more() {
-      return this.getItemsInArray(this.variants, "pack").length>this.limit;
+      return this.getItemsInArray(this.variants, "pack").length > this.limit;
     },
-
 
     types() {
       return this.getItemsInArray(this.variants, "type").limit(this.limit);
     },
     types_more() {
-      return this.getItemsInArray(this.variants, "type").length>this.limit;
+      return this.getItemsInArray(this.variants, "type").length > this.limit;
     },
 
     quantitys() {
       return this.getItemsInArray(this.variants, "quantity").limit(this.limit);
     },
     quantitys_more() {
-      return this.getItemsInArray(this.variants, "quantity").length>this.limit;
+      return (
+        this.getItemsInArray(this.variants, "quantity").length > this.limit
+      );
     },
 
     prices() {
       return this.getItemsInArray(this.variants, "price").limit(this.limit);
     },
     prices_more() {
-      return this.getItemsInArray(this.variants, "price").length>this.limit;
+      return this.getItemsInArray(this.variants, "price").length > this.limit;
     },
-
 
     shop_id() {
       return this.getShop()?.id;
@@ -388,7 +411,9 @@ export default {
     },
 
     isUltraDense(items) {
-      return this.forceUltraDense || items?.join(" ").length > (this.small?20:50);
+      return (
+        this.forceUltraDense || items?.join(" ").length > (this.small ? 20 : 50)
+      );
     },
   },
 };
@@ -417,13 +442,16 @@ export default {
 
   &.dark {
     color: #fff;
+
     .card-badge-info {
       color: #fff;
     }
+
     .card-badge-color {
       border: solid 1px #555;
     }
   }
+
   .card-badge-color {
     border: solid 1px #aaa;
   }
@@ -438,7 +466,6 @@ export default {
 }
 
 .card-badge-info {
-
   user-select: none;
   padding: 4px 4px;
   font-weight: 600;
@@ -480,20 +507,22 @@ export default {
   max-width: max-content !important;
   margin: 2px 6px;
 }
-.-var-row{
+
+.-var-row {
   display: flex;
   padding: 4px;
   align-items: center;
 }
-.-ultra-dense {
 
-  .-var-row{
+.-ultra-dense {
+  .-var-row {
     font-size: 0.5rem;
     padding: 1px;
   }
 }
-.-single-line{
-  .card-badge-info{
+
+.-single-line {
+  .card-badge-info {
     display: inline-block;
     white-space: nowrap;
     text-overflow: ellipsis;

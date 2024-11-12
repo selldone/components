@@ -34,10 +34,11 @@
 
 <script lang="ts">
 import { colorSet3 } from "@selldone/core-js/helper/color/ColorGenerator";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "InlineChartByDiffDays",
-
+  mixins: [CurrencyMixin],
   props: {
     dataPack: {},
     dataKeys: {},

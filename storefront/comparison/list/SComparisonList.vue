@@ -438,12 +438,15 @@ import SShopBuyButton from "../../../storefront/product/button/SShopBuyButton.vu
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 /**
  * <s-comparison-list>
  */
 export default {
   name: "SComparisonList",
+  mixins: [ProductMixin],
+
   components: {
     UTextCopyBox,
     UColorCircle,

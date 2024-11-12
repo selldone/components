@@ -79,9 +79,12 @@
 <script lang="ts">
 import ProductVariantsView from "../../../storefront/product/variant/ProductVariantsView.vue";
 import UChipDiscount from "../../../ui/chip/discount/UChipDiscount.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "SProductPreviewById",
+  mixins: [ProductMixin],
+
   components: { UChipDiscount, ProductVariantsView },
 
   inject: ["$shop"],

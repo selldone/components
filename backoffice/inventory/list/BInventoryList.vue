@@ -279,7 +279,7 @@
         <div
           :class="{ '-focus': show_price_dialog && selected_item === item }"
           class="editable center-flex rounded-lg ma-1 price-btn px-5"
-          :style="{height: $vuetify.display.xs?'42px':'65px'}"
+          :style="{ height: $vuetify.display.xs ? '42px' : '65px' }"
           @click="showEditPrice(item)"
         >
           <v-icon
@@ -323,17 +323,12 @@
         </div>
         <!-- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
-        <div
-          v-else-if="item.type === ProductType.PHYSICAL.code"
-
-          class="p-2"
-        >
+        <div v-else-if="item.type === ProductType.PHYSICAL.code" class="p-2">
           <u-number-input
             v-model="item.number"
             :min="item.add ? -1000 : 0"
             background-color="#fafafa"
             class="max-width-field inline-block vertical-align-middle center-input strong-field min-width-300"
-
             flat
             hide-details
             no-padding
@@ -349,8 +344,8 @@
                 mandatory
                 rounded="lg"
                 base-color="#efefef"
-                :style="{height: $vuetify.display.xs?'42px':'52px'}"
-                :selected-class="isChanged(item)?'elevation-1':undefined"
+                :style="{ height: $vuetify.display.xs ? '42px' : '52px' }"
+                :selected-class="isChanged(item) ? 'elevation-1' : undefined"
               >
                 <v-btn :value="true" selected-class="green-flat " size="small">
                   {{ $t("global.actions.add") }}
@@ -368,20 +363,12 @@
                     ? item.number === 0
                     : item.number === item.quantity,
                 }"
-                :color="
-                  isChanged(item)
-                    ? '#000'
-                    : '#999'
-                "
+                :color="isChanged(item) ? '#000' : '#999'"
                 :loading="busy_count === item.key"
-                :variant="
-                    isChanged(item)
-                    ? 'elevated'
-                    : 'plain'
-                "
+                :variant="isChanged(item) ? 'elevated' : 'plain'"
                 class="ms-2 me-n1 vertical-align-middle tnt"
                 rounded="lg"
-                :min-height="$vuetify.display.xs?36:52"
+                :min-height="$vuetify.display.xs ? 36 : 52"
                 @click.stop="updateProductQuantity(item)"
               >
                 {{ $t("global.actions.save") }}
@@ -538,9 +525,11 @@ import BInventoryBulkDiscount from "../../inventory/bulk/discount/BInventoryBulk
 import BInventoryListGroupHeader from "../../inventory/list/group-header/BInventoryListGroupHeader.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BInventoryList",
+  mixins: [ProductMixin],
   components: {
     UPriceInvalid,
     UAvatarFolder,
@@ -691,7 +680,7 @@ export default {
             value: "price",
           },
           {
-            title: '',
+            title: "",
             align: "center",
             value: "change",
             sortable: false,
@@ -969,11 +958,11 @@ export default {
             // available: this.filter_bundle.only_available,
             dir: "*",
             /* dir:
-                                                            !this.search &&
-                                                            this.filter_bundle.dir &&
-                                                            this.filter_bundle.dir.length
-                                                                ? this.filter_bundle.dir
-                                                                : "*",*/
+                                                              !this.search &&
+                                                              this.filter_bundle.dir &&
+                                                              this.filter_bundle.dir.length
+                                                                  ? this.filter_bundle.dir
+                                                                  : "*",*/
             products_only: true,
             need_full_variants: true, // Return full variants data
             optimized: true, // Dont send pricing & rating values!
@@ -1095,10 +1084,9 @@ export default {
       this.show_bulk_discount = true;
     },
 
-
-    isChanged(item){
-      return !(item.add ? item.number === 0 : item.number === item.quantity)
-    }
+    isChanged(item) {
+      return !(item.add ? item.number === 0 : item.number === item.quantity);
+    },
   },
 };
 </script>

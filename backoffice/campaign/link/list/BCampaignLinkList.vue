@@ -152,9 +152,11 @@ import BCampaignSourceIcon from "../../../campaign/source/icon/BCampaignSourceIc
 import BCampaignMediumIcon from "../../../campaign/medium/icon/BCampaignMediumIcon.vue";
 import { CampaignHelper } from "@selldone/core-js/helper/campaign/CampaignHelper";
 import USparkline from "../../../../ui/chart/sparkline/USparkline.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BCampaignLinkList",
+  mixins: [CurrencyMixin],
   components: { USparkline, BCampaignMediumIcon, BCampaignSourceIcon },
 
   props: {

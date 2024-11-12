@@ -120,7 +120,7 @@
             '-dropshipping': add_by_dropShipping,
           }"
           :size="36"
-          :src="getShopImagePath(product.icon,imageSize )"
+          :src="getShopImagePath(product.icon, imageSize)"
           class="pos-img hover-scale force-top"
           drop-image="true"
         ></circle-image>
@@ -315,11 +315,14 @@ import { GetArrayOfValuesInVariants } from "@selldone/core-js/enums/product/Prod
 import UColorCircle from "../../../../../ui/color/circle/UColorCircle.vue";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import BNoteButton from "../../../../note/button/BNoteButton.vue";
-import {BackofficeLocalStorages, DateConverter} from "@selldone/core-js";
+import { BackofficeLocalStorages, DateConverter } from "@selldone/core-js";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BProductWindowProductMini",
+  mixins: [ProductMixin],
+
   components: {
     UPriceInvalid,
     BNoteButton,

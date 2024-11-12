@@ -98,10 +98,11 @@ import { SetupService } from "@selldone/core-js/server/SetupService";
 import UCurrencyIcon from "../../ui/currency/icon/UCurrencyIcon.vue";
 import UChartFunnel from "../../ui/chart/funnel/UChartFunnel.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "FunnelPayment",
-  mixins: [DateMixin],
+  mixins: [DateMixin, CurrencyMixin],
   components: { UChartFunnel, UCurrencyIcon },
   props: {
     shop: {
@@ -175,19 +176,21 @@ export default {
 
             //   console.log('currency',currency,'this.selected_currency',this.selected_currency)
 
-            try{
+            try {
               let val =
-                  this.findFinanceSellValueByCurrency(item.payment, currency) *
-                  this.getBuyRateValue(this.shop, currency, this.selected_currency);
+                this.findFinanceSellValueByCurrency(item.payment, currency) *
+                this.getBuyRateValue(
+                  this.shop,
+                  currency,
+                  this.selected_currency,
+                );
 
               val = this.truncate(val + 0.0001, Number.parseInt(floats));
 
               pack.push(val);
-            }catch (e) {
+            } catch (e) {
               pack.push(0);
             }
-
-
           });
           out.push(pack);
         });

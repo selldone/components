@@ -85,9 +85,7 @@
       </v-col>
     </v-row>
 
-    <div
-      v-if="hasInsufficientData"
-    >
+    <div v-if="hasInsufficientData">
       <u-chart-funnel
         id="fun-finance"
         :actualValue="(row, col) => amount_sell_values[row][col]"
@@ -122,10 +120,11 @@ import { SetupService } from "@selldone/core-js/server/SetupService";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
 import UChartFunnel from "../../../../ui/chart/funnel/UChartFunnel.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SChartFunnelFinance",
-  mixins: [DateMixin],
+  mixins: [DateMixin, CurrencyMixin],
   components: { UChartFunnel, UCurrencyIcon },
   props: {
     shop: {
@@ -256,7 +255,6 @@ export default {
 
               pack.push(val);
             } catch (e) {
-
               pack.push(0 /*Fix funnel bug in set zero!*/); // Error in exchange rate!
             }
           });

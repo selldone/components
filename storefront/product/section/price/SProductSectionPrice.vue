@@ -134,9 +134,12 @@ import { ExtraPricingHelper } from "@selldone/core-js/helper/shop/ExtraPricingHe
 import { BasketHelper } from "@selldone/core-js/helper/shop/BasketHelper";
 import SProductSectionWaitingAuction from "../auction/SProductSectionWaitingAuction.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "SProductSectionPrice",
+  mixins: [ProductMixin],
+
   components: { UPriceInvalid, SProductSectionWaitingAuction, SProductPrice },
   inject: ["$shop", "$product", "$variant"],
   props: {

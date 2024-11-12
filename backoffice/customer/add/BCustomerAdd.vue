@@ -308,9 +308,11 @@ import BCustomerSegmentInput from "../../customer/segment/input/BCustomerSegment
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import { defineAsyncComponent } from "vue";
 import { SetupService } from "@selldone/core-js";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BCustomerAdd",
+  mixins: [CurrencyMixin],
   components: {
     UTelInput: defineAsyncComponent(
       () => import("@selldone/components-vue/ui/tel-input/UTelInput.vue"),

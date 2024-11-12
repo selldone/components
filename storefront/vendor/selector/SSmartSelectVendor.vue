@@ -161,10 +161,13 @@
 <script lang="ts">
 import { MapHelper, ShopURLs } from "@selldone/core-js";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations.ts";
-import {BusinessModel} from "@selldone/core-js/enums/shop/BusinessModel.ts";
+import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "SSmartSelectVendor",
+  mixins: [CurrencyMixin, ProductMixin],
   emits: ["update:modelValue", "change"],
   inject: ["$shop"],
   props: {
@@ -210,13 +213,16 @@ export default {
     },
 
     pickup_transportation_for_vendors_exists() {
-      return this.IS_MARKETPLACE && this.$shop.transportations?.some(
-        (transportation) =>
-          transportation.type === ShopTransportations.Pickup.code &&
-          transportation.marketplace,
+      return (
+        this.IS_MARKETPLACE &&
+        this.$shop.transportations?.some(
+          (transportation) =>
+            transportation.type === ShopTransportations.Pickup.code &&
+            transportation.marketplace,
           /* Transportation must be available for vendors. If the marketplace mode is not direct,
        'marketplace' could be true (miss config!)! But vendor_products would not return any value. This check is safe, so there's no need to explicitly check
        the marketplace mode. */
+        )
       );
     },
   },
