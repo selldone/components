@@ -330,9 +330,11 @@ import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import { throttle } from "lodash-es";
 import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
 import BUserBox from "../../user/box/BUserBox.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BBlogsList",
+  mixins: [DateMixin],
   components: { BUserBox, UAvatarFolder, BClusterInput },
   props: {
     shop: {

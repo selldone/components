@@ -66,9 +66,12 @@
 import UChipChange from "../../../../../ui/chip/change/UChipChange.vue";
 import TimeSeriesInlineChart from "../../../../chart/TimeSeriesInlineChart.vue";
 import { isEmpty } from "lodash-es";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BDashboardShopPerformanceOrders",
+  mixins: [DateMixin],
+
   components: { TimeSeriesInlineChart, UChipChange },
   props: {
     shop: {

@@ -130,9 +130,12 @@
 
 <script lang="ts">
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductsAdvancedOptionsGoogleSheet",
+  mixins: [DateMixin],
+
   components: {
     UTextValueDashed,
   },

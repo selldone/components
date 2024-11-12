@@ -538,9 +538,12 @@ import { Currency } from "@selldone/core-js/enums/payment/Currency";
 
 import { throttle } from "lodash-es";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "ServiceBillingItem",
+  mixins: [DateMixin],
+
   components: {
     SWidgetButtons,
     UPriceInput,

@@ -85,9 +85,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import SOrderChatBox from "@selldone/components-vue/storefront/order/chat/box/SOrderChatBox.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default defineComponent({
   name: "SOrderChatWidget",
+  mixins: [DateMixin],
+
   components: { SOrderChatBox },
   inject: ["$shop"],
 

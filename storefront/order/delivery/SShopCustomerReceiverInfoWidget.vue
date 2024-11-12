@@ -120,6 +120,7 @@
 <script lang="ts">
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 import UMapViewPin from "../../../ui/map/view/market/UMapViewPin.vue";
+import {CountriesResourceHelper} from "@selldone/components-vue/utils/country/CountriesResourceHelper.ts";
 
 export default {
   name: "SShopCustomerReceiverInfoWidget",
@@ -161,7 +162,8 @@ export default {
   },
 
   created() {
-    this.fetchCountries();
+    CountriesResourceHelper.FetchCountries(this);
+
   },
 };
 </script>

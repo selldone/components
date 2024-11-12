@@ -154,10 +154,11 @@ import UChartLine from "../../ui/chart/line/UChartLine.vue";
 import TrendSparkline from "./TrendSparkline.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import { IntersectMixin } from "../../mixin/IntersectMixin";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "CommunityStatisticView",
-  mixins: [IntersectMixin],
+  mixins: [IntersectMixin,DateMixin],
 
   components: { UTimeSpan, UChartArea, UChartLine, TrendSparkline },
   props: {

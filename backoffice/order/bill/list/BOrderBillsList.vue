@@ -289,9 +289,12 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BOrderPaymentRowPayment from "../../../order/payment/row/payment/BOrderPaymentRowPayment.vue";
 import { throttle } from "lodash-es";
 import { Bill } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderBillsList",
+  mixins: [DateMixin],
+
   components: {
     BOrderPaymentRowPayment,
     SOrderDeliveryStatusStepper,

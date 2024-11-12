@@ -433,9 +433,12 @@ import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import { TimelineEmailType } from "@selldone/core-js/enums/timeline/TimelineEmailType.ts";
 import { CampaignLink, Club, Order } from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderTimeline",
+  mixins: [DateMixin],
+
   components: {
     ULoadingEllipsis,
     USmartMenu,

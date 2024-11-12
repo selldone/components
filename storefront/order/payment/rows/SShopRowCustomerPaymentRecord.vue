@@ -70,9 +70,11 @@
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import UPaymentBillingDetails from "../../../../ui/payment/billing-details/UPaymentBillingDetails.vue";
 import UMapCountriesSingle from "../../../../ui/map/countries/single/UMapCountriesSingle.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SShopRowCustomerPaymentRecord",
+  mixins: [DateMixin],
   components: { UMapCountriesSingle, UPaymentBillingDetails, UPaymentCard },
   props: {
     payment: {

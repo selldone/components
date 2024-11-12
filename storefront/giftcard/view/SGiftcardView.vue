@@ -119,9 +119,11 @@
 
 <script lang="ts">
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SGiftcardView",
+  mixins: [DateMixin],
   components: { UCurrencyIcon },
   props: {
     giftCard: {

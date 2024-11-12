@@ -269,9 +269,11 @@ import VariantItemViewMicro from "../../../../storefront/product/variant/Variant
 import { Basket, BasketItem, PriceHelper } from "@selldone/core-js";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import BOrderPaymentActionsRefundButton from "@selldone/components-vue/backoffice/order/payment/actions/refund/button/BOrderPaymentActionsRefundButton.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderDashboardCart",
+  mixins: [DateMixin],
   components: {
     BOrderPaymentActionsRefundButton,
     UPrice,

@@ -58,9 +58,11 @@
 <script lang="ts">
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BWholesalerAccountCard",
+  mixins: [DateMixin],
   components: { UCurrencyIcon },
   emits: ["select"],
   props: {

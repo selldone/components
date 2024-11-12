@@ -400,10 +400,11 @@ import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.
 import BTransportationServiceRate from "../../../transportation/service/rate/BTransportationServiceRate.vue";
 import { debounce } from "lodash-es";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BTransportationServiceLabels",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin,DateMixin],
   components: {
     BTransportationServiceRate,
     UTextValueDashed,

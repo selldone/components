@@ -135,9 +135,11 @@ import SOrderStatusView from "../../../storefront/order/order-status/SOrderStatu
 import SOrderDeliveryStatusStepper from "../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import { Avocado, Basket } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SStorefrontAvocadoCustomerOrderList",
+  mixins: [DateMixin],
   components: {
     ProductsDenseImagesCircles,
     SOrderDeliveryStatusStepper,

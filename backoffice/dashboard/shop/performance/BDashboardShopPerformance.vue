@@ -79,9 +79,12 @@ import BDashboardShopPerformanceOrders from "../../../dashboard/shop/performance
 import BDashboardShopPerformanceUsers from "../../../dashboard/shop/performance/users/BDashboardShopPerformanceUsers.vue";
 import BDashboardShopPerformanceViews from "../../../dashboard/shop/performance/views/BDashboardShopPerformanceViews.vue";
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BDashboardShopPerformance",
+  mixins: [DateMixin],
+
   components: {
     BDashboardShopPerformanceViews,
     BDashboardShopPerformanceUsers,

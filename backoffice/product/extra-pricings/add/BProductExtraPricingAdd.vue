@@ -179,7 +179,7 @@
               :dark="!light"
               :model-value="has_discount_period ? 0 : null"
               class="mt-5 mx-auto"
-              style="border-radius: 18px; overflow: hidden;max-width: 560px"
+              style="border-radius: 18px; overflow: hidden; max-width: 560px"
               @update:model-value="(val) => (has_discount_period = val === 0)"
             >
               <v-expansion-panel
@@ -198,8 +198,13 @@
                     $t("add_product.pricing.has_discount_period_input")
                   }}</span>
 
-                  <v-chip v-if="is_finished_discount" color="#000" size="small" variant="flat">
-                    {{$t('global.commons.finished')}}
+                  <v-chip
+                    v-if="is_finished_discount"
+                    color="#000"
+                    size="small"
+                    variant="flat"
+                  >
+                    {{ $t("global.commons.finished") }}
                   </v-chip>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text color="transparent">
@@ -297,7 +302,7 @@ import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import UDateInput from "../../../../ui/date/input/UDateInput.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
-import {DateConverter} from "@selldone/core-js";
+import { DateConverter } from "@selldone/core-js";
 
 export default {
   name: "BProductExtraPricingAdd",
@@ -318,7 +323,8 @@ export default {
       /*🟢 Vendor Panel 🟢*/ required: false,
     },
     vendorProduct: {
-      /*🟢 Add extra pricing to product<->vendor in the Product > Vendors tab🟢*/ required: false,
+      /*🟢 Add extra pricing to product<->vendor in the Product > Vendors tab🟢*/ required:
+        false,
     },
 
     product: {
@@ -417,15 +423,15 @@ export default {
 
     is_finished_discount() {
       return (
-          (this.clone_extra_pricing?.dis_start || this.clone_extra_pricing?.dis_end) &&
-          !DateConverter.inBetweenDates(
-              new Date(),
-              this.convertToLocalTime(this.clone_extra_pricing.dis_start),
-              this.convertToLocalTime(this.clone_extra_pricing.dis_end),
-          )
+        (this.clone_extra_pricing?.dis_start ||
+          this.clone_extra_pricing?.dis_end) &&
+        !DateConverter.inBetweenDates(
+          new Date(),
+          DateConverter.convertToLocalTime(this.clone_extra_pricing.dis_start),
+          DateConverter.convertToLocalTime(this.clone_extra_pricing.dis_end),
+        )
       );
     },
-
   },
 
   watch: {

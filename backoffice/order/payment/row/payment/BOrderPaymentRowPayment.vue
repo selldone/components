@@ -379,9 +379,12 @@ import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import USmartMenu from "@selldone/components-vue/ui/smart/menu/USmartMenu.vue";
 import BOrderPaymentActionsRefundDialog from "@selldone/components-vue/backoffice/order/payment/actions/refund/dialog/BOrderPaymentActionsRefundDialog.vue";
 import BOrderPaymentActionsDeliveryDialog from "@selldone/components-vue/backoffice/order/payment/actions/delivery/dialog/BOrderPaymentActionsDeliveryDialog.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderPaymentRowPayment",
+  mixins: [DateMixin],
+
   components: {
     BOrderPaymentActionsDeliveryDialog,
     BOrderPaymentActionsRefundDialog,

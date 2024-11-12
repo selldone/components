@@ -647,10 +647,13 @@ import { throttle } from "lodash-es";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
-import {HelpCenterCode} from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
+import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BDomainsList",
+  mixins: [DateMixin],
+
   components: {
     SWidgetHelp,
     UTextCopyBox,

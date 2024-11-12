@@ -81,14 +81,14 @@
 
 <script lang="ts">
 import UNumberInput from "../../../../../ui/number/input/UNumberInput.vue";
-import UCalendarView from "../../../../../ui/calendar/clendar-view/UCalendarView.vue";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import { throttle } from "lodash-es";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductInventoryManagementService",
+  mixins: [DateMixin],
   components: {
-    UCalendarView,
     UNumberInput,
   },
   props: {

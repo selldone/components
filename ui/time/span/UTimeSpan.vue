@@ -67,9 +67,11 @@
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UTimeSpanSelector from "./selector/UTimeSpanSelector.vue";
 import { throttle } from "lodash-es";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "UTimeSpan",
+  mixins: [DateMixin],
   components: { UTimeSpanSelector },
   emits: [
     "onChange",

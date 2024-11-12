@@ -430,8 +430,8 @@ export default {
     inBetween() {
       return DateConverter.inBetweenDates(
         new Date(),
-        this.convertToLocalTime(this.product.dis_start),
-        this.convertToLocalTime(this.product.dis_end),
+        DateConverter.convertToLocalTime(this.product.dis_start),
+        DateConverter.convertToLocalTime(this.product.dis_end),
       );
     },
 

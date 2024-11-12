@@ -187,9 +187,12 @@ import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import { throttle } from "lodash-es";
 import BMapTagAdd from "../../../map/tag/add/BMapTagAdd.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BMapTagsList",
+  mixins: [DateMixin],
+
   components: {
     BMapTagAdd,
   },

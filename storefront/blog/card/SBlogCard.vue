@@ -103,9 +103,11 @@
 
 <script lang="ts">
 import SBlogCardAuthorCategory from "../../../storefront/blog/card/author-category/SBlogCardAuthorCategory.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SBlogCard",
+  mixins: [DateMixin],
   components: { SBlogCardAuthorCategory },
   props: {
     article: {

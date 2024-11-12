@@ -367,10 +367,11 @@ import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import { Basket } from "@selldone/core-js";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin,DateMixin],
 
   components: {
     UMapView,

@@ -91,10 +91,13 @@
               open-on-hover
             >
               <template v-slot:activator="{ props }">
-                <div class="badge-sell-products text-center ps-5" v-bind="props">
+                <div
+                  class="badge-sell-products text-center ps-5"
+                  v-bind="props"
+                >
                   {{ numeralFormat(total_sell, "0.[0]a") }} 🔔
-                  <div style="font-size: 10px"
-                    ><i class="fas fa-circle mx-1 blink-me"></i>
+                  <div style="font-size: 10px">
+                    <i class="fas fa-circle mx-1 blink-me"></i>
                     {{ $t("user_dashboard.shops.shop_card.orders") }}
                   </div>
                 </div>
@@ -526,11 +529,12 @@ import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import BShopCardVisitors from "../../shop/card/visitors/BShopCardVisitors.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BShopCard",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin, DateMixin],
 
   components: {
     BShopCardVisitors,

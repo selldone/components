@@ -814,10 +814,11 @@ import { RouteMixin } from "../../../mixin/RouteMixin";
 import { Avocado, Basket } from "@selldone/core-js";
 import BCampaignSourceIcon from "@selldone/components-vue/backoffice/campaign/source/icon/BCampaignSourceIcon.vue";
 import BOrderChatBox from "@selldone/components-vue/backoffice/order/chat/box/BOrderChatBox.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProcessCenterList",
-  mixins: [RouteMixin],
+  mixins: [RouteMixin,DateMixin],
 
   components: {
     BCampaignSourceIcon,
@@ -1598,7 +1599,7 @@ export default {
 
     remainsTimePercent(item) {
       try {
-        const date = this.convertToLocalTime(item.delivery_info.date);
+        const date = DateConverter.convertToLocalTime(item.delivery_info.date);
         if (date.isBeforeToday()) return 0;
 
         return (100 * Math.abs(date.diffHours(new Date()))) / (3 * 24);

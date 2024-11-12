@@ -446,11 +446,14 @@ import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
 import { throttle } from "lodash-es";
 import SelldoneHelpCard from "../help-card/SelldoneHelpCard.vue";
 import SelldoneBlogCard from "../blog-card/SelldoneBlogCard.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 //―――――――――――――――――――――― Scrollbar Styler ――――――――――――――――――――
 
 export default {
   name: "BSupportMenu",
+  mixins: [DateMixin],
+
   components: {
     USmartSelect,
     SelldoneHelpCard,

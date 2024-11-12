@@ -696,9 +696,11 @@ import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentTyp
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
 import DynamicScriptDirective from "@selldone/components-vue/directives/script/DynamicScriptDirective.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BVendorOnboarding",
+  mixins: [DateMixin],
   directives: { 'dynamic-scripts':DynamicScriptDirective },
   components: {
     UWidgetHeader,

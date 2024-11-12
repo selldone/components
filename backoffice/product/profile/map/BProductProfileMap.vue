@@ -207,9 +207,11 @@ import { defineComponent } from "vue";
 import UMapViewPin from "../../../../ui/map/view/market/UMapViewPin.vue";
 import BMapTagInput from "../../../map/tag/input/BMapTagInput.vue";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default defineComponent({
   name: "BProductProfileMap",
+  mixins: [DateMixin],
   components: { BMapTagInput, UMapViewPin },
 
   props: {

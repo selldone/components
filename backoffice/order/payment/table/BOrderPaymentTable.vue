@@ -1400,9 +1400,12 @@ import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import { Basket, Bill, PriceHelper } from "@selldone/core-js";
 import BOrderPaymentRowWallet from "@selldone/components-vue/backoffice/order/payment/row/wallet/BOrderPaymentRowWallet.vue";
 import BOrderPaymentRowCashback from "@selldone/components-vue/backoffice/order/payment/row/cashback/BOrderPaymentRowCashback.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderPaymentTable",
+  mixins: [DateMixin],
+
   components: {
     BOrderPaymentRowCashback,
     BOrderPaymentRowWallet,

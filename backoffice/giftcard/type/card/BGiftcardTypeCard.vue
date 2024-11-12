@@ -104,9 +104,11 @@
 import CircleImage from "../../../../ui/image/CircleImage.vue";
 import BShopLicenseBlockIcon from "../../../shop/license/block/icon/BShopLicenseBlockIcon.vue";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BGiftcardTypeCard",
+  mixins: [DateMixin],
   components: { UCurrencyIcon, BShopLicenseBlockIcon, CircleImage },
   props: {
     giftCardType: {

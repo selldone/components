@@ -1935,9 +1935,12 @@ import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category
 import { BProductBreadcrumbsHelper } from "../breadcrumbs/helper/BProductBreadcrumbsHelper";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductsWindow",
+  mixins: [DateMixin],
+
   emits: [
     "click:ai-add",
     "change:folders",

@@ -44,9 +44,11 @@
 
 <script lang="ts">
 import UChartFunnel from "../../../../ui/chart/funnel/UChartFunnel.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SChartFunnelData",
+  mixins: [DateMixin],
   components: { UChartFunnel },
   props: {
     timeSeries: {

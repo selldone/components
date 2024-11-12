@@ -300,10 +300,11 @@ import BContactConversation from "../../contact/conversation/BContactConversatio
 import SDataIteratorToolbar from "../../../ui/toolbar/SDataIteratorToolbar.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BContactsList",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin, DateMixin],
 
   components: {
     ULoadingEllipsis,

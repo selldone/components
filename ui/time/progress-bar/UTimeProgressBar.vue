@@ -80,9 +80,11 @@
 
 <script lang="ts">
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "UTimeProgressBar",
+  mixins: [DateMixin],
 
   props: {
     createdTime: {},
@@ -133,16 +135,16 @@ export default {
 
     start() {
       if (!this.startTime) return null;
-      return this.convertToLocalTime(this.startTime).getTime();
+      return DateConverter.convertToLocalTime(this.startTime).getTime();
     },
 
     end() {
       if (!this.endTime) return null;
-      return this.convertToLocalTime(this.endTime).getTime();
+      return DateConverter.convertToLocalTime(this.endTime).getTime();
     },
     created_at() {
       if (!this.createdTime) return null;
-      return this.convertToLocalTime(this.createdTime).getTime();
+      return DateConverter.convertToLocalTime(this.createdTime).getTime();
     },
 
     passed_percent() {
@@ -161,8 +163,8 @@ export default {
     inBetween() {
       return DateConverter.inBetweenDates(
         new Date(),
-        this.convertToLocalTime(this.startTime),
-        this.convertToLocalTime(this.endTime),
+        DateConverter.convertToLocalTime(this.startTime),
+        DateConverter.convertToLocalTime(this.endTime),
       );
     },
   },

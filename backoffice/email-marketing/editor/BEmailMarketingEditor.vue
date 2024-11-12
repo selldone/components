@@ -719,7 +719,7 @@
                 <!-- ================= Add Sections ================= -->
                 <div class="hed-line center-absolute"></div>
                 <p class="hed center-absolute">
-                  <v-icon >keyboard_arrow_down</v-icon>
+                  <v-icon>keyboard_arrow_down</v-icon>
                   Add
                 </p>
                 <div class="overflow-auto d-flex justify-center">
@@ -1434,11 +1434,12 @@ import { InlineEditorMixin } from "../../../mixin/InlineEditorMixin";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import BEmailMarketingEditorSection from "../../email-marketing/editor/section/BEmailMarketingEditorSection.vue";
 import { EmailOptionsHelper } from "./section/options/EmailOptionsHelper.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 var WebFont = require("webfontloader");
 export default {
   name: "BEmailMarketingEditor",
-  mixins: [InlineEditorMixin],
+  mixins: [InlineEditorMixin, DateMixin],
 
   components: {
     BEmailMarketingEditorSection,

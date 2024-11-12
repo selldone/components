@@ -77,10 +77,11 @@
 <script lang="ts">
 import UButtonWhatsapp from "../../../ui/button/whatsapp/UButtonWhatsapp.vue";
 import { RouteMixin } from "../../../mixin/RouteMixin";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BUserBox",
-  mixins: [RouteMixin],
+  mixins: [RouteMixin,DateMixin],
 
   components: { UButtonWhatsapp },
   props: {

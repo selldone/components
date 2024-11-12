@@ -859,10 +859,11 @@ import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
 import { Basket, ShopOptionsHelper } from "@selldone/core-js";
 import BTransportationServiceLabels from "@selldone/components-vue/backoffice/transportation/service/labels/BTransportationServiceLabels.vue";
 import {BEventBusMixin} from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderDashboardDelivery",
-  mixins:[BEventBusMixin],
+  mixins:[BEventBusMixin,DateMixin],
   components: {
     UMapImage,
     UMapView,

@@ -105,7 +105,9 @@
               <span> {{ item.product.warranty }}</span>
             </v-tooltip>
           </p>
-          <small class="m-0"> {{ item.product.title_en?.limitWords(32) }}</small>
+          <small class="m-0">
+            {{ item.product.title_en?.limitWords(32) }}</small
+          >
 
           <variant-item-view-micro
             v-if="item.variant"
@@ -223,9 +225,9 @@
             (!item.return_request || item.return_request.state === 'Pending')
           "
           :size="
-            item.return_request &&
-            item.return_request.state === 'Pending' ?
-            'small':undefined
+            item.return_request && item.return_request.state === 'Pending'
+              ? 'small'
+              : undefined
           "
           color="red"
           rounded
@@ -251,7 +253,14 @@
 
     <!-- -------------------------- Return request-------------------------- -->
 
-    <v-bottom-sheet v-model="bottom_sheet" width="98vw" max-width="840" persistent scrollable content-class="rounded-t-xl">
+    <v-bottom-sheet
+      v-model="bottom_sheet"
+      width="98vw"
+      max-width="840"
+      persistent
+      scrollable
+      content-class="rounded-t-xl"
+    >
       <s-shop-basket-item-return-form
         v-if="selected_item"
         :basket-item="selected_item"
@@ -358,9 +367,11 @@ import BasketItemUserMessageForm from "../../../storefront/order/product-input/B
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
 import { BasketItemReturn } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SShopBasketItemsList",
+  mixins: [DateMixin],
   components: {
     SProductSectionValuation,
     BasketItemUserMessageForm,
@@ -411,7 +422,7 @@ export default {
     },
 
     headers() {
-     const out= [
+      const out = [
         {
           title: "",
           align: "start",
@@ -453,7 +464,7 @@ export default {
         },
       ];
 
-      if (this.isPhysical ) {
+      if (this.isPhysical) {
         out.push({
           text: this.$t("order_page.basket_items.table.returned"),
           align: "center",

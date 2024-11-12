@@ -132,9 +132,11 @@ ${affiliate.name}
 import { defineComponent } from "vue";
 import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import UTextValueDashed from "../../../ui/text/value-dashed/UTextValueDashed.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default defineComponent({
   name: "BAffiliateCard",
+  mixins: [DateMixin],
   components: { UTextValueDashed, ProductsDenseImagesCircles },
   props: {
     affiliate: {

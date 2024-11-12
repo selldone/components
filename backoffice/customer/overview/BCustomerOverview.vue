@@ -677,14 +677,15 @@ import BCustomerSegmentDialog from "../../customer/segment/dialog/BCustomerSegme
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import { URLHelper } from "@selldone/core-js/helper/url/URLHelper";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
-import BOrderButton from "@selldone/components-vue/backoffice/order/button/BOrderButton.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BCustomerOverview",
+  mixins: [DateMixin],
+
   components: {
     ULoadingEllipsis,
-    BOrderButton,
     UCurrencyIcon,
     USmartMenu,
     BCustomerSegmentDialog,

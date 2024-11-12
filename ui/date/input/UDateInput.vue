@@ -156,9 +156,11 @@
 
 <script lang="ts">
 import UTimeInput from "../../../ui/time/input/UTimeInput.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "UDateInput",
+  mixins: [DateMixin],
   components: { UTimeInput },
   emits: ["update:modelValue", "change", "enter", "click:clear"],
   props: {

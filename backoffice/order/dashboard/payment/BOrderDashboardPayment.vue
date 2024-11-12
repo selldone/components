@@ -804,9 +804,12 @@ import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionSt
 import BOrderPaymentTable from "../../../order/payment/table/BOrderPaymentTable.vue";
 import UChartSankey from "../../../../ui/chart/sankey/UChartSankey.vue";
 import { Basket, Bill } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderDashboardPayment",
+  mixins: [DateMixin],
+
   components: {
     UChartSankey,
     BOrderPaymentTable,

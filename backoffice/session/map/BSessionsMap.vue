@@ -249,9 +249,13 @@ import UTimeSpan from "../../../ui/time/span/UTimeSpan.vue";
 import BSessionDevicesPie from "../../session/devices/pie/BSessionDevicesPie.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import { Analytics } from "@selldone/core-js";
+import { CountriesResourceHelper } from "@selldone/components-vue/utils/country/CountriesResourceHelper.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BSessionsMap",
+  mixins: [DateMixin],
+
   components: {
     USmartToggle,
     BSessionDevicesPie,
@@ -410,7 +414,7 @@ export default {
     },
   },
   created() {
-    this.fetchCountries();
+    CountriesResourceHelper.FetchCountries(this);
 
     if (this.externalFeed) this.timeSeries = this.externalTimeSeries;
   },

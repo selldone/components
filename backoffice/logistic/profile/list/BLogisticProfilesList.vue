@@ -112,9 +112,11 @@
 <script lang="ts">
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import { throttle } from "lodash-es";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BLogisticProfilesList",
+  mixins: [DateMixin],
   components: {},
   props: {
     shop: {

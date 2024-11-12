@@ -163,9 +163,12 @@ import { SetupService } from "@selldone/core-js/server/SetupService";
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import UTextValueBox from "../../ui/text/value-box/UTextValueBox.vue";
 import { EventBus } from "@selldone/core-js/events/EventBus";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "CommunityUserProfileDialog",
+  mixins: [DateMixin],
+
   components: { UTextValueBox, UDenseCirclesUsers },
   props: {
     community: {

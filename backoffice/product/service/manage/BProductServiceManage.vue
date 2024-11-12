@@ -219,9 +219,11 @@ import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UTimePicker from "../../../../ui/time/picker/UTimePicker.vue";
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductServiceManage",
+  mixins: [DateMixin],
   components: {
     USmartSelect,
     UTimePicker,

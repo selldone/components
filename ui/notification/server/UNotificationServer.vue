@@ -69,6 +69,7 @@
 <script lang="ts">
 import UTimeLaps from "../../../ui/time/lapse/UTimeLaps.vue";
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
+import { DateConverter } from "@selldone/core-js";
 
 export default {
   name: "UNotificationServer",
@@ -95,7 +96,7 @@ export default {
       return (
         this.notification &&
         this.notification.end_at &&
-        this.convertToLocalTime(this.notification.end_at)
+        DateConverter.convertToLocalTime(this.notification.end_at)
       );
     },
     action_text() {

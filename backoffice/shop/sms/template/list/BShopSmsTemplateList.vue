@@ -376,9 +376,12 @@ import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";
 import { throttle } from "lodash-es";
 import FrameView from "../../../../../ui/mockup/frame/FrameView.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BShopSmsTemplateList",
+  mixins: [DateMixin],
+
   components: {
     UWidgetHeader,
     UPodWire,

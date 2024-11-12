@@ -119,9 +119,12 @@
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import UChartFunnel from "../../../../ui/chart/funnel/UChartFunnel.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductInventoryAbstractView",
+  mixins: [DateMixin],
+
   components: { UChartFunnel, SWidgetBox },
   props: {
     product: {

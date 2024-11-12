@@ -184,9 +184,12 @@ import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
 import { Connect } from "@selldone/core-js";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderConnectItem",
+  mixins: [DateMixin],
+
   components: {
     UAvatarFolder,
     USmartMenu,

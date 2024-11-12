@@ -195,9 +195,11 @@ import SShopAvocadoCustomerOrderItems from "./SShopAvocadoCustomerOrderItems.vue
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import SShopCustomerReceiverInfoWidget from "../delivery/SShopCustomerReceiverInfoWidget.vue";
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SStorefrontAvocadoCustomerOrderForm",
+  mixins: [DateMixin],
   components: {
     UCurrencyInput,
     SShopCustomerReceiverInfoWidget,

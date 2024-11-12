@@ -126,9 +126,12 @@
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import UTextValueBox from "../../../ui/text/value-box/UTextValueBox.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BDomainSetting",
+  mixins: [DateMixin],
+
   components: { USmartSwitch, UTextValueBox },
   props: {
     shop: {

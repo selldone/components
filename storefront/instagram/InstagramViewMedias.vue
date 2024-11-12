@@ -511,10 +511,11 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { delay, throttle } from "lodash-es";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "InstagramViewMedias",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin,DateMixin],
   components: {
     ULoadingEllipsis,
     UCurrencyInput,

@@ -135,9 +135,11 @@
 <script lang="ts">
 import BVendorPayoutPods from "../../../../vendor/payout/pods/BVendorPayoutPods.vue";
 import { throttle } from "lodash-es";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BVendorAccountTransactionsList",
+  mixins: [DateMixin],
   components: { BVendorPayoutPods },
 
   props: {

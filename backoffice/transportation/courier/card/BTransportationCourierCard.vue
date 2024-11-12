@@ -143,9 +143,11 @@
 import { defineComponent } from "vue";
 import UChartRadialBar from "../../../../ui/chart/radial/bar/UChartRadialBar.vue";
 import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default defineComponent({
   name: "BTransportationCourierCard",
+  mixins: [DateMixin],
   components: { USmartToggle, UChartRadialBar },
   props: {
     courier: {

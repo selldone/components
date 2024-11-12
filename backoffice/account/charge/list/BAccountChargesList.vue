@@ -167,9 +167,11 @@ import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import UPaymentRiskIndicator from "../../../../ui/payment/risk/indicator/UPaymentRiskIndicator.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BAccountChargesList",
+  mixins: [DateMixin],
   components: {
     UCurrencyIcon,
     UTextValueDashed,

@@ -363,9 +363,11 @@ import ProductsDenseImagesCircles from "../../../../storefront/product/products-
 import BTransportationServiceRate from "../../../transportation/service/rate/BTransportationServiceRate.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import UMapGeoButton from "@selldone/components-vue/ui/map/geo-button/UMapGeoButton.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BTransportationServiceOrders",
+  mixins: [DateMixin],
   components: {
     UMapGeoButton,
     BTransportationServiceRate,

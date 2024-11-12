@@ -249,9 +249,11 @@ import CircleImage from "../../../../ui/image/CircleImage.vue";
 import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import { BasketItemReturn } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SOrderBasketReturn",
+  mixins: [DateMixin],
   components: {
     UTextValueDashed,
     VariantItemViewMicro,

@@ -306,10 +306,11 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { Basket } from "@selldone/core-js";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderDashboardServiceLocation",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin, DateMixin],
   components: {
     UMapView,
     SOrderBillCard,

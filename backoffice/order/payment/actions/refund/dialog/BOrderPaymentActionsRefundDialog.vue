@@ -133,9 +133,11 @@ import { defineComponent } from "vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import UPriceInput from "@selldone/components-vue/ui/price/input/UPriceInput.vue";
 import USmartVerify from "@selldone/components-vue/ui/smart/verify/USmartVerify.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default defineComponent({
   name: "BOrderPaymentActionsRefundDialog",
+  mixins: [DateMixin],
   components: { USmartVerify, UPriceInput, UPrice },
   emits: ["update:modelValue", "payment-refunded"],
   props: {

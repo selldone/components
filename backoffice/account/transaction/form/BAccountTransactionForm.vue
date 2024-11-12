@@ -419,9 +419,11 @@ import UPodsPanel from "../../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../../ui/pod/node/UPodNode.vue";
 import { throttle } from "lodash-es";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BAccountTransactionForm",
+  mixins: [DateMixin],
   components: {
     SWidgetButtons,
     UPodNode,

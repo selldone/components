@@ -313,9 +313,11 @@
 <script lang="ts">
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import SShippingRate from "../../../storefront/order/delivery/SShippingRate.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "DeliveryTimeline",
+  mixins: [DateMixin],
   components: { SShippingRate },
   emits: ["click:refresh-service"],
   props: {

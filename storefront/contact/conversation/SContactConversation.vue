@@ -254,6 +254,7 @@ import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory
 import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 import SProductPreviewById from "../../../storefront/product/preview-by-id/SProductPreviewById.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 /**
  * <s-contact-conversation>
@@ -261,6 +262,8 @@ import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper
 
 export default {
   name: "SContactConversation",
+  mixins: [DateMixin],
+
   components: { SProductPreviewById, URatingEmoji },
   inject: ["$shop"],
   props: {

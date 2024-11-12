@@ -152,9 +152,11 @@ import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
 import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
 import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderDashboardDropshippingDelivery",
+  mixins: [DateMixin],
   components: {
     UMapView,
     UMapImage,

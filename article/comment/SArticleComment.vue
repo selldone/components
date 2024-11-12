@@ -271,9 +271,11 @@
 <script lang="ts">
 import URatingBar from "../../ui/rating/bar/URatingBar.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SArticleComment",
+  mixins: [DateMixin],
   components: { URatingBar },
   props: {
     comment: {

@@ -162,9 +162,11 @@ import {
   FORM_BUILDER_TAGS,
   SmartConvertTextToHtml,
 } from "@selldone/core-js/helper/html/HtmlHelper";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SBasketProductInputs",
+  mixins: [DateMixin],
   components: { USmartSwitch },
 
   emits: ["update:modelValue", "update:files", "onDeleteFile"],

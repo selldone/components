@@ -323,9 +323,12 @@ import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense";
 import BShopLicenseSubscriptionDetail from "../../../shop/license/subscription/detail/BShopLicenseSubscriptionDetail.vue";
 
 import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BShopLicenseManagement",
+  mixins: [DateMixin],
+
   components: {
     USmartToggle,
 

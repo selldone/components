@@ -163,9 +163,11 @@
 <script lang="ts">
 import UTextValueDashed from "../../ui/text/value-dashed/UTextValueDashed.vue";
 import { Article } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SArticlesTimeline",
+  mixins: [DateMixin],
   components: { UTextValueDashed },
   props: {
     shopId: {

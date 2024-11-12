@@ -70,9 +70,12 @@
 
 <script lang="ts">
 import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BVendorPayoutBankInfo",
+  mixins: [DateMixin],
+
   components: { UTextValueBox },
   props: {
     vendor: {

@@ -259,9 +259,11 @@
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
 import UButtonShareGroup from "../../../ui/button/share/group/UButtonShareGroup.vue";
 import { throttle } from "lodash-es";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SInviteFriends",
+  mixins: [DateMixin],
   components: { UButtonShareGroup },
   emits: ["update:dialog"],
   props: {

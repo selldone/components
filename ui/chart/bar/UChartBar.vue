@@ -133,9 +133,12 @@
 <script lang="ts">
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "UChartBar",
+  mixins: [DateMixin],
+
   components: { UFadeScroll },
   props: {
     startDate: {},

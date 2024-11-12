@@ -273,7 +273,6 @@ export default {
       const today = new Date(date);
       //const checkout_date = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11, 0, 0);
 
-      //this.convertToLocalTime(event.start)
 
       return this.events.some((event) => {
         const found = DateConverter.InSameDay(event.end, today);

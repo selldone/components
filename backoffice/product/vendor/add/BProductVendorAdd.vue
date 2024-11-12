@@ -843,8 +843,8 @@ export default {
         (this.dis_start || this.dis_end) &&
         !DateConverter.inBetweenDates(
           new Date(),
-          this.convertToLocalTime(this.dis_start),
-          this.convertToLocalTime(this.dis_end),
+          DateConverter.convertToLocalTime(this.dis_start),
+          DateConverter.convertToLocalTime(this.dis_end),
         )
       );
     },

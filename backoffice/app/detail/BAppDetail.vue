@@ -479,9 +479,12 @@ import BAppComments from "../comments/BAppComments.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import BAppDetailGallery from "../../app/detail/gallery/BAppDetailGallery.vue";
 import { Application } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BAppDetail",
+  mixins: [DateMixin],
+
   components: { BAppDetailGallery, BAppComments },
   props: {
     shopId: {}, // Optional

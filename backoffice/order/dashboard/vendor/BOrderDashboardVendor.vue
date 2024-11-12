@@ -535,9 +535,12 @@ import {
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import UCountDown from "@selldone/components-vue/ui/count-down/UCountDown.vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderDashboardVendor",
+  mixins: [DateMixin],
+
   components: {
     UFadeScroll,
     UCountDown,

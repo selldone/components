@@ -33,7 +33,7 @@
 
       <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
       <s-header-section-drawer-menu
-        v-if="isMobile || is_standalone"
+        v-if="isMobile || isStandalone"
       ></s-header-section-drawer-menu>
 
       <s-header-section-logo class="mx-1"></s-header-section-logo>
@@ -67,7 +67,7 @@ import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin
 
 export default {
   name: "SHeaderSection",
-  mixins:[TemplateMixin],
+  mixins: [TemplateMixin],
   components: {
     SHeaderSectionUser,
     SHeaderSectionButtons,
@@ -91,8 +91,6 @@ export default {
   }),
 
   computed: {
-
-
     user() {
       return this.$store.getters.getUser;
     },

@@ -708,9 +708,12 @@ import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionSt
 import { Basket, Bill, PriceHelper } from "@selldone/core-js";
 import SOrderPaymentRowWallet from "@selldone/components-vue/storefront/order/payment/rows/SOrderPaymentRowWallet.vue";
 import SOrderPaymentRowCashback from "@selldone/components-vue/storefront/order/payment/rows/SOrderPaymentRowCashback.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",
+  mixins: [DateMixin],
+
   components: {
     SOrderPaymentRowCashback,
     SOrderPaymentRowWallet,

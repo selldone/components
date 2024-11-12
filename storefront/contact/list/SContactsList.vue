@@ -299,13 +299,14 @@ import { throttle } from "lodash-es";
 import SDataIteratorToolbar from "../../../ui/toolbar/SDataIteratorToolbar.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 /**
  * <s-contacts-list>
  */
 export default {
   name: "SContactsList",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin,DateMixin],
 
   components: {
     ULoadingEllipsis,

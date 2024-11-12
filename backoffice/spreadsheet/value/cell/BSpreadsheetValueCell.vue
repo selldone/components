@@ -259,9 +259,11 @@
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
 import UColorSelector from "../../../../ui/color/selector/UColorSelector.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BSpreadsheetValueCell",
+  mixins: [DateMixin],
   components: {
     UColorCircle,
     UColorSelector,

@@ -504,9 +504,12 @@ import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper
 import FinanceInlineChart from "../../../chart/FinanceInlineChart.vue";
 import SChartFunnelData from "../../../chart/funnel/data/SChartFunnelData.vue";
 import SChartFunnelFinance from "../../../chart/funnel/finance/SChartFunnelFinance.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BDashboardShopFinance",
+  mixins: [DateMixin],
+
   components: {
     BDashboardShopPerformanceOrders,
     BDashboardShopPerformancePayments,

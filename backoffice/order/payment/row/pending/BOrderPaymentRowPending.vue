@@ -142,9 +142,11 @@
 
 <script lang="ts">
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderPaymentRowPending",
+  mixins: [DateMixin],
   props: {
     transaction: {
       require: true,

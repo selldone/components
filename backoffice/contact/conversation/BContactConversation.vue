@@ -289,12 +289,14 @@ import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 import BProductsSelectBox from "../../../backoffice/product/select-box/BProductsSelectBox.vue";
 import SProductPreviewById from "../../../storefront/product/preview-by-id/SProductPreviewById.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 /**
  * <b-contact-conversation>
  */
 export default {
   name: "BContactConversation",
+  mixins: [DateMixin],
   components: { SProductPreviewById, BProductsSelectBox, URatingEmoji },
   props: {
     shop: {

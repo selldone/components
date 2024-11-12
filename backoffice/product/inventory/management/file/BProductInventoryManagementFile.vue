@@ -421,9 +421,11 @@ import { throttle } from "lodash-es";
 import USparkline from "../../../../../ui/chart/sparkline/USparkline.vue";
 import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
 import { defineAsyncComponent } from "vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductInventoryManagementFile",
+  mixins: [DateMixin],
   components: {
     FilePond: FilePondLoader.loadFilePondComponent(),
 

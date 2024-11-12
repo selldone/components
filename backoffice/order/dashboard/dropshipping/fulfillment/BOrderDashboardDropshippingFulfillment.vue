@@ -202,9 +202,11 @@
 import BOrderCart from "../../../cart/BOrderCart.vue";
 import SOrderDeliveryStatusStepper from "../../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import { Basket } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderDashboardDropshippingFulfillment",
+  mixins: [DateMixin],
   components: { SOrderDeliveryStatusStepper, BOrderCart },
   props: {
     shop: {

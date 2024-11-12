@@ -61,8 +61,12 @@
 </template>
 
 <script lang="ts">
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+
 export default {
   name: "BNoteButton",
+  mixins: [DateMixin],
+
   props: {
     note: {},
     activeColor: { default: "orange" },

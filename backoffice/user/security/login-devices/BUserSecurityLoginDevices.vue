@@ -94,8 +94,12 @@
 </template>
 
 <script lang="ts">
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+
 export default {
   name: "BUserSecurityLoginDevices",
+  mixins: [DateMixin],
+
   components: {},
   props: {},
   data: () => ({

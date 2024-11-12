@@ -59,7 +59,22 @@ const TemplateMixin = {
     isMobile() {
       return this.$vuetify.display.smAndDown;
     },
+
+    isStandalone() {
+      // Detects if device is in standalone mode
+      const isInWebAppiOS = window.navigator.standalone === true;
+
+      let isInWebAppChrome = false;
+      try {
+        isInWebAppChrome = window.matchMedia(
+            "(display-mode: standalone)",
+        ).matches;
+      } catch (e) {}
+
+      return isInWebAppiOS || isInWebAppChrome;
     },
+
+  },
 };
 
 export default TemplateMixin;

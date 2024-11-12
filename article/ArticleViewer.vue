@@ -86,7 +86,12 @@
             <v-icon size="24">edit</v-icon>
             <div class="x-small mt-1 tnt">{{ $t("global.actions.edit") }}</div>
 
-            <v-tooltip activator="parent" location="top" max-width="360" aria-label="switch to edit mode">
+            <v-tooltip
+              activator="parent"
+              location="top"
+              max-width="360"
+              aria-label="switch to edit mode"
+            >
               <b>{{ $t("global.article.menu.edit") }}</b>
               <div>Click to edit article.</div>
             </v-tooltip>
@@ -1033,9 +1038,11 @@ import UButtonAiSmall from "../ui/button/ai/small/UButtonAiSmall.vue";
 import { delay } from "lodash-es";
 import SArticleAuthorBox from "../article/author/box/SArticleAuthorBox.vue";
 import { Article } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "ArticleViewer",
+  mixins: [DateMixin],
   components: {
     SArticleAuthorBox,
 

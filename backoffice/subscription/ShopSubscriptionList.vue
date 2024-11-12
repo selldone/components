@@ -482,9 +482,12 @@ import UTextValueDashed from "../../ui/text/value-dashed/UTextValueDashed.vue";
 import USmartSelect from "../../ui/smart/select/USmartSelect.vue";
 import USmartToggle from "../../ui/smart/toggle/USmartToggle.vue";
 import USmartVerify from "../../ui/smart/verify/USmartVerify.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "ShopSubscriptionList",
+  mixins: [DateMixin],
+
   components: {
     USmartVerify,
     USmartToggle,

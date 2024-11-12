@@ -37,9 +37,11 @@
 <script lang="ts">
 import numeral from "numeral";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "TimeSeriesInlineChart",
+  mixins: [DateMixin],
   props: {
     timeSeries: {
       required: true,

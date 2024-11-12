@@ -119,10 +119,11 @@
 <script lang="ts">
 import threads from "@selldone/core-js/utils/thread/threads";
 import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductsImporterProducts",
-
+  mixins: [DateMixin],
   props: {
     shop: {
       require: true,

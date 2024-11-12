@@ -211,9 +211,12 @@
 <script lang="ts">
 import { ShopPermissions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import ExpertContractView from "../../../expert/contract/ExpertContractView.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BDashboardShopExpert",
+  mixins: [DateMixin],
+
   components: { ExpertContractView },
   props: {
     shop: {

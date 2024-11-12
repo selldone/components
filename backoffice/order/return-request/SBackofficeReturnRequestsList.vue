@@ -147,9 +147,11 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BOrderButton from "../../order/button/BOrderButton.vue";
 import { BasketItemReturn } from "@selldone/core-js";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SBackofficeReturnRequestsList",
+  mixins: [DateMixin],
   components: { UAvatarFolder, BOrderButton, VariantItemViewMicro },
   props: {
     url: {

@@ -82,9 +82,12 @@
 import TimeSeriesInlineChart from "../../../../chart/TimeSeriesInlineChart.vue";
 import UChipChange from "../../../../../ui/chip/change/UChipChange.vue";
 import UCurrencyInput from "../../../../../ui/currency/input/UCurrencyInput.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BDashboardShopPerformancePayments",
+  mixins: [DateMixin],
+
   components: { UCurrencyInput, UChipChange, TimeSeriesInlineChart },
   props: {
     shop: {

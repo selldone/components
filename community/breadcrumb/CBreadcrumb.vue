@@ -616,12 +616,14 @@ import UCountDown from "../../ui/count-down/UCountDown.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import CUserInput from "../../community/user/input/CUserInput.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 /**
  * <c-breadcrumb>
  */
 export default {
   name: "CBreadcrumb",
+  mixins: [DateMixin],
   components: {
     CUserInput,
     UCountDown,

@@ -176,9 +176,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import UChartRadialBar from "../../../../ui/chart/radial/bar/UChartRadialBar.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default defineComponent({
   name: "BTransportationServiceCard",
+  mixins: [DateMixin],
   components: { UChartRadialBar },
   props: {
     service: {

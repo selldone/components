@@ -597,10 +597,11 @@ import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
 import { UMixinConfetti } from "@selldone/components-vue/mixin/confetti/UMixinConfetti.ts";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BShopAdd",
-  mixins: [UMixinConfetti, TemplateMixin],
+  mixins: [UMixinConfetti, TemplateMixin, DateMixin],
   components: {
     UMapView,
     UWidgetHeader,

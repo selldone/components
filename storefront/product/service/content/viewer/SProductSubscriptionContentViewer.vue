@@ -139,9 +139,12 @@
 import SShopProductFilesList from "../../../../../storefront/product/file/SShopProductFilesList.vue";
 import SFilesGroup from "../../../../../ui/file/group/SFilesGroup.vue";
 import { throttle } from "lodash-es";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SProductSubscriptionContentViewer",
+  mixins: [DateMixin],
+
   components: { SFilesGroup, SShopProductFilesList },
   props: {
     product: {

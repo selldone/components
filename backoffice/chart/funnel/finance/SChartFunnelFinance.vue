@@ -121,9 +121,11 @@ import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
 import UChartFunnel from "../../../../ui/chart/funnel/UChartFunnel.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SChartFunnelFinance",
+  mixins: [DateMixin],
   components: { UChartFunnel, UCurrencyIcon },
   props: {
     shop: {

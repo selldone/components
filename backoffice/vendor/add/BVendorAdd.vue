@@ -1167,9 +1167,11 @@ import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox
 import { ShopURLs } from "@selldone/core-js";
 import LAugmentForm from "@selldone/page-builder/components/augment/form/LAugmentForm.vue";
 import BInventoryWarehouse from "@selldone/components-vue/backoffice/inventory/warehouse/BInventoryWarehouse.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BVendorAdd",
+  mixins: [DateMixin],
   components: {
     BInventoryWarehouse,
     LAugmentForm,

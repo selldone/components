@@ -49,9 +49,12 @@
 import { defineComponent } from "vue";
 import * as d3 from "d3";
 import eventDrops from "./core";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default defineComponent({
   name: "UChartEventDrops",
+  mixins: [DateMixin],
+
   props: {
     dataset: {
       /**

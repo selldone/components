@@ -402,9 +402,11 @@ import BProductVariantItem from "../../../../product/variants/item/BProductVaria
 import VariantItemViewMicro from "../../../../../storefront/product/variant/VariantItemViewMicro.vue";
 import USmartMenu from "../../../../../ui/smart/menu/USmartMenu.vue";
 import BProductVirtualItemAdd from "../../../../product/virtual/item/add/BProductVirtualItemAdd.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductInventoryManagementVirtual",
+  mixins: [DateMixin],
   components: {
     BProductVirtualItemAdd,
     USmartMenu,

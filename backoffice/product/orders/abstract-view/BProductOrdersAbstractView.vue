@@ -75,10 +75,11 @@ import OrdersQue from "../../../order-que/OrdersQue.vue";
 import TimeSeriesInlineChart from "../../../chart/TimeSeriesInlineChart.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductOrdersAbstractView",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin,DateMixin],
 
   components: { TimeSeriesInlineChart, OrdersQue, SWidgetBox },
   props: {

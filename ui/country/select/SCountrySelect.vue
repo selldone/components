@@ -100,6 +100,8 @@
 </template>
 
 <script lang="ts">
+import { CountriesResourceHelper } from "@selldone/components-vue/utils/country/CountriesResourceHelper.ts";
+
 export default {
   name: "SCountrySelect",
   emits: ["change", "update:modelValue"],
@@ -244,7 +246,7 @@ export default {
   created() {
     if (!this.countries || !this.countries.length) {
       this.loading = true;
-      this.fetchCountries(() => {
+      CountriesResourceHelper.FetchCountries(this, () => {
         this.loading = false;
       });
     } else {

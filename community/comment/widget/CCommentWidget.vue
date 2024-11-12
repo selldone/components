@@ -57,9 +57,12 @@
 <script lang="ts">
 import CCommentsList from "../list/CCommentsList.vue";
 import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "CCommentWidget",
+  mixins: [DateMixin],
+
   components: { CCommentsList },
   props: {
     community: {

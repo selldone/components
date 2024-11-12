@@ -63,8 +63,8 @@ export default defineComponent({
     inBetween() {
       return DateConverter.inBetweenDates(
         new Date(),
-        this.convertToLocalTime(this.start),
-        this.convertToLocalTime(this.end),
+        DateConverter.convertToLocalTime(this.start),
+        DateConverter.convertToLocalTime(this.end),
       );
     },
 

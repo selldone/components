@@ -203,10 +203,12 @@ import {
   PermissionLevels,
   PermissionNames,
 } from "@selldone/core-js/enums/admin";
-import {SetupService} from "@selldone/core-js/server";
+import { SetupService } from "@selldone/core-js/server";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default defineComponent({
   name: "SArticleAuthorBox",
+  mixins: [DateMixin],
   components: { AFeedbackContentViolationReport },
   props: {
     article: {

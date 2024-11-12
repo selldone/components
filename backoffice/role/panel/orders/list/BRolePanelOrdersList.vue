@@ -152,9 +152,11 @@ import ReturnRequestButtonBadge from "../../../../../storefront/order/order-retu
 import SOrderStatusView from "../../../../../storefront/order/order-status/SOrderStatusView.vue";
 import { Basket } from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BRolePanelOrdersList",
+  mixins: [DateMixin],
   components: {
     ULoadingEllipsis,
     SOrderStatusView,

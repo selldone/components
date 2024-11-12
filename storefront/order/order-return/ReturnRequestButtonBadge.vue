@@ -97,9 +97,12 @@
 
 <script lang="ts">
 import { BasketItemReturn } from "@selldone/core-js";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "ReturnRequestButtonBadge",
+  mixins: [DateMixin],
+
   props: {
     basketItemReturns: {
       require: true,

@@ -399,9 +399,11 @@ import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants
 import { UploadHelper } from "@selldone/core-js/helper/upload/UploadHelper";
 import UAvatarFolder from "../../../../ui/avatar/folder/UAvatarFolder.vue";
 import UCube from "../../../../ui/cube/UCube.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductVariantItem",
+  mixins: [DateMixin],
   components: {
     UCube,
     UAvatarFolder,
