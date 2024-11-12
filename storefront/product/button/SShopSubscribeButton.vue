@@ -88,7 +88,6 @@
                   <v-btn
                     class="-delivery-btn"
                     color="#03A9F4"
-
                     rounded
                     size="x-large"
                     @click="showMapSelect"
@@ -168,7 +167,6 @@
                 :class="{ disabled: !can_subscribe }"
                 :color="default_color"
                 :loading="busy_subscribe"
-
                 height="82"
                 size="x-large"
                 @click="subscribeNow"
@@ -210,9 +208,12 @@ import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import SShopBillingAddressForm from "../../../storefront/order/billing/SShopBillingAddressForm.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { RibbonHelper } from "@selldone/core-js/helper/ribbon/RibbonHelper";
+import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "SShopSubscribeButton",
+  mixins: [MapMixin, AuthMixin],
   components: {
     UNumberInput,
     SShopBillingAddressForm,

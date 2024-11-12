@@ -400,10 +400,11 @@ import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHead
 import BShopCustomerBox from "@selldone/components-vue/backoffice/customer/box/BShopCustomerBox.vue";
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 
 export default {
   name: "BOrderDashboard",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin, MapMixin],
   components: {
     USmartSwitch,
     BShopCustomerBox,
@@ -454,7 +455,6 @@ export default {
 
       ProductType: ProductType,
 
-      PhysicalOrderStates: Basket.PhysicalOrderStates,
       center: { lat: 0, lng: 0 },
       location: null,
 

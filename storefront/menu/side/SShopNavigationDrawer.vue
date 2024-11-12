@@ -266,9 +266,12 @@ import MenuCategories from "../../../storefront/menu/header/MenuCategories.vue";
 import UCurrencySelector from "../../../ui/currency/selector/UCurrencySelector.vue";
 import SLanguageSelector from "../../../storefront/language/selector/SLanguageSelector.vue";
 import SStorefrontSocialButtons from "../../../storefront/social/SStorefrontSocialButtons.vue";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "SShopNavigationDrawer",
+  mixins: [AuthMixin],
+
   emits: ["update:modelValue"],
   components: {
     SLanguageSelector,

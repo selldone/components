@@ -230,9 +230,11 @@ import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import BMapTagProducts from "../../../map/tag/products/BMapTagProducts.vue";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
+import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 
 export default {
   name: "BMapTagAdd",
+  mixins: [MapMixin],
 
   components: {
     USmartSuggestion,

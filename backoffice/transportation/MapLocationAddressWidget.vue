@@ -191,11 +191,13 @@
 import UMapGeoButton from "../../ui/map/geo-button/UMapGeoButton.vue";
 import BOrderButtonBasket from "../order/button/basket/BOrderButtonBasket.vue";
 import { Basket } from "@selldone/core-js";
-import BOrderButton from "@selldone/components-vue/backoffice/order/button/BOrderButton.vue";
+import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 
 export default {
   name: "MapLocationAddressWidget",
-  components: { BOrderButton, BOrderButtonBasket, UMapGeoButton },
+  mixins: [MapMixin],
+
+  components: { BOrderButtonBasket, UMapGeoButton },
   props: {
     isOrigin: {
       required: false,

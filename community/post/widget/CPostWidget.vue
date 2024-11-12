@@ -352,10 +352,12 @@ import CAttachViewer from "../../../community/attach/viewer/CAttachViewer.vue";
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
 import { CommunityPostReaction } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
 export default {
   name: "CPostWidget",
-  mixins: [DateMixin],
+  mixins: [DateMixin, AuthMixin, CommunityMixin],
   components: {
     CAttachViewer,
     CProductView,

@@ -126,10 +126,14 @@ import AFeedbackContentViolationReport from "../../article/feedback/conent-viola
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import { delay } from "lodash-es";
 import { ArticleReport } from "@selldone/core-js";
-import {EventBus} from "@selldone/core-js/events/EventBus";
+import { EventBus } from "@selldone/core-js/events/EventBus";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
 export default {
   name: "CommunityPostActionsMenu",
+  mixins: [AuthMixin, CommunityMixin],
+
   components: { AFeedbackContentViolationReport, CPostEditor },
   props: {
     shop: {},

@@ -381,9 +381,12 @@ import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import { Community } from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "CommunityCategoryPage",
+  mixins: [AuthMixin],
+
   components: {
     ULoadingEllipsis,
     SWidgetButtons,

@@ -66,13 +66,7 @@
 
       <v-col v-if="order.track" cols="12" md="4" sm="6">
         <span>{{ $t("global.commons.track_order") }}:</span>
-        <v-btn
-          :href="order.track"
-          color="blue"
-
-          target="_blank"
-          variant="flat"
-        >
+        <v-btn :href="order.track" color="blue" target="_blank" variant="flat">
           <v-icon class="me-1">gps_fixed</v-icon>
           {{ $t("global.commons.track") }}
         </v-btn>
@@ -98,9 +92,11 @@
 </template>
 
 <script lang="ts">
+import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+
 export default {
   name: "DeliveryOrderWidget",
-
+  mixins: [MapMixin],
   props: {
     order: {
       required: true,

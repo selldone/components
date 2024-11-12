@@ -275,9 +275,11 @@ import CommunityTopicStatistic from "../../../community/topic/CommunityTopicStat
 import { debounce } from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
 export default {
   name: "CommunityTopicPage",
+  mixins: [CommunityMixin],
   components: {
     ULoadingEllipsis,
     CommunityTopicStatistic,

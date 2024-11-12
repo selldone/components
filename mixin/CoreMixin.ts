@@ -13,7 +13,6 @@
  */
 
 import {ProductType} from "@selldone/core-js/enums/product/ProductType";
-import {DateConverter} from "@selldone/core-js/helper/date/DateConverter";
 import type {ICurrency} from "@selldone/core-js/enums/payment/Currency";
 import {Currency} from "@selldone/core-js/enums/payment/Currency";
 import {type ILanguage, Language,} from "@selldone/core-js/enums/language/Language";
@@ -21,50 +20,32 @@ import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense";
 import {FileExtensions} from "@selldone/core-js/enums/file/FileExtensions";
 import {SocialNetwork} from "@selldone/core-js/enums/social/SocialNetwork";
 import {ShopURLs} from "@selldone/core-js/helper/url/ShopURLs";
-import {CurrencyHelper} from "@selldone/core-js/helper/currency/CurrencyHelper.ts";
 import {PriceHelper} from "@selldone/core-js/helper/price/PriceHelper";
 import {GiftStatus} from "@selldone/core-js/enums/wallet/gift/GiftStatus";
 import {GiftStProgramTypes} from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes";
-import {MapHelper} from "@selldone/core-js/helper/map/MapHelper";
 import numeral from "numeral";
-import {debounce} from "lodash-es";
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
 import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
 
 //―――――――――――――――――――――― Country ――――――――――――――――――――
 import {getCountryName} from "@selldone/core-js/models/general/country/country-helper.ts";
 import {Shop} from "@selldone/core-js/models/shop/shop.model";
-import type {ProductVariant} from "@selldone/core-js/models/shop/product/product_variant.model";
-import {Product} from "@selldone/core-js/models/shop/product/product.model";
 import {XapiUser} from "@selldone/sdk-storefront";
-import type {CommunityTopic} from "@selldone/core-js/models/community/community.topic.model";
-import type {CommunityPost} from "@selldone/core-js/models/community/community.post.model";
-import type {CommunityComment} from "@selldone/core-js/models/community/community.comment.model";
 import type {Guild} from "@selldone/core-js/models/guild/guild.model";
 import type {Avocado} from "@selldone/core-js/models/shop/order/avocado/avocado.order";
 import type {ICountryCode} from "@selldone/core-js/models/general/country/country.model.ts";
-import type {BasketItem} from "@selldone/core-js/models/shop/order/basket/basket_item.model";
-import type {gapi} from "@selldone/core-js/gapi/requests/gapi.countries.get";
 import type {User} from "@selldone/core-js/models/user/user.model";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
 import {Slugify} from "@selldone/core-js/utils/slugify/slugify";
 import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
-import {UserProfile} from "@selldone/core-js/models/user/user_profile.model";
-import {Basket, BasketItemReturn, Club, Map, Order, VendorProduct,} from "@selldone/core-js";
+import {Basket, BasketItemReturn, Club, Order,} from "@selldone/core-js";
+import {isString} from "lodash-es";
 
-//――― User Device Preferences ―――
 
-function isString(value: any): value is string {
-  if (!value) return true;
-  return typeof value === "string" || value instanceof String;
-}
 
 const CoreMixin = {
-
-
-
   methods: {
     USER(): Partial<User> | XapiUser.IMeServerResponse | null {
       return this.$store.getters.getUser;
@@ -93,12 +74,6 @@ const CoreMixin = {
         (this.$options?.data as () => Array<any>)?.call(this),
       );
     },
-
-
-
-
-
-
 
     //―――――――――――――――――――――― 🌍 Status ――――――――――――――――――――
 
@@ -537,53 +512,6 @@ const CoreMixin = {
       return out ? out : {};
     },
 
-    //―――――――――――――――――――――― Currency ――――――――――――――――――――
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-
-    /**
-     * Map: Only in Samin!
-     */
-    showMap(
-      center: Map.ILocation,
-      mode: string,
-      location: Order.IReceiverInfo,
-      selectCallback: () => void,
-      viewOnly: boolean = false,
-    ) {
-      EventBus.$emit(EventName.SHOW_MAP, {
-        center,
-        mode,
-        location,
-        selectCallback,
-        viewOnly,
-      });
-    },
-    closeMap() {
-      EventBus.$emit(EventName.HIDE_MAP);
-    },
-
-    generateFullAddress(info_object: Order.IAddress) {
-      return MapHelper.GenerateFullAddressFromMapInfo(info_object);
-    },
-
-    NeedLogin() {
-      EventBus.$emit("need-login", true);
-    },
-
     BlurApp(blur: boolean) {
       EventBus.$emit(EventName.BLUR_APP, blur);
     },
@@ -593,87 +521,6 @@ const CoreMixin = {
     // Fullscreen by animation
     showFullscreen(event: MouseEvent) {
       EventBus.$emit("show:fullscreen", event);
-    },
-
-    //―――――――――――――――――――――― Community global ――――――――――――――――――――
-    showCommunityUserProfile(profile: UserProfile) {
-      EventBus.$emit("community:show-profile", { profile });
-    },
-    showCommunitySharePost(
-      activator: Element,
-      shop: Shop,
-      topic: CommunityTopic,
-      post: CommunityPost,
-    ) {
-      EventBus.$emit("community:share:post", {
-        activator,
-        shop,
-        topic,
-        post,
-      });
-    },
-
-    showCommunityPostReactions(post: CommunityPost, reaction: string) {
-      EventBus.$emit("community:show-post-reactions", { post, reaction });
-    },
-
-    showCommunityPostInsights(post: CommunityPost) {
-      EventBus.$emit("community:show-post-insights", { post });
-    },
-
-    showCommunityPostActionsMenu(
-      activator: Element,
-      topic: CommunityTopic,
-      post: CommunityPost,
-      delete_callback: () => void,
-    ) {
-      EventBus.$emit("community:post-actions-menu", {
-        activator,
-        topic,
-        post,
-        delete_callback,
-      });
-    },
-
-    showCommunityPostReportsMenu(post: CommunityPost) {
-      EventBus.$emit("community:show-post-reports", { post });
-    },
-
-    showCommunityCommentActionsMenu(
-      activator: Element,
-      shop: Shop,
-      post: CommunityPost,
-      comment: CommunityComment,
-      delete_callback: () => void,
-    ) {
-      EventBus.$emit("community:comment-actions-menu", {
-        activator,
-        shop,
-        post,
-        comment,
-        delete_callback,
-      });
-    },
-
-    showCommunityCommentReportsMenu(comment: CommunityComment) {
-      EventBus.$emit("community:show-comment-reports", { comment });
-    },
-    //―――――――――――――――――――――― Community global >Analytics ――――――――――――――――――――
-
-    onCommunityPostImpression(topic: CommunityTopic, post: CommunityPost) {
-      EventBus.$emit("community:analytics:post:impression", {
-        topic,
-        post,
-      });
-    },
-    onCommunityPostShare(topic: CommunityTopic, post: CommunityPost) {
-      EventBus.$emit("community:analytics:post:share", { topic, post });
-    },
-    onCommunityPostEmbed(topic: CommunityTopic, post: CommunityPost) {
-      EventBus.$emit("community:analytics:post:embed", { topic, post });
-    },
-    onCommunityPostView(topic: CommunityTopic, post: CommunityPost) {
-      EventBus.$emit("community:analytics:post:view", { topic, post });
     },
 
     //―――――――――――――――――――――― Guild global ――――――――――――――――――――
@@ -732,8 +579,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                                                                                  PushNotification.AskForPermission();
-                                                                                                },*/
+                                                                                                      PushNotification.AskForPermission();
+                                                                                                    },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 
@@ -751,7 +598,7 @@ const CoreMixin = {
       error: string | { error: true; error_msg: string; code?: number } | any,
     ) {
       if (!error) return;
-      if (this.isString(error)) {
+      if (isString(error)) {
         this.showErrorAlert(
           this.$t("global.notification.error") as string,
           error,
@@ -959,7 +806,7 @@ const CoreMixin = {
 
     getName(val: any) {
       if (!val) return "";
-      if (!this.isString(val)) val = "" + val;
+      if (!isString(val)) val = "" + val;
 
       const str = val
         .replace(/([A-Z])/g, " $1")

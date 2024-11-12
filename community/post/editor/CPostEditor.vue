@@ -681,6 +681,7 @@ import CAttachViewer from "../../../community/attach/viewer/CAttachViewer.vue";
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper.ts";
 import { delay } from "lodash-es";
 import { Community, CommunityTopic } from "@selldone/core-js";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 /**
  * Calculate aspect ratio of element.
@@ -692,6 +693,10 @@ function getAspect(el) {
 }
 
 export default {
+  name: "CPostEditor",
+
+  mixins: [AuthMixin],
+
   components: {
     CAttachViewer,
     CAttachEditor,
@@ -706,8 +711,6 @@ export default {
     UTabsRounded,
     UVoiceBox,
   },
-
-  name: "CPostEditor",
 
   props: {
     community: {
@@ -1030,8 +1033,6 @@ export default {
   },
 
   methods: {
-
-
     purify(message) {
       // Hashtag pages :
       return SmartConvertTextToHtmlHashtags(message, false, true, "/trends");

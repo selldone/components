@@ -100,9 +100,12 @@
 
 <script lang="ts">
 import SStorefrontSocialButtons from "../../../../storefront/social/SStorefrontSocialButtons.vue";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "SProductSectionExtraButtons",
+  mixins: [AuthMixin],
+
   components: { SStorefrontSocialButtons },
   inject: ["$shop", "$product"],
 

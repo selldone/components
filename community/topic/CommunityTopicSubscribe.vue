@@ -80,9 +80,12 @@
 
 <script lang="ts">
 import { CommunityTopic } from "@selldone/core-js";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "CommunityTopicSubscribe",
+  mixins: [AuthMixin],
+
   components: {},
   props: {
     community: {

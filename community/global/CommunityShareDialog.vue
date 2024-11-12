@@ -46,9 +46,11 @@
 import UButtonShareGroup from "../../ui/button/share/group/UButtonShareGroup.vue";
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import { EventBus } from "@selldone/core-js/events/EventBus";
+import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
 export default {
   name: "CommunityShareDialog",
+  mixins: [CommunityMixin],
   components: { UButtonShareGroup },
   props: {
     community: {

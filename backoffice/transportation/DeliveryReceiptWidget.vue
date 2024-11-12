@@ -64,8 +64,11 @@
 </template>
 
 <script lang="ts">
+import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+
 export default {
   name: "DeliveryReceiptWidget",
+  mixins: [MapMixin],
 
   props: {
     pricing: {

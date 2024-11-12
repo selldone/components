@@ -434,10 +434,11 @@ import { TimelineEmailType } from "@selldone/core-js/enums/timeline/TimelineEmai
 import { CampaignLink, Club, Order } from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 
 export default {
   name: "BOrderTimeline",
-  mixins: [DateMixin],
+  mixins: [DateMixin, MapMixin],
 
   components: {
     ULoadingEllipsis,

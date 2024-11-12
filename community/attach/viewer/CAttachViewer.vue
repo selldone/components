@@ -52,8 +52,12 @@
 </template>
 
 <script lang="ts">
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+
 export default {
   name: "CAttachViewer",
+  mixins: [AuthMixin],
+
   components: {},
   props: {
     post: {

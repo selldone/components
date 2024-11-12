@@ -617,13 +617,14 @@ import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import CUserInput from "../../community/user/input/CUserInput.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 /**
  * <c-breadcrumb>
  */
 export default {
   name: "CBreadcrumb",
-  mixins: [DateMixin],
+  mixins: [DateMixin, AuthMixin],
   components: {
     CUserInput,
     UCountDown,

@@ -101,7 +101,7 @@
                 </p>
 
                 <div
-                  v-if=" $shop?.lottery?.enable"
+                  v-if="$shop?.lottery?.enable"
                   class="d-flex align-center pt-2"
                 >
                   <img
@@ -244,10 +244,11 @@
 <script lang="ts">
 import SShopUserMenuList from "@selldone/components-vue/storefront/menu/user/SShopUserMenuList.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "SHeaderSectionUser",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin, AuthMixin],
 
   components: {
     SShopUserMenuList,
@@ -266,8 +267,8 @@ export default {
     user() {
       return this.$store.getters.getUser;
     },
-    club(){
-      return this.getClub()
+    club() {
+      return this.getClub();
     },
     profile() {
       return this.user && this.user.profile;

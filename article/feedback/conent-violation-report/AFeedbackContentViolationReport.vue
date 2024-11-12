@@ -102,9 +102,11 @@
 
 <script lang="ts">
 import { ArticleReport } from "@selldone/core-js";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "AFeedbackContentViolationReport",
+  mixins: [AuthMixin],
   emits: ["update:modelValue", "report", "delete"],
   props: {
     modelValue: {},

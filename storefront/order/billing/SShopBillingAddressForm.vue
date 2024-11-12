@@ -69,29 +69,6 @@
     <div v-else class="small">
       {{ $t("basket_page.custom_billing_info_desc") }}
     </div>
-    <!--
-        <u-smart-toggle
-          v-if="!forceShowForm"
-          v-model="same_billing"
-          :dark="dark"
-          :false-description="$t('basket_page.custom_billing_info_desc')"
-          :false-title="$t('basket_page.custom_billing_info')"
-          :true-description="
-            no_receiver_address
-              ? $t('basket_page.no_billing_desc')
-              : receiverInfo?.address
-                ? MapHelper.GenerateFullAddressFromMapInfo(receiverInfo)
-                : $t('basket_page.same_billing_address_desc')
-          "
-          :true-title="
-            no_receiver_address
-              ? $t('basket_page.no_billing_title')
-              : $t('basket_page.same_billing_address')
-          "
-          class="text-start-dir"
-          color="success"
-          @change="updateValue"
-        ></u-smart-toggle>-->
 
     <v-expand-transition>
       <v-container v-if="!same_billing" fluid>

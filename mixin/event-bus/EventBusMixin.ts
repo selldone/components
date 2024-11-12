@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. Selldone® Business OS™
+ * Copyright (c) 2023-2024. Selldone® Business OS™
  *
  * Author: M.Pajuhaan
  * Web: https://selldone.com
@@ -13,7 +13,7 @@
  */
 
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-import {EventBus} from "@selldone/core-js/events/EventBus";
+import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 
 const EventBusMixin = {
   data() {
@@ -22,7 +22,11 @@ const EventBusMixin = {
     };
   },
 
-  methods: {},
+  methods: {
+
+
+
+  },
 };
 
 export default EventBusMixin;

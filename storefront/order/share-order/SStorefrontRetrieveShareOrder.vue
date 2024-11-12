@@ -129,10 +129,11 @@ import VariantItemViewMicro from "../../../storefront/product/variant/VariantIte
 import SShopCustomerReceiverInfoWidget from "../../../storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "SStorefrontRetrieveShareOrder",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin, AuthMixin],
   components: { SShopCustomerReceiverInfoWidget, VariantItemViewMicro },
   inject: ["$shop"],
   props: {},

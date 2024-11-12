@@ -54,7 +54,10 @@
           receiverInfo.postal ? receiverInfo.postal : $t("global.commons.empty")
         }}
       </span>
-      <span v-if="!receiverInfo.postal" class="ms-4 text-red text-lowercase d-inline-flex align-center">
+      <span
+        v-if="!receiverInfo.postal"
+        class="ms-4 text-red text-lowercase d-inline-flex align-center"
+      >
         <v-icon class="me-2 blink-me" color="red" size="14"
           >fa:fas fa-exclamation-circle</v-icon
         >
@@ -74,7 +77,10 @@
         {{ receiverInfo.full_name }}
       </span>
 
-      <span v-if="!receiverInfo.phone" class="ms-4 text-red text-lowercase d-inline-flex align-center">
+      <span
+        v-if="!receiverInfo.phone"
+        class="ms-4 text-red text-lowercase d-inline-flex align-center"
+      >
         <v-icon class="me-2 blink-me" color="red" size="14"
           >fa:fas fa-exclamation-circle</v-icon
         >
@@ -120,11 +126,12 @@
 <script lang="ts">
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 import UMapViewPin from "../../../ui/map/view/market/UMapViewPin.vue";
-import {CountriesResourceHelper} from "@selldone/components-vue/utils/country/CountriesResourceHelper.ts";
+import { CountriesResourceHelper } from "@selldone/components-vue/utils/country/CountriesResourceHelper.ts";
+import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 
 export default {
   name: "SShopCustomerReceiverInfoWidget",
-  components: { UMapViewPin, SCountrySelect },
+  components: { UMapViewPin, SCountrySelect, MapMixin },
   props: {
     receiverInfo: {
       require: true,
@@ -156,14 +163,14 @@ export default {
 
     has_postcode() {
       return (
-        !this.selected_country_detail?.nozip || this.receiverInfo?.postal/*Show if postal code exists!*/
+        !this.selected_country_detail?.nozip ||
+        this.receiverInfo?.postal /*Show if postal code exists!*/
       );
     },
   },
 
   created() {
     CountriesResourceHelper.FetchCountries(this);
-
   },
 };
 </script>
