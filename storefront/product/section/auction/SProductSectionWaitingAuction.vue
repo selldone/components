@@ -57,10 +57,11 @@
 
 <script lang="ts">
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "SProductSectionWaitingAuction",
-  mixins: [AuthMixin],
+  mixins: [AuthMixin, ProductMixin],
 
   components: {},
   inject: ["$shop", "$product"],

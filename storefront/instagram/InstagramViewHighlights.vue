@@ -312,7 +312,7 @@ import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts
 
 export default {
   name: "InstagramViewHighlights",
-  mixins: [BEventBusMixin,ProductMixin],
+  mixins: [BEventBusMixin, ProductMixin],
   components: {
     SShopBuyButton,
     UVariantSelector,

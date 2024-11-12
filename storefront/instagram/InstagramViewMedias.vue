@@ -516,7 +516,7 @@ import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts
 
 export default {
   name: "InstagramViewMedias",
-  mixins: [BEventBusMixin,DateMixin,ProductMixin],
+  mixins: [BEventBusMixin, DateMixin, ProductMixin],
   components: {
     ULoadingEllipsis,
     UCurrencyInput,

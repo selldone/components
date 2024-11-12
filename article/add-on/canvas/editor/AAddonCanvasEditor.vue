@@ -140,7 +140,7 @@
 
 <script lang="ts">
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
-import { ArticleMixin } from "../../../../mixin/ArticleMixin";
+import { ArticleMixin } from "../../../../mixin/article/ArticleMixin.ts";
 
 export default {
   name: "AAddonCanvasEditor",

@@ -156,13 +156,15 @@
       <slot name="append-item"></slot>
     </template>
     <template v-if="hasAdd" v-slot:prepend-item>
-      <v-list-item :to="{name:'BPageShuttleWalletAccounts'}" class="text-start" append-icon="open_in_new" target="_blank"
-      title="Add new account"
-                   prepend-icon="add_box"
-      subtitle="Go to my wallets to add a new account"
+      <v-list-item
+        :to="{ name: 'BPageShuttleWalletAccounts' }"
+        class="text-start"
+        append-icon="open_in_new"
+        target="_blank"
+        title="Add new account"
+        prepend-icon="add_box"
+        subtitle="Go to my wallets to add a new account"
       >
-
-
       </v-list-item>
     </template>
   </v-select>
@@ -170,9 +172,11 @@
 
 <script lang="ts">
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BAccountInput",
+  mixins: [CurrencyMixin],
   components: { UCurrencyIcon },
   emits: ["update:modelValue", "update:busy"],
   props: {
@@ -203,8 +207,7 @@ export default {
 
     label: {},
     messages: {},
-    hasAdd:Boolean,
-
+    hasAdd: Boolean,
   },
 
   data: () => ({

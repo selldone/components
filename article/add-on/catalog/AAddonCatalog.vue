@@ -50,7 +50,7 @@
 import Flipbook from "flipbook-vue";
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { defineComponent } from "vue";
-import { ArticleMixin } from "../../../mixin/ArticleMixin";
+import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
 
 export default defineComponent({
   name: "AAddonCatalog",

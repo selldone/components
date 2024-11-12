@@ -135,10 +135,11 @@ import SChartFunnelFinance from "../../../chart/funnel/finance/SChartFunnelFinan
 import FinanceInlineChart from "../../../chart/FinanceInlineChart.vue";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BProductFinanceCharts",
-  mixins: [DateMixin],
+  mixins: [DateMixin, CurrencyMixin],
 
   components: {
     UCurrencyIcon,

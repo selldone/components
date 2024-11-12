@@ -401,10 +401,11 @@ import BShopCustomerBox from "@selldone/components-vue/backoffice/customer/box/B
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 export default {
   name: "BOrderDashboard",
-  mixins: [BEventBusMixin, MapMixin],
+  mixins: [BEventBusMixin, MapMixin,OrderMixin],
   components: {
     USmartSwitch,
     BShopCustomerBox,

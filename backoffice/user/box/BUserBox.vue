@@ -76,7 +76,7 @@
 
 <script lang="ts">
 import UButtonWhatsapp from "../../../ui/button/whatsapp/UButtonWhatsapp.vue";
-import { RouteMixin } from "../../../mixin/RouteMixin";
+import { RouteMixin } from "../../../mixin/route/RouteMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {

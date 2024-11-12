@@ -18,7 +18,7 @@ import {PriceHelper} from "@selldone/core-js/helper/price/PriceHelper";
 import {Shop} from "@selldone/core-js/models/shop/shop.model";
 import type {ProductVariant} from "@selldone/core-js/models/shop/product/product_variant.model";
 import {Product} from "@selldone/core-js/models/shop/product/product.model";
-import {VendorProduct} from "@selldone/core-js";
+import {CurrencyHelper, VendorProduct} from "@selldone/core-js";
 
 const ProductMixin = {
   methods: {
@@ -43,7 +43,9 @@ const ProductMixin = {
       current_extra_pricing = null, // 🌸 Add extra pricing 🌸
     ) {
       //console.log('CalcPriceProductCurrentCurrency',product,variant)
-      const to_currency = this.GetUserSelectedCurrency().code;
+      const to_currency = CurrencyHelper.GetUserSelectedCurrency(
+        this.$localstorage_base_path(),
+      ).code;
       return this.priceProductByCurrency(
         shop,
         product,
@@ -95,7 +97,9 @@ const ProductMixin = {
      * @returns {*}
      */
     getProductDiscountAmount(shop: Shop, product: Product, variant = null) {
-      const to_currency = this.GetUserSelectedCurrency().code;
+      const to_currency = CurrencyHelper.GetUserSelectedCurrency(
+        this.$localstorage_base_path(),
+      ).code;
       return this.getProductDiscountAmountByCurrency(
         shop,
         product,

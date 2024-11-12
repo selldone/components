@@ -810,15 +810,16 @@ import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper";
 import { debounce, throttle } from "lodash-es";
 import { OrderType } from "@selldone/core-js/enums/order/OrderType";
-import { RouteMixin } from "../../../mixin/RouteMixin";
+import { RouteMixin } from "../../../mixin/route/RouteMixin.ts";
 import { Avocado, Basket } from "@selldone/core-js";
 import BCampaignSourceIcon from "@selldone/components-vue/backoffice/campaign/source/icon/BCampaignSourceIcon.vue";
 import BOrderChatBox from "@selldone/components-vue/backoffice/order/chat/box/BOrderChatBox.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 export default {
   name: "BProcessCenterList",
-  mixins: [RouteMixin,DateMixin],
+  mixins: [RouteMixin, DateMixin, OrderMixin],
 
   components: {
     BCampaignSourceIcon,

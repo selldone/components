@@ -304,10 +304,11 @@ import UDateInput from "../../../../ui/date/input/UDateInput.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import { DateConverter } from "@selldone/core-js";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BProductExtraPricingAdd",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin,ProductMixin],
 
   components: {
     UNumberInput,

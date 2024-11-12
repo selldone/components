@@ -17,6 +17,7 @@ import {delay} from "lodash-es";
 /**
  * IntersectMixin provides inline editing capabilities.
  * @mixin IntersectMixin
+ * @deprecated
  */
 export const IntersectMixin = {
   data() {

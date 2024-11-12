@@ -40,10 +40,8 @@ import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/Ba
 import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
 import {Slugify} from "@selldone/core-js/utils/slugify/slugify";
 import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
-import {Basket, BasketItemReturn, Club, Order,} from "@selldone/core-js";
+import {Basket, BasketItemReturn, Club, CurrencyHelper, Order} from "@selldone/core-js";
 import {isString} from "lodash-es";
-
-
 
 const CoreMixin = {
   methods: {
@@ -73,75 +71,6 @@ const CoreMixin = {
         this.$data,
         (this.$options?.data as () => Array<any>)?.call(this),
       );
-    },
-
-    //―――――――――――――――――――――― 🌍 Status ――――――――――――――――――――
-
-    getStatusString(status: string) {
-      if (!status) return "";
-      if (status === "Unpaid") return this.$t("global.status.unpaid");
-      else if (status === "Paid" || status === "Payed")
-        return this.$t("global.status.paid");
-      else if (status === "Canceled") return this.$t("global.status.canceled");
-      else if (status === "Completed")
-        return this.$t("global.status.completed");
-      else if (status === "Reserved") return this.$t("global.status.reserved");
-      else if (status === "COD") return this.$t("global.status.COD");
-      else if (status === "Sold") return this.$t("global.status.sold");
-      else if (status === "Open") return this.$t("global.status.open");
-      else if (status === "Cancel") return this.$t("global.status.cancel");
-      else if (
-        status.toLowerCase() === "accept" ||
-        status.toLowerCase() === "accepted"
-      )
-        return this.$t("global.status.accept");
-      else if (
-        status.toLowerCase() === "reject" ||
-        status.toLowerCase() === "rejected"
-      )
-        return this.$t("global.status.reject");
-      else if (status.toLowerCase() === "pending")
-        return this.$t("global.status.pending");
-
-      return status;
-    },
-
-    getStatusColor(status: string) {
-      if (!status) return "#444";
-      if (status === "Unpaid") return "#FFA000";
-      else if (status === "Paid" || status === "Payed") return "green";
-      else if (status === "Canceled") return "#D32F2F";
-      else if (status === "Completed") return "#00796B";
-      else if (status === "Reserved") return "#FFA000";
-      else if (status === "COD") return "#1976D2";
-      else if (status === "Sold") return "#00796B";
-      else if (status === "Open") return "#1976D2";
-      else if (status === "Cancel") return "#D32F2F";
-
-      return "#111";
-    },
-    getStatusIcon(status: string) {
-      if (!status) return "";
-      if (status === "Unpaid") return "fa:fas fa-question ";
-      else if (status === "Paid" || status === "Payed")
-        return "fa:fas fa-check ";
-      else if (status === "Canceled") return "fa:fas fa-times ";
-      else if (status === "Completed") return "fa:fas fa-check-double ";
-      else if (status === "Reserved") return "fa:fas fa-hourglass-start ";
-      else if (status === "COD") return "fa:fas fa-hand-holding-usd";
-    },
-
-    getDeliveryStateString(
-      state: keyof typeof Basket.PhysicalOrderStates | null,
-    ) {
-      if (!state) return "";
-      return this.$t(Basket.PhysicalOrderStates[state].name);
-    },
-
-    getDeliveryStateIcon(state: string | null) {
-      if (!state) return "";
-      // @ts-ignore
-      return Basket.PhysicalOrderStates[state].icon;
     },
 
     //―――――――――――――――――――――― ⚠ Show Alerts ――――――――――――――――――――
@@ -579,8 +508,8 @@ const CoreMixin = {
       return Notification && Notification.permission === "granted";
     },
     /* EnablePushNotification() {
-                                                                                                      PushNotification.AskForPermission();
-                                                                                                    },*/
+                                                                                                          PushNotification.AskForPermission();
+                                                                                                        },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 
@@ -699,7 +628,7 @@ const CoreMixin = {
           ? _currency
           : _currency
             ? Currency[_currency]
-            : this.GetUserSelectedCurrency();
+            : CurrencyHelper.GetUserSelectedCurrency(this.$localstorage_base_path());
 
       if (!currency_obj) return `${_currency} Not exist 🚨!`;
       const value =

@@ -18,7 +18,7 @@
     v-model:focused="focused"
     :bg-color="backgroundColor"
     :clearable="clearable"
-    :density="density?density:dense ? 'compact' : undefined"
+    :density="density ? density : dense ? 'compact' : undefined"
     :disabled="disabled"
     :error-messages="errorMessages"
     :flat="flat"
@@ -58,6 +58,7 @@
 
 <script lang="ts">
 import { NumberHelper } from "@selldone/core-js/helper/number/NumberHelper";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 function tryParseFloat(str, defaultValue) {
   let retValue = defaultValue;
@@ -73,6 +74,7 @@ function tryParseFloat(str, defaultValue) {
 
 export default {
   name: "UPriceInput",
+  mixins: [CurrencyMixin],
   emits: ["update:modelValue", "blur", "change", "enter", "click:clear"],
   props: {
     modelValue: null,
@@ -124,7 +126,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    density:{},
+    density: {},
 
     clearable: {
       type: Boolean,

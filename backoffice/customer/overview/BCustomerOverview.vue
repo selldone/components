@@ -679,10 +679,11 @@ import { URLHelper } from "@selldone/core-js/helper/url/URLHelper";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 export default {
   name: "BCustomerOverview",
-  mixins: [DateMixin],
+  mixins: [DateMixin,OrderMixin],
 
   components: {
     ULoadingEllipsis,

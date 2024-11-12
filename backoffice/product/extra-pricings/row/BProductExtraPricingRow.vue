@@ -83,10 +83,11 @@
 <script lang="ts">
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BProductExtraPricingRow",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin,ProductMixin],
 
   components: {
     UTimeProgressBar,

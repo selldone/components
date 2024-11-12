@@ -90,9 +90,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default defineComponent({
   name: "UChartFunnelHover",
+  mixins: [CurrencyMixin],
   components: { UCurrencyIcon },
   props: {
     values: {

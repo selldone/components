@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import { RouteMixin } from "../../../mixin/RouteMixin";
+import { RouteMixin } from "../../../mixin/route/RouteMixin.ts";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 
 export default {

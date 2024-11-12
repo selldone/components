@@ -290,10 +290,11 @@ import BOrderPaymentRowPayment from "../../../order/payment/row/payment/BOrderPa
 import { throttle } from "lodash-es";
 import { Bill } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 export default {
   name: "BOrderBillsList",
-  mixins: [DateMixin],
+  mixins: [DateMixin, OrderMixin],
 
   components: {
     BOrderPaymentRowPayment,

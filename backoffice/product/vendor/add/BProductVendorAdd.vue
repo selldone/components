@@ -744,10 +744,11 @@ import { PriceHelper } from "@selldone/core-js/helper/price/PriceHelper.ts";
 import VPricingInput from "../../../../storefront/pricing/VPricingInput.vue";
 import { DateConverter } from "@selldone/core-js";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BProductVendorAdd",
-  mixins: [ProductMixin],
+  mixins: [ProductMixin, CurrencyMixin],
 
   components: {
     BProductExtraPricingRow,

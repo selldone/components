@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { RouteMixin } from "../../../mixin/RouteMixin";
+import { RouteMixin } from "../../../mixin/route/RouteMixin.ts";
 import BAiAssistance from "../../ai/assistance/BAiAssistance.vue";
 
 export default {

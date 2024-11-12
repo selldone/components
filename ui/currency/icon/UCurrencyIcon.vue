@@ -54,8 +54,11 @@
 </template>
 
 <script lang="ts">
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+
 export default {
   name: "UCurrencyIcon",
+  mixins: [CurrencyMixin],
   props: {
     currency: {
       required: true,

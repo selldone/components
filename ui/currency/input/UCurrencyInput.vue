@@ -150,9 +150,11 @@
 <script lang="ts">
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UCurrencyIcon from "../icon/UCurrencyIcon.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "UCurrencyInput",
+  mixins: [CurrencyMixin],
   components: { UCurrencyIcon },
 
   emits: ["update:modelValue", "change"],

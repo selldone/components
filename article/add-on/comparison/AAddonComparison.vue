@@ -60,7 +60,7 @@
 <script lang="ts">
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import VueCompareImage from "../../../ui/image-compare/VueCompareImage.vue";
-import { ArticleMixin } from "../../../mixin/ArticleMixin";
+import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
 
 export default {
   name: "AAddonComparison",

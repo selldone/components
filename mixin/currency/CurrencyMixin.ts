@@ -90,22 +90,18 @@ const CurrencyMixin = {
       ) as string;
     },
 
-
-
-
-
     /**
      * @return {number}
      */
     GetUserSelectedCurrencyFloats(
-        opt_currency: ICurrency | keyof typeof Currency | null = null,
+      opt_currency: ICurrency | keyof typeof Currency | null = null,
     ) {
       if (!isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
       return CurrencyHelper.GetUserSelectedCurrencyFloats(
-          this.GetUserSelectedCurrency(this),
-          opt_currency,
+        this.GetUserSelectedCurrency(this),
+        opt_currency,
       );
     },
 
@@ -115,25 +111,20 @@ const CurrencyMixin = {
      * @constructor
      */
     GetUserSelectedCurrencyFormat(
-        opt_currency: ICurrency | null | string = null,
+      opt_currency: ICurrency | null | string = null,
     ) {
       if (opt_currency && !isString(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
       return CurrencyHelper.GetUserSelectedCurrencyFormat(
-          this.GetUserSelectedCurrency(this),
-          opt_currency,
+        this.GetUserSelectedCurrency(this),
+        opt_currency,
       );
     },
-
-
-
 
     truncate(num: number, places: number) {
       return Math.trunc(num * Math.pow(10, places)) / Math.pow(10, places);
     },
-
-
 
     getFormatPriceCurrency(price: number, currency: keyof typeof Currency) {
       return new Intl.NumberFormat(window.$language?.full_locale, {
@@ -142,15 +133,13 @@ const CurrencyMixin = {
       }).format(price);
     },
 
-
     //―――――――――――――――――――――― Price ――――――――――――――――――――
-
 
     getAmountAfterPoint(amount: number) {
       return amount
-          .toString()
-          .replace(/^[^.]+/, "")
-          .substring(0, 6);
+        .toString()
+        .replace(/^[^.]+/, "")
+        .substring(0, 6);
     },
 
     getBasketItemPrice(shop: Shop, item: BasketItem) {
@@ -163,11 +152,6 @@ const CurrencyMixin = {
       const to_currency = this.GetUserSelectedCurrency().code;
       return PriceHelper.getBasketItemSumPriceDiscount(shop, item, to_currency);
     },
-
-
-
-
-
   },
 };
 
