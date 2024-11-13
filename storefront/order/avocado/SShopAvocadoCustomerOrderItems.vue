@@ -124,11 +124,12 @@
 
 <script lang="ts">
 import { AvocadoItem, Basket } from "@selldone/core-js";
+import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
 
 
 export default {
   name: "SShopAvocadoCustomerOrderItems",
-  mixins:[],
+  mixins:[ImageMixin],
 
   props: {
     avocado: { required: true },

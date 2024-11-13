@@ -228,10 +228,11 @@
 import SStorefrontSearchBox from "../../../storefront/search/SStorefrontSearchBox.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 export default {
   name: "SFooterNavigation",
-  mixins: [TemplateMixin, AuthMixin],
+  mixins: [TemplateMixin, AuthMixin,ClubMixin],
 
   components: { SStorefrontSearchBox },
 

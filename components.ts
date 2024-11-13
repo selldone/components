@@ -40,7 +40,7 @@ import CoreMixin from "./mixin/CoreMixin";
 
 //―――――――――――――――――――――― SEO ――――――――――――――――――――
 import { SEO } from "@selldone/core-js/helper/seo/SEO";
-import { App } from "vue";
+import type { App } from "vue";
 import { installGlobalComponents } from "./components-mandetory";
 import { installGlobalDirectives } from "./directives-mandetory";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules.ts";

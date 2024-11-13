@@ -292,13 +292,6 @@ export default {
               return numeral(value).format("0.[0]a");
             },
 
-            /*   formatter: (value, timestamp, index) => {
-              return (
-                this.FormatNumberCurrency(value, this.currency) +
-                " " +
-                this.GetUserSelectedCurrencyName(this.currency)
-              );
-            }*/
           },
           marker: {
             show: false,

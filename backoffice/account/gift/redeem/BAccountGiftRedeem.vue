@@ -43,7 +43,7 @@
             :src="
               selectedGift.program.promotion
                 ? selectedGift.program.promotion
-                : this.GetGiftProgramType(selectedGift.program.type).image
+                : GetGiftProgramType(selectedGift.program.type).image
             "
             class="mx-auto mb-5"
             height="180"
@@ -117,6 +117,7 @@ import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import {GiftStProgramTypes} from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes.ts";
 
 
 export default {
@@ -152,6 +153,13 @@ export default {
     this.apply_gift_dialog = this.modelValue;
   },
   methods: {
+    //―――――――――――――――――――――― Gift ――――――――――――――――――――
+
+    GetGiftProgramType(type: keyof typeof GiftStProgramTypes) {
+      if (!type) return GiftStProgramTypes.Airdrop;
+      return GiftStProgramTypes[type];
+    },
+
     getGift() {
       if (this.busy) return;
 

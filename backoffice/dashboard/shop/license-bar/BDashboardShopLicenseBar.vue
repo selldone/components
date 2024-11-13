@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense.ts";
 
 export default defineComponent({
   name: "BDashboardShopLicenseBar",
@@ -25,7 +26,7 @@ export default defineComponent({
   },
   computed: {
     license() {
-      return this.getShopLicenseObject(this.shop.license);
+      return ShopLicense[this.shop.license];
     },
   },
 });

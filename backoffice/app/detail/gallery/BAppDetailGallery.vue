@@ -69,11 +69,13 @@ import "../../../../ui/swiper/effects/material/effect-material.scss";
 
 // Import Swiper styles
 import "swiper/css";
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
 
 export default {
   name: "BAppDetailGallery",
+  mixins: [ImageMixin],
   components: { Swiper, SwiperSlide },
   props: {
     app: {

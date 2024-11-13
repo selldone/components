@@ -1170,6 +1170,7 @@ import BInventoryWarehouse from "@selldone/components-vue/backoffice/inventory/w
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "BVendorAdd",
@@ -1368,7 +1369,7 @@ export default {
         this.page = this.vendor.page;
         this.slug = this.vendor.slug
           ? this.vendor.slug
-          : this.slugify(this.vendor.name);
+          : Slugify.apply(this.vendor.name);
 
         this.map_id = this.vendor.map_id;
         this.pricing_id = this.vendor.pricing_id;

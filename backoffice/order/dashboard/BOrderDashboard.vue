@@ -404,10 +404,11 @@ import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "BOrderDashboard",
-  mixins: [BEventBusMixin, MapMixin, OrderMixin],
+  mixins: [BEventBusMixin, MapMixin, OrderMixin,ProductMixin],
   components: {
     USmartSwitch,
     BShopCustomerBox,

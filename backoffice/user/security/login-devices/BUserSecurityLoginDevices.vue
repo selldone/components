@@ -137,20 +137,20 @@ export default {
     getDeviceImage(login_device) {
       const user_agent = login_device.user_agent.toLowerCase();
       if (user_agent.includes("firefox"))
-        return require("../../../../assets/trademark/firefox.svg");
+        return require("@selldone/core-js/assets/trademark/firefox.svg");
       else if (user_agent.includes("chrome"))
-        return require("../../../../assets/trademark/chrome.svg");
+        return require("@selldone/core-js/assets/trademark/chrome.svg");
       else if (user_agent.includes("trident"))
-        return require("../../../../assets/trademark/internet-explorer.svg");
+        return require("@selldone/core-js/assets/trademark/internet-explorer.svg");
       else if (user_agent.includes("applewebkit"))
-        return require("../../../../assets/trademark/safari.svg");
+        return require("@selldone/core-js/assets/trademark/safari.svg");
       else if (user_agent.includes("android application"))
-        return require("../../../../assets/trademark/android.svg");
+        return require("@selldone/core-js/assets/trademark/android.svg");
       else if (user_agent.includes("ios application"))
-        return require("../../../../assets/trademark/apple.svg");
+        return require("@selldone/core-js/assets/trademark/apple.svg");
       else if (user_agent.includes("selldone"))
-        return require("../../../../assets/selldone-logo/selldone.svg");
-      else return require("../../../../assets/trademark/information.svg");
+        return require("@selldone/core-js/assets/trademark/selldone.svg");
+      else return require("@selldone/core-js/assets/trademark/information.svg");
     },
 
     logoutSession(login_device) {

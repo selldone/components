@@ -314,10 +314,11 @@ import BGatewayNetworkStatus from "../../gateway/network-status/BGatewayNetworkS
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
 
 export default {
   name: "BGatewayCard",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin,AccountMixin],
   components: {
     UCurrencyIcon,
     BGatewayNetworkStatus,

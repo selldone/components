@@ -67,7 +67,7 @@
               placeholder="Enter a title for input..."
               variant="underlined"
               @blur="
-                item.name = item.name ? item.name : slugify(item.title);
+                item.name = item.name ? item.name : Slugify.apply(item.title);
                 $forceUpdate();
               "
             />
@@ -235,6 +235,7 @@
 
 <script lang="ts">
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
+import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "SFormBuilderRow",
@@ -254,6 +255,8 @@ export default {
   },
 
   data: () => ({
+    Slugify: Slugify,
+
     show_hints: false,
     edit_name: false,
   }),

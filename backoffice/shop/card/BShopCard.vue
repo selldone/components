@@ -531,10 +531,11 @@ import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import LicenseMixin from "@selldone/components-vue/mixin/license/LicenseMixin.ts";
 
 export default {
   name: "BShopCard",
-  mixins: [TemplateMixin, DateMixin],
+  mixins: [TemplateMixin, DateMixin,LicenseMixin],
 
   components: {
     BShopCardVisitors,

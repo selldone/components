@@ -333,10 +333,11 @@ import USmartVerify from "../../../../../ui/smart/verify/USmartVerify.vue";
 import UTextValueBox from "../../../../../ui/text/value-box/UTextValueBox.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import LicenseMixin from "@selldone/components-vue/mixin/license/LicenseMixin.ts";
 
 export default {
   name: "BShopLicenseSubscriptionDetail",
-  mixins: [],
+  mixins: [LicenseMixin],
   components: {
     UTextValueBox,
     USmartVerify,

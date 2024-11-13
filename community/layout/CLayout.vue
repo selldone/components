@@ -68,9 +68,9 @@
           name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
           params: {
             category_id: post.topic.category.id,
-            category_slug: slugify(post.topic.category.title),
+            category_slug: Slugify.apply(post.topic.category.title),
             topic_id: post.topic.id,
-            topic_slug: slugify(post.topic.title),
+            topic_slug: Slugify.apply(post.topic.title),
           },
         }"
         style="color: #111"
@@ -149,6 +149,7 @@ import CommunityCommentReportsDialog from "../../community/global/CommunityComme
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 import CPostWidget from "../post/widget/CPostWidget.vue";
 import { debounce } from "lodash-es";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "CLayout",
@@ -169,6 +170,8 @@ export default {
   },
   data() {
     return {
+      Slugify: Slugify,
+
       community: null,
       community_timeseries: null,
       categories: null,

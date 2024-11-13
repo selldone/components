@@ -62,7 +62,7 @@
             @blur="
               element.name = element.name
                 ? element.name
-                : slugify(element.title.substring(0, 32))
+                : Slugify.apply(element.title.substring(0, 32))
             "
           >
             <template v-slot:message>
@@ -71,7 +71,7 @@
                 @select="
                   (v) => {
                     element.title = v;
-                    element.name = slugify(element.title.substring(0, 32));
+                    element.name = Slugify.apply(element.title.substring(0, 32));
                   }
                 "
               >
@@ -366,6 +366,7 @@ import UNumberInput from "../../../../../ui/number/input/UNumberInput.vue";
 import UPriceInput from "../../../../../ui/price/input/UPriceInput.vue";
 import USmartSuggestion from "../../../../../ui/smart/suggestion/USmartSuggestion.vue";
 import { ValuationStructureItemType } from "../../../ValuationStructureItemType.ts";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "BValuationFormStructureRow",
@@ -391,12 +392,17 @@ export default {
   },
 
   data: () => ({
+    Slugify: Slugify,
+
+
     types: ValuationStructureItemType,
     lock_name: true,
     local_collapse: false,
   }),
 
-  computed: {},
+  computed: {
+
+  },
 
   watch: {
     collapse() {

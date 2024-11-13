@@ -701,18 +701,19 @@
       v-model="reset_password_dialog"
       width="640"
       max-width="98vw"
+      content-class="rounded-t-xl"
     >
-      <v-card class="text-start">
+      <v-card class="text-start" rounded="t-xl">
         <v-card-title>
           <v-icon class="me-1">password</v-icon>
           {{ $t("login.password_recovery_title") }}
         </v-card-title>
 
-        <v-card-subtitle class="text-subtitle-2 mt-2">
-          {{ $t("login.password_recovery_message") }}
-        </v-card-subtitle>
-
         <v-card-text>
+          <p class="mb-2 typo-body">
+            {{ $t("login.password_recovery_message") }}
+          </p>
+
           <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Phone Recovery ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
           <template v-if="recover_mode === 'phone'">
@@ -728,11 +729,11 @@
               :inputOptions="{
                 placeholder: $t('global.need_login.mobile_input'),
               }"
-              class="my-3 max-width-field mx-auto zoomIn"
+              class="my-3 mx-auto zoomIn"
               enabledCountryCode
               required
               validCharactersOnly
-              variant="underlined"
+              variant="outlined"
               @country-changed="(val) => (country = val)"
             ></u-tel-input>
           </template>
@@ -746,6 +747,7 @@
               v-model="in_code"
               :length="6"
               autofocus
+              variant="outlined"
               class="zoomIn max-width-field mx-auto text-center mb-12"
               dir="ltr"
               @finish="(val) => (in_code = val)"
@@ -780,21 +782,24 @@
 
           <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Email Recovery ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
           <template v-else>
-            <v-btn
-              color="primary"
-              variant="text"
-              @click="recover_mode = 'phone'"
-            >
-              <v-icon class="me-1" size="small">phone</v-icon>
-              {{ $t("global.actions.reset_by_sms") }}
-            </v-btn>
-
             <v-text-field
               v-model="reset_password_email"
               :placeholder="$t('login.email')"
-              append-icon="mail_outline"
-              class="mt-3 mx-auto english-field max-width-field zoomIn strong-field"
+              prepend-inner-icon="mail_outline"
+              variant="outlined"
+              class="mt-3 mx-auto english-field strong-field"
             />
+            <div class="text-end">
+              <v-btn
+                color="primary"
+                variant="text"
+                size="small"
+                @click="recover_mode = 'phone'"
+              >
+                <v-icon start>phone</v-icon>
+                {{ $t("global.actions.reset_by_sms") }}
+              </v-btn>
+            </div>
           </template>
         </v-card-text>
 
@@ -808,9 +813,10 @@
               :loading="busy_reset"
               color="primary"
               size="x-large"
+              variant="elevated"
               @click.stop="requestResetPassword()"
+              append-icon="send"
             >
-              <v-icon class="me-1">send</v-icon>
               {{ $t("login.password_recovery_action") }}
             </v-btn>
 
@@ -827,10 +833,10 @@
               :loading="busy_set_mail"
               color="primary"
               size="x-large"
+              variant="elevated"
               @click.stop="setUserEmail()"
+              prepend-icon="check"
             >
-              <v-icon class="me-1">check</v-icon>
-
               {{ $t("global.actions.verify") }}
             </v-btn>
           </div>
@@ -981,7 +987,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BLoginForm",
-  mixins: [BackofficeMixinAuth ],
+  mixins: [BackofficeMixinAuth],
   components: {
     UTelInput: defineAsyncComponent(
       () => import("@selldone/components-vue/ui/tel-input/UTelInput.vue"),
@@ -1229,14 +1235,12 @@ export default {
       this.mode =
         this.$route.name === "register" ? "register" : this.initialMode;
     },
-
     ValidateEmail(mail) {
       if (!mail) return false;
-      // eslint-disable-next-line no-useless-escape
-      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
-        return true;
-      }
-      return false;
+
+      // Broad regex pattern for validating email
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return emailRegex.test(mail);
     },
 
     login() {

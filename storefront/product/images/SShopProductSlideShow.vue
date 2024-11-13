@@ -222,9 +222,11 @@ import VariantItemViewMicro from "../../../storefront/product/variant/VariantIte
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import UYoutubePlayer from "../../../ui/youtube/player/UYoutubePlayer.vue";
 import SImage from "../../../storefront/product/images/SImage.vue";
+import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
 
 export default {
   name: "SShopProductSlideShow",
+  mixins: [ImageMixin],
   components: { SImage, UYoutubePlayer, UFadeScroll, VariantItemViewMicro },
 
   inject: ["$shop", "$product"],

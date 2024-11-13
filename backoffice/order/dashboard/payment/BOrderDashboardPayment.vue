@@ -807,10 +807,11 @@ import { Basket, Bill } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 export default {
   name: "BOrderDashboardPayment",
-  mixins: [DateMixin ],
+  mixins: [DateMixin,ClubMixin ],
 
   components: {
     UChartSankey,

@@ -340,9 +340,9 @@
         :shop-id="shop.id"
         :show-author-info="false"
         :show-share-buttons="false"
-        :tags="`${slugify(
+        :tags="`${Slugify.apply(
           $product.category ? $product.category.title : null,
-        )},${slugify($product.title)},${slugify($product.title_en)}`"
+        )},${Slugify.apply($product.title)},${Slugify.apply($product.title_en)}`"
         :target-id="SELECTED_ARTICLE_PACK ? $product.id : 'new'"
         class="mt-5 min-height-60vh"
         initial-render-state="editing"
@@ -549,6 +549,7 @@ import { Article } from "@selldone/core-js";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 
 const TAB_TYPE = 1;
 const TAB_GENERAL_INFO = 2;
@@ -618,6 +619,8 @@ export default {
 
   data: function () {
     return {
+      Slugify: Slugify,
+
       show_article: true, // For refresh article!
 
       article_type: Article.Types.Product,
@@ -1117,7 +1120,10 @@ not need!
           if (data.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            NotificationService.showSuccessAlert(null, "The product added to the list.");
+            NotificationService.showSuccessAlert(
+              null,
+              "The product added to the list.",
+            );
             this.$emit("add", data.product);
             Object.assign(this.$product, data.product);
 
@@ -1334,8 +1340,8 @@ not need!
 
         this.step =
           /* this.hasStep__Inputs
-                                              ? TAB_INPUTS
-                                              :*/
+                                                ? TAB_INPUTS
+                                                :*/
           this.hasStep__Outputs
             ? TAB_OUTPUTS
             : this.hasStep__physicalExtra

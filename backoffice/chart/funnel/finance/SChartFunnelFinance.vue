@@ -121,6 +121,7 @@ import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
 import UChartFunnel from "../../../../ui/chart/funnel/UChartFunnel.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import {PriceHelper} from "@selldone/core-js/helper";
 
 export default {
   name: "SChartFunnelFinance",
@@ -232,7 +233,7 @@ export default {
             //   console.log('currency',currency,'this.selected_currency',this.selected_currency)
 
             try {
-              const rate = this.getBuyRateValue(
+              const rate = PriceHelper.getBuyRateValue(
                 this.shop,
                 currency,
                 this.selected_currency,

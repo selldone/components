@@ -35,7 +35,7 @@
             $route.params
               .category_slug /*BUG in VUe3 Route. Not replace 'category_slug' optional params*/,
           topic_id: topic.id,
-          topic_slug: slugify(topic.title),
+          topic_slug: Slugify.apply(topic.title),
         },
       }"
       class="c-widget -hover d-flex text-black"
@@ -184,6 +184,7 @@ import URibbon from "../../ui/ribbon/URibbon.vue";
 import TrendSparkline from "../statistics/TrendSparkline.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 import { CommunityTopic } from "@selldone/core-js";
+import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "CommunityTopicCard",
@@ -206,6 +207,7 @@ export default {
 
   data() {
     return {
+      Slugify: Slugify,
       timeSeries: null,
 
       keys: [

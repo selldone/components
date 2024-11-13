@@ -62,7 +62,7 @@
             variant="underlined"
             @blur="
               () => {
-                if (!name) name = slugify(title);
+                if (!name) name = Slugify.apply(title);
               }
             "
           >
@@ -392,6 +392,7 @@ import { ShopURLs } from "@selldone/core-js/helper";
 import { ShopCategoryHelper } from "@selldone/core-js/helper/category/ShopCategoryHelper.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "BCategoryAdd",
@@ -440,6 +441,8 @@ export default {
   },
 
   data: () => ({
+    Slugify: Slugify,
+
     tab: "setting",
 
     profile_pic: [],
@@ -715,7 +718,7 @@ export default {
         this.parent_id = this.category.parent_id;
         this.name = this.category.name;
 
-        this.edit_name = this.name && this.name !== this.slugify(this.name);
+        this.edit_name = this.name && this.name !== Slugify.apply(this.name);
 
         this.page = this.category.page;
         this.augment = Object.assign([], this.category.augment);

@@ -105,10 +105,11 @@ import SUserInput from "../../../user/input/SUserInput.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BAccountGiftSend",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin,CurrencyMixin],
   components: { SUserInput, BAccountInput, UPriceInput },
   emits: ["update:modelValue"],
   props: {

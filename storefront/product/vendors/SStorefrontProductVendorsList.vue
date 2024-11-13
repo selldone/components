@@ -27,7 +27,7 @@
         <v-card
           :to="{
             name: window.$storefront.routes.SHOP_VENDOR_PAGE,
-            params: { slug: slugify(vendor.name), vendor_id: vendor.id },
+            params: { slug: Slugify.apply(vendor.name), vendor_id: vendor.id },
           }"
           class="vnd-card"
           rounded="lg"
@@ -51,9 +51,11 @@
 
 <script lang="ts">
 import { debounce } from "lodash-es";
+import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "SStorefrontProductVendorsList",
+
   emits: ["fetch-vendors", "vendor-hover:enter", "vendor-hover:leave"],
   inject: ["$shop"],
   props: {
@@ -63,6 +65,8 @@ export default {
   },
 
   data: () => ({
+    Slugify: Slugify,
+
     busy: false,
     vendors: [],
 

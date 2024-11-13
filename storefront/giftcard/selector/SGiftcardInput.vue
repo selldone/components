@@ -154,9 +154,11 @@
 import SGiftcardAdd from "../../../storefront/giftcard/add/SGiftcardAdd.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import BGiftcardTypeIcon from "@selldone/components-vue/backoffice/giftcard/type/icon/BGiftcardTypeIcon.vue";
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
 
 export default {
   name: "SGiftcardInput",
+  mixins: [AccountMixin],
   components: { BGiftcardTypeIcon, UPrice, SGiftcardAdd },
   emits: ["update:modelValue"],
   props: {

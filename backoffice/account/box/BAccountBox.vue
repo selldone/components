@@ -57,12 +57,12 @@
       </div>
       <div v-else>
         <div class="text-subtitle-2 d-flex align-center">
-
-           <v-avatar class="avatar-gradient -thin -user me-1" size="24">
+          <v-avatar class="avatar-gradient -thin -user me-1" size="24">
             <v-img :src="getUserAvatar(account.user_id)" />
           </v-avatar>
 
-          {{ account.account_name }}</div>
+          {{ account.account_name }}
+        </div>
         <small>You are not the wallet owner!</small>
       </div>
     </span>
@@ -71,9 +71,11 @@
 
 <script lang="ts">
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
 
 export default {
   name: "BAccountBox",
+  mixins: [AccountMixin],
   components: { UCurrencyIcon },
   props: {
     account: { required: true },

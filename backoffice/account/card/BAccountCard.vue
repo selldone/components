@@ -142,10 +142,11 @@ import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import { AccountStatus } from "@selldone/core-js/enums/wallet/AccountStatus";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
 
 export default {
   name: "BAccountCard",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin,AccountMixin],
   components: { UCurrencyIcon },
   props: {
     account: {

@@ -492,10 +492,12 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
+import LicenseMixin from "@selldone/components-vue/mixin/license/LicenseMixin.ts";
 
 export default {
   name: "ShopSubscriptionList",
-  mixins: [DateMixin, CurrencyMixin ],
+  mixins: [DateMixin, CurrencyMixin, AccountMixin,LicenseMixin],
 
   components: {
     USmartVerify,

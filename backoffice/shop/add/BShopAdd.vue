@@ -601,6 +601,7 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import {ShopURLs} from "@selldone/core-js/helper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "BShopAdd",
@@ -823,7 +824,7 @@ export default {
           }
         })
         .catch((error) => {
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           t.busy = false;
         })
         .finally(() => {
@@ -852,17 +853,12 @@ export default {
       if (!this.shop && this.step >= 1) return;
 
       if (!this.shop && this.step === 0 && this.title && !this.name) {
-        /* function hasNonEnglishChars(str) {
-           const nonEnglishPattern = /[^a-zA-Z0-9\s.,-_!()&'"]/;
-           return nonEnglishPattern.test(str);
-         }*/
+
 
         // Auto set shop name:
-        this.name = this.slugify(this.title);
+        this.name = Slugify.apply(this.title);
 
-        /* if (!hasNonEnglishChars(this.title)) {
-           this.name = this.slugify(this.title);
-         }*/
+
       }
 
       if (this.step === 1 && !this.shop) {

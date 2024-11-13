@@ -150,10 +150,12 @@ import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFold
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 export default {
   name: "SBackofficeReturnRequestsList",
-  mixins: [DateMixin ],
+  mixins: [DateMixin, ProductMixin,OrderMixin],
   components: { UAvatarFolder, BOrderButton, VariantItemViewMicro },
   props: {
     url: {

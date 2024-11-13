@@ -39,8 +39,11 @@
 </template>
 
 <script lang="ts">
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
+
 export default {
   name: "SShopRowCustomerPaymentGiftCard",
+  mixins: [AccountMixin],
   props: {
     giftcard: {
       require: true,

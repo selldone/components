@@ -231,10 +231,11 @@ import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionSt
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
 
 export default {
   name: "SShopRowCustomerPendingPayment",
-  mixins: [DateMixin],
+  mixins: [DateMixin, ImageMixin],
   components: { UTextValueDashed, SImageUploader },
   props: {
     transaction: {

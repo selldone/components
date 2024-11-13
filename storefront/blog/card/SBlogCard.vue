@@ -102,8 +102,7 @@
 <script lang="ts">
 import SBlogCardAuthorCategory from "../../../storefront/blog/card/author-category/SBlogCardAuthorCategory.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
-import { ShopBlog } from "@selldone/core-js/models";
-import {Product, ShopURLs} from "@selldone/core-js";
+import { ShopURLs } from "@selldone/core-js";
 
 export default {
   name: "SBlogCard",
@@ -127,14 +126,11 @@ export default {
     viewOnly: Boolean,
   },
   data() {
-    return {
-      ShopBlog: ShopBlog,
-      Product: Product,
-    };
+    return {};
   },
   computed: {
     ShopURLs() {
-      return ShopURLs
+      return ShopURLs;
     },
     shop() {
       return this.getShop();

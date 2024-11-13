@@ -289,7 +289,7 @@
             <v-spacer></v-spacer>
 
             <div title="Browser">
-              <img :src="getBrowserImage(activity.browser)" height="18" />
+              <img :src="Browser.getImageByCode(activity.browser)" height="18" />
               {{ activity.browser }}
             </div>
           </v-row>
@@ -682,10 +682,12 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
+import Browser from "@selldone/core-js/enums/analytics/browser/Browser.ts";
 
 export default {
   name: "BCustomerOverview",
-  mixins: [DateMixin, OrderMixin],
+  mixins: [DateMixin, OrderMixin,ClubMixin],
 
   components: {
     ULoadingEllipsis,
@@ -735,6 +737,9 @@ export default {
     busy_portal: false,
   }),
   computed: {
+    Browser() {
+      return Browser
+    },
     headers() {
       return [
         {

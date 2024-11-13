@@ -250,7 +250,7 @@ import SCategoryFilterSelector from "../../../storefront/category/filter/selecto
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
-import { GetNameOfColor } from "@selldone/core-js/helper";
+import { GetNameOfColor, PriceHelper } from "@selldone/core-js/helper";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
@@ -259,7 +259,7 @@ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin
  */
 export default {
   name: "SCategoryFilter",
-  mixins: [TemplateMixin,CurrencyMixin],
+  mixins: [TemplateMixin, CurrencyMixin],
 
   components: { UPrice, USmartToggle, SCategoryFilterSelector },
   emits: ["change-filter", "change-height", "update:modelValue"],
@@ -324,7 +324,7 @@ export default {
       let out = 0;
 
       this.filters.prices.forEach((item) => {
-        const rate = this.getExchangeRateValue(
+        const rate = PriceHelper.getExchangeRateValue(
           this.$shop,
           item.currency,
           this.GetUserSelectedCurrency().code,
@@ -343,7 +343,7 @@ export default {
       let out = 0;
 
       this.filters.prices.forEach((item) => {
-        const rate = this.getExchangeRateValue(
+        const rate = PriceHelper.getExchangeRateValue(
           this.$shop,
           item.currency,
           this.GetUserSelectedCurrency().code,
@@ -654,7 +654,7 @@ export default {
       this.filters.prices.forEach((item) => {
         // console.log("*** item",item)
 
-        const rate = this.getExchangeRateValue(
+        const rate = PriceHelper.getExchangeRateValue(
           this.$shop,
           this.GetUserSelectedCurrency().code,
           item.currency,

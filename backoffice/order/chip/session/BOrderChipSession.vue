@@ -20,15 +20,19 @@
     :color="color"
   >
     <img
-        v-if="session"
-      :src="getBrowserImage(session.browser)"
+      v-if="session"
+      :src="Browser.getImageByCode(session.browser)"
       :title="session.browser"
       class=""
       :height="imageSize"
       :width="imageSize"
     />
 
-    <v-icon v-if="device" :title="$t(device.title)" class="ms-1" :size="imageSize"
+    <v-icon
+      v-if="device"
+      :title="$t(device.title)"
+      class="ms-1"
+      :size="imageSize"
       >{{ device.icon }}
     </v-icon>
 
@@ -45,6 +49,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Analytics } from "@selldone/core-js/models";
+import Browser from "@selldone/core-js/enums/analytics/browser/Browser.ts";
 
 export default defineComponent({
   name: "BOrderChipSession",
@@ -61,11 +66,14 @@ export default defineComponent({
     color: {},
   },
   computed: {
+    Browser() {
+      return Browser
+    },
     session() {
       return this.order.session;
     },
     device() {
-      if(!this.session?.type)return null;
+      if (!this.session?.type) return null;
       let out = Analytics.DeviceType.find(
         (item) => item.code === this.session.type.toLowerCase(),
       );

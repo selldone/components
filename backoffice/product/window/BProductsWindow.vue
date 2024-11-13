@@ -959,7 +959,7 @@
                   ShopURLs.GetProductLink(
                     shop,
                     currentProductForMenu.id,
-                    slugify(currentProductForMenu.title),
+                    Slugify.apply(currentProductForMenu.title),
                   )
                 "
                 base-color="#1976d2"
@@ -1942,6 +1942,7 @@ import { Category, Product } from "@selldone/core-js/models";
 import {ShopURLs} from "@selldone/core-js/helper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "BProductsWindow",
@@ -2090,6 +2091,8 @@ export default {
   },
 
   data: () => ({
+    Slugify: Slugify,
+
     Category: Category,
     Product: Product,
 
@@ -2213,6 +2216,7 @@ export default {
   }),
 
   computed: {
+
     ShopURLs() {
       return ShopURLs
     },

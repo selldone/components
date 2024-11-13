@@ -99,6 +99,7 @@ import UCurrencyIcon from "../../ui/currency/icon/UCurrencyIcon.vue";
 import UChartFunnel from "../../ui/chart/funnel/UChartFunnel.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import {PriceHelper} from "@selldone/core-js/helper";
 
 export default {
   name: "FunnelPayment",
@@ -179,7 +180,7 @@ export default {
             try {
               let val =
                 this.findFinanceSellValueByCurrency(item.payment, currency) *
-                this.getBuyRateValue(
+                  PriceHelper.getBuyRateValue(
                   this.shop,
                   currency,
                   this.selected_currency,

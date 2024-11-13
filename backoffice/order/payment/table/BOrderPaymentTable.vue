@@ -1403,10 +1403,13 @@ import BOrderPaymentRowCashback from "@selldone/components-vue/backoffice/order/
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
+import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
+import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
 
 export default {
   name: "BOrderPaymentTable",
-  mixins: [DateMixin ],
+  mixins: [DateMixin,AccountMixin,ClubMixin,ImageMixin ],
 
   components: {
     BOrderPaymentRowCashback,

@@ -41,8 +41,11 @@
 </template>
 
 <script lang="ts">
+import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
+
 export default {
   name: "CImageView",
+  mixins: [ImageMixin],
   components: {},
   props: {
     fullscreen: {

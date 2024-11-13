@@ -13,31 +13,21 @@
  */
 
 import {ProductType} from "@selldone/core-js/enums/product/ProductType";
-import type {ICurrency} from "@selldone/core-js/enums/payment/Currency";
-import {Currency} from "@selldone/core-js/enums/payment/Currency";
 import {type ILanguage, Language,} from "@selldone/core-js/enums/language/Language";
-import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense";
-import {PriceHelper} from "@selldone/core-js/helper/price/PriceHelper";
-import {GiftStatus} from "@selldone/core-js/enums/wallet/gift/GiftStatus";
-import {GiftStProgramTypes} from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes";
-import numeral from "numeral";
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
 import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
 
 //―――――――――――――――――――――― Country ――――――――――――――――――――
 import {getCountryName} from "@selldone/core-js/models/general/country/country-helper.ts";
-import {Shop} from "@selldone/core-js/models/shop/shop.model";
+import type {Shop} from "@selldone/core-js/models/shop/shop.model";
 import {XapiUser} from "@selldone/sdk-storefront";
-import type {Guild} from "@selldone/core-js/models/guild/guild.model";
 import type {ICountryCode} from "@selldone/core-js/models/general/country/country.model.ts";
 import type {User} from "@selldone/core-js/models/user/user.model";
 import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
-import {Slugify} from "@selldone/core-js/utils/slugify/slugify";
 import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
-import {Basket, BasketItemReturn, Club, CurrencyHelper, Order,} from "@selldone/core-js";
+import {Basket, Order} from "@selldone/core-js";
 import {isString} from "lodash-es";
-import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 const CoreMixin = {
   methods: {
@@ -69,95 +59,8 @@ const CoreMixin = {
       );
     },
 
-    //―――――――――――――――――――――― Format account number ――――――――――――――――――――
-    // XXXX-XXXX-XXXX-XXXX
-    formatCard(val: string | null) {
-      if (!val) return val;
-      return val.replace(/(\d{4})(\d{4})(\d{4})(\d+)/, "$1-$2-$3-$4");
-    },
-
-    //―――――――――――――――――――――― String Limit ――――――――――――――――――――
-    LimitString(str: string | null, count = 100) {
-      if (!str) return str;
-      str = str.replace(/<[^>]*>?/gm, ""); // Remove all html tags!
-      if (str.length > count) return str.substring(0, count) + "…";
-      return str;
-    },
-
-    //――――――――――――――――――――――  Exchange Rates ――――――――――――――――――――
-
-    getExchangeRate: function getExchangeRate(
-      shop: Shop,
-      from: keyof typeof Currency,
-      to: keyof typeof Currency,
-    ) {
-      return PriceHelper.getExchangeRate(shop, from, to);
-    },
-
-    getExchangeRateValue(
-      shop: Shop,
-      from: keyof typeof Currency,
-      to: keyof typeof Currency,
-      default_rate?: number | null,
-    ) {
-      return PriceHelper.getExchangeRateValue(shop, from, to, default_rate);
-    },
-
-    // Used for convert product prices to (to_currency).
-    getBuyRateValue(
-      shop: Shop,
-      from_currency: keyof typeof Currency,
-      to_currency: keyof typeof Currency,
-    ) {
-      return PriceHelper.getBuyRateValue(shop, from_currency, to_currency);
-    },
-
     //―――――――――――――――――――――― SHOP ――――――――――――――――――――
-    getShopLicenseObject(license: keyof typeof ShopLicense) {
-      return ShopLicense[license];
-    },
 
-    getShopLicenseName(license: keyof typeof ShopLicense) {
-      const _license = ShopLicense[license];
-      return _license ? this.$t(_license.name) : this.$t("global.error");
-    },
-    getShopLicenseIcon(license: keyof typeof ShopLicense) {
-      const _license = ShopLicense[license];
-      return _license ? _license.icon : null;
-    },
-    getShopStateName(state: string) {
-      return state ? this.$t("global.active") : this.$t("global.inactive");
-    },
-
-    getProductTypeName(type: keyof typeof ProductType) {
-      return ProductType[type] ? this.$t(ProductType[type].name) : "";
-    },
-
-    getProductTypeImage(
-      type: keyof typeof ProductType | "POS" | "FUL" | "AVO" | "HYP",
-    ) {
-      if (type === "POS") return require("../assets/icons/pos-order-type.svg");
-      else if (type === "FUL")
-        return require("../assets/icons/dropshipping.svg");
-      else if (type === "AVO") return require("../assets/icons/avocado.svg");
-      else if (type === "HYP") return require("../assets/icons/hyper.svg");
-
-      return ProductType[type] ? ProductType[type].image : "";
-    },
-    getBasketTypeImage(
-      type: keyof typeof ProductType | "POS" | "FUL" | "AVO" | "HYP",
-    ) {
-      if (type === "POS")
-        return require("@selldone/core-js/assets/order-types/basket-pos.svg");
-      else if (type === "FUL")
-        return require("@selldone/core-js/assets/order-types/basket-drop-shipping.svg");
-      else if (type === "AVO")
-        return require("@selldone/core-js/assets/order-types/basket-avocado.svg");
-      else if (type === "HYP")
-        return require("@selldone/core-js/assets/order-types/basket-hyper.svg");
-
-      return ProductType[type] ? ProductType[type].basket : "";
-    },
     //―――――――――――――――――――――― Replace updated item in array ――――――――――――――――――――
 
     FindItemByID: function UpdateItemByID(
@@ -231,26 +134,6 @@ const CoreMixin = {
       return Object.assign({}, _old ? _old : {}, _new);
     },
 
-    /**
-     * Convert string to proper hashtag
-     * @param text
-     * @returns {string}
-     */
-    slugify(text: string | null) {
-      if (!text) return "";
-
-      return Slugify.apply(text.toString()); // Trim - from end of text
-    },
-
-    //―――――――――――――――――――――― Gift ――――――――――――――――――――
-    GetGiftStatus(status: keyof typeof GiftStatus) {
-      if (!status) return null;
-      return GiftStatus[status];
-    },
-    GetGiftProgramType(type: keyof typeof GiftStProgramTypes) {
-      if (!type) return GiftStProgramTypes.Airdrop;
-      return GiftStProgramTypes[type];
-    },
     //―――――――――――――――――――――― Country ――――――――――――――――――――
 
     getCountryName(code: ICountryCode) {
@@ -263,41 +146,8 @@ const CoreMixin = {
       return key === translated ? getCountryName(code) : translated;
     },
 
-    //―――――――――――――――――――――― Device Image ――――――――――――――――――――
-
-    getBrowserImage(code: string) {
-      if (!code) return null;
-      code = code.toLowerCase();
-      if (code === "firefox") return require("../assets/trademark/firefox.svg");
-      if (code === "chrome") return require("../assets/trademark/chrome.svg");
-      if (code === "opera") return require("../assets/trademark/opera.svg");
-      if (code === "internet-explorer")
-        return require("../assets/trademark/internet-explorer.svg");
-      if (code === "safari") return require("../assets/trademark/safari.svg");
-      else return require("../assets/trademark/information.svg");
-    },
-
-    //―――――――――――――――――――――― Basket > Reject ――――――――――――――――――――
-
-    getReturnRequestStateObject(state: keyof typeof BasketItemReturn.States) {
-      const out = BasketItemReturn.States[state];
-      return out ? out : {};
-    },
-
     BlurApp(blur: boolean) {
       EventBus.$emit(EventName.BLUR_APP, blur);
-    },
-
-    //―――――――――――――――――――――― Fullscreen ――――――――――――――――――――
-
-    // Fullscreen by animation
-    showFullscreen(event: MouseEvent) {
-      EventBus.$emit("show:fullscreen", event);
-    },
-
-    //―――――――――――――――――――――― Guild global ――――――――――――――――――――
-    showGuildSharePost(activator: Element, guild: Guild) {
-      EventBus.$emit("guild:share", { activator, guild });
     },
 
     //―――――――――――――――――――――― Logistic > Basket Helpers ――――――――――――――――――――
@@ -361,129 +211,7 @@ const CoreMixin = {
       ExecuteCopyToClipboard(this, str, title, message);
     },
 
-    //―――――――――――――――――――――― Laravel validation error handler ――――――――――――――――――――
-
-    showLaravelError(
-      error: string | { error: true; error_msg: string; code?: number } | any,
-    ) {
-      if (!error) return;
-      if (isString(error)) {
-        NotificationService.showErrorAlert(
-          this.$t("global.notification.error") as string,
-          error,
-        );
-        return;
-      }
-
-      if (error?.error_msg /*Errors in the response with 2xx code*/) {
-        NotificationService.showErrorAlert(
-          this.$t("global.notification.error") as string,
-          error.error_msg,
-        );
-        return;
-      }
-
-      if (!error.response) {
-        console.error("1- error", error);
-        if (error.message) {
-          NotificationService.showErrorAlert(
-            this.$t("global.notification.error") as string,
-            `<div dir="ltr" class="text-left">${error.message}</div>`,
-          );
-        } else if (error.body) {
-          NotificationService.showErrorAlert(
-            this.$t("global.notification.error") as string,
-            `<div dir="ltr" class="text-left">${error.body}</div>`,
-          );
-        }
-        return;
-      }
-
-      // Handle CSRF token expire:
-      if (error.response.status === 419) {
-        NotificationService.showErrorAlert(
-          this.$t("global.notification.error") +
-            " " +
-            error.response.status +
-            " | CSRF token mismatch.",
-          `<div class="text-start">${this.$t("global.errors.419")}</div>`,
-          null,
-          60000,
-        );
-        return;
-      }
-
-      const data = error.response.data;
-      console.error(
-        "2- data",
-        error.response.status,
-        data,
-        "response",
-        error.response,
-      );
-
-      if (data?.error_msg) {
-        // Normal laravel app level errors
-        NotificationService.showErrorAlert(
-          this.$t("global.notification.error") + " " + data.code,
-          `<div class="text-start">${data.error_msg}</div>`,
-        );
-      } else if (data?.errors) {
-        let error_msg = "";
-
-        for (const key in data.errors) {
-          const val = data.errors[key]; //is array
-          //  error_msg += `<b>${key}:</b>`;
-
-          if (Array.isArray(val)) {
-            val.forEach((er) => {
-              error_msg += `<li><b style="text-transform: capitalize">${key}: </b> ${er}</li>`;
-            });
-          }
-          error_msg = `<ul>${error_msg}</ul>`;
-        }
-        NotificationService.showErrorAlert(
-          this.$t("global.notification.error") + " " + error.response.status,
-          `<div class="text-start">${error_msg}</div>`,
-        );
-      } else if (data?.message) {
-        NotificationService.showErrorAlert(
-          this.$t("global.notification.error") + " " + error.response.status,
-          `<div class="text-start">${data.message}</div>`,
-        );
-      } else {
-        NotificationService.showErrorAlert(
-          this.$t("global.notification.error") + " " + error.response.status,
-          this.$t("global.notification.error_message") as string,
-        );
-      }
-    },
-
-    FormatNumberCurrency(
-      _value: number,
-      _currency: keyof typeof Currency | ICurrency | null = null,
-    ) {
-      const currency_obj =
-        _currency && _currency instanceof Object
-          ? _currency
-          : _currency
-            ? Currency[_currency]
-            : CurrencyHelper.GetUserSelectedCurrency(
-                this.$localstorage_base_path(),
-              );
-
-      if (!currency_obj) return `${_currency} Not exist 🚨!`;
-      const value =
-        _value * (currency_obj.alt_factor ? currency_obj.alt_factor : 1);
-
-      return numeral(value).format(currency_obj.format);
-    },
-
-    //―――――――――――――――――――――― Enums ――――――――――――――――――――
-
-    getCustomerClubLevel(level: keyof typeof Club.Levels) {
-      return Club.Levels[level];
-    },
+    //―――――――――――――――――――――― Type Check ――――――――――――――――――――
 
     isString(value: any): value is string {
       if (!value) return true;

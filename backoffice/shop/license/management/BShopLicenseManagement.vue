@@ -326,10 +326,11 @@ import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import LicenseMixin from "@selldone/components-vue/mixin/license/LicenseMixin.ts";
 
 export default {
   name: "BShopLicenseManagement",
-  mixins: [DateMixin ],
+  mixins: [DateMixin,LicenseMixin ],
 
   components: {
     USmartToggle,

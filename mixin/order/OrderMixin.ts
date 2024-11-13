@@ -14,7 +14,7 @@
 
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
 
-import {Basket} from "@selldone/core-js/models";
+import {Basket, BasketItemReturn} from "@selldone/core-js/models";
 
 const OrderMixin = {
   methods: {
@@ -89,6 +89,12 @@ const OrderMixin = {
     },
 
 
+    //―――――――――――――――――――――― Basket > Return Order ――――――――――――――――――――
+
+    getReturnRequestStateObject(state: keyof typeof BasketItemReturn.States) {
+      const out = BasketItemReturn.States[state];
+      return out ? out : {};
+    },
 
 
 

@@ -76,8 +76,11 @@
 </template>
 
 <script lang="ts">
+import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
+
 export default {
   name: "UPaymentBillingDetails",
+  mixins: [ImageMixin],
   props: {
     billingDetail: {
       require: true,

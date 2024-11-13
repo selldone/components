@@ -580,9 +580,11 @@ import SProductSectionValuation from "../../../storefront/product/section/valuat
 import { BasketItemReturn } from "@selldone/core-js";
 import UTooltipTips from "@selldone/components-vue/ui/tooltip/tips/UTooltipTips.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
+import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 export default {
   name: "BOrderCart",
+  mixins: [OrderMixin],
   components: {
     UTooltipTips,
     UTextValueDashed,

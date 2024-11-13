@@ -26,9 +26,9 @@
     :show-author-info="false"
     :show-share-buttons="false"
     :show-user-feedback-buttons="false"
-    :tags="`${slugify(
+    :tags="`${Slugify.apply(
       $product.category ? $product.category.title : null,
-    )},${slugify($product.title)},${slugify($product.title_en)}`"
+    )},${Slugify.apply($product.title)},${Slugify.apply($product.title_en)}`"
     :target-id="$product.article_pack ? $product.id : 'new'"
     class="s--product-section-article my-16"
     no-return-back-on-delete
@@ -48,6 +48,7 @@
 import { defineComponent } from "vue";
 import ArticleViewer from "@selldone/components-vue/article/ArticleViewer.vue";
 import { Article } from "@selldone/core-js/models";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default defineComponent({
   name: "SProductArticle",
@@ -56,6 +57,7 @@ export default defineComponent({
 
   data() {
     return {
+      Slugify:Slugify,
       Article: Article,
 
       show_article: true, // For refresh article!
@@ -65,6 +67,7 @@ export default defineComponent({
     hideTitle: Boolean,
   },
   computed: {
+
     has_article() {
       return (
         this.$product?.article_pack?.article?.title &&

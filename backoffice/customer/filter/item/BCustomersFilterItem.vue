@@ -93,10 +93,11 @@
 <script lang="ts">
 import { Customer } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 export default {
   name: "BCustomersFilterItem",
-  mixins: [DateMixin],
+  mixins: [DateMixin,ClubMixin],
   props: {
     filter: { required: true },
     dark: { default: false, type: Boolean },

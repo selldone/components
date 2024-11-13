@@ -185,7 +185,7 @@
               name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
               params: {
                 category_id: category.id,
-                category_slug: slugify(category.title),
+                category_slug: Slugify.apply(category.title),
               },
             }"
             class="d-block text-start"
@@ -210,9 +210,9 @@
               name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
               params: {
                 category_id: category.id,
-                category_slug: slugify(category.title),
+                category_slug: Slugify.apply(category.title),
                 topic_id: topic.id,
-                topic_slug: slugify(topic.title),
+                topic_slug: Slugify.apply(topic.title),
               },
             }"
             class="d-block text-start"
@@ -618,6 +618,7 @@ import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper
 import CUserInput from "../../community/user/input/CUserInput.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 
 /**
@@ -679,6 +680,8 @@ export default {
 
   data() {
     return {
+      Slugify: Slugify,
+
       dialog_rule: false,
 
       show_invite: false,

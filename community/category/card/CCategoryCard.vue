@@ -19,7 +19,7 @@
         name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
         params: {
           category_id: category.id,
-          category_slug: slugify(category.title),
+          category_slug: Slugify.apply(category.title),
         },
       }"
       class="c-widget -hover flex-grow-1"
@@ -111,6 +111,7 @@ import CImageView from "../../../community/image/view/CImageView.vue";
 import TrendSparkline from "../../../community/statistics/TrendSparkline.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries.ts";
 import USparkline from "../../../ui/chart/sparkline/USparkline.vue";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "CCategoryCard",
@@ -128,6 +129,10 @@ export default {
 
   data() {
     return {
+
+      Slugify: Slugify,
+
+
       timeSeries: null,
 
       keys: [

@@ -90,7 +90,13 @@
             >fa:fas fa-crown
           </v-icon>
 
-          <v-tooltip v-else :max-width="480" color="#111" location="bottom" content-class="bg-black">
+          <v-tooltip
+            v-else
+            :max-width="480"
+            color="#111"
+            location="bottom"
+            content-class="bg-black"
+          >
             <template v-slot:activator="{ props }">
               <v-icon class="me-1" color="#03A9F4" size="x-small" v-bind="props"
                 >fa:fas fa-user
@@ -141,12 +147,14 @@
 <script lang="ts">
 import { ShopPermissions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import UButtonAdd from "../../../ui/button/add/UButtonAdd.vue";
+import LicenseMixin from "@selldone/components-vue/mixin/license/LicenseMixin.ts";
 
 /**
  * <b-shops-abstract-list>
  */
 export default {
   name: "BShopsAbstractList",
+  mixins: [LicenseMixin],
   components: { UButtonAdd },
   props: {
     link: {

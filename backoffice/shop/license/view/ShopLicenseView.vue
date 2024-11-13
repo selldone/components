@@ -57,8 +57,11 @@
 </template>
 
 <script lang="ts">
+import LicenseMixin from "@selldone/components-vue/mixin/license/LicenseMixin.ts";
+
 export default {
   name: "ShopLicenseView",
+  mixins: [LicenseMixin, LicenseMixin],
   props: {
     shop: { require: true, type: Object },
     vertical: {
@@ -74,6 +77,7 @@ export default {
       type: Boolean,
     },
   },
+  methods: {},
 };
 </script>
 

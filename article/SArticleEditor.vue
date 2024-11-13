@@ -166,6 +166,7 @@ import { installGlobalComponents } from "../components-mandetory";
 import { debounce } from "lodash-es";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
 
 window.MediumInsert = MediumInsert;
 
@@ -317,7 +318,7 @@ const OPTIONS_BODY = {
 
 export default defineComponent({
   name: "SArticleEditor",
-  mixins: [],
+  mixins: [ImageMixin],
   emits: ["change", "update:title", "update:body", "update:images"],
 
   components: {

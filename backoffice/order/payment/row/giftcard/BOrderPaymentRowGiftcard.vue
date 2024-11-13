@@ -84,10 +84,11 @@
 
 <script lang="ts">
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
 
 export default {
   name: "BOrderPaymentRowGiftcard",
-  mixins: [DateMixin],
+  mixins: [DateMixin,AccountMixin],
 
   props: {
     giftcard: {

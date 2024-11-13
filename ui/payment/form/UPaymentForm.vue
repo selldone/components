@@ -773,10 +773,11 @@ import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelp
 import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 export default {
   name: "UPaymentForm",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin,ClubMixin],
   components: {
     ULoadingEllipsis,
     SWalletInput,

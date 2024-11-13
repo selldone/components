@@ -19,6 +19,7 @@ import {Shop} from "@selldone/core-js/models/shop/shop.model";
 import type {ProductVariant} from "@selldone/core-js/models/shop/product/product_variant.model";
 import {Product} from "@selldone/core-js/models/shop/product/product.model";
 import {CurrencyHelper, VendorProduct} from "@selldone/core-js";
+import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 const ProductMixin = {
   methods: {
@@ -170,6 +171,40 @@ const ProductMixin = {
         return variant.lead;
       }
       return product.lead;
+    },
+
+    getProductTypeName(type: keyof typeof ProductType) {
+      return ProductType[type] ? this.$t(ProductType[type].name) : "";
+    },
+
+    getProductTypeImage(
+      type: keyof typeof ProductType | "POS" | "FUL" | "AVO" | "HYP",
+    ) {
+      if (type === "POS")
+        return require("@selldone/core-js/assets/product-types/pos.svg");
+      else if (type === "FUL")
+        return require("@selldone/core-js/assets/product-types/dropshipping.svg");
+      else if (type === "AVO")
+        return require("@selldone/core-js/assets/product-types/avocado.svg");
+      else if (type === "HYP")
+        return require("@selldone/core-js/assets/product-types/hyper.svg");
+
+      return ProductType[type] ? ProductType[type].image : "";
+    },
+
+    getBasketTypeImage(
+      type: keyof typeof ProductType | "POS" | "FUL" | "AVO" | "HYP",
+    ) {
+      if (type === "POS")
+        return require("@selldone/core-js/assets/order-types/basket-pos.svg");
+      else if (type === "FUL")
+        return require("@selldone/core-js/assets/order-types/basket-drop-shipping.svg");
+      else if (type === "AVO")
+        return require("@selldone/core-js/assets/order-types/basket-avocado.svg");
+      else if (type === "HYP")
+        return require("@selldone/core-js/assets/order-types/basket-hyper.svg");
+
+      return ProductType[type] ? ProductType[type].basket : "";
     },
   },
 };

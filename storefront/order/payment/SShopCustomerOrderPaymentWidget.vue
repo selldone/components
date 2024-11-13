@@ -710,11 +710,12 @@ import SOrderPaymentRowWallet from "@selldone/components-vue/storefront/order/pa
 import SOrderPaymentRowCashback from "@selldone/components-vue/storefront/order/payment/rows/SOrderPaymentRowCashback.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CoreMixin from "@selldone/components-vue/mixin/CoreMixin.ts";
+import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",
-  mixins: [DateMixin,CoreMixin ],
+  mixins: [DateMixin,CoreMixin ,ClubMixin],
 
   components: {
     SOrderPaymentRowCashback,

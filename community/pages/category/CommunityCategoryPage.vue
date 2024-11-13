@@ -198,10 +198,10 @@
                   name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
                   params: {
                     category_id: category.id,
-                    category_slug: slugify(category.title),
+                    category_slug: Slugify.apply(category.title),
 
                     topic_id: topic.id,
-                    topic_slug: slugify(topic.title),
+                    topic_slug: Slugify.apply(topic.title),
                   },
                 })
             "
@@ -382,11 +382,11 @@ import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import { Community } from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
-
+import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "CommunityCategoryPage",
-  mixins: [AuthMixin ],
+  mixins: [AuthMixin],
 
   components: {
     ULoadingEllipsis,
@@ -413,6 +413,8 @@ export default {
 
   data() {
     return {
+      Slugify: Slugify,
+
       more: false, // Show all description
 
       //----------------------------------
@@ -453,7 +455,9 @@ export default {
 
   computed: {
     stage_level() {
-      return this.community.stage && Community.StageLevels[this.community.stage];
+      return (
+        this.community.stage && Community.StageLevels[this.community.stage]
+      );
     },
     access() {
       return this.community.access;
@@ -612,10 +616,10 @@ export default {
               name: window.$community.routes.COMMUNITY_TOPIC_PAGE,
               params: {
                 category_id: this.category.id,
-                category_slug: this.slugify(this.category.title),
+                category_slug: Slugify.apply(this.category.title),
 
                 topic_id: topic.id,
-                topic_slug: this.slugify(topic.title),
+                topic_slug: Slugify.apply(topic.title),
               },
             });
           } else {

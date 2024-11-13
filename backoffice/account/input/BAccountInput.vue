@@ -173,10 +173,11 @@
 <script lang="ts">
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
 
 export default {
   name: "BAccountInput",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin,AccountMixin],
   components: { UCurrencyIcon },
   emits: ["update:modelValue", "update:busy"],
   props: {

@@ -255,6 +255,7 @@ import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHead
 import { ShopURLs } from "@selldone/core-js/helper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "BIncludeItemAdd",
@@ -330,7 +331,7 @@ export default {
     },
     mode(mode) {
       if (mode === "internal") {
-        if (!this.path) this.path = this.slugify(this.include_title); // Auto set a path!
+        if (!this.path) this.path = Slugify.apply(this.include_title); // Auto set a path!
         if (!this.augment || !Array.isArray(this.augment)) this.augment = [];
       }
     },
@@ -424,7 +425,7 @@ export default {
 
     editInclude() {
       if (!this.include_code)
-        this.include_code = this.slugify(this.include_title);
+        this.include_code = Slugify.apply(this.include_title);
 
       this.busy_edit = true;
       let formData = new FormData();

@@ -422,11 +422,11 @@ import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
 
 export default {
   name: "BAccountTransactionForm",
-  mixins: [DateMixin, CurrencyMixin ],
+  mixins: [DateMixin, CurrencyMixin, AccountMixin],
   components: {
     SWidgetButtons,
     UPodNode,
@@ -580,7 +580,7 @@ export default {
           }
         })
         .catch((error) => {
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.account_to_loading = false;
@@ -625,7 +625,7 @@ export default {
           }
         })
         .catch((error) => {
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.receipt_loading = false;

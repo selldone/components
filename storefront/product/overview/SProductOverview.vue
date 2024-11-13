@@ -266,7 +266,9 @@
                 :color="
                   shop.theme?.color_buy ? shop.theme.color_buy : '#0061e0'
                 "
-                :href="ShopURLs.GetProductLink(shop, $product.id, $product.slug)"
+                :href="
+                  ShopURLs.GetProductLink(shop, $product.id, $product.slug)
+                "
                 min-height="72"
                 min-width="220"
                 style="font-size: 18px"
@@ -363,11 +365,12 @@ import SProductSectionCashback from "@selldone/components-vue/storefront/product
 import SProductSectionIncentivise from "@selldone/components-vue/storefront/product/section/incentivise/SProductSectionIncentivise.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { Product } from "@selldone/core-js/models";
-import {Shop, ShopURLs} from "@selldone/core-js";
+import { ShopURLs } from "@selldone/core-js";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "SProductOverview",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin, ProductMixin],
   components: {
     SProductSectionIncentivise,
     SProductSectionCashback,
@@ -462,7 +465,6 @@ export default {
   }),
 
   computed: {
-
     shop() {
       return this.getShop();
     },

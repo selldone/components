@@ -17,6 +17,7 @@ import {Currency} from "@selldone/core-js/enums/payment/Currency";
 import {CurrencyHelper, PriceHelper} from "@selldone/core-js/helper";
 import {isObject, isString} from "lodash-es";
 import {BasketItem, Shop} from "@selldone/core-js/models";
+import numeral from "numeral";
 
 const CurrencyMixin = {
   methods: {
@@ -152,6 +153,30 @@ const CurrencyMixin = {
       const to_currency = this.GetUserSelectedCurrency().code;
       return PriceHelper.getBasketItemSumPriceDiscount(shop, item, to_currency);
     },
+
+    //―――――――――――――――――――――― Format ――――――――――――――――――――
+
+    FormatNumberCurrency(
+        _value: number,
+        _currency: keyof typeof Currency | ICurrency | null = null,
+    ) {
+      const currency_obj =
+          _currency && _currency instanceof Object
+              ? _currency
+              : _currency
+                  ? Currency[_currency]
+                  : CurrencyHelper.GetUserSelectedCurrency(
+                      this.$localstorage_base_path(),
+                  );
+
+      if (!currency_obj) return `${_currency} Not exist 🚨!`;
+      const value =
+          _value * (currency_obj.alt_factor ? currency_obj.alt_factor : 1);
+
+      return numeral(value).format(currency_obj.format);
+    },
+
+
   },
 };
 

@@ -767,7 +767,7 @@
                 <router-link
                   :to="{
                     name: 'AuthorPage',
-                    params: { author: slugify(user.name), author_id: user.id },
+                    params: { author: Slugify.apply(user.name), author_id: user.id },
                   }"
                 >
                   {{ author_name }}
@@ -1041,6 +1041,7 @@ import { Article } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "ArticleViewer",
@@ -1181,6 +1182,9 @@ export default {
 
   data() {
     return {
+      Slugify:Slugify,
+
+
       ArticleTypes: Article.Types,
 
       can_edit: false,

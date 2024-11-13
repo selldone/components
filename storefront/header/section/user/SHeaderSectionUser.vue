@@ -245,10 +245,11 @@
 import SShopUserMenuList from "@selldone/components-vue/storefront/menu/user/SShopUserMenuList.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 export default {
   name: "SHeaderSectionUser",
-  mixins: [TemplateMixin, AuthMixin],
+  mixins: [TemplateMixin, AuthMixin,ClubMixin],
 
   components: {
     SShopUserMenuList,

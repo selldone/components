@@ -169,9 +169,11 @@ import BProductFlowRowVendor from "../../product/flow/row/vendor/BProductFlowRow
 import BProductFlowErrorsFile from "../../product/flow/errors/file/BProductFlowErrorsFile.vue";
 import BProductFlowErrorsLocation from "../../product/flow/errors/location/BProductFlowErrorsLocation.vue";
 import BProductFlowErrorsSubscription from "../../product/flow/errors/subscription/BProductFlowErrorsSubscription.vue";
+import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 export default {
   name: "FlowProduct",
+  mixins: [ProductMixin],
   components: {
     BProductFlowErrorsSubscription,
     BProductFlowErrorsLocation,
@@ -195,7 +197,6 @@ export default {
   data: function () {
     return {
       ProductType: ProductType,
-
     };
   },
 

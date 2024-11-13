@@ -35,7 +35,7 @@
                   <td>{{ $t("global.commons.browser") }}</td>
                   <td>
                     <img
-                      :src="getBrowserImage(session.browser)"
+                      :src="Browser.getImageByCode(session.browser)"
                       class="me-2"
                       height="18"
                     />
@@ -102,6 +102,7 @@
 import SWidgetBox from "../../../ui/widget/box/SWidgetBox.vue";
 import { Analytics } from "@selldone/core-js";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
+import Browser from "@selldone/core-js/enums/analytics/browser/Browser.ts";
 
 export default {
   name: "BOrderSession",
@@ -123,6 +124,9 @@ export default {
     };
   },
   computed: {
+    Browser() {
+      return Browser
+    },
     device() {
       let out = Analytics.DeviceType.find(
         (item) => item.code === this.session.type.toLowerCase(),
