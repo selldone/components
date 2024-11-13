@@ -45,7 +45,7 @@ class NotificationService {
     });
   }
 
-  showSuccessAlert(
+  static showSuccessAlert(
     title: string | null,
     message: string | null,
     icon = "done",
@@ -267,7 +267,7 @@ class NotificationService {
   }
 
   //―――――――――――――――――――――― Common dialogs ――――――――――――――――――――
-  openDeleteAlert(callback: () => void) {
+  static openDeleteAlert(callback: () => void) {
     const title = this.$t("global.dialogs.delete.title");
     const message = this.$t("global.dialogs.delete.message");
     const accept = this.$t("global.dialogs.delete.action");
