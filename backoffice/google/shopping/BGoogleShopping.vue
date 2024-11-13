@@ -77,6 +77,7 @@ import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import UPodsPanel from "@selldone/components-vue/ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";
 import UPodWire from "@selldone/components-vue/ui/pod/wire/UPodWire.vue";
+import {ShopURLs} from "@selldone/core-js/helper";
 
 export default {
   name: "BGoogleShopping",
@@ -100,7 +101,7 @@ export default {
   }),
   computed: {
     google_products_feed() {
-      return `${this.getShopMainUrl(this.shop)}/rss/google`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/rss/google`;
     },
 
     pages() {

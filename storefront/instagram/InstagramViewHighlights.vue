@@ -309,6 +309,8 @@ import SShopBuyButton from "../../storefront/product/button/SShopBuyButton.vue";
 import { throttle } from "lodash-es";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import { ShopURLs } from "@selldone/core-js/helper";
+
 
 export default {
   name: "InstagramViewHighlights",
@@ -527,7 +529,7 @@ export default {
     },
 
     showCategory(id) {
-      window.open(this.getCategoryLink(this.$shop, id), "_blank");
+      window.open(ShopURLs.GetCategoryLink(this.$shop, id), "_blank");
       this.showNormalPost();
     },
     showProduct(id) {
@@ -558,12 +560,12 @@ export default {
                 ? data.product.product_variants[0]
                 : null;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.error_msg = data.error_msg;
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
           this.error_msg = "Product not found!";
         })
         .finally(() => {
@@ -586,11 +588,11 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_save = false;

@@ -162,11 +162,11 @@ export default {
             if (!data.error) {
               this.$product.wishlist = data.wishlist;
             } else {
-              this.showErrorAlert(null, data.error_msg);
+              NotificationService.showErrorAlert(null, data.error_msg);
             }
           })
           .catch((error) => {
-            this.showLaravelError(error);
+            NotificationService.showLaravelError(error);
           })
           .finally(() => {
             this.wishlist_busy = false;
@@ -183,11 +183,11 @@ export default {
             if (!data.error) {
               this.$product.wishlist = null;
             } else {
-              this.showErrorAlert(null, data.error_msg);
+              NotificationService.showErrorAlert(null, data.error_msg);
             }
           })
           .catch((error) => {
-            this.showLaravelError(error);
+            NotificationService.showLaravelError(error);
           })
           .finally(() => {
             this.wishlist_busy = false;

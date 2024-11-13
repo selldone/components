@@ -552,8 +552,11 @@ import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
 import { throttle } from "lodash-es";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductEditType",
+  mixins: [],
   components: {
     UCurrencyInput,
     USmartToggle,
@@ -660,11 +663,11 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.search_result = data.result;
             if (!data.result.length) {
-              this.showWarningAlert(
+              NotificationService.showWarningAlert(
                 null,
                 "Product not exist in our repository!",
               );
@@ -672,7 +675,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_search = false;
@@ -710,14 +713,14 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(null, "The product added successfully.");
+            NotificationService.showSuccessAlert(null, "The product added successfully.");
             this.dialog_repository = false;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add_from_repository = null;

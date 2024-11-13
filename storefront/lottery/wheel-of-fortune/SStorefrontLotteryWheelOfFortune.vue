@@ -251,8 +251,11 @@ import SStorefrontLotteryPrizeDetail from "../../../storefront/lottery/prize-det
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 
+
 export default {
   name: "SStorefrontLotteryWheelOfFortune",
+  mixins:[],
+
   components: { ULottie, SStorefrontLotteryPrizeDetail },
   inject: ["$shop"],
 
@@ -357,11 +360,11 @@ export default {
           if (!data.error) {
             this.lotteries = data.lotteries;
           } else {
-            // this.showErrorAlert(null, data.error_msg);
+            // NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          // this.showLaravelError(error); Prevent show error on restricted shops!
+          // NotificationService.showLaravelError(error); Prevent show error on restricted shops!
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -495,12 +498,12 @@ export default {
               this.setTarget(this.count - 1);
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.play = false;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           this.play = false;
         })
         .finally(() => {

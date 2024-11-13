@@ -746,9 +746,11 @@ import { DateConverter } from "@selldone/core-js";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductVendorAdd",
-  mixins: [ProductMixin, CurrencyMixin],
+  mixins: [ProductMixin, CurrencyMixin ],
 
   components: {
     BProductExtraPricingRow,
@@ -1030,7 +1032,7 @@ export default {
 
     addVendorProduct() {
       if (this.IS_VENDOR_PANEL) {
-        this.showWarningAlert(null, "Not supported!");
+        NotificationService.showWarningAlert(null, "Not supported!");
         return;
       }
       this.busy = true;
@@ -1076,11 +1078,11 @@ export default {
 
             this.$emit("close");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -1139,11 +1141,11 @@ export default {
             this.$emit("update", data.vendor_product);
             this.$emit("close");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -1184,11 +1186,11 @@ export default {
             this.$emit("remove", data.id);
             this.$emit("close");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

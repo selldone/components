@@ -619,12 +619,13 @@ import CUserInput from "../../community/user/input/CUserInput.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
+
 /**
  * <c-breadcrumb>
  */
 export default {
   name: "CBreadcrumb",
-  mixins: [DateMixin, AuthMixin],
+  mixins: [DateMixin, AuthMixin ],
   components: {
     CUserInput,
     UCountDown,
@@ -775,16 +776,16 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
             this.user_nominate = null;
             this.USER().profile.credit--; // Decrement profile credit!
             this.show_nominate = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_nominate = false;
@@ -807,14 +808,14 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
             this.topic.action = data.action;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_notify = false;

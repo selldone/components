@@ -772,6 +772,7 @@ import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoad
 import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
 import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "UPaymentForm",
@@ -1057,7 +1058,7 @@ export default {
               `⚠ ❰ Stripe ❱  Failed to load script file: `,
               exception,
             );
-            this.showErrorAlert(null, "Can not load script!");
+            NotificationService.showErrorAlert(null, "Can not load script!");
           });
       }
     },
@@ -1096,7 +1097,7 @@ export default {
               `⚠ ❰ Paypal ❱  Failed to load script file: `,
               exception,
             );
-            t.showErrorAlert(null, "Can not load script!");
+            NotificationService.showErrorAlert(null, "Can not load script!");
           });
       }
     },
@@ -1120,12 +1121,12 @@ export default {
           if (!data.error) {
             this.createPayPalTransaction(data.token);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_get_paypal_client_token = false;
@@ -1147,7 +1148,7 @@ export default {
         if (createErr) {
           if (!this.selected_gateway) {
             // Prevent to show error when select other gateway (before UI create completely!
-            this.showErrorAlert(null, "Problem in creating payment UI!");
+            NotificationService.showErrorAlert(null, "Problem in creating payment UI!");
             console.error(createErr);
           }
         }
@@ -1313,7 +1314,7 @@ export default {
         })
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_gift_cards = false;
@@ -1391,7 +1392,7 @@ export default {
             // End process:
             this.$emit("onEndPayment", data);
             this.success_end_countdown = true;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Payment received",
               "Your payment accepted successfully.",
             );
@@ -1413,7 +1414,7 @@ export default {
               start,
             );
           } else {
-            this.showWarningAlert(
+            NotificationService.showWarningAlert(
               "Please refresh page after payment completed.",
             );
 
@@ -1423,7 +1424,7 @@ export default {
           }
         })
         .catch((e) => {
-          this.showErrorAlert(e);
+          NotificationService.showErrorAlert(e);
         })
         .finally(() => {});
     },

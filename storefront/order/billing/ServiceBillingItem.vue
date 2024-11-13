@@ -540,9 +540,10 @@ import { throttle } from "lodash-es";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+
 export default {
   name: "ServiceBillingItem",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {
     SWidgetButtons,
@@ -739,17 +740,17 @@ export default {
             this.basket.price = data.basket_price; // Recalculate basket price each time update service item.
             this.item.price = data.item_price; // Update basket item price.
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Your service order billing has been saved.",
             );
             this.expand = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -786,13 +787,13 @@ export default {
             this.service_item = data.service_item; // Update local object
             this.item.service_item = data.service_item; // Update main object
 
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;

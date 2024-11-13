@@ -383,9 +383,10 @@ import { Community } from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
+
 export default {
   name: "CommunityCategoryPage",
-  mixins: [AuthMixin],
+  mixins: [AuthMixin ],
 
   components: {
     ULoadingEllipsis,
@@ -512,7 +513,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
 
@@ -520,7 +521,7 @@ export default {
           this.has_more = data.more;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -581,11 +582,11 @@ export default {
           if (!data.error) {
             this.cross_preview = data.topic;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_pre = false;
@@ -618,11 +619,11 @@ export default {
               },
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_cross = false;
@@ -631,7 +632,7 @@ export default {
 
     //――――――――――――――――――――――― Remove category ―――――――――――――――――――――――
     removeCategory() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("community.category.delete_dialog.title"),
         this.$t("community.category.delete_dialog.message"),
         this.$t("community.category.delete_dialog.actions"),
@@ -646,18 +647,18 @@ export default {
             )
             .then(({ data }) => {
               if (!data.error) {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   "Remove category",
                   this.category.title + " has been removed successfully!",
                 );
                 this.DeleteItemByID(this.categories, this.category.id);
                 this.$router.push({ name: "CommunityHomePage" });
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = false;

@@ -262,8 +262,11 @@ import USmartDraggable from "../../../../ui/smart/draggable/USmartDraggable.vue"
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import { throttle } from "lodash-es";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductBadgesManage",
+  mixins: [],
   components: { USmartSwitch, USmartDraggable },
   props: {
     product: {
@@ -326,13 +329,13 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.all_badges = data.badges;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -363,7 +366,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
 
@@ -374,7 +377,7 @@ export default {
           this.pattern_input = null;
 
           this.AddOrUpdateItemByID(this.all_badges, data.badge);
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t(
               "product_badges.add_custom_badge.notifications.badge_added",
@@ -382,7 +385,7 @@ export default {
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -415,7 +418,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
 
@@ -427,7 +430,7 @@ export default {
 
           this.AddOrUpdateItemByID(this.all_badges, data.badge);
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t(
               "product_badges.add_custom_badge.notifications.badge_updated",
@@ -435,7 +438,7 @@ export default {
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -453,7 +456,7 @@ export default {
     showEdit(id) {
       const item = this.all_badges.find((b) => b.id === id);
       if (!item) {
-        return this.showErrorAlert(
+        return NotificationService.showErrorAlert(
           null,
           this.$t(
             "product_badges.add_custom_badge.notifications.item_not_found_error",
@@ -503,13 +506,13 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.product.badges = data.badges;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;

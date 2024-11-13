@@ -122,9 +122,11 @@ import UTextValueBox from "../../../ui/text/value-box/UTextValueBox.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BGiftcardAdd",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin ],
 
   emits: ["close", "save"],
   components: { USmartToggle, UTextValueBox, UNumberInput },
@@ -176,7 +178,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t(
                 "gift_card.gift_card_edit.notifications.create_success_title",
               ),
@@ -190,11 +192,11 @@ export default {
 
             this.$emit("save", data.count);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

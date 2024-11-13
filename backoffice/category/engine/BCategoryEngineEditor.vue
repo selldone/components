@@ -20,8 +20,7 @@
         :title="$t('category_engine_editor.title')"
       ></u-widget-header>
       <v-list-subheader>
-        {{$t('category_engine_editor.subtitle')}}
-
+        {{ $t("category_engine_editor.subtitle") }}
       </v-list-subheader>
 
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Preview ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
@@ -44,7 +43,9 @@
         :messages="$t('category_engine_editor.inputs.categories.messages')"
         multiple
         persistent-placeholder
-        :placeholder="$t('category_engine_editor.inputs.categories.placeholder')"
+        :placeholder="
+          $t('category_engine_editor.inputs.categories.placeholder')
+        "
         @change="engine_changed = true"
       >
       </b-category-input>
@@ -75,8 +76,7 @@
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Auto Add All Sub Categories ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
       <v-list-subheader>
-        {{$t('category_engine_editor.aut_add_sub_categories_tips')}}
-
+        {{ $t("category_engine_editor.aut_add_sub_categories_tips") }}
       </v-list-subheader>
       <div>
         <v-btn
@@ -86,8 +86,7 @@
           variant="elevated"
           @click="autoAddSubCategories"
         >
-          {{$t('category_engine_editor.actions.auto_add_subcategories')}}
-
+          {{ $t("category_engine_editor.actions.auto_add_subcategories") }}
         </v-btn>
       </div>
     </div>
@@ -103,7 +102,7 @@
           variant="elevated"
           @click="saveEngine()"
         >
-          {{$t('category_engine_editor.actions.save_engine')}}
+          {{ $t("category_engine_editor.actions.save_engine") }}
 
           {{ IS_VENDOR_PANEL ? " [Marketplace Owner]" : "" }}
         </v-btn>
@@ -120,8 +119,11 @@ import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import { BackofficeLocalStorages } from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCategoryEngineEditor",
+  mixins: [],
   components: {
     BCategoryEnginePreview,
     UWidgetHeader,
@@ -203,9 +205,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Category engine has been successfully updated.",
             );
@@ -216,7 +218,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_engine = false;
@@ -237,9 +239,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "All sub-categories have been successfully added.",
             );
@@ -250,7 +252,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_auto = false;

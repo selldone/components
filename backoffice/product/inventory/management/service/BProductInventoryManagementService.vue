@@ -85,9 +85,11 @@ import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import { throttle } from "lodash-es";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductInventoryManagementService",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: {
     UNumberInput,
   },
@@ -163,7 +165,7 @@ export default {
         )
         .then((response) => {
           if (!response.data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "product_admin.inventory.variants.notifications.save_product_inventory_success",
@@ -172,11 +174,11 @@ export default {
             this.product.quantity = response.data.quantity;
             this.$forceUpdate(); // Update vue component!
           } else {
-            this.showErrorAlert(null, response.data.error_msg);
+            NotificationService.showErrorAlert(null, response.data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -204,14 +206,14 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
-          this.showSuccessAlert(null, "Two step login inactivated.");
+          NotificationService.showSuccessAlert(null, "The product outputs have been updated.");
 
           this.product.outputs = data.outputs;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_output = false;

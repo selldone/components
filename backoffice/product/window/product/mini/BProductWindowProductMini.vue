@@ -142,7 +142,7 @@
         >
           <img
             v-if="product.category_id"
-            :src="getCategoryIcon(product.category_id)"
+            :src="ShopCategoryHelper.GetCategoryIconById(product.category_id)"
           />
           <v-icon v-else color="#000" size="12">home</v-icon>
         </v-avatar>
@@ -318,6 +318,7 @@ import BNoteButton from "../../../../note/button/BNoteButton.vue";
 import { BackofficeLocalStorages, DateConverter } from "@selldone/core-js";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import {ShopCategoryHelper} from "@selldone/core-js/helper/category/ShopCategoryHelper.ts";
 
 export default {
   name: "BProductWindowProductMini",
@@ -380,6 +381,9 @@ export default {
   },
 
   computed: {
+    ShopCategoryHelper() {
+      return ShopCategoryHelper
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -459,6 +463,12 @@ export default {
 
       // It's not a product of the vendor! It has multi vendors, so vendor can not edit it in their panel.
       return !this.vendor;
+    },
+  },
+
+  methods: {
+    getConnectIcon(connect_id: string | number) {
+      return window.CDN.GET_CONNECT_ICON(connect_id);
     },
   },
 };

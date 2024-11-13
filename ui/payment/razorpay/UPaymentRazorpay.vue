@@ -60,7 +60,7 @@ export default {
      */
     payByRazorpay() {
       if (!this.pack) {
-        this.showErrorAlert(null, "Payment package not received!");
+        NotificationService.showErrorAlert(null, "Payment package not received!");
         return;
       }
 

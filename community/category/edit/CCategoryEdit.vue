@@ -123,8 +123,10 @@ import CImageInput from "../../../community/image/input/CImageInput.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 
+
 export default {
   name: "CCategoryEdit",
+  mixins: [],
   components: { USmartToggle, CImageInput },
 
   props: {
@@ -172,10 +174,10 @@ export default {
 
     save(callback_busy) {
       if (!this.title) {
-        return this.showErrorAlert(null, "Enter title for the category!");
+        return NotificationService.showErrorAlert(null, "Enter title for the category!");
       }
       if (!this.desc) {
-        return this.showErrorAlert(null, "Enter description for the category!");
+        return NotificationService.showErrorAlert(null, "Enter description for the category!");
       }
 
       this.busy = true;
@@ -219,7 +221,7 @@ export default {
       promise
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.category
                 ? "The category has been updated successfully."
@@ -235,11 +237,11 @@ export default {
               this.resetToDefault(); // 🞇 Reset to default
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

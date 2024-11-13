@@ -277,9 +277,10 @@ import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
+
 export default {
   name: "CommunityTopicPage",
-  mixins: [CommunityMixin],
+  mixins: [CommunityMixin ],
   components: {
     ULoadingEllipsis,
     CommunityTopicStatistic,
@@ -452,7 +453,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
 
@@ -467,7 +468,7 @@ export default {
           this.fetchPosts(1);
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -522,7 +523,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
           this.posts.push(...data.posts);
@@ -538,7 +539,7 @@ export default {
           });
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_posts = false;
@@ -554,7 +555,7 @@ export default {
     },
     //――――――――――――――――――――――― Remove topic ―――――――――――――――――――――――
     removeTopic() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("community.topic.delete_dialog.title"),
         this.$t("community.topic.delete_dialog.message"),
         this.$t("community.topic.delete_dialog.actions"),
@@ -573,11 +574,11 @@ export default {
                   name: window.$community.routes.COMMUNITY_CATEGORY_PAGE,
                 });
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = false;

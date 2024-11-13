@@ -81,6 +81,8 @@ import "vue-prism-editor/dist/prismeditor.min.css";
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "AAddonCodeEditor",
   mixins: [ArticleMixin],
@@ -181,7 +183,7 @@ export default {
 
     showEdit() {
       if (!this.selected_lang) {
-        this.showErrorAlert(null, "Please select a language to edit code!");
+        NotificationService.showErrorAlert(null, "Please select a language to edit code!");
         return;
       }
       if (!this.editable) return;

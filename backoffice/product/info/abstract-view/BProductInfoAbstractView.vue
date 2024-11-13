@@ -702,7 +702,7 @@ import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import { ProductEmbedHelper } from "@selldone/core-js/helper/embed/ProductEmbedHelper";
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
-import { MapHelper } from "@selldone/core-js";
+import {MapHelper, ShopURLs} from "@selldone/core-js";
 import { ProductExternal } from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
 import UChipDiscount from "@selldone/components-vue/ui/chip/discount/UChipDiscount.vue";
 import { defineAsyncComponent } from "vue";
@@ -785,7 +785,7 @@ export default {
     },
 
     product_link() {
-      let domain = this.getShopMainUrl(this.shop);
+      let domain = ShopURLs.MainShopUrl(this.shop);
       return `${domain}/product/${this.product.id}`;
     },
 

@@ -180,6 +180,7 @@
 
 <script lang="ts">
 import { delay, throttle } from "lodash-es";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "UMapAddressInput",
@@ -294,11 +295,11 @@ export default {
             this.search_results = data.list;
             this.suggestion_menu = !this.hide;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.search_busy = false;

@@ -115,7 +115,9 @@
         :src="
           category_obj?.icon
             ? getShopImagePath(category_obj.icon, IMAGE_SIZE_SMALL)
-            : getCategoryIcon(isObject(modelValue) ? modelValue.id : modelValue)
+            : ShopCategoryHelper.GetCategoryIconById(
+                isObject(modelValue) ? modelValue.id : modelValue,
+              )
         "
         class="mb-1 me-1 hover-scale force-top"
       />
@@ -166,9 +168,13 @@ import CircleImage from "../../../ui/image/CircleImage.vue";
 import BCategoryParent from "../../category/parent/BCategoryParent.vue";
 import threads from "@selldone/core-js/utils/thread/threads";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import { ShopCategoryHelper } from "@selldone/core-js/helper/category/ShopCategoryHelper.ts";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BCategoryInput",
+  mixins: [],
   components: { UAvatarFolder, BCategoryParent, CircleImage },
   emits: ["change", "update:modelValue"],
   props: {
@@ -242,6 +248,9 @@ export default {
   }),
 
   computed: {
+    ShopCategoryHelper() {
+      return ShopCategoryHelper;
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -345,7 +354,7 @@ export default {
         })
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -370,20 +379,20 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.AddOrUpdateItemByID(this.categories, data.category);
             this.category = this.returnObject
               ? data.category
               : data.category.id;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_category.notifications.add_success"),
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_create = false;

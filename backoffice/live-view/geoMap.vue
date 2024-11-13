@@ -159,8 +159,11 @@
 import Mapbox from "../../ui/map/providers/mapbox/MapBox";
 import USparkline from "../../ui/chart/sparkline/USparkline.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "GeoMap",
+  mixins: [],
   components: { USparkline },
   data() {
     return {
@@ -441,11 +444,11 @@ export default {
             this.updateCharts();
             this.fitMap();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

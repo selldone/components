@@ -59,8 +59,11 @@
 <script lang="ts">
 import threads from "@selldone/core-js/utils/thread/threads";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BIncludeItemInput",
+  mixins: [],
   components: {},
   emits: ["update:modelValue", "click:clear"],
   props: {
@@ -141,7 +144,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
           this.includes = data.includes;
           this.total = data.total;

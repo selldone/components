@@ -649,10 +649,13 @@ import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPe
 import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import DomainMixin from "@selldone/components-vue/mixin/domain/DomainMixin.ts";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BDomainsList",
-  mixins: [DateMixin],
+  mixins: [DateMixin, DomainMixin ],
 
   components: {
     SWidgetHelp,
@@ -849,13 +852,13 @@ export default {
             if (domain_id !== "local" && domain_id !== "sub")
               // Custom domain repair client!
 
-              this.showSuccessAlert(null, data.message);
+              NotificationService.showSuccessAlert(null, data.message);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add_client = false;
@@ -899,7 +902,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("global.notification.confirm"),
               this.$t("admin_shop.dashboard.info.notification.update_message"),
             );
@@ -920,14 +923,14 @@ export default {
 
             this.dialog_set_domain = false;
           } else {
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               this.$t("global.notification.error"),
               data.error_msg,
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update = false;
@@ -945,7 +948,7 @@ export default {
     //▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Delete Domain ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
 
     deleteShopDomain(domain) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("admin_shop.dashboard.info.alert.title"),
         this.$t("admin_shop.dashboard.info.alert.message"),
         this.$t("global.actions.delete"),
@@ -956,7 +959,7 @@ export default {
             .delete(window.API.DELETE_EDIT_DOMAIN(this.shop.id, domain.domain))
             .then(({ data }) => {
               if (!data.error) {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   this.$t("admin_shop.dashboard.info.alert.title"),
                   this.$t(
                     "admin_shop.dashboard.info.notification.delete_domain_message",
@@ -965,14 +968,14 @@ export default {
                 this.DeleteItemByID(this.shop.domains, data.id);
                 this.DeleteItemByID(this.domains, data.id);
               } else {
-                this.showErrorAlert(
+                NotificationService.showErrorAlert(
                   this.$t("global.notification.error"),
                   data.error_msg,
                 );
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = null;

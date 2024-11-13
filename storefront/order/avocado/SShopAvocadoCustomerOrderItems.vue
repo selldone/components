@@ -125,8 +125,11 @@
 <script lang="ts">
 import { AvocadoItem, Basket } from "@selldone/core-js";
 
+
 export default {
   name: "SShopAvocadoCustomerOrderItems",
+  mixins:[],
+
   props: {
     avocado: { required: true },
 
@@ -163,7 +166,7 @@ export default {
 
   methods: {
     deleteItem(item) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("avocado.delete_item_dialog.title"),
         this.$t("avocado.delete_item_dialog.message"),
         this.$t("avocado.delete_item_dialog.action"),
@@ -183,16 +186,16 @@ export default {
                 this.DeleteItemByID(this.items, item.id);
                 Object.assign(this.avocado, data.avocado);
 
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t("avocado.notifications.delete_success"),
                 );
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = null;

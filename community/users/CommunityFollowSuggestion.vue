@@ -72,8 +72,12 @@
 </template>
 
 <script lang="ts">
+
+
 export default {
   name: "CommunityFollowSuggestion",
+  mixins: [],
+
   components: {},
   props: {
     community: {
@@ -135,13 +139,13 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
 
           profile.follow = data.follow; // Indicate followed now!
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_follow = false;

@@ -290,8 +290,11 @@
 import UButtonFeature from "../../../../ui/button/feature/UButtonFeature.vue";
 import { throttle } from "lodash-es";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopHomeSelect",
+  mixins: [],
   components: { UButtonFeature },
   props: {
     shop: {
@@ -366,7 +369,7 @@ export default {
           this.pages = data.pages;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -409,11 +412,11 @@ export default {
               this.shop.home = data.home;
             }
 
-            this.showSuccessAlert(null, "Home page successfully set up.");
-          } else this.showErrorAlert(null, data.error_msg);
+            NotificationService.showSuccessAlert(null, "Home page successfully set up.");
+          } else NotificationService.showErrorAlert(null, data.error_msg);
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;

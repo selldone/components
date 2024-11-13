@@ -37,8 +37,11 @@ import CommunityStatisticView from "../statistics/CommunityStatisticView.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 import CommunityStatisticViewSkeleton from "../statistics/CommunityStatisticViewSkeleton.vue";
 
+
 export default {
   name: "CommunityTopicStatistic",
+  mixins: [],
+
   components: { CommunityStatisticViewSkeleton, CommunityStatisticView },
   props: {
     community: {
@@ -92,7 +95,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
 
@@ -111,7 +114,7 @@ export default {
           this.timeSeries.fetch = this.fetchCallback;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

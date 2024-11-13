@@ -96,9 +96,11 @@
 <script lang="ts">
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BUserSecurityLoginDevices",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {},
   props: {},
@@ -126,7 +128,7 @@ export default {
           this.current_device = data.current;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.fetching_login_devices = false;
@@ -159,12 +161,12 @@ export default {
           user_agent: login_device.user_agent,
         })
         .then(({ data }) => {
-          if (data.error) return this.showErrorAlert(null, data.error_msg);
+          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
 
           this.fetchLoginDevices();
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_logout_device = null;

@@ -417,9 +417,10 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
+
 export default {
   name: "CCommentsList",
-  mixins: [DateMixin, AuthMixin, CommunityMixin],
+  mixins: [DateMixin, AuthMixin, CommunityMixin ],
 
   components: { ULoadingEllipsis, CImageView },
   props: {
@@ -529,7 +530,7 @@ export default {
       //   console.log(files);
 
       if (file.size > 2 * 1024 * 1024) {
-        this.showErrorAlert(null, "Max image size limit is 2Mb.");
+        NotificationService.showErrorAlert(null, "Max image size limit is 2Mb.");
         return;
       }
 
@@ -580,7 +581,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
 
@@ -591,7 +592,7 @@ export default {
           this.totalItems = data.total;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -654,11 +655,11 @@ export default {
 
             this.$emit("add", data.comment);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -700,11 +701,11 @@ export default {
             comment.action = data.action; // Update user reaction
             Object.assign(comment, data.comment); // Update agrees / disagrees count
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_reaction = null;

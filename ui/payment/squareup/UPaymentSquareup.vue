@@ -179,6 +179,7 @@
 
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import {ScriptHelper} from "@selldone/components-vue/plugins/jquery/ScriptHelper";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "UPaymentSquareup",
@@ -326,7 +327,7 @@ export default {
               `⚠ ❰ Square ❱  Failed to load script file: `,
               exception,
             );
-            t.showErrorAlert(null, "Can not load Square script!");
+            NotificationService.showErrorAlert(null, "Can not load Square script!");
           });
       }
     },
@@ -387,11 +388,11 @@ export default {
           if (!data.error) {
             window.location.href = this.orderUrl;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_submit = false;

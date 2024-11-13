@@ -275,7 +275,7 @@ export default {
     },
 
     changePaymentMethod(transaction) {
-      this.openConfirmationAlert(
+      NotificationService.openConfirmationAlert(
         "Change the payment method",
         "Are you sure about switching payment methods?",
         "Yes, Show payment options",

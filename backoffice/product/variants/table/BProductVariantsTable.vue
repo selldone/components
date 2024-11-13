@@ -320,9 +320,11 @@ import UChipDiscount from "../../../../ui/chip/discount/UChipDiscount.vue";
 import { defineAsyncComponent } from "vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductVariantsTable",
-  mixins: [ProductMixin],
+  mixins: [ProductMixin ],
 
   components: {
     UChipDiscount,
@@ -411,7 +413,7 @@ export default {
     },
 
     showAddVariantDialog(parent_variant) {
-      this.openConfirmationAlert(
+      NotificationService.openConfirmationAlert(
         "Add variant",
         "Are you sure to add this variant to your product?",
         "Yes, Add now",
@@ -439,13 +441,13 @@ export default {
               data.product_variant,
             );
 
-            this.showSuccessAlert(null, "Variant added successfully.");
+            NotificationService.showSuccessAlert(null, "Variant added successfully.");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add_variant = false;

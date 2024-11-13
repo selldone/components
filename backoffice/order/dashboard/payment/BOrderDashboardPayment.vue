@@ -806,9 +806,11 @@ import UChartSankey from "../../../../ui/chart/sankey/UChartSankey.vue";
 import { Basket, Bill } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BOrderDashboardPayment",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {
     UChartSankey,
@@ -1525,7 +1527,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             if (data.success) {
               // If changed status request refresh order:
@@ -1536,7 +1538,7 @@ export default {
               )
                 this.$emit("fetch-order");
 
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 this.$t(
                   "process_center.payment_widget.notifications.pay_confirm_message",
@@ -1549,7 +1551,7 @@ export default {
                   (data.message ? `<hr>${data.message}` : ""), // Add extra message!
               );
             } else {
-              this.showWarningAlert(
+              NotificationService.showWarningAlert(
                 this.$t(
                   "process_center.payment_widget.notifications.pay_fail_title",
                 ),
@@ -1563,7 +1565,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_check = false;
@@ -1590,9 +1592,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("process_center.notifications.pay_cod_success"),
             );
@@ -1602,7 +1604,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_pay = false;

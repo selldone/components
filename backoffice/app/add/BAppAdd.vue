@@ -54,7 +54,6 @@
                       <v-img
                         :src="app_mode.src"
                         class="mx-auto my-2"
-
                         height="64"
                         width="64"
                       ></v-img>
@@ -238,7 +237,6 @@
         v-if="app"
         :loading="busy"
         color="primary"
-
         size="x-large"
         variant="flat"
         @click="editApp"
@@ -250,7 +248,6 @@
         v-else
         :loading="busy"
         color="primary"
-
         size="x-large"
         variant="flat"
         @click="addApp"
@@ -272,8 +269,11 @@ import { Scopes } from "@selldone/core-js/enums/permission/Scopes";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import { Application } from "@selldone/core-js";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BAppAdd",
+  mixins: [],
   components: { SFormBuilder },
   props: {
     company: {
@@ -408,9 +408,9 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_app.notifications.add_success", { name: this.name }),
             );
@@ -418,7 +418,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -450,9 +450,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_app.notifications.delete_success"),
             );
@@ -463,7 +463,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

@@ -126,8 +126,11 @@ import BLogisticProfileInput from "../../../logistic/profile/input/BLogisticProf
 import BMapTagInput from "../../../map/tag/input/BMapTagInput.vue";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCategoryBulkActionSetLogisticProfile",
+  mixins: [],
   components: {
     USmartVerify,
     BMapTagInput,
@@ -213,10 +216,10 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("close");
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Bulk profile assignment task completed." +
                 (data.message ? data.message : ""),
@@ -224,7 +227,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

@@ -96,10 +96,13 @@ import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 import { ShopOptionsHelper, ShopURLs } from "@selldone/core-js/helper";
 import { Product } from "@selldone/core-js/models";
+
 import ProductType = Product.ProductType;
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default defineComponent({
   name: "BOrderShare",
+  mixins: [],
   components: { ULoadingProgress, UTextCopyBox },
   inject: ["$shop"],
   props: {
@@ -167,17 +170,17 @@ export default defineComponent({
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.secure_link = data.url;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               $t("b_order_share.notifications.secure_link_created"),
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_secure_link = null;

@@ -42,7 +42,7 @@
         v-model="gateway.code"
         append-inner-icon="fa:fas fa-copyright"
         disabled
-        :label="$t('edit_gateway.gateway_code') "
+        :label="$t('edit_gateway.gateway_code')"
         variant="underlined"
       />
       <u-widget-header :title="$t('edit_gateway.status_title')" icon="flaky">
@@ -98,7 +98,7 @@
         </u-pods-panel>
 
         <v-list-subheader>
-          {{$t('edit_gateway.hold_only_for') }}:
+          {{ $t("edit_gateway.hold_only_for") }}:
 
           <v-chip class="ma-1" color="#FFF" variant="flat" label size="small"
             ><img
@@ -122,7 +122,7 @@
           v-model="manual"
           :disabled="!enable"
           class="my-3"
-          :false-description="$t('edit_gateway.manual_input.false_description')  "
+          :false-description="$t('edit_gateway.manual_input.false_description')"
           false-icon="published_with_changes"
           :false-title="$t('edit_gateway.manual_input.false_title')"
           :true-description="$t('edit_gateway.manual_input.true_description')"
@@ -312,9 +312,9 @@
         icon="production_quantity_limits"
       ></u-widget-header>
 
-      <v-list-subheader>{{
-        $t("edit_gateway.limit.subtitle")
-      }}</v-list-subheader>
+      <v-list-subheader
+        >{{ $t("edit_gateway.limit.subtitle") }}
+      </v-list-subheader>
       <u-price-input
         v-model="limit"
         :currency="gateway.currency"
@@ -340,8 +340,7 @@
       ></u-widget-header>
 
       <v-list-subheader>
-        {{$t("edit_gateway.debug.subtitle")}}
-
+        {{ $t("edit_gateway.debug.subtitle") }}
       </v-list-subheader>
       <u-smart-switch
         v-model="debug"
@@ -373,10 +372,13 @@ import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
 import UPriceInput from "@selldone/components-vue/ui/price/input/UPriceInput.vue";
-import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BGatewayAdd",
+  mixins: [],
   components: {
     UPriceInput,
     UPodWire,
@@ -487,7 +489,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("edit_gateway.notifications.edit_success", {
                 gateway_name: this.gateway.name,
@@ -509,11 +511,11 @@ export default {
             TrackSeller.onAddGateway(this.gateway, data.shop_gateway);
             //└───────────────────────────────────────────────┘
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = false;

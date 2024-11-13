@@ -122,7 +122,8 @@
                 :shop="shop"
                 flat
                 label="Vendor*"
-                solo clearable
+                solo
+                clearable
               ></b-vendor-input>
             </template>
 
@@ -159,7 +160,8 @@
                     class="mt-5"
                     flat
                     label="Vendor"
-                    solo clearable
+                    solo
+                    clearable
                     @change="$forceUpdate()"
                   ></b-vendor-input>
                 </div>
@@ -330,12 +332,16 @@ import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import BProductEditType from "../../../product/edit/type/BProductEditType.vue";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
 import { Article } from "@selldone/core-js";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 const TAB_PRODUCT = 1;
 const TAB_CATEGORY = 2;
 
 export default {
   name: "BProductAddStudio",
+  mixins: [],
   components: {
     SWidgetButtons,
     BProductEditType,
@@ -508,11 +514,11 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.product = data.product;
 
-            this.showSuccessAlert(null, "The product added to the list.");
+            NotificationService.showSuccessAlert(null, "The product added to the list.");
             this.$emit("add", data.product);
 
             this.tab_product = 2;
@@ -520,7 +526,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = false;
@@ -529,6 +535,15 @@ export default {
 
     finish() {
       this.$emit("finish");
+    },
+
+    //―――――――――――――――――――――― Page Scroll Helper ――――――――――――――――――――
+    GoToTopPage() {
+      this.$nextTick(() => {
+        this.$nextTick(() => {
+          ScrollHelper.scrollToTop(0, "smooth");
+        });
+      });
     },
   },
 };

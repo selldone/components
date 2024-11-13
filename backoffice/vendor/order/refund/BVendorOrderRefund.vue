@@ -17,25 +17,28 @@
     <v-card-title></v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
-        <u-widget-header icon="remove_shopping_cart" :title="$t('vendor_order_refund.title')">
+        <u-widget-header
+          icon="remove_shopping_cart"
+          :title="$t('vendor_order_refund.title')"
+        >
         </u-widget-header>
 
         <v-list-subheader>
-          <div v-html="$t('vendor_order_refund.subtitle')">
-
-          </div>
+          <div v-html="$t('vendor_order_refund.subtitle')"></div>
         </v-list-subheader>
 
         <!-- Visual fund flow -->
         <div class="text-center d-flex align-center justify-center" dir="ltr">
           <div class="min-width-100">
             <v-icon>business</v-icon>
-            <small class="d-block">{{$t('global.commons.you')}}</small>
+            <small class="d-block">{{ $t("global.commons.you") }}</small>
           </div>
           <v-icon class="rotate-180 mb-4">trending_flat</v-icon>
           <div class="min-width-100">
             <v-icon>wallet</v-icon>
-            <small class="d-block">{{$t('global.commons.vendor_wallet')}}</small>
+            <small class="d-block">{{
+              $t("global.commons.vendor_wallet")
+            }}</small>
           </div>
         </div>
 
@@ -51,7 +54,7 @@
           :currency="currency"
           :error-messages="
             amount > sum_transactions
-              ?$t('vendor_order_refund.inputs.amount.error_message')
+              ? $t('vendor_order_refund.inputs.amount.error_message')
               : undefined
           "
           :label="$t('global.commons.amount')"
@@ -65,7 +68,7 @@
           :label="$t('global.commons.note')"
           append-inner-icon="sticky_note_2"
           auto-grow
-          :messages="$t('vendor_order_refund.inputs.note.message') "
+          :messages="$t('vendor_order_refund.inputs.note.message')"
           persistent-placeholder
           :placeholder="$t('vendor_order_refund.inputs.note.placeholder')"
           rows="2"
@@ -111,8 +114,10 @@ import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
 
+
 export default {
   name: "BVendorOrderRefund",
+  mixins: [],
   components: {
     USmartSuggestion,
     UCurrencyInput,
@@ -190,11 +195,11 @@ export default {
             this.$emit("add:transaction", data.transaction);
             this.$emit("close");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

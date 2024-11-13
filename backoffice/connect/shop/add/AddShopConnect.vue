@@ -85,12 +85,10 @@
       <v-expand-transition>
         <div v-if="!connect">
           <v-list-subheader
-            >These tutorials showcase some of the capabilities of Connect
-            OS.</v-list-subheader
-          >
+            >These tutorials showcase some of the capabilities of Connect OS.
+          </v-list-subheader>
           <s-widget-help code="Connect.Printful" inline></s-widget-help>
           <s-widget-help code="Connect.XCart" inline></s-widget-help>
-
         </div>
       </v-expand-transition>
 
@@ -427,8 +425,11 @@ import BShopQuotaCard from "@selldone/components-vue/backoffice/shop/quota/card/
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "AddShopConnect",
+  mixins: [],
   emits: ["edit", "delete", "add"],
   components: {
     SWidgetHelp,
@@ -552,13 +553,13 @@ export default {
           if (!data.error) {
             this.$emit("add", data.shop_connect);
 
-            this.showSuccessAlert(null, "Connect has been added successfully.");
+            NotificationService.showSuccessAlert(null, "Connect has been added successfully.");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.loading = false;
@@ -585,16 +586,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.$emit("edit", data.shop_connect);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Connect has been updated successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -614,16 +615,16 @@ export default {
 
             this.$router.push({ name: "BPageShopChannelConnect" });
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Connect has been deleted successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;

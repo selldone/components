@@ -171,7 +171,7 @@
               <v-text-field
                 v-model="path"
                 :counter="64"
-                :prefix="getShopMainUrl(shop) + '/in/'"
+                :prefix="ShopURLs.MainShopUrl(shop) + '/in/'"
                 :suffix="`-${include ? include.id : 'ID'}`"
                 :label="$t('include_item_add.inputs.path.label')"
                 messages="ex. light-cable"
@@ -252,9 +252,13 @@ import LAugmentForm from "@selldone/page-builder/components/augment/form/LAugmen
 import BTranslationButtonInclude from "../../translation/button/include/BTranslationButtonInclude.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
+import { ShopURLs } from "@selldone/core-js/helper";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BIncludeItemAdd",
+  mixins: [],
   emits: ["add", "edit", "close"],
   components: {
     UWidgetHeader,
@@ -311,7 +315,7 @@ export default {
     internal_page_link() {
       if (!this.include?.id) return null;
       return (
-        this.getShopMainUrl(this.shop) +
+        ShopURLs.MainShopUrl(this.shop) +
         "/in/" +
         this.path +
         "-" +
@@ -396,11 +400,11 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t("include_item_add.notifications.add.message"),
           );
@@ -411,7 +415,7 @@ export default {
           this.include_image = null;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = false;
@@ -454,10 +458,10 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t("include_item_add.notifications.edit.message"),
           );
@@ -469,7 +473,7 @@ export default {
           this.include_image = null;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit = false;
@@ -487,7 +491,7 @@ export default {
           this.augment = augment;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_load = false;

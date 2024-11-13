@@ -279,34 +279,32 @@
               <div v-if="report">
                 <div v-if="mode === 'marketplace'">
                   <u-text-value-dashed>
-                    <template v-slot:label>{{
-                      $t("bulk_price_dialog.listing_products_changes")
-                    }}</template>
+                    <template v-slot:label
+                      >{{ $t("bulk_price_dialog.listing_products_changes") }}
+                    </template>
                     <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
                 </div>
                 <div v-else-if="bulk_vendor">
                   <u-text-value-dashed>
                     <template v-slot:label>
-                      {{
-                        $t("bulk_price_dialog.total_vendor_products")
-                      }}</template
-                    >
+                      {{ $t("bulk_price_dialog.total_vendor_products") }}
+                    </template>
                     <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
                 </div>
                 <div v-else>
                   <u-text-value-dashed>
                     <template v-slot:label>
-                      {{ $t("bulk_price_dialog.total_products") }}</template
-                    >
+                      {{ $t("bulk_price_dialog.total_products") }}
+                    </template>
                     <b>{{ report.count_products }}</b>
                   </u-text-value-dashed>
 
                   <u-text-value-dashed>
-                    <template v-slot:label>{{
-                      $t("bulk_price_dialog.total_variants")
-                    }}</template>
+                    <template v-slot:label
+                      >{{ $t("bulk_price_dialog.total_variants") }}
+                    </template>
                     <b>{{ report.count_variants }}</b>
                   </u-text-value-dashed>
                 </div>
@@ -422,8 +420,11 @@ import BVendorInput from "@selldone/components-vue/backoffice/vendor/input/BVend
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import USmartSelect from "@selldone/components-vue/ui/smart/select/USmartSelect.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BInventoryBulkPrice",
+  mixins: [],
   components: {
     USmartSelect,
     BVendorInput,
@@ -521,17 +522,17 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
             this.preview = false;
 
             this.$emit("update", data);
             this.$emit("update:modelValue", false);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => (this.busy_bulk = false));
     },
@@ -564,11 +565,11 @@ export default {
             if (!data.error) {
               this.report = data;
             } else {
-              this.showErrorAlert(null, data.error_msg);
+              NotificationService.showErrorAlert(null, data.error_msg);
             }
           })
           .catch((error) => {
-            this.showLaravelError(error);
+            NotificationService.showLaravelError(error);
           })
           .finally(() => {
             this.busy_report = false;

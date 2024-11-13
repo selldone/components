@@ -178,9 +178,11 @@ import { defineComponent } from "vue";
 import UChartRadialBar from "../../../../ui/chart/radial/bar/UChartRadialBar.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "BTransportationServiceCard",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: { UChartRadialBar },
   props: {
     service: {
@@ -199,7 +201,7 @@ export default defineComponent({
     //――――――――――――――――――――――― Transportation > Service > Reset ―――――――――――――――――――――――
 
     resetService(service) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("transportation_services.reset.title"),
         this.$t("transportation_services.reset.message"),
         this.$t("transportation_services.reset.action"),
@@ -215,10 +217,10 @@ export default defineComponent({
             )
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
                 this.AddOrUpdateItemByID(this.services, data.service);
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t(
                     "transportation_services.notifications.success_reset",
@@ -227,7 +229,7 @@ export default defineComponent({
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_reset = null;
@@ -253,17 +255,17 @@ export default defineComponent({
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.AddOrUpdateItemByID(this.service, data.service);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("transportation_services.notifications.success_update")
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_enable = null;

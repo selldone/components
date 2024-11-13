@@ -348,6 +348,22 @@ export default {
       ); // Force download file!
     },
 
+    getShop3DModelPath(
+      shop_name: string,
+      product_id: number,
+      variant_id: number | null,
+      folder_name: string,
+      file_name: string,
+    ) {
+      return window.CDN.GET_SHOP_3D_MODEL_PATH(
+        shop_name,
+        product_id,
+        variant_id,
+        folder_name,
+        file_name,
+      );
+    },
+
     getArViewUrl() {
       if (!this.ar) return null;
 
@@ -366,7 +382,7 @@ export default {
     },
 
     deleteFile(file_type) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete 3D model",
         "Are you sure to remove this file?",
         "Delete",
@@ -390,7 +406,7 @@ export default {
               }
             })
             .catch((e) => {
-              this.showLaravelError(e);
+              NotificationService.showLaravelError(e);
             })
             .finally(() => {
               if (file_type === "src") this.busy_delete_src = false;

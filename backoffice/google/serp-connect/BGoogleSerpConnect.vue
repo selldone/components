@@ -64,7 +64,10 @@
       </ol>
     </div>
 
-    <div v-if="writeShopAccess(ShopPermissionRegions.CHANNELS.code)" class="widget-buttons">
+    <div
+      v-if="writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
+      class="widget-buttons"
+    >
       <v-btn
         v-if="!shop.search_console"
         :class="{ disabled: !main_domain }"
@@ -96,10 +99,13 @@
 </template>
 
 <script lang="ts">
-import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BGoogleSerpConnect",
+  mixins: [],
   components: {},
   props: {
     shop: {
@@ -115,7 +121,7 @@ export default {
 
   computed: {
     ShopPermissionRegions() {
-      return ShopPermissionRegions
+      return ShopPermissionRegions;
     },
     main_domain() {
       return this.shop.domains.find((i) => i.enable && i.primary);
@@ -128,7 +134,7 @@ export default {
 
   methods: {
     askRemove() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Remove connection",
         "Are you sure remove the search console link?",
         "Yes, remove it",
@@ -147,11 +153,11 @@ export default {
           if (!data.error) {
             this.shop.search_console = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_remove_search_console = false;

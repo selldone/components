@@ -251,9 +251,10 @@ import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.
 import { BasketItemReturn } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+
 export default {
   name: "SOrderBasketReturn",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: {
     UTextValueDashed,
     VariantItemViewMicro,
@@ -315,6 +316,10 @@ export default {
       return out ? out : {};
     },
 
+    getShopFileTempPath(file_name: string) {
+      return window.CDN.GET_SHOP_TEMP_FILE_PATH(file_name);
+    },
+
     getImagePath(return_request) {
       if (return_request && return_request.image)
         return this.getShopFileTempPath(return_request.image);
@@ -357,9 +362,9 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "global.basket_return_request_view.notifications.update_status_success",
@@ -369,7 +374,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_item = null;

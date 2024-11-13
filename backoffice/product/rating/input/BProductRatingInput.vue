@@ -89,8 +89,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "BProductRatingInput",
+  mixins:[],
   props: {
     product: {
       type: Object,
@@ -140,7 +143,7 @@ export default defineComponent({
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "add_product.rating_pros_cons.notifications.delete_rating_success",
@@ -149,12 +152,12 @@ export default defineComponent({
             );
             this.DeleteItemByID(this.product.ratings, data.id);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
           this.$forceUpdate(); // Update vue component!
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete_rating = null;
@@ -185,7 +188,7 @@ export default defineComponent({
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "add_product.rating_pros_cons.notifications.add_rating_success",
@@ -199,12 +202,12 @@ export default defineComponent({
             this.new_rating = null;
             //this.rating_name = "";
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
           this.$forceUpdate(); // Update vue component!
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_rating = false;

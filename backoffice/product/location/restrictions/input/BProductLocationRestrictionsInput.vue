@@ -74,8 +74,11 @@
 <script lang="ts">
 import { debounce } from "lodash-es";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductLocationRestrictionsInput",
+  mixins: [],
   components: {},
   emits: ["update:modelValue", "click:clear"],
   props: {
@@ -133,7 +136,7 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
           this.profiles = data.profiles;
           this.total = data.total;

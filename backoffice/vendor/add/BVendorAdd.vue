@@ -1169,9 +1169,11 @@ import LAugmentForm from "@selldone/page-builder/components/augment/form/LAugmen
 import BInventoryWarehouse from "@selldone/components-vue/backoffice/inventory/warehouse/BInventoryWarehouse.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BVendorAdd",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: {
     BInventoryWarehouse,
     LAugmentForm,
@@ -1381,7 +1383,7 @@ export default {
 
     addVendor() {
       if (this.IS_VENDOR_PANEL) {
-        return this.showErrorAlert(null, "You can not add a new vendor here!");
+        return NotificationService.showErrorAlert(null, "You can not add a new vendor here!");
       }
 
       const valid = this.$refs.form.validate();
@@ -1425,14 +1427,14 @@ export default {
           if (!data.error) {
             this.$emit("add", data.vendor);
             this.$emit("close");
-            this.showSuccessAlert(null, "Vendor has been added successfully.");
+            NotificationService.showSuccessAlert(null, "Vendor has been added successfully.");
             this.resetToDefault(); // 🞇 Reset to default
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -1491,16 +1493,16 @@ export default {
             Object.assign(this.vendor, data.vendor);
             this.$emit("update", data.vendor);
             this.$emit("close");
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Vendor has been updated successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -1513,7 +1515,7 @@ export default {
     },
 
     showRemove() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         `Remove ${this.vendor.name}`,
         "Are you sure to remove this vendor?",
         "Yes,Remove it",
@@ -1533,16 +1535,16 @@ export default {
           if (!data.error) {
             this.$emit("remove", data.id);
             this.$emit("close");
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Vendor has been removed successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -1577,16 +1579,16 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Invite email has been sent successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -1621,7 +1623,7 @@ export default {
           this.augment = augment;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_load = false;

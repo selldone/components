@@ -29,7 +29,7 @@
       <!--    v-bind="file.download_link ? { href: file.download_link } : undefined" -->
       <template v-slot:prepend>
         <v-avatar tile>
-          <img :src="getFileExtensionImage(file.name)" />
+          <img :src="FileHelper.GetFileExtensionImage(file.name)" />
         </v-avatar>
       </template>
 
@@ -105,10 +105,12 @@
 <script lang="ts">
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import {FileHelper} from "@selldone/core-js/utils";
+
 
 export default {
   name: "SShopProductFilesList",
-  mixins: [AuthMixin],
+  mixins: [AuthMixin ],
 
   props: {
     files: {
@@ -124,7 +126,11 @@ export default {
     },
   },
 
-  computed: {},
+  computed: {
+    FileHelper() {
+      return FileHelper
+    }
+  },
   watch: {},
 
   data: function () {
@@ -189,11 +195,11 @@ export default {
             // Add link to file:
             file.download_link = data.url;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_get_file = null;

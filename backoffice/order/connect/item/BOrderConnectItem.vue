@@ -186,9 +186,11 @@ import { Connect } from "@selldone/core-js";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BOrderConnectItem",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {
     UAvatarFolder,
@@ -329,11 +331,11 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.error_msg = data.error_msg;
           } else {
             this.error_msg = null;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("Order successfully synced with the destination."),
             );
@@ -341,7 +343,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_sync = false;
@@ -359,16 +361,16 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.error_msg = data.error_msg;
           } else {
             this.error_msg = null;
-            this.showSuccessAlert(null, this.$t("Order successfully updated."));
+            NotificationService.showSuccessAlert(null, this.$t("Order successfully updated."));
             Object.assign(this.connectOrder, data.connect_order);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_refresh = false;
@@ -376,7 +378,7 @@ export default {
     },
 
     confirmNowAsk() {
-      this.openConfirmationAlert(
+      NotificationService.openConfirmationAlert(
         "Confirm order",
         `Are you sure to confirm this order? ${this.connect.name} will charge you.`,
         "Yes, Confirm now",
@@ -397,11 +399,11 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.error_msg = data.error_msg;
           } else {
             this.error_msg = null;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("Order successfully confirmed."),
             );
@@ -409,7 +411,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_confirm = false;
@@ -417,7 +419,7 @@ export default {
     },
 
     cancelNowAsk() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Cancel order",
         `Are you sure to cancel this order? <br><ul><li>Some providers support this feature to cancel orders on Selldone.</li><li>If you see error please go to your account on their services and cancel this order there.</li></ul>`,
         "Yes, Cancel now",
@@ -438,11 +440,11 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.error_msg = data.error_msg;
           } else {
             this.error_msg = null;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("Order successfully canceled."),
             );
@@ -450,7 +452,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_confirm = false;

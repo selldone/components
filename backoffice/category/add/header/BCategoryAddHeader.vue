@@ -21,7 +21,7 @@
     <v-spacer></v-spacer>
     <v-btn
       v-if="category"
-      :href="`${getShopMainUrl(shop)}/${category.name}-category`"
+      :href="`${ShopURLs.MainShopUrl(shop)}/${category.name}-category`"
       class="tnt"
       rounded
       size="x-large"
@@ -79,6 +79,8 @@
 </template>
 
 <script lang="ts">
+import {ShopURLs} from "@selldone/core-js/helper";
+
 export default {
   name: "BCategoryAddHeader",
   components: {},
@@ -103,7 +105,11 @@ export default {
   },
 
   data: () => ({}),
-  computed: {},
+  computed: {
+    ShopURLs() {
+      return ShopURLs
+    }
+  },
   watch: {},
   created() {},
   mounted() {},

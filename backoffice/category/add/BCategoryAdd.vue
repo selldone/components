@@ -101,7 +101,7 @@
             <v-icon class="me-1">link</v-icon>
             <div class="text-wrap text-start py-1">
               <b>{{ $t("global.actions.edit") }}</b> :
-              {{ getShopMainUrl(shop) }}/{{ name }}-category
+              {{ ShopURLs.MainShopUrl(shop) }}/{{ name }}-category
             </div>
           </v-btn>
           <v-expand-transition>
@@ -186,14 +186,14 @@
             <div class="my-2 d-flex align-center">
               <circle-image
                 :size="36"
-                :src="getCategoryIcon(parentFolder.id)"
+                :src="ShopCategoryHelper.GetCategoryIconById(parentFolder.id)"
                 class="me-2 avatar-gradient -thin -category"
                 scale-on-hover
               />
-             <div>
-               <b class="text-subtitle-2">{{ parentFolder.title }}</b>
-               <p class="small">{{ parentFolder.description }}</p>
-             </div>
+              <div>
+                <b class="text-subtitle-2">{{ parentFolder.title }}</b>
+                <p class="small">{{ parentFolder.description }}</p>
+              </div>
             </div>
           </template>
           <b-category-input
@@ -388,9 +388,14 @@ import BTranslationButtonCategory from "../../translation/button/category/BTrans
 import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import BCategoryAddHeader from "../../category/add/header/BCategoryAddHeader.vue";
 import BCategoryEngineEditor from "@selldone/components-vue/backoffice/category/engine/BCategoryEngineEditor.vue";
+import { ShopURLs } from "@selldone/core-js/helper";
+import { ShopCategoryHelper } from "@selldone/core-js/helper/category/ShopCategoryHelper.ts";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BCategoryAdd",
+  mixins: [],
   components: {
     BCategoryEngineEditor,
 
@@ -468,6 +473,12 @@ export default {
     busy_load: false,
   }),
   computed: {
+    ShopCategoryHelper() {
+      return ShopCategoryHelper;
+    },
+    ShopURLs() {
+      return ShopURLs;
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -533,7 +544,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             // Update prent childes:
             if (data.category.parent_id && !this.parentFolder) {
@@ -548,7 +559,7 @@ export default {
             } else {
             }
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_category.notifications.add_success"),
             );
@@ -558,7 +569,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -590,7 +601,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             // data.category.parent = t.findCategoryById(t.parent_id);
             // Update prent childes:
@@ -614,7 +625,7 @@ export default {
                 );
             }
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_category.notifications.edit_success"),
             );
@@ -623,7 +634,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -631,7 +642,7 @@ export default {
     },
 
     deleteCategoryDialog() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("add_category.delete_alert.title"),
         this.$t("add_category.delete_alert.message", {
           title: this.category.title,
@@ -653,9 +664,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_category.notifications.delete_success", {
                 title: category.title,
@@ -674,7 +685,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;
@@ -739,7 +750,7 @@ export default {
           this.augment = augment;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_load = false;

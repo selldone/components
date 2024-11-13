@@ -372,9 +372,11 @@ import SOrderChatMessage from "@selldone/components-vue/storefront/order/chat/me
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import USmartSuggestion from "@selldone/components-vue/ui/smart/suggestion/USmartSuggestion.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BOrderChatBox",
-
+  mixins: [],
   components: {
     USmartSuggestion,
     UWidgetHeader,
@@ -448,11 +450,11 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.body_input = null;
             this.basket.chat = data.chat;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "b_order_chat_box.notifications.add_chat_success_message",
@@ -461,7 +463,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = null;
@@ -483,10 +485,10 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.email_preview = false;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "b_order_chat_box.send_update_email.notifications.send_success_message",
@@ -495,7 +497,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_send_update = null;
@@ -514,13 +516,13 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.templates = data.templates;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch_templates = null;
@@ -561,11 +563,11 @@ export default {
       req
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.dialog_add_template = false;
             this.AddOrUpdateItemByID(this.templates, data.template);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "b_order_chat_box.add_template.notifications.save_success_message",
@@ -574,7 +576,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save_template = null;

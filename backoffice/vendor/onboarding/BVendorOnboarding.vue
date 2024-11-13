@@ -694,13 +694,15 @@ import SCountrySelect from "@selldone/components-vue/ui/country/select/SCountryS
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentType";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
-import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
+import { FileHelper } from "@selldone/core-js/utils/file/FileHelper.ts";
 import DynamicScriptDirective from "@selldone/components-vue/directives/script/DynamicScriptDirective.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 
 export default {
   name: "BVendorOnboarding",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   directives: { 'dynamic-scripts':DynamicScriptDirective },
   components: {
     UWidgetHeader,
@@ -842,11 +844,11 @@ export default {
             this.$emit("update:modelValue", data.vendor_request);
           } else {
             // We don't have any request! no need to show error!
-            // this.showErrorAlert(null, data.error_msg);
+            // NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -871,22 +873,22 @@ export default {
           if (!data.error) {
             if (Object.values(this.files)?.some((f) => !!f)) {
               this.uploadFiles();
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 "Uploading files...",
                 "Your vendor request is received!",
               );
             } else {
-              this.showSuccessAlert(null, "Your vendor request is received!");
+              NotificationService.showSuccessAlert(null, "Your vendor request is received!");
               this.$emit("update:modelValue", data.vendor_request);
 
               this.close();
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -918,14 +920,14 @@ export default {
             this.files = {};
 
             this.$emit("update:modelValue", this.modelValue);
-            this.showSuccessAlert(null, "Files uploaded successfully!");
+            NotificationService.showSuccessAlert(null, "Files uploaded successfully!");
             this.close();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_upload = false;
@@ -937,7 +939,7 @@ export default {
     },
 
     removeAttachment(attachment) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete Attachment",
         "Are you sure you want to delete this attachment?",
         "Yes, Delete Now",
@@ -955,13 +957,13 @@ export default {
               if (!data.error) {
                 this.DeleteItemByID(this.attachments, data.id);
 
-                this.showSuccessAlert(null, "Attachment removed successfully!");
+                NotificationService.showSuccessAlert(null, "Attachment removed successfully!");
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = null;
@@ -1003,11 +1005,11 @@ export default {
               this.shop.vendors.waiting_count--;
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_accept = null;

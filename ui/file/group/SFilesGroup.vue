@@ -21,7 +21,7 @@
         class="m-1"
       >
         <img
-          :src="getFileExtensionImage(extension)"
+          :src="FileHelper.GetFileExtensionImage(extension)"
           class="hover-scale"
           style="vertical-align: top"
           width="20"
@@ -38,6 +38,8 @@
 </template>
 
 <script lang="ts">
+import {FileHelper} from "@selldone/core-js/utils";
+
 export default {
   name: "SFilesGroup",
   props: {
@@ -45,6 +47,9 @@ export default {
   },
 
   computed: {
+    FileHelper() {
+      return FileHelper
+    },
     files_grouped() {
       let out = {};
       this.files.forEach((file) => {

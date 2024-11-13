@@ -50,16 +50,18 @@ import {
   CategoriesCsvFormat,
   CategoriesCsvHeaders,
   CategoriesCsvStyler,
-} from "@selldone/core-js/helper/csv/CategoriesCsvFormat";
-import { ProductsCsvFormat } from "@selldone/core-js/helper/csv/product/ProductsCsvFormat";
+} from "@selldone/core-js";
+import { ProductsCsvFormat } from "@selldone/core-js";
 import BSpreadsheet from "../BSpreadsheet.vue";
 import SpreadsheetMixin from "../mixins/SpreadsheetMixin";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 const Papa = require("papaparse");
 
 export default {
   name: "BSpreadsheetCategories",
-  mixins: [SpreadsheetMixin],
+  mixins: [SpreadsheetMixin ],
 
   components: {
     BSpreadsheet,
@@ -178,7 +180,7 @@ export default {
       const config = {
         complete: (results, file) => {
           //  console.log("Parsing complete:", results, file);
-          this.showSuccessAlert(null, "Load CSV file completed.");
+          NotificationService.showSuccessAlert(null, "Load CSV file completed.");
           this.loadCsvToSheet(results);
 
           let valid = CategoriesCsvFormat.CheckValidFile(this.headers);
@@ -192,13 +194,13 @@ export default {
               });
               return;
             }
-            this.showErrorAlert(null, "Invalid file format!");
+            NotificationService.showErrorAlert(null, "Invalid file format!");
           }
 
           this.$emit("update:valid", valid);
         },
         error: () => {
-          this.showErrorAlert(null, "Parsing error!");
+          NotificationService.showErrorAlert(null, "Parsing error!");
           this.$emit("update:valid", false);
         },
       };
@@ -214,7 +216,7 @@ export default {
       });
 
       if (!data || !data.length) {
-        this.showErrorAlert(null, "Can not read this file!");
+        NotificationService.showErrorAlert(null, "Can not read this file!");
       }
 
       const sheet = data;

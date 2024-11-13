@@ -324,9 +324,11 @@ import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BDiscountCodeAdd",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin ],
 
   components: {
     SWidgetButtons,
@@ -415,16 +417,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.$emit("add", data.discount_code);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("discount_codes.dialog.notifications.add"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -458,16 +460,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.$emit("edit", data.discount_code);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("discount_codes.dialog.notifications.edit"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;

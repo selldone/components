@@ -131,9 +131,10 @@ import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelp
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
+
 export default {
   name: "SStorefrontRetrieveShareOrder",
-  mixins: [CurrencyMixin, AuthMixin],
+  mixins: [CurrencyMixin, AuthMixin ],
   components: { SShopCustomerReceiverInfoWidget, VariantItemViewMicro },
   inject: ["$shop"],
   props: {},
@@ -181,11 +182,11 @@ export default {
             this.user = data.user;
             this.show = true;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -210,7 +211,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Import completed",
               "Items in your cart has been replaced by new items.",
             );
@@ -222,11 +223,11 @@ export default {
 
             this.fetchBasketAndShop();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_import = false;

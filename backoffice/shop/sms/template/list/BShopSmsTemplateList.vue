@@ -378,9 +378,11 @@ import FrameView from "../../../../../ui/mockup/frame/FrameView.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopSmsTemplateList",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {
     UWidgetHeader,
@@ -540,7 +542,7 @@ export default {
           this.totalItems = data.total;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -558,7 +560,7 @@ export default {
     },
 
     showDelete(template) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete message template",
         "Are you sure to delete this template?",
         "Yes, Delete now",
@@ -572,11 +574,11 @@ export default {
               if (!data.error) {
                 this.DeleteItemByID(this.templates, data.id);
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = null;
@@ -597,13 +599,13 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.templates, data.template);
-            this.showSuccessAlert(null, "SMS template errors reset!");
+            NotificationService.showSuccessAlert(null, "SMS template errors reset!");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_reset = false;
@@ -621,20 +623,20 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               `Test message has been sent to your phone number <b>${
                 this.USER().phone
               }</b>.`,
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
           this.show_data = !!data;
           this.test_response = data;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_test = false;

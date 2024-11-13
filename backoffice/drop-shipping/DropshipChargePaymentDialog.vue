@@ -71,8 +71,11 @@
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UPaymentForm from "../../ui/payment/form/UPaymentForm.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "DropshipChargePaymentDialog",
+  mixins: [],
   components: { UPaymentForm },
 
   props: {
@@ -230,7 +233,7 @@ export default {
             // ➔ Payment by QR code:
             if (data.address) {
               // Show qr code!
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("master_payment.notifications.pay_title"),
                 this.$t("master_payment.notifications.qr_code_payment"),
               );
@@ -247,7 +250,7 @@ export default {
             // ➔ Payment by online gateway:
             else {
               this.showSelectGateway = false;
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("master_payment.notifications.pay_title"),
                 this.$t(
                   "master_payment.notifications.connecting_to_online_gateway",
@@ -256,7 +259,7 @@ export default {
               // Redirect by BuySellForm!!!
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.showSelectGateway = false;
           }
 
@@ -266,7 +269,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           this.showSelectGateway = false;
         })
         .finally(() => {

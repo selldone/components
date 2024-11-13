@@ -155,13 +155,13 @@ export default {
             this.fetched_blog = { article: data.article, id: this.blogId };
             this.$emit("update:blog", this.fetched_blog);
           } else {
-            // this.showErrorAlert(null, data.error_msg);
+            // NotificationService.showErrorAlert(null, data.error_msg);
             this.error = true;
           }
         })
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {});
     },

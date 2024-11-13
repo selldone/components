@@ -291,12 +291,14 @@ import SProductPreviewById from "../../../storefront/product/preview-by-id/SProd
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 /**
  * <b-contact-conversation>
  */
 export default {
   name: "BContactConversation",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: { SProductPreviewById, BProductsSelectBox, URatingEmoji },
   props: {
     shop: {
@@ -362,7 +364,7 @@ export default {
           if (!data.error) {
             if (!this.popup)
               // Not show success message in popup mode!
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 "Send message",
                 "Your response sent successfully.",
               );
@@ -382,17 +384,17 @@ export default {
               objDiv.scrollTop = objDiv.scrollHeight + 80;
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
-        .catch((e) => this.showLaravelError(e))
+        .catch((e) => NotificationService.showLaravelError(e))
         .finally(() => {
           this.busy_contact = false;
         });
     },
 
     deleteResponse(index) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete message",
         "Are you sure to delete this response?",
         "Yes, delete now",
@@ -410,17 +412,17 @@ export default {
               if (!data.error) {
                 if (!this.popup)
                   // Not show success message in popup mode!
-                  this.showSuccessAlert(
+                  NotificationService.showSuccessAlert(
                     "Remove message",
                     "Message response removed successfully.",
                   );
                 this.$emit("update:selectedContact", data.contact);
                 this.$emit("update", data.contact);
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
-            .catch((e) => this.showLaravelError(e))
+            .catch((e) => NotificationService.showLaravelError(e))
             .finally(() => {
               this.busy_delete = null;
             });
@@ -445,17 +447,17 @@ export default {
           if (!data.error) {
             if (!this.popup)
               // Not show success message in popup mode!
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 "Ticket closed",
                 "This ticket closed successfully.",
               );
             this.$emit("update:selectedContact", data.contact);
             this.$emit("update", data.contact);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
-        .catch((e) => this.showLaravelError(e))
+        .catch((e) => NotificationService.showLaravelError(e))
         .finally(() => {
           this.busy_close = false;
         });
@@ -474,15 +476,15 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(null, "Thanks, Your rate has been saved.");
+            NotificationService.showSuccessAlert(null, "Thanks, Your rate has been saved.");
 
             this.$emit("update:selectedContact", data.contact);
             this.$emit("update", data.contact);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
-        .catch((e) => this.showLaravelError(e))
+        .catch((e) => NotificationService.showLaravelError(e))
         .finally(() => {
           this.busy_rate = false;
         });

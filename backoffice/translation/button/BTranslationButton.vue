@@ -119,9 +119,11 @@
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BTranslationButton",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin ],
   components: {},
   emits: ["update:translations"],
   props: {
@@ -235,15 +237,15 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("update:translations", data.translations);
-            this.showSuccessAlert(null, "Translation successfully saved!");
+            NotificationService.showSuccessAlert(null, "Translation successfully saved!");
             this.dialog = false;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -284,7 +286,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             Object.keys(data.translates).forEach((lang) => {
               this.pack[lang] = data.translates[lang];
@@ -293,7 +295,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_auto_translate = false;

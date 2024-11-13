@@ -123,8 +123,12 @@ import {
 } from "@selldone/core-js/enums/product/ProductVariants";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopOptionsVariants",
+  mixins:[],
+
   components: { SWidgetButtons },
   props: {
     shop: {
@@ -160,16 +164,16 @@ export default {
             this.variants_change = false;
             OverrideCustomVariantsName(this.shop); // Update custom variant names.
             this.$forceUpdate();
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Variants updated",
               "Your custom variants have been updated successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_variants = false;

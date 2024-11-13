@@ -424,7 +424,7 @@ export default {
           this.totalItems = total;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -456,14 +456,14 @@ export default {
           this.dialog_add = false;
 
           if (this.selected) {
-            this.showSuccessAlert(null, "Category updated successfully.");
+            NotificationService.showSuccessAlert(null, "Category updated successfully.");
           } else {
             this.totalItems++;
-            this.showSuccessAlert(null, "Category added successfully.");
+            NotificationService.showSuccessAlert(null, "Category added successfully.");
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -471,7 +471,7 @@ export default {
     },
 
     deleteCategory(category) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete category",
         "Are you sure to delete selldone blog category?",
         "Yes, delete now",
@@ -482,12 +482,12 @@ export default {
             .remove(this.shop.id, category.id)
 
             .then(({ id }) => {
-              this.showSuccessAlert(null, "Category deleted successfully.");
+              NotificationService.showSuccessAlert(null, "Category deleted successfully.");
               this.DeleteItemByID(this.categories, id);
               this.totalItems--;
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_del = null;

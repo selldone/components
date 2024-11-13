@@ -67,8 +67,11 @@ import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CPostWidget from "../../post/widget/CPostWidget.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
+
 export default {
   name: "CommunityFeedPage",
+  mixins:[],
+
   components: {
     ULoadingEllipsis,
     CPostWidget,
@@ -144,14 +147,14 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
           this.posts.push(...data.posts);
           this.totalItems = 200;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

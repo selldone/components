@@ -127,7 +127,7 @@ import { Print } from "@selldone/core-js/helper/canvas/Print";
 import UTabsRounded from "../../../ui/tab/rounded/UTabsRounded.vue";
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
-import { GetNameOfColor } from "@selldone/core-js/helper";
+import {GetNameOfColor, ShopURLs} from "@selldone/core-js/helper";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
@@ -172,7 +172,7 @@ export default {
 
   computed: {
     link() {
-      return `${this.getShopMainUrl(this.shop)}/product/${this.product.id}`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/product/${this.product.id}`;
     },
 
     available_formats() {

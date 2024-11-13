@@ -403,9 +403,11 @@ import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BOrderDashboard",
-  mixins: [BEventBusMixin, MapMixin,OrderMixin],
+  mixins: [BEventBusMixin, MapMixin, OrderMixin],
   components: {
     USmartSwitch,
     BShopCustomerBox,
@@ -665,10 +667,10 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             if (callback) callback(false);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_order_page_dashboard.notifications.update_status_success",
@@ -695,7 +697,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           if (callback) callback(false);
         })
         .finally(() => {
@@ -718,9 +720,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_order_page_dashboard.notifications.update_status_success",
@@ -732,7 +734,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           callback();
@@ -772,9 +774,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_order_page_dashboard.notifications.update_status_success",
@@ -785,7 +787,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update_state = false;
@@ -825,9 +827,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_order_page_dashboard.notifications.reject_update_success",
@@ -841,7 +843,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_reject_order = false;
@@ -875,9 +877,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_order_page_dashboard.notifications.dismiss_reject_success",
@@ -889,7 +891,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete_reject = false;
@@ -902,7 +904,7 @@ export default {
       if (this.isFulfillment) return;
 
       if (!transportation_order.service) {
-        this.showWarningAlert(null, "Delivery service order not exist!");
+        NotificationService.showWarningAlert(null, "Delivery service order not exist!");
         if (callback) callback();
         return;
       }
@@ -933,11 +935,11 @@ export default {
               transportation_order.history = data.tracking.history;
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           if (callback) callback();
@@ -974,10 +976,10 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             if (callback) callback(false);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_order_page_dashboard.notifications.set_tracking_success",
@@ -988,7 +990,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           if (callback) callback(false);
         })
         .finally(() => {});
@@ -1010,9 +1012,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_order_page_dashboard.notifications.vendor_order_status_update_success",
@@ -1030,7 +1032,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           callback();
@@ -1070,9 +1072,9 @@ export default {
             )
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t(
                     "process_order_page_dashboard.notifications.shipping_address_update_success",
@@ -1082,7 +1084,7 @@ export default {
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               if (callback) callback(false);

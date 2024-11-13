@@ -336,6 +336,8 @@ import { HelpCenterCode } from "../../../help/HelpCenterCode";
 import { ShopPublicFeedApi } from "@selldone/core-js/enums/shop/feeds/api/ShopPublicFeedApi";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
+import { ShopURLs } from "@selldone/core-js/helper";
 
 export default {
   name: "BProductsPanelHeader",
@@ -347,7 +349,13 @@ export default {
     InlineHelp,
   },
 
-  emits: ["update:showDeletes", "update:showVendors", "update:showNotes", "click:addProduct", "click:addCategory"],
+  emits: [
+    "update:showDeletes",
+    "update:showVendors",
+    "update:showNotes",
+    "click:addProduct",
+    "click:addCategory",
+  ],
   props: {
     showDeletes: Boolean,
     showVendors: Boolean,
@@ -411,18 +419,18 @@ export default {
     },
 
     products_feed() {
-      return `${this.getShopMainUrl(this.shop)}/rss/products`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/rss/products`;
     },
     products_feed_google() {
-      return `${this.getShopMainUrl(this.shop)}/rss/google`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/rss/google`;
     },
 
     products_feed_facebook() {
-      return `${this.getShopMainUrl(this.shop)}/rss/facebook`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/rss/facebook`;
     },
 
     products_api_feed() {
-      return `${this.getShopMainUrl(this.shop)}/api/products`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/api/products`;
     },
     available_api_feeds() {
       return ShopPublicFeedApi.filter(
@@ -452,7 +460,16 @@ export default {
     },
 
     generateApiFeedUrl(item) {
-      return `${this.getShopMainUrl(this.shop)}/api/${item.driver}/products`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/api/${item.driver}/products`;
+    },
+
+    //―――――――――――――――――――――― Page Scroll Helper ――――――――――――――――――――
+    GoToTopPage() {
+      this.$nextTick(() => {
+        this.$nextTick(() => {
+          ScrollHelper.scrollToTop(0, "smooth");
+        });
+      });
     },
   },
 };

@@ -146,8 +146,11 @@ import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelp
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "BLogisticProfileEditor",
+  mixins: [],
   components: {
     UWidgetHeader,
     SWidgetButtons,
@@ -251,7 +254,7 @@ export default defineComponent({
           if (!data.error) {
             this.AddOrUpdateItemByID(this.articles, data.article);
             this.selectArticle(data.article);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "logistic_profile_editor.notifications.translate.message",
@@ -259,11 +262,11 @@ export default defineComponent({
             );
             this.translate_dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_translate = false;
@@ -314,18 +317,18 @@ export default defineComponent({
             this.article = data.article;
             this.changed = false;
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "logistic_profile_editor.notifications.save_article.message",
               ),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_save = false;
@@ -333,7 +336,7 @@ export default defineComponent({
     },
 
     deleteArticle() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("global.actions.delete") + " " + this.article.title,
         this.$t("logistic_profile_editor.delete_dialog.message"),
         this.$t("logistic_profile_editor.delete_dialog.action"),
@@ -357,18 +360,18 @@ export default defineComponent({
             this.DeleteItemByID(this.articles, data.id);
             this.article = this.articles[0];
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "logistic_profile_editor.notifications.delete_article.message",
               ),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_delete = false;

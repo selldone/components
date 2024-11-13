@@ -130,8 +130,11 @@ import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import BShopOnboardingTour from "@selldone/components-vue/backoffice/onboarding/customization/BShopOnboardingTour.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "SShopOnboardingCustomization",
+  mixins:[],
   components: {
     BShopOnboardingTour,
     UWidgetHeader,
@@ -204,11 +207,11 @@ export default {
             this.templates = data.templates;
             window.CACHED_HOT_TEMPLATES = data.templates;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;

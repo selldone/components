@@ -210,7 +210,7 @@ export default {
         .submitMyRate(this.product.id, this.user_rating)
 
         .then(({ my_ratings, ratings, rate_count, rate }) => {
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             this.$t("product_rating_view.notification.title"),
             this.$t("product_rating_view.notification.message"),
           );
@@ -223,7 +223,7 @@ export default {
           this.$forceUpdate(); // Force refresh component!
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

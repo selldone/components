@@ -196,7 +196,7 @@ export default {
           this.$store.commit("setInlineHelp", data);
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

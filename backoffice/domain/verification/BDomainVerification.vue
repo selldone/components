@@ -53,8 +53,12 @@
 </template>
 
 <script lang="ts">
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BDomainVerification",
+  mixins: [],
   components: {},
   props: {
     shop: {
@@ -106,17 +110,17 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("verified");
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Success upload",
               "Your verification file has been uploaded successfully.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_upload = false;

@@ -44,7 +44,7 @@
       rounded
       v-bind="
         window.ExternalWidget
-          ? { href: getProductLink(shop, product.id), target: '' }
+          ? { href: ShopURLs.GetProductLink(shop, product.id), target: '' }
           : {}
       "
       @click.stop="showSubscribe"
@@ -210,10 +210,13 @@ import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { RibbonHelper } from "@selldone/core-js/helper/ribbon/RibbonHelper";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import {Product} from "@selldone/core-js/models";
+import {ShopURLs} from "@selldone/core-js/helper";
+
 
 export default {
   name: "SShopSubscribeButton",
-  mixins: [MapMixin, AuthMixin],
+  mixins: [MapMixin, AuthMixin ],
   components: {
     UNumberInput,
     SShopBillingAddressForm,
@@ -239,6 +242,8 @@ export default {
     }, // External selected subscription price
   },
   data: () => ({
+    Product: Product,
+
     busy: false,
     busy_subscribe: false,
 
@@ -261,6 +266,9 @@ export default {
   }),
 
   computed: {
+    ShopURLs() {
+      return ShopURLs
+    },
     subscription_prices() {
       return this.product.subscription_prices;
     },
@@ -387,11 +395,11 @@ export default {
 
             //  this.dialog=false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_subscribe = false;

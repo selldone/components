@@ -211,7 +211,7 @@ export default {
   },
   methods: {
     showDeleteDialog() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("product_admin.inventory.variant_item.delete_dialog.title"),
         this.$t("product_admin.inventory.variant_item.delete_dialog.message"),
         this.$t("global.actions.delete"),
@@ -222,7 +222,7 @@ export default {
     },
 
     showRestoreDialog() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Restore deleted variant",
         "Do you want to restore this deleted variant?",
         "Yes, Restore now",

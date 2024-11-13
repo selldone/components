@@ -224,6 +224,8 @@ import BAccountTax from "../../../../account/tax/BAccountTax.vue";
 import { delay } from "lodash-es";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BAccountChargePaymentDialog",
   mixins: [CurrencyMixin],
@@ -353,11 +355,11 @@ export default {
           if (!data.error) {
             // Payment succeeded:
             /* if (data.success) {
-                      this.showSuccessAlert(
-                        "Payment confirmed",
-                        "Your payment received and processing now."
-                      );
-                    } else {*/
+                        NotificationService.showSuccessAlert(
+                          "Payment confirmed",
+                          "Your payment received and processing now."
+                        );
+                      } else {*/
 
             // Fill payment form:
             this.fillPaymentForm(data);
@@ -394,11 +396,11 @@ export default {
             if (data.address && data.amount && data.qr_code) {
               // 1. Set time out to remove QR code: Time out in form!
               /*  this.timeout_instance = setTimeout(() => {
-                        this.delayedHide();
-                      }, this.timeout);*/
+                          this.delayedHide();
+                        }, this.timeout);*/
 
               // 2. Show success alert:
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("account_page.deposit.notifications.qr_title"),
                 this.$t("account_page.deposit.notifications.qr_message", {
                   currency: this.$t(this.currency.name),
@@ -426,7 +428,7 @@ export default {
             // ―――――――― Other ―――――――― ➔ Payment by online gateway
             else {
               this.delayedHide();
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("master_payment.notifications.pay_title"),
                 this.$t(
                   "master_payment.notifications.connecting_to_online_gateway",
@@ -438,7 +440,7 @@ export default {
 
           // Error response:
           else {
-            this.showErrorAlert(null, data.error_msg, data.error_detail);
+            NotificationService.showErrorAlert(null, data.error_msg, data.error_detail);
             this.delayedHide();
           }
 
@@ -448,7 +450,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           this.delayedHide();
         })
         .finally(() => {

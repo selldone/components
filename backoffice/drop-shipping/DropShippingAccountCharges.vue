@@ -94,9 +94,11 @@
 <script lang="ts">
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "DropShippingAccountCharges",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: {},
   props: {
     shop: {
@@ -195,7 +197,7 @@ export default {
           this.charges = data.charges;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -218,7 +220,7 @@ export default {
             this.AddOrUpdateItemByID(this.charges, data.charge);
 
             if (data.success) {
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 this.$t("dropship_charges.notifications.pay_confirm_message", {
                   payment_at: this.getLocalTimeString(data.payment_at),
@@ -231,7 +233,7 @@ export default {
               charge.completed = data.charge.completed;
               this.$emit("onSuccessCompletedChargePayment", data.charge);
             } else {
-              this.showWarningAlert(
+              NotificationService.showWarningAlert(
                 this.$t("dropship_charges.notifications.pay_fail_title"),
                 this.$t("dropship_charges.notifications.pay_fail_message") +
                   `<br>${this.$t("global.commons.last_status")}: ${this.getName(
@@ -240,11 +242,11 @@ export default {
               );
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

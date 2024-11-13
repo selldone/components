@@ -26,11 +26,16 @@
       <v-list-subheader>
         {{ $t("onboarding.shop.subtitle") }}
       </v-list-subheader>
-      <v-btn :href="getShopMainUrl(shop)" target="_blank" append-icon="open_in_new" class="nbt mb-3">
-        <v-avatar class="avatar-gradient -thin -shop ms-n2 me-2" size="24" >
-          <v-img :src="getShopImagePath(shop.icon,128)" />
+      <v-btn
+        :href="ShopURLs.MainShopUrl(shop)"
+        target="_blank"
+        append-icon="open_in_new"
+        class="nbt mb-3"
+      >
+        <v-avatar class="avatar-gradient -thin -shop ms-n2 me-2" size="24">
+          <v-img :src="getShopImagePath(shop.icon, 128)" />
         </v-avatar>
-        {{getShopMainUrl(shop)}}
+        {{ ShopURLs.MainShopUrl(shop) }}
       </v-btn>
       <v-row>
         <v-col cols="12" lg="3" md="4" sm="5" class="px-0 px-sm-2">
@@ -106,7 +111,7 @@
             </v-tab>
 
             <v-tab class="justify-start">
-              <v-icon class="me-1"> light </v-icon>
+              <v-icon class="me-1"> light</v-icon>
               {{ $t("onboarding.overview.title") }}
             </v-tab>
           </v-tabs>
@@ -213,8 +218,8 @@
                         size="small"
                       >
                         <v-icon class="blink-me" size="x-small" start
-                          >lens</v-icon
-                        >
+                          >lens
+                        </v-icon>
                         {{ $t("global.commons.livemode") }}
                       </v-chip>
                       <v-chip
@@ -232,7 +237,7 @@
 
                     <div class="widget-buttons flex-grow-0 w-100">
                       <v-btn
-                        :href="getShopMainUrl(shop)"
+                        :href="ShopURLs.MainShopUrl(shop)"
                         color="#000"
                         size="large"
                         target="_blank"
@@ -336,6 +341,7 @@ import SShopOnboardingCustomization from "../onboarding/customization/SShopOnboa
 import ShopOnboardingSetupBusinessTab from "../onboarding/tabs/ShopOnboardingSetupBusinessTab.vue";
 import ShopOnboardingMigrationTab from "../onboarding/tabs/ShopOnboardingMigrationTab.vue";
 import UFadeScroll from "../../ui/fade-scroll/UFadeScroll.vue";
+import { ShopURLs } from "@selldone/core-js/helper";
 
 export default {
   name: "SShopOnboarding",
@@ -407,6 +413,9 @@ export default {
   }),
 
   computed: {
+    ShopURLs() {
+      return ShopURLs;
+    },
     last_data() {
       return this.timeSeries.lastDayData();
     },

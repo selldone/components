@@ -139,9 +139,13 @@
 import LanguagesRepository from "@selldone/translate/repository/LanguagesRepository.ts";
 import BLanguageOverrideTable from "../../../language/override/table/BLanguageOverrideTable.vue";
 import SDropZone from "../../../../ui/uploader/SDropZone.vue";
+import { FileHelper } from "@selldone/core-js";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BLanguageOverrideDialog",
+  mixins: [],
   components: { SDropZone, BLanguageOverrideTable },
   props: {
     shop: {
@@ -229,11 +233,11 @@ export default {
           if (!data.error) {
             return this.isObject(data.pack) ? data.pack : {};
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         });
       //console.log("🧰 Shop pack loaded...", this.pack_override);
 
@@ -264,7 +268,7 @@ export default {
         this.pack_default = cal.default;
       } catch (e) {
         console.error(e);
-        this.showErrorAlert(null, e.toString());
+        NotificationService.showErrorAlert(null, e.toString());
       }
     },
 
@@ -287,16 +291,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.$emit("update:modelValue", false);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("Language package has been override successfully."),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -346,10 +350,10 @@ export default {
     importPack(event) {
       if (!event) return;
 
-      this.loadFile(event)
+      FileHelper.LoadFile(event)
         .then((json) => {
           if (!json[this.selected_package.pack_code]) {
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               "Invalid language file | " + this.selected_package.pack_code,
               "We can not find any data related to current selected pack on the file.",
             );
@@ -365,12 +369,12 @@ export default {
           this.pack_override = json[this.selected_package.pack_code];
           this.emptyClone(this.pack_default, this.pack_override);
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             "File loaded | " + this.selected_package.pack_code,
             "The language pack has been loaded successfully.",
           );
         })
-        .catch((err) => this.showErrorAlert(null, err));
+        .catch((err) => NotificationService.showErrorAlert(null, err));
     },
   },
 };

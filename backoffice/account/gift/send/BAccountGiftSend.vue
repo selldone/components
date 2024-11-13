@@ -104,6 +104,8 @@ import BAccountInput from "../../../account/input/BAccountInput.vue";
 import SUserInput from "../../../user/input/SUserInput.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BAccountGiftSend",
   mixins: [TemplateMixin],
@@ -155,7 +157,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showAwardAlert(
+            NotificationService.showAwardAlert(
               null,
               this.$t("send_gift_dialog.notifications.send_success", {
                 amount: this.FormatNumberCurrency(
@@ -169,11 +171,11 @@ export default {
             this.account_from = null;
             this.send_gift_dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

@@ -721,7 +721,11 @@ export default {
   },
   mounted() {},
 
-  methods: {},
+  methods: {
+    getConnectIcon(connect_id: string | number) {
+      return window.CDN.GET_CONNECT_ICON(connect_id);
+    },
+  },
 };
 </script>
 

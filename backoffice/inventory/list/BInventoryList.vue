@@ -527,9 +527,11 @@ import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFold
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BInventoryList",
-  mixins: [ProductMixin],
+  mixins: [ProductMixin ],
   components: {
     UPriceInvalid,
     UAvatarFolder,
@@ -914,7 +916,7 @@ export default {
         )
         .then((response) => {
           if (!response.data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("inventory_list.notifications.save_success"),
             );
@@ -924,11 +926,11 @@ export default {
             //item.add = true;
             this.$forceUpdate(); // Update vue component!
           } else {
-            this.showErrorAlert(null, response.data.error_msg);
+            NotificationService.showErrorAlert(null, response.data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_count = null;

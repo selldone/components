@@ -261,8 +261,11 @@ import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import USmartSelect from "../../../../../ui/smart/select/USmartSelect.vue";
 import USmartSuggestion from "../../../../../ui/smart/suggestion/USmartSuggestion.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductSubscriptionPricingAdd",
+  mixins:[],
   components: {
     USmartSuggestion,
     USmartSelect,
@@ -414,7 +417,7 @@ export default {
       promise
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Pricing has been set successfully." +
                 (data.extra?.message ? `<hr>${data.extra.message}` : ""),
@@ -435,11 +438,11 @@ export default {
 
             this.$emit("close");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -462,11 +465,11 @@ export default {
           if (!data.error) {
             this.gateways = data.gateways;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_billings = false;

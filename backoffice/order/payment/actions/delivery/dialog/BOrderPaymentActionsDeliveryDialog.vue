@@ -24,12 +24,12 @@
       <v-card-title>
         <img :src="getShopImagePath(gateway?.icon)" class="me-2" height="24" />
 
-        {{$t('payment_delivery_dialog.title')}}
+        {{ $t("payment_delivery_dialog.title") }}
       </v-card-title>
 
       <v-card-text>
         <p>
-          {{$t('payment_delivery_dialog.message')}}
+          {{ $t("payment_delivery_dialog.message") }}
         </p>
 
         <u-smart-verify
@@ -61,7 +61,7 @@
           >
             <v-icon start>check</v-icon>
 
-            {{$t('payment_delivery_dialog.action')}}
+            {{ $t("payment_delivery_dialog.action") }}
           </v-btn>
         </div>
       </v-card-actions>
@@ -73,8 +73,11 @@
 import { defineComponent } from "vue";
 import USmartVerify from "@selldone/components-vue/ui/smart/verify/USmartVerify.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "BOrderPaymentActionsDeliveryDialog",
+  mixins: [],
   components: { USmartVerify },
   emits: ["update:modelValue", "payment-delivery"],
   props: {
@@ -124,19 +127,19 @@ export default defineComponent({
           },
         )
         .then(({ data }) => {
-          if (data.error) return this.showErrorAlert(null, data.error_msg);
+          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
 
           Object.assign(this.payment, data.payment);
           this.$emit("payment-delivery", data.amount);
           this.$emit("update:modelValue", false);
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             "The delivery confirmation has been sent to payment provider successfully.",
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

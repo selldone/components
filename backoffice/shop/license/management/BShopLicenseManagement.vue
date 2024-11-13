@@ -325,9 +325,11 @@ import BShopLicenseSubscriptionDetail from "../../../shop/license/subscription/d
 import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopLicenseManagement",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {
     USmartToggle,
@@ -384,17 +386,17 @@ export default {
         .post(window.API.POST_PARTNER_FIX_SHOP_LICENSE(this.shop.id))
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(null, "We fix your shop license.");
+            NotificationService.showSuccessAlert(null, "We fix your shop license.");
 
             // May shop license updated:
             this.shop.license = data.license;
             this.shop.expire_at = data.expire_at;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fix = false;
@@ -421,17 +423,17 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The agency read access updated successfully.",
             );
             this.shop.agency_meta = data.agency_meta;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_access = false;

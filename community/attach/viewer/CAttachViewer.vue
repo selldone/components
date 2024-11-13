@@ -17,7 +17,7 @@
     <v-list-item v-for="file in files" :key="file.key">
       <template v-slot:prepend>
         <v-avatar tile>
-          <img :src="getFileExtensionImage(file.name)" />
+          <img :src="FileHelper.GetFileExtensionImage(file.name)" />
         </v-avatar>
       </template>
 
@@ -53,10 +53,12 @@
 
 <script lang="ts">
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import {FileHelper} from "@selldone/core-js";
+
 
 export default {
   name: "CAttachViewer",
-  mixins: [AuthMixin],
+  mixins: [AuthMixin ],
 
   components: {},
   props: {
@@ -80,7 +82,11 @@ export default {
 
   watch: {},
 
-  computed: {},
+  computed: {
+    FileHelper() {
+      return FileHelper
+    }
+  },
 
   created() {},
 
@@ -103,24 +109,24 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Download start...",
               "The secure download link has been generated successfully!",
             );
             try {
               window.open(data.url, "_blank").focus();
             } catch (e) {
-              this.showWarningAlert(
+              NotificationService.showWarningAlert(
                 "Popup blocked!",
                 "Please permit the browser to open the popup to start the download.",
               );
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_ids.remove(file.id);

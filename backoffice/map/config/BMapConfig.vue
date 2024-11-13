@@ -44,7 +44,6 @@
       title="Provider"
       variant="solo"
       :disabled="!writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
-
     >
       <template v-slot:item="{ item, props }">
         <v-list-item class="text-start" v-bind="props">
@@ -64,7 +63,9 @@
 
     <u-smart-switch
       v-model="enable"
-      :disabled="busy_set || !writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
+      :disabled="
+        busy_set || !writeShopAccess(ShopPermissionRegions.CHANNELS.code)
+      "
       class="my-3"
       false-gray
       false-icon="disabled_visible"
@@ -73,7 +74,6 @@
       true-icon="mode_of_travel"
       true-title="Enable map listing"
       @change="setEnable"
-
     >
     </u-smart-switch>
 
@@ -97,26 +97,26 @@
       </v-card-title>
       <v-list class="border-between-vertical my-5" lines="three">
         <v-list-item
-          :href="getShopMainUrl(shop) + '/map'"
+          :href="ShopURLs.MainShopUrl(shop) + '/map'"
           append-icon="open_in_new"
           prepend-icon="shopping_bag"
           target="_blank"
         >
           <v-list-item-title><b>Products Map Page</b></v-list-item-title>
           <v-list-item-subtitle
-            >{{ getShopMainUrl(shop) + "/map" }}
+            >{{ ShopURLs.MainShopUrl(shop) + "/map" }}
           </v-list-item-subtitle>
         </v-list-item>
 
         <v-list-item
-          :href="getShopMainUrl(shop) + '/map-vendors'"
+          :href="ShopURLs.MainShopUrl(shop) + '/map-vendors'"
           append-icon="open_in_new"
           prepend-icon="store"
           target="_blank"
         >
           <v-list-item-title><b>Vendors Map Page</b></v-list-item-title>
           <v-list-item-subtitle
-            >{{ getShopMainUrl(shop) + "/map-vendors" }}
+            >{{ ShopURLs.MainShopUrl(shop) + "/map-vendors" }}
           </v-list-item-subtitle>
         </v-list-item>
       </v-list>
@@ -128,11 +128,14 @@
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import BMapDriverOptions from "../../map/driver/options/BMapDriverOptions.vue";
-import { Map } from "@selldone/core-js";
-import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
+import { Map, ShopURLs } from "@selldone/core-js";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BMapConfig",
+  mixins: [],
   components: {
     BMapDriverOptions,
 
@@ -154,8 +157,11 @@ export default {
     show_map_urls: false,
   }),
   computed: {
+    ShopURLs() {
+      return ShopURLs;
+    },
     ShopPermissionRegions() {
-      return ShopPermissionRegions
+      return ShopPermissionRegions;
     },
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
@@ -179,16 +185,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.shop.options = data.options;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Shop map listing has been updated successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;

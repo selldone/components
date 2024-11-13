@@ -54,7 +54,10 @@
       <v-list-subheader
         >{{ $t("product_admin.inventory.variants.sub_title") }}
 
-        <s-widget-help code="Product.Variants.AddBulkVariants" inline></s-widget-help>
+        <s-widget-help
+          code="Product.Variants.AddBulkVariants"
+          inline
+        ></s-widget-help>
       </v-list-subheader>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Variants ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -330,8 +333,11 @@ import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants
 import BProductVariantsBulkAdd from "../../../../product/variants/bulk-add/BProductVariantsBulkAdd.vue";
 import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductInventoryManagementPhysical",
+  mixins: [],
   components: {
     SWidgetHelp,
     BProductVariantsBulkAdd,
@@ -625,7 +631,7 @@ export default {
 
             this.dialog = false;
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "product_admin.inventory.variants.notifications.add_success",
@@ -634,11 +640,11 @@ export default {
 
             this.$forceUpdate(); // Update vue component!
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -700,7 +706,7 @@ export default {
           this.onUpdateVariants(Object.assign({}, variant)); // Force update!
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         });
     },
 
@@ -723,7 +729,7 @@ export default {
       )
 
         .then(({ quantity }) => {
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t(
               "product_admin.inventory.variants.notifications.save_product_inventory_success",
@@ -735,7 +741,7 @@ export default {
           this.$forceUpdate(); // Update vue component!
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_count = false;

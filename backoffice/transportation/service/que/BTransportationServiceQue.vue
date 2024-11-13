@@ -219,7 +219,7 @@
               <v-img
                 v-if="getDeliveryServiceID(basket)"
                 :height="24"
-                :src="getDeliveryServiceIcon(getDeliveryServiceID(basket))"
+                :src="DeliveryServiceHelper.GetDeliveryServiceIconById(getDeliveryServiceID(basket))"
                 :width="24"
               />
               <v-icon v-else>help_outline</v-icon>
@@ -324,6 +324,7 @@ import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelp
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import UDrag from "../../../../ui/drag/core/UDrag.vue";
 import { EventBus } from "@selldone/core-js/events/EventBus";
+import {DeliveryServiceHelper} from "@selldone/core-js/helper";
 
 export default {
   name: "BTransportationServiceQue",
@@ -362,6 +363,9 @@ export default {
     filter_delivery_service_id: null,
   }),
   computed: {
+    DeliveryServiceHelper() {
+      return DeliveryServiceHelper
+    },
     has_orders_in_que() {
       return this.send_orders_list && this.send_orders_list.length;
     },

@@ -50,7 +50,13 @@
           <v-icon v-else>account_circle</v-icon>
         </v-avatar>
         <div class="flex-grow-1">
-          <b>{{ user?.profile?.name?user.profile.name: user ? user.name : $t("global.commons.guest") }}</b>
+          <b>{{
+            user?.profile?.name
+              ? user.profile.name
+              : user
+                ? user.name
+                : $t("global.commons.guest")
+          }}</b>
           <small class="d-block">{{ $t("global.commons.now") }}</small>
         </div>
       </div>
@@ -88,8 +94,10 @@
 <script lang="ts">
 import SOrderChatMessage from "../message/SOrderChatMessage.vue";
 
+
 export default {
   name: "SOrderChatBox",
+  mixins: [],
 
   components: {
     SOrderChatMessage,
@@ -152,15 +160,15 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.body_input = null;
             this.basket.chat = data.chat;
-            this.showSuccessAlert(null, "Message has been added successfully.");
+            NotificationService.showSuccessAlert(null, "Message has been added successfully.");
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = null;

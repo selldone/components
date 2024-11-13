@@ -681,9 +681,11 @@ import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoad
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCustomerOverview",
-  mixins: [DateMixin,OrderMixin],
+  mixins: [DateMixin, OrderMixin],
 
   components: {
     ULoadingEllipsis,
@@ -780,7 +782,7 @@ export default {
         })
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -808,11 +810,11 @@ export default {
             this.customer.chips = data.chips;
             this.show_set_ships = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          thNotificationServiceis.showLaravelError(e);
         })
         .finally(() => {
           this.busy_set_chips = false;
@@ -840,11 +842,11 @@ export default {
             this.customer.level = data.level;
             this.show_set_club = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_set_club = false;
@@ -893,11 +895,11 @@ export default {
           if (!data.error) {
             URLHelper.OpenInNewWindow(data.url);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_portal = null;

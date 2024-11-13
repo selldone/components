@@ -496,6 +496,8 @@ import UMapViewAddressBook from "@selldone/components-vue/ui/map/view/address-bo
 import { MapHelper } from "@selldone/core-js";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 
 export default {
   name: "UMapView",
@@ -997,11 +999,11 @@ export default {
 
             this.$emit("address", this.address);
           } else {
-            this.showErrorAlert(null.data.error_msg);
+            NotificationService.showErrorAlert(null.data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.loading_address = false;

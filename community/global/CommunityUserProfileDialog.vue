@@ -165,9 +165,10 @@ import UTextValueBox from "../../ui/text/value-box/UTextValueBox.vue";
 import { EventBus } from "@selldone/core-js/events/EventBus";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+
 export default {
   name: "CommunityUserProfileDialog",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: { UTextValueBox, UDenseCirclesUsers },
   props: {
@@ -231,11 +232,11 @@ export default {
             this.full_profile = data.profile;
             this.profile = data.profile;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -253,12 +254,12 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
           this.profile.follow = data.follow; // Indicate followed now!
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_follow = false;

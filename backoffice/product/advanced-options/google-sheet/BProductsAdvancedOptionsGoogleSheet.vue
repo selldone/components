@@ -132,9 +132,11 @@
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductsAdvancedOptionsGoogleSheet",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {
     UTextValueDashed,
@@ -177,7 +179,7 @@ export default {
   beforeUnmount() {},
   methods: {
     askRemove() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Remove connection",
         "Are you sure remove the google drive link for products?",
         "Yes, Remove it",
@@ -196,11 +198,11 @@ export default {
           if (!data.error) {
             this.shop.service_google_sheet = null;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -216,11 +218,11 @@ export default {
           if (!data.error) {
             this.syncing = true;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_sync = false;

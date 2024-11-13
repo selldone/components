@@ -116,8 +116,11 @@ import {
 } from "@selldone/core-js/enums/shop/options/CheckoutOptions";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopOptionsCheckout",
+  mixins: [],
   components: {
     USmartSwitch,
     BShopOptionsCheckoutMapPods,
@@ -182,16 +185,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.shop.options = data.options;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Checkout settings have been successfully updated.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

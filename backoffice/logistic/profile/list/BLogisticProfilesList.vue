@@ -114,9 +114,11 @@ import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticPr
 import { throttle } from "lodash-es";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BLogisticProfilesList",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: {},
   props: {
     shop: {
@@ -225,14 +227,14 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null.error_msg);
+            return NotificationService.showErrorAlert(null.error_msg);
           }
 
           this.profiles = data.profiles;
           this.totalItems = data.total;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;

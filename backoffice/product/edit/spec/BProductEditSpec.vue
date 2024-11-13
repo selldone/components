@@ -532,8 +532,11 @@ import UButtonAiLarge from "../../../../ui/button/ai/large/UButtonAiLarge.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import {StripTags} from "@selldone/core-js/helper/index";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductEditSpec",
+  mixins:[],
   components: {
     SWidgetButtons,
     UButtonAiLarge,
@@ -623,7 +626,7 @@ export default {
   methods: {
     addGroup() {
       if (!this.group_title) {
-        this.showWarningAlert(
+        NotificationService.showWarningAlert(
           null,
           this.$t(
             "add_product.edit_spec.notifications.enter_group_title_error",
@@ -644,7 +647,7 @@ export default {
     },
     addSpec() {
       if (!this.item_title || !this.item_value) {
-        this.showWarningAlert(
+        NotificationService.showWarningAlert(
           null,
           this.$t(
             "add_product.edit_spec.notifications.enter_item_title_and_value_error",
@@ -708,7 +711,7 @@ export default {
         )
         .then((response) => {
           if (!response.data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_product.edit_spec.notifications.spec_saved_success"),
             );
@@ -722,11 +725,11 @@ export default {
 
             if (go_next) this.$emit("next");
           } else {
-            this.showErrorAlert(null, response.data.error_msg);
+            NotificationService.showErrorAlert(null, response.data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -760,7 +763,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             if (data.spec)
               this.spec_selected = SpecHelper.CONVERT_SPEC_JSON_TO_ARRAY(
@@ -771,7 +774,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_find = false;
@@ -797,7 +800,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             if (data.spec)
               this.spec_generated = SpecHelper.CONVERT_SPEC_JSON_TO_ARRAY(
@@ -808,7 +811,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_ai = false;

@@ -426,10 +426,10 @@ export default {
     handleFilePondError(error, file, status) {
       this.$emit("onError", error);
       if (error.main && error.sub)
-        return this.showErrorAlert(error.main, error.sub);
-      else if (error.main) return this.showErrorAlert(null, error.main);
+        return NotificationService.showErrorAlert(error.main, error.sub);
+      else if (error.main) return NotificationService.showErrorAlert(null, error.main);
 
-      this.showLaravelError(error);
+      NotificationService.showLaravelError(error);
       console.error("File upload error", error);
     },
 

@@ -41,7 +41,7 @@
       <img
         v-if="!rawImagesPath && id.toString().startsWith('c-')"
         :src="
-          getCategoryIcon(id.toString().replace('c-', ''), IMAGE_SIZE_SMALL)
+          ShopCategoryHelper.GetCategoryIconById(id.toString().replace('c-', ''), IMAGE_SIZE_SMALL)
         "
         height="100%"
         style="padding: 2px"
@@ -77,8 +77,15 @@
 </template>
 
 <script lang="ts">
+import {ShopCategoryHelper} from "@selldone/core-js/helper/category/ShopCategoryHelper.ts";
+
 export default {
   name: "ProductsDenseImagesCircles",
+  computed: {
+    ShopCategoryHelper() {
+      return ShopCategoryHelper
+    }
+  },
   props: {
     ids: {
       require: true,

@@ -64,10 +64,12 @@ import UCurrencyIcon from "../../../../../ui/currency/icon/UCurrencyIcon.vue";
 import { throttle } from "lodash-es";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import { EventBus } from "@selldone/core-js/events/EventBus.ts";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 
 export default {
   name: "BAccountReceiptPaymentDialog",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin ],
 
   components: { UCurrencyIcon, ULoadingEllipsis, BAccountTransactionForm },
   props: {},
@@ -111,12 +113,12 @@ export default {
           if (!data.error) {
             this.receipt = data.receipt;
           } else {
-            t.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
           console.error(error);
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

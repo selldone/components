@@ -245,7 +245,7 @@ export default {
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

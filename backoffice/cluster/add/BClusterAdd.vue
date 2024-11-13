@@ -32,9 +32,8 @@
       <div class="widget-box mb-5">
         <u-widget-header icon="tune" title="General Config"></u-widget-header>
         <v-list-subheader
-          >Configure the cluster's name, description, and image
-          here.</v-list-subheader
-        >
+          >Configure the cluster's name, description, and image here.
+        </v-list-subheader>
 
         <v-text-field
           v-model="name"
@@ -201,8 +200,11 @@ import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue"
 import UColorSelector from "../../../ui/color/selector/UColorSelector.vue";
 import BClusterFolder from "../../cluster/folder/BClusterFolder.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BClusterAdd",
+  mixins: [],
   components: {
     BClusterFolder,
     UColorSelector,
@@ -273,8 +275,7 @@ export default {
       this.busy = true;
 
       let formData = new FormData();
-      if (this.selected_file)
-        formData.append("photo", this.selected_file);
+      if (this.selected_file) formData.append("photo", this.selected_file);
       if (this.name) formData.append("name", this.name);
       if (this.description) formData.append("description", this.description);
       if (this.parent_id) formData.append("parent_id", this.parent_id);
@@ -293,9 +294,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "New custer has been created successfully.",
             );
@@ -304,7 +305,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -322,9 +323,9 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The cluster has been updated successfully.",
             );
@@ -333,7 +334,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -341,7 +342,7 @@ export default {
     },
 
     deleteClusterDialog() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete Cluster",
         "Are you sure to delete this cluster?",
         "Yes, Delete Now",
@@ -357,9 +358,9 @@ export default {
         .delete(window.API.DELETE_SHOP_CLUSTER(this.shop.id, cluster.id))
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The cluster has been removed successfully!",
             );
@@ -368,7 +369,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;

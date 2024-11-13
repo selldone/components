@@ -67,8 +67,11 @@
 <script lang="ts">
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductsAdvancedOptionsFixArticles",
+  mixins: [],
   components: {
     USmartVerify,
   },
@@ -117,19 +120,19 @@ export default {
         .then(({ data }) => {
           if (data.error) {
             // Error!
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
 
             return;
           }
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             "Successfully Updated & Auto-Fixed",
             "All articles pertaining to products have been successfully updated and auto-fixed.",
           );
           this.$emit("close");
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_articles = false;

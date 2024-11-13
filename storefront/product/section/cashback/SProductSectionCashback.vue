@@ -74,7 +74,7 @@ export default {
         .then(handleSuccessResponse)
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .then(() => {

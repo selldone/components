@@ -23,8 +23,15 @@
     "
   >
     <div class="position-relative">
-      <v-icon class="no-inv" :color="isEmpty?'#959c9f':'amber'" size="100">folder</v-icon>
-<span v-if="isEmpty" class="absolute-top-right ma-1" style="font-size: 8px">{{$t('global.commons.empty')}}</span>
+      <v-icon class="no-inv" :color="isEmpty ? '#959c9f' : 'amber'" size="100"
+        >folder</v-icon
+      >
+      <span
+        v-if="isEmpty"
+        class="absolute-top-right ma-1"
+        style="font-size: 8px"
+        >{{ $t("global.commons.empty") }}</span
+      >
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Connect service icon (top - Right) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <div v-if="category.connect_id" class="top-r">
@@ -109,12 +116,17 @@ export default {
       required: true,
       type: Object,
     },
-    isEmpty:Boolean
+    isEmpty: Boolean,
   },
   data() {
     return {
       clicked: false,
     };
+  },
+  methods: {
+    getConnectIcon(connect_id: string | number) {
+      return window.CDN.GET_CONNECT_ICON(connect_id);
+    },
   },
 };
 </script>

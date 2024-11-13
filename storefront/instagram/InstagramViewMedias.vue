@@ -513,6 +513,8 @@ import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoad
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import { ShopURLs } from "@selldone/core-js/helper";
+
 
 export default {
   name: "InstagramViewMedias",
@@ -745,7 +747,7 @@ export default {
     },
 
     showCategory(id) {
-      window.open(this.getCategoryLink(this.$shop, id), "_blank");
+      window.open(ShopURLs.GetCategoryLink(this.$shop, id), "_blank");
       this.showNormalPost();
     },
     showProduct(id) {
@@ -775,12 +777,12 @@ export default {
                 ? data.product.product_variants[0]
                 : null;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.error_msg = data.error_msg;
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
           this.error_msg = "Product not found!";
         })
         .finally(() => {
@@ -803,11 +805,11 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_save = false;
@@ -833,11 +835,11 @@ export default {
             media.caption = data.media.caption;
             this.focus_caption = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_save = false;
@@ -904,11 +906,11 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.product = data.product;
 
-            this.showSuccessAlert(null, "The product added to the list.");
+            NotificationService.showSuccessAlert(null, "The product added to the list.");
 
             this.selected_media.products.list[this.product.id] = []; // Add to products list
             this.selected_media.products.tags.push({
@@ -922,7 +924,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_new_product = false;

@@ -146,7 +146,7 @@
           theme="dark"
         >
           <u-widget-header
-            :href="getProductLink(shop, product.id, product.slug)"
+            :href="ShopURLs.GetProductLink(shop, product.id, product.slug)"
             add-caption="View Product"
             add-icon="open_in_new"
             add-text
@@ -418,10 +418,14 @@ import VueCompareImage from "../../../../ui/image-compare/VueCompareImage.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import { Product } from "@selldone/core-js/models";
+import {ShopURLs} from "@selldone/core-js/helper";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BProductAddAi",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin ],
   components: {
     ULottie,
     UWidgetHeader,
@@ -449,6 +453,8 @@ export default {
   },
 
   data: () => ({
+    Product: Product,
+
     types: Object.values(ProductType),
     step: "upload",
     product: null,
@@ -470,6 +476,9 @@ export default {
   }),
 
   computed: {
+    ShopURLs() {
+      return ShopURLs
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -518,10 +527,10 @@ export default {
       this.uploading = false;
 
       if (response.error) {
-        this.showErrorAlert(null, response.error_msg);
+        NotificationService.showErrorAlert(null, response.error_msg);
         return;
       }
-      this.showSuccessAlert("Create Product", "Product created successfully!");
+      NotificationService.showSuccessAlert("Create Product", "Product created successfully!");
 
       const file = response.files;
       const product = response.product;
@@ -562,18 +571,18 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Update Product",
               "Product updated successfully!",
             );
             this.step = "finish";
             this.$emit("product-updated", data.product);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit = false;

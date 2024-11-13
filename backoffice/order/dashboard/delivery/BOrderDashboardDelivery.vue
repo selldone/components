@@ -140,7 +140,7 @@
             "
             :images="
               transportation.info.service_ids.map((k) =>
-                getDeliveryServiceIcon(k),
+                DeliveryServiceHelper.GetDeliveryServiceIconById(k),
               )
             "
             :limit="20"
@@ -558,7 +558,7 @@
                   <img
                     v-if="transportation_order.service"
                     :src="
-                      getDeliveryServiceIcon(
+                      DeliveryServiceHelper.GetDeliveryServiceIconById(
                         transportation_order.service.service_id,
                       )
                     "
@@ -856,14 +856,18 @@ import UDenseCirclesUsers from "../../../../ui/dense-circles/users/UDenseCircles
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
-import { Basket, ShopOptionsHelper } from "@selldone/core-js";
+import {
+  Basket,
+  DeliveryServiceHelper,
+  ShopOptionsHelper,
+} from "@selldone/core-js";
 import BTransportationServiceLabels from "@selldone/components-vue/backoffice/transportation/service/labels/BTransportationServiceLabels.vue";
-import {BEventBusMixin} from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BOrderDashboardDelivery",
-  mixins:[BEventBusMixin,DateMixin],
+  mixins: [BEventBusMixin, DateMixin],
   components: {
     UMapImage,
     UMapView,
@@ -910,8 +914,6 @@ export default {
 
       dialog_received_by_customer: false,
 
-      PhysicalOrderStates: Basket.PhysicalOrderStates,
-
       center: { lat: 0, lng: 0 },
 
       busy_sentOrder: false,
@@ -937,6 +939,10 @@ export default {
   },
 
   computed: {
+    DeliveryServiceHelper() {
+      return DeliveryServiceHelper;
+    },
+
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -1191,7 +1197,6 @@ export default {
         return;
 
       this.selected_transportation_service = this.transportation_services[0];
-
     },
   },
   created() {

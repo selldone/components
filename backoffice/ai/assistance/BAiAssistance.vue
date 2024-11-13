@@ -106,9 +106,11 @@ import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UButtonAiSmall from "../../../ui/button/ai/small/UButtonAiSmall.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BAiAssistance",
-  mixins: [RouteMixin],
+  mixins: [RouteMixin ],
   emits: ["response", "update:modelValue"],
   components: {
     UButtonAiSmall,
@@ -202,18 +204,18 @@ export default {
         .post(this.endpoint, formData, config)
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.error_msg = data.error_msg;
           } else {
             this.$emit("response", data);
 
             this.$emit("update:modelValue", false);
-            this.showSuccessAlert(null, this.successMessage);
+            NotificationService.showSuccessAlert(null, this.successMessage);
           }
         })
         .catch((error) => {
           this.error_msg = this.errorMessage;
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_ai = false;

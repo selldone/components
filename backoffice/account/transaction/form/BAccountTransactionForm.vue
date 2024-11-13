@@ -421,10 +421,12 @@ import { throttle } from "lodash-es";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 
 export default {
   name: "BAccountTransactionForm",
-  mixins: [DateMixin, CurrencyMixin],
+  mixins: [DateMixin, CurrencyMixin ],
   components: {
     SWidgetButtons,
     UPodNode,
@@ -650,11 +652,11 @@ export default {
               this.TransactionConfirmDialog = true;
             });
           } else {
-            t.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_createTransaction = false;
@@ -680,7 +682,7 @@ export default {
           if (!data.error) {
             this.TransactionConfirmDialog = false;
 
-            t.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("transaction_form.notifications.confirm_success"),
             );
@@ -692,13 +694,13 @@ export default {
             });
             t.$emit("completed");
           } else {
-            t.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
           console.error(error);
 
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_confirmTransaction = false;

@@ -332,8 +332,11 @@ import USmartMenu from "../../../../../ui/smart/menu/USmartMenu.vue";
 import USmartVerify from "../../../../../ui/smart/verify/USmartVerify.vue";
 import UTextValueBox from "../../../../../ui/text/value-box/UTextValueBox.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopLicenseSubscriptionDetail",
+  mixins: [],
   components: {
     UTextValueBox,
     USmartVerify,
@@ -420,16 +423,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.cancel_plan_dialog = false;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "A confirmation link to cancel the deal has been dispatched to the email of the shop owner.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_cancel = false;

@@ -141,10 +141,8 @@
 </template>
 
 <script lang="ts">
-
 //---------------- Medium Editor --------------
 import MediumEditor from "medium-editor";
-
 
 import "@selldone/components-vue/article/add-on/code-editor/plugin/ArticleAddonCodeEditorPlugin";
 import "@selldone/components-vue/article/add-on/comparison/plugin/ArticleAddonComparisonPlugin";
@@ -153,11 +151,7 @@ import "@selldone/components-vue/article/add-on/canvas/plugin/ArticleAddonCanvas
 
 // @ts-ignore
 import { MediumInsert } from "@selldone/components-vue/article/insert/SelldoneEditorInsert";
-window.MediumInsert = MediumInsert;
-
-
 import AAddonCodeEditor from "./add-on/code-editor/AAddonCodeEditor.vue";
-
 
 import { createApp, defineComponent, h } from "vue";
 import AAddonComparison from "./add-on/comparison/AAddonComparison.vue";
@@ -170,6 +164,10 @@ import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
 import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
 import { installGlobalComponents } from "../components-mandetory";
 import { debounce } from "lodash-es";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
+window.MediumInsert = MediumInsert;
 
 const OPTIONS_TITLE = {
   buttonLabels: "fontawesome",
@@ -319,6 +317,7 @@ const OPTIONS_BODY = {
 
 export default defineComponent({
   name: "SArticleEditor",
+  mixins: [],
   emits: ["change", "update:title", "update:body", "update:images"],
 
   components: {
@@ -571,7 +570,7 @@ export default defineComponent({
           !file.name.toLowerCase().endsWith(".docx") &&
           !file.name.toLowerCase().endsWith(".odt")
         ) {
-          this.showErrorAlert(
+          NotificationService.showErrorAlert(
             null,
             "Only docx and odt file format supported.!",
           );
@@ -580,7 +579,7 @@ export default defineComponent({
 
         // 2. Check file size:
         if (file.size > 8 * 1024 * 1024) {
-          this.showErrorAlert(null, "Maximum file size limited to 8MB!");
+          NotificationService.showErrorAlert(null, "Maximum file size limited to 8MB!");
           return;
         }
 
@@ -600,7 +599,7 @@ export default defineComponent({
               this.setDirection();
               this.onEdited();
               console.log("🍒 Load word completed ");
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 "Magical word converter",
                 "Your file has been converted to article successfully, enjoy it!",
               );
@@ -621,8 +620,8 @@ export default defineComponent({
           this.showFullscreen,
           // Deprecated:
           /* function () {
-                              $(this).toggleClass("fullscreen");
-                            }*/
+                                $(this).toggleClass("fullscreen");
+                              }*/
         );
       }, 1000);
     },

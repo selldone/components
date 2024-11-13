@@ -555,9 +555,11 @@ import { PriceHelper } from "@selldone/core-js/helper/price/PriceHelper";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductEditPrice",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin ],
   components: {
     SWidgetButtons,
     BProductExtraPricingRow,
@@ -917,10 +919,10 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("update:instance", params);
-            this.showSuccessAlert(null, "The product price updated.");
+            NotificationService.showSuccessAlert(null, "The product price updated.");
 
             //----------------------------------------------
 
@@ -948,7 +950,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update = false;

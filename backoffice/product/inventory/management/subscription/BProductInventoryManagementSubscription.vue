@@ -90,8 +90,11 @@ import USmartMenu from "../../../../../ui/smart/menu/USmartMenu.vue";
 import BProductSubscriptionPricingAdd from "../../../../product/subscription/pricing/add/BProductSubscriptionPricingAdd.vue";
 import BProductSubscriptionPricingItem from "../../../../product/subscription/pricing/item/BProductSubscriptionPricingItem.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductInventoryManagementSubscription",
+  mixins: [],
   components: {
     BProductSubscriptionPricingItem,
     BProductSubscriptionPricingAdd,
@@ -203,7 +206,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "product_admin.inventory.variants.notifications.delete_success",
@@ -218,11 +221,11 @@ export default {
 
             this.$forceUpdate(); // Update vue component!
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;
@@ -257,7 +260,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The product variant was restored successfully.",
             );
@@ -271,11 +274,11 @@ export default {
 
             this.$forceUpdate(); // Update vue component!
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_restore = null;

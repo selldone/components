@@ -63,9 +63,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "SArticleCategoryShopBlogInput",
-
+  mixins: [],
   props: {
     shop: {},
     modelValue: {},
@@ -98,7 +100,7 @@ export default defineComponent({
           if (!data.error) {
             this.categories = data.categories;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .finally(() => {

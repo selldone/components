@@ -676,8 +676,11 @@ import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import { GetNameOfColor } from "@selldone/core-js/helper";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductVariantAdd",
+  mixins: [],
   components: {
     UAvatarFolder,
     BProductGraphicalAssetsSelector,
@@ -974,7 +977,7 @@ export default {
     validateColor() {
       if (!this.color?.startsWith("#")) {
         this.color = "#FFFFFF";
-        this.showErrorAlert(null, "Invalid color code!");
+        NotificationService.showErrorAlert(null, "Invalid color code!");
       }
     },
   },

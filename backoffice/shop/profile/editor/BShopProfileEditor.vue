@@ -48,8 +48,12 @@
 <script lang="ts">
 import SArticleEditor from "../../../../article/SArticleEditor.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopProfileEditor",
+  mixins:[],
+
   components: { SArticleEditor },
   props: {
     shop: {
@@ -96,19 +100,19 @@ export default {
           if (!data.error) {
             this.state = "no-change";
             this.profile = data.profile;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("global.article.notifications.update_success_title"),
               this.$t("global.article.notifications.update_success"),
             );
           } else {
             this.state = "changed";
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
           console.error(error);
           this.state = "changed";
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -124,12 +128,12 @@ export default {
           if (!data.error) {
             this.profile = data.profile;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
           console.error(error);
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

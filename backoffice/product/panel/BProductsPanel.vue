@@ -381,7 +381,6 @@
 </template>
 
 <script lang="ts">
-
 import BProductsWindow from "../../product/window/BProductsWindow.vue";
 import BProductAddStudio from "../add/studio/BProductAddStudio.vue";
 import BCategoryAdd from "../../category/add/BCategoryAdd.vue";
@@ -399,10 +398,15 @@ import BShopProductsImportProcessing from "../../product/importer/processing/BSh
 import BProductsPanelHeader from "../../product/panel/header/BProductsPanelHeader.vue";
 import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
 import BProductsPanelAddProduct from "@selldone/components-vue/backoffice/product/panel/add-product/BProductsPanelAddProduct.vue";
-import {HelpCenterCode} from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
+import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
+import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
+import { ShopURLs } from "@selldone/core-js/helper";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BProductsPanel",
+  mixins: [],
   components: {
     BProductsPanelAddProduct,
     BProductsPanelHeader,
@@ -499,14 +503,14 @@ export default {
     //--------------------------------------------------------------------------------
 
     products_feed() {
-      return `${this.getShopMainUrl(this.shop)}/rss/products`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/rss/products`;
     },
     products_feed_google() {
-      return `${this.getShopMainUrl(this.shop)}/rss/google`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/rss/google`;
     },
 
     products_feed_facebook() {
-      return `${this.getShopMainUrl(this.shop)}/rss/facebook`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/rss/facebook`;
     },
 
     service_google_sheet() {
@@ -821,11 +825,11 @@ export default {
           return;
         }
         if (!file.name.toLowerCase().endsWith(".csv")) {
-          this.showErrorAlert(null, "Acceptable file format is CSV!");
+          NotificationService.showErrorAlert(null, "Acceptable file format is CSV!");
           return;
         }
         if (file.size > 20 * 1024 * 1024) {
-          this.showErrorAlert(null, "Maximum file size limited to 20MB!");
+          NotificationService.showErrorAlert(null, "Maximum file size limited to 20MB!");
           return;
         }
 
@@ -857,6 +861,15 @@ export default {
       this.$nextTick(() => {
         this.ai_dialog_pre = true;
         this.ai_dialog = true;
+      });
+    },
+
+    //―――――――――――――――――――――― Page Scroll Helper ――――――――――――――――――――
+    GoToTopPage() {
+      this.$nextTick(() => {
+        this.$nextTick(() => {
+          ScrollHelper.scrollToTop(0, "smooth");
+        });
       });
     },
   },

@@ -1043,9 +1043,11 @@ import SDenseImagesCircles from "@selldone/components-vue/ui/image/SDenseImagesC
 import SProductSectionValuation from "@selldone/components-vue/storefront/product/section/valuation/SProductSectionValuation.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductEditInfo",
-  mixins: [ProductMixin],
+  mixins: [ProductMixin ],
 
   components: {
     SProductSectionValuation,
@@ -1336,7 +1338,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             // Set
             if (data.valuation) {
@@ -1348,14 +1350,14 @@ export default {
               this.$product.valuation = null;
             }
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Valuation",
               "Custom valuation form added to the product.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_valuation = false;
@@ -1403,18 +1405,18 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$product.shortcuts = data.shortcuts;
             this.shortcut_dialog = false;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Shortcuts Updated",
               "The product has been successfully linked as a shortcut to the selected categories.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set_shortcuts = false;

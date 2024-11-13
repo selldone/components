@@ -126,8 +126,10 @@ import UStamp from "../../../ui/stamp/UStamp.vue";
 import { throttle } from "lodash-es";
 import { Basket } from "@selldone/core-js";
 
+
 export default {
   name: "SHyperCart",
+  mixins: [],
   components: {
     UStamp,
     SHyperProduct,
@@ -203,11 +205,11 @@ export default {
             this.hyper.currency = data.hyper.currency;
             this.$emit("update:hyper", data.hyper);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_currency = false;
@@ -236,11 +238,11 @@ export default {
           if (!data.error) {
             this.$emit("update:hyper", data.hyper);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = false;

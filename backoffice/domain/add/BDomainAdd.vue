@@ -726,10 +726,13 @@ import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
-import {HelpCenterCode} from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
+import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BDomainAdd",
+  mixins: [],
   emits: ["close", "update", "update-shop-domain"],
   components: {
     ULoadingEllipsis,
@@ -929,7 +932,7 @@ export default {
 
             this.AddOrUpdateItemByID(this.shop.domains, data.domain);
           } else {
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               this.$t("global.notification.error"),
               data.error_msg,
             );
@@ -957,7 +960,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("global.notification.confirm"),
               this.$t("admin_shop.dashboard.info.notification.add_message"),
             );
@@ -965,7 +968,7 @@ export default {
             this.$emit("add", data.domain);
             this.close();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
 
             this.last_dns = data.dns;
             this.show_dns = !!data.dns;
@@ -973,7 +976,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = false;
@@ -992,13 +995,13 @@ export default {
               // Custom domain repair client!
               this.domain_client = data.client;
 
-            this.showSuccessAlert(null, data.message);
+            NotificationService.showSuccessAlert(null, data.message);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add_client = false;
@@ -1018,7 +1021,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("global.notification.confirm"),
               this.$t("admin_shop.dashboard.info.notification.update_message"),
             );
@@ -1039,14 +1042,14 @@ export default {
 
             this.close();
           } else {
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               this.$t("global.notification.error"),
               data.error_msg,
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update = false;

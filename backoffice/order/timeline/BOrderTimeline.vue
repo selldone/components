@@ -257,7 +257,9 @@
                   >
                     <v-img
                       :src="
-                        getDeliveryServiceIcon(item.data.delivery_service_id)
+                        DeliveryServiceHelper.GetDeliveryServiceIconById(
+                          item.data.delivery_service_id,
+                        )
                       "
                     />
                   </v-avatar>
@@ -431,10 +433,17 @@ import UMapGeoButton from "../../../ui/map/geo-button/UMapGeoButton.vue";
 import TimelineStatus from "@selldone/core-js/enums/timeline/TimelineStatus.ts";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import { TimelineEmailType } from "@selldone/core-js/enums/timeline/TimelineEmailType.ts";
-import { CampaignLink, Club, Order } from "@selldone/core-js";
+import {
+  CampaignLink,
+  Club,
+  DeliveryServiceHelper,
+  Order,
+} from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BOrderTimeline",
@@ -523,6 +532,9 @@ export default {
     };
   },
   computed: {
+    DeliveryServiceHelper() {
+      return DeliveryServiceHelper;
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -612,6 +624,10 @@ export default {
   mounted() {},
   unmounted() {},
   methods: {
+    getConnectIcon(connect_id: string | number) {
+      return window.CDN.GET_CONNECT_ICON(connect_id);
+    },
+
     //------------------------------------- Emails -------------------------------------
 
     isEmail(item) {
@@ -632,7 +648,7 @@ export default {
     showEmailView(item) {
       /*🟢 Vendor Panel 🟢*/
       /* In vendor panel maybe some email be visible to vendor! if (this.IS_VENDOR_PANEL) {
-          this.showWarningAlert(null, "Not supported for vendor!");
+          NotificationService.showWarningAlert(null, "Not supported for vendor!");
           return;
         }*/
 
@@ -662,13 +678,13 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
 
           this.email_html = data;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           this.show_email = false;
         })
         .finally(() => {
@@ -679,10 +695,10 @@ export default {
     resendEmail(item) {
       if (this.IS_VENDOR_PANEL) {
         /*🟢 Vendor Panel 🟢*/
-        this.showWarningAlert(null, "Not supported for vendor!");
+        NotificationService.showWarningAlert(null, "Not supported for vendor!");
         return;
       }
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("order_timeline.resend_dialog.title"),
         this.$t("order_timeline.resend_dialog.message"),
         this.$t("order_timeline.resend_dialog.action"),
@@ -693,17 +709,17 @@ export default {
             .post(window.API.POST_ORDER_RESEND_EMAIL(this.shop.id, item.id))
             .then(({ data }) => {
               if (!data.error) {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t("order_timeline.resend_dialog.success"),
                 );
                 this.AddOrUpdateItemByID(this.timelines, data.timeline);
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_resend = null;
@@ -737,14 +753,14 @@ export default {
         .get(this.base_url)
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.timelines = data.timelines;
             this.resortItems();
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -760,12 +776,12 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
 
           this.AddOrUpdateItemByID(this.timelines, data.timeline, "id", false);
           this.resortItems();
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t("order_timeline.notifications.add_note_success"),
           );
@@ -774,7 +790,7 @@ export default {
           this.mentions = {};
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.saving = false;
@@ -790,19 +806,19 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
 
           this.AddOrUpdateItemByID(this.timelines, data.timeline);
           this.resortItems();
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t("order_timeline.notifications.edit_note_success"),
           );
           timeline.editing = false;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit = null;
@@ -815,18 +831,18 @@ export default {
         .delete(`${this.base_url}/${timeline.id}`)
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
 
           this.DeleteItemByID(this.timelines, data.id);
           this.resortItems();
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t("order_timeline.notifications.delete_note_success"),
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = null;
@@ -834,7 +850,7 @@ export default {
     },
 
     showDeleteNoteDialog(timeline) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("order_timeline.delete_dialog.title"),
         this.$t("order_timeline.delete_dialog.message"),
         this.$t("order_timeline.delete_dialog.action"),

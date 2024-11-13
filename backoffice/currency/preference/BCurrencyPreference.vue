@@ -149,7 +149,7 @@ export default {
 
         this.savePreferencesKey("currency", currency)
           .catch((error) => {
-            this.showLaravelError(error);
+            NotificationService.showLaravelError(error);
           })
           .finally(() => {
             this.busy_currency = false;

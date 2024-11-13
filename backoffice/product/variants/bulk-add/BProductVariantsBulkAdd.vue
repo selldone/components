@@ -206,8 +206,12 @@ import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAsset
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductVariantsBulkAdd",
+  mixins: [],
+
   components: {
     UVariantAssetImage,
     UColorCircle,
@@ -359,18 +363,18 @@ export default {
 
             this.close();
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "product_admin.inventory.variants.notifications.add_success",
               ),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

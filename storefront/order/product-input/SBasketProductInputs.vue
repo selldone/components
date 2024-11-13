@@ -156,7 +156,7 @@
 </template>
 
 <script lang="ts">
-import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
+import { FileHelper } from "@selldone/core-js/utils/file/FileHelper.ts";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import {
   FORM_BUILDER_TAGS,
@@ -164,9 +164,10 @@ import {
 } from "@selldone/core-js/helper/html/HtmlHelper";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+
 export default {
   name: "SBasketProductInputs",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: { USmartSwitch },
 
   emits: ["update:modelValue", "update:files", "onDeleteFile"],
@@ -247,13 +248,13 @@ export default {
               item_id: file_item.item_id,
               file_id: file_item.id,
             });
-            this.showSuccessAlert(null, "File removed successfully!");
+            NotificationService.showSuccessAlert(null, "File removed successfully!");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = null;
@@ -274,16 +275,16 @@ export default {
           if (!data.error) {
             window.open(data.url, "_blank").focus();
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The secure download link has been generated successfully!",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_download = null;

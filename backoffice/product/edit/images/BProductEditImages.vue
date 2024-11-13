@@ -347,9 +347,11 @@ import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import { ImageHelper } from "@selldone/core-js/utils/image/ImageHelper.ts";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductEditImages",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin ],
   components: {
     SWidgetButtons,
     UButtonAiLarge,
@@ -535,7 +537,7 @@ export default {
     },
     removeBackground() {
       if (!this.USER().premium) return this.showNeedSubscribePremium();
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         `Remove Main Image Background`,
         "Are you sure you want to remove the background of this image? We will replace the main image with new transparent background.",
         "Yes,Remove it",
@@ -561,13 +563,13 @@ export default {
             this.$forceUpdate();
             this.$emit("update:icon", data.product.icon);
 
-            this.showSuccessAlert(null, "Background removed successfully!");
+            NotificationService.showSuccessAlert(null, "Background removed successfully!");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_ai = false;
@@ -590,13 +592,13 @@ export default {
             this.$forceUpdate();
             this.$emit("update:icon", data.product.icon);
 
-            this.showSuccessAlert(null, "Image upscaled successfully!");
+            NotificationService.showSuccessAlert(null, "Image upscaled successfully!");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_upscale = false;
@@ -632,13 +634,13 @@ export default {
 
             this.dialog_replace_bg = false;
 
-            this.showSuccessAlert(null, "Image created successfully!");
+            NotificationService.showSuccessAlert(null, "Image created successfully!");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

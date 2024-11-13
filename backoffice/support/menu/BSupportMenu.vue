@@ -448,11 +448,13 @@ import SelldoneHelpCard from "../help-card/SelldoneHelpCard.vue";
 import SelldoneBlogCard from "../blog-card/SelldoneBlogCard.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 //―――――――――――――――――――――― Scrollbar Styler ――――――――――――――――――――
 
 export default {
   name: "BSupportMenu",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {
     USmartSelect,
@@ -549,7 +551,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Support",
               "We received your request successfully.",
             );
@@ -567,10 +569,10 @@ export default {
               this.showSupport(data.support);
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
-        .catch((e) => this.showLaravelError(e))
+        .catch((e) => NotificationService.showLaravelError(e))
         .finally(() => {
           this.busy_support = false;
         });
@@ -589,7 +591,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Send message",
               "Your message sent successfully.",
             );
@@ -597,16 +599,16 @@ export default {
             this.selected_support = data.support;
             this.support_message = null;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
-        .catch((e) => this.showLaravelError(e))
+        .catch((e) => NotificationService.showLaravelError(e))
         .finally(() => {
           this.busy_support = false;
         });
     },
     closeTicket() {
-      this.openConfirmationAlert(
+      NotificationService.openConfirmationAlert(
         "Close ticket",
         "Are you sure to close this support ticket?",
         "Yes, Close Now",
@@ -621,7 +623,7 @@ export default {
             )
             .then(({ data }) => {
               if (!data.error) {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   "Your support ticket has been closed.",
                 );
@@ -629,10 +631,10 @@ export default {
                 this.show_support = false;
                 this.support_message = null;
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
-            .catch((e) => this.showLaravelError(e))
+            .catch((e) => NotificationService.showLaravelError(e))
             .finally(() => {
               this.busy_close_ticket = false;
             });
@@ -654,13 +656,13 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(null, "Thanks, Your rate has been saved.");
+            NotificationService.showSuccessAlert(null, "Thanks, Your rate has been saved.");
             this.AddOrUpdateItemByID(this.shop.supports, data.support);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
-        .catch((e) => this.showLaravelError(e))
+        .catch((e) => NotificationService.showLaravelError(e))
         .finally(() => {
           this.busy_rate = false;
         });

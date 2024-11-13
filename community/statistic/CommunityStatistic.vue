@@ -29,8 +29,10 @@
 import CommunityStatisticView from "../../community/statistics/CommunityStatisticView.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 
+
 export default {
   name: "CommunityStatistic",
+  mixins: [],
   components: { CommunityStatisticView },
   props: {
     community: { required: true, type: Object },
@@ -95,11 +97,11 @@ export default {
             // Register fetch callback (Use to refresh by change time span)
             this.community_timeseries.fetch = this.fetchCallback;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

@@ -48,7 +48,7 @@
           <img :src="getShopImagePath(fulfillment.shop.icon)" />
         </v-avatar>
         <a
-          :href="getShopMainUrl(fulfillment.shop)"
+          :href="ShopURLs.MainShopUrl(fulfillment.shop)"
           class="link-dash ms-1"
           target="_blank"
         >
@@ -201,7 +201,7 @@
 <script lang="ts">
 import BOrderCart from "../../../cart/BOrderCart.vue";
 import SOrderDeliveryStatusStepper from "../../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
-import { Basket } from "@selldone/core-js";
+import {Basket, ShopURLs} from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
@@ -234,6 +234,9 @@ export default {
   },
 
   computed: {
+    ShopURLs() {
+      return ShopURLs
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (

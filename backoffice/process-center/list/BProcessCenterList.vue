@@ -811,15 +811,17 @@ import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper
 import { debounce, throttle } from "lodash-es";
 import { OrderType } from "@selldone/core-js/enums/order/OrderType";
 import { RouteMixin } from "../../../mixin/route/RouteMixin.ts";
-import { Avocado, Basket } from "@selldone/core-js";
+import {Avocado, Basket, ShopURLs} from "@selldone/core-js";
 import BCampaignSourceIcon from "@selldone/components-vue/backoffice/campaign/source/icon/BCampaignSourceIcon.vue";
 import BOrderChatBox from "@selldone/components-vue/backoffice/order/chat/box/BOrderChatBox.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProcessCenterList",
-  mixins: [RouteMixin, DateMixin, OrderMixin],
+  mixins: [RouteMixin, DateMixin, OrderMixin ],
 
   components: {
     BCampaignSourceIcon,
@@ -1311,7 +1313,7 @@ export default {
       // For affiliate POS orders redirect user to shop page:
       if (this.isAffiliatePos) {
         const url =
-          this.getShopMainUrl(this.shop) + `/orders/physical/SM-${selected.id}`;
+            ShopURLs.MainShopUrl(this.shop) + `/orders/physical/SM-${selected.id}`;
         window.open(url, "_blank").focus();
         return;
       }
@@ -1429,13 +1431,13 @@ export default {
           },
         )
         .then(({ data }) => {
-          if (data.error) return this.showErrorAlert(null, data.error_msg);
+          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
 
           this.totalItems = data.total;
           this.orders = data.orders;
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_fetch = false;

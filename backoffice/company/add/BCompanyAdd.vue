@@ -205,8 +205,11 @@ import { SetupService } from "@selldone/core-js/server/SetupService";
 import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
 import { Country } from "@selldone/core-js/models/general/country/country.model";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCompanyAdd",
+  mixins: [],
   components: {
     USmartVerify,
     SCountrySelect,
@@ -278,9 +281,9 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_company.notifications.add_success", {
                 name: this.name,
@@ -290,7 +293,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -312,9 +315,9 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_company.notifications.edit_success"),
             );
@@ -325,7 +328,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

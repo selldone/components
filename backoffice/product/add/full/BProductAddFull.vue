@@ -104,13 +104,13 @@
                 style="position: absolute; bottom: 2px; z-index: -1"
               >
                 <img
-                    v-if="$product.icon"
-                    key="p-icon"
-                    :src="getShopImagePath($product.icon, 64)"
-                    width="16"
-                    height="16"
-                    class="border rounded"
-                    style="margin-inline-start: 2px"
+                  v-if="$product.icon"
+                  key="p-icon"
+                  :src="getShopImagePath($product.icon, 64)"
+                  width="16"
+                  height="16"
+                  class="border rounded"
+                  style="margin-inline-start: 2px"
                 />
                 <img
                   v-for="x in $product.images?.limit(2)"
@@ -548,6 +548,8 @@ import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import { Article } from "@selldone/core-js";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 const TAB_TYPE = 1;
 const TAB_GENERAL_INFO = 2;
 const TAB_RATING = 3;
@@ -569,6 +571,7 @@ const TAB_VARIANTS = 11;
  */
 export default {
   name: "BProductAddFull",
+  mixins: [],
   components: {
     UPrice,
     SWidgetButtons,
@@ -610,8 +613,7 @@ export default {
     /**
      * Update route hash with current tab
      */
-    replaceHashRoute:Boolean,
-
+    replaceHashRoute: Boolean,
   },
 
   data: function () {
@@ -800,16 +802,16 @@ export default {
     },
 
     isPhysical() {
-     return this.$product.type === ProductType.PHYSICAL.code;
+      return this.$product.type === ProductType.PHYSICAL.code;
     },
     isVirtual() {
-      return  this.$product.type === ProductType.VIRTUAL.code;
+      return this.$product.type === ProductType.VIRTUAL.code;
     },
     isFile() {
-    return this.$product.type === ProductType.FILE.code;
+      return this.$product.type === ProductType.FILE.code;
     },
     isService() {
-   return this.$product.type === ProductType.SERVICE.code;
+      return this.$product.type === ProductType.SERVICE.code;
     },
 
     hasStep__Inputs() {
@@ -912,17 +914,17 @@ export default {
       });
 
       if (this.replaceHashRoute) {
+        const tab_hash =
+          "#" +
+          Object.keys(this.tabs_name).find(
+            (key) => this.tabs_name[key] === step,
+          );
 
-      const tab_hash =
-        "#" +
-        Object.keys(this.tabs_name).find((key) => this.tabs_name[key] === step);
-
-      if (this.$route.hash !== tab_hash)
-        this.$router.replace({
-          hash: tab_hash,
-        });
+        if (this.$route.hash !== tab_hash)
+          this.$router.replace({
+            hash: tab_hash,
+          });
       }
-
     },
   },
   created() {
@@ -998,13 +1000,13 @@ not need!
         )
         .then(({ data }) => {
           if (data.error) {
-            t.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.rendered_on_google = data.html;
           }
         })
         .catch((error) => {
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_render_google = false;
@@ -1113,9 +1115,9 @@ not need!
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(null, "The product added to the list.");
+            NotificationService.showSuccessAlert(null, "The product added to the list.");
             this.$emit("add", data.product);
             Object.assign(this.$product, data.product);
 
@@ -1138,7 +1140,7 @@ not need!
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -1238,9 +1240,9 @@ not need!
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(null, "The product edited.");
+            NotificationService.showSuccessAlert(null, "The product edited.");
 
             Object.assign(this.$product, data.product); // Copy product data (refresh)
 
@@ -1259,7 +1261,7 @@ not need!
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -1279,9 +1281,9 @@ not need!
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(null, "The product removed.");
+            NotificationService.showSuccessAlert(null, "The product removed.");
             //this.$emit("delete", product);
 
             // Go to shop page > products
@@ -1293,7 +1295,7 @@ not need!
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;
@@ -1332,8 +1334,8 @@ not need!
 
         this.step =
           /* this.hasStep__Inputs
-                                            ? TAB_INPUTS
-                                            :*/
+                                              ? TAB_INPUTS
+                                              :*/
           this.hasStep__Outputs
             ? TAB_OUTPUTS
             : this.hasStep__physicalExtra

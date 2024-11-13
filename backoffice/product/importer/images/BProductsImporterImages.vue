@@ -317,7 +317,7 @@ export default {
           this.images = images;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -343,7 +343,7 @@ export default {
           this.totalItems--;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_remove = null;
@@ -367,14 +367,14 @@ export default {
           if (success) {
             this.DeleteItemByID(this.images, id);
             this.totalItems--;
-            this.showSuccessAlert(null, "Import image successfully completed.");
+            NotificationService.showSuccessAlert(null, "Import image successfully completed.");
           } else {
             this.AddOrUpdateItemByID(this.images, item);
-            this.showWarningAlert(null, "Server can not download image.");
+            NotificationService.showWarningAlert(null, "Server can not download image.");
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_attempt = null;

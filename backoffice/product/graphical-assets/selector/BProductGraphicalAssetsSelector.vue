@@ -93,8 +93,12 @@
 </template>
 
 <script lang="ts">
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductGraphicalAssetsSelector",
+  mixins: [],
   components: {},
   emits: ["select"],
   props: {
@@ -163,11 +167,11 @@ export default {
               totalItems: data.totalItems,
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;

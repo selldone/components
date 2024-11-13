@@ -31,6 +31,7 @@
 
 <script lang="ts">
 import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "UPaymentPaypalStandard",
@@ -107,7 +108,7 @@ export default {
               `⚠ ❰ PayPal ❱  Failed to load script file: `,
               exception,
             );
-            this.showErrorAlert(null, "Can not load script!");
+            NotificationService.showErrorAlert(null, "Can not load script!");
           });
       }
     },
@@ -133,9 +134,9 @@ export default {
                 },
               )
               .then(({ data }) => {
-                if (data.error) return t.showErrorAlert(null, data.error_msg);
+                if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
 
-                t.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   "Payment completed",
                   "We received your payment successfully.",
                 );
@@ -153,7 +154,7 @@ export default {
               })
 
               .catch((error) => {
-                t.showLaravelError(error);
+                NotificationService.showLaravelError(error);
               })
               .finally(() => {
                 // t.busy_verify = false;  Not needed! page will be redirected!

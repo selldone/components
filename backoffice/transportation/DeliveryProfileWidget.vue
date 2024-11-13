@@ -63,8 +63,12 @@
 <script lang="ts">
 import UTextValueDashed from "../../ui/text/value-dashed/UTextValueDashed.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "DeliveryProfileWidget",
+  mixins:[],
+
   components: { UTextValueDashed },
 
   props: {
@@ -109,11 +113,11 @@ export default {
           if (!data.error) {
             this.profile = data.profile;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

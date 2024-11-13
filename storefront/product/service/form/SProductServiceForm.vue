@@ -268,16 +268,16 @@ export default {
               this.setBasketBill(this.basket, data.bill);
             }
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("global.basket_item_message.notifications.success"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

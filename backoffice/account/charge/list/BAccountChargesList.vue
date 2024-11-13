@@ -17,7 +17,7 @@
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <v-data-table-server
-        :mobile="$vuetify.display.xs"
+      :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -168,10 +168,13 @@ import UPaymentRiskIndicator from "../../../../ui/payment/risk/indicator/UPaymen
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import { FileHelper } from "@selldone/core-js";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BAccountChargesList",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: {
     UCurrencyIcon,
     UTextValueDashed,
@@ -351,12 +354,12 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             if (data.success) {
               item.status = data.transaction_status;
 
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 this.$t(
                   "process_center.payment_widget.notifications.pay_confirm_message",
@@ -372,7 +375,7 @@ export default {
 
               this.$emit("request:refresh");
             } else {
-              this.showWarningAlert(
+              NotificationService.showWarningAlert(
                 this.$t(
                   "process_center.payment_widget.notifications.pay_fail_title",
                 ),
@@ -387,7 +390,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_check = false;
@@ -409,10 +412,10 @@ export default {
         .then(({ data, headers }) => {
           console.log("headers", headers);
 
-          this.DownloadBlobFile(data, headers);
+          FileHelper.DownloadBlobFile(data, headers);
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_download = null;

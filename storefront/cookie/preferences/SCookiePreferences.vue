@@ -138,8 +138,13 @@
 </template>
 
 <script lang="ts">
+
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "SCookiePreferences",
+  mixins: [],
   inject: ["$shop"],
   emits: ["close"],
   props: {
@@ -202,16 +207,16 @@ export default {
           .then(({ data }) => {
             if (!data.error) {
               app.blocked = !active;
-              t.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 `Application status has been updated successfully.`,
               );
             } else {
-              t.showErrorAlert(null, data.error_msg);
+              NotificationService.showErrorAlert(null, data.error_msg);
             }
           })
           .catch((error) => {
-            t.showLaravelError(error);
+            NotificationService.showLaravelError(error);
             console.log(error);
           });
       } else {

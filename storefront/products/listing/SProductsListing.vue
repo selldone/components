@@ -125,7 +125,7 @@
                   v-bind="
                     !viewOnly && window.ExternalWidget
                       ? {
-                          href: getCategoryLink($shop, category.name),
+                          href: ShopURLs.GetCategoryLink($shop, category.name),
                           target: '',
                         }
                       : {}
@@ -243,7 +243,10 @@
                   "
                   v-bind="
                     !viewOnly && window.ExternalWidget
-                      ? { href: getProductLink($shop, product.id), target: '' }
+                      ? {
+                          href: ShopURLs.GetProductLink($shop, product.id),
+                          target: '',
+                        }
                       : {}
                   "
                   @click="onClickProduct(product, index)"
@@ -353,6 +356,9 @@ import { computed, defineAsyncComponent } from "vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 import { SProductBreadcrumbHelper } from "./helper/SProductBreadcrumbHelper";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import { Category, Product } from "@selldone/core-js/models";
+import {ShopURLs} from "@selldone/core-js/helper";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "SProductsListing",
@@ -527,6 +533,10 @@ export default {
   },
 
   data: () => ({
+    Category: Category,
+
+    Product: Product,
+
     busy_fetch: false,
 
     products: [],
@@ -565,6 +575,9 @@ export default {
   }),
 
   computed: {
+    ShopURLs() {
+      return ShopURLs
+    },
     single_line_categories() {
       return this.products.length > 0 || this.forceSingleLine;
     },
@@ -1109,7 +1122,7 @@ export default {
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch_product = false;
@@ -1266,7 +1279,7 @@ export default {
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

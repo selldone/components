@@ -58,9 +58,10 @@ import UProductSpecTable from "../../../ui/product/spec/table/UProductSpecTable.
 import {computed} from "vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+
 export default {
   name: "CProductView",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin ],
   components: { UProductSpecTable, SProductOverview },
   props: {
     shop: {
@@ -127,7 +128,7 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
 
@@ -149,7 +150,7 @@ export default {
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

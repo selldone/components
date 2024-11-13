@@ -68,10 +68,12 @@ import UProgressRadial from "../../../ui/progress/radial/UProgressRadial.vue";
 import SComparisonList from "../list/SComparisonList.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 
+
 export default {
   name: "SComparisonButton",
+  mixins: [TemplateMixin ],
+
   components: { SComparisonList, UProgressRadial },
-  mixins: [TemplateMixin],
   data: () => ({
     show: false,
     busy: false,
@@ -129,7 +131,7 @@ export default {
               this.addToProductComparison(product, variant);
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .finally(() => {

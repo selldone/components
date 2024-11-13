@@ -165,9 +165,11 @@ import UTextValueDashed from "../../ui/text/value-dashed/UTextValueDashed.vue";
 import { Article } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "SArticlesTimeline",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: { UTextValueDashed },
   props: {
     shopId: {
@@ -229,7 +231,7 @@ export default {
           if (!data.error) {
             this.timeline = data.timeline;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .finally(() => {

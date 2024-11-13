@@ -956,7 +956,7 @@
             <template v-if="!currentProductForMenu.deleted_at">
               <v-list-item
                 :href="
-                  getProductLink(
+                  ShopURLs.GetProductLink(
                     shop,
                     currentProductForMenu.id,
                     slugify(currentProductForMenu.title),
@@ -1195,7 +1195,9 @@
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Open public product page ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <v-list-item
-              :href="getCategoryLink(shop, currentCategoryForMenu.name)"
+              :href="
+                ShopURLs.GetCategoryLink(shop, currentCategoryForMenu.name)
+              "
               base-color="#1976d2"
               target="_blank"
               theme="dark"
@@ -1936,10 +1938,14 @@ import { BProductBreadcrumbsHelper } from "../breadcrumbs/helper/BProductBreadcr
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import { Category, Product } from "@selldone/core-js/models";
+import {ShopURLs} from "@selldone/core-js/helper";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BProductsWindow",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   emits: [
     "click:ai-add",
@@ -2084,6 +2090,9 @@ export default {
   },
 
   data: () => ({
+    Category: Category,
+    Product: Product,
+
     ProductStatus: ProductStatus,
 
     mini: true,
@@ -2204,6 +2213,9 @@ export default {
   }),
 
   computed: {
+    ShopURLs() {
+      return ShopURLs
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -2647,9 +2659,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("products_select.notifications.copy_success"),
             );
@@ -2657,7 +2669,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         });
     },
 
@@ -2684,7 +2696,7 @@ export default {
         .then(({}) => {
           if (success_callback) success_callback();
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t("products_select.notifications.change_category_success"),
           );
@@ -2701,7 +2713,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         });
     },
 
@@ -2721,17 +2733,17 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             if (success_callback) success_callback();
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("products_select.notifications.change_category_success"),
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         });
     },
 
@@ -2831,7 +2843,7 @@ export default {
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -2873,7 +2885,7 @@ export default {
     },
 
     deleteProduct(product) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("add_product.delete_product.title"),
         this.$t("add_product.delete_product.message", {
           product_title: product.title,
@@ -2892,9 +2904,9 @@ export default {
             )
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
-                this.showSuccessAlert(null, "The product removed.");
+                NotificationService.showSuccessAlert(null, "The product removed.");
                 // this.$emit("delete", product);
 
                 if (this.showDeletes) {
@@ -2905,7 +2917,7 @@ export default {
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = false;
@@ -2919,7 +2931,7 @@ export default {
         .filter((p) => selected_products.includes(p.id))
         .map((p) => p.title);
 
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("add_product.delete_product.title"),
         this.$t("add_product.delete_product.message", {
           product_title: product_titles.join(", "),
@@ -2938,9 +2950,9 @@ export default {
             )
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   `<b>${data.ids.length}</b>×  Removed`,
                   `Selected products has been removed successfully.`,
                 );
@@ -2963,7 +2975,7 @@ export default {
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = false;
@@ -2985,15 +2997,15 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(null, "The product restored successfully.");
+            NotificationService.showSuccessAlert(null, "The product restored successfully.");
 
             this.AddOrUpdateItemByID(this.products, data.product);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_restore = false;
@@ -3081,11 +3093,11 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_arrange = false;
@@ -3132,11 +3144,11 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_arrange = false;
@@ -3172,7 +3184,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Vendors have been added to selected products.",
             );
@@ -3183,11 +3195,11 @@ export default {
               this.fetchData();
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_assign_vendor = false;
@@ -3238,18 +3250,18 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Product(s) status has been updated successfully.",
             );
             this.status_product_dialog = false;
             products.forEach((p) => (p.status = status)); // Update status of products in local.
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.status_busy = false;
@@ -3289,7 +3301,7 @@ export default {
     },
 
     showClearRootFiltersDialog(category) {
-      this.openConfirmationAlert(
+      NotificationService.openConfirmationAlert(
         `Remove ${category ? category.title : "Root"} Filter`,
         "Do you want to clear filter of this category?",
         "Yes, Clear filters",
@@ -3309,7 +3321,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Root filters has been removed successfully.",
             );
@@ -3319,11 +3331,11 @@ export default {
               this.shop.filters = data.filters;
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_clear_root_filter = false;

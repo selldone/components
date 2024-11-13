@@ -261,9 +261,11 @@ import UButtonShareGroup from "../../../ui/button/share/group/UButtonShareGroup.
 import { throttle } from "lodash-es";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "SInviteFriends",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: { UButtonShareGroup },
   emits: ["update:dialog"],
   props: {
@@ -324,11 +326,11 @@ export default {
           if (!data.error) {
             this.valid_mails.push(data.email);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_check = null;
@@ -355,15 +357,15 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(null, "Your invites has been sent.");
+            NotificationService.showSuccessAlert(null, "Your invites has been sent.");
 
             this.resetToDefault(); // 🞇 Reset to default
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

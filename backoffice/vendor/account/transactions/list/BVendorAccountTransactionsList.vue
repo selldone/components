@@ -137,9 +137,11 @@ import BVendorPayoutPods from "../../../../vendor/payout/pods/BVendorPayoutPods.
 import { throttle } from "lodash-es";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BVendorAccountTransactionsList",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: { BVendorPayoutPods },
 
   props: {
@@ -273,11 +275,11 @@ export default {
             this.transactions = data.transactions;
             this.totalItems = data.total;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;

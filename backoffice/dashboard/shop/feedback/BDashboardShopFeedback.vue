@@ -127,8 +127,11 @@
 <script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BDashboardShopFeedback",
+  mixins: [],
   components: {
     SWidgetBox,
   },
@@ -168,19 +171,19 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.shop.feedback = data.feedback;
             this.hide = true;
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "We received your message and will get back to you soon.",
             );
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy = false;

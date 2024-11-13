@@ -85,9 +85,11 @@ import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductExtraPricingRow",
-  mixins: [CurrencyMixin,ProductMixin],
+  mixins: [CurrencyMixin,ProductMixin ],
 
   components: {
     UTimeProgressBar,
@@ -227,7 +229,7 @@ export default {
     },
 
     showDelete() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete extra pricing",
         "Are you certain you want to permanently remove this additional pricing?",
         "Yes, Delete now",
@@ -255,18 +257,18 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("onDelete", data.id);
             this.$emit("close");
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The product extra pricing has been deleted.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;

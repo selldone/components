@@ -30,36 +30,32 @@
         </v-list-subheader>
       </div>
       <div class="widget-box mb-5">
-      <b-product-extra-input
-        v-model:bulk="bulk"
-        :class="{ disabled: add_by_dropShipping }"
-        :default-lead-time="lead"
-        :extra="extra"
-        :shop="shop"
-        class="mb-5"
-        has-bulk-action
-        @onLeadChange="
-          (value) => {
-            lead = value;
-          }
-        "
-      />
+        <b-product-extra-input
+          v-model:bulk="bulk"
+          :class="{ disabled: add_by_dropShipping }"
+          :default-lead-time="lead"
+          :extra="extra"
+          :shop="shop"
+          class="mb-5"
+          has-bulk-action
+          @onLeadChange="
+            (value) => {
+              lead = value;
+            }
+          "
+        />
       </div>
       <div class="widget-box mb-5">
         <u-widget-header
           :title="
-            $t('add_product.extra_edit.order_limit.title')  +
+            $t('add_product.extra_edit.order_limit.title') +
             (limit_min ? ` | Min: ${limit_min}` : '') +
             (limit_max ? ` | Max: ${limit_max}` : '')
           "
           icon="running_with_errors"
         ></u-widget-header>
-        <v-list-subheader
-          >
-
-          {{ $t('add_product.extra_edit.order_limit.subtitle') }}
-
-
+        <v-list-subheader>
+          {{ $t("add_product.extra_edit.order_limit.subtitle") }}
         </v-list-subheader>
 
         <v-slide-y-reverse-transition leave-absolute>
@@ -70,8 +66,12 @@
               @click="limit_min = Math.ceil(Math.max(100, limit_max) / 10)"
             >
               <div class="d-flex flex-column align-center">
-                <b>{{$t('add_product.extra_edit.order_limit.no_limit') }}</b>
-                <small class="mt-1">{{$t('add_product.extra_edit.order_limit.minimum_purchase_quantity') }}</small>
+                <b>{{ $t("add_product.extra_edit.order_limit.no_limit") }}</b>
+                <small class="mt-1">{{
+                  $t(
+                    "add_product.extra_edit.order_limit.minimum_purchase_quantity",
+                  )
+                }}</small>
               </div>
             </v-btn>
           </div>
@@ -96,8 +96,12 @@
               @click="limit_max = Math.max(10, limit_min) * 10"
             >
               <div class="d-flex flex-column align-center">
-                <b>{{$t('add_product.extra_edit.order_limit.no_limit') }}</b>
-                <small class="mt-1">{{$t('add_product.extra_edit.order_limit.maximum_purchase_quantity') }}</small>
+                <b>{{ $t("add_product.extra_edit.order_limit.no_limit") }}</b>
+                <small class="mt-1">{{
+                  $t(
+                    "add_product.extra_edit.order_limit.maximum_purchase_quantity",
+                  )
+                }}</small>
               </div>
             </v-btn>
           </div>
@@ -148,10 +152,13 @@
 import BProductExtraInput from "../../extra/input/BProductExtraInput.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
-import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BProductEditExtra",
+  mixins: [],
   components: { SWidgetButtons, UNumberInput, BProductExtraInput },
   props: {
     shop: {
@@ -248,7 +255,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("add_product.extra_edit.notifications.save_title"),
               this.$t("add_product.extra_edit.notifications.save_msg"),
             );
@@ -261,11 +268,11 @@ export default {
 
             this.$emit("next");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

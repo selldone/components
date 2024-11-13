@@ -44,7 +44,12 @@
       >
         <img
           v-if="item.id.startsWith('c-')"
-          :src="getCategoryIcon(item.id.replace('c-', ''), IMAGE_SIZE_SMALL)"
+          :src="
+            ShopCategoryHelper.GetCategoryIconById(
+              item.id.replace('c-', ''),
+              IMAGE_SIZE_SMALL,
+            )
+          "
         />
         <img v-else :src="getProductImage(item.id, IMAGE_SIZE_SMALL)" />
       </v-avatar>
@@ -55,6 +60,7 @@
 <script lang="ts">
 import UDrop from "../../../ui/drag/core/UDrop.vue";
 import UDrag from "../../../ui/drag/core/UDrag.vue";
+import {ShopCategoryHelper} from "@selldone/core-js/helper/category/ShopCategoryHelper.ts";
 
 export default {
   name: "UDragPin",
@@ -92,6 +98,9 @@ export default {
     ],
   }),
   computed: {
+    ShopCategoryHelper() {
+      return ShopCategoryHelper
+    },
     size() {
       return this.$vuetify.display.xs ? 56 : 72;
     },

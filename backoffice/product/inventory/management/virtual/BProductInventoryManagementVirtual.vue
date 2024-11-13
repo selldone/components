@@ -405,9 +405,11 @@ import BProductVirtualItemAdd from "../../../../product/virtual/item/add/BProduc
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductInventoryManagementVirtual",
-  mixins: [DateMixin,OrderMixin],
+  mixins: [DateMixin,OrderMixin ],
   components: {
     BProductVirtualItemAdd,
     USmartMenu,
@@ -624,16 +626,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.DeleteItemByID(this.virtual_items, data.id);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("virtual_items_list.notifications.delete_success"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = null;
@@ -671,7 +673,7 @@ export default {
           this.totalItems = data.total;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -747,7 +749,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "product_admin.inventory.variants.notifications.add_success",
@@ -779,11 +781,11 @@ export default {
 
             this.$forceUpdate(); // Update vue component!
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -811,7 +813,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "product_admin.inventory.variants.notifications.delete_success",
@@ -826,11 +828,11 @@ export default {
 
             this.$forceUpdate(); // Update vue component!
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;
@@ -858,7 +860,7 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The product variant was restored successfully.",
             );
@@ -872,11 +874,11 @@ export default {
 
             this.$forceUpdate(); // Update vue component!
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_restore = null;

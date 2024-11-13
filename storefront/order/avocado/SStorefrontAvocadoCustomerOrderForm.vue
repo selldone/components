@@ -309,7 +309,7 @@ export default {
           this.$forceUpdate();
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -339,7 +339,7 @@ export default {
           this.count = 1;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save_items = false;
@@ -354,13 +354,13 @@ export default {
         .then(({ avocado }) => {
           this.$emit("add", avocado);
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t("avocado.notifications.order_success"),
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_submit = false;

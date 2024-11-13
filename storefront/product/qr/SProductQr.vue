@@ -69,6 +69,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { ShopURLs } from "@selldone/core-js/helper";
 
 export default defineComponent({
   name: "SProductQr",
@@ -81,7 +82,7 @@ export default defineComponent({
   computed: {
     qrcode_value() {
       if (!this.$product) return null;
-      return `${this.getShopMainUrl(this.$shop)}/product/${this.$product.id}`;
+      return `${ShopURLs.MainShopUrl(this.$shop)}/product/${this.$product.id}`;
     },
     qr_size() {
       return window.innerWidth > 480 ? 400 : window.innerWidth * 0.8;

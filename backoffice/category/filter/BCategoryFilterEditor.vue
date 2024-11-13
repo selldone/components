@@ -205,9 +205,11 @@ import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import { GetNameOfColor } from "@selldone/core-js/helper";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCategoryFilterEditor",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin ],
 
   components: { UCurrencyIcon, UVariantAssetImage },
   emits: ["edit-filters"],
@@ -357,14 +359,14 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.filters = data.filters;
             this.spec_keys = data.spec_keys;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_get_specs = false;
@@ -384,10 +386,10 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.filters = data.filters;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_category.edit_filter.notifications.edit_success"),
             );
@@ -395,7 +397,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit = false;

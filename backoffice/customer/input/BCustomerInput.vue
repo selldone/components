@@ -131,9 +131,12 @@
 </template>
 
 <script lang="ts">
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCustomerInput",
-
+  mixins: [],
   props: {
     shop: {
       type: Object,
@@ -264,13 +267,13 @@ export default {
         .get(window.API.GET_SUGGESTION_CUSTOMERS(this.shop.id, v))
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
           this.items = data;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.loading = false;

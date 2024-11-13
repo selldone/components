@@ -165,6 +165,7 @@
 <script lang="ts">
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "ShopEmailLogin",
@@ -227,7 +228,7 @@ export default {
         .catch((error) => {
           if (error.error_msg) this.error_message_send_code = error.error_msg;
 
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -254,7 +255,7 @@ export default {
         .catch((error) => {
           if (error.error_msg) this.error_message_otp_check = error.error_msg;
 
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

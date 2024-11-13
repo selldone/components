@@ -92,8 +92,11 @@ import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import { Connect } from "@selldone/core-js/models";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "BProductConnectAbstractView",
+  mixins: [],
   components: { UAvatarFolder, SWidgetBox },
   inject: ["$shop"],
   props: {
@@ -138,16 +141,16 @@ export default defineComponent({
         )
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
           Object.assign(this.product, data.product);
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             "Product has been re-synced and updated.",
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_sync = false;

@@ -266,9 +266,11 @@ import { Cluster } from "@selldone/core-js";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BClustersPanel",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin ],
 
   components: { BClusterResource, BClusterFolder },
   props: {
@@ -384,7 +386,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
           this.current_cluster = data.cluster;
           this.sub_clusters = data.sub_clusters;

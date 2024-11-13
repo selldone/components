@@ -362,6 +362,10 @@ export default {
   created() {},
 
   methods: {
+    getConnectIcon(connect_id: string | number) {
+      return window.CDN.GET_CONNECT_ICON(connect_id);
+    },
+
     fetchRibbons(page, sortBy, sortDesc = true) {
       this.busy_fetch = true;
 
@@ -383,7 +387,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;

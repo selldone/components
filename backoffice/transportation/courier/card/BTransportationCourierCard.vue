@@ -145,9 +145,11 @@ import UChartRadialBar from "../../../../ui/chart/radial/bar/UChartRadialBar.vue
 import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "BTransportationCourierCard",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: { USmartToggle, UChartRadialBar },
   props: {
     courier: {
@@ -180,17 +182,17 @@ export default defineComponent({
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.AddOrUpdateItemByID(this.persons, data.person);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("transportation_persons.notifications.success_update"),
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_enable = null;
@@ -200,7 +202,7 @@ export default defineComponent({
     //――――――――――――――――――――――― Transportation > Person > Reset ―――――――――――――――――――――――
 
     deletePerson(person) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("transportation_persons.remove.title"),
         this.$t("transportation_persons.remove.message"),
         this.$t("transportation_persons.remove.action"),
@@ -216,10 +218,10 @@ export default defineComponent({
             )
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
                 this.DeleteItemByID(this.persons, data.id);
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t(
                     "transportation_persons.notifications.success_remove",
@@ -228,7 +230,7 @@ export default defineComponent({
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = null;
@@ -240,7 +242,7 @@ export default defineComponent({
     //――――――――――――――――――――――― Transportation > Person > Reset ―――――――――――――――――――――――
 
     resetPerson(person) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("transportation_persons.reset.title"),
         this.$t("transportation_persons.reset.message"),
         this.$t("transportation_persons.reset.action"),
@@ -256,17 +258,17 @@ export default defineComponent({
             )
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
                 this.AddOrUpdateItemByID(this.persons, data.person);
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t("transportation_persons.notifications.success_reset"),
                 );
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_reset = null;

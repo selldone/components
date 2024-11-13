@@ -977,9 +977,11 @@ import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import { BackofficeMixinAuth } from "../../../mixin/backoffice/auth/BackofficeMixinAuth.ts";
 import { defineAsyncComponent } from "vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BLoginForm",
-  mixins: [BackofficeMixinAuth],
+  mixins: [BackofficeMixinAuth ],
   components: {
     UTelInput: defineAsyncComponent(
       () => import("@selldone/components-vue/ui/tel-input/UTelInput.vue"),
@@ -1257,14 +1259,14 @@ export default {
             this.checkHas2StepVerification();
           } else {
             this.hideOverlay();
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.errorMessage = data.error_msg;
             this.reCAPTCHA_execute();
           }
         })
         .catch((error) => {
           this.hideOverlay();
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           this.reCAPTCHA_execute();
         })
         .finally(() => {
@@ -1285,7 +1287,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -1305,16 +1307,16 @@ export default {
           if (!data.error) {
             this.errorMessage = null;
             this.finishLogin(data.user);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("login.notifications.step2_login_success"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.hideOverlay();
@@ -1371,13 +1373,13 @@ export default {
 
             this.finishLogin(data.user);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.errorMessage_register = data.error_msg;
             this.reCAPTCHA_execute();
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           this.reCAPTCHA_execute();
         })
         .finally(() => {
@@ -1410,7 +1412,7 @@ export default {
         })
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_terms = false;
@@ -1429,7 +1431,7 @@ export default {
         })
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_privacy = false;
@@ -1469,17 +1471,17 @@ export default {
               this.recover_mode = "set-mail";
             } else {
               this.reset_password_dialog = false;
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 "Reset password link has been sent to your email. Please check your mail.",
               );
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           this.reCAPTCHA_execute();
         })
         .finally(() => {
@@ -1502,11 +1504,11 @@ export default {
             this.reset_password_dialog = false;
             this.finishLogin(data.user);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

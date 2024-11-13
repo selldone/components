@@ -54,18 +54,20 @@ import {
   ProductsCsvFormat,
   ProductsCsvHeaders,
   ProductsCsvStyler,
-} from "@selldone/core-js/helper/csv/product/ProductsCsvFormat";
-import { CategoriesCsvFormat } from "@selldone/core-js/helper/csv/CategoriesCsvFormat";
+} from "@selldone/core-js";
+import { CategoriesCsvFormat } from "@selldone/core-js";
 import BSpreadsheet from "../BSpreadsheet.vue";
 import ImportInvalidCharacterErrorDialog from "../../spreadsheet/dialog/ImportInvalidCharacterErrorDialog.vue";
 import SpreadsheetMixin from "../../spreadsheet/mixins/SpreadsheetMixin";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 const Papa = require("papaparse");
 
 export default {
   name: "BSpreadsheetProducts",
-  mixins: [SpreadsheetMixin],
+  mixins: [SpreadsheetMixin ],
   components: {
     ImportInvalidCharacterErrorDialog,
     BSpreadsheet,
@@ -196,7 +198,7 @@ export default {
       const config = {
         complete: (results, file) => {
           //  console.log("Parsing complete:", results, file);
-          this.showSuccessAlert(null, "Load CSV file completed.");
+          NotificationService.showSuccessAlert(null, "Load CSV file completed.");
           this.loadCsvToSheet(results);
 
           let valid = ProductsCsvFormat.CheckValidFile(this.headers);
@@ -216,13 +218,13 @@ export default {
               });
               return;
             }
-            this.showErrorAlert(null, "Invalid file format!");
+            NotificationService.showErrorAlert(null, "Invalid file format!");
           }
 
           this.$emit("update:valid", valid);
         },
         error: () => {
-          this.showErrorAlert(null, "Parsing error!");
+          NotificationService.showErrorAlert(null, "Parsing error!");
           this.$emit("update:valid", false);
 
           this.file = null;
@@ -249,7 +251,7 @@ export default {
       });
 
       if (!data || !data.length) {
-        this.showErrorAlert(null, "Can not read this file!");
+        NotificationService.showErrorAlert(null, "Can not read this file!");
       }
 
       const sheet = data;

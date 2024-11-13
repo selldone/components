@@ -206,9 +206,11 @@ import {
 import { SetupService } from "@selldone/core-js/server";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "SArticleAuthorBox",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: { AFeedbackContentViolationReport },
   props: {
     article: {
@@ -326,7 +328,7 @@ export default defineComponent({
         .then(({ data }) => {
           if (data.error) {
             // Error!
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               null,
               data.error_msg
                 ? data.error_msg
@@ -336,7 +338,7 @@ export default defineComponent({
           }
 
           this.dialog_report = false;
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             this.$t(
               "global.article.notifications.report_and_delete_success_title",
             ),
@@ -347,7 +349,7 @@ export default defineComponent({
           this.$router.go(-1);
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_report = false;
@@ -361,11 +363,11 @@ export default defineComponent({
         .then(({ data }) => {
           if (data.error) {
             // Error!
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
           this.dialog_report = false;
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             this.$t("global.article.notifications.report_success_title"),
             this.$t("global.article.notifications.report_success_message"),
           );
@@ -373,7 +375,7 @@ export default defineComponent({
           this.$emit("update:reported", this.reported);
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_report = false;

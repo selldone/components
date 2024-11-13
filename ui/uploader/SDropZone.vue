@@ -177,14 +177,14 @@ export default {
           this.extension &&
           !file.name.toLowerCase().endsWith(this.extension)
         ) {
-          this.showErrorAlert(
+          NotificationService.showErrorAlert(
             null,
             `Acceptable file format is ${this.extension}!`,
           );
           return;
         }
         if (file.size > this.maxFileSize) {
-          this.showErrorAlert(
+          NotificationService.showErrorAlert(
             null,
             `Maximum file size limited to ${Math.round(
               maxFileSize / (1024 * 1024),

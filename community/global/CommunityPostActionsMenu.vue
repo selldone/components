@@ -130,9 +130,10 @@ import { EventBus } from "@selldone/core-js/events/EventBus";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
+
 export default {
   name: "CommunityPostActionsMenu",
-  mixins: [AuthMixin, CommunityMixin],
+  mixins: [AuthMixin, CommunityMixin ],
 
   components: { AFeedbackContentViolationReport, CPostEditor },
   props: {
@@ -277,7 +278,7 @@ export default {
     //――――――――――――――――――――――――― Delete ―――――――――――――――――――――――――
 
     deletePost() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("community.post_actions.delete_dialog.title"),
         this.$t("community.post_actions.delete_dialog.message"),
         this.$t("community.post_actions.delete_dialog.action"),
@@ -299,7 +300,7 @@ export default {
                 }
                 // Errors in removing files on disk:
                 if (data.errors) {
-                  this.showWarningAlert(
+                  NotificationService.showWarningAlert(
                     null,
                     "There is some issue with removing files: <ul>" +
                       data.errors.map((e) => "<li>" + e + "</li>").join(" ") +
@@ -307,11 +308,11 @@ export default {
                   );
                 }
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy = false;
@@ -339,13 +340,13 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.post.action = data.action;
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -370,13 +371,13 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.post.approved = data.approved;
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -412,13 +413,13 @@ export default {
           if (!data.error) {
             this.post.action = data.action;
             this.report_dialog = false;
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_report = false;

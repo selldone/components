@@ -70,8 +70,10 @@
 import VariantItemViewMicro from "../../../../storefront/product/variant/VariantItemViewMicro.vue";
 import { Basket } from "@selldone/core-js";
 
+
 export default {
   name: "SHyperCartItems",
+  mixins:[],
   components: { VariantItemViewMicro },
   props: {
     hyper: { required: true },
@@ -99,7 +101,7 @@ export default {
 
   methods: {
     deleteItem(item) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("hyper.delete_item_dialog.title"),
         this.$t("hyper.delete_item_dialog.message"),
         this.$t("hyper.delete_item_dialog.action"),
@@ -114,16 +116,16 @@ export default {
 
                 this.$emit("update:hyper", data.hyper);
 
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t("hyper.notifications.delete_success"),
                 );
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = null;

@@ -113,12 +113,12 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.shop.plugins, data.plugin);
-            this.showSuccessAlert(null, "Set tag manager ID.");
+            NotificationService.showSuccessAlert(null, "Set tag manager ID.");
             this.change = false;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.loading_set_id = false;

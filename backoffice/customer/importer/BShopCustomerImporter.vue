@@ -47,8 +47,8 @@
             title="Important checklist"
           ></u-widget-header>
           <v-list-subheader
-            >Make sure to follow the guideline.</v-list-subheader
-          >
+            >Make sure to follow the guideline.
+          </v-list-subheader>
           <v-list density="compact">
             <v-list-item
               :prepend-icon="
@@ -114,7 +114,6 @@
 
         <v-stepper-window-item :value="2">
           <div class="pt-6" style="min-height: 200px">
-
             <b-shop-quota-importer
               :new-count="total_items"
               :quota-key="shopQuota.Customer"
@@ -191,7 +190,11 @@
           </div>
 
           <div class="widget-buttons mt-4">
-            <v-btn exact size="x-large" variant="outlined" @click="$emit('close')"
+            <v-btn
+              exact
+              size="x-large"
+              variant="outlined"
+              @click="$emit('close')"
               >Back to the customers list
               <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
             </v-btn>
@@ -240,19 +243,19 @@
 <script lang="ts">
 import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
 import BSpreadsheetCustomers from "../../spreadsheet/customers/BSpreadsheetCustomers.vue";
-import ShopLicenseView from "../../shop/license/view/ShopLicenseView.vue";
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";
 import BShopQuotaImporter from "../../shop/quota/Importer/BShopQuotaImporter.vue";
 import shopQuota from "@selldone/core-js/enums/shop/quota/ShopQuota";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopCustomerImporter",
+  mixins: [],
   components: {
     BShopQuotaImporter,
     BSpreadsheetCustomers,
-
-    ShopLicenseView,
   },
 
   props: {
@@ -327,7 +330,7 @@ export default {
             })
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
                 this.result_success += data.success_count;
                 this.result_fails += data.fail_count;
@@ -336,7 +339,7 @@ export default {
               // console.log("axios then", data);
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
 
             .finally(() => {
@@ -352,7 +355,7 @@ export default {
         chunk,
         1000,
         () => {
-          this.showErrorAlert(null, "Data set is invalid!");
+          NotificationService.showErrorAlert(null, "Data set is invalid!");
           this.busy_send = false;
         },
       );
@@ -408,11 +411,11 @@ export default {
           return;
         }
         if (!file.name.toLowerCase().endsWith(".csv")) {
-          this.showErrorAlert(null, "Acceptable file format is CSV!");
+          NotificationService.showErrorAlert(null, "Acceptable file format is CSV!");
           return;
         }
         if (file.size > 20 * 1024 * 1024) {
-          this.showErrorAlert(null, "Maximum file size limited to 20MB!");
+          NotificationService.showErrorAlert(null, "Maximum file size limited to 20MB!");
           return;
         }
 

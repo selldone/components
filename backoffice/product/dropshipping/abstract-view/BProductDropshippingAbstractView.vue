@@ -35,7 +35,6 @@
         variant="elevated"
         density="compact"
         class="mb-3"
-
       >
         <p>
           {{ $t("product_dropshipping.need_re_enable") }}
@@ -58,7 +57,8 @@
         color="blue"
         icon="info"
         variant="elevated"
-        density="compact"    class="mb-3"
+        density="compact"
+        class="mb-3"
       >
         <p>
           {{ $t("product_dropshipping.changed_value") }}
@@ -81,8 +81,8 @@
         color="red"
         icon="error"
         variant="elevated"
-        density="compact"    class="mb-3"
-
+        density="compact"
+        class="mb-3"
       >
         <p>
           {{ $t("product_dropshipping.parent_deleted") }}
@@ -95,8 +95,8 @@
         color="amber"
         icon="warning"
         variant="elevated"
-        density="compact"    class="mb-3"
-
+        density="compact"
+        class="mb-3"
       >
         <p>
           {{ $t("product_dropshipping.parent_closed") }}
@@ -110,7 +110,7 @@
             <img :src="getShopImagePath(parent.shop.icon)" />
           </v-avatar>
           <a
-            :href="getShopMainUrl(parent.shop)"
+            :href="ShopURLs.MainShopUrl(parent.shop)"
             class="link-dash ms-1"
             target="_blank"
           >
@@ -156,9 +156,13 @@
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import BProductVariantsTable from "../../variants/table/BProductVariantsTable.vue";
 import SCountrySelect from "../../../../ui/country/select/SCountrySelect.vue";
+import { ShopURLs } from "@selldone/core-js/helper";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BProductDropshippingAbstractView",
+  mixins: [],
   components: {
     SCountrySelect,
     BProductVariantsTable,
@@ -181,6 +185,9 @@ export default {
     selected_shipping_country: null,
   }),
   computed: {
+    ShopURLs() {
+      return ShopURLs;
+    },
     add_by_dropShipping() {
       return !!this.product.parent_id;
     },
@@ -233,7 +240,9 @@ export default {
 
       let changed = false;
       checks.forEach((key) => {
-        if (!this.isEqualJson(this.parent[key], this.product[key])) {
+        if (
+          JSON.stringify(this.parent[key]) !== JSON.stringify(this.product[key])
+        ) {
           console.log(
             "changed_value",
             key,
@@ -272,16 +281,16 @@ export default {
           if (!data.error) {
             Object.assign(this.product, data.product);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("product_dropshipping.notifications.re_enable_success"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_enable = false;
@@ -302,16 +311,16 @@ export default {
           if (!data.error) {
             Object.assign(this.product, data.product);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("product_dropshipping.notifications.update_success"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_enable = false;

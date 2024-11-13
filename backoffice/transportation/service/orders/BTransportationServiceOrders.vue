@@ -146,7 +146,7 @@
       <template v-slot:item.service_id="{ item }">
         <div v-if="item.service" class="d-flex flex-column align-center">
           <v-avatar :size="38" class="hover-scale force-top" tile>
-            <v-img :src="getDeliveryServiceIcon(item.service.service_id)" />
+            <v-img :src="DeliveryServiceHelper.GetDeliveryServiceIconById(item.service.service_id)" />
           </v-avatar>
           <v-chip
             v-if="!item.service.livemode"
@@ -370,10 +370,13 @@ import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPe
 import UMapGeoButton from "@selldone/components-vue/ui/map/geo-button/UMapGeoButton.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+import {DeliveryServiceHelper} from "@selldone/core-js/helper";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BTransportationServiceOrders",
-  mixins: [DateMixin, MapMixin],
+  mixins: [DateMixin, MapMixin ],
   components: {
     UMapGeoButton,
     BTransportationServiceRate,
@@ -419,6 +422,9 @@ export default {
     };
   },
   computed: {
+    DeliveryServiceHelper() {
+      return DeliveryServiceHelper
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -557,7 +563,7 @@ export default {
           this.transportation_orders = data.transportation_orders;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -567,7 +573,7 @@ export default {
     //――――――――――――――――――――――― Update transportation status ―――――――――――――――――――――――
 
     updateTransportationOrderStatus(transportation_order, status) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         status,
         `Are you sure to change the delivery state to ${status}?`,
         "Yes, Set it!",
@@ -592,9 +598,9 @@ export default {
             )
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t("transportation_orders.notifications.success_update"),
                 );
@@ -602,7 +608,7 @@ export default {
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_transportation = null;
@@ -637,11 +643,11 @@ export default {
               this.fetchOrders();
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_info_order = false;

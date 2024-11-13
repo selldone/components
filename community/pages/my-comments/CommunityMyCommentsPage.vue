@@ -59,8 +59,11 @@ import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CCommentWidget from "../../../community/comment/widget/CCommentWidget.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
+
 export default {
   name: "CommunityMyCommentsPage",
+  mixins:[],
+
   components: {
     ULoadingEllipsis,
     CCommentWidget,
@@ -136,7 +139,7 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
           this.comments.push(...data.comments);
@@ -148,7 +151,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

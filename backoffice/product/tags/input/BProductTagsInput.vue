@@ -121,13 +121,13 @@ export default {
             tags,
           );
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t("product_tags.notifications.tags_updated"),
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

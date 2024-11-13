@@ -306,9 +306,11 @@ import { DateConverter } from "@selldone/core-js";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductExtraPricingAdd",
-  mixins: [CurrencyMixin,ProductMixin],
+  mixins: [CurrencyMixin, ProductMixin],
 
   components: {
     UNumberInput,
@@ -495,15 +497,15 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("onAdd", data.extra_pricing);
             this.$emit("update:modelValue", false);
-            this.showSuccessAlert(null, "The product extra pricing added.");
+            NotificationService.showSuccessAlert(null, "The product extra pricing added.");
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -544,11 +546,11 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("onEdit", data.extra_pricing);
             this.$emit("update:modelValue", false);
-            this.showSuccessAlert(null, "The product extra pricing updated.");
+            NotificationService.showSuccessAlert(null, "The product extra pricing updated.");
 
             //----------------------------------------------
             Object.assign(this.extraPricing, data.extra_pricing);
@@ -556,7 +558,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -564,7 +566,7 @@ export default {
     },
 
     showDelete() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete extra pricing",
         "Are you certain you want to permanently remove this additional pricing?",
         "Yes, Delete now",
@@ -592,18 +594,18 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("onDelete", data.id);
             this.$emit("close");
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The product extra pricing has been deleted.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;

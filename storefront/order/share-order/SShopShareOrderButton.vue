@@ -93,10 +93,12 @@
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import { ShopURLs } from "@selldone/core-js/helper";
+
 
 export default {
   name: "SShopShareOrderButton",
-  mixins: [TemplateMixin],
+  mixins: [TemplateMixin ],
 
   components: { USmartSwitch, UTextCopyBox },
   inject: ["$shop"],
@@ -149,18 +151,18 @@ export default {
           if (!data.error) {
             this.show_share = true;
             this.wishlist_url =
-              this.getShopMainUrl(this.$shop) +
+              ShopURLs.MainShopUrl(this.$shop) +
               "?retrieve=" +
               data.link
                 .replace(/[\\/]/g, "_")
                 .replace(/[?]/g, "~")
                 .replace(/[\\&]/g, "|");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_share = false;

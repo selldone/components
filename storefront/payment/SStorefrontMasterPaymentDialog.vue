@@ -135,9 +135,10 @@ import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin
 import { EventBus } from "@selldone/core-js/events/EventBus.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+
 export default {
   name: "SStorefrontMasterPaymentDialog",
-  mixins: [TemplateMixin, CurrencyMixin],
+  mixins: [TemplateMixin, CurrencyMixin ],
 
   components: { ULoadingEllipsis, UProgressRadial, UPaymentForm },
 
@@ -585,7 +586,7 @@ export default {
               name: window.$storefront.routes.BASKET_PAGE,
               params: { type: data.order.type },
             });
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Reopen Order",
               "We've successfully reopened this order, allowing you to attempt payment with a different method.",
             );
@@ -593,14 +594,14 @@ export default {
           }
 
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.fetchBasketAndShop(); // Refresh!
             return;
           }
           // ―――――――― Payment succeeded ――――――――
 
           if (data.success) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("master_payment.notifications.payment_success_title"),
               this.$t("master_payment.notifications.payment_success"),
             );
@@ -652,7 +653,7 @@ export default {
           this.order_url = data.order_url;
 
           if (data.status === "Processing") {
-            this.showWarningAlert(
+            NotificationService.showWarningAlert(
               "Processing",
               "Payment on processing, require no more actions.",
             );
@@ -718,7 +719,7 @@ export default {
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_loading_payment = null;
@@ -855,7 +856,7 @@ export default {
 
             // ―――――――― Giftcards payment ―――――――― ➔ Payment by Gift cards completed
             if (data.payed_by_gift_card) {
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("master_payment.notifications.buy_title"),
                 this.$t("master_payment.notifications.pay_by_giftcards"),
               );
@@ -867,7 +868,7 @@ export default {
 
             // ――――――――  Free order ――――――――  ➔ Payment Free order completed
             else if (data.free_order) {
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("master_payment.notifications.buy_title"),
                 this.$t("master_payment.notifications.free_order"),
               );
@@ -878,7 +879,7 @@ export default {
 
             // ―――――――― Cash on delivery ――――――――  ➔ Payment by COD
             else if (data.cod) {
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("master_payment.notifications.buy_title"),
                 this.$t("master_payment.notifications.pay_by_cod"),
               );
@@ -889,7 +890,7 @@ export default {
 
             // ―――――――― Direct payment ――――――――  ➔ Payment by Card to card, bank money transfer ,...
             else if (data.dir) {
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("master_payment.notifications.buy_title"),
                 this.$t("master_payment.notifications.pay_by_dir"),
               );
@@ -905,7 +906,7 @@ export default {
               this.keeped_data_to_callback = data;
 
               // 2. Show success alert:
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("master_payment.notifications.pay_title"),
                 this.$t("master_payment.notifications.qr_code_payment"),
               );
@@ -936,7 +937,7 @@ export default {
             // ―――――――― Other ―――――――― ➔ Payment by online gateway
             else {
               this.delayedHide();
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 this.$t("master_payment.notifications.pay_title"),
                 this.$t(
                   "master_payment.notifications.connecting_to_online_gateway",
@@ -947,7 +948,7 @@ export default {
           } else {
             // Error response:
 
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             this.delayedHide();
           }
 
@@ -959,7 +960,7 @@ export default {
         .catch((error) => {
           this.need_refresh = true; // Need refresh after close.
 
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
           this.delayedHide();
 
           // Scroll to top page:

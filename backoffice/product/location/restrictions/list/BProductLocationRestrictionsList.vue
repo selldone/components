@@ -163,12 +163,16 @@
               <b-product-location-restrictions-input
                 v-model="selected_profile"
                 :shop="shop"
-                :label="   $t(
-                  'product_location_restrictions.load_profile_dialog.select_input.title',
-                )"
-                :placeholder="   $t(
-                  'product_location_restrictions.load_profile_dialog.select_input.placeholder',
-                )"
+                :label="
+                  $t(
+                    'product_location_restrictions.load_profile_dialog.select_input.title',
+                  )
+                "
+                :placeholder="
+                  $t(
+                    'product_location_restrictions.load_profile_dialog.select_input.placeholder',
+                  )
+                "
                 variant="solo"
                 @update:model-value="setProfile()"
               ></b-product-location-restrictions-input>
@@ -393,8 +397,11 @@ import USmartMenu from "../../../../../ui/smart/menu/USmartMenu.vue";
 import BProductLocationRestrictionsInput from "../../../../product/location/restrictions/input/BProductLocationRestrictionsInput.vue";
 import BProductFlowErrorsLocation from "../../../../product/flow/errors/location/BProductFlowErrorsLocation.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductLocationRestrictionsList",
+  mixins: [],
   components: {
     BProductFlowErrorsLocation,
     BProductLocationRestrictionsInput,
@@ -506,16 +513,16 @@ export default {
           if (!data.error) {
             this.product.locations = data.locations;
             this.setting_changed = false;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The available locations for the product have been successfully updated.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -533,16 +540,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.dialog_save_profile = false;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The location set for the product has been saved successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save_profile = false;
@@ -554,7 +561,7 @@ export default {
 
       this.locations = Object.assign({}, this.selected_profile.locations);
       this.dialog_load_profile = false;
-      this.showSuccessAlert(
+      NotificationService.showSuccessAlert(
         null,
         "The location set has been successfully loaded.",
       );

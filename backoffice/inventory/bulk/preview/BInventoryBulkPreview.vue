@@ -130,8 +130,11 @@ import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import { throttle } from "lodash-es";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BInventoryBulkPreview",
+  mixins: [],
   components: { UTimeProgressBar, UCurrencyInput },
   props: {
     url: {
@@ -255,11 +258,11 @@ export default {
             this.products = data.products;
             this.totalItems = data.total;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;

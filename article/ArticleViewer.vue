@@ -1040,9 +1040,11 @@ import SArticleAuthorBox from "../article/author/box/SArticleAuthorBox.vue";
 import { Article } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "ArticleViewer",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: {
     SArticleAuthorBox,
 
@@ -1493,7 +1495,7 @@ export default {
 
       let pure_title = this.$refs.editorContainer.purifyTitle();
       if (!pure_title) {
-        return this.showErrorAlert(null, "Title can not be empty!");
+        return NotificationService.showErrorAlert(null, "Title can not be empty!");
       }
       this.article.title = pure_title;
 
@@ -1575,7 +1577,7 @@ export default {
             // Update smart by changed values: (New methods)
             if (data.changes) Object.assign(this.article, data.changes);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("global.article.notifications.update_success_title"),
               this.$t("global.article.notifications.update_success"),
             );
@@ -1599,7 +1601,7 @@ export default {
             // ---------------------------------------------------------------------------------
           } else {
             this.state = "changed";
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               null,
               data.error_msg
                 ? this.isString(data.error_msg)
@@ -1611,7 +1613,7 @@ export default {
         })
         .catch((error) => {
           this.state = "changed";
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {});
     },
@@ -1854,7 +1856,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.power_busy = false;
@@ -1878,7 +1880,7 @@ export default {
 
     //――――――――――――――――――――――― Delete this article ―――――――――――――――――――――――
     openDeleteArticleAlert() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("global.article.alert.delete_article.title"),
         this.$t("global.article.alert.delete_article.message"),
         this.$t("global.article.alert.delete_article.action"),
@@ -1905,7 +1907,7 @@ export default {
         .then(({ data }) => {
           if (data.error) {
             // Error!
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               null,
               data.error_msg
                 ? data.error_msg
@@ -1918,7 +1920,7 @@ export default {
           if (!this.noReturnBackOnDelete) this.$router.go(-1);
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         });
     },
     //――――――――――――――――― Fix body structure ―――――――――――――――――
@@ -1937,7 +1939,7 @@ export default {
         .then(({ data }) => {
           if (data.error) {
             // Error!
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
 
             return;
           }
@@ -1945,7 +1947,7 @@ export default {
           this.onChangeNote();
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_fix = false;
@@ -1990,7 +1992,7 @@ export default {
       console.log("🆎 AI / Auto generate article.");
 
       if (!this.article.id) {
-        return this.showErrorAlert(null, "Save article first.");
+        return NotificationService.showErrorAlert(null, "Save article first.");
       }
 
       let url = null;
@@ -2026,14 +2028,14 @@ export default {
           }
 
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.article.title = data.title;
             this.article.body = data.body;
 
             this.state = "changed";
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Write completed",
               "Article successfully auto created and loaded.",
             );
@@ -2046,7 +2048,7 @@ export default {
               this.autoGenerate(false);
             }, 2 * 60000);
           } else {
-            this.showLaravelError(error);
+            NotificationService.showLaravelError(error);
           }
         })
         .finally(() => {

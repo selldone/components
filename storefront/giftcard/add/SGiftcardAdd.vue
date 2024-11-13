@@ -77,8 +77,11 @@
 </template>
 
 <script lang="ts">
+
+
 export default {
   name: "SGiftcardAdd",
+  mixins: [],
   emits: ["update:modelValue", "add"],
   props: {
     modelValue: {},
@@ -115,11 +118,11 @@ export default {
             this.card_cvv = null;
             this.$emit("add", data.giftcard);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => [(this.busy_add = false)]);
     },

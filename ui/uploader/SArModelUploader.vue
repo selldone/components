@@ -94,7 +94,7 @@ export default {
 
   methods: {
     handleFilePondError(error) {
-      this.showErrorAlert(null, error.body);
+      NotificationService.showErrorAlert(null, error.body);
       //  console.error('handleFilePondError',error)
     },
     handleProcessFile: function (error, file, ssss) {

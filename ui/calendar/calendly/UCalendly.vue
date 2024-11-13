@@ -27,6 +27,7 @@
 
 <script lang="ts">
 import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "UCalendly",
@@ -92,7 +93,7 @@ export default {
               `⚠ ❰ Calendly ❱  Failed to load script file: `,
               exception,
             );
-            t.showErrorAlert(null, "Can not load script!");
+            NotificationService.showErrorAlert(null, "Can not load script!");
           });
       }
     },

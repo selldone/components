@@ -695,8 +695,11 @@ import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelp
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import { isEmpty } from "lodash-es";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "DeliveryFormWidget",
+  mixins:[],
   components: {
     SWidgetButtons,
     BTransportationCalculator,
@@ -817,7 +820,7 @@ export default {
 
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "admin_shop.logistic.delivery.delivery_form.notifications.update_success",
@@ -826,11 +829,11 @@ export default {
             this.transportation = data.transportation;
             this.$emit("update:modelValue", data.transportation);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -838,7 +841,7 @@ export default {
     },
 
     deleteTransportation() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Remove transportation",
         "Are you sure to remove this transportation? This action would not clear the history of transportation.",
         "Yes, Delete Now",
@@ -855,7 +858,7 @@ export default {
 
             .then(({ data }) => {
               if (!data.error) {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   "Transportation removed successfully.",
                 );
@@ -864,11 +867,11 @@ export default {
                   name: "BPageShopLogisticShipping",
                 });
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = false;
@@ -884,7 +887,7 @@ export default {
     },
     addProfile() {
       if (!this.new_profile_country) {
-        return this.showErrorAlert(
+        return NotificationService.showErrorAlert(
           "Select a country!",
           "Please select a country to create a profile.",
         );
@@ -907,7 +910,7 @@ export default {
     },
 
     removeCountryProfile(country) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         `Remove Profile for ${this.getCountryName(country)}`,
         `Are you sure you want to remove the country profile for ${this.getCountryName(country)}? This action cannot be undone.`,
         "Yes,Remove Profile",

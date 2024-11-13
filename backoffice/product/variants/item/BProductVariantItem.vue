@@ -547,7 +547,7 @@ export default {
   },
   methods: {
     showDeleteDialog() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("product_admin.inventory.variant_item.delete_dialog.title"),
         this.$t("product_admin.inventory.variant_item.delete_dialog.message"),
         this.$t("global.actions.delete"),
@@ -558,7 +558,7 @@ export default {
     },
 
     showRestoreDialog() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("product_variant_item.restore_dialog.title"),
 
         this.$t("product_variant_item.restore_dialog.message"),
@@ -654,7 +654,7 @@ export default {
       )
 
         .then(({ variants, quantity }) => {
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t(
               "product_admin.inventory.variants.notifications.delete_success",
@@ -669,7 +669,7 @@ export default {
           this.$emit("delete", this.productVariant.id);
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;
@@ -695,7 +695,7 @@ export default {
       )
 
         .then(({ variants, quantity, product_variant }) => {
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t(
               "product_variant_item.notifications.restore_variant_success",
@@ -707,7 +707,7 @@ export default {
           this.$emit("restore", product_variant);
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_restore = false;

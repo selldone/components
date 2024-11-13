@@ -711,9 +711,10 @@ import SOrderPaymentRowCashback from "@selldone/components-vue/storefront/order/
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CoreMixin from "@selldone/components-vue/mixin/CoreMixin.ts";
 
+
 export default {
   name: "SShopCustomerOrderPaymentWidget",
-  mixins: [DateMixin,CoreMixin],
+  mixins: [DateMixin,CoreMixin ],
 
   components: {
     SOrderPaymentRowCashback,
@@ -955,11 +956,11 @@ export default {
             this.cache_portal = data.url;
             URLHelper.OpenInNewWindow(data.url);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_portal = false;

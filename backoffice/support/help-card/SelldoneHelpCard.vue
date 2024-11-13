@@ -104,13 +104,13 @@ export default {
             this.fetched_help = { article: data.article, id: this.helpId };
             this.$emit("update:help", this.fetched_help);
           } else {
-            //  this.showErrorAlert(null, data.error_msg);
+            //  NotificationService.showErrorAlert(null, data.error_msg);
             this.error = true;
           }
         })
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {});
     },

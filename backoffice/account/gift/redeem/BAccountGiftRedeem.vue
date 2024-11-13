@@ -116,6 +116,8 @@ import { GiftStatus } from "@selldone/core-js/enums/wallet/gift/GiftStatus";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 
 export default {
   name: "BAccountGiftRedeem",
@@ -162,7 +164,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            t.showAwardAlert(
+            NotificationService.showAwardAlert(
               this.$t("get_gift_dialog.notifications.received_success_title"),
               this.$t("get_gift_dialog.notifications.received_success_title", {
                 amount: this.FormatNumberCurrency(
@@ -176,12 +178,12 @@ export default {
 
             t.apply_gift_dialog = false;
           } else {
-            t.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
           console.error(error);
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           t.busy = false;

@@ -265,8 +265,11 @@ import { throttle } from "lodash-es";
 import UChipDiscount from "../../../../ui/chip/discount/UChipDiscount.vue";
 import BInventoryPricePreview from "../../../inventory/price-preview/BInventoryPricePreview.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BInventoryBulkDiscount",
+  mixins: [],
   components: {
     BInventoryPricePreview,
     UChipDiscount,
@@ -360,16 +363,16 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
             this.preview = false;
             this.$emit("update", data);
             this.$emit("update:modelValue", false);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => (this.busy_bulk = false));
     },
@@ -399,11 +402,11 @@ export default {
             if (!data.error) {
               this.report = data;
             } else {
-              this.showErrorAlert(null, data.error_msg);
+              NotificationService.showErrorAlert(null, data.error_msg);
             }
           })
           .catch((error) => {
-            this.showLaravelError(error);
+            NotificationService.showLaravelError(error);
           })
           .finally(() => {
             this.busy_report = false;

@@ -1435,11 +1435,14 @@ import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import BEmailMarketingEditorSection from "../../email-marketing/editor/section/BEmailMarketingEditorSection.vue";
 import { EmailOptionsHelper } from "./section/options/EmailOptionsHelper.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import {FileHelper} from "@selldone/core-js";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 var WebFont = require("webfontloader");
 export default {
   name: "BEmailMarketingEditor",
-  mixins: [InlineEditorMixin, DateMixin],
+  mixins: [InlineEditorMixin, DateMixin ],
 
   components: {
     BEmailMarketingEditorSection,
@@ -1738,14 +1741,14 @@ export default {
         .get(window.API.GET_EMAIL_RENDER(this.shop.id, this.email.id))
         .then(({ data }) => {
           if (!data.error)
-            this.downloadText(
+            FileHelper.DownloadText(
               this.email.name + ".html",
               data,
               "data:html/plain;charset=utf-8,",
             );
-          else this.showErrorAlert(null, data.error_msg);
+          else NotificationService.showErrorAlert(null, data.error_msg);
         })
-        .catch((err) => this.showErrorAlert(null, err))
+        .catch((err) => NotificationService.showErrorAlert(null, err))
 
         .finally(() => {
           this.busy_html = false;
@@ -1756,12 +1759,12 @@ export default {
     },
     loadFileTemplate(event) {
       if (!event) return;
-      this.loadFile(event)
+      FileHelper.LoadFile(event)
         .then((json) => {
           //console.log("---Load Json---", json);
           this.$emit("update:structure", json);
         })
-        .catch((err) => this.showErrorAlert(null, err));
+        .catch((err) => NotificationService.showErrorAlert(null, err));
     },
 
     dropHandler(ev) {
@@ -1837,7 +1840,7 @@ export default {
       promise
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(null, "Email saved.");
+            NotificationService.showSuccessAlert(null, "Email saved.");
 
             if (callback) callback();
 
@@ -1855,11 +1858,11 @@ export default {
               this.MergeObjects(this.email, data.email),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -1898,13 +1901,13 @@ export default {
               this.MergeObjects(this.email, data.email),
             );
 
-            this.showSuccessAlert(null, "Email updated.");
+            NotificationService.showSuccessAlert(null, "Email updated.");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_send = false;
@@ -2044,7 +2047,7 @@ export default {
     },
 
     downloadJson() {
-      this.downloadText(
+      FileHelper.DownloadText(
         this.email.name + ".smail",
         JSON.stringify(this.structure, null, 4),
       );

@@ -213,7 +213,7 @@ export default {
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -240,16 +240,16 @@ export default {
             content.rate = data.rate;
             content.rate_count = data.rate_count;
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Thanks for your feedback. We received your content quality rating.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_rate = false;

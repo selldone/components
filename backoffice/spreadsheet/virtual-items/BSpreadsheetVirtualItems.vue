@@ -50,11 +50,13 @@
 import BSpreadsheet from "../BSpreadsheet.vue";
 import SpreadsheetMixin from "../../spreadsheet/mixins/SpreadsheetMixin";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 const Papa = require("papaparse");
 
 export default {
   name: "BSpreadsheetVirtualItems",
-  mixins: [SpreadsheetMixin],
+  mixins: [SpreadsheetMixin ],
 
   components: {
     BSpreadsheet,
@@ -194,7 +196,7 @@ export default {
       const config = {
         complete: (results, file) => {
           //  console.log("Parsing complete:", results, file);
-          this.showSuccessAlert(null, "Load CSV file completed.");
+          NotificationService.showSuccessAlert(null, "Load CSV file completed.");
           this.loadCsvToSheet(results);
 
           let valid = this.CheckValidFile(this.headers);
@@ -202,7 +204,7 @@ export default {
           this.$emit("update:valid", valid);
         },
         error: () => {
-          this.showErrorAlert(null, "Parsing error!");
+          NotificationService.showErrorAlert(null, "Parsing error!");
           this.$emit("update:valid", false);
         },
       };
@@ -218,7 +220,7 @@ export default {
       });
 
       if (!data || !data.length) {
-        this.showErrorAlert(null, "Can not read this file!");
+        NotificationService.showErrorAlert(null, "Can not read this file!");
       }
 
       const sheet = data;

@@ -68,8 +68,11 @@
 import WebhookTypes from "@selldone/core-js/enums/webhook/WebhookTypes";
 import SJsonTable from "../../../ui/json/table/SJsonTable.vue";
 
+
 export default {
   name: "BWebhookTest",
+  mixins: [],
+
   components: { SJsonTable },
   props: {
     webhook: { required: true },
@@ -117,11 +120,11 @@ export default {
           if (!data.error) {
             this.response = data.response;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

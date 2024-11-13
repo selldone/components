@@ -233,9 +233,13 @@ import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHead
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
+import {ShopURLs} from "@selldone/core-js/helper";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BOptionsLoginMethodRow",
+  mixins:[],
   components: { UTextCopyBox, ULoadingProgress, USmartSwitch, UWidgetHeader },
   props: {
     shop: {
@@ -269,11 +273,11 @@ export default {
     },
 
     callback_url() {
-      return `${this.getShopMainUrl(this.shop)}/login/${this.login.code}/callback`;
+      return `${ShopURLs.MainShopUrl(this.shop)}/login/${this.login.code}/callback`;
     },
 
     has_selldone_in_url() {
-      return this.getShopMainUrl(this.shop).includes("selldone");
+      return ShopURLs.MainShopUrl(this.shop).includes("selldone");
     },
   },
   watch: {
@@ -296,13 +300,13 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.shop.options = data.options;
-            this.showSuccessAlert(null, "Login methods updated successfully.");
+            NotificationService.showSuccessAlert(null, "Login methods updated successfully.");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_login = null;
@@ -333,7 +337,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -356,14 +360,14 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.oauth = data.oauth;
             this.dialog = false;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;

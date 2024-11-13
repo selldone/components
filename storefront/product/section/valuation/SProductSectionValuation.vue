@@ -128,7 +128,7 @@
 </template>
 
 <script lang="ts">
-import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
+import { FileHelper } from "@selldone/core-js/utils/file/FileHelper.ts";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import { debounce } from "lodash-es";
@@ -295,16 +295,16 @@ export default {
 
             Object.assign(basket_item, data.item);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("global.basket_item_message.notifications.success"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;

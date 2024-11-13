@@ -299,7 +299,7 @@ export default {
         //console.log("add notAvailable");
 
         if (this.disabled.length >= 30) {
-          this.showErrorAlert(null, "Max disabled days is 30!");
+          NotificationService.showErrorAlert(null, "Max disabled days is 30!");
           return;
         }
 

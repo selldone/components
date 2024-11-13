@@ -185,8 +185,11 @@
 import { defineComponent } from "vue";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "BProductConsInput",
+  mixins: [],
   components: { USmartSuggestion },
   props: {
     product: {
@@ -257,7 +260,7 @@ export default defineComponent({
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "add_product.rating_pros_cons.notifications.add_cons_success",
@@ -268,11 +271,11 @@ export default defineComponent({
             this.cons_value = "";
             this.createConsList();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_cons = false;
@@ -298,7 +301,7 @@ export default defineComponent({
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "add_product.rating_pros_cons.notifications.delete_cons_success",
@@ -309,11 +312,11 @@ export default defineComponent({
 
             this.$forceUpdate(); // Update vue component!
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete_cons = null;
@@ -338,7 +341,7 @@ export default defineComponent({
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Item has been updated successfully saved.",
             );
@@ -352,11 +355,11 @@ export default defineComponent({
 
             this.edit_dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update = false;

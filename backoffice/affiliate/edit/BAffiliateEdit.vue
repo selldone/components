@@ -266,7 +266,7 @@
             "
             :shop="shop"
             border-less
-            >{{ $t('affiliate_edit.inputs.products.select_product')}}
+            >{{ $t("affiliate_edit.inputs.products.select_product") }}
             <b v-if="!has_product_restrictions" class="ms-1"
               >(
               <v-icon class="me-1" size="small">all_inclusive</v-icon>
@@ -413,7 +413,7 @@
           @click="updateAffiliate()"
         >
           <v-icon start>save</v-icon>
-          {{ $t('affiliate_edit.actions.update') }}
+          {{ $t("affiliate_edit.actions.update") }}
         </v-btn>
         <v-btn
           v-else
@@ -424,7 +424,7 @@
           @click="createAffiliate()"
         >
           <v-icon start>add</v-icon>
-          {{ $t('affiliate_edit.actions.add') }}
+          {{ $t("affiliate_edit.actions.add") }}
         </v-btn>
       </s-widget-buttons>
     </v-card-actions>
@@ -446,8 +446,11 @@ import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BAffiliateEdit",
+  mixins: [],
   components: {
     UWidgetHeader,
     SWidgetButtons,
@@ -605,12 +608,12 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             Object.assign(this.affiliate, data.affiliate);
             this.$emit("edit", data.affiliate);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("affiliate_edit.notifications.update_success"),
             );
@@ -619,7 +622,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update = false;
@@ -657,11 +660,11 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("add", data.affiliate);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("affiliate_edit.notifications.create_success"),
             );
@@ -670,7 +673,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_create = false;

@@ -88,7 +88,7 @@
                 v-bind="
                   window.ExternalWidget
                     ? {
-                        href: getShopPageLink(shop, {
+                        href: ShopURLs.GetShopPageLink(shop, {
                           search: $product.brand,
                         }),
                         target: '_blank',
@@ -266,7 +266,7 @@
                 :color="
                   shop.theme?.color_buy ? shop.theme.color_buy : '#0061e0'
                 "
-                :href="getProductLink(shop, $product.id, $product.slug)"
+                :href="ShopURLs.GetProductLink(shop, $product.id, $product.slug)"
                 min-height="72"
                 min-width="220"
                 style="font-size: 18px"
@@ -362,6 +362,8 @@ import SProductSectionVariants from "../section/variants/SProductSectionVariants
 import SProductSectionCashback from "@selldone/components-vue/storefront/product/section/cashback/SProductSectionCashback.vue";
 import SProductSectionIncentivise from "@selldone/components-vue/storefront/product/section/incentivise/SProductSectionIncentivise.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import { Product } from "@selldone/core-js/models";
+import {Shop, ShopURLs} from "@selldone/core-js";
 
 export default {
   name: "SProductOverview",
@@ -425,8 +427,10 @@ export default {
     },
   },
   data: () => ({
-    ProductType: ProductType,
+    ShopURLs: ShopURLs,
+    Product: Product,
 
+    ProductType: ProductType,
 
     //▅▅▅▅▅▅▅▅ 🟣 Marketplace 🟣 ▅▅▅▅▅▅▅▅
     selected_vendor_product_id: null,
@@ -458,6 +462,7 @@ export default {
   }),
 
   computed: {
+
     shop() {
       return this.getShop();
     },

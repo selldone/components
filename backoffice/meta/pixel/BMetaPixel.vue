@@ -112,12 +112,12 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.shop.plugins, data.plugin);
-            this.showSuccessAlert(null, "Set Facebook pixel ID.");
+            NotificationService.showSuccessAlert(null, "Set Facebook pixel ID.");
             this.change = false;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;

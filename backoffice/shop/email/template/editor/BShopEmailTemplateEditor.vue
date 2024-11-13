@@ -51,7 +51,6 @@
   >
     <v-card>
       <v-card-title class="d-flex align-center">
-
         <v-icon class="me-2">mark_email_read</v-icon>
 
         {{ template.title }}
@@ -255,8 +254,11 @@ import SWidgetButtons from "../../../../../ui/widget/buttons/SWidgetButtons.vue"
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopEmailTemplateEditor",
+  mixins: [],
   components: {
     ULoadingProgress,
     UWidgetHeader,
@@ -388,11 +390,11 @@ export default {
               this.message = this.default_values.message;
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -451,17 +453,17 @@ export default {
 
             this.$emit("update", data.mail_template);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Mail template has been updated successfully!",
             );
             this.dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;

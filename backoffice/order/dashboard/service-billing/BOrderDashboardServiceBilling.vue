@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import ServiceBillingItem from "../../../../storefront/order/billing/ServiceBillingItem.vue";
-import { Basket } from "@selldone/core-js";
+import {Basket, ShopURLs} from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardServiceBilling",
@@ -113,7 +113,7 @@ export default {
 
     customer_order_page() {
       return (
-        this.getShopMainUrl(this.shop) +
+          ShopURLs.MainShopUrl(this.shop) +
         `/orders/service/${this.getBasketOrderCode(this.basket)}`
       );
     },

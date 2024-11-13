@@ -57,8 +57,11 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "BAppShopIcon",
+  mixins: [],
   props: {
     shop: {
       required: true,
@@ -81,7 +84,7 @@ export default defineComponent({
 
   methods: {
     deleteApp(app_code) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete app",
         "Do you want to remove this app from your store?",
         "Delete",
@@ -91,14 +94,14 @@ export default defineComponent({
             .delete(window.API.DELETE_APP(this.shop.id, app_code))
             .then(({ data }) => {
               if (!data.error) {
-                this.showSuccessAlert(null, `Application deleted.`);
+                NotificationService.showSuccessAlert(null, `Application deleted.`);
                 this.$emit("delete", data.id);
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = false;

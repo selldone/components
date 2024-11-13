@@ -81,9 +81,10 @@ import ProductVariantsView from "../../../storefront/product/variant/ProductVari
 import UChipDiscount from "../../../ui/chip/discount/UChipDiscount.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
+
 export default {
   name: "SProductPreviewById",
-  mixins: [ProductMixin],
+  mixins: [ProductMixin ],
 
   components: { UChipDiscount, ProductVariantsView },
 
@@ -143,12 +144,12 @@ export default {
         if (!data.error) {
           this.product = data.product;
         } else {
-          this.showErrorAlert(null, data.error_msg);
+          NotificationService.showErrorAlert(null, data.error_msg);
           this.error_msg = data.error_msg;
         }
       })
       .catch((e) => {
-        this.showLaravelError(e);
+        NotificationService.showLaravelError(e);
         this.error_msg = "Product not found!";
       })
       .finally(() => {

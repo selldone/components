@@ -283,7 +283,7 @@ export default {
         .delete(this.deletePath(image_item))
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             const clone = this.images.slice();
             this.DeleteItemByID(clone, data.id);
@@ -299,14 +299,14 @@ export default {
                     this.$refs.grid_container.layout();
                   });*/
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Delete image",
               "Image removed successfully.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

@@ -17,9 +17,6 @@ import type {ICurrency} from "@selldone/core-js/enums/payment/Currency";
 import {Currency} from "@selldone/core-js/enums/payment/Currency";
 import {type ILanguage, Language,} from "@selldone/core-js/enums/language/Language";
 import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense";
-import {FileExtensions} from "@selldone/core-js/enums/file/FileExtensions";
-import {SocialNetwork} from "@selldone/core-js/enums/social/SocialNetwork";
-import {ShopURLs} from "@selldone/core-js/helper/url/ShopURLs";
 import {PriceHelper} from "@selldone/core-js/helper/price/PriceHelper";
 import {GiftStatus} from "@selldone/core-js/enums/wallet/gift/GiftStatus";
 import {GiftStProgramTypes} from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes";
@@ -32,16 +29,15 @@ import {getCountryName} from "@selldone/core-js/models/general/country/country-h
 import {Shop} from "@selldone/core-js/models/shop/shop.model";
 import {XapiUser} from "@selldone/sdk-storefront";
 import type {Guild} from "@selldone/core-js/models/guild/guild.model";
-import type {Avocado} from "@selldone/core-js/models/shop/order/avocado/avocado.order";
 import type {ICountryCode} from "@selldone/core-js/models/general/country/country.model.ts";
 import type {User} from "@selldone/core-js/models/user/user.model";
-import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import {BackofficeLocalStorages} from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import {ExecuteCopyToClipboard} from "../directives/copy/CopyDirective";
 import {Slugify} from "@selldone/core-js/utils/slugify/slugify";
 import {ShopOptionsHelper} from "@selldone/core-js/helper/shop/ShopOptionsHelper.ts";
-import {Basket, BasketItemReturn, Club, CurrencyHelper, Order} from "@selldone/core-js";
+import {Basket, BasketItemReturn, Club, CurrencyHelper, Order,} from "@selldone/core-js";
 import {isString} from "lodash-es";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 const CoreMixin = {
   methods: {
@@ -71,159 +67,6 @@ const CoreMixin = {
         this.$data,
         (this.$options?.data as () => Array<any>)?.call(this),
       );
-    },
-
-    //―――――――――――――――――――――― ⚠ Show Alerts ――――――――――――――――――――
-
-    showErrorAlert(
-      title: string | null,
-      message: string | null = null,
-      detail: string | null = null,
-      duration: number = 6000,
-    ) {
-      if (!this.$t) {
-        console.error("Error: Translation is not available!");
-        return;
-      }
-      if (!title) title = this.$t("global.notification.error") as string;
-
-      this.$notify({
-        group: "regular-notifications",
-        title: title,
-        text: message + (detail ? `<br><hr>${detail}` : ""),
-        duration: detail ? duration * 2 : duration,
-        type: "error",
-      });
-    },
-
-    showSuccessAlert(
-      title: string | null,
-      message: string | null,
-      icon = "done",
-      duration = 3000,
-      img = null,
-    ) {
-      if (!this.$t) return;
-      if (!title) title = this.$t("global.notification.confirm") as string;
-
-      this.$notify({
-        group: "regular-notifications",
-        title: title,
-        text: message
-          ? message
-          : (this.$t("global.notification.confirm_message") as string),
-        duration: duration,
-        type: "success",
-        data: { img: img, icon: icon },
-      });
-    },
-
-    showWarningAlert(title: string | null, message?: string, duration = 6000) {
-      if (!this.$t) return;
-      if (!title) title = this.$t("global.notification.warning") as string;
-
-      this.$notify({
-        group: "regular-notifications",
-        title: title,
-        text: message,
-        duration: duration,
-        type: "warn",
-      });
-    },
-
-    showAwardAlert(title: string | null, message?: string) {
-      if (!this.$t) return;
-      if (!title) title = this.$t("global.notification.award") as string;
-
-      this.$notify({
-        group: "regular-notifications",
-        title: title,
-        text: message,
-        duration: 7000,
-        type: "award",
-      });
-    },
-    showNotificationAlert(
-      title: string | null,
-      message?: string,
-      icon?: string | null,
-      color?: string | null,
-      img = null,
-      duration = 30000,
-    ) {
-      if (!this.$t) return;
-      if (!title) title = this.$t("global.notification.caution") as string;
-
-      this.$notify({
-        group: "regular-notifications",
-        title: title,
-        text: message,
-        duration: duration,
-        data: { img: img, icon: icon },
-      });
-    },
-
-    copyNotification(description: string) {
-      this.showSuccessAlert("Copy", description, "file_copy");
-    },
-
-    openDangerAlert(
-      title: string | null,
-      message: string,
-      accept: string,
-      callback: () => void,
-      color: string = "red",
-    ) {
-      EventBus.$emit("alert-dialog", {
-        title,
-        message,
-        accept,
-        reject: this.$t("global.actions.cancel"),
-        callback,
-        color: color,
-      });
-    },
-
-    openConfirmationAlert(
-      title: string,
-      message: string,
-      accept: string,
-      callback: () => void,
-    ) {
-      EventBus.$emit("alert-dialog", {
-        title,
-        message,
-        accept,
-        reject: this.$t("global.actions.no"),
-        callback,
-        color: "success",
-      });
-    },
-
-    showMessage(title: string, message: string, duration: number = 12000) {
-      if (!title) title = this.$t("global.notification.message") as string;
-      this.$notify({
-        group: "regular-notifications",
-        title: title,
-        text: message,
-        duration: duration,
-        type: "message",
-      });
-    },
-    //―――――――――――――――――――――― Common dialogs ――――――――――――――――――――
-    openDeleteAlert(callback: () => void) {
-      const title = this.$t("global.dialogs.delete.title");
-      const message = this.$t("global.dialogs.delete.message");
-      const accept = this.$t("global.dialogs.delete.action");
-
-      EventBus.$emit("alert-dialog", {
-        title,
-        message,
-        accept,
-        reject: this.$t("global.actions.cancel"),
-        callback,
-        color: "red",
-      });
     },
 
     //―――――――――――――――――――――― Format account number ――――――――――――――――――――
@@ -525,7 +368,7 @@ const CoreMixin = {
     ) {
       if (!error) return;
       if (isString(error)) {
-        this.showErrorAlert(
+        NotificationService.showErrorAlert(
           this.$t("global.notification.error") as string,
           error,
         );
@@ -533,7 +376,7 @@ const CoreMixin = {
       }
 
       if (error?.error_msg /*Errors in the response with 2xx code*/) {
-        this.showErrorAlert(
+        NotificationService.showErrorAlert(
           this.$t("global.notification.error") as string,
           error.error_msg,
         );
@@ -543,12 +386,12 @@ const CoreMixin = {
       if (!error.response) {
         console.error("1- error", error);
         if (error.message) {
-          this.showErrorAlert(
+          NotificationService.showErrorAlert(
             this.$t("global.notification.error") as string,
             `<div dir="ltr" class="text-left">${error.message}</div>`,
           );
         } else if (error.body) {
-          this.showErrorAlert(
+          NotificationService.showErrorAlert(
             this.$t("global.notification.error") as string,
             `<div dir="ltr" class="text-left">${error.body}</div>`,
           );
@@ -558,7 +401,7 @@ const CoreMixin = {
 
       // Handle CSRF token expire:
       if (error.response.status === 419) {
-        this.showErrorAlert(
+        NotificationService.showErrorAlert(
           this.$t("global.notification.error") +
             " " +
             error.response.status +
@@ -581,7 +424,7 @@ const CoreMixin = {
 
       if (data?.error_msg) {
         // Normal laravel app level errors
-        this.showErrorAlert(
+        NotificationService.showErrorAlert(
           this.$t("global.notification.error") + " " + data.code,
           `<div class="text-start">${data.error_msg}</div>`,
         );
@@ -599,17 +442,17 @@ const CoreMixin = {
           }
           error_msg = `<ul>${error_msg}</ul>`;
         }
-        this.showErrorAlert(
+        NotificationService.showErrorAlert(
           this.$t("global.notification.error") + " " + error.response.status,
           `<div class="text-start">${error_msg}</div>`,
         );
       } else if (data?.message) {
-        this.showErrorAlert(
+        NotificationService.showErrorAlert(
           this.$t("global.notification.error") + " " + error.response.status,
           `<div class="text-start">${data.message}</div>`,
         );
       } else {
-        this.showErrorAlert(
+        NotificationService.showErrorAlert(
           this.$t("global.notification.error") + " " + error.response.status,
           this.$t("global.notification.error_message") as string,
         );
@@ -625,7 +468,9 @@ const CoreMixin = {
           ? _currency
           : _currency
             ? Currency[_currency]
-            : CurrencyHelper.GetUserSelectedCurrency(this.$localstorage_base_path());
+            : CurrencyHelper.GetUserSelectedCurrency(
+                this.$localstorage_base_path(),
+              );
 
       if (!currency_obj) return `${_currency} Not exist 🚨!`;
       const value =
@@ -759,62 +604,14 @@ const CoreMixin = {
     getShopImagePath(file_name: string, size = null, random_fill = false) {
       return window.CDN.GET_SHOP_IMAGE_PATH(file_name, size, random_fill);
     },
-    getPublicFilePath(file_name: string) {
-      return window.CDN.GET_PUBLIC_FILE_PATH(file_name);
-    },
 
-    getShopJsonPath(file_name: string) {
-      return window.CDN.GET_SHOP_JSON_PATH(file_name);
-    },
-
-    getCategoryIcon(
-      category_id: string | number,
-      size = BackofficeLocalStorages.IMAGE_SIZE_SMALL,
-    ) {
-      return window.CDN.GET_CATEGORY_ICON(category_id, size);
-    },
     getProductImage(
       product_id: string | number,
       size = BackofficeLocalStorages.IMAGE_SIZE_SMALL,
     ) {
       return window.CDN.GET_PRODUCT_IMAGE(product_id, size);
     },
-    getDeliveryServiceIcon(
-      delivery_service_id: string | number,
-      size = BackofficeLocalStorages.IMAGE_SIZE_SMALL,
-    ) {
-      return window.CDN.GET_DELIVERY_SERVICE_ICON(delivery_service_id, size);
-    },
-    getConnectIcon(connect_id: string | number) {
-      return window.CDN.GET_CONNECT_ICON(connect_id);
-    },
 
-    getShopFileTempPath(file_name: string) {
-      return window.CDN.GET_SHOP_TEMP_FILE_PATH(file_name);
-    },
-
-    getShop3DModelPath(
-      shop_name: string,
-      product_id: number,
-      variant_id: number | null,
-      folder_name: string,
-      file_name: string,
-    ) {
-      return window.CDN.GET_SHOP_3D_MODEL_PATH(
-        shop_name,
-        product_id,
-        variant_id,
-        folder_name,
-        file_name,
-      );
-    },
-
-    getVideoUrl(file_name: string) {
-      return window.CDN.GET_VIDEO_URL(file_name);
-    },
-    getVoiceUrl(file_name: string) {
-      return window.CDN.GET_VIDEO_URL(file_name);
-    },
     //―――――――――――――――――――――― User ――――――――――――――――――――
 
     getUserAvatar(user_id: number, size: "small" | "big" | null = "small") {
@@ -840,35 +637,6 @@ const CoreMixin = {
       }
     },
 
-    //―――――――――――――――――――――― Download file text ――――――――――――――――――――
-
-    downloadText(
-      filename: string,
-      text: string,
-      data_uri = "data:text/plain;charset=utf-8,",
-    ) {
-      const element = document.createElement("a");
-      element.setAttribute("href", data_uri + encodeURIComponent(text));
-      element.setAttribute("download", filename);
-
-      element.style.display = "none";
-      document.body.appendChild(element);
-
-      element.click();
-
-      document.body.removeChild(element);
-    },
-
-    getFileExtensionImage(filename: string) {
-      const extension = filename.split(".").pop();
-      const out = FileExtensions.find((item) =>
-        item.ex.includes(extension as string),
-      );
-      return out
-        ? out.src
-        : require("@selldone/core-js/enums/file/assets/extensions/file.svg");
-    },
-
     //―――――――――――――――――――――― Remove item from array by value ――――――――――――――――――――
 
     remove<T>(array: T[], valueToRemove: T) {
@@ -877,200 +645,6 @@ const CoreMixin = {
       );
       // console.log('foundIndex',foundIndex,array,valueToRemove)
       if (foundIndex >= 0) array.splice(foundIndex, 1);
-    },
-
-    //―――――――――――――――――――――― 💡 Get Primary Shop Url ――――――――――――――――――――
-
-    getShopMainUrl(shop: Shop) {
-      return ShopURLs.MainShopUrl(shop);
-    },
-    //――――――――――――――――――――――――― Instagram ―――――――――――――――――――――――――
-
-    getShopInstagramUrl(shop: Shop) {
-      return this.getShopMainUrl(shop) + "/instagram";
-    },
-
-    //――――――――――――――――――――――――― Avocado ―――――――――――――――――――――――――
-
-    getShopAvocadoUrl(shop: Shop) {
-      return this.getShopMainUrl(shop) + "/avocado";
-    },
-    getAvocadoBuyerUrl(shop: Shop, avocado: Avocado) {
-      return this.getShopMainUrl(shop) + "/avocado/" + avocado.hash;
-    },
-    //――――――――――――――――――――――――― Avocado ―――――――――――――――――――――――――
-
-    getShopHyperUrl(shop: Shop) {
-      return this.getShopMainUrl(shop) + "/hyper";
-    },
-
-    //――――――――――――――――――――――――― Products / Categories link ―――――――――――――――――――――――――
-    getCategoryLink(shop: Shop, category_name: string) {
-      return this.getShopMainUrl(shop) + "/" + category_name + "-category";
-    },
-    getProductLink(shop: Shop, product_id: number | string, slug = null) {
-      return (
-        this.getShopMainUrl(shop) +
-        "/product/" +
-        product_id +
-        (slug ? `-${slug}` : "")
-      );
-    },
-    getShopPageLink(
-      shop: Shop,
-      query: { [key: string]: string },
-      path: string = "",
-    ) {
-      const queryString = Object.keys(query)
-        .map(function (key) {
-          return key + "=" + query[key];
-        })
-        .join("&");
-      return this.getShopMainUrl(shop) + path + "?" + queryString;
-    },
-    getBlogLink(shop: Shop, blog_id: number | string) {
-      return this.getShopMainUrl(shop) + "/blog/" + blog_id;
-    },
-
-    //―――――――――――――――――――――― 💡 Read txt file to json ――――――――――――――――――――
-
-    loadFile(event: Blob) {
-      return new Promise(function (resolve, reject) {
-        if (!event) {
-          reject(new Error("No date!"));
-          return;
-        }
-        const fr = new FileReader();
-        fr.onload = (e) => {
-          const json = JSON.parse(e.target?.result as string);
-          resolve(json);
-        };
-        fr.readAsText(event);
-      });
-    },
-
-    //―――――――――――――――――――――― Convert Html to Text ――――――――――――――――――――
-
-    extractContent(html: string) {
-      return new DOMParser().parseFromString(html, "text/html").documentElement
-        .textContent;
-    },
-
-    //―――――――――――――――――――――― Page Scroll Helper ――――――――――――――――――――
-    GoToTopPage() {
-      this.$nextTick(() => {
-        this.$nextTick(() => {
-          ScrollHelper.scrollToTop(0, "smooth");
-        });
-      });
-    },
-
-    //――――――――――――――――――――――――― Accounts ―――――――――――――――――――――――――
-
-    isSelldoneAccount(account_number: string) {
-      return (
-        account_number.startsWith("20000000000") ||
-        account_number.startsWith("10000000000")
-      );
-    },
-
-    //―――――――――――――――――――――― Global appearance――――――――――――――――――――
-
-    setHtmlFontSize(low_vision: boolean) {
-      document.documentElement.style.setProperty(
-        "font-size",
-        low_vision
-          ? "var(--base-font-low-vision)"
-          : "var(--base-font-standard)",
-        "important",
-      );
-    },
-
-    //―――――――――――――――――――――― Download Blob File ――――――――――――――――――――
-    DownloadBlobFile(data: any, headers: { [key: string]: string }) {
-      // Get the content-disposition header
-      const headerLine = headers["content-disposition"];
-      if (!headerLine) {
-        console.error("Content-Disposition header is missing.");
-        return;
-      }
-
-      // Extract the filename from the content-disposition header
-      const startFileNameIndex = headerLine.lastIndexOf("=") + 1;
-      let filename = headerLine.substring(startFileNameIndex);
-
-      // Remove any extra quotes or whitespace
-      filename = filename.replace(/["']/g, "").trim();
-
-      // Default filename if extraction fails
-      if (!filename) filename = "data.xlsx";
-
-      const downloadUrl = window.URL.createObjectURL(new Blob([data]));
-
-      const link = document.createElement("a");
-
-      link.href = downloadUrl;
-
-      link.setAttribute("download", filename); //any other extension
-
-      document.body.appendChild(link);
-
-      link.click();
-
-      link.remove();
-    },
-
-    isEqualJson(obj1: any, obj2: any) {
-      return JSON.stringify(obj1) === JSON.stringify(obj2);
-    },
-
-    //―――――――――――――――――――――― Social ――――――――――――――――――――
-
-    getSocialIcon(social: string) {
-      const found = Object.values(SocialNetwork).find(
-        (it) => it.code.toLowerCase() === social.toLowerCase(),
-      );
-      return found ? found.image : null;
-    },
-
-    //――――――――――――――――――――――――― Home Image Helper ―――――――――――――――――――――――――
-    GetDomainHomeIcon: function (home: string) {
-      return home === "shop"
-        ? require("../assets/icons/store.svg")
-        : home === "avocado"
-          ? require("../assets/icons/avocado.svg")
-          : home === "blog"
-            ? require("../assets/icons/blog.svg")
-            : home === "hyper"
-              ? require("../assets/icons/hyper.svg")
-              : home === "community"
-                ? require("../assets/icons/community.png")
-                : home === "map"
-                  ? require("../assets/icons/map-tag.svg")
-                  : ("" + home).startsWith("/")
-                    ? require("../assets/icons/static-pages.svg")
-                    : home
-                      ? require("../assets/icons/landing-page.svg")
-                      : require("../assets/icons/store.svg");
-    },
-    GetDomainHomeName(home: string) {
-      return home === "shop"
-        ? this.$t("global.commons.shop")
-        : home === "avocado"
-          ? this.$t("global.commons.avocado")
-          : home === "blog"
-            ? this.$t("global.commons.blog")
-            : home === "hyper"
-              ? this.$t("global.commons.hyper")
-              : home === "community"
-                ? this.$t("global.commons.community")
-                : home === "map"
-                  ? this.$t("global.commons.map")
-                  : ("" + home).startsWith("/")
-                    ? this.$t("global.commons.static_page")
-                    : home
-                      ? this.$t("global.commons.landing_page")
-                      : this.$t("global.commons.store");
     },
   },
 };

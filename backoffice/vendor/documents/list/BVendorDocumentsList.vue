@@ -16,7 +16,11 @@
   <div v-bind="$attrs">
     <div class="widget-box mb-5">
       <u-widget-header
-        :add-caption="IS_VENDOR_PANEL ? $t('vendor_documents_list.action_upload_doc') : undefined"
+        :add-caption="
+          IS_VENDOR_PANEL
+            ? $t('vendor_documents_list.action_upload_doc')
+            : undefined
+        "
         icon="post_add"
         :title="$t('vendor_documents_list.title')"
         @click:add="showUpload"
@@ -24,8 +28,8 @@
       <v-list-subheader>
         {{
           IS_VENDOR_PANEL
-            ? $t('vendor_documents_list.vendor_subtitle')
-            :$t('vendor_documents_list.marketplace_subtitle')
+            ? $t("vendor_documents_list.vendor_subtitle")
+            : $t("vendor_documents_list.marketplace_subtitle")
         }}
       </v-list-subheader>
       <u-loading-progress v-if="busy"></u-loading-progress>
@@ -164,8 +168,7 @@
     <v-card class="text-start">
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1">pageview</v-icon>
-        {{$t('vendor_documents_list.upload_dialog.title')}}
-
+        {{ $t("vendor_documents_list.upload_dialog.title") }}
       </v-card-title>
       <v-card-text>
         <div class="widget-box mb-5">
@@ -174,8 +177,7 @@
             :title="$t('vendor_documents_list.upload_dialog.type.title')"
           ></u-widget-header>
           <v-list-subheader>
-            {{$t('vendor_documents_list.upload_dialog.type.subtitle')}}
-
+            {{ $t("vendor_documents_list.upload_dialog.type.subtitle") }}
           </v-list-subheader>
           <u-smart-select
             v-model="type"
@@ -284,11 +286,14 @@ import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
 import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentType";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
-import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper";
+import { FileHelper } from "@selldone/core-js/utils/file/FileHelper.ts";
 import DynamicScriptDirective from "@selldone/components-vue/directives/script/DynamicScriptDirective.ts";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BVendorDocumentsList",
+  mixins: [],
   directives: {
     "dynamic-scripts": DynamicScriptDirective,
   },
@@ -435,14 +440,14 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
 
           this.uploaded_documents = data.documents;
           this.totalItems = data.total;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -452,10 +457,7 @@ export default {
 
     saveDocument() {
       let formData = new FormData();
-      formData.append(
-        "file",
-        this.selected_file,
-      );
+      formData.append("file", this.selected_file);
 
       formData.append("type", this.type);
 
@@ -468,18 +470,18 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.uploaded_documents, data.document);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Document has been uploaded successfully.",
             );
 
             this.dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -487,7 +489,7 @@ export default {
     },
 
     showDelete(document) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete document",
         "Are you sure to delete this document?",
         "Yes, Delete now",
@@ -504,16 +506,16 @@ export default {
             .then(({ data }) => {
               if (!data.error) {
                 this.DeleteItemByID(this.uploaded_documents, document.id);
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   "Document has been deleted successfully.",
                 );
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = null;

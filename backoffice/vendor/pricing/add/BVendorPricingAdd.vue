@@ -17,13 +17,14 @@
     <v-card-title></v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
-        <u-widget-header icon="price_change" :title="$t('vendor_pricing_add.title')">
+        <u-widget-header
+          icon="price_change"
+          :title="$t('vendor_pricing_add.title')"
+        >
         </u-widget-header>
 
-        <v-list-subheader
-          >
-          {{$t('vendor_pricing_add.subtitle')}}
-
+        <v-list-subheader>
+          {{ $t("vendor_pricing_add.subtitle") }}
         </v-list-subheader>
 
         <v-text-field
@@ -44,14 +45,12 @@
             ></b-translation-button-vendor-pricing>
           </template>
           <template v-slot:message>
-
-          <u-smart-suggestion
+            <u-smart-suggestion
               :samples="$tm('suggestions.vendor_pricing.title')"
               @select="(v) => (title = v)"
-          ></u-smart-suggestion>
+            ></u-smart-suggestion>
           </template>
         </v-text-field>
-
 
         <u-number-input
           v-model="commission"
@@ -69,7 +68,7 @@
           append-inner-icon="sticky_note_2"
           auto-grow
           persistent-placeholder
-          :placeholder="$t('vendor_pricing_add.inputs.description.placeholder') "
+          :placeholder="$t('vendor_pricing_add.inputs.description.placeholder')"
           rows="2"
           variant="underlined"
         >
@@ -93,16 +92,16 @@
           icon="warning_amber"
         >
         </u-widget-header>
-        <v-list-subheader
-          >
-          {{$t('vendor_pricing_add.delete.subtitle') }}
-
+        <v-list-subheader>
+          {{ $t("vendor_pricing_add.delete.subtitle") }}
         </v-list-subheader>
 
         <u-smart-verify
           v-model="accept_delete"
           color="red"
-          :true-description="$t('vendor_pricing_add.inputs.accept_delete.true_description')  "
+          :true-description="
+            $t('vendor_pricing_add.inputs.accept_delete.true_description')
+          "
           :true-title="$t('vendor_pricing_add.inputs.accept_delete.true_title')"
         ></u-smart-verify>
 
@@ -115,8 +114,7 @@
             @click="remove"
           >
             <v-icon class="me-1">remove</v-icon>
-            {{$t('vendor_pricing_add.delete.remove_pricing_action')}}
-
+            {{ $t("vendor_pricing_add.delete.remove_pricing_action") }}
           </v-btn>
         </div>
       </div>
@@ -165,8 +163,10 @@ import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import BTranslationButtonVendorPricing from "../../../translation/button/vendor-pricing/BTranslationButtonVendorPricing.vue";
 import USmartSuggestion from "@selldone/components-vue/ui/smart/suggestion/USmartSuggestion.vue";
 
+
 export default {
   name: "BVendorPricingAdd",
+  mixins: [],
   components: {
     USmartSuggestion,
     BTranslationButtonVendorPricing,
@@ -230,11 +230,11 @@ export default {
             this.$emit("add", data.pricing);
             this.$emit("close");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -262,11 +262,11 @@ export default {
             this.$emit("update", data.pricing);
             this.$emit("close");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -289,11 +289,11 @@ export default {
             this.$emit("remove", data.id);
             this.$emit("close");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

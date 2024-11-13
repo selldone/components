@@ -54,7 +54,10 @@
       rounded
       v-bind="
         window.ExternalWidget
-          ? { href: getProductLink(shop, product.id), target: '_blank' }
+          ? {
+              href: ShopURLs.GetProductLink(shop, product.id),
+              target: '_blank',
+            }
           : {}
       "
       variant="flat"
@@ -210,7 +213,7 @@
       rounded
       v-bind="
         window.ExternalWidget
-          ? { href: getProductLink(shop, product.id), target: '' }
+          ? { href: ShopURLs.GetProductLink(shop, product.id), target: '' }
           : {}
       "
       @click.stop="physicalBuyAction(1)"
@@ -243,10 +246,13 @@ import { debounce, delay } from "lodash-es";
 import SProductExternalButton from "@selldone/components-vue/storefront/product/external/button/SProductExternalButton.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
+import { ShopURLs } from "@selldone/core-js/helper";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 
 export default {
   name: "SShopBuyButton",
-  mixins: [CurrencyMixin, AuthMixin],
+  mixins: [CurrencyMixin, AuthMixin ],
   components: {
     SProductExternalButton,
     SShopSubscribeButton,
@@ -288,6 +294,8 @@ export default {
     selectedSubscriptionPrice: { type: Object },
   },
   data: () => ({
+    ShopURLs: ShopURLs,
+
     busy: false,
 
     // 🞇 Physical
@@ -606,7 +614,7 @@ export default {
       } else if (this.volume_mode) {
         new_count = this.dim_1 * this.dim_2 * this.dim_3;
       } else {
-        this.showWarningAlert(null, "Invalid pricing input configuration!");
+        NotificationService.showWarningAlert(null, "Invalid pricing input configuration!");
       }
 
       if (new_count === this.selected_order_count) return;
@@ -746,20 +754,20 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("global.notification.congratulation"),
               this.$t("buy_button.notifications.inform_add_success"),
             );
             this.product.informs = data.informs;
           } else {
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               this.$t("global.notification.error"),
               data.error_msg,
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -783,20 +791,20 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("global.notification.confirm"),
               this.$t("buy_button.notifications.inform_remove_success"),
             );
             this.product.informs = data.informs;
           } else {
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               this.$t("global.notification.error"),
               data.error_msg,
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

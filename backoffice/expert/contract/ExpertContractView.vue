@@ -794,9 +794,11 @@ import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIc
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "ExpertContractView",
-  mixins: [TemplateMixin,DateMixin],
+  mixins: [TemplateMixin,DateMixin ],
 
   components: {
     UCurrencyIcon,
@@ -1051,7 +1053,7 @@ export default {
             this.contract = data.contract;
             this.loadEditForm();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {})
@@ -1079,11 +1081,11 @@ export default {
           if (!data.error) {
             this.contract.tasks = data.tasks;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_progress = false;
@@ -1112,18 +1114,18 @@ export default {
             this.contract.permissions = data.contract.permissions;
 
             this.$emit("update:contract", this.contract);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("contract_view.notifications.save"),
             );
 
             this.edit_mode = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -1147,18 +1149,18 @@ export default {
             this.$emit("message", data.message);
 
             this.$emit("update:contract", this.contract);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("contract_view.notifications.pay"),
             );
 
             this.dialog_pay = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_pay = false;
@@ -1175,16 +1177,16 @@ export default {
             this.contract.end_at = data.contract.end_at;
 
             this.$emit("update:contract", this.contract);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("contract_view.notifications.end"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_end = false;
@@ -1210,18 +1212,18 @@ export default {
 
             this.$emit("update:contract", this.contract);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               accept
                 ? this.$t("contract_view.notifications.complete")
                 : this.$t("contract_view.notifications.reject"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_complete = null;
@@ -1238,18 +1240,18 @@ export default {
 
             this.$emit("update:contract", this.contract);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("contract_view.notifications.cancel"),
             );
 
             this.dialog_cancel = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_cancel = null;
@@ -1274,16 +1276,16 @@ export default {
 
             this.$emit("update:contract", this.contract);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("contract_view.notifications.update"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_permission = null;
@@ -1311,16 +1313,16 @@ export default {
 
             this.$emit("update:contract", this.contract);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("contract_view.notifications.comment"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_comment = null;
@@ -1340,16 +1342,16 @@ export default {
 
             this.$emit("update:contract", this.contract);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("contract_view.notifications.response"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_response = null;

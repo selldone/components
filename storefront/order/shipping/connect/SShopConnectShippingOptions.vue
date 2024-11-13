@@ -135,6 +135,10 @@ export default {
   },
 
   methods: {
+    getConnectIcon(connect_id: string | number) {
+      return window.CDN.GET_CONNECT_ICON(connect_id);
+    },
+
     init() {
       // Create clone:
       this.connect_shippings = Object.assign(

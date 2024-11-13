@@ -80,7 +80,7 @@ export default {
       const file = defaultFile.files[0];
 
       if (file.size > 2 * 1024 * 1024) {
-        this.showErrorAlert(null, "Max image size limit is 2Mb.");
+        NotificationService.showErrorAlert(null, "Max image size limit is 2Mb.");
         return;
       }
 

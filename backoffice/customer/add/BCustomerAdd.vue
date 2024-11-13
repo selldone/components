@@ -310,9 +310,11 @@ import { defineAsyncComponent } from "vue";
 import { SetupService } from "@selldone/core-js";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCustomerAdd",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin ],
   components: {
     UTelInput: defineAsyncComponent(
       () => import("@selldone/components-vue/ui/tel-input/UTelInput.vue"),
@@ -462,16 +464,16 @@ export default {
           if (!data.error) {
             this.$emit("add", data.customer);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               data.customer.name,
               "New customer has been added successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -506,16 +508,16 @@ export default {
           if (!data.error) {
             this.$emit("update", data.customer);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               data.customer.name,
               "Customer has been updated successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

@@ -269,7 +269,7 @@
             <v-list-item>
               <template v-slot:prepend>
                 <v-avatar class="cursor-move" rounded="0">
-                  <img :src="getFileExtensionImage(element.name)" />
+                  <img :src="FileHelper.GetFileExtensionImage(element.name)" />
                 </v-avatar>
               </template>
 
@@ -422,10 +422,13 @@ import USparkline from "../../../../../ui/chart/sparkline/USparkline.vue";
 import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
 import { defineAsyncComponent } from "vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import {FileHelper} from "@selldone/core-js/utils";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BProductInventoryManagementFile",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: {
     FilePond: FilePondLoader.loadFilePondComponent(),
 
@@ -742,6 +745,9 @@ export default {
   },
 
   computed: {
+    FileHelper() {
+      return FileHelper
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -851,12 +857,12 @@ export default {
             if (!data.error) {
               resolve(data);
             } else {
-              this.showErrorAlert(null, data.error_msg);
+              NotificationService.showErrorAlert(null, data.error_msg);
               reject(data.error_msg);
             }
           })
           .catch((error) => {
-            this.showLaravelError(error);
+            NotificationService.showLaravelError(error);
             reject(error);
           })
           .finally(() => {
@@ -879,7 +885,7 @@ export default {
     },
 
     deleteFile(file) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("product_file.delete_dialog.title"),
         this.$t("product_file.delete_dialog.message"),
         this.$t("product_file.delete_dialog.action"),
@@ -901,7 +907,7 @@ export default {
             )
             .then(({ data }) => {
               if (!data.error) {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t("product_file.notifications.delete_success"),
                 );
@@ -917,11 +923,11 @@ export default {
 
                 if (data.capacity) this.shop.capacity = data.capacity;
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = null;
@@ -971,11 +977,11 @@ export default {
               this.product.files = data.files;
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = null;
@@ -1007,16 +1013,16 @@ export default {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.files, data.file);
             target.innerText = data.file.name; // Force update if file name corrected by server.
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               `File name has been updated successfully. New file name is ${file.name}`,
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_name = null;
@@ -1047,13 +1053,13 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(null, `File sort saved successfully.`);
+            NotificationService.showSuccessAlert(null, `File sort saved successfully.`);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_sort = null;
@@ -1084,18 +1090,18 @@ export default {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.files, data.file);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               `File has been updated successfully. Now ${file.name} is <b>${
                 data.file.sample ? "FREE" : "PAID"
               }</b>.`,
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_sample = null;

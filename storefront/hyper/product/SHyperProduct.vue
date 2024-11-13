@@ -141,9 +141,10 @@ import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { defineAsyncComponent } from "vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
+
 export default {
   name: "SHyperProduct",
-  mixins: [ProductMixin],
+  mixins: [ProductMixin ],
 
   components: {
     UScanner: defineAsyncComponent(
@@ -328,11 +329,11 @@ export default {
 
             this.resetCountSafe();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

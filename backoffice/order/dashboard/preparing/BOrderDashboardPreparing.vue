@@ -155,7 +155,7 @@
                   <s-dense-images-circles
                     :images="
                       item.info.service_ids.map((k) =>
-                        getDeliveryServiceIcon(k),
+                        DeliveryServiceHelper.GetDeliveryServiceIconById(k),
                       )
                     "
                     :limit="20"
@@ -350,7 +350,7 @@ import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import UDenseCirclesUsers from "../../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
-import { Basket } from "@selldone/core-js";
+import {Basket, DeliveryServiceHelper} from "@selldone/core-js";
 
 export default {
   name: "BOrderDashboardPreparing",
@@ -401,6 +401,9 @@ export default {
   },
 
   computed: {
+    DeliveryServiceHelper() {
+      return DeliveryServiceHelper
+    },
     has_shipping_services() {
       return (
         !this.IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/ ||

@@ -66,8 +66,11 @@ import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.
 import { ArticleReport } from "@selldone/core-js";
 import { EventBus } from "@selldone/core-js/events/EventBus";
 
+
 export default {
   name: "CommunityCommentReportsDialog",
+  mixins: [],
+
   components: { UDenseCirclesUsers },
   props: {
     community: {
@@ -109,11 +112,11 @@ export default {
           if (!data.error) {
             this.reports = data.reports;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

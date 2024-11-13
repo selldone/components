@@ -121,7 +121,7 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.shop.plugins, data.plugin);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Set meta tag to your site's home page.",
             );
@@ -129,7 +129,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.loading_set_metatag = false;

@@ -160,8 +160,10 @@ import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
 import BVendorPayoutHistory from "../../../vendor/payout/history/BVendorPayoutHistory.vue";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
 
+
 export default {
   name: "BVendorPayoutReverse",
+  mixins: [],
   components: {
     USmartSuggestion,
     BVendorPayoutHistory,
@@ -233,11 +235,11 @@ export default {
             this.$emit("update", data.payment);
             this.$emit("close");
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

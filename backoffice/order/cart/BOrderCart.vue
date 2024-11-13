@@ -430,9 +430,8 @@
               class="ms-1"
             ></u-price>
             <u-tooltip-tips
-              >The cost of the item should be paid to the
-              vendor.</u-tooltip-tips
-            >
+              >The cost of the item should be paid to the vendor.
+            </u-tooltip-tips>
           </div>
 
           <div v-if="item.offer_amount">
@@ -580,7 +579,7 @@ import { OrderTypeCode } from "@selldone/core-js/enums/order/OrderTypeCode";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
 import { BasketItemReturn } from "@selldone/core-js";
 import UTooltipTips from "@selldone/components-vue/ui/tooltip/tips/UTooltipTips.vue";
-import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 
 export default {
   name: "BOrderCart",
@@ -728,6 +727,9 @@ export default {
   created() {},
 
   methods: {
+    getConnectIcon(connect_id: string | number) {
+      return window.CDN.GET_CONNECT_ICON(connect_id);
+    },
     getProduct(item) {
       return this.isFulfillment ? item.product?.parent : item.product;
     },

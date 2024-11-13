@@ -59,8 +59,12 @@
 </template>
 
 <script lang="ts">
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCustomerSegmentInput",
+  mixins: [],
   emits: ["update:modelValue"],
   props: {
     shop: { required: true },
@@ -108,11 +112,11 @@ export default {
             this.shop_segments = data.segments;
             this.shop.CUSTOMER_SEGMENTS = data.segments;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_segments = false;

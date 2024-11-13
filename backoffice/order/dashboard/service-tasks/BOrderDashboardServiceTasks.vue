@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     finish() {
-      this.openConfirmationAlert(
+      NotificationService.openConfirmationAlert(
         this.$t("service_tasks.notification_finish.title"),
         this.$t("service_tasks.notification_finish.message"),
         this.$t("service_tasks.notification_finish.action"),

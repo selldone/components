@@ -369,9 +369,10 @@ import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
-  mixins: [TemplateMixin,DateMixin],
+  mixins: [TemplateMixin,DateMixin ],
 
   components: {
     UMapView,
@@ -545,18 +546,18 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.basket.receiver_info = data.receiver_info;
             this.center = Object.assign({}, this.center_edit);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Address has been updated successfully.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit_receiver = false;
@@ -606,14 +607,14 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.basket.billing = data.billing;
             this.edit_billing = false;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit_billing = false;
@@ -649,9 +650,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("order_page.delivery.notifications.confirm_delivery"),
             );
@@ -659,7 +660,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_receive = false;

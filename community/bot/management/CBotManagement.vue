@@ -83,8 +83,10 @@
 <script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService.ts";
 
+
 export default {
   name: "CBotManagement",
+  mixins: [],
   components: {},
 
   props: {
@@ -146,13 +148,13 @@ export default {
             this.community.bots = data.bots;
             this.$emit("update:bot", data.bot);
 
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

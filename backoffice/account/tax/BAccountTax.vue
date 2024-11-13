@@ -137,8 +137,11 @@
 import BCompanyInput from "../../company/input/BCompanyInput.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BAccountTax",
+  mixins: [],
   components: { USmartSwitch, BCompanyInput },
   emits: ["update:modelValue", "update:business", "update:vatPercent"],
   props: {
@@ -205,11 +208,11 @@ export default {
             this.calculated_vat_percent = data.percent;
             this.$emit("update:vatPercent", data.percent);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

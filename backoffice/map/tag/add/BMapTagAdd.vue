@@ -232,9 +232,11 @@ import BMapTagProducts from "../../../map/tag/products/BMapTagProducts.vue";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BMapTagAdd",
-  mixins: [MapMixin],
+  mixins: [MapMixin ],
 
   components: {
     USmartSuggestion,
@@ -315,13 +317,13 @@ export default {
             if (!this.currentItem.id) {
               // Create mode:
               this.$emit("add", data.map_tag);
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 "The location has been added successfully.",
               );
             } else {
               this.$emit("edit", data.map_tag);
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 "The location has been updated successfully.",
               );
@@ -329,7 +331,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -363,17 +365,17 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.$emit("delete", data.id);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The location has been removed successfully.",
             );
             this.dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;

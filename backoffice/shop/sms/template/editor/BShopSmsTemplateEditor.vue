@@ -353,8 +353,12 @@ import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelp
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import UTextCopyBox from "@selldone/components-vue/ui/text/copy-box/UTextCopyBox.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopSmsTemplateEditor",
+  mixins:[],
+
   components: {
     UTextCopyBox,
     UWidgetHeader,
@@ -462,19 +466,19 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("add", data.template);
             this.$emit("close");
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "New template has been added successfully.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -498,19 +502,19 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.$emit("edit", data.template);
             this.$emit("close");
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "This template has been updated successfully.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -549,7 +553,7 @@ export default {
     getDefaultText() {
       this.getDefault(SmsTemplateMode.text.code, (body) => {
         this.text = body;
-        this.showSuccessAlert(
+        NotificationService.showSuccessAlert(
           this.sms.title + " | " + this.getLanguageName(data.language),
           `The default message for <b>${this.getLanguageName(
             data.language,
@@ -588,14 +592,14 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.defaults[mode + data.language] = data.body;
             callback(data.body,data.tokens);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

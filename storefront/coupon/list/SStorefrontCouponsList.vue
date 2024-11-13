@@ -139,9 +139,10 @@ import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import { throttle } from "lodash-es";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+
 export default {
   name: "SStorefrontCouponsList",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin ],
   components: { UFadeScroll, SStorefrontCouponView },
   emits: ["update:modelValue", "loading"],
   props: {
@@ -299,11 +300,11 @@ export default {
 
             this.dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = false;
@@ -343,11 +344,11 @@ export default {
           if (!data.error) {
             this.setBasketBill(this.basket, data.bill);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;

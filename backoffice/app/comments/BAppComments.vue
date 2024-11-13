@@ -61,9 +61,11 @@
 <script lang="ts">
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BAppComments",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   props: {
     appCode: {
@@ -102,11 +104,11 @@ export default {
             this.comments = data.comments;
             this.total = data.total;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

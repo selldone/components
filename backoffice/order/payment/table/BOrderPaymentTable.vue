@@ -1402,9 +1402,11 @@ import BOrderPaymentRowWallet from "@selldone/components-vue/backoffice/order/pa
 import BOrderPaymentRowCashback from "@selldone/components-vue/backoffice/order/payment/row/cashback/BOrderPaymentRowCashback.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BOrderPaymentTable",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {
     BOrderPaymentRowCashback,
@@ -1857,7 +1859,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             if (data.success) {
               // If changed status request refresh order:
@@ -1868,7 +1870,7 @@ export default {
               )
                 this.$emit("fetch-order");
 
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 this.$t(
                   "process_center.payment_widget.notifications.pay_confirm_message",
@@ -1881,7 +1883,7 @@ export default {
                   (data.message ? `<hr>${data.message}` : ""), // Add extra message!
               );
             } else {
-              this.showWarningAlert(
+              NotificationService.showWarningAlert(
                 this.$t(
                   "process_center.payment_widget.notifications.pay_fail_title",
                 ),
@@ -1895,7 +1897,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_check = false;
@@ -1917,9 +1919,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("process_center.notifications.pay_dir_success"),
             );
@@ -1929,7 +1931,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_pay = false;
@@ -1953,14 +1955,14 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(null, "Affiliate status updated.");
+            NotificationService.showSuccessAlert(null, "Affiliate status updated.");
             this.order.affiliate_order.status = data.status;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_affiliate = null;
@@ -1980,9 +1982,9 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("process_center.notifications.new_bill_success"),
             );
@@ -1991,7 +1993,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add_bill = false;
@@ -2013,9 +2015,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("process_center.notifications.edit_bill_success"),
             );
@@ -2024,7 +2026,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit_bill = false;
@@ -2045,9 +2047,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_center.notifications.update_bill_status_success",
@@ -2057,7 +2059,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update_bill_status = null;
@@ -2070,7 +2072,7 @@ export default {
     },
 
     deleteBill(bill) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("process_center.delete_bill_dialog.title"),
         this.$t("process_center.delete_bill_dialog.message"),
         this.$t("process_center.delete_bill_dialog.action"),
@@ -2081,14 +2083,14 @@ export default {
             )
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
-                this.showSuccessAlert(null, "Bill has been deleted.");
+                NotificationService.showSuccessAlert(null, "Bill has been deleted.");
                 this.DeleteItemByID(this.order.bills, bill.id);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {});
         },
@@ -2114,9 +2116,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_center.notifications.set_payment_in_cash_success",
@@ -2128,7 +2130,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_pay = false;

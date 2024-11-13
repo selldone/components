@@ -90,7 +90,14 @@ export default {
     },
   },
 
-  methods: {},
+  methods: {
+    getVideoUrl(file_name: string) {
+      return window.CDN.GET_VIDEO_URL(file_name);
+    },
+    getVoiceUrl(file_name: string) {
+      return window.CDN.GET_VIDEO_URL(file_name);
+    },
+  },
 
   mounted() {
     //█████████████████████████████████████████████████████████████

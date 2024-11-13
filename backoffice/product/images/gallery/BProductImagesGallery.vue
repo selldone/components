@@ -154,9 +154,11 @@ import SGalleryUploadGrid from "../../../../ui/uploader/SGalleryUploadGrid.vue";
 import UButtonAiLarge from "../../../../ui/button/ai/large/UButtonAiLarge.vue";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductImagesGallery",
-  mixins: [BEventBusMixin],
+  mixins: [BEventBusMixin ],
   components: { UButtonAiLarge, SGalleryUploadGrid },
   props: {
     product: {
@@ -308,16 +310,16 @@ export default {
               Object.assign(this.variant, data.variant); // Update variant (change in its main image)
             }
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("product_images_list.notifications.update_sort_success"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         });
     },
 
@@ -350,7 +352,7 @@ export default {
             this.AddOrUpdateItemByID(this.images, data.image);
             this.AddOrUpdateItemByID(this.product.images, data.image);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "product_images_gallery.dialog_alt.success_update_notification",
@@ -358,11 +360,11 @@ export default {
             );
             this.dialog_alt = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -396,18 +398,18 @@ export default {
             this.dialog_bg_remove = false;
             this.$forceUpdate();
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "product_images_gallery.dialog_alt.success_remove_bg_notification",
               ),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_ai = false;

@@ -519,9 +519,11 @@ import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import { Club } from "@selldone/core-js";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCouponAdd",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin ],
 
   components: {
     SWidgetButtons,
@@ -703,16 +705,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.$emit("add", data.coupon);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("coupon_edit.notifications.add"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -765,16 +767,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.$emit("edit", data.coupon);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("coupon_edit.notifications.edit"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;

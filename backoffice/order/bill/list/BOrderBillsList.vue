@@ -292,9 +292,11 @@ import { Bill } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BOrderBillsList",
-  mixins: [DateMixin, OrderMixin],
+  mixins: [DateMixin, OrderMixin ],
 
   components: {
     BOrderPaymentRowPayment,
@@ -460,7 +462,7 @@ export default {
           this.bills = data.bills;
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -490,7 +492,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            return this.showErrorAlert(null, data.error_msg);
+            return NotificationService.showErrorAlert(null, data.error_msg);
           }
           const { sortBy, page, itemsPerPage } = this.options;
           this.fetchBills(page, sortBy[0]?.key, sortBy[0]?.order === "desc");
@@ -498,10 +500,10 @@ export default {
           // Needs basket update:
           if (data.update_basket) this.$emit("fetch-order");
           // Show detail message:
-          this.showSuccessAlert("Sync bills", data.message, "sync", 8000);
+          NotificationService.showSuccessAlert("Sync bills", data.message, "sync", 8000);
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_sync = false;

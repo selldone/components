@@ -80,9 +80,10 @@ import { throttle } from "lodash-es";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+
 export default {
   name: "SDiscountCodeInput",
-  mixins: [TemplateMixin,CurrencyMixin],
+  mixins: [TemplateMixin,CurrencyMixin ],
   emits: ["update:modelValue", "loading"],
   props: {
     modelValue: {},
@@ -158,7 +159,7 @@ export default {
               this.basket.discount_id === data.discount_code
                 ? data.discount_code.id
                 : null;
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 this.$t("global.discount_input.notifications.add_success"),
               );
@@ -169,12 +170,12 @@ export default {
             this.$emit("update:modelValue", data.discount_code);
           } else {
             if (with_error_notification)
-              this.showErrorAlert(null, data.error_msg);
+              NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
 
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

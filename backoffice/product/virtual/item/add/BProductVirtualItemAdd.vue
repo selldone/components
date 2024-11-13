@@ -315,8 +315,11 @@ import BSpreadsheetVirtualItems from "../../../../spreadsheet/virtual-items/BSpr
 import BProductVariantInput from "../../../../product/variants/input/BProductVariantInput.vue";
 import VariantItemViewMicro from "../../../../../storefront/product/variant/VariantItemViewMicro.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductVirtualItemAdd",
+  mixins:[],
   components: {
     VariantItemViewMicro,
     BProductVariantInput,
@@ -411,9 +414,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_virtual_item.notifications.add_success"),
             );
@@ -424,7 +427,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -447,9 +450,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_virtual_item.notifications.edit_success"),
             );
@@ -461,7 +464,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -499,7 +502,7 @@ export default {
             )
             .then(({ data }) => {
               if (data.error) {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               } else {
                 this.result_success += data.success_count;
                 this.result_fails += data.fail_count;
@@ -514,7 +517,7 @@ export default {
               console.log("axios then", data);
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
 
             .finally(() => {
@@ -530,7 +533,7 @@ export default {
         chunk,
         1000,
         () => {
-          this.showErrorAlert(null, "Data set is invalid!");
+          NotificationService.showErrorAlert(null, "Data set is invalid!");
           this.busy_send = false;
         },
       );

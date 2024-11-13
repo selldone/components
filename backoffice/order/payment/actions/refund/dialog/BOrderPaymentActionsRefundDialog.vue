@@ -135,9 +135,11 @@ import UPriceInput from "@selldone/components-vue/ui/price/input/UPriceInput.vue
 import USmartVerify from "@selldone/components-vue/ui/smart/verify/USmartVerify.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default defineComponent({
   name: "BOrderPaymentActionsRefundDialog",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
   components: { USmartVerify, UPriceInput, UPrice },
   emits: ["update:modelValue", "payment-refunded"],
   props: {
@@ -199,19 +201,19 @@ export default defineComponent({
           },
         )
         .then(({ data }) => {
-          if (data.error) return this.showErrorAlert(null, data.error_msg);
+          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
 
           Object.assign(this.payment, data.payment);
           this.$emit("payment-refunded", data.amount);
           this.$emit("update:modelValue", false);
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             "The payment has been refunded successfully.",
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

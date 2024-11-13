@@ -178,8 +178,13 @@
 </template>
 
 <script lang="ts">
+
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BOrderVirtualItem",
+  mixins: [],
   components: {},
   props: {
     shop: {
@@ -256,9 +261,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            t.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            t.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_virtual_item.notifications.edit_success"),
             );
@@ -268,7 +273,7 @@ export default {
           }
         })
         .catch((error) => {
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           t.busy = false;

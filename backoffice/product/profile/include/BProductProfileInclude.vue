@@ -232,8 +232,11 @@
 import BIncludeItemInput from "../../../include-item/input/BIncludeItemInput.vue";
 import BIncludeItemAdd from "../../../include-item/add/BIncludeItemAdd.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductProfileInclude",
+  mixins: [],
   components: {
     BIncludeItemAdd,
     BIncludeItemInput,
@@ -307,7 +310,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
 
@@ -315,7 +318,7 @@ export default {
           this.includes_dialog = false;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;

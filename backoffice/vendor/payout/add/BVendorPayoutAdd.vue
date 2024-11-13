@@ -402,8 +402,10 @@ import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
 
+
 export default {
   name: "BVendorPayoutAdd",
+  mixins: [],
   components: {
     UCurrencyIcon,
     USmartSuggestion,
@@ -500,11 +502,11 @@ export default {
             this.selected_vendor = data.vendor;
             this.options = data.options;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -557,16 +559,16 @@ export default {
             this.$emit("update:account", data.account);
             this.$emit("close");
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t("vendor_payout_add.notifications.payout_success.title"),
               this.$t("vendor_payout_add.notifications.payout_success.message"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -585,7 +587,7 @@ export default {
           if (!data.error) {
             this.$emit("remove", data.id);
             this.$emit("close");
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               this.$t(
                 "vendor_payout_add.notifications.reverse_fund_success.title",
               ),
@@ -594,11 +596,11 @@ export default {
               ),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

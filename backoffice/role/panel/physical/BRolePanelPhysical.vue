@@ -171,8 +171,11 @@ import SOrderBasketReturn from "../../../../storefront/order/basket/return/SOrde
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import { Basket } from "@selldone/core-js";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BRolePanelPhysical",
+  mixins:[],
   components: {
     SWidgetButtons,
     SOrderBasketReturn,
@@ -299,9 +302,9 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t(
                 "process_order_page_dashboard.notifications.update_status_success",
@@ -319,7 +322,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update_state = false;

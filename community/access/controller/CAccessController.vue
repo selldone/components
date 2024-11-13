@@ -185,8 +185,11 @@ import UDenseCirclesUsers from "../../../ui/dense-circles/users/UDenseCirclesUse
 import CUserInput from "../../../community/user/input/CUserInput.vue";
 import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
 
+
 export default {
   name: "CAccessController",
+  mixins: [],
+
   components: { CUserInput, UDenseCirclesUsers },
   props: {
     shop: {},
@@ -262,11 +265,11 @@ export default {
               this.AddOrUpdateItemByID(this.moderators, r, "user_id");
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -294,16 +297,16 @@ export default {
             this.user_email = null;
             Object.assign(this.community, data.community); // Update moderators_list
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Add moderator",
               "A new moderator has been added successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = false;
@@ -327,16 +330,16 @@ export default {
             this.DeleteItemByID(this.moderators, data.user_id, "user_id");
             Object.assign(this.community, data.community); // Update moderators_list
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Remove moderator",
               "The moderator has been removed successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_remove = null;

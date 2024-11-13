@@ -172,9 +172,12 @@ import BAppShopStoreIcon from "../../../app/shop/store/icon/BAppShopStoreIcon.vu
 import { Application } from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BAppShopStore",
-  components: {ULoadingEllipsis, BAppShopStoreIcon, BAppConfigDialog },
+  mixins: [],
+  components: { ULoadingEllipsis, BAppShopStoreIcon, BAppConfigDialog },
   props: {
     shop: {
       type: Object,
@@ -269,16 +272,16 @@ export default {
             this.credential = null;
             this.AddOrUpdateItemByID(this.apps, data.app, "id", false);
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Add credential",
               "Your enterprise app credential added successfully.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add_credential = false;
@@ -309,7 +312,7 @@ export default {
           this.totalItems = data.total;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -327,11 +330,11 @@ export default {
             this.shop_app = data.shop_app;
             this.dialog_app_edit = true;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch_id = null;

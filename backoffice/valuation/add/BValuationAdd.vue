@@ -270,8 +270,11 @@ import BValuationFormCondition from "../../valuation/form/condition/BValuationFo
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
 import { computed } from "vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BValuationAdd",
+  mixins:[],
   components: {
     SProductSectionValuation,
     BValuationFormCondition,
@@ -494,17 +497,17 @@ export default {
           if (!data.error) {
             this.$emit("update:valuation", data.valuation);
             this.$emit("edit", data.valuation);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Valuation form has been successfully updated.",
             );
             this.close();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -525,17 +528,17 @@ export default {
           if (!data.error) {
             this.$emit("update:valuation", data.valuation);
             this.$emit("add", data.valuation);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Valuation form has been successfully created.",
             );
             this.close();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;

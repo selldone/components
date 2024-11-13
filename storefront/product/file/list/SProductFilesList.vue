@@ -30,7 +30,7 @@
               class="m-1"
             >
               <img
-                :src="getFileExtensionImage(extension)"
+                :src="FileHelper.GetFileExtensionImage(extension)"
                 style="vertical-align: top"
                 width="20"
               />
@@ -69,6 +69,7 @@
 import UExpandView from "../../../../ui/expand-view/UExpandView.vue";
 import SShopProductFilesList from "../../../../storefront/product/file/SShopProductFilesList.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import {FileHelper} from "@selldone/core-js/utils";
 
 export default {
   name: "SProductFilesList",
@@ -84,6 +85,9 @@ export default {
   },
 
   computed: {
+    FileHelper() {
+      return FileHelper
+    },
     files() {
       return this.$product.files;
     },

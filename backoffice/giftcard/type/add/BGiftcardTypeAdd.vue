@@ -244,9 +244,11 @@ import BTranslationButtonGiftcard from "../../../translation/button/giftcard/BTr
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BGiftcardTypeAdd",
-  mixins: [CurrencyMixin],
+  mixins: [CurrencyMixin ],
 
   components: {
     SWidgetButtons,
@@ -353,18 +355,18 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("gift_card_type_edit.notifications.create_success"),
             );
 
             this.$emit("save", data.gift_card_type);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add = false;
@@ -395,18 +397,18 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("gift_card_type_edit.notifications.update_success"),
             );
 
             this.$emit("save", data.gift_card_type);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit = false;

@@ -129,6 +129,13 @@ export default {
 
       return "#444";
     },
+
+    //―――――――――――――――――――――― Convert Html to Text ――――――――――――――――――――
+
+    extractContent(html: string) {
+      return new DOMParser().parseFromString(html, "text/html").documentElement
+        .textContent;
+    },
   },
 };
 </script>

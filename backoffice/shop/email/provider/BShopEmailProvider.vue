@@ -30,8 +30,7 @@
 
     <u-loading-progress v-if="busy"></u-loading-progress>
     <v-list-subheader>
-      {{$t('shop_email_provider.subtitle')}}
-
+      {{ $t("shop_email_provider.subtitle") }}
     </v-list-subheader>
 
     <u-smart-select
@@ -48,8 +47,7 @@
 
     <v-list-subheader v-if="mail_service && mail_service.errors > 10">
       <v-icon class="me-1" color="amber">warning</v-icon>
-      {{$t('shop_email_provider.messages.provider_error_limit')}}
-
+      {{ $t("shop_email_provider.messages.provider_error_limit") }}
     </v-list-subheader>
 
     <v-alert
@@ -66,10 +64,14 @@
         :false-title="$t('global.commons.disable')"
         :true-title="$t('global.commons.enable')"
         class="my-3"
-        :false-description="$t('shop_email_provider.enable_input.false_description') "
+        :false-description="
+          $t('shop_email_provider.enable_input.false_description')
+        "
         false-gray
         false-icon="close"
-        :true-description="$t('shop_email_provider.enable_input.true_description')  "
+        :true-description="
+          $t('shop_email_provider.enable_input.true_description')
+        "
         true-icon="check"
       >
       </u-smart-switch>
@@ -77,12 +79,11 @@
       <u-widget-header
         class="mt-6"
         icon="tune"
-        :title="$t('shop_email_provider.config.title')  "
+        :title="$t('shop_email_provider.config.title')"
       ></u-widget-header>
 
       <v-list-subheader>
-        {{$t('shop_email_provider.config.subtitle')}}
-
+        {{ $t("shop_email_provider.config.subtitle") }}
       </v-list-subheader>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Host ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -183,10 +184,9 @@
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Encryption ━━━━━━━━━━━━━━━━━━━━━━ -->
 
       <v-list-subheader>
-        <div v-html="$t('shop_email_provider.messages.encryption_ports_guide')">
-
-
-        </div>
+        <div
+          v-html="$t('shop_email_provider.messages.encryption_ports_guide')"
+        ></div>
       </v-list-subheader>
       <u-smart-select
         v-model="encryption"
@@ -198,12 +198,14 @@
       >
       </u-smart-select>
 
-      <u-widget-header class="mt-5" icon="contact_mail" :title="$t('shop_email_provider.sender.title')">
+      <u-widget-header
+        class="mt-5"
+        icon="contact_mail"
+        :title="$t('shop_email_provider.sender.title')"
+      >
       </u-widget-header>
-      <v-list-subheader
-        >
-        {{$t('shop_email_provider.sender.subtitle')}}
-
+      <v-list-subheader>
+        {{ $t("shop_email_provider.sender.subtitle") }}
       </v-list-subheader>
 
       <!-- ━━━━━━━━━━━━━━━━━━━━━━ Default Sender Email ━━━━━━━━━━━━━━━━━━━━━━ -->
@@ -211,7 +213,7 @@
       <v-text-field
         v-model="from"
         append-icon="alternate_email"
-        :label="$t('shop_email_provider.inputs.from.label') "
+        :label="$t('shop_email_provider.inputs.from.label')"
         persistent-placeholder
         placeholder="support@yourdomain.com"
         variant="underlined"
@@ -231,10 +233,13 @@
       <template v-if="enable">
         <v-list-subheader>
           <v-icon class="me-1">info</v-icon>
-          <span v-html="$t('shop_email_provider.messages.enable_receive_test',{
-            email:USER().email
-          })"></span>
-
+          <span
+            v-html="
+              $t('shop_email_provider.messages.enable_receive_test', {
+                email: USER().email,
+              })
+            "
+          ></span>
         </v-list-subheader>
 
         <div class="my-2 text-end">
@@ -244,10 +249,8 @@
             class="tnt"
             @click="sendTestMail"
             :loading="busy_send_test"
-            >
-            {{$t('shop_email_provider.actions.send_test_email')}}
-
-
+          >
+            {{ $t("shop_email_provider.actions.send_test_email") }}
           </v-btn>
         </div>
       </template>
@@ -275,8 +278,11 @@ import { EmailProviders } from "@selldone/core-js/enums/email/EmailProviders";
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopEmailProvider",
+  mixins: [],
   components: { SWidgetButtons, USmartSelect, USmartSwitch, UNumberInput },
   props: {
     shop: {
@@ -377,11 +383,11 @@ export default {
 
             this.assign();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -409,17 +415,17 @@ export default {
             this.mail_service = data.mail_service;
             this.shop.mail_service = data.mail_service;
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Shop mail service updated successfully!",
             );
             this.edit_dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -435,14 +441,14 @@ export default {
             this.mail_service = data.mail_service;
             this.shop.mail_service = data.mail_service;
 
-            this.showSuccessAlert(null, "Shop mail service errors reset!");
+            NotificationService.showSuccessAlert(null, "Shop mail service errors reset!");
             this.edit_dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_reset = false;
@@ -455,16 +461,16 @@ export default {
         .post(window.API.POST_SHOP_MAIL_SERVICE_TEST(this.shop.id))
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               "Send Success",
               "Test email sent successfully. Please check your inbox.",
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_send_test = false;

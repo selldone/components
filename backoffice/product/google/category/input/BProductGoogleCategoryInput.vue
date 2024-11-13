@@ -54,8 +54,11 @@
 import { throttle } from "lodash-es";
 import { User } from "@selldone/core-js";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductGoogleCategoryInput",
+  mixins:[],
   emits: ["update:modelValue"],
   computed: {
     AppLevel() {
@@ -109,13 +112,13 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.items = data.items;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_google_category = false;

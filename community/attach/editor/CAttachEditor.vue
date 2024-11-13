@@ -24,7 +24,7 @@
       <v-list-item v-for="file in files" :key="file.key">
         <template v-slot:prepend>
           <v-avatar tile>
-            <img :src="getFileExtensionImage(file.name)" />
+            <img :src="FileHelper.GetFileExtensionImage(file.name)" />
           </v-avatar>
         </template>
 
@@ -67,7 +67,7 @@
               <span v-if="mims">
                 <span v-for="m in mims" :key="m" class="mx-1"
                   ><img
-                    :src="getFileExtensionImage(m)"
+                    :src="FileHelper.GetFileExtensionImage(m)"
                     class="hover-scale"
                     height="16"
                     width="16"
@@ -86,9 +86,13 @@
 
 <script lang="ts">
 import numeral from "numeral";
+import {FileHelper} from "@selldone/core-js";
+
 
 export default {
   name: "CAttachEditor",
+  mixins: [],
+
   components: {},
   emits: ["update:modelValue"],
   props: {
@@ -112,6 +116,9 @@ export default {
   },
 
   computed: {
+    FileHelper() {
+      return FileHelper
+    },
     mims() {
       return this.community.mims;
     },
@@ -136,7 +143,7 @@ export default {
         if (this.files.length >= 3) return;
         // Check size:
         if (file.size > 8 * 1024 * 1024) {
-          return this.showErrorAlert(
+          return NotificationService.showErrorAlert(
             file.name + " size is " + numeral(file.size).format("0.[0] b"),
             "The file size is limited to 8MB.",
           );
@@ -145,7 +152,7 @@ export default {
         // Check does not exist:
         file.key = file.name + file.size;
         if (this.files.some((f) => f.key === file.key)) {
-          return this.showErrorAlert(
+          return NotificationService.showErrorAlert(
             "Duplicated file | " + file.name,
             "This file exists in your attachment list.",
           );

@@ -368,8 +368,11 @@ import BTranslationButtonLottery from "../../translation/button/lottery/BTransla
 import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue";
 import { Club } from "@selldone/core-js";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BLotteryAdd",
+  mixins: [],
   components: {
     USmartSuggestion,
     BTranslationButtonLottery,
@@ -479,17 +482,17 @@ export default {
               data.lottery.image = image;
 
               this.$emit("add", data.lottery);
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 this.$t("lottery_edit.notifications.add"),
               );
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -512,17 +515,17 @@ export default {
               data.lottery.image = image;
 
               this.$emit("edit", data.lottery);
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 this.$t("lottery_edit.notifications.edit"),
               );
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -549,11 +552,11 @@ export default {
           if (!data.error) {
             if (callback) callback(data.files.path);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_upload = false;

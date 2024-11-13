@@ -667,7 +667,7 @@ import UTextMentionInput from "../../../ui/text/mention-input/UTextMentionInput.
 import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
 import UDenseCirclesUsers from "../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { Screenshot } from "@selldone/core-js/helper/canvas/Screenshot.ts";
-import { FileHelper } from "@selldone/core-js/helper/converters/FileHelper.ts";
+import { FileHelper } from "@selldone/core-js/utils/file/FileHelper.ts";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency.ts";
@@ -683,6 +683,7 @@ import { delay } from "lodash-es";
 import { Community, CommunityTopic } from "@selldone/core-js";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
+
 /**
  * Calculate aspect ratio of element.
  * @param el
@@ -695,7 +696,7 @@ function getAspect(el) {
 export default {
   name: "CPostEditor",
 
-  mixins: [AuthMixin],
+  mixins: [AuthMixin ],
 
   components: {
     CAttachViewer,
@@ -1033,6 +1034,10 @@ export default {
   },
 
   methods: {
+    getVideoUrl(file_name: string) {
+      return window.CDN.GET_VIDEO_URL(file_name);
+    },
+
     purify(message) {
       // Hashtag pages :
       return SmartConvertTextToHtmlHashtags(message, false, true, "/trends");
@@ -1052,7 +1057,7 @@ export default {
       const file = defaultFile.files[0];
 
       if (file.size > 2 * 1024 * 1024) {
-        this.showErrorAlert(null, "Max image size limit is 2Mb.");
+        NotificationService.showErrorAlert(null, "Max image size limit is 2Mb.");
         return;
       }
 
@@ -1085,7 +1090,7 @@ export default {
       //   console.log(files);
 
       if (file.size > 2 * 1024 * 1024) {
-        this.showErrorAlert(null, "Max image size limit is 2Mb.");
+        NotificationService.showErrorAlert(null, "Max image size limit is 2Mb.");
         return;
       }
 
@@ -1117,7 +1122,7 @@ export default {
       const file = defaultFile.files[0]; //files[0] - For getting first file
 
       if (file.size > 8 * 1024 * 1024) {
-        this.showErrorAlert(null, "Max image size limit is 8Mb.");
+        NotificationService.showErrorAlert(null, "Max image size limit is 8Mb.");
         return;
       }
 
@@ -1146,7 +1151,7 @@ export default {
 
     submitLink() {
       if (!this.link || !GlobalRules.ValidURL(this.link)) {
-        this.showErrorAlert(null, "Enter valid url!");
+        NotificationService.showErrorAlert(null, "Enter valid url!");
         return;
       }
       this.busy_link = true;
@@ -1159,14 +1164,14 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.link_preview = data;
             // console.log("link_preview", this.link_preview);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_link = false;
@@ -1197,7 +1202,7 @@ export default {
       // Check link submitted:
       if (this.link && !this.link_preview) {
         this.submitLink();
-        this.showWarningAlert(
+        NotificationService.showWarningAlert(
           "Submit link",
           "The link preview must first be created correctly.",
         );
@@ -1253,7 +1258,7 @@ export default {
         // Payment:
         if (this.subscription) {
           if (!this.currency) {
-            this.showErrorAlert(null, "Select a currency!");
+            NotificationService.showErrorAlert(null, "Select a currency!");
             return;
           }
           formData.append("subscription", this.subscription);
@@ -1395,11 +1400,11 @@ export default {
               }
             }
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

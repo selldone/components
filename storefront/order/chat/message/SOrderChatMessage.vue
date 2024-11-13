@@ -85,7 +85,6 @@ export default {
   name: "SOrderChatMessage",
   mixins: [DateMixin],
 
-  emits: ["showSuccessAlert", "showErrorAlert", "showLaravelError"],
   inject: ["$shop"],
   props: {
     basket: {
@@ -152,17 +151,17 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.basket.chat = data.chat;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Message has been deleted successfully.",
             );
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete_message = false;

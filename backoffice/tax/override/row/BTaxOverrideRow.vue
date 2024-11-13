@@ -186,8 +186,11 @@ import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import BTaxRegionView from "../../../tax/region/view/BTaxRegionView.vue";
 import SStateFlag from "@selldone/components-vue/ui/country/state-flag/SStateFlag.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BTaxOverrideRow",
+  mixins: [],
   components: {
     SStateFlag,
     BTaxRegionView,
@@ -291,18 +294,18 @@ export default {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.overrides, data.override);
             this.$emit("set", data.override);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The overriding rule has been updated successfully.",
             );
 
             this.edit_mode = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -325,17 +328,17 @@ export default {
           if (!data.error) {
             this.DeleteItemByID(this.overrides, data.id);
             this.$emit("delete", data.id);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "The overriding rule has been removed successfully.",
             );
             this.edit_mode = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_delete = false;

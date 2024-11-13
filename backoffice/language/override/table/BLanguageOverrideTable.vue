@@ -188,8 +188,12 @@
 </template>
 
 <script lang="ts">
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BLanguageOverrideTable",
+  mixins: [],
   components: {},
   props: {
     to: {
@@ -291,7 +295,7 @@ export default {
       let translatedParams = translated.match(paramsPattern);
 
       if (translatedParams.length !== originalParams.length) {
-        this.showErrorAlert(null, "Params length not equal!");
+        NotificationService.showErrorAlert(null, "Params length not equal!");
         return;
       }
       for (let i = 0; i < translatedParams.length; i++) {

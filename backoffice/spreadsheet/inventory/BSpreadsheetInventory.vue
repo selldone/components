@@ -54,16 +54,18 @@ import {
   InventoryCsvFormat,
   InventoryCsvHeaders,
   InventoryCsvStyler,
-} from "@selldone/core-js/helper/csv/InventoryCsvFormat";
+} from "@selldone/core-js";
 import BSpreadsheet from "../BSpreadsheet.vue";
 import ImportInvalidCharacterErrorDialog from "../../spreadsheet/dialog/ImportInvalidCharacterErrorDialog.vue";
 import SpreadsheetMixin from "../../spreadsheet/mixins/SpreadsheetMixin";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 const Papa = require("papaparse");
 
 export default {
   name: "BSpreadsheetInventory",
-  mixins: [SpreadsheetMixin],
+  mixins: [SpreadsheetMixin ],
 
   emits: ["update:valid", "update:totalItems", "update:importType"],
   components: {
@@ -203,7 +205,7 @@ export default {
       const config = {
         complete: (results, file) => {
           //  console.log("Parsing complete:", results, file);
-          this.showSuccessAlert(null, "Load CSV file completed.");
+          NotificationService.showSuccessAlert(null, "Load CSV file completed.");
           this.loadCsvToSheet(results);
 
           this.inventory_import_type =
@@ -216,7 +218,7 @@ export default {
           );
 
           if (!valid) {
-            this.showErrorAlert(
+            NotificationService.showErrorAlert(
               null,
               "Invalid file format!<hr>" + InventoryCsvFormat.LastError,
             );
@@ -225,7 +227,7 @@ export default {
           this.$emit("update:valid", valid);
         },
         error: () => {
-          this.showErrorAlert(null, "Parsing error!");
+          NotificationService.showErrorAlert(null, "Parsing error!");
           this.$emit("update:valid", false);
 
           this.file = null;
@@ -244,7 +246,7 @@ export default {
       });
 
       if (!data || !data.length) {
-        this.showErrorAlert(null, "Can not read this file!");
+        NotificationService.showErrorAlert(null, "Can not read this file!");
       }
 
       const sheet = data;

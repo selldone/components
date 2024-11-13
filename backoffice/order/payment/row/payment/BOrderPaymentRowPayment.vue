@@ -381,9 +381,11 @@ import BOrderPaymentActionsRefundDialog from "@selldone/components-vue/backoffic
 import BOrderPaymentActionsDeliveryDialog from "@selldone/components-vue/backoffice/order/payment/actions/delivery/dialog/BOrderPaymentActionsDeliveryDialog.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BOrderPaymentRowPayment",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: {
     BOrderPaymentActionsDeliveryDialog,
@@ -498,19 +500,19 @@ export default {
           },
         )
         .then(({ data }) => {
-          if (data.error) return this.showErrorAlert(null, data.error_msg);
+          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
 
           Object.assign(this.payment, data.payment);
           this.$emit("payment-captured");
           this.dialog_capture = false;
 
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             "The fund has been captured successfully. We have been update order based on captured amount.",
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_capture = false;

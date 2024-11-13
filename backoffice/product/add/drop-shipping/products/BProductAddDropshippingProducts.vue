@@ -160,7 +160,7 @@
           size="small"
           icon
           variant="text"
-          :href="getProductLink(wholesalerShop, item.id)"
+          :href="ShopURLs.GetProductLink(wholesalerShop, item.id)"
           @click.stop
           target="_blank"
           title="See product page... (if available)"
@@ -391,10 +391,14 @@ import ProductVariantsView from "@selldone/components-vue/storefront/product/var
 import UPriceInput from "@selldone/components-vue/ui/price/input/UPriceInput.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import {Product} from "@selldone/core-js/models";
+import {ShopURLs} from "@selldone/core-js/helper";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BProductAddDropshippingProducts",
-  mixins: [ProductMixin],
+  mixins: [ProductMixin ],
   components: {
     UAvatarFolder,
     UPriceInput,
@@ -412,6 +416,8 @@ export default {
     },
   },
   data: () => ({
+    Product: Product,
+
     busy_fetch: false,
 
     //---------------------------------------
@@ -446,6 +452,9 @@ export default {
   }),
 
   computed: {
+    ShopURLs() {
+      return ShopURLs
+    },
     headers() {
       return [
         {
@@ -589,7 +598,7 @@ export default {
           this.total = data.total;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .then(() => {
           this.busy_fetch = false;
@@ -616,7 +625,7 @@ export default {
           this.total_categories = data.total;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .then(() => {
           this.busy_fetch = false;
@@ -654,16 +663,16 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.show_add_dialog = false;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("dropshipping_products.notifications.add_product"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .then(() => {
           this.busy_add = false;

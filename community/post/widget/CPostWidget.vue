@@ -355,9 +355,10 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
+
 export default {
   name: "CPostWidget",
-  mixins: [DateMixin, AuthMixin, CommunityMixin],
+  mixins: [DateMixin, AuthMixin, CommunityMixin ],
   components: {
     CAttachViewer,
     CProductView,
@@ -478,6 +479,13 @@ export default {
   mounted() {},
 
   methods: {
+    getVideoUrl(file_name: string) {
+      return window.CDN.GET_VIDEO_URL(file_name);
+    },
+    getVoiceUrl(file_name: string) {
+      return window.CDN.GET_VIDEO_URL(file_name);
+    },
+
     smartText(text) {
       return SmartConvertTextToHtmlHashtags(text, false, true);
     },
@@ -510,11 +518,11 @@ export default {
             Object.assign(this.post, data.post); // Update reactions count on post!
             this.$emit("update:action", data.action);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_reaction = false;
@@ -550,11 +558,11 @@ export default {
             this.topic.poll = data.poll;
             this.$emit("update:poll", data.poll);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_poll = false;

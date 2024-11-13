@@ -74,10 +74,13 @@
 import BCustomersFilterDesign from "../filter/design/BCustomersFilterDesign.vue";
 import { debounce } from "lodash-es";
 import UChartFunnel from "../../../ui/chart/funnel/UChartFunnel.vue";
-import { Customer } from "@selldone/core-js";
+import { Customer, FileHelper } from "@selldone/core-js";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BCustomersFunnel",
+  mixins: [],
   emits: ["update:modelValue", "update:count"],
   components: {
     UChartFunnel,
@@ -200,11 +203,11 @@ export default {
           if (!data.error) {
             this.shop_segments = data.segments;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_segments = false;
@@ -241,16 +244,16 @@ export default {
               );
 
             /*  if(download_data){
-                          const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
-                          excel.downLoad();
-            
-                        }*/
+                            const excel = new ExcelConverter(JSON.stringify(data.users),this.shop.name+" Customers",'Customers');
+                            excel.downLoad();
+              
+                          }*/
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_download = false;
@@ -275,10 +278,10 @@ export default {
         .then(({ data, headers }) => {
           console.log("headers", headers);
 
-          this.DownloadBlobFile(data, headers);
+          FileHelper.DownloadBlobFile(data, headers);
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_download = false;

@@ -274,11 +274,11 @@ export default {
           if (!response.data.error) {
             this.address_book = response.data.addresses;
           } else {
-            this.showErrorAlert(null, response.data.error_msg);
+            NotificationService.showErrorAlert(null, response.data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -286,7 +286,7 @@ export default {
     },
 
     deleteAddressBook(item) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("global.map_view.delete_address_dialog.title"),
         this.$t("global.map_view.delete_address_dialog.message"),
         this.$t("global.map_view.delete_address_dialog.action"),
@@ -299,11 +299,11 @@ export default {
               if (!response.data.error) {
                 this.DeleteItemByID(this.address_book, response.data.id);
               } else {
-                this.showErrorAlert(null, response.data.error_msg);
+                NotificationService.showErrorAlert(null, response.data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             });
         },
       );
@@ -342,7 +342,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("global.map_view.notifications.save_in_list"),
             );
@@ -352,11 +352,11 @@ export default {
             this.title_input = "";
             this.dialog_add_to_address_book = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;
@@ -392,7 +392,7 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.UpdateItemByID(this.address_book, data.address);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("global.map_view.notifications.edit_success", {
                 title: data.address.title,
@@ -400,11 +400,11 @@ export default {
             );
             this.dialog_add_to_address_book = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update_book = false;

@@ -177,7 +177,7 @@ export default {
           this.shop_tags = tags;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -206,7 +206,7 @@ export default {
       ) /*In the storefront*/
 
         .then(({}) => {
-          this.showSuccessAlert(null, `${old_tag} => ${new_tag}`);
+          NotificationService.showSuccessAlert(null, `${old_tag} => ${new_tag}`);
           this.show_edit_tag = false;
 
           // Replace new tag in tags list:
@@ -221,7 +221,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.loading_edit_tag = false;
@@ -258,7 +258,7 @@ export default {
       ) /*In Storefront*/
 
         .then(({ tags }) => {
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             null,
             this.$t("global.article_tags.notification.add_success") +
               ": <br>" +
@@ -267,7 +267,7 @@ export default {
           this.article.tags = tags;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_save = false;

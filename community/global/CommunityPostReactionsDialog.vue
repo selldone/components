@@ -90,10 +90,12 @@
 
 <script lang="ts">
 import { CommunityPostReaction } from "@selldone/core-js";
-import {EventBus} from "@selldone/core-js/events/EventBus";
+import { EventBus } from "@selldone/core-js/events/EventBus";
+
 
 export default {
   name: "CommunityPostReactionsDialog",
+  mixins: [],
   components: {},
   props: {
     community: {
@@ -207,11 +209,11 @@ export default {
               this.AddOrUpdateItemByID(this.reactions, r, "user_id");
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

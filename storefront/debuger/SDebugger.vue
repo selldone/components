@@ -192,8 +192,10 @@ import { SetupService } from "@selldone/core-js/server/SetupService";
 import { delay } from "lodash-es";
 import UTextValueBox from "../../ui/text/value-box/UTextValueBox.vue";
 
+
 export default {
   name: "SDebugger",
+  mixins: [],
   components: { UTextValueBox },
   props: {},
   data() {
@@ -517,7 +519,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(null, "Dev server config successfully!");
+            NotificationService.showSuccessAlert(null, "Dev server config successfully!");
 
             this.count_down_refresh = true;
 
@@ -526,12 +528,12 @@ export default {
               window.location.href = currentUrl.href;
             }, 5000);
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
           this.error_dev_serve = error;
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_dev_server = false;

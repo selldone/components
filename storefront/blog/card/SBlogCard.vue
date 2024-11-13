@@ -14,7 +14,7 @@
 
 <template>
   <v-card
-    :elevation="flat?0:elevation"
+    :elevation="flat ? 0 : elevation"
     :flat="flat"
     :color="color"
     :rounded="rounded"
@@ -37,8 +37,8 @@
       window.ExternalWidget && !viewOnly
         ? {
             href: is_product
-              ? getProductLink(shop, article.parent_id)
-              : getBlogLink(shop, article.parent_id),
+              ? ShopURLs.GetProductLink(shop, article.parent_id)
+              : ShopURLs.GetBlogLink(shop, article.parent_id),
             target: '',
           }
         : {}
@@ -61,9 +61,7 @@
         </template>
       </v-img>
     </div>
-    <v-icon v-if="is_product" class="absolute-top-end"
-      >shopping_bag
-    </v-icon>
+    <v-icon v-if="is_product" class="absolute-top-end">shopping_bag</v-icon>
 
     <v-card-title>
       {{ article.title }}
@@ -104,6 +102,8 @@
 <script lang="ts">
 import SBlogCardAuthorCategory from "../../../storefront/blog/card/author-category/SBlogCardAuthorCategory.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import { ShopBlog } from "@selldone/core-js/models";
+import {Product, ShopURLs} from "@selldone/core-js";
 
 export default {
   name: "SBlogCard",
@@ -117,8 +117,8 @@ export default {
     categories: {},
 
     flat: {},
-    elevation:{
-      default:5
+    elevation: {
+      default: 5,
     },
     rounded: {},
     dark: {},
@@ -126,7 +126,16 @@ export default {
 
     viewOnly: Boolean,
   },
+  data() {
+    return {
+      ShopBlog: ShopBlog,
+      Product: Product,
+    };
+  },
   computed: {
+    ShopURLs() {
+      return ShopURLs
+    },
     shop() {
       return this.getShop();
     },
@@ -137,6 +146,8 @@ export default {
       return this.article.parent_type === "product";
     },
   },
+
+  methods: {},
 };
 </script>
 
@@ -162,13 +173,10 @@ export default {
     border-radius: var(--radius) var(--radius) 0 0;
   }
 
-
-
   /*  &.-rect {
       --radius: 0;
     }*/
 }
-
 
 .title-blog {
   min-height: 4em;

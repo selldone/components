@@ -402,9 +402,11 @@ import { debounce } from "lodash-es";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BTransportationServiceLabels",
-  mixins: [BEventBusMixin,DateMixin],
+  mixins: [BEventBusMixin,DateMixin ],
   components: {
     BTransportationServiceRate,
     UTextValueDashed,
@@ -708,11 +710,11 @@ export default {
               else baske.rate = null;
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.$emit("update:busyRates", false);
@@ -768,11 +770,11 @@ export default {
               transportation_orders: data.transportation_orders,
             });
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add_order = false;

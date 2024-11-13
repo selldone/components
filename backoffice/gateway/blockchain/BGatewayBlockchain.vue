@@ -115,8 +115,12 @@
 </template>
 
 <script lang="ts">
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BGatewayBlockchain",
+  mixins:[],
   props: {
     gateway: {
       require: true,
@@ -187,13 +191,13 @@ export default {
               () => (Math.random() > 0.5 ? 1 : -1),
             );
 
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_gen = false;
@@ -224,13 +228,13 @@ export default {
             this.$emit("update:modelValue", data.wallet);
             this.show_create_wallet = false;
 
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((e) => {
-          this.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_create = false;

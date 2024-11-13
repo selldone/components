@@ -39,7 +39,8 @@
             v-model="segments_input"
             :label="$t('global.commons.segments')"
             :shop="shop"
-            variant="outlined" class="mt-5"
+            variant="outlined"
+            class="mt-5"
           ></b-customer-segment-input>
         </div>
       </v-card-text>
@@ -71,8 +72,11 @@
 import BCustomerSegmentInput from "../../../customer/segment/input/BCustomerSegmentInput.vue";
 import BShopCustomerBox from "../../../customer/box/BShopCustomerBox.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BCustomerSegmentDialog",
+  mixins: [],
   components: { BShopCustomerBox, BCustomerSegmentInput },
 
   props: {
@@ -119,17 +123,17 @@ export default {
           if (!data.error) {
             Object.assign(this.customer, data.customer);
             this.$emit("update", data.customer);
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               data.customer.name,
               "Customer has been updated successfully.",
             );
             this.close();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set_segments = false;

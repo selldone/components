@@ -501,7 +501,7 @@ export default {
     },
     removeOverrideState(state_code) {
       const state_name = this.states?.find((v) => v.code === state_code)?.name;
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         `Remove Override for ${state_name ? state_name : state_code}`,
         `Are you sure you want to remove the override rule for ${state_name ? state_name : state_code}? This action cannot be undone.`,
         "Yes, Remove Override",

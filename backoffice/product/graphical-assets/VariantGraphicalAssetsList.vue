@@ -91,8 +91,11 @@
 import SImageUploader from "../../../ui/uploader/SImageUploader.vue";
 import { throttle } from "lodash-es";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "VariantGraphicalAssetsList",
+  mixins: [],
   components: { SImageUploader },
   props: {
     shop: {
@@ -167,18 +170,18 @@ export default {
             this.variant_assets = data.variant_assets;
             this.totalItems = data.total;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
         });
     },
     deleteVariantAssets(asset) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         "Delete variant asset",
         "Upon removing this asset, any associated variant images will no longer be displayed. However, if you upload a new image with the same file name, the new image will be shown instead.",
         "Yes, Delete now",
@@ -197,11 +200,11 @@ export default {
                 this.DeleteItemByID(this.variant_assets, data.id);
                 this.totalItems--;
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = null;

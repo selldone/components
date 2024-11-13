@@ -140,7 +140,7 @@
                   temp_access.expire_at,
                 )}`"
                 :value="
-                  getShopMainUrl(shop) + '/?temp_access_key=' + temp_access.code
+                  ShopURLs.MainShopUrl(shop) + '/?temp_access_key=' + temp_access.code
                 "
                 icon="link"
                 small-width-mode
@@ -598,10 +598,13 @@ import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCen
 import { UMixinConfetti } from "@selldone/components-vue/mixin/confetti/UMixinConfetti.ts";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import {ShopURLs} from "@selldone/core-js/helper";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BShopAdd",
-  mixins: [UMixinConfetti, TemplateMixin, DateMixin],
+  mixins: [UMixinConfetti, TemplateMixin, DateMixin ],
   components: {
     UMapView,
     UWidgetHeader,
@@ -686,6 +689,9 @@ export default {
   }),
 
   computed: {
+    ShopURLs() {
+      return ShopURLs
+    },
     has_deal() {
       return this.USER().has_deal;
     },
@@ -903,13 +909,13 @@ export default {
         .get(window.API.GET_SEO_PREVIEW_SHOP(this.shop.id))
         .then(({ data }) => {
           if (data.error) {
-            t.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.rendered_on_google = data.html;
           }
         })
         .catch((error) => {
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_render_google = false;
@@ -929,9 +935,9 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_shop.notifications.add_success", {
                 name: this.title,
@@ -953,7 +959,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_add_shop = false;
@@ -973,9 +979,9 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("add_shop.notifications.edit_success"),
             );
@@ -993,7 +999,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit_shop = false;
@@ -1057,15 +1063,15 @@ export default {
         })
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.showSuccessAlert(null, "Access key generated successfully.");
+            NotificationService.showSuccessAlert(null, "Access key generated successfully.");
 
             this.temp_access = data.temp_access;
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_temp_access = false;

@@ -268,8 +268,12 @@ import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BShopSmsProvider",
+  mixins:[],
+
   components: {
     SWidgetButtons,
     USmartVerify,
@@ -389,11 +393,11 @@ export default {
 
             this.assign();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;
@@ -426,13 +430,13 @@ export default {
 
             if (data.sms_service.error) {
               // Some error!
-              this.showWarningAlert(
+              NotificationService.showWarningAlert(
                 "Something goes wrong!",
                 data.sms_service.error,
               );
             } else {
               // Success:
-              this.showSuccessAlert(
+              NotificationService.showSuccessAlert(
                 null,
                 "Shop SMS service updated successfully!",
               );
@@ -440,11 +444,11 @@ export default {
 
             this.edit_dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_set = false;
@@ -459,14 +463,14 @@ export default {
           if (!data.error) {
             this.sms_service = data.sms_service;
 
-            this.showSuccessAlert(null, "Shop SMS service errors reset!");
+            NotificationService.showSuccessAlert(null, "Shop SMS service errors reset!");
             this.edit_dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_reset = false;
@@ -479,17 +483,17 @@ export default {
         .post(window.API.POST_SHOP_SMS_SERVICE_ACTION_SYNC(this.shop.id))
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               "Contacts syncing started successfully. <br><hr>" + data.message,
             );
             this.edit_dialog = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_sync = false;

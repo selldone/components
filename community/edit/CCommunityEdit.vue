@@ -207,7 +207,7 @@
         <template v-slot:chip="{ item, props }">
           <v-chip v-bind="props">
             <img
-              :src="getFileExtensionImage(item.raw)"
+              :src="FileHelper.GetFileExtensionImage(item.raw)"
               class="me-1"
               height="16"
               width="16"
@@ -273,10 +273,12 @@ import USmartSelect from "../../ui/smart/select/USmartSelect.vue";
 import { throttle } from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import SWidgetButtons from "../../ui/widget/buttons/SWidgetButtons.vue";
-import { Community } from "@selldone/core-js";
+import { Community, FileHelper } from "@selldone/core-js";
+
 
 export default {
   name: "CCommunityEdit",
+  mixins: [],
   components: { SWidgetButtons, USmartSelect, USmartToggle, CImageInput },
 
   props: {
@@ -322,6 +324,9 @@ export default {
   },
 
   computed: {
+    FileHelper() {
+      return FileHelper;
+    },
     access() {
       return this.community && this.community.access;
     },
@@ -369,7 +374,7 @@ export default {
           this.name_error = data.error_msg;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_name = false;
@@ -426,13 +431,13 @@ export default {
               this.$emit("add:community", data.community);
             }
 
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

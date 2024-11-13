@@ -196,9 +196,11 @@
           variant="text"
           @click="$emit('onClose')"
           size="x-large"
-          :prepend-icon="step === 1?'close':'done'"
+          :prepend-icon="step === 1 ? 'close' : 'done'"
         >
-          {{step === 1? $t("global.actions.close"):$t("global.actions.done") }}
+          {{
+            step === 1 ? $t("global.actions.close") : $t("global.actions.done")
+          }}
         </v-btn>
 
         <v-btn
@@ -223,9 +225,12 @@ import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import { BasketItemReturn } from "@selldone/core-js";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 
 export default {
   name: "SShopBasketItemReturnForm",
+  mixins: [],
   components: {
     FilePond: FilePondLoader.loadFilePondComponent(),
 
@@ -366,6 +371,10 @@ export default {
   },
 
   methods: {
+    getShopFileTempPath(file_name: string) {
+      return window.CDN.GET_SHOP_TEMP_FILE_PATH(file_name);
+    },
+
     load_default() {
       this.step = 1;
 
@@ -399,26 +408,26 @@ export default {
             count: this.count,
             note: this.note,
             /*image: this.image,
-                                                    video: this.video,
-                                                    voice: this.voice*/
+                                                            video: this.video,
+                                                            voice: this.voice*/
           },
         )
         .then(({ data }) => {
           console.log(data);
           if (!data.error) {
-            t.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("return_request.notifications.add_success"),
             );
             t.basketItem.return_request = data.return_request;
             t.step = 2;
           } else {
-            t.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
           console.error(error);
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           t.busy = false;

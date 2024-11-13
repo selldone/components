@@ -481,9 +481,11 @@ import BAppDetailGallery from "../../app/detail/gallery/BAppDetailGallery.vue";
 import { Application } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BAppDetail",
-  mixins: [DateMixin],
+  mixins: [DateMixin ],
 
   components: { BAppDetailGallery, BAppComments },
   props: {
@@ -569,15 +571,15 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(null, `App's review has been saved.`);
+            NotificationService.showSuccessAlert(null, `App's review has been saved.`);
             this.app.my_review = data.app_review;
             this.rate_mode = false;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_review = false;
@@ -620,7 +622,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            t.showSuccessAlert(null, `App's config has been saved.`);
+            NotificationService.showSuccessAlert(null, `App's config has been saved.`);
             if (!data.shop_app.public) data.shop_app.public = {};
             if (!data.shop_app.private) data.shop_app.private = {};
             if (!data.shop_app.variables) data.shop_app.variables = {};
@@ -629,11 +631,11 @@ export default {
 
             //this.close();
           } else {
-            t.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          t.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           t.busy_save = false;
@@ -641,7 +643,7 @@ export default {
     },
 
     deleteApp() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("app_config.delete_dialog.title"),
         this.$t("app_config.delete_dialog.message"),
         this.$t("app_config.delete_dialog.action"),
@@ -651,7 +653,7 @@ export default {
             .delete(window.API.DELETE_APP(this.shopId, this.app.code))
             .then(({ data }) => {
               if (!data.error) {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t("app_config.notifications.uninstall_success"),
                 );
@@ -660,11 +662,11 @@ export default {
 
                 //t.close();
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_delete = false;

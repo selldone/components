@@ -168,8 +168,11 @@
 import SArticleComment from "./SArticleComment.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "SArticleComments",
+  mixins: [],
 
   components: {
     ULoadingEllipsis,
@@ -332,7 +335,7 @@ export default {
         .put(window.ARTICLE_API.PUT_UPDATE_COMMENT($event.comment_id), $event)
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
           this.comments[this.commentIndex($event.comment_id)].body =
@@ -341,7 +344,7 @@ export default {
             data.comment.updated_at;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update = null;
@@ -358,7 +361,7 @@ export default {
         )
         .then(({ data }) => {
           if (data.error) {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
           this.comments[this.commentIndex(comment_id)].reply =
@@ -367,7 +370,7 @@ export default {
             data.comment.updated_at;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_update = null;
@@ -415,7 +418,7 @@ export default {
           this.stopEditing();
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -427,7 +430,7 @@ export default {
     openDeleteAlert($event) {
       this.current_comment_id = $event.comment_id;
 
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("global.comments.delete_alert.title"),
         this.$t("global.comments.delete_alert.message"),
         this.$t("global.comments.delete_alert.action"),
@@ -445,18 +448,18 @@ export default {
             this.error_message = this.$t(
               "global.comments.cant_remove_this_comment",
             );
-            this.showErrorAlert("Error!", data.error_msg);
+            NotificationService.showErrorAlert("Error!", data.error_msg);
             return;
           }
           this.comments_count = data.count;
           this.comments.splice(this.commentIndex(data.comment.id), 1);
-          this.showSuccessAlert(
+          NotificationService.showSuccessAlert(
             this.$t("global.comments.delete_alert.title"),
             this.$t("global.comments.notifications.delete_success"),
           );
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         });
     },
 

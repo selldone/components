@@ -94,8 +94,10 @@ import { delay } from "lodash-es";
 import { ArticleReport } from "@selldone/core-js";
 import { EventBus } from "@selldone/core-js/events/EventBus";
 
+
 export default {
   name: "CommunityCommentActionsMenu",
+  mixins: [],
   components: { AFeedbackContentViolationReport },
   props: {
     community: {
@@ -215,13 +217,13 @@ export default {
           if (!data.error) {
             this.comment.body = data.body;
             this.edit_dialog = false;
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_edit = false;
@@ -230,7 +232,7 @@ export default {
 
     //――――――――――――――――――――――――― Delete ―――――――――――――――――――――――――
     deleteComment() {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("community.comment_actions.delete_dialog.title"),
         this.$t("community.comment_actions.delete_dialog.message"),
         this.$t("community.comment_actions.delete_dialog.action"),
@@ -253,11 +255,11 @@ export default {
                 }
                 Object.assign(this.post, data.post); // update total_comments
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy = false;
@@ -289,13 +291,13 @@ export default {
           if (!data.error) {
             this.comment.action = data.action;
             this.report_dialog = false;
-            this.showSuccessAlert();
+            NotificationService.showSuccessAlert();
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_report = false;

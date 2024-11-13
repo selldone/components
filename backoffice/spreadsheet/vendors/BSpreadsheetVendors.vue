@@ -56,14 +56,16 @@ import {
   VendorsCsvFormat,
   VendorsCsvHeaders,
   VendorsCsvStyler,
-} from "@selldone/core-js/helper/csv/VendorsCsvFormat";
+} from "@selldone/core-js";
 import SpreadsheetMixin from "../../spreadsheet/mixins/SpreadsheetMixin";
+
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 const Papa = require("papaparse");
 
 export default {
   name: "BSpreadsheetVendors",
-  mixins: [SpreadsheetMixin],
+  mixins: [SpreadsheetMixin ],
 
   components: {
     ImportInvalidCharacterErrorDialog,
@@ -179,7 +181,7 @@ export default {
       const config = {
         complete: (results, file) => {
           //  console.log("Parsing complete:", results, file);
-          this.showSuccessAlert(null, "Load CSV file completed.");
+          NotificationService.showSuccessAlert(null, "Load CSV file completed.");
           this.loadCsvToSheet(results);
 
           let valid = VendorsCsvFormat.CheckValidFile(this.headers);
@@ -187,7 +189,7 @@ export default {
           this.$emit("update:valid", valid);
         },
         error: () => {
-          this.showErrorAlert(null, "Parsing error!");
+          NotificationService.showErrorAlert(null, "Parsing error!");
           this.$emit("update:valid", false);
 
           this.file = null;
@@ -207,7 +209,7 @@ export default {
       });
 
       if (!data || !data.length) {
-        this.showErrorAlert(null, "Can not read this file!");
+        NotificationService.showErrorAlert(null, "Can not read this file!");
       }
 
       const sheet = data;
@@ -217,7 +219,7 @@ export default {
       // Validate header:
       if (!this.isValidVendorsCsv(this.headers)) {
         this.items = [];
-        this.showErrorAlert(null, "Invalid vendors format.");
+        NotificationService.showErrorAlert(null, "Invalid vendors format.");
         return;
       }
 

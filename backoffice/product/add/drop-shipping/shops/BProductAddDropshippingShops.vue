@@ -197,8 +197,11 @@ import { throttle } from "lodash-es";
 import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 import SCountrySelect from "@selldone/components-vue/ui/country/select/SCountrySelect.vue";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "BProductAddDropshippingShops",
+  mixins: [],
   components: {
     USmartToggle,
 
@@ -330,11 +333,11 @@ export default {
             this.drop_shops = data.shops;
             this.totalItems = data.total;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -351,16 +354,16 @@ export default {
           if (!data.error) {
             this.request_dialog = false;
             drop_shop.dropship_access = data.request;
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("dropshipping_products.notifications.request_access"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .then(() => {
           this.busy_request = null;

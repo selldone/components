@@ -67,8 +67,11 @@
 </template>
 
 <script lang="ts">
+
+
 export default {
   name: "CImageInput",
+  mixins:[],
   components: {},
   emits: ["update:modelValue"],
   props: {
@@ -114,7 +117,7 @@ export default {
       //   console.log(files);
 
       if (file.size > 2 * 1024 * 1024) {
-        this.showErrorAlert(null, "Max image size limit is 2Mb.");
+        NotificationService.showErrorAlert(null, "Max image size limit is 2Mb.");
         return;
       }
 

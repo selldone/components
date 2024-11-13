@@ -208,7 +208,7 @@
           <img
             v-for="id in service_ids"
             :key="id"
-            :src="getDeliveryServiceIcon(id, IMAGE_SIZE_SMALL)"
+            :src="DeliveryServiceHelper.GetDeliveryServiceIconById(id, IMAGE_SIZE_SMALL)"
             class="me-2"
             height="32"
             width="32"
@@ -265,6 +265,7 @@ import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
 import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
 import UDenseCirclesUsers from "../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
+import {DeliveryServiceHelper} from "@selldone/core-js/helper";
 
 export default {
   name: "BTransportationOverview",
@@ -287,6 +288,9 @@ export default {
   },
 
   computed: {
+    DeliveryServiceHelper() {
+      return DeliveryServiceHelper
+    },
     transportationObj() {
       return ShopTransportations[this.transportation.type];
     },

@@ -70,7 +70,7 @@ export default {
           this.vendor = vendor;
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

@@ -576,7 +576,7 @@ export default {
         })
         .catch((error) => {
           this.error_message_send_code = error.error_msg;
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_login = false;
@@ -617,7 +617,7 @@ export default {
         })
         .catch((error) => {
           this.error_message_otp_check = error.error_msg;
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -635,7 +635,7 @@ export default {
           this.handleToken(data.token, data.expires_in); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
@@ -662,7 +662,7 @@ export default {
           this.handleToken(data.token, data.expires_in); //  🚀 🚀 🚀 LOGIN  🚀 🚀 🚀
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
 
         .finally(() => {

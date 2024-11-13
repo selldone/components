@@ -108,8 +108,10 @@ import {
   SmartConvertTextToHtml,
 } from "@selldone/core-js/helper/html/HtmlHelper";
 
+
 export default {
   name: "BasketItemUserMessageForm",
+  mixins: [],
   components: { SBasketProductInputs },
   props: {
     product: {
@@ -251,10 +253,10 @@ export default {
             },
           },
           /* {
-                            basket_id: this.basket.id,
-                            variant_id: variant_id,
-                            message: this.message,
-                          }*/
+                                basket_id: this.basket.id,
+                                variant_id: variant_id,
+                                message: this.message,
+                              }*/
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -278,16 +280,16 @@ export default {
 
             this.invalidate = Math.random(); // Force invalidate completed percent!
 
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("global.basket_item_message.notifications.success"),
             );
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

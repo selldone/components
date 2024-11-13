@@ -491,9 +491,11 @@ import USmartVerify from "../../ui/smart/verify/USmartVerify.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "ShopSubscriptionList",
-  mixins: [DateMixin, CurrencyMixin],
+  mixins: [DateMixin, CurrencyMixin ],
 
   components: {
     USmartVerify,
@@ -662,11 +664,11 @@ export default {
           if (!data.error) {
             subscription.renewal = data.renewal;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_renewal = null;
@@ -698,11 +700,11 @@ export default {
             this.start_at = data.start_at;
             this.end_at = data.end_at;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_price = false;
@@ -717,11 +719,11 @@ export default {
           if (!data.error) {
             this.subscriptions = data.subscriptions;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -744,7 +746,7 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.showSuccessAlert(
+            NotificationService.showSuccessAlert(
               null,
               this.$t("shop_license.notifications.subscribe_success"),
             );
@@ -759,11 +761,11 @@ export default {
             // Update shop license:
             this.shop.license = data.shop_license;
           } else {
-            this.showErrorAlert(null, data.error_msg);
+            NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy_buy = false;
@@ -771,7 +773,7 @@ export default {
     },
 
     cancelSubscription(subscription_id) {
-      this.openDangerAlert(
+      NotificationService.openDangerAlert(
         this.$t("shop_license.cancel_dialog.title"),
         this.$t("shop_license.cancel_dialog.message"),
         this.$t("shop_license.cancel_dialog.action"),
@@ -785,7 +787,7 @@ export default {
             )
             .then(({ data }) => {
               if (!data.error) {
-                this.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t("shop_license.notifications.cancel_success"),
                 );
@@ -798,11 +800,11 @@ export default {
                 // Update shop license:
                 this.shop.license = data.shop_license;
               } else {
-                this.showErrorAlert(null, data.error_msg);
+                NotificationService.showErrorAlert(null, data.error_msg);
               }
             })
             .catch((error) => {
-              this.showLaravelError(error);
+              NotificationService.showLaravelError(error);
             })
             .finally(() => {});
         },
