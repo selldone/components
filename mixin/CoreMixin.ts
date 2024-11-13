@@ -507,9 +507,6 @@ const CoreMixin = {
     HasNotificationPermission() {
       return Notification && Notification.permission === "granted";
     },
-    /* EnablePushNotification() {
-                                                                                                          PushNotification.AskForPermission();
-                                                                                                        },*/
 
     //―――――――――――――――――――――― Copy Clipboard (Bug fixed in dialog) ――――――――――――――――――――
 

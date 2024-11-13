@@ -52,12 +52,12 @@ console.log(
   "color:#70557e;font-weight: 800;",
 );
 console.style(
-  '<b="font-size:20px;color:#112;font-family:Roboto;font-weight: 900;">🛍️ Selldone ® Business OS™</b>',
+  '<b="font-size:20px;color:#112;font-weight: 900;">🛍️ Selldone ® Business OS™</b>',
 );
 console.style(
-  '<b="color:green;font-family:Roboto;"> ✔ Commerce secure platform</b>',
+  '<b="color:green;"> ✔ Commerce secure platform</b>',
 );
-console.style('<css="font-family:Roboto;">🆕 Tanks using business OS.</css>');
+console.style('<css="">🆕 Tanks using business OS.</css>');
 console.log(
   "%c――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――",
   "color:#70557e;font-weight: 800;",

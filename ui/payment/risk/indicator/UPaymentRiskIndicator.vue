@@ -23,14 +23,14 @@
 </template>
 
 <script lang="ts">
-import chroma from "chroma-js";
+import { scale } from "chroma-js";
 
 export default {
   name: "UPaymentRiskIndicator",
 
   data: function () {
     return {
-      chromaScale: chroma.scale(["#00796B", "#FFA000", "#D32F2F"]),
+      chromaScale: scale(["#00796B", "#FFA000", "#D32F2F"]),
     };
   },
 

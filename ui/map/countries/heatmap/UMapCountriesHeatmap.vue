@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import chroma from "chroma-js";
+import { scale } from "chroma-js";
 import UMapCountriesSvg from "../../../../ui/map/countries/svg/UMapCountriesSvg.vue";
 import {
   getBaseCss,
@@ -45,11 +45,11 @@ export default {
       this.renderMapCSS();
     },
     highColor() {
-      this.chromaScale = chroma.scale([this.lowColor, this.highColor]);
+      this.chromaScale = scale([this.lowColor, this.highColor]);
       this.renderMapCSS();
     },
     lowColor() {
-      this.chromaScale = chroma.scale([this.lowColor, this.highColor]);
+      this.chromaScale = scale([this.lowColor, this.highColor]);
       this.renderMapCSS();
     },
   },
@@ -84,7 +84,7 @@ export default {
     return {
       map_id: "0",
       //node: document.createElement('style'),
-      chromaScale: chroma.scale([this.$props.lowColor, this.$props.highColor]),
+      chromaScale: scale([this.$props.lowColor, this.$props.highColor]),
       css: "",
     };
   },

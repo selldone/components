@@ -15,7 +15,7 @@
 import type {ICurrency} from "@selldone/core-js/enums/payment/Currency";
 import {Currency} from "@selldone/core-js/enums/payment/Currency";
 import {CurrencyHelper, PriceHelper} from "@selldone/core-js/helper";
-import {isString} from "lodash-es";
+import {isObject, isString} from "lodash-es";
 import {BasketItem, Shop} from "@selldone/core-js/models";
 
 const CurrencyMixin = {
@@ -27,7 +27,7 @@ const CurrencyMixin = {
 
       let currency: ICurrency | null = null;
       if (this.isObject(currency_code)) currency = currency_code as ICurrency;
-      else if (this.isString(currency_code))
+      else if (isString(currency_code))
         currency = Currency[currency_code as string];
       if (!currency) return "";
 
@@ -50,7 +50,7 @@ const CurrencyMixin = {
      * @constructor
      */
     SetUserSelectedCurrency(currency: ICurrency | keyof typeof Currency) {
-      if (!isString(currency)) currency = (currency as ICurrency).code;
+      if (isObject(currency)) currency = (currency as ICurrency).code;
 
       return CurrencyHelper.SetUserSelectedCurrency(
         this.$localstorage_base_path(),
@@ -78,7 +78,7 @@ const CurrencyMixin = {
       opt_currency: ICurrency | keyof typeof Currency | null = null,
       unicode = false,
     ): String {
-      if (!isString(opt_currency))
+      if (isObject(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
       return this.$t(
@@ -96,7 +96,7 @@ const CurrencyMixin = {
     GetUserSelectedCurrencyFloats(
       opt_currency: ICurrency | keyof typeof Currency | null = null,
     ) {
-      if (!isString(opt_currency))
+      if (isObject(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
       return CurrencyHelper.GetUserSelectedCurrencyFloats(
@@ -113,7 +113,7 @@ const CurrencyMixin = {
     GetUserSelectedCurrencyFormat(
       opt_currency: ICurrency | null | string = null,
     ) {
-      if (opt_currency && !isString(opt_currency))
+      if (opt_currency && isObject(opt_currency))
         opt_currency = (opt_currency as ICurrency).code;
 
       return CurrencyHelper.GetUserSelectedCurrencyFormat(
