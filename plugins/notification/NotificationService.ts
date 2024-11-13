@@ -52,15 +52,15 @@ class NotificationService {
     duration = 3000,
     img = null,
   ) {
-    if (!this.$t) return;
-    if (!title) title = this.$t("global.notification.confirm") as string;
+    if (!window.$t) return;
+    if (!title) title = window.$t("global.notification.confirm") as string;
 
-    this.$notify({
+    notify({
       group: "regular-notifications",
       title: title,
       text: message
         ? message
-        : (this.$t("global.notification.confirm_message") as string),
+        : (window.$t("global.notification.confirm_message") as string),
       duration: duration,
       type: "success",
       data: { img: img, icon: icon },
@@ -72,10 +72,10 @@ class NotificationService {
     message?: string,
     duration = 6000,
   ) {
-    if (!this.$t) return;
-    if (!title) title = this.$t("global.notification.warning") as string;
+    if (!window.$t) return;
+    if (!title) title = window.$t("global.notification.warning") as string;
 
-    this.$notify({
+    notify({
       group: "regular-notifications",
       title: title,
       text: message,
@@ -85,10 +85,10 @@ class NotificationService {
   }
 
   static showAwardAlert(title: string | null, message?: string) {
-    if (!this.$t) return;
-    if (!title) title = this.$t("global.notification.award") as string;
+    if (!window.$t) return;
+    if (!title) title = window.$t("global.notification.award") as string;
 
-    this.$notify({
+    notify({
       group: "regular-notifications",
       title: title,
       text: message,
@@ -105,10 +105,10 @@ class NotificationService {
     img = null,
     duration = 30000,
   ) {
-    if (!this.$t) return;
-    if (!title) title = this.$t("global.notification.caution") as string;
+    if (!window.$t) return;
+    if (!title) title = window.$t("global.notification.caution") as string;
 
-    this.$notify({
+    notify({
       group: "regular-notifications",
       title: title,
       text: message,
@@ -128,7 +128,7 @@ class NotificationService {
       title,
       message,
       accept,
-      reject: this.$t("global.actions.cancel"),
+      reject: window.$t("global.actions.cancel"),
       callback,
       color: color,
     });
@@ -144,15 +144,15 @@ class NotificationService {
       title,
       message,
       accept,
-      reject: this.$t("global.actions.no"),
+      reject: window.$t("global.actions.no"),
       callback,
       color: "success",
     });
   }
 
   static showMessage(title: string, message: string, duration: number = 12000) {
-    if (!title) title = this.$t("global.notification.message") as string;
-    this.$notify({
+    if (!title) title = window.$t("global.notification.message") as string;
+    notify({
       group: "regular-notifications",
       title: title,
       text: message,
@@ -176,7 +176,7 @@ class NotificationService {
     if (!error) return;
     if (isString(error)) {
       NotificationService.showErrorAlert(
-          this.$t("global.notification.error") as string,
+          window.$t("global.notification.error") as string,
           error,
       );
       return;
@@ -184,7 +184,7 @@ class NotificationService {
 
     if (error?.error_msg /*Errors in the response with 2xx code*/) {
       NotificationService.showErrorAlert(
-          this.$t("global.notification.error") as string,
+          window.$t("global.notification.error") as string,
           error.error_msg,
       );
       return;
@@ -194,12 +194,12 @@ class NotificationService {
       console.error("1- error", error);
       if (error.message) {
         NotificationService.showErrorAlert(
-            this.$t("global.notification.error") as string,
+            window.$t("global.notification.error") as string,
             `<div dir="ltr" class="text-left">${error.message}</div>`,
         );
       } else if (error.body) {
         NotificationService.showErrorAlert(
-            this.$t("global.notification.error") as string,
+            window.$t("global.notification.error") as string,
             `<div dir="ltr" class="text-left">${error.body}</div>`,
         );
       }
@@ -209,11 +209,11 @@ class NotificationService {
     // Handle CSRF token expire:
     if (error.response.status === 419) {
       NotificationService.showErrorAlert(
-          this.$t("global.notification.error") +
+          window.$t("global.notification.error") +
           " " +
           error.response.status +
           " | CSRF token mismatch.",
-          `<div class="text-start">${this.$t("global.errors.419")}</div>`,
+          `<div class="text-start">${window.$t("global.errors.419")}</div>`,
           null,
           60000,
       );
@@ -232,7 +232,7 @@ class NotificationService {
     if (data?.error_msg) {
       // Normal laravel app level errors
       NotificationService.showErrorAlert(
-          this.$t("global.notification.error") + " " + data.code,
+          window.$t("global.notification.error") + " " + data.code,
           `<div class="text-start">${data.error_msg}</div>`,
       );
     } else if (data?.errors) {
@@ -250,33 +250,33 @@ class NotificationService {
         error_msg = `<ul>${error_msg}</ul>`;
       }
       NotificationService.showErrorAlert(
-          this.$t("global.notification.error") + " " + error.response.status,
+          window.$t("global.notification.error") + " " + error.response.status,
           `<div class="text-start">${error_msg}</div>`,
       );
     } else if (data?.message) {
       NotificationService.showErrorAlert(
-          this.$t("global.notification.error") + " " + error.response.status,
+          window.$t("global.notification.error") + " " + error.response.status,
           `<div class="text-start">${data.message}</div>`,
       );
     } else {
       NotificationService.showErrorAlert(
-          this.$t("global.notification.error") + " " + error.response.status,
-          this.$t("global.notification.error_message") as string,
+          window.$t("global.notification.error") + " " + error.response.status,
+          window.$t("global.notification.error_message") as string,
       );
     }
   }
 
   //―――――――――――――――――――――― Common dialogs ――――――――――――――――――――
   static openDeleteAlert(callback: () => void) {
-    const title = this.$t("global.dialogs.delete.title");
-    const message = this.$t("global.dialogs.delete.message");
-    const accept = this.$t("global.dialogs.delete.action");
+    const title = window.$t("global.dialogs.delete.title");
+    const message = window.$t("global.dialogs.delete.message");
+    const accept = window.$t("global.dialogs.delete.action");
 
     EventBus.$emit("alert-dialog", {
       title,
       message,
       accept,
-      reject: this.$t("global.actions.cancel"),
+      reject: window.$t("global.actions.cancel"),
       callback,
       color: "red",
     });
