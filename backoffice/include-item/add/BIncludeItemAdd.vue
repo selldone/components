@@ -255,7 +255,7 @@ import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHead
 import { ShopURLs } from "@selldone/core-js/helper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
+import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "BIncludeItemAdd",
@@ -286,6 +286,7 @@ export default {
 
   data: function () {
     return {
+      ShopURLs: ShopURLs,
       includes: [],
       includes_dialog: false,
 

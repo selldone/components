@@ -441,6 +441,7 @@ export default {
   },
 
   data: () => ({
+    ShopURLs: ShopURLs,
     Slugify: Slugify,
 
     tab: "setting",
@@ -479,9 +480,7 @@ export default {
     ShopCategoryHelper() {
       return ShopCategoryHelper;
     },
-    ShopURLs() {
-      return ShopURLs;
-    },
+
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
