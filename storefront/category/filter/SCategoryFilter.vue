@@ -250,10 +250,10 @@ import SCategoryFilterSelector from "../../../storefront/category/filter/selecto
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
-import { GetNameOfColor, PriceHelper } from "@selldone/core-js/helper";
+import {  PriceHelper } from "@selldone/core-js/helper";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
-
+import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
 /**
  *
  */

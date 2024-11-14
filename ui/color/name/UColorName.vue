@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { GetNameOfColor } from "@selldone/core-js/helper";
+import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
 
 export default {
   name: "UColorName",

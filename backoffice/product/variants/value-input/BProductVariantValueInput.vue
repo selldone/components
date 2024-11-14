@@ -95,7 +95,7 @@ import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
-import { GetNameOfColor } from "@selldone/core-js/helper";
+import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
 
 export default {
   name: "BProductVariantValueInput",

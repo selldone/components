@@ -138,7 +138,7 @@ import VariantItemMini from "../../../../storefront/product/variant/VariantItemM
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
-import { GetNameOfColor } from "@selldone/core-js/helper";
+import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
 
 export default {
   name: "SProductSectionVariants",

@@ -202,7 +202,7 @@
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import UVariantAssetImage from "../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
-import { GetNameOfColor } from "@selldone/core-js/helper";
+import { GetNameOfColor } from "@selldone/core-js/helper/color/ColorHelper.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";

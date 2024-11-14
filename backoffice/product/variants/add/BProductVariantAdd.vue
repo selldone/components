@@ -674,7 +674,7 @@ import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants
 import BProductGraphicalAssetsSelector from "../../../product/graphical-assets/selector/BProductGraphicalAssetsSelector.vue";
 import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
-import { GetNameOfColor } from "@selldone/core-js/helper";
+import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
