@@ -183,6 +183,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import { throttle } from "lodash-es";
 import BMapTagAdd from "../../../map/tag/add/BMapTagAdd.vue";

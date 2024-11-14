@@ -357,6 +357,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SOrderBillCard from "../../../storefront/order/billing/card/SOrderBillCard.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SOrderDeliveryAutoComplete from "../../../storefront/order/auto-complete/SOrderDeliveryAutoComplete.vue";

@@ -326,6 +326,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import { throttle } from "lodash-es";
 import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";

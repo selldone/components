@@ -55,6 +55,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CCommentWidget from "../../../community/comment/widget/CCommentWidget.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";

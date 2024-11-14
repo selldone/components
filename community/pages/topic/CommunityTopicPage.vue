@@ -264,6 +264,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CPostWidget from "../../post/widget/CPostWidget.vue";
 import CPostEditor from "../../../community/post/editor/CPostEditor.vue";
 import CPostsFilter from "../../../community/post/filter/CPostsFilter.vue";

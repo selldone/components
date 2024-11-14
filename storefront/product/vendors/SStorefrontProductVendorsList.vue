@@ -50,6 +50,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { debounce } from "lodash-es";
 import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 

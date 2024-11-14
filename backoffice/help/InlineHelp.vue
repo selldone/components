@@ -137,6 +137,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 //―――――――――――――――――――――― Scrollbar Styler ――――――――――――――――――――
 
 import { VideoHelper } from "@selldone/core-js/helper/video/VideoHelper";

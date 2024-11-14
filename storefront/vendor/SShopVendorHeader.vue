@@ -37,6 +37,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 export default {
   name: "SShopVendorHeader",
   inject: ["$shop"],

@@ -119,6 +119,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CImageInput from "../../../community/image/input/CImageInput.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";

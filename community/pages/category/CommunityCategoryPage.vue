@@ -371,6 +371,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CommunityTopicCard from "../../../community/topic/CommunityTopicCard.vue";
 import CPostEditor from "../../../community/post/editor/CPostEditor.vue";

@@ -125,6 +125,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { defineComponent } from "vue";
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import BLogisticProfileInput from "../../../logistic/profile/input/BLogisticProfileInput.vue";

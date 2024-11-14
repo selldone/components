@@ -147,6 +147,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { PosDeviceTypes } from "@selldone/core-js/enums/pos/PosDeviceTypes";
 import UWidgetHeader from "../../../../ui/widget/header/UWidgetHeader.vue";
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";

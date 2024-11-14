@@ -247,6 +247,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SStorefrontLotteryPrizeDetail from "../../../storefront/lottery/prize-detail/SStorefrontLotteryPrizeDetail.vue";
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";

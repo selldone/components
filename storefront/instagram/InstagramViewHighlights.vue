@@ -300,6 +300,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import ProductsDenseImagesCircles from "../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import { InstagramHelper } from "./helpers/InstagramHelper.js";
 import UDragPin from "../../ui/drag/pin/UDragPin.vue";

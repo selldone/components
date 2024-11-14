@@ -62,6 +62,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import { ArticleReport } from "@selldone/core-js";
 import { EventBus } from "@selldone/core-js/events/EventBus";

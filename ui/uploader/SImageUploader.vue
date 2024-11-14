@@ -87,15 +87,20 @@
       <div v-if="!on_compact">
         <div v-if="label" class="label-top" v-html="label"></div>
         <div
-          :class="[{
-            dense: dense,
-            dark: dark,
-            disabled: disabled,
-            'has-value': true,
-            ctrl: ctrl,
-
-          },rounded?`rounded-${rounded}`:'']"
-          :style="{ minHeight: minHeight,border:border?'dashed thin #ddd':undefined  }"
+          :class="[
+            {
+              dense: dense,
+              dark: dark,
+              disabled: disabled,
+              'has-value': true,
+              ctrl: ctrl,
+            },
+            rounded ? `rounded-${rounded}` : '',
+          ]"
+          :style="{
+            minHeight: minHeight,
+            border: border ? 'dashed thin #ddd' : undefined,
+          }"
           class="uploader-container mx-auto overflow-hidden"
         >
           <v-slide-y-transition>
@@ -186,6 +191,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
 
 export default {
@@ -212,8 +219,8 @@ export default {
       required: false,
       type: String,
     },
-    extraParams:{
-      type:Object
+    extraParams: {
+      type: Object,
     },
 
     maxFileSize: {
@@ -256,8 +263,8 @@ export default {
       type: Boolean,
       default: false,
     },
-    rounded:{
-      default:'xl'
+    rounded: {
+      default: "xl",
     },
 
     dark: {
@@ -304,19 +311,18 @@ export default {
       default: false,
     },
     minHeight: { default: "240px" },
-    border:Boolean,
+    border: Boolean,
 
     autoCompact: {
       type: Boolean,
       default: false,
     },
     headers: {}, // Add extra headers
-
   },
 
   data: () => ({
     logo: null,
-  ///////  version: "",
+    ///////  version: "",
     last_image: null,
 
     focused: false,
@@ -331,10 +337,8 @@ export default {
   computed: {
     on_compact() {
       return (
-        this.autoCompact &&
-        this.last_image &&
-        !this.force_edit
-      //  && !this.last_image.includes("/image-placeholder")
+        this.autoCompact && this.last_image && !this.force_edit
+        //  && !this.last_image.includes("/image-placeholder")
       ); // /image-placeholder -> default place holder image!
     },
 
@@ -345,7 +349,7 @@ export default {
     },
     image_url() {
       if (!this.image) return null;
-      return this.image//// + this.version;
+      return this.image; //// + this.version;
     },
     server_credential() {
       const token = document.head.querySelector('meta[name="csrf-token"]');
@@ -370,14 +374,14 @@ export default {
           headers: headers,
           ondata: (formData) => {
             // Append extra parameters to the FormData object
-            if(this.extraParams ){
+            if (this.extraParams) {
               Object.keys(this.extraParams).forEach((key) => {
                 formData.append(key, this.extraParams[key]);
               });
             }
 
             return formData;
-          }
+          },
         },
         revert: null,
       };
@@ -390,7 +394,7 @@ export default {
   },
   created() {
     this.last_image = this.image;
-   ///////// this.version = "?v=" + Math.round(Math.random() * 100); //Invalidate cache!
+    ///////// this.version = "?v=" + Math.round(Math.random() * 100); //Invalidate cache!
   },
 
   mounted() {
@@ -418,7 +422,6 @@ export default {
   },
 
   methods: {
-
     onIntersect(isIntersecting) {
       this.focused = isIntersecting;
     },
@@ -427,7 +430,8 @@ export default {
       this.$emit("onError", error);
       if (error.main && error.sub)
         return NotificationService.showErrorAlert(error.main, error.sub);
-      else if (error.main) return NotificationService.showErrorAlert(null, error.main);
+      else if (error.main)
+        return NotificationService.showErrorAlert(null, error.main);
 
       NotificationService.showLaravelError(error);
       console.error("File upload error", error);
@@ -452,7 +456,7 @@ export default {
           this.$emit("new-url", response.files.url);
 
           this.$nextTick(() => {
-          //////  this.version = "?v=" + Math.random(100);
+            //////  this.version = "?v=" + Math.random(100);
           });
         }
 

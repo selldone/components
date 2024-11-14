@@ -196,6 +196,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 
 import InstagramViewMedias from "../../storefront/instagram/InstagramViewMedias.vue";

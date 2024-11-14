@@ -65,6 +65,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import ServiceBillingItem from "../../../../storefront/order/billing/ServiceBillingItem.vue";
 import { Basket } from "@selldone/core-js";
 

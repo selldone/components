@@ -144,6 +144,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
 
 export default {

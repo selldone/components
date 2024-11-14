@@ -102,6 +102,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SBasketProductInputs from "./SBasketProductInputs.vue";
 import {
   FORM_BUILDER_TAGS,

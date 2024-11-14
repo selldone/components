@@ -118,6 +118,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
 import SHyperCartItems from "../../../storefront/hyper/cart/items/SHyperCartItems.vue";
 import SHyperProduct from "../product/SHyperProduct.vue";

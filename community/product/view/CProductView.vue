@@ -51,6 +51,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SProductOverview from "../../../storefront/product/overview/SProductOverview.vue";
 import { SpecHelper } from "@selldone/core-js/helper/product/SpecHelper.ts";
 import { GtagEcommerce } from "../../../plugins/gtag/GtagEcommerce.ts";

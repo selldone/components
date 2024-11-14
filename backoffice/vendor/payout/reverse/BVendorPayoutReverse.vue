@@ -151,6 +151,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
 import UPodsPanel from "../../../../ui/pod/panel/UPodsPanel.vue";

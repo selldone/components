@@ -87,6 +87,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import UTagsCloud from "../../../ui/tag/cloud/UTagsCloud.vue";
 import { debounce } from "lodash-es";

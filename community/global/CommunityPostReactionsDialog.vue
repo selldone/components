@@ -89,6 +89,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { CommunityPostReaction } from "@selldone/core-js";
 import { EventBus } from "@selldone/core-js/events/EventBus";
 

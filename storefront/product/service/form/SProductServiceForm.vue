@@ -107,6 +107,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UTimeWeekPicker from "../../../../ui/time/week-picker/UTimeWeekPicker.vue";
 import { throttle } from "lodash-es";

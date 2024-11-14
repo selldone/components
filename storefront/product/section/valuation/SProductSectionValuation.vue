@@ -128,6 +128,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { FileHelper } from "@selldone/core-js/utils/file/FileHelper.ts";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";

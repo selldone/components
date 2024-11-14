@@ -92,6 +92,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SOrderChatMessage from "../message/SOrderChatMessage.vue";
 
 

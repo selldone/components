@@ -201,6 +201,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SShopBuyButton from "../../../../storefront/product/button/SShopBuyButton.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SShopProductFilesList from "../../../../storefront/product/file/SShopProductFilesList.vue";

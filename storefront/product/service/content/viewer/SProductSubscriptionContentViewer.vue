@@ -136,6 +136,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SShopProductFilesList from "../../../../../storefront/product/file/SShopProductFilesList.vue";
 import SFilesGroup from "../../../../../ui/file/group/SFilesGroup.vue";
 import { throttle } from "lodash-es";

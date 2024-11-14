@@ -90,6 +90,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";

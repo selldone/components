@@ -99,6 +99,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SStorefrontSocialButtons from "../../../../storefront/social/SStorefrontSocialButtons.vue";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 

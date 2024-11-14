@@ -120,6 +120,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UPaymentForm from "../../ui/payment/form/UPaymentForm.vue";
 import UProgressRadial from "../../ui/progress/radial/UProgressRadial.vue";

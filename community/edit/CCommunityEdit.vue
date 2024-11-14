@@ -267,6 +267,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CImageInput from "../../community/image/input/CImageInput.vue";
 import USmartToggle from "../../ui/smart/toggle/USmartToggle.vue";
 import USmartSelect from "../../ui/smart/select/USmartSelect.vue";

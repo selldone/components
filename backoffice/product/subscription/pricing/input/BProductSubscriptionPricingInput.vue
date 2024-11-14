@@ -118,6 +118,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import threads from "@selldone/core-js/utils/thread/threads";
 

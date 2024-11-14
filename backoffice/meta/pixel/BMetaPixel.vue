@@ -57,6 +57,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import {ShopPermissionRegions} from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {

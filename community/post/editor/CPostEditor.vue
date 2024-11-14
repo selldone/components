@@ -660,6 +660,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UVoiceBox from "../../../community/voice/box/UVoiceBox.vue";
 import UTabsRounded from "../../../ui/tab/rounded/UTabsRounded.vue";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules.ts";

@@ -123,6 +123,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { AvocadoItem, Basket } from "@selldone/core-js";
 import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
 

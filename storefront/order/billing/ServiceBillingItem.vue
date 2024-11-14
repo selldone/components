@@ -528,6 +528,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UDateInput from "../../../ui/date/input/UDateInput.vue";
 import UTasksEditor from "../../../ui/task/editor/UTasksEditor.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";

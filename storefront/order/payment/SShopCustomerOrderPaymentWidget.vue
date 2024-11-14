@@ -693,6 +693,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";

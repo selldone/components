@@ -121,6 +121,8 @@
   </div>
 </template>
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CPostEditor from "../../community/post/editor/CPostEditor.vue";
 import AFeedbackContentViolationReport from "../../article/feedback/conent-violation-report/AFeedbackContentViolationReport.vue";
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";

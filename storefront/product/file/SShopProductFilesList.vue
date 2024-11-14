@@ -103,6 +103,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import {FileHelper} from "@selldone/core-js/utils";

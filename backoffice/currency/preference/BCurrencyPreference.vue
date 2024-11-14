@@ -46,6 +46,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UCurrencySelector from "../../../ui/currency/selector/UCurrencySelector.vue";
 

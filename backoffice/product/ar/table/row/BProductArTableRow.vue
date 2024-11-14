@@ -269,6 +269,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SArModelUploader from "../../../../../ui/uploader/SArModelUploader.vue";
 import VariantItemViewMicro from "../../../../../storefront/product/variant/VariantItemViewMicro.vue";
 import UWidgetHeader from "../../../../../ui/widget/header/UWidgetHeader.vue";

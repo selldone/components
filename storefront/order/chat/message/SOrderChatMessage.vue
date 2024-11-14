@@ -79,6 +79,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {

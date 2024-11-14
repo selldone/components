@@ -342,6 +342,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { SmartConvertTextToHtmlHashtags } from "@selldone/core-js/helper/html/HtmlHelper.ts";
 import CCommentsList from "../../../community/comment/list/CCommentsList.vue";
 import CImageView from "../../../community/image/view/CImageView.vue";

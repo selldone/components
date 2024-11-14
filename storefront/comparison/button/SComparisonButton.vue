@@ -64,6 +64,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UProgressRadial from "../../../ui/progress/radial/UProgressRadial.vue";
 import SComparisonList from "../list/SComparisonList.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";

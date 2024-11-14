@@ -410,6 +410,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CImageView from "../../../community/image/view/CImageView.vue";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper.ts";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";

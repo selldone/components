@@ -140,6 +140,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SImageUploader from "./SImageUploader.vue";
 import SGridDraggableView from "../../ui/grid/draggable-view/SGridDraggableView.vue";
 

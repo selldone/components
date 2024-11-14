@@ -44,6 +44,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CImageView from "../../community/image/view/CImageView.vue";
 
 export default {

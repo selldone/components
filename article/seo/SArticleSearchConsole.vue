@@ -171,6 +171,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import numeral from "numeral";
 import UProgressScore from "../../ui/progress/score/UProgressScore.vue";

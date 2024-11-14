@@ -35,6 +35,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 
 export default {

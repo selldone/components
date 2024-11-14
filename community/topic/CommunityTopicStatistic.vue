@@ -33,6 +33,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CommunityStatisticView from "../statistics/CommunityStatisticView.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 import CommunityStatisticViewSkeleton from "../statistics/CommunityStatisticViewSkeleton.vue";

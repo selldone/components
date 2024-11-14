@@ -272,6 +272,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";

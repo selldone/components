@@ -63,6 +63,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CBreadcrumb from "../../../community/breadcrumb/CBreadcrumb.vue";
 import CPostWidget from "../../post/widget/CPostWidget.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";

@@ -164,6 +164,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import threads from "@selldone/core-js/utils/thread/threads";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 

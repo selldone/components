@@ -65,6 +65,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import WebhookTypes from "@selldone/core-js/enums/webhook/WebhookTypes";
 import SJsonTable from "../../../ui/json/table/SJsonTable.vue";
 

@@ -133,6 +133,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import SStorefrontCouponView from "../view/SStorefrontCouponView.vue";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";

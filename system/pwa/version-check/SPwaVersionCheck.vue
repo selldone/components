@@ -31,6 +31,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { debounce } from "lodash-es";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 

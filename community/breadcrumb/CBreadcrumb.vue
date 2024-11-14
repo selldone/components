@@ -608,6 +608,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import UButtonShareGroup from "../../ui/button/share/group/UButtonShareGroup.vue";
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";

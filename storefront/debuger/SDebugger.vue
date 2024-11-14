@@ -185,6 +185,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { LRUCache } from "@selldone/core-js/helper/cache/LRUCache";
 import { StorefrontDebugLogType } from "@selldone/core-js/enums/debug/StorefrontDebugLogType.ts";
 import { StorefrontDebugEvents } from "@selldone/core-js/enums/debug/StorefrontDebugEvents.ts";

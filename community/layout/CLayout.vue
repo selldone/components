@@ -137,6 +137,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import CommunityUserProfileDialog from "../../community/global/CommunityUserProfileDialog.vue";
 import CommunityShareDialog from "../../community/global/CommunityShareDialog.vue";
 import CommunityPostReactionsDialog from "../../community/global/CommunityPostReactionsDialog.vue";

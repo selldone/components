@@ -77,6 +77,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import ProductVariantsView from "../../../storefront/product/variant/ProductVariantsView.vue";
 import UChipDiscount from "../../../ui/chip/discount/UChipDiscount.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";

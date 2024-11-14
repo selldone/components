@@ -76,6 +76,8 @@ document.getElementById("form").addEventListener("submit", function(event) {
   </div>
 </template>
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import UTextCopyBox from "../../ui/text/copy-box/UTextCopyBox.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 

@@ -240,6 +240,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import BSpreadsheetVendors from "../../spreadsheet/vendors/BSpreadsheetVendors.vue";

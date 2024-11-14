@@ -145,6 +145,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import BClusterParent from "../../cluster/parent/BClusterParent.vue";
 import CircleImage from "../../../ui/image/CircleImage.vue";
 import { throttle } from "lodash-es";

@@ -139,6 +139,8 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import UTextValueDashed from "../../../../../ui/text/value-dashed/UTextValueDashed.vue";
 
