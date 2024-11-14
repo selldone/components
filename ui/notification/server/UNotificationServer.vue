@@ -67,13 +67,20 @@
 </template>
 
 <script lang="ts">
-import UTimeLaps from "../../../ui/time/lapse/UTimeLaps.vue";
-import UCountDown from "../../../ui/count-down/UCountDown.vue";
 import { DateConverter } from "@selldone/core-js";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "UNotificationServer",
-  components: { UCountDown, UTimeLaps },
+  components: {
+    UCountDown: defineAsyncComponent(
+      () => import("../../../ui/count-down/UCountDown.vue"),
+    ),
+
+    UTimeLaps: defineAsyncComponent(
+      () => import("../../../ui/time/lapse/UTimeLaps.vue"),
+    ),
+  },
   props: {
     notification: {},
     autoClose: { type: Boolean, default: false },
