@@ -27,7 +27,11 @@
 
           <v-img
             v-if="item.image"
-            :alt="item.image.alt"
+            :alt="
+              item.image.alt
+                ? item.image.alt
+                : `Product Image ${$product.title}`
+            "
             :src="getShopImagePath(item.image.path, IMAGE_SIZE_SMALL)"
             aspect-ratio="1"
             class="-slide"
@@ -113,7 +117,11 @@
           />
 
           <s-image
-            :alt="item.image.alt"
+            :alt="
+              item.image.alt
+                ? item.image.alt
+                : `Product Image ${$product.title}`
+            "
             :cover="!isStyleContain"
             :lazy-src="getShopImagePath(item.image.path, IMAGE_SIZE_SMALL)"
             :src="getShopImagePath(item.image.path)"

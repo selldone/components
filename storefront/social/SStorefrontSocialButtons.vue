@@ -57,6 +57,7 @@
         class="trn toc"
         height="20"
         width="20"
+        :alt="item.network"
       />
     </v-btn>
   </v-row>

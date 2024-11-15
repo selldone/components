@@ -24,6 +24,7 @@
     :height="background ? '100%' : size"
     :src="src"
     :width="background ? '100%' : size"
+    :alt="value"
   />
 </template>
 
