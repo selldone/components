@@ -1939,14 +1939,15 @@ import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPe
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import { Category, Product } from "@selldone/core-js/models";
-import {ShopURLs} from "@selldone/core-js/helper";
+import { ShopURLs } from "@selldone/core-js/helper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
+import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
+import { CleanCache } from "@selldone/core-js/server";
 
 export default {
   name: "BProductsWindow",
-  mixins: [DateMixin ],
+  mixins: [DateMixin],
 
   emits: [
     "click:ai-add",
@@ -2216,9 +2217,8 @@ export default {
   }),
 
   computed: {
-
     ShopURLs() {
-      return ShopURLs
+      return ShopURLs;
     },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
@@ -2567,6 +2567,8 @@ export default {
 
           // Remove cut product:
           this.$store.commit("setCutProduct", null);
+
+
         });
       }
       // -------------------------- Category --------------------------
@@ -2592,6 +2594,10 @@ export default {
         });
       }
       this.onDragEnd();
+
+
+      // Force clean all temporary cache!
+      CleanCache();
     },
 
     onDropEnter(category) {
@@ -2833,11 +2839,11 @@ export default {
 
       (this.IS_VENDOR_PANEL
         ? /*🟢 Vendor Panel 🟢*/ window.$vendor.product
-            .optimize(force?0:30)
+            .optimize(force ? 0 : 30)
             .cancellation()
             .list(this.vendor.id, offset, limit, params)
         : window.$backoffice.product
-            .optimize(force?0:30)
+            .optimize(force ? 0 : 30)
             .cancellation()
             .list(this.shop.id, offset, limit, params)
       )
@@ -2910,7 +2916,10 @@ export default {
               if (data.error) {
                 NotificationService.showErrorAlert(null, data.error_msg);
               } else {
-                NotificationService.showSuccessAlert(null, "The product removed.");
+                NotificationService.showSuccessAlert(
+                  null,
+                  "The product removed.",
+                );
                 // this.$emit("delete", product);
 
                 if (this.showDeletes) {
@@ -3003,7 +3012,10 @@ export default {
           if (data.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            NotificationService.showSuccessAlert(null, "The product restored successfully.");
+            NotificationService.showSuccessAlert(
+              null,
+              "The product restored successfully.",
+            );
 
             this.AddOrUpdateItemByID(this.products, data.product);
           }
