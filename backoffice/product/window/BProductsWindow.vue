@@ -2833,11 +2833,11 @@ export default {
 
       (this.IS_VENDOR_PANEL
         ? /*🟢 Vendor Panel 🟢*/ window.$vendor.product
-            .optimize(30)
+            .optimize(force?0:30)
             .cancellation()
             .list(this.vendor.id, offset, limit, params)
         : window.$backoffice.product
-            .optimize(30)
+            .optimize(force?0:30)
             .cancellation()
             .list(this.shop.id, offset, limit, params)
       )
