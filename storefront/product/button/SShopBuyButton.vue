@@ -71,6 +71,7 @@
         class="ms-2"
         src="../../../assets/icons/available-notify.svg"
         width="28"
+        alt="Available Notify"
       />
       <span v-if="forAvailable" class="mx-2">
         {{ $t("buy_button.waiting_for_availability") }}

@@ -54,8 +54,8 @@
             />
             <span
               class="text-subtitle-2"
-              :title="generateFullAddress(getOrder(item).receiver_info)"
-              >{{ generateFullAddress(getOrder(item).receiver_info) }}</span
+              :title="MapHelper.GenerateFullAddressFromMapInfo(getOrder(item).receiver_info)"
+              >{{ MapHelper.GenerateFullAddressFromMapInfo(getOrder(item).receiver_info) }}</span
             >
           </div>
 
@@ -370,7 +370,7 @@ import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPe
 import UMapGeoButton from "@selldone/components-vue/ui/map/geo-button/UMapGeoButton.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
-import {DeliveryServiceHelper} from "@selldone/core-js/helper";
+import {DeliveryServiceHelper, MapHelper} from "@selldone/core-js/helper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -422,6 +422,9 @@ export default {
     };
   },
   computed: {
+    MapHelper() {
+      return MapHelper
+    },
     DeliveryServiceHelper() {
       return DeliveryServiceHelper
     },

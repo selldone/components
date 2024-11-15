@@ -35,6 +35,7 @@
         :src="logo"
         :width="theme.logo_w"
         style="object-fit: contain"
+        :alt="`${$shop.title} Logo`"
       />
       <v-avatar
         v-else
@@ -51,7 +52,7 @@
                 : require('../../../../assets/icons/basket-w.svg')
               : logo
           "
-          alt="Shop"
+          :alt="`${$shop.title} Logo`"
           style="transition: none"
         />
       </v-avatar>

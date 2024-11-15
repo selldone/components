@@ -116,63 +116,62 @@
     ></instagram-view-highlights>
 
     <div class="container">
-      <template v-if="editable">
-        <v-btn
-          :color="show_heat ? 'blue' : undefined"
-          icon
-          title="Show heatmap"
-          variant="text"
-          @click="toggleHeat"
-        >
-          <v-icon>bar_chart</v-icon>
-        </v-btn>
+      <!--  <template v-if="editable">
+  <v-btn
+        :color="show_heat ? 'blue' : undefined"
+        icon
+        title="Show heatmap"
+        variant="text"
+        @click="toggleHeat"
+      >
+        <v-icon>bar_chart</v-icon>
+      </v-btn>
 
-        <v-expand-transition>
-          <div v-if="show_heat">
-            <v-btn-toggle
-              v-model="heatmap_filter"
-              :style="{ direction: $vuetify.locale.isRtl ? 'rtl' : 'ltr' }"
-              class="fadeIn widget-toggle"
-              mandatory
-              multiple
-              rounded
-              selected-class="black-flat"
-              @update:model-value="initHeatmap"
-            >
-              <v-btn stacked title="Likes" value="likes">
-                <v-icon
-                  :color="heatmap_filter.includes('likes') ? 'red' : undefined"
-                  >favorite
-                </v-icon>
-                likes
-              </v-btn>
-              <v-btn stacked title="Comments" value="comments">
-                <v-icon
-                  :color="
-                    heatmap_filter.includes('comments') ? 'blue' : undefined
-                  "
-                  >chat_bubble
-                </v-icon>
-                comments
-              </v-btn>
-              <v-btn stacked title="Video views" value="videoViewCount">
-                <v-icon
-                  :color="
-                    heatmap_filter.includes('videoViewCount')
-                      ? 'green'
-                      : undefined
-                  "
-                  >play_arrow
-                </v-icon>
-                plays
-              </v-btn>
-            </v-btn-toggle>
-          </div>
-        </v-expand-transition>
-      </template>
-
+      <v-expand-transition>
+        <div v-if="show_heat">
+          <v-btn-toggle
+            v-model="heatmap_filter"
+            :style="{ direction: $vuetify.locale.isRtl ? 'rtl' : 'ltr' }"
+            class="fadeIn widget-toggle"
+            mandatory
+            multiple
+            rounded
+            selected-class="black-flat"
+            @update:model-value="initHeatmap"
+          >
+            <v-btn stacked title="Likes" value="likes">
+              <v-icon
+                :color="heatmap_filter.includes('likes') ? 'red' : undefined"
+                >favorite
+              </v-icon>
+              likes
+            </v-btn>
+            <v-btn stacked title="Comments" value="comments">
+              <v-icon
+                :color="
+                  heatmap_filter.includes('comments') ? 'blue' : undefined
+                "
+                >chat_bubble
+              </v-icon>
+              comments
+            </v-btn>
+            <v-btn stacked title="Video views" value="videoViewCount">
+              <v-icon
+                :color="
+                  heatmap_filter.includes('videoViewCount')
+                    ? 'green'
+                    : undefined
+                "
+                >play_arrow
+              </v-icon>
+              plays
+            </v-btn>
+          </v-btn-toggle>
+        </div>
+      </v-expand-transition>
+    </template>
+-->
       <instagram-view-medias
-        ref="medias_container"
         :editable="editable"
         :instagram="instagram"
         :medias="medias"
@@ -202,13 +201,10 @@ import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper
 
 import InstagramViewMedias from "../../storefront/instagram/InstagramViewMedias.vue";
 import InstagramViewHighlights from "../../storefront/instagram/InstagramViewHighlights.vue";
-import * as h337 from "heatmap.js";
-import { delay } from "lodash-es";
-
 
 export default {
   name: "SInstagramView",
-  mixins:[],
+  mixins: [],
   components: {
     InstagramViewHighlights,
     InstagramViewMedias,
@@ -256,101 +252,102 @@ export default {
   },
 
   methods: {
-    toggleHeat() {
-      this.show_heat = !this.show_heat;
-
-      if (this.show_heat) {
-        this.initHeatmap();
-      } else {
-        this.destroyHeatmap();
-      }
-    },
-
-    onResize() {
-      if (!this.show_heat) return;
-
-      delay(() => {
-        this.initHeatmap();
-      }, 500);
-    },
+    /* toggleHeat() {
+       this.show_heat = !this.show_heat;
+ 
+       if (this.show_heat) {
+         this.initHeatmap();
+       } else {
+         this.destroyHeatmap();
+       }
+     },
+ 
+     onResize() {
+       if (!this.show_heat) return;
+ 
+       delay(() => {
+         this.initHeatmap();
+       }, 500);
+     },*/
     //------------------------------------- Visualize Heatmap For Admin ------------------------------------------------
-
-    initHeatmap() {
-      if (!this.show_heat) return;
-
-      let data = [];
-      let max = 0;
-      let min = 10000;
-
-      const container_rect =
-        this.$refs.medias_container.$el.getBoundingClientRect();
-
-      let i = 0;
-      this.medias.forEach((media) => {
-        let x = (((i % 3) + 0.5) * container_rect.width) / 3;
-        let y = ((Math.floor(i / 3) + 0.5) * container_rect.width) / 3;
-
-        let val = 0;
-        if (this.heatmap_filter.includes("likes")) val += media.likes;
-        if (this.heatmap_filter.includes("comments")) val += media.comments;
-        if (this.heatmap_filter.includes("videoViewCount"))
-          val += media.videoViewCount;
-
-        // val=200;
-        data.push({
-          x: Math.round(x),
-          y: Math.round(y),
-          value: val,
-        });
-
-        max = Math.max(max, val);
-        min = Math.min(max, val);
-        i++;
-      });
-
-      // Destroy if element change!
-      if (
-        this.heatmap &&
-        this.last_heatmap_el !== this.$refs.medias_container.$el
-      ) {
-        this.destroyHeatmap();
-      }
-
-      // console.log('this.$refs.page_render.$el',this.$refs.page_render.$refs)
-      if (!this.heatmap) {
-        this.heatmap = h337.create({
-          container: this.$refs.medias_container.$el,
-          maxOpacity: 0.6,
-          radius: (0.9 * container_rect.width) / 3,
-          blur: 0.7,
-          backgroundColor: "rgba(0, 0, 0, 0)",
-          gradient: {
-            // enter n keys between 0 and 1 here
-            // for gradient color customization
-            ".5": "#03A9F4",
-            ".6": "#FFC107",
-            ".8": "#D32F2F",
-            ".95": "#C2185B",
-          },
-        });
-      }
-
-      this.heatmap.setData({
-        min: min,
-        max: max,
-        data: data, // [{ x: 10, y: 15, value: 5},{ x: 200, y: 105, value: 5}]
-      });
-      // console.log("data",data, min, max);
-      // console.log("data", data, max, this.$refs.medias_container.$el, this.heatmap);
-    },
-    destroyHeatmap() {
-      //find corresponding canvas element
-      const canvas = this.heatmap._renderer.canvas;
-      //remove the canvas from DOM
-      $(canvas).remove();
-
-      this.heatmap = null;
-    },
+    /*
+        initHeatmap() {
+          if (!this.show_heat) return;
+    
+          let data = [];
+          let max = 0;
+          let min = 10000;
+    
+          const container_rect =
+            this.$refs.medias_container.$el.getBoundingClientRect();
+    
+          let i = 0;
+          this.medias.forEach((media) => {
+            let x = (((i % 3) + 0.5) * container_rect.width) / 3;
+            let y = ((Math.floor(i / 3) + 0.5) * container_rect.width) / 3;
+    
+            let val = 0;
+            if (this.heatmap_filter.includes("likes")) val += media.likes;
+            if (this.heatmap_filter.includes("comments")) val += media.comments;
+            if (this.heatmap_filter.includes("videoViewCount"))
+              val += media.videoViewCount;
+    
+            // val=200;
+            data.push({
+              x: Math.round(x),
+              y: Math.round(y),
+              value: val,
+            });
+    
+            max = Math.max(max, val);
+            min = Math.min(max, val);
+            i++;
+          });
+    
+          // Destroy if element change!
+          if (
+            this.heatmap &&
+            this.last_heatmap_el !== this.$refs.medias_container.$el
+          ) {
+            this.destroyHeatmap();
+          }
+    
+          // console.log('this.$refs.page_render.$el',this.$refs.page_render.$refs)
+          if (!this.heatmap) {
+            this.heatmap = h337.create({
+              container: this.$refs.medias_container.$el,
+              maxOpacity: 0.6,
+              radius: (0.9 * container_rect.width) / 3,
+              blur: 0.7,
+              backgroundColor: "rgba(0, 0, 0, 0)",
+              gradient: {
+                // enter n keys between 0 and 1 here
+                // for gradient color customization
+                ".5": "#03A9F4",
+                ".6": "#FFC107",
+                ".8": "#D32F2F",
+                ".95": "#C2185B",
+              },
+            });
+          }
+    
+          this.heatmap.setData({
+            min: min,
+            max: max,
+            data: data, // [{ x: 10, y: 15, value: 5},{ x: 200, y: 105, value: 5}]
+          });
+          // console.log("data",data, min, max);
+          // console.log("data", data, max, this.$refs.medias_container.$el, this.heatmap);
+        },
+        
+        destroyHeatmap() {
+          //find corresponding canvas element
+          const canvas = this.heatmap._renderer.canvas;
+          //remove the canvas from DOM
+          $(canvas).remove();
+    
+          this.heatmap = null;
+        },*/
     //-------------------------------------------------------------------------------------
 
     /**
@@ -389,9 +386,9 @@ export default {
             // Maybe has more data:
             this.has_more = data.medias.length >= this.itemsPerPage;
 
-            delay(() => {
-              this.initHeatmap();
-            }, 500);
+            /*  delay(() => {
+                  this.initHeatmap();
+                }, 500);*/
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
           }

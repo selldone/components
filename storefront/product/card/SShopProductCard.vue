@@ -35,7 +35,11 @@
       <div class="overflow-hidden position-relative card-wrap">
         <div class="card__info-hover">
           <div class="card__clock-info float-start">
-            <img :src="getProductTypeImage(product.type)" width="20" />
+            <img
+              :src="getProductTypeImage(product.type)"
+              width="20"
+              :alt="product.type"
+            />
           </div>
         </div>
 
@@ -299,7 +303,11 @@
                     <v-icon class="mx-1" color="#D32F2F" size="x-small"
                       >fa:fas fa-plus</v-icon
                     >
-                    <img height="24" src="../../../assets/icons/coupon.svg" />
+                    <img
+                      height="24"
+                      src="../../../assets/icons/coupon.svg"
+                      alt="Coupon"
+                    />
                   </span>
                 </p>
               </div>
@@ -312,6 +320,7 @@
                 <img
                   :src="require('../../../assets/icons/sold.svg')"
                   :width="'36px'"
+                  alt="Sold out"
                 />
               </template>
 
@@ -320,6 +329,7 @@
                 :src="require('../../../assets/icons/sold.svg')"
                 class="float-end"
                 width="20px"
+                alt="Sold out"
               />
             </v-col>
           </v-row>
@@ -332,7 +342,7 @@
            -->
 
         <span v-if="hasOffer" class="offer-top-end"
-          ><img src="../../../assets/icons/gift-w.svg" />
+          ><img src="../../../assets/icons/gift-w.svg" alt="Gift" />
           <span>{{ $t("global.commons.offer") }}</span></span
         >
       </div>
@@ -340,6 +350,7 @@
       <img
         v-if="hasDiscountCountDown"
         class="count-down-bg fadeIn delay_400"
+        alt="Countdown"
         src="../../../assets/icons/countdown-badge.svg"
       />
 
@@ -436,6 +447,7 @@
                 <img
                   v-if="hasCoupon"
                   height="24"
+                  alt="Coupon"
                   src="../../../assets/icons/coupon.svg"
                   title="Has extra coupon!"
                 />
@@ -462,6 +474,7 @@
               </h5>
               <img
                 :src="require('../../../assets/icons/sold.svg')"
+                alt="Sold out"
                 width="36px"
               />
             </div>
@@ -484,7 +497,7 @@
         </v-row>
 
         <span v-if="hasOffer" class="offer-top-end"
-          ><img src="../../../assets/icons/gift-w.svg" />
+          ><img src="../../../assets/icons/gift-w.svg" alt="Gift" />
           <span>{{ $t("global.commons.offer") }}</span></span
         >
       </v-container>
@@ -494,6 +507,7 @@
         v-if="hasDiscountCountDown"
         class="count-down-bg fadeIn delay_400"
         src="../../../assets/icons/countdown-badge.svg"
+        alt="Countdown"
       />
 
       <div

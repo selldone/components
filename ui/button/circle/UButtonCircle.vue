@@ -91,6 +91,7 @@
             :src="src"
             :style="isCurrent || forceFill ? 'padding:3px' : ''"
             style="aspect-ratio: 1"
+            :alt="`${tooltip} Icon`"
           />
         </v-avatar>
         <slot v-else></slot>

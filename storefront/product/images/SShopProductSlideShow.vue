@@ -187,6 +187,7 @@
               :key="prev_item.image"
               :src="getShopImagePath(prev_item.image.path, IMAGE_SIZE_SMALL)"
               class="pa-2 hover-scale-small"
+              alt="Previous"
             />
             <v-icon v-else-if="prev_item.video">smart_display</v-icon>
             <v-icon v-else-if="prev_item.ar">view_in_ar</v-icon>
@@ -207,6 +208,7 @@
               :key="next_item.image"
               :src="getShopImagePath(next_item.image.path, IMAGE_SIZE_SMALL)"
               class="pa-2 hover-scale-small"
+              alt="Next"
             />
             <v-icon v-else-if="next_item.video">smart_display</v-icon>
             <v-icon v-else-if="next_item.ar">view_in_ar</v-icon>

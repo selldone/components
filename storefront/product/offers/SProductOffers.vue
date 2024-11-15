@@ -85,6 +85,7 @@
                     height="32"
                     src="../../../assets/icons/gift-w.svg"
                     width="32"
+                    alt="Gift"
                   />
                 </v-sheet>
               </div>

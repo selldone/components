@@ -45,6 +45,7 @@
             height="16"
             src="../../../assets/selldone-logo/logo-mini-white.svg"
             width="16"
+            alt="Selldone"
           />
 
           Edit Guide

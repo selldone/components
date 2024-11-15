@@ -281,7 +281,7 @@
                     <div>
                       <v-icon color="red" size="small">close</v-icon>
                       <small>{{ $t("global.commons.old") }}:</small>
-                      <b>{{ generateFullAddress(item.data.old) }}</b>
+                      <b>{{ MapHelper.GenerateFullAddressFromMapInfo(item.data.old) }}</b>
                       <u-map-geo-button
                         v-if="item.data.old && item.data.old.location"
                         :icon="true"
@@ -293,7 +293,7 @@
                     <div class="mt-2">
                       <v-icon color="green" size="small">check</v-icon>
                       <small>{{ $t("global.commons.new") }}:</small>
-                      <b>{{ generateFullAddress(item.data.new) }}</b>
+                      <b>{{ MapHelper.GenerateFullAddressFromMapInfo(item.data.new) }}</b>
                       <u-map-geo-button
                         v-if="item.data.new && item.data.new.location"
                         :icon="true"
@@ -436,7 +436,7 @@ import { TimelineEmailType } from "@selldone/core-js/enums/timeline/TimelineEmai
 import {
   CampaignLink,
   Club,
-  DeliveryServiceHelper,
+  DeliveryServiceHelper, MapHelper,
   Order,
 } from "@selldone/core-js";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
@@ -532,6 +532,9 @@ export default {
     };
   },
   computed: {
+    MapHelper() {
+      return MapHelper
+    },
     DeliveryServiceHelper() {
       return DeliveryServiceHelper;
     },

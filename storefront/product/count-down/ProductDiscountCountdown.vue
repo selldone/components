@@ -19,6 +19,7 @@
       class="count-down-bg fadeIn delay_400"
       fetchpriority="high"
       src="../../../assets/icons/countdown-badge.svg"
+      alt="Discount countdown"
     />
 
     <div class="count-down-container fadeIn delay_400">

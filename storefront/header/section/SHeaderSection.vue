@@ -57,24 +57,34 @@
 </template>
 
 <script lang="ts">
-import SStorefrontLotteryWheelOfFortune from "../../../storefront/lottery/wheel-of-fortune/SStorefrontLotteryWheelOfFortune.vue";
 import SHeaderSectionLogo from "../../../storefront/header/section/logo/SHeaderSectionLogo.vue";
 import SHeaderSectionDrawerMenu from "@selldone/components-vue/storefront/header/section/drawer-menu/SHeaderSectionDrawerMenu.vue";
 import SHeaderSectionButtons from "@selldone/components-vue/storefront/header/section/buttons/SHeaderSectionButtons.vue";
-import SHeaderSectionUser from "@selldone/components-vue/storefront/header/section/user/SHeaderSectionUser.vue";
 import { ThemeHelper } from "@selldone/core-js";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import { defineAsyncComponent } from "vue";
 
 export default {
   name: "SHeaderSection",
   mixins: [TemplateMixin],
   components: {
-    SHeaderSectionUser,
+    SHeaderSectionUser: defineAsyncComponent(
+      () =>
+        import(
+          "@selldone/components-vue/storefront/header/section/user/SHeaderSectionUser.vue"
+        ),
+    ),
+
+    SStorefrontLotteryWheelOfFortune: defineAsyncComponent(
+      () =>
+        import(
+          "../../../storefront/lottery/wheel-of-fortune/SStorefrontLotteryWheelOfFortune.vue"
+        ),
+    ),
+
     SHeaderSectionButtons,
     SHeaderSectionDrawerMenu,
     SHeaderSectionLogo,
-
-    SStorefrontLotteryWheelOfFortune,
   },
   inject: ["$shop"],
   props: {

@@ -40,6 +40,7 @@
         height="28"
         src="../../../../assets/icons/track-price.svg"
         width="28"
+        alt="Track price"
       />
       <div class="font-weight-black single-line">
         {{ $t("product_info.track_price") }}

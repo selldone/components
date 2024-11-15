@@ -29,7 +29,7 @@
       <!--    v-bind="file.download_link ? { href: file.download_link } : undefined" -->
       <template v-slot:prepend>
         <v-avatar tile>
-          <img :src="FileHelper.GetFileExtensionImage(file.name)" />
+          <img :src="FileHelper.GetFileExtensionImage(file.name)" :alt="`File Format`" />
         </v-avatar>
       </template>
 

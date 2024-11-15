@@ -69,7 +69,7 @@
       <v-card>
         <v-card-title>
           <v-avatar class="me-2" size="36">
-            <img :src="getShopImagePath(product.icon, 64)" />
+            <img :src="getShopImagePath(product.icon, 64)" alt="Product Image" />
           </v-avatar>
           {{ product.title }} | <b> Subscription</b>
         </v-card-title>

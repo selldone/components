@@ -173,6 +173,7 @@
             :style="{
               objectFit: $product?.style?.contain ? 'contain' : 'cover',
             }"
+            alt="Product Image"
           />
         </v-avatar>
         <div class="sticky-content">

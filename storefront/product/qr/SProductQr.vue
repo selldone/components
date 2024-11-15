@@ -19,7 +19,7 @@
     tile
     variant="text"
     @click="show_qr = true"
-    ><img src="@selldone/components-vue/assets/icons/qr-code.svg" width="32" />
+    ><img src="@selldone/components-vue/assets/icons/qr-code.svg" width="32" alt="QR Code" />
     <v-tooltip activator="parent" location="bottom"> Barcode</v-tooltip>
   </v-btn>
 

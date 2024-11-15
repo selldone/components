@@ -40,7 +40,7 @@
       <span class="field-value" @click.stop="$emit('show:map')">
         {{
           receiverInfo.address
-            ? generateFullAddress(receiverInfo)
+            ? MapHelper.GenerateFullAddressFromMapInfo(receiverInfo)
             : $t("global.receiver_info.enter_value")
         }}
       </span>
@@ -128,6 +128,7 @@ import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 import UMapViewPin from "../../../ui/map/view/market/UMapViewPin.vue";
 import { CountriesResourceHelper } from "@selldone/components-vue/utils/country/CountriesResourceHelper.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+import {MapHelper} from "@selldone/core-js/helper";
 
 export default {
   name: "SShopCustomerReceiverInfoWidget",
@@ -149,6 +150,9 @@ export default {
   },
 
   computed: {
+    MapHelper() {
+      return MapHelper
+    },
     countries() {
       return this.$store.getters.getCountries;
     },

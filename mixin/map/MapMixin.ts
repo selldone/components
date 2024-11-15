@@ -15,7 +15,6 @@
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
 import {EventBus, EventName} from "@selldone/core-js/events/EventBus.ts";
 import {Map, Order} from "@selldone/core-js/models";
-import {MapHelper} from "@selldone/core-js/helper";
 
 const MapMixin = {
   methods: {
@@ -42,10 +41,6 @@ const MapMixin = {
 
     closeMap() {
       EventBus.$emit(EventName.HIDE_MAP);
-    },
-
-    generateFullAddress(info_object: Order.IAddress) {
-      return MapHelper.GenerateFullAddressFromMapInfo(info_object);
     },
   },
 };

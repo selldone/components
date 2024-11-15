@@ -32,6 +32,7 @@
         <img
           :src="lead_time_object.icon"
           :title="lead_time_object.title(this, $product.lead)"
+          alt="Lead Time"
         />
         <p class="-badge-title">
           {{ lead_time_object.title(this, $product.lead) }}
@@ -46,6 +47,7 @@
             })
           "
           src="../../../../assets/product-badges/return_order.svg"
+          alt="Return Order"
         />
         <p class="-badge-title">
           {{
@@ -60,6 +62,7 @@
         <img
           :title="$t('product_info.support24h7')"
           src="../../../../assets/product-badges/support_24h.svg"
+          alt="24/7 Support"
         />
         <p class="-badge-title">
           {{ $t("product_info.support24h7") }}
@@ -69,6 +72,7 @@
         <img
           :title="$t('product_info.support_normal')"
           src="../../../../assets/product-badges/support_normal.svg"
+          alt="Normal Support"
         />
 
         <p class="-badge-title">
@@ -80,6 +84,7 @@
         <img
           :title="$t('product_info.original_guarantee')"
           src="../../../../assets/product-badges/orginal_warranty.svg"
+          alt="Original Warranty"
         />
 
         <p class="-badge-title">
@@ -90,6 +95,7 @@
         <img
           :title="$t('product_info.cod_payment')"
           src="../../../../assets/product-badges/cash_on_delivery.svg"
+          alt="Cash on Delivery"
         />
 
         <p class="-badge-title">
@@ -117,6 +123,7 @@
             :src="getShopImagePath(badge.image)"
             :title="badge.title"
             class="rounded hover-scale"
+            alt="Custom Badge"
           />
           <p v-if="badge.title" class="-badge-title">
             {{ badge.title }}

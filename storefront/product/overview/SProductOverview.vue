@@ -69,6 +69,7 @@
               <img
                 :src="getProductTypeImage($product.type)"
                 :title="getProductTypeName($product.type)"
+                alt="Product Type"
                 class="m-1 me-2 flex-grow-0"
                 height="16"
                 width="16"

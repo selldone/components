@@ -40,6 +40,7 @@
         class="ms-1"
         height="16"
         width="16"
+        alt="Transportation Logo"
       />
     </span>
 
@@ -83,6 +84,7 @@
                           18,
                         )
                       "
+                      alt="Pickup Location"
                     />
                   </v-avatar>
                 </template>

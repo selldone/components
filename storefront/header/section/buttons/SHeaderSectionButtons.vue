@@ -23,9 +23,13 @@
     :tooltip="$t('global.commons.orders')"
     class="me-3 fadeIn delay_300"
     dense
-    exact tile
-    :src="dark?require('./assets/order-history-w.svg'):require('./assets/order-history.svg')"
-
+    exact
+    tile
+    :src="
+      dark
+        ? require('./assets/order-history-w.svg')
+        : require('./assets/order-history.svg')
+    "
   >
   </u-button-circle>
 
@@ -40,7 +44,11 @@
     badge-color="teal"
     class="me-3 fadeIn delay_300"
     dense
-    :src="dark?require('./assets/shopping-bag-w.svg'):require('./assets/shopping-bag.svg')"
+    :src="
+      dark
+        ? require('./assets/shopping-bag-w.svg')
+        : require('./assets/shopping-bag.svg')
+    "
     tile
     persist-badge
     @click="show_basket = true"
@@ -117,7 +125,7 @@ import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCu
 import { ShopOptionsHelper } from "@selldone/core-js";
 import BasketTopMenu from "@selldone/components-vue/storefront/order/basket/BasketTopMenu.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import {EventBus} from "@selldone/core-js/events/EventBus";
+import { EventBus } from "@selldone/core-js/events/EventBus";
 
 export default {
   name: "SHeaderSectionButtons",

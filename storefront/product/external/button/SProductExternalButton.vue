@@ -31,6 +31,7 @@
       :src="action_image"
       height="20"
       width="auto"
+      :alt="`${action_text} Logo`"
 
     />
     {{ action_text }}

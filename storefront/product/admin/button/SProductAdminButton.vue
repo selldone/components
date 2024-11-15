@@ -24,6 +24,7 @@
       height="16"
       src="@selldone/components-vue/assets/selldone-logo/logo-mini-white.svg"
       width="16"
+      alt="Selldone"
     />
     Product Admin
     <v-icon class="mx-1" size="small">open_in_new</v-icon>

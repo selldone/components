@@ -37,6 +37,7 @@
                     128,
                   )
                 "
+                :alt="`${cross_sell.target.title} Image`"
               />
               <v-icon v-else>widgets</v-icon>
 
@@ -165,8 +166,8 @@ import CrossSellActionType from "@selldone/core-js/enums/product/CrossSellAction
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
-import {Product} from "@selldone/core-js/models";
-import {ShopURLs} from "@selldone/core-js/helper";
+import { Product } from "@selldone/core-js/models";
+import { ShopURLs } from "@selldone/core-js/helper";
 
 export default {
   name: "SProductCrossSells",
@@ -190,7 +191,7 @@ export default {
 
   computed: {
     ShopURLs() {
-      return ShopURLs
+      return ShopURLs;
     },
     CrossSellActionType() {
       return CrossSellActionType;

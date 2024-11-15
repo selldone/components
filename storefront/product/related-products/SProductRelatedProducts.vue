@@ -45,7 +45,7 @@
                     class="avatar-gradient -thin -shop mb-3"
                     size="96"
                   >
-                    <img :src="getShopImagePath(category.icon)" />
+                    <img :src="getShopImagePath(category.icon)" :alt="`Category Image ${category.title}`" />
                   </v-avatar>
                   <p>
                     <b>{{ category.title }}</b>

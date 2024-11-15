@@ -29,6 +29,7 @@
         :href="item.href"
         class="menu-item pp"
         :target="item.target"
+        :role="!item.href?'button':undefined"
       >
         {{ item.name }}
         <v-icon v-if="item.target === '_blank'" size="x-small" class="ms-1">launch</v-icon>

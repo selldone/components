@@ -33,6 +33,7 @@
                 :src="FileHelper.GetFileExtensionImage(extension)"
                 style="vertical-align: top"
                 width="20"
+                alt="File Format"
               />
               {{ numeralFormat(val, "0.[0] a") }}🞬
             </div>

@@ -190,7 +190,7 @@
 <script lang="ts">
 import UMapGeoButton from "../../ui/map/geo-button/UMapGeoButton.vue";
 import BOrderButtonBasket from "../order/button/basket/BOrderButtonBasket.vue";
-import { Basket } from "@selldone/core-js";
+import {Basket, MapHelper} from "@selldone/core-js";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 
 export default {
@@ -246,7 +246,7 @@ export default {
     },
 
     full_address() {
-      return this.generateFullAddress(this.mapInfo);
+      return MapHelper.GenerateFullAddressFromMapInfo(this.mapInfo);
     },
 
     location() {

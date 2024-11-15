@@ -40,6 +40,7 @@
               :src="getShopImagePath(it.image)"
               class="-image"
               loading="eager"
+              alt="Product Include Image"
             />
 
             <div class="-title">
@@ -78,6 +79,7 @@
             :src="getShopImagePath(it.image)"
             class="-image"
             loading="eager"
+            alt="Product Include Image"
           />
 
           <div class="-title">

@@ -17,7 +17,7 @@
     <div class="d-flex align-center">
       <h2>
         <v-avatar class="hover-scale me-1" size="24">
-          <img :src="getProductImage(item.product_id)" />
+          <img :src="getProductImage(item.product_id)" :alt="`${item.product.title} Image`" />
         </v-avatar>
 
         {{ item.product.title }}

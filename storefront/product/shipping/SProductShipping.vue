@@ -48,6 +48,7 @@
                       )
                     "
                     class="hover-scale"
+                    alt="Pickup Location"
                   />
                 </a>
                 <div class="-address">
@@ -92,6 +93,7 @@
                 class="ma-2 img-grayscale"
                 height="32"
                 width="32"
+                alt="Shipping Logo"
               />
             </div>
           </template>
@@ -115,6 +117,7 @@
             height="16"
             src="../../../assets/selldone-logo/logo-mini-white.svg"
             width="16"
+            alt="Selldone"
           />
 
           Edit Shipping

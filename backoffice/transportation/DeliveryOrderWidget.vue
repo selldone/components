@@ -93,6 +93,7 @@
 
 <script lang="ts">
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+import {MapHelper} from "@selldone/core-js/helper";
 
 export default {
   name: "DeliveryOrderWidget",
@@ -110,7 +111,7 @@ export default {
     },
 
     full_address() {
-      return this.generateFullAddress(this.mapInfo);
+      return MapHelper.GenerateFullAddressFromMapInfo(this.mapInfo);
     },
 
     location() {
