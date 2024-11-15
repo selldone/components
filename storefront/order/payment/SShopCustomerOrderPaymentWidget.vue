@@ -654,7 +654,13 @@
           cols="12"
           @click="createMyPortalUrl()"
         >
-          <v-btn :loading="busy_portal" class="float-end" icon variant="text"  color="#1976D2">
+          <v-btn
+            :loading="busy_portal"
+            class="float-end"
+            icon
+            variant="text"
+            color="#1976D2"
+          >
             <v-icon>open_in_new</v-icon>
           </v-btn>
 
@@ -713,11 +719,11 @@ import SOrderPaymentRowCashback from "@selldone/components-vue/storefront/order/
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CoreMixin from "@selldone/components-vue/mixin/CoreMixin.ts";
 import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
-
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "SShopCustomerOrderPaymentWidget",
-  mixins: [DateMixin,CoreMixin ,ClubMixin],
+  mixins: [DateMixin, CoreMixin, ClubMixin, CurrencyMixin],
 
   components: {
     SOrderPaymentRowCashback,
