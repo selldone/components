@@ -39,6 +39,8 @@
           class="me-2"
           rounded
           variant="text"
+          :aria-label="`${tab.title} Link`"
+          role="link"
         >
           <v-icon
             v-if="tab.icon"
@@ -65,6 +67,8 @@
         class="me-2"
         rounded
         variant="text"
+        :aria-label="`${tab.title} Menu`"
+        role="button"
       >
         <v-icon
           v-if="tab.icon"
@@ -261,6 +265,11 @@ export default {
     $route(val) {
       this.visibles = new Array(this.visibles.length).fill(false);
     },
+  },
+
+
+  created() {
+    this.visibles = Array(this.tabs.length).fill(false);
   },
 
   methods: {

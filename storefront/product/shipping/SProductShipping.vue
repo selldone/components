@@ -48,7 +48,6 @@
                       )
                     "
                     class="hover-scale"
-                    alt="Pickup Location"
                   />
                 </a>
                 <div class="-address">

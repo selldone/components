@@ -39,27 +39,22 @@ import { PriceHelper } from "@selldone/core-js/helper";
 export default {
   name: "ProductDiscountCountdown",
   mixins: [ProductMixin],
-  components: { UCountDown },
-
-  props: {
-    product: {
-      required: true,
-      type: Object,
+  inject: {
+    $product: {},
+    $variant: {
+      default: null,
     },
   },
+  components: { UCountDown },
+
+  props: {},
 
   computed: {
     hasDiscountCountDown() {
-      return PriceHelper.HasDiscountCountDownMode(
-        this.product,
-        this.currentVariant,
-      );
+      return PriceHelper.HasDiscountCountDownMode(this.$product, this.$variant);
     },
     endOfDiscountDate() {
-      return PriceHelper.GetEndOfDiscountDate(
-        this.product,
-        this.currentVariant,
-      );
+      return PriceHelper.GetEndOfDiscountDate(this.$product, this.$variant);
     },
   },
 };
@@ -68,13 +63,12 @@ export default {
 <style lang="scss" scoped>
 .count-down-bg {
   position: absolute;
-  top: -9px;
+  top: -10px;
   left: -10px;
   z-index: 3;
   width: 200px;
   pointer-events: none;
 
-  -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
 }
 
@@ -82,14 +76,11 @@ export default {
   .count-down-bg {
     right: -10px;
     left: unset;
-    -webkit-transform: unset;
     transform: unset;
   }
 
   .count-down-container {
-    -ms-transform: rotate(42deg) translate(24%, -30%); /* IE 9 */
-    -webkit-transform: rotate(42deg) translate(24%, -30%); /* Safari */
-    transform: rotate(42deg) translate(24%, -30%); /* Standard syntax */
+    transform: rotate(42deg) translate(24%, -30%);
   }
 }
 
@@ -99,15 +90,13 @@ export default {
 
   user-select: none;
   text-align: center;
-  top: 1px;
-  left: 1px;
+  top: 0px;
+  left: 0px;
   right: 0;
   z-index: 4;
   padding: 6px;
   color: #fff;
 
-  -ms-transform: rotate(-42deg) translate(-24%, -30%);
-  -webkit-transform: rotate(-42deg) translate(-24%, -30%);
   transform: rotate(-42deg) translate(-24%, -30%);
 
   //  background: rgba(194, 24, 91, 0.8);

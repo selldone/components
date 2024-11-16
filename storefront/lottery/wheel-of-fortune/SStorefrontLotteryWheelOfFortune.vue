@@ -253,10 +253,9 @@ import SStorefrontLotteryPrizeDetail from "../../../storefront/lottery/prize-det
 import { SoundHelper } from "@selldone/core-js/helper/sound/SoundHelper";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 
-
 export default {
   name: "SStorefrontLotteryWheelOfFortune",
-  mixins:[],
+  mixins: [],
 
   components: { ULottie, SStorefrontLotteryPrizeDetail },
   inject: ["$shop"],
@@ -344,7 +343,7 @@ export default {
   },
 
   created() {
-    this.fetchLottery();
+    if (this.USER()) this.fetchLottery();
   },
   methods: {
     reset() {

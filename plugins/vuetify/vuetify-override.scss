@@ -14,6 +14,6 @@
 @use 'sass:map';
 @use 'vuetify' with (
   $font-size-root: 15px,
-  $body-font-family: 'Inter, sans-serif', // Set Inter as the default font
+  $body-font-family: ('Inter', sans-serif) // Set Inter as the default font
   // other overrides
 );

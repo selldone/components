@@ -13,6 +13,7 @@
  */
 
 import { SetupService } from "@selldone/core-js/server/SetupService.ts";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 /**
  *
@@ -70,7 +71,7 @@ export const BackofficeMixinAuth = {
           window.location.href = SetupService.MainServiceUrl(); // Refresh the page!
         })
         .catch((error) => {
-          this.showLaravelError(error);
+          NotificationService.showLaravelError(error);
         });
     },
   },

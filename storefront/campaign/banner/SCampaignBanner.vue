@@ -50,6 +50,7 @@
               size="42"
               variant="text"
               @click.stop="dismiss"
+              aria-label="Close Banner"
             >
               <v-icon>close</v-icon>
             </v-btn>

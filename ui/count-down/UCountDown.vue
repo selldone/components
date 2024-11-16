@@ -180,13 +180,13 @@ export default {
 }
 
 .vuejs-countdown .digit {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 600;
   line-height: 1.4;
   margin-bottom: 0;
 
   @media only screen and (max-width: 600px) {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
   }
 }
 

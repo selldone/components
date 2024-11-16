@@ -141,7 +141,13 @@ export default {
   mixins: [ProductMixin],
 
   components: { UPriceInvalid, SProductSectionWaitingAuction, SProductPrice },
-  inject: ["$shop", "$product", "$variant"],
+  inject: {
+    $shop: {},
+    $product: {},
+    $variant: {
+      default: null, // Provide a default value if $variant is not injected
+    },
+  },
   props: {
     selectedVendorProduct: {},
     preferences: {},

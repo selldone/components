@@ -15,14 +15,14 @@
 <template>
   <div class="s--product-section-tax px-2 mb-2 flex-grow-0">
     <span v-html="tax && tax_string" class="-tax-box"></span>
-    <span v-if="has_free_shipping" class="-shipping-box text-success">
+    <span v-if="has_free_shipping" class="-shipping-box text-green-darken-2">
       ● {{ $t("global.commons.free_shipping") }}
       <span
         v-if="
           transportation_with_min_free_shipping_limit?.free_shipping_limit > 0
         "
         class="mx-1"
-        >(<v-icon color="success" size="small">shopping_bag</v-icon>
+        >(<v-icon size="small">shopping_bag</v-icon>
         {{ $t("global.commons.over") }}
         <u-price
           :amount="
@@ -41,6 +41,7 @@
         height="16"
         width="16"
         alt="Transportation Logo"
+        style="object-fit: contain"
       />
     </span>
 
@@ -51,6 +52,8 @@
         class="-pickup-box"
         color="#000"
         variant="flat"
+        aria-label="Pickup Transportation"
+        role="button"
       >
         <v-icon size="small" start>place</v-icon>
         {{

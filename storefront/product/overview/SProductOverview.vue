@@ -332,9 +332,7 @@
 
     <!-- ████████████████████ Discount Countdown ████████████████████ -->
 
-    <product-discount-countdown
-      :product="$product"
-    ></product-discount-countdown>
+    <product-discount-countdown></product-discount-countdown>
   </div>
 </template>
 

@@ -22,18 +22,34 @@
       md="3"
       sm="3"
     >
-      <router-link
-        v-for="(item, i) in menu[index - 1]"
-        :key="i"
-        :to="item.to"
-        :href="item.href"
-        class="menu-item pp"
-        :target="item.target"
-        :role="!item.href?'button':undefined"
-      >
-        {{ item.name }}
-        <v-icon v-if="item.target === '_blank'" size="x-small" class="ms-1">launch</v-icon>
-      </router-link>
+      <template v-for="(item, i) in menu[index - 1]" :key="i">
+        <router-link
+          v-if="item.to"
+          :to="item.to"
+          class="menu-item pp"
+          :target="item.target"
+          :role="!item.href ? 'button' : undefined"
+        >
+          {{ item.name }}
+          <v-icon v-if="item.target === '_blank'" size="x-small" class="ms-1">
+            launch
+          </v-icon>
+        </router-link>
+        <a
+          v-else-if="item.href"
+          :href="item.href"
+          class="menu-item pp"
+          :target="item.target"
+        >
+          {{ item.name }}
+          <v-icon v-if="item.target === '_blank'" size="x-small" class="ms-1">
+            launch
+          </v-icon>
+        </a>
+        <span v-else class="menu-item pp" role="button">
+          {{ item.name }}
+        </span>
+      </template>
     </v-col>
   </v-row>
 </template>
