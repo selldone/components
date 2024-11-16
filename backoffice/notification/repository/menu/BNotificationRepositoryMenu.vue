@@ -187,9 +187,11 @@
 import { NotificationRepositoryType } from "@selldone/core-js/enums/notification/NotificationRepositoryType";
 import ProductsDenseImagesCirclesLinks from "../../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCirclesLinks.vue";
 import { NotificationHelper } from "@selldone/core-js/enums/notification/NotificationHelper";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BNotificationRepositoryMenu",
+  mixins: [DateMixin],
   components: { ProductsDenseImagesCirclesLinks },
   props: {},
   data: () => ({

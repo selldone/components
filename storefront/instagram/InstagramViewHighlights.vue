@@ -312,11 +312,11 @@ import { throttle } from "lodash-es";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import { ShopURLs } from "@selldone/core-js/helper";
-
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "InstagramViewHighlights",
-  mixins: [BEventBusMixin, ProductMixin],
+  mixins: [BEventBusMixin, ProductMixin, DateMixin],
   components: {
     SShopBuyButton,
     UVariantSelector,

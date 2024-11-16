@@ -524,10 +524,11 @@ import { PricingTypes } from "@selldone/core-js/enums/product/PricingTypes";
 import BNoteButton from "../../../../note/button/BNoteButton.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductWindowProductLarge",
-  mixins: [ProductMixin],
+  mixins: [ProductMixin,DateMixin],
 
   components: {
     UPriceInvalid,

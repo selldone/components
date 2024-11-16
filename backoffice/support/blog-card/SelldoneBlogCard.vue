@@ -100,9 +100,11 @@
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import SBlogCardAuthorCategory from "../../../storefront/blog/card/author-category/SBlogCardAuthorCategory.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SelldoneBlogCard",
+  mixins: [DateMixin],
   components: { SBlogCardAuthorCategory },
   props: {
     blog: {},
