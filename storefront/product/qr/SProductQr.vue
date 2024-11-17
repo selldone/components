@@ -19,8 +19,13 @@
     tile
     variant="text"
     @click="show_qr = true"
-    ><img src="@selldone/components-vue/assets/icons/qr-code.svg" width="32" alt="QR Code" />
-    <v-tooltip activator="parent" location="bottom"> Barcode</v-tooltip>
+    aria-label="QR Code - Link to product page"
+    ><img
+      src="@selldone/components-vue/assets/icons/qr-code.svg"
+      width="32"
+      alt="QR Code"
+    />
+    <v-tooltip activator="parent" location="bottom" aria-hidden="true"> Barcode</v-tooltip>
   </v-btn>
 
   <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Dialog > QR Code ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->

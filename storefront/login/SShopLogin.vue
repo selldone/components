@@ -204,7 +204,7 @@
             >
               <template v-slot:prepend>
                 <v-avatar>
-                  <v-img :src="getUserAvatar(user.id)"></v-img>
+                  <v-img :src="getUserAvatar(user.id)" alt="User"></v-img>
                 </v-avatar>
               </template>
 
@@ -295,7 +295,7 @@
         <div class="-msg">
           <div class="d-flex align-items-center justify-center">
             <v-avatar class="avatar-gradient -thin -shop"
-              ><img :src="getShopIcon($shop.id)"
+              ><img :src="getShopIcon($shop.id)" alt="Shop"
             /></v-avatar>
             <p class="text-subtitle-2 mx-2 my-2">{{ $shop.title }}</p>
           </div>
@@ -324,7 +324,7 @@
           >
             <template v-slot:prepend>
               <v-avatar class="float-start ms-n2" color="#fff" size="32"
-                ><img class="p-2" src="../../assets/trademark/google.svg"
+                ><img class="p-2" src="../../assets/trademark/google.svg" alt="Google"
               /></v-avatar>
             </template>
 
@@ -349,7 +349,7 @@
           >
             <template v-slot:prepend>
               <v-avatar class="float-start ms-n2" color="#fff" size="32"
-                ><img class="p-2" src="../../assets/trademark/apple-b.svg"
+                ><img class="p-2" src="../../assets/trademark/apple-b.svg" alt="Apple"
               /></v-avatar>
             </template>
             <span>{{ $t("global.need_login.login_apple") }}</span>
@@ -381,7 +381,7 @@
           >
             <template v-slot:prepend>
               <v-avatar class="float-start ms-n2" color="#fff" size="32"
-                ><img class="p-2" src="../../assets/trademark/meta.png"
+                ><img class="p-2" src="../../assets/trademark/meta.png" alt="Meta"
               /></v-avatar>
             </template>
             <span>{{ $t("global.need_login.login_facebook") }}</span>
@@ -405,7 +405,7 @@
           >
             <template v-slot:prepend>
               <v-avatar class="float-start ms-n2" color="#fff" size="32">
-                <img class="p-2" src="../../assets/trademark/selldone.svg" />
+                <img class="p-2" src="../../assets/trademark/selldone.svg" alt="Selldone" />
               </v-avatar>
             </template>
             <span>{{ $t("global.need_login.login_account") }}</span>

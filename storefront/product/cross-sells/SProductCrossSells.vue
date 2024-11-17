@@ -50,7 +50,7 @@
                   >add
                 </v-icon>
                 <v-avatar class="avatar-gradient -thin -current" size="36">
-                  <img :src="getShopImagePath($product.icon, 128)" />
+                  <img :src="getShopImagePath($product.icon, 128)" :alt="`Product Image: ${$product.title}`" />
                 </v-avatar>
               </div>
             </v-avatar>

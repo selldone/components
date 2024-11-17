@@ -20,7 +20,7 @@
     @error="loading = false"
     @load="loading = false"
   >
-    <v-img v-if="src" :src="src" aspect-ratio="1" cover>
+    <v-img v-if="src" :src="src" aspect-ratio="1" cover :alt="alt">
       <template v-slot:placeholder>
         <v-progress-circular
           v-if="loading"
@@ -54,7 +54,7 @@ export default {
       required: false,
       type: String,
     },
-
+    alt:{},
     size: {
       required: false,
       default: 24,

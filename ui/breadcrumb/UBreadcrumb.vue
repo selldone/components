@@ -21,41 +21,46 @@
       class="single-line overflow-auto thin-scroll"
       divider="/"
     >
-      <template v-slot:item="{ item }">
-        <router-link
-          v-if="!item.disabled"
-          :replace="replace"
-          :target="target"
-          :to="item.to"
-        >
-          <span class="font-weight-medium">
-            <v-icon v-if="item.icon" :color="ThemeColorInfo" class="me-1">{{
-              item.icon
-            }}</v-icon>
+      <template v-slot:item="{ item, props }">
+        <v-breadcrumbs-item v-bind="props">
+          <router-link
+            v-if="!item.disabled"
+            :replace="replace"
+            :target="target"
+            :to="item.to"
+            :aria-label="`Link to ${item.text}`"
+          >
+            <span class="font-weight-medium">
+              <v-icon v-if="item.icon" :color="ThemeColorInfo" class="me-1">{{
+                item.icon
+              }}</v-icon>
+              <circle-image
+                v-if="item.image"
+                :size="imageSize"
+                :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
+                class="me-1"
+                scale-on-hover
+                alt="Icon"
+              />
+
+              <span :title="item.text" class="link-dash">{{
+                item.text?.limitWords(4)
+              }}</span>
+            </span>
+          </router-link>
+          <span v-else :title="item.text" class="font-weight-medium">
             <circle-image
               v-if="item.image"
               :size="imageSize"
               :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
               class="me-1"
               scale-on-hover
+              alt="Icon"
             />
 
-            <span :title="item.text" class="link-dash">{{
-              item.text?.limitWords(4)
-            }}</span>
-          </span>
-        </router-link>
-        <span v-else :title="item.text" class="font-weight-medium">
-          <circle-image
-            v-if="item.image"
-            :size="imageSize"
-            :src="getShopImagePath(item.image, IMAGE_SIZE_SMALL)"
-            class="me-1"
-            scale-on-hover
-          />
-
-          {{ item.text?.limitWords(4) }}</span
-        >
+            {{ item.text?.limitWords(4) }}</span
+          >
+        </v-breadcrumbs-item>
       </template>
     </v-breadcrumbs>
 

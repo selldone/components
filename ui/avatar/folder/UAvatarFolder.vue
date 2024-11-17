@@ -30,7 +30,7 @@
       :class="{'elevation-3':elevated}"
       class="hover-scale force-top"
     >
-      <v-img v-if="src" :src="getShopImagePath(src)">
+      <v-img v-if="src" :src="getShopImagePath(src)" :alt="text_avatar_value">
         <template v-slot:placeholder>
           <s-image-placeholder
             :bg-color="color1"
@@ -64,6 +64,7 @@
         :height="side_size / (smallSideIcon ? 2 : 1)"
         :src="sideImage"
         :width="side_size / (smallSideIcon ? 2 : 1)"
+        alt="Side Icon"
       >
       <v-icon v-else :size="side_size / (smallSideIcon ? 2 : 1)" color="#fff">
         {{ sideIcon }}
