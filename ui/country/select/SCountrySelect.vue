@@ -136,7 +136,7 @@ export default {
     },
     rounded: {
       default: false,
-      type: Boolean,
+     // type: Boolean,
     },
     filled: {
       default: false,

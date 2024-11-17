@@ -358,7 +358,7 @@ export default defineComponent({
     },
     hideTitle: {
       // Has title but not show! important!
-      type: Boolean,
+     // type: Boolean,
       default: false,
     },
     enableBody: {
