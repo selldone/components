@@ -1359,8 +1359,8 @@ export default {
   right: 0;
   width: 72px;
   height: 72px;
-  background-color: rgba(0, 0, 0, 0.8);
-  box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  background-color: rgba(var(--offer-bg-color), 0.93);
+  box-shadow: 0px 5px 5px 0px rgba(var(--offer-bg-color), 0.1);
   color: #fff;
   z-index: 2;
   border-bottom-left-radius: 72px;
