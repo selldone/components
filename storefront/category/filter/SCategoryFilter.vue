@@ -40,11 +40,14 @@
     temporary
   >
     <div ref="list_container">
-      <v-list class="py-0 text-start" density="compact" nav>
-        <v-list-item lines="two">
+      <div class="text-start">
+        <v-list-item lines="two" role="presentation" :aria-selected="null">
           <template v-slot:prepend>
             <v-avatar v-if="category_image">
-              <v-img :src="category_image" />
+              <v-img
+                :src="category_image"
+                :alt="`Current Category: ${category_title}`"
+              />
             </v-avatar>
           </template>
 
@@ -54,7 +57,13 @@
           </v-list-item-subtitle>
           <template v-slot:append>
             <v-list-item-action end>
-              <v-btn :size="48" icon variant="plain" @click="drawer = false">
+              <v-btn
+                :size="48"
+                icon
+                variant="plain"
+                @click="drawer = false"
+                aria-label="Close Filter Menu"
+              >
                 <v-icon>close</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -75,6 +84,9 @@
           item-value="id"
           open-all
           open-strategy="multiple"
+          aria-label="Category Tree"
+          role="none"
+          aria-hidden="true"
         >
           <template v-slot:title="{ item, props }">
             <div
@@ -85,9 +97,13 @@
               class="text-ellipsis"
               v-bind="props"
               @click.stop="clickTreeView(item)"
+              :aria-label="`Click to go ${item.title}`"
             >
               <v-avatar v-if="item.icon" class="me-1" color="primary" size="28">
-                <v-img :src="getShopImagePath(item.icon)" />
+                <v-img
+                  :src="getShopImagePath(item.icon)"
+                  :alt="`Sub Category: ${item.title}`"
+                />
               </v-avatar>
               {{ item.title }}
             </div>
@@ -135,6 +151,7 @@
             thumb-label
             @end="onChangeFilter"
             @start="price_range_changed = true"
+            aria-label="Price range"
           >
             <template v-slot:thumb-label="{ modelValue }">
               <u-price :amount="modelValue" compact></u-price>
@@ -150,7 +167,7 @@
             </v-col>
           </v-row>
         </div>
-      </v-list>
+      </div>
 
       <!-- =========================================== Brands =========================================== -->
 
@@ -250,10 +267,11 @@ import SCategoryFilterSelector from "../../../storefront/category/filter/selecto
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
-import {  PriceHelper } from "@selldone/core-js/helper";
+import { PriceHelper } from "@selldone/core-js/helper";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
-import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
+import { GetNameOfColor } from "@selldone/core-js/helper/color/ColorHelper.ts";
+
 /**
  *
  */

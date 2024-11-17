@@ -14,32 +14,26 @@
 //import "vuetify/styles"; // Import Vuetify styles
 import "./vuetify-override.scss";
 
-import {createVuetify, VuetifyOptions} from "vuetify";
-//import * as components from "vuetify/components";
-//import * as directives from "vuetify/directives";
-import {SetupService} from "@selldone/core-js/server/SetupService";
-import {aliases, md} from "vuetify/iconsets/md";
+import { createVuetify, VuetifyOptions } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
+
+import { SetupService } from "@selldone/core-js/server/SetupService";
+import { aliases, md } from "vuetify/iconsets/md";
 
 //import "@fortawesome/fontawesome-free/css/all.css"; // Ensure your project is capable of handling css files
-import {fa} from "vuetify/iconsets/fa";
-import {createVueI18nAdapter} from "vuetify/locale/adapters/vue-i18n";
-import {I18n, useI18n} from "vue-i18n";
-import {VDialog} from "vuetify/components/VDialog";
-import {VBottomSheet} from "vuetify/components/VBottomSheet";
+import { fa } from "vuetify/iconsets/fa";
+import { createVueI18nAdapter } from "vuetify/locale/adapters/vue-i18n";
+import { I18n, useI18n } from "vue-i18n";
+import { VTreeview } from "vuetify/labs/VTreeview";
 // Define the Vuetify options.
 const vuetifyOptions: VuetifyOptions = {
-  // Manual import not detectable auto import by tree-shaking (Vuetify Issue in vite-plugin-vuetify)
   components: {
-    VDialog,
-    VBottomSheet,
+    ...components,
+    VTreeview,
   },
+  directives,
 
-  /* components: {
-         ...components,
-         VTreeview,
-       },
-       directives,
-     */
   theme: {
     defaultTheme: "light", // Set the default theme
     themes: {

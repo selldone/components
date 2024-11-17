@@ -43,6 +43,7 @@
           icon
           variant="flat"
           @click="scrollLeft"
+          aria-label="Show back categories"
         >
           <v-icon size="x-large">{{ $t("icons.navigate_before") }}</v-icon>
         </v-btn>
@@ -56,6 +57,7 @@
           icon
           variant="flat"
           @click="scrollRight"
+          aria-label="Show next categories"
         >
           <v-icon size="x-large">{{ $t("icons.navigate_next") }}</v-icon>
         </v-btn>

@@ -22,6 +22,7 @@
       variant="flat"
       @click="force_show = true"
       @click.stop
+      aria-label="Search"
     >
       <v-icon> search</v-icon>
     </v-btn>
@@ -84,6 +85,7 @@
           size="small"
           variant="text"
           @click="showQRScanner"
+          aria-label="QR Code Scanner"
         >
           <v-icon size="20">qr_code_scanner</v-icon>
         </v-btn>

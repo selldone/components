@@ -341,8 +341,8 @@
            </v-btn>
            -->
 
-        <span v-if="hasOffer" class="offer-top-end"
-          ><img src="../../../assets/icons/gift-w.svg" alt="Gift" />
+        <span v-if="hasOffer" class="offer-top-end" role="img"
+          ><img src="../../../assets/icons/gift-w.svg" alt="Especial Offer" />
           <span>{{ $t("global.commons.offer") }}</span></span
         >
       </div>
@@ -496,8 +496,8 @@
           </div>
         </v-row>
 
-        <span v-if="hasOffer" class="offer-top-end"
-          ><img src="../../../assets/icons/gift-w.svg" alt="Gift" />
+        <span v-if="hasOffer" class="offer-top-end" role="img"
+        ><img src="../../../assets/icons/gift-w.svg" alt="Especial Offer" />
           <span>{{ $t("global.commons.offer") }}</span></span
         >
       </v-container>
@@ -1359,8 +1359,8 @@ export default {
   right: 0;
   width: 72px;
   height: 72px;
-  background-color: rgba(17, 161, 33, 0.63);
-  box-shadow: 0px 5px 5px 0px #68c37299;
+  background-color: rgba(0, 0, 0, 0.8);
+  box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.1);
   color: #fff;
   z-index: 2;
   border-bottom-left-radius: 72px;

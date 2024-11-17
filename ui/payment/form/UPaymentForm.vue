@@ -483,7 +483,7 @@
                 <u-payment-button
                   :blue="gateway.cod"
                   :pos="GetUserSelectedCurrencyName(gateway.currency, true)"
-                  :disabled="gateway.limit && gateway.limit > final_payment"
+                  :disabled="gateway.limit>0 && gateway.limit > final_payment"
                   class="ma-auto pointer-pointer"
                   small
                   @click="
