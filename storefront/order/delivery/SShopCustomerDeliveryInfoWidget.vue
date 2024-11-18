@@ -87,7 +87,7 @@
             </div>
           </div>
           <div v-else>
-            <div class="spacer-line-dotted mt-5 mb-2"></div>
+            <div class="mt-5 mb-2" style=" border-bottom: 2px dotted rgba(255, 255, 255, 0.18);  width: 60%; margin: 0 auto;"></div>
 
             <u-smart-toggle
               v-model="same_billing"

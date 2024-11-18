@@ -16,6 +16,19 @@ import {notify} from "@kyvg/vue3-notification";
 import {EventBus} from "@selldone/core-js/events/EventBus.ts";
 import {isString} from "lodash-es";
 
+// Event listener to detect when the user is refreshing or navigating away from the page.
+// This sets a flag in localStorage to indicate that a page refresh is in progress.
+window.addEventListener('beforeunload', () => {
+  localStorage.setItem('isRefreshing', 'true');
+});
+
+// Event listener to detect when the page has fully loaded.
+// This clears the refresh flag from localStorage to allow normal operations.
+window.addEventListener('load', () => {
+  localStorage.removeItem('isRefreshing');
+});
+
+
 class NotificationService {
   /**
    * Shows an error alert with specified details.
@@ -173,6 +186,14 @@ class NotificationService {
  static showLaravelError(
       error: string | { error: true; error_msg: string; code?: number } | any,
   ) {
+
+   const isRefreshing = localStorage.getItem('isRefreshing');
+   // Skip showing the error if the page is refreshing
+   if (isRefreshing === 'true') {
+     console.warn('Page is refreshing, skipping error display.');
+     return;
+   }
+
     if (!error) return;
     if (isString(error)) {
       NotificationService.showErrorAlert(

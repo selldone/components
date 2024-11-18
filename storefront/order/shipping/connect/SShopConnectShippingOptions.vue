@@ -18,9 +18,14 @@
     class="s--shop-connect-shipping-options"
   >
     <div
-      v-for="connect_shipping_option in connect_shipping_options"
+      v-for="(connect_shipping_option, i) in connect_shipping_options"
       :key="connect_shipping_option.connect_id"
     >
+      <div
+          class="spacer-line my-3"
+          :caption="`${$t('global.commons.package')} ${startPackageIndex + i + 1}`"
+      />
+
       <div class="d-flex align-center my-2">
         <span class="small min-width-50 d-inline-block">{{
           $t("global.commons.shipping")
@@ -85,8 +90,6 @@
         </u-smart-select>
       </template>
     </div>
-
-    <div class="spacer-line my-3" />
   </div>
 </template>
 
@@ -105,6 +108,9 @@ export default {
     basket: {
       required: true,
       type: Object,
+    },
+    startPackageIndex: {
+      default: 0,
     },
   },
   data: () => ({

@@ -1025,6 +1025,16 @@ $size: 2.8rem;
     transform: translateY(-2px);
   }
 }
+//-------------------------------------------------------------------------
+
+:root {
+  --hover-bg-color: #fff; /* Default hover background color */
+  --hover-text-color: #333; /* Default hover text color */
+}
+.v-theme--dark {
+  --hover-bg-color: #333; /* Default hover background color for dark theme */
+  --hover-text-color: #fff; /* Default hover text color for dark theme */
+}
 
 .row-hover {
   transition: all 0.45s !important;
@@ -1033,17 +1043,15 @@ $size: 2.8rem;
 
   &.-no-pointer {
     cursor: default;
-
   }
 
   &:hover:not(.excluded) {
     box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.2);
     transition: all 0.35s !important;
-    background-color: #fff !important;
+    background-color: var(--hover-bg-color) !important; /* Use variable */
     z-index: 3;
     transform: translateY(-2px);
-    color: #333;
-
+    color: var(--hover-text-color); /* Use variable */
   }
 }
 
@@ -1051,11 +1059,10 @@ $size: 2.8rem;
   .row-hover {
     &:hover:not(.excluded) {
       box-shadow: 0px 10px 50px 0px rgba(220, 220, 220, 0.2);
-      background-color: #333 !important;
-      color: #fff;
     }
   }
 }
+//-------------------------------------------------------------------------
 
 .shadow-hover {
   transition: all 0.5s !important;

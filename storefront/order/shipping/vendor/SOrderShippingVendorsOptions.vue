@@ -18,17 +18,20 @@
     class="s--order-shipping-vendors-options"
   >
     <div
-      v-for="vendor_shipping_option in vendor_shipping_options"
+      v-for="(vendor_shipping_option, i) in vendor_shipping_options"
       :key="vendor_shipping_option.vendor_id"
     >
+      <div
+          class="spacer-line my-3"
+          :caption="`${$t('global.commons.package')} ${startPackageIndex + i + 1}`"
+      />
+
       <s-order-shipping-vendor-options
         :basket="basket"
         :vendorShippingOption="vendor_shipping_option"
         @set-basket-config="$emit('set-basket-config')"
         :deliveryInfo="deliveryInfo"
       ></s-order-shipping-vendor-options>
-
-      <div class="spacer-line my-3" />
     </div>
   </div>
 </template>
@@ -52,6 +55,9 @@ export default {
     deliveryInfo: {
       required: true,
       type: Object,
+    },
+    startPackageIndex: {
+      default: 0,
     },
   },
   data: () => ({}),
