@@ -4985,3 +4985,10 @@ canvas.heatmap-canvas {
 ol, ul {
   list-style-position: inside;
 }
+
+.disable-animations {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
