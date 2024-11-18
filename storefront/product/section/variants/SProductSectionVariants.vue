@@ -104,7 +104,7 @@
                 <template v-else>
                   <u-color-circle :color="selection"></u-color-circle>
 
-                  <small>{{ GetNameOfColor(selection) }}</small>
+                  <span style="font-size: 70%">{{ GetNameOfColor(selection) }}</span>
                 </template>
               </template>
               <!-- Normal -->

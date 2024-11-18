@@ -60,7 +60,7 @@
 
       <v-toolbar
         v-if="USER() && can_edit && canEdit"
-        :extended="12"
+        extended
         :height="62"
         class="overflow-x-auto"
         color="transparent"

@@ -16,7 +16,7 @@
   <v-row align="center" justify="center" no-gutters>
     <p
       :title="title"
-      class="m-0 small text-muted text-truncate flex-grow-1"
+      class="m-0 small op-0-8 text-truncate flex-grow-1"
       style="width: 40%"
     >
       {{ title }}

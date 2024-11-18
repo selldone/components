@@ -28,7 +28,7 @@
 
     <v-expand-transition>
       <div v-if="input_rating_mode" key="edit">
-        <p class="small text-muted me-10">
+        <p class="small op-0-8 me-10">
           {{ $t("product_rating_view.message", { user: user?.name }) }}
         </p>
         <u-rating-input
@@ -77,8 +77,8 @@
             hover
             readonly
           />
-          <small v-if="product.rate_count" class="mx-2"
-            >({{ numeralFormat(product.rate_count, "0,0") }})</small
+          <span v-if="product.rate_count" class="mx-2 small op-0-7"
+            >({{ numeralFormat(product.rate_count, "0,0") }})</span
           >
         </div>
 

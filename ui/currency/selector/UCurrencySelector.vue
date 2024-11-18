@@ -20,6 +20,7 @@
       :tooltip="selectedCurrency"
       dense
       @click="dialog = true"
+      aria-label="Select Currency"
     >
       <template v-slot:default>
         <u-currency-icon

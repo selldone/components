@@ -14,7 +14,7 @@
 
 <template>
   <div class="s--top-menu-categories" :style="{'--background':dark?'#111':'#fff'}">
-    <v-container class="-container" @click.stop>
+    <v-container class="-container" @click.stop :class="{'pa-0':zeroPadding}">
       <v-row>
         <v-col class="-categories-wrap" cols="12" lg="10">
           <v-row>
@@ -244,6 +244,7 @@ export default {
       type: Boolean,
     },
     dark:Boolean,
+    zeroPadding:Boolean,
   },
   data: () => ({
     selected_category: null,

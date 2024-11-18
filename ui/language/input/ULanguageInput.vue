@@ -25,6 +25,7 @@
       :tooltip="selected_language_object?.title"
       dense
       @click="readonly ? undefined : showDialog()"
+      aria-label="Select Language"
     ></u-button-circle>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Normal Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->

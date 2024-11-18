@@ -16,7 +16,7 @@
   <div
     v-if="!isService || calculated_price"
     :class="{ 'flex-column-reverse': revers_col }"
-    class="px-2 mt-2 d-flex flex-grow-0"
+    class="s-product-section-price px-2 mt-2 d-flex flex-grow-0"
   >
     <div class="price">
       <p v-if="discount_value" class="m-0">
@@ -105,7 +105,7 @@
       :style="revers_col ? 'align-self: self-end' : ''"
       class="mx-3"
     >
-      <p class="discount-text m-2 text-left">
+      <p class="discount-text text-left">
         {{ $t("product_info.discount") }}
       </p>
       <span class="discount-percent text-nowrap"
@@ -299,37 +299,58 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.discount-value {
-  color: #222;
-  font-size: 1.4rem;
+<style lang="scss">
+/*
+━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
+ */
+:root {
+  // Define CSS variables for product price section colors
+  --s--product-section-price-discount-value: #222;
+  --s--product-section-price: #3265ba;
+  --s--product-section-price-discount-text: #c2185b;
+  --s--product-section-price-discount-percent-bg: #c2185b;
+  --s--product-section-price-discount-percent-color: #ffffff;
 }
 
-.price {
-  font-weight: 500;
-  color: #4d90fe;
-  line-height: 1.5;
-
-  .price-value {
-    font-weight: 400;
-    font-size: 2.5rem;
+/*
+━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
+ */
+.s-product-section-price {
+  .discount-value {
+    color: var(--s--product-section-price-discount-value);
+    font-size: 1.4rem;
   }
 
-  .currency {
-    font-size: 1.4em;
-    margin-right: 8px;
+  .price {
+    font-weight: 500;
+    color: var(--s--product-section-price);
+    line-height: 1.5;
+
+    .price-value {
+      font-weight: 400;
+      font-size: 2.5rem;
+    }
+
+    .currency {
+      font-size: 1.4em;
+      margin-right: 8px;
+    }
   }
-}
 
-.discount-text {
-  color: #c2185b;
-}
+  .discount-text {
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    color: var(--s--product-section-price-discount-text);
+  }
 
-.discount-percent {
-  font-weight: 500;
-  background-color: #c2185b;
-  color: white;
-  border-radius: 0 19px 19px 19px;
-  padding: 4px 12px;
+  .discount-percent {
+    font-weight: 500;
+    background-color: var(--s--product-section-price-discount-percent-bg);
+    color: var(--s--product-section-price-discount-percent-color);
+    border-radius: 0 19px 19px 19px;
+    padding: 4px 12px;
+  }
 }
 </style>

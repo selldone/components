@@ -105,22 +105,24 @@
               >
             </div>
 
-            <div class="flex-grow-1 ps-1">
+            <div class="flex-grow-1 ps-0 ps-sm-1 py-2">
               {{ $product.title_en?.limitWords(limit_title_en) }}
-              <v-btn
+
+            </div>
+
+            <v-btn
                 v-if="$product.title_en?.wordsCount() > 20"
-                class="tnt"
-                color="#111"
-                size="small"
+                class="tnt" slim
+                color="#444"
                 variant="text"
                 @click="limit_title_en = limit_title_en > 20 ? 20 : 2000"
-                >{{
-                  limit_title_en > 20
+            >{{
+                limit_title_en > 20
                     ? $t("global.actions.collapse")
                     : $t("global.actions.view_all")
-                }}...
-              </v-btn>
-            </div>
+              }}
+              <v-icon end class="t-all-400" :class="{'rotate-180':limit_title_en > 20 }">expand_more</v-icon>
+            </v-btn>
 
             <template v-if="$product.rate_count && $product.rate">
               <b class="mx-2 -rate-value">{{
@@ -808,7 +810,7 @@ export default {
   }
 
   .s--title-en {
-    color: #888;
+    color: #444;
     margin: var(--title-en-margin);
     text-align: start;
     flex-grow: 0;

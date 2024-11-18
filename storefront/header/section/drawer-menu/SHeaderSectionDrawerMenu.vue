@@ -14,7 +14,13 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
-  <v-btn v-bind="$attrs" icon size="large" @click.stop="drawer = !drawer">
+  <v-btn
+    v-bind="$attrs"
+    icon
+    size="large"
+    @click.stop="drawer = !drawer"
+    aria-label="Open Main Menu"
+  >
     <v-icon> menu</v-icon>
   </v-btn>
 

@@ -59,9 +59,10 @@
           last_product = null;
           last_cat = null;
         "
+        aria-label="Home"
       >
         <v-avatar v-if="last_product" color="#eee" size="24">
-          <img :src="getProductImage(last_product, 64)" />
+          <img :src="getProductImage(last_product, 64)" alt="Product" />
         </v-avatar>
         <v-icon v-else-if="last_cat" size="24"> folder</v-icon>
         <v-icon v-else-if="last_home_route" size="24">store</v-icon>
@@ -85,6 +86,7 @@
         min-width="60"
         value="search"
         @click="search_mode = true"
+        aria-label="Search"
       >
         <v-icon size="24">search</v-icon>
       </v-btn>
@@ -99,6 +101,7 @@
         class="zoomIn delay_200"
         min-width="60"
         value="basket"
+        aria-label="Basket"
       >
         <v-badge
           :content="numeralFormat(total_items_in_carts, '0a')"
@@ -111,6 +114,7 @@
             height="24"
             src="../../../assets/icons/pos-basket.png"
             width="24"
+            alt="Basket"
           />
           <v-icon v-else>local_mall</v-icon>
         </v-badge>
@@ -131,6 +135,7 @@
         min-width="60"
         value="notification"
         @click="USER() ? null : NeedLogin()"
+        aria-label="Notifications"
       >
         <v-badge
           :content="numeralFormat(sum_orders_badges, '0a')"
@@ -154,6 +159,7 @@
         "
         value="profile"
         @click="USER() ? null : NeedLogin()"
+        aria-label="Profile"
       >
         <v-badge
           v-if="USER_ID()"
@@ -162,7 +168,7 @@
           floating
         >
           <v-avatar color="#eee" size="24">
-            <v-img :src="getUserAvatar(USER_ID())"></v-img>
+            <v-img :src="getUserAvatar(USER_ID())" alt="User"></v-img>
           </v-avatar>
 
           <template v-slot:badge>
@@ -172,6 +178,7 @@
               height="18"
               style="min-width: 18px; min-height: 18px"
               width="18"
+              :alt="getClub().level"
             />
           </template>
         </v-badge>
@@ -190,6 +197,7 @@
         variant="text"
         width="70"
         @click="$refs.search.showQRScanner()"
+        aria-label="Scan QR"
       >
         <v-icon size="24">qr_code_scanner</v-icon>
       </v-btn>
@@ -217,6 +225,7 @@
         variant="text"
         width="70"
         @click="search_mode = false"
+        aria-label="Close"
       >
         <v-icon size="24">close</v-icon>
       </v-btn>
@@ -232,7 +241,7 @@ import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 export default {
   name: "SFooterNavigation",
-  mixins: [TemplateMixin, AuthMixin,ClubMixin],
+  mixins: [TemplateMixin, AuthMixin, ClubMixin],
 
   components: { SStorefrontSearchBox },
 

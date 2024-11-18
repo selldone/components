@@ -36,6 +36,7 @@
       :src="getShopImagePath(notification.image)"
       class="mx-auto my-2"
       height="96"
+      alt="Notification Image"
     ></v-img>
     <p
       v-if="notification.title"
@@ -59,6 +60,7 @@
           class="m-2"
           variant="text"
           @click="close()"
+          aria-label="Close Top Banner"
         >
           {{ $t("global.actions.close") }}
         </v-btn>
