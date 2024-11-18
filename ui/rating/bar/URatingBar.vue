@@ -29,6 +29,7 @@
         rounded
         rounded-bar
         style="pointer-events: none"
+        :aria-label="`${title}: ${rating_percent}`"
       />
       <v-avatar
         v-if="userRate"
@@ -45,7 +46,7 @@
         color="#1976D2"
         size="18"
       >
-        <img :src="getUserAvatar(USER_ID())" style="padding: 2px" />
+        <img :src="getUserAvatar(USER_ID())" style="padding: 2px" alt="User" />
       </v-avatar>
     </div>
 

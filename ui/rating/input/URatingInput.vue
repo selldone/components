@@ -18,9 +18,7 @@
       <v-icon v-if="value_clone" :color="ticksColor[value_clone - 1]"
         >{{ tickIcons[value_clone - 1] }}
       </v-icon>
-      <v-icon v-else>
-        question_mark
-      </v-icon>
+      <v-icon v-else> question_mark </v-icon>
       <br />
       <span class="small">{{ ticksLabels[value_clone - 1] }}</span>
     </small>
@@ -43,6 +41,8 @@
         track-color="#ddd"
         track-fill-color="primary"
         @update:model-value="$emit('update:modelValue', value_clone)"
+        :aria-label="`${title}: ${modelValue}`"
+        role="progressbar"
       />
     </div>
   </div>
