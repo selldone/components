@@ -14,7 +14,7 @@
 
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
 
-import {Basket, BasketItemReturn} from "@selldone/core-js/models";
+import { Basket, BasketItemReturn } from "@selldone/core-js/models";
 
 const OrderMixin = {
   methods: {
@@ -34,13 +34,13 @@ const OrderMixin = {
       else if (status === "Open") return this.$t("global.status.open");
       else if (status === "Cancel") return this.$t("global.status.cancel");
       else if (
-          status.toLowerCase() === "accept" ||
-          status.toLowerCase() === "accepted"
+        status.toLowerCase() === "accept" ||
+        status.toLowerCase() === "accepted"
       )
         return this.$t("global.status.accept");
       else if (
-          status.toLowerCase() === "reject" ||
-          status.toLowerCase() === "rejected"
+        status.toLowerCase() === "reject" ||
+        status.toLowerCase() === "rejected"
       )
         return this.$t("global.status.reject");
       else if (status.toLowerCase() === "pending")
@@ -75,12 +75,11 @@ const OrderMixin = {
     },
 
     getDeliveryStateString(
-        state: keyof typeof Basket.PhysicalOrderStates | null,
+      state: keyof typeof Basket.PhysicalOrderStates | null,
     ) {
       if (!state) return "";
       return this.$t(Basket.PhysicalOrderStates[state].name);
     },
-
 
     getDeliveryStateIcon(state: string | null) {
       if (!state) return "";
@@ -88,19 +87,12 @@ const OrderMixin = {
       return Basket.PhysicalOrderStates[state].icon;
     },
 
-
     //―――――――――――――――――――――― Basket > Return Order ――――――――――――――――――――
 
     getReturnRequestStateObject(state: keyof typeof BasketItemReturn.States) {
       const out = BasketItemReturn.States[state];
       return out ? out : {};
     },
-
-
-
-
-
-
   },
 };
 
