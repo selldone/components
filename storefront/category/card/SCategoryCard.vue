@@ -17,6 +17,7 @@
     :is="to ? 'router-link' : href ? 'a' : 'div'"
     class="s--category-card"
     v-bind="to ? { to: to } : { href: href }"
+    :draggable="false"
   >
     <div class="category-card-root">
       <div class="box">
@@ -28,7 +29,7 @@
             <p class="category-title text-nowrap text-ellipsis">
               {{ category.title }}
             </p>
-            <img :src="getShopImagePath(category.icon)" alt="" />
+            <img :src="getShopImagePath(category.icon)" :alt="`Category ${category.title}`" :draggable="false" />
           </div>
           <div class="details">
             <b class="-title text-wrap">{{ category.title }}</b
@@ -93,7 +94,6 @@ export default {
 /**
 Npt scoped: in landing builder show wrong style for insta-card (global style to override)
  */
-
 .category-card-root {
   text-align: center;
   margin: 0;
@@ -105,8 +105,7 @@ Npt scoped: in landing builder show wrong style for insta-card (global style to 
   // background: #212121;
   //font-family: sans-serif;
 
-  // Fix Flickering in Safari in Safari: (Apple bug)
-  //-webkit-transform: translateZ(0);
+  // Fix Flickering in Safari: (Apple bug)
   -webkit-backface-visibility: hidden;
 
   .folder-card {
@@ -150,34 +149,35 @@ Npt scoped: in landing builder show wrong style for insta-card (global style to 
       z-index: -1;
     }
 
-    // --------------------- hover ---------------------
-    &:not(.-static) {
+    // --------------------- Hover Styles ---------------------
+    @media (hover: hover) and (pointer: fine) {
+      &:not(.-static) {
+        &:hover {
+          &:before {
+            transform: rotate(20deg);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+          }
+
+          &:after {
+            transform: rotate(10deg);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+          }
+        }
+      }
+
       &:hover {
-        &:before {
-          transform: rotate(20deg);
-          box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-        }
+        .imgBx {
+          bottom: 120px;
 
-        &:after {
-          transform: rotate(10deg);
-          box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-        }
-      }
-    }
+          .category-title {
+            transition-delay: 0s;
 
-    &:hover {
-      .imgBx {
-        bottom: 120px;
-
-        .category-title {
-          transition-delay: 0s;
-
-          opacity: 0;
+            opacity: 0;
+          }
         }
       }
     }
-
-    // --------------------- end hover ---------------------
+    // --------------------- End Hover Styles ---------------------
 
     .imgBx {
       position: absolute;
@@ -263,4 +263,5 @@ Npt scoped: in landing builder show wrong style for insta-card (global style to 
     transition-delay: 0.35s;
   }
 }
+
 </style>

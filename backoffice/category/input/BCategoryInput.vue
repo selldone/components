@@ -14,6 +14,7 @@
 
 <template>
   <v-autocomplete
+    v-bind="$attrs"
     v-model="category"
     v-model:menu="menu"
     v-model:search="search"
@@ -44,6 +45,7 @@
     <!-- ―――――――――――――――――― message ―――――――――――――――――― -->
 
     <template v-slot:message>
+      <v-btn @click="dialog = true" size="small" slim variant="text" color="primary" prepend-icon="drive_folder_upload">{{$t('global.actions.select_category')}}</v-btn>
       <b-category-parent
         v-if="
           !multiple /*Show the category detail on the single mode!*/ &&
@@ -54,6 +56,7 @@
       >
       </b-category-parent>
       <div v-if="messages">{{ messages }}</div>
+
     </template>
 
     <!-- ―――――――――――――――――― items ―――――――――――――――――― -->
@@ -161,6 +164,46 @@
       <slot name="append-inner"></slot>
     </template>
   </v-autocomplete>
+
+  <v-bottom-sheet
+    v-model="dialog"
+    max-width="1720"
+    width="98vw"
+    content-class="rounded-t-xl"
+    min-height="70vh"
+    scrollable
+    max-height="90vh"
+  >
+    <v-card class="text-start" rounded="t-xl">
+      <v-card-text>
+        <b-products-window
+          :can-select-category="true"
+          :can-select-product="false"
+          :selected-list="selected_list"
+          :shop="$shop"
+          :vendor="$vendor"
+          class="mx-auto"
+          dialog-mode
+          select-mode
+          compactMode
+          @select="selectProduct"
+          @select-category="selectCategory"
+        />
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="dialog = false"
+            prepend-icon="close"
+          >
+            {{ $t("global.actions.close") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-bottom-sheet>
 </template>
 
 <script lang="ts">
@@ -171,12 +214,21 @@ import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFold
 import { ShopCategoryHelper } from "@selldone/core-js/helper/category/ShopCategoryHelper.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import { defineAsyncComponent } from "vue";
+
+const BProductsWindow = defineAsyncComponent(
+  () =>
+    import(
+      "@selldone/components-vue/backoffice/product/window/BProductsWindow.vue"
+    ),
+);
 
 export default {
   name: "BCategoryInput",
   mixins: [],
-  components: { UAvatarFolder, BCategoryParent, CircleImage },
+  components: { BProductsWindow, UAvatarFolder, BCategoryParent, CircleImage },
   emits: ["change", "update:modelValue"],
+  inject: ["$shop", "$vendor"],
   props: {
     modelValue: {},
     label: {},
@@ -245,6 +297,8 @@ export default {
     menu: false,
 
     busy_create: false,
+
+    dialog: false,
   }),
 
   computed: {
@@ -268,6 +322,22 @@ export default {
             this.isObject(this.category) ? this.category.id : this.category,
           ),
       );
+    },
+
+    selected_list() {
+      if (!this.category) return [];
+
+      if (this.multiple) {
+        if (this.returnObject) {
+          return this.category.map((i) => "c-" + i.id);
+        } else {
+          return this.category.map((i) => "c-" + i);
+        }
+      } else {
+        return this.returnObject
+          ? ["c-" + this.category.id]
+          : ["c-" + this.category];
+      }
     },
   },
   watch: {
@@ -397,6 +467,27 @@ export default {
         .finally(() => {
           this.busy_create = false;
         });
+    },
+
+    selectCategory(category) {
+      if (this.returnObject) {
+        if (this.multiple) {
+          this.category = [...this.category, category];
+        } else {
+          this.category = category;
+        }
+      } else {
+        if (this.multiple) {
+          this.category = [...this.category, category.id];
+        } else {
+          this.category = category.id;
+        }
+      }
+
+      if (!this.multiple) {
+        this.dialog = false;
+      }
+      console.log("category", category, this.category);
     },
   },
 };

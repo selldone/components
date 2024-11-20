@@ -26,7 +26,7 @@
   >
     <div
       ref="scroll"
-      v-dragscroll="dragScroll && $vuetify.display.smAndUp"
+      v-dragscroll="dragScroll"
       v-intersect="onIntersect"
       v-scroll.self="(ev) => debouncedOnScroll(ev.target)"
       :class="{ usn: dragScroll }"
@@ -150,7 +150,7 @@ export default {
       this.$refs.scroll.scrollBy({
         left:
           (this.$vuetify.locale.isRtl ? -1 : 1) *
-          Math.min(window.innerWidth, 1600),
+          Math.min(window.innerWidth*0.8, 1600),
         behavior: "smooth",
       });
     },
@@ -162,7 +162,7 @@ export default {
       this.$refs.scroll.scrollBy({
         left:
           (this.$vuetify.locale.isRtl ? 1 : -1) *
-          Math.min(window.innerWidth, 1600),
+          Math.min(window.innerWidth*0.8, 1600),
         behavior: "smooth",
       });
     },

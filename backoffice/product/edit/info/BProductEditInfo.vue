@@ -202,24 +202,38 @@
         clearable
         no-selected-icon="home"
       >
-        <template v-if="$product?.id" v-slot:append-inner>
+        <template v-slot:append-inner>
           <products-dense-images-circles
-            v-if="$product.shortcuts?.length"
+            v-if="$product?.shortcuts?.length"
             :ids="$product.shortcuts.map((i) => 'c-' + i)"
             :size="32"
             class="pa-0 mx-1"
           ></products-dense-images-circles>
-          <v-btn
-            class="hover-scale-small"
-            color="primary"
-            icon
-            size="32"
-            title="Add to more categories..."
-            variant="elevated"
-            @click.stop="showShortcuts()"
-          >
-            <v-icon size="18">create_new_folder</v-icon>
-          </v-btn>
+          <span>
+            <v-btn
+              class="hover-scale-small"
+              color="primary"
+              icon
+              size="32"
+              variant="elevated"
+              @click.stop="showShortcuts()"
+              :class="{ disabled: !$product?.id }"
+            >
+              <v-icon size="18">create_new_folder</v-icon>
+            </v-btn>
+            <v-tooltip activator="parent" content-class="bg-black text-start" max-width="320">
+              <div>
+                <b class="me-1">Shortcuts</b>
+              </div>
+              <p>
+                You can add this product to multiple categories. This will act like creating shortcut of the product in other categories.
+              </p>
+              <div v-if="!$product?.id" class="text-amber small py-1">
+                <v-icon class="me-1">info_outline</v-icon>
+                Save the product first to enable this option.
+              </div>
+            </v-tooltip>
+          </span>
         </template>
       </b-category-input>
       <v-text-field
@@ -1047,7 +1061,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BProductEditInfo",
-  mixins: [ProductMixin ],
+  mixins: [ProductMixin],
 
   components: {
     SProductSectionValuation,

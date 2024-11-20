@@ -19,6 +19,7 @@
     fullscreen
     scrollable
     transition="dialog-bottom-transition"
+    close-on-back
   >
     <v-card color="#FFF">
       <v-card-title>

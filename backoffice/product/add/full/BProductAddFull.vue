@@ -58,167 +58,167 @@
       </v-row>
     </template>
 
-    <template v-if="$product.id">
-      <v-container class="pt-0 fadeIn" fluid>
-        <v-row class="tab-container">
-          <u-tabs-rounded
-            v-model="step"
-            :src="type.image"
-            :tabs="tabs"
-            class="mt-4 mb-5 mx-auto"
-            scrollable
-            small
-          >
-            <!-- TAB_IMAGES -->
-            <template v-slot:[`item.${TAB_SPEC}`]>
-              <div
-                v-if="$product.id"
-                style="position: absolute; bottom: 2px; z-index: -1"
+    <v-container v-if="type" class="pt-0 fadeIn" fluid>
+      <v-row class="tab-container">
+        <u-tabs-rounded
+          v-model="step"
+          :src="type.image"
+          :tabs="tabs"
+          class="mt-4 mb-5 mx-auto"
+          scrollable
+          small
+          :disabled="!$product?.id"
+        >
+          <!-- TAB_IMAGES -->
+          <template v-slot:[`item.${TAB_SPEC}`]>
+            <div
+              v-if="$product?.id"
+              style="position: absolute; bottom: 2px; z-index: -1"
+            >
+              <v-chip
+                v-if="$product.spec_order?.length"
+                size="x-small"
+                density="comfortable"
+                color="#CDDC39"
+                variant="flat"
+                prepend-icon="check_circle"
               >
-                <v-chip
-                  v-if="$product.spec_order?.length"
-                  size="x-small"
-                  density="comfortable"
-                  color="#CDDC39"
-                  variant="flat"
-                  prepend-icon="check_circle"
-                >
-                  {{ $t("add_product.menu_extra.has_spec") }}
-                </v-chip>
-                <v-chip
-                  v-else
-                  size="x-small"
-                  density="comfortable"
-                  color="#FFEB3B"
-                  variant="flat"
-                >
-                  {{ $t("add_product.menu_extra.no_spec") }}
-                </v-chip>
-              </div>
-            </template>
+                {{ $t("add_product.menu_extra.has_spec") }}
+              </v-chip>
+              <v-chip
+                v-else
+                size="x-small"
+                density="comfortable"
+                color="#FFEB3B"
+                variant="flat"
+              >
+                {{ $t("add_product.menu_extra.no_spec") }}
+              </v-chip>
+            </div>
+          </template>
 
-            <!-- TAB_IMAGES -->
-            <template v-slot:[`item.${TAB_IMAGES}`]>
-              <div
-                v-if="$product.id"
-                style="position: absolute; bottom: 2px; z-index: -1"
-              >
-                <img
-                  v-if="$product.icon"
-                  key="p-icon"
-                  :src="getShopImagePath($product.icon, 64)"
-                  width="16"
-                  height="16"
-                  class="border rounded"
-                  style="margin-inline-start: 2px"
-                />
-                <img
-                  v-for="x in $product.images?.limit(2)"
-                  :key="x.id"
-                  :src="getShopImagePath(x.path, 64)"
-                  width="16"
-                  height="16"
-                  class="border rounded"
-                  style="margin-inline-start: 2px"
-                />
-                {{ $product.images?.length > 2 ? "..." : "" }}
-              </div>
-            </template>
+          <!-- TAB_IMAGES -->
+          <template v-slot:[`item.${TAB_IMAGES}`]>
+            <div
+              v-if="$product?.id"
+              style="position: absolute; bottom: 2px; z-index: -1"
+            >
+              <img
+                v-if="$product.icon"
+                key="p-icon"
+                :src="getShopImagePath($product.icon, 64)"
+                width="16"
+                height="16"
+                class="border rounded"
+                style="margin-inline-start: 2px"
+              />
+              <img
+                v-for="x in $product.images?.limit(2)"
+                :key="x.id"
+                :src="getShopImagePath(x.path, 64)"
+                width="16"
+                height="16"
+                class="border rounded"
+                style="margin-inline-start: 2px"
+              />
+              {{ $product.images?.length > 2 ? "..." : "" }}
+            </div>
+          </template>
 
-            <!-- TAB_INPUTS -->
-            <template v-slot:[`item.${TAB_INPUTS}`]>
-              <div
-                v-if="$product.id"
-                style="position: absolute; bottom: 2px; z-index: -1"
+          <!-- TAB_INPUTS -->
+          <template v-slot:[`item.${TAB_INPUTS}`]>
+            <div
+              v-if="$product?.id"
+              style="position: absolute; bottom: 2px; z-index: -1"
+            >
+              <v-chip
+                v-if="$product.inputs?.length"
+                size="x-small"
+                density="comfortable"
+                color="#CDDC39"
+                variant="flat"
+                prepend-icon="checklist"
               >
-                <v-chip
-                  v-if="$product.inputs?.length"
-                  size="x-small"
-                  density="comfortable"
-                  color="#CDDC39"
-                  variant="flat"
-                  prepend-icon="checklist"
-                >
-                  {{ $t("add_product.menu_extra.form") }}
-                </v-chip>
-              </div>
-            </template>
+                {{ $t("add_product.menu_extra.form") }}
+              </v-chip>
+            </div>
+          </template>
 
-            <!-- TAB_PRICE -->
-            <template v-slot:[`item.${TAB_PRICE}`]>
-              <div
-                v-if="$product.id"
-                style="position: absolute; bottom: 2px; z-index: -1"
-              >
-                <u-price
-                  :amount="$product.price"
-                  :currency="$product.currency"
-                ></u-price>
-              </div>
-            </template>
+          <!-- TAB_PRICE -->
+          <template v-slot:[`item.${TAB_PRICE}`]>
+            <div
+              v-if="$product?.id"
+              style="position: absolute; bottom: 2px; z-index: -1"
+            >
+              <u-price
+                :amount="$product.price"
+                :currency="$product.currency"
+              ></u-price>
+            </div>
+          </template>
 
-            <!-- TAB_PHYSICAL_EXTRA_INFO -->
-            <template v-slot:[`item.${TAB_PHYSICAL_EXTRA_INFO}`]>
-              <div
-                v-if="$product.id && $product.extra"
-                style="position: absolute; bottom: 2px; z-index: -1"
-                class="small"
-              >
-                <template v-if="$product.extra?.width">
-                  <v-icon>straighten</v-icon>
-                  {{ $product.extra.width }}x{{ $product.extra.length }}x{{
-                    $product.extra.height
-                  }}
-                </template>
-                <template v-if="$product.extra.weight">
-                  <v-icon class="ms-1">scale</v-icon>
-                  {{ $product.extra.weight }}
-                </template>
-              </div>
-            </template>
+          <!-- TAB_PHYSICAL_EXTRA_INFO -->
+          <template v-slot:[`item.${TAB_PHYSICAL_EXTRA_INFO}`]>
+            <div
+              v-if="$product?.id && $product?.extra"
+              style="position: absolute; bottom: 2px; z-index: -1"
+              class="small"
+            >
+              <template v-if="$product.extra?.width">
+                <v-icon>straighten</v-icon>
+                {{ $product.extra.width }}x{{ $product.extra.length }}x{{
+                  $product.extra.height
+                }}
+              </template>
+              <template v-if="$product.extra.weight">
+                <v-icon class="ms-1">scale</v-icon>
+                {{ $product.extra.weight }}
+              </template>
+            </div>
+          </template>
 
-            <!-- TAB_REVIEW_BLOG -->
-            <template v-slot:[`item.${TAB_REVIEW_BLOG}`]>
-              <div
-                v-if="$product.id"
-                style="position: absolute; bottom: 2px; z-index: -1"
-              >
-                <v-chip
-                  v-if="SELECTED_ARTICLE_PACK?.article?.body?.length > 10"
-                  size="x-small"
-                  density="comfortable"
-                  color="#CDDC39"
-                  variant="flat"
-                  prepend-icon="format_quote"
-                  >{{ $t("add_product.menu_extra.description") }}
-                </v-chip>
-              </div>
-            </template>
+          <!-- TAB_REVIEW_BLOG -->
+          <template v-slot:[`item.${TAB_REVIEW_BLOG}`]>
+            <div
+              v-if="$product?.id"
+              style="position: absolute; bottom: 2px; z-index: -1"
+            >
+              <v-chip
+                v-if="SELECTED_ARTICLE_PACK?.article?.body?.length > 10"
+                size="x-small"
+                density="comfortable"
+                color="#CDDC39"
+                variant="flat"
+                prepend-icon="format_quote"
+                >{{ $t("add_product.menu_extra.description") }}
+              </v-chip>
+            </div>
+          </template>
 
-            <!-- TAB_VARIANTS -->
-            <template v-slot:[`item.${TAB_VARIANTS}`]>
-              <div
-                v-if="$product.id"
-                style="position: absolute; bottom: 2px; z-index: -1"
-              >
-                <template v-if="$product.quantity > 0">
-                  {{ numeralFormat($product.quantity, "0.[0] a") }}
-                </template>
-                <v-chip
-                  v-else
-                  size="x-small"
-                  density="comfortable"
-                  color="#FFCDD2"
-                  variant="flat"
-                  prepend-icon="cancel"
-                  >{{ $t("global.commons.out_of_stock") }}
-                </v-chip>
-              </div>
-            </template>
-          </u-tabs-rounded>
-        </v-row>
-      </v-container>
-    </template>
+          <!-- TAB_VARIANTS -->
+          <template v-slot:[`item.${TAB_VARIANTS}`]>
+            <div
+              v-if="$product?.id"
+              style="position: absolute; bottom: 2px; z-index: -1"
+            >
+              <template v-if="$product.quantity > 0">
+                {{ numeralFormat($product.quantity, "0.[0] a") }}
+              </template>
+              <v-chip
+                v-else
+                size="x-small"
+                density="comfortable"
+                color="#FFCDD2"
+                variant="flat"
+                prepend-icon="cancel"
+                >{{ $t("global.commons.out_of_stock") }}
+              </v-chip>
+            </div>
+          </template>
+        </u-tabs-rounded>
+      </v-row>
+    </v-container>
+
     <!-- ███████████████████████ Product Type ███████████████████████ -->
 
     <div v-if="step === TAB_TYPE" class="max-width-container-1280px mx-auto">
@@ -1340,8 +1340,8 @@ not need!
 
         this.step =
           /* this.hasStep__Inputs
-                                                ? TAB_INPUTS
-                                                :*/
+                                                  ? TAB_INPUTS
+                                                  :*/
           this.hasStep__Outputs
             ? TAB_OUTPUTS
             : this.hasStep__physicalExtra

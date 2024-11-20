@@ -194,6 +194,10 @@
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLoader.ts";
+import { isString } from "lodash-es";
+
+// Define a regular expression to match "image-placeholder*.svg"
+const pattern = /^image-placeholder.*\.svg$/;
 
 export default {
   name: "SImageUploader",
@@ -337,9 +341,12 @@ export default {
   computed: {
     on_compact() {
       return (
-        this.autoCompact && this.last_image && !this.force_edit
-        //  && !this.last_image.includes("/image-placeholder")
-      ); // /image-placeholder -> default place holder image!
+        this.autoCompact &&
+        this.last_image &&
+        !this.force_edit &&
+        !(isString(this.last_image) && !pattern.test(this.last_image))
+      ); // Define a regular expression to match "image-placeholder*.svg"
+      // /image-placeholder -> default place holder image!
     },
 
     acceptedFileTypes() {

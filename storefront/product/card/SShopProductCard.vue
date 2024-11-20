@@ -20,9 +20,11 @@
       'no-hover': isInsta,
       '-insta-mode': isInsta,
       '-static': static,
+      '-rtl': $vuetify.locale.isRtl,
     }"
-    class="card-item-new card-link pointer-pointer s--product-card"
+    class="s--product-card"
     v-bind="to ? { to: to } : { href: href }"
+    :draggable="false"
   >
     <div
       v-if="!isRow"
@@ -497,7 +499,7 @@
         </v-row>
 
         <span v-if="hasOffer" class="offer-top-end" role="img"
-        ><img src="../../../assets/icons/gift-w.svg" alt="Especial Offer" />
+          ><img src="../../../assets/icons/gift-w.svg" alt="Especial Offer" />
           <span>{{ $t("global.commons.offer") }}</span></span
         >
       </v-container>
@@ -733,16 +735,8 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped src="./ProductCard.scss" />
-
 <style lang="scss" scoped>
-@media only screen and (max-width: 600px) {
-  .card-item-new {
-    padding: 4px; //!important;
-  }
-}
-
-.card-item-new {
+.s--product-card {
   --card-height: 360px;
   --footer-height: 80px;
 
@@ -766,6 +760,7 @@ export default {
     --image-center-height-contain: 110px;
   }
 
+  cursor: pointer;
   position: relative;
   line-height: 1em;
 
@@ -781,6 +776,31 @@ export default {
     -webkit-transform: unset; // Make sure card be on top!
   }
 
+  // Disable hover effects on touch devices
+  @media (hover: none) {
+    &:hover {
+      transform: none;
+      box-shadow: none;
+
+      .card__info,
+      .card__img--hover,
+      .card:hover {
+        transform: none !important;
+        transition: none !important;
+      }
+
+      .toggle-visible-on-hover {
+        opacity: 1 !important;
+        transition: none;
+      }
+
+      .toggle-hidden-on-hover {
+        opacity: 1 !important;
+      }
+    }
+  }
+
+
   p {
     font-size: 0.95em;
     line-height: 1.2em;
@@ -789,6 +809,10 @@ export default {
     word-wrap: break-word;
     text-overflow: ellipsis;
     display: block; /* or inline-block */
+  }
+
+  @media only screen and (max-width: 600px) {
+    padding: 4px; //!important;
   }
 
   @media (max-width: 800px) {
@@ -1381,18 +1405,32 @@ export default {
   }
 }
 
-.v-locale--is-rtl {
-  .offer-top-end {
-    right: unset;
-    left: 0;
-    border-bottom-left-radius: unset;
-    border-bottom-right-radius: 72px;
-    padding-left: unset;
-    padding-right: 12px;
-  }
+.s--product-card {
+  &.-rtl {
+    .offer-top-end {
+      right: unset;
+      left: 0;
+      border-bottom-left-radius: unset;
+      border-bottom-right-radius: 72px;
+      padding-left: unset;
+      padding-right: 12px;
+    }
 
-  .card-item-new {
-    .card:hover {
+    .s--product-card {
+      .card:hover {
+        &:hover {
+          .offer-top-end {
+            transform: translate(-90%, -90%);
+          }
+        }
+      }
+
+      .main-price-label {
+        text-align: left !important;
+      }
+    }
+
+    .row-box {
       &:hover {
         .offer-top-end {
           transform: translate(-90%, -90%);
@@ -1400,41 +1438,49 @@ export default {
       }
     }
 
-    .main-price-label {
-      text-align: left !important;
-    }
-  }
-
-  .row-box {
-    &:hover {
-      .offer-top-end {
-        transform: translate(-90%, -90%);
+    .s--product-card {
+      .card__copy-product-badge {
+        left: 0;
+        right: unset;
+        transform: translateX(-80%);
+        border-radius: 0 0 12px 0;
       }
     }
-  }
 
-  .card-item-new {
-    .card__copy-product-badge {
-      left: 0;
-      right: unset;
-      transform: translateX(-80%);
-      border-radius: 0 0 12px 0;
+    .top-title {
+      &.has-discount-banner {
+        padding-left: unset;
+        padding-right: 56px;
+      }
+    }
+
+    .count-down-bg {
+      right: -4px;
+      left: unset;
+      // -webkit-transform: unset;
+      transform: unset;
+
+      /*   @media only screen and (max-width: 1750px) {
+        right: -1px;
+        left: unset;
+      }*/
+    }
+
+    .count-down-container {
+      top: -15px;
+      right: -65px;
+      left: unset;
+
+      transform: scale(0.5, 0.5) rotate(42deg) translate(24%, -30%);
     }
   }
+
+  // End: &.-rtl
 }
 
 .top-title {
   &.has-discount-banner {
     padding-left: 56px;
-  }
-}
-
-.v-locale--is-rtl {
-  .top-title {
-    &.has-discount-banner {
-      padding-left: unset;
-      padding-right: 56px;
-    }
   }
 }
 
@@ -1451,28 +1497,6 @@ export default {
   /*@media only screen and (max-width: 1750px) {
     left: -1px;
   }*/
-}
-
-.v-locale--is-rtl {
-  .count-down-bg {
-    right: -4px;
-    left: unset;
-    // -webkit-transform: unset;
-    transform: unset;
-
-    /*   @media only screen and (max-width: 1750px) {
-      right: -1px;
-      left: unset;
-    }*/
-  }
-
-  .count-down-container {
-    top: -15px;
-    right: -65px;
-    left: unset;
-
-    transform: scale(0.5, 0.5) rotate(42deg) translate(24%, -30%);
-  }
 }
 
 .count-down-container {
@@ -1593,7 +1617,7 @@ export default {
   }
 }
 
-.card-item-new.-static {
+.s--product-card.-static {
   .card:hover {
     transition: unset !important;
   }

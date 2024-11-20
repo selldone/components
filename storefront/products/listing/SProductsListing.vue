@@ -102,6 +102,7 @@
                   : '',
               ]"
               class="s--products-listing-row pb-5 mb-2 pb-sm-12 pt-9"
+              :draggable="false"
             >
               <v-fade-transition group hide-on-leave>
                 <s-category-card
@@ -130,6 +131,7 @@
                         }
                       : {}
                   "
+                  :draggable="false"
                 />
               </v-fade-transition>
             </v-row>
