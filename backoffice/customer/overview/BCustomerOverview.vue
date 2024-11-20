@@ -819,7 +819,7 @@ export default {
           }
         })
         .catch((e) => {
-          thNotificationServiceis.showLaravelError(e);
+          NotificationService.showLaravelError(e);
         })
         .finally(() => {
           this.busy_set_chips = false;

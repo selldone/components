@@ -1093,7 +1093,7 @@ export default defineComponent({
 
               uploadCompleted: ($el, data) => {
                 // console.log("***** Image uploaded ****");
-                current_instance.showSuccessAlert(
+                NotificationService.showSuccessAlert(
                   null,
                   this.$t(
                     "global.article.editor.notifications.image_uploaded_success",
@@ -1101,22 +1101,16 @@ export default defineComponent({
                 );
                 current_instance.onEdited();
                 current_instance.findAllImages();
-                // this.$emit('update:body',this.purifyBody())
               },
               uploadFailed: (uploadErrors, data) => {
-                //  console.log("***** uploadFailed ****" + uploadErrors);
-
-                current_instance.showErrorAlert(
+                NotificationService.showErrorAlert(
                   null,
                   this.$t(
                     "global.article.editor.notifications.image_uploaded_failed",
                   ),
                 );
 
-                /* current_instance.showErrorAlert(
-                                       "Upload failed!",
-                                       uploadErrors[0]
-                                     );*/
+
               },
 
               deleteMethod: "POST",

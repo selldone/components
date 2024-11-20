@@ -30,7 +30,8 @@
  * @author [Your Name]
  */
 
-import { DirectiveBinding, ObjectDirective } from "vue";
+import {DirectiveBinding, ObjectDirective} from "vue";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 /**
  * A Vue directive to copy text to the clipboard when an element is clicked.
@@ -103,10 +104,9 @@ export function ExecuteCopyToClipboard(
   el.select();
   document.execCommand("copy");
   document.body.removeChild(el);
-  if (typeof instance?.showSuccessAlert === "function") {
-    instance.showSuccessAlert(
-      title,
-      message ? message : "Copied successfully.",
-    );
-  }
+
+  NotificationService.showSuccessAlert(
+    title,
+    message ? message : "Copied successfully.",
+  );
 }
