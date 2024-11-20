@@ -535,6 +535,7 @@ import { PriceHelper } from "@selldone/core-js";
 import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIcon.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import { ModeView } from "@selldone/core-js/enums/shop/ModeView.ts";
 
 export default {
   name: "SShopProductCard",
@@ -584,17 +585,27 @@ export default {
       type: Boolean,
     },
 
-    isInsta: {
-      type: Boolean,
-      default: false,
-    },
-
     rounded: {
       type: Boolean,
       default: false,
     },
 
     static: {
+      default: false,
+      type: Boolean,
+    },
+
+    mode: {
+      type: Object,
+      default: () => ModeView.NORMAL,
+    },
+    /**
+     * In free mode, the width of product and category items is set directly in the CSS.
+     * @type {Boolean}
+     * @default false
+     */
+    freeMode: {
+      // In the map view -> set min width for cards (in card modes only!)
       default: false,
       type: Boolean,
     },
@@ -610,6 +621,10 @@ export default {
   },
 
   computed: {
+    isInsta() {
+      return !this.freeMode && this.mode?.code === ModeView.INSTA.code;
+    },
+
     isFile() {
       return this.product.type === ProductType.FILE.code;
     },
@@ -775,31 +790,6 @@ export default {
   &:hover {
     -webkit-transform: unset; // Make sure card be on top!
   }
-
-  // Disable hover effects on touch devices
-  @media (hover: none) {
-    &:hover {
-      transform: none;
-      box-shadow: none;
-
-      .card__info,
-      .card__img--hover,
-      .card:hover {
-        transform: none !important;
-        transition: none !important;
-      }
-
-      .toggle-visible-on-hover {
-        opacity: 1 !important;
-        transition: none;
-      }
-
-      .toggle-hidden-on-hover {
-        opacity: 1 !important;
-      }
-    }
-  }
-
 
   p {
     font-size: 0.95em;
@@ -1028,24 +1018,26 @@ export default {
     box-shadow: unset;
   }
 
-  .card:hover {
-    transition-delay: 0s;
-    box-shadow: 0px 30px 18px -8px rgba(0, 0, 0, 0.1);
-    z-index: 100;
+  @media (hover: hover) and (pointer: fine) { // Not be in mobile - touch screens
+    .card:hover {
+      transition-delay: 0s;
+      box-shadow: 0px 30px 18px -8px rgba(0, 0, 0, 0.1);
+      z-index: 100;
 
-    transform: scale(1.15, 1.15);
+      transform: scale(1.15, 1.15);
 
-    @media (max-width: 1902px) {
-      transform: scale(1.1, 1.1);
-    }
+      @media (max-width: 1902px) {
+        transform: scale(1.1, 1.1);
+      }
 
-    @media (max-width: 800px) {
-      transform: scale(1.05, 1.05);
-    }
+      @media (max-width: 800px) {
+        transform: scale(1.05, 1.05);
+      }
 
-    .colors-rating-small-mode {
-      transform: translateY(26px);
-      opacity: 0;
+      .colors-rating-small-mode {
+        transform: translateY(26px);
+        opacity: 0;
+      }
     }
   }
 
@@ -1114,35 +1106,36 @@ export default {
     text-decoration: none;
     color: #ad7d52;
   }
+  @media (hover: hover) and (pointer: fine) { // Not be in mobile - touch screens
+    .card:hover .card__img--hover {
+      transition-delay: 0s;
 
-  .card:hover .card__img--hover {
-    transition-delay: 0s;
-
-    height: 100%;
-    top: 0;
-    opacity: 1;
-  }
-
-  .card:hover {
-    .card__info {
-      backdrop-filter: none;
-      border-radius: 16px;
-      //  transform: scale(0.75, 0.75);
-      background-color: rgba(255, 255, 255, 0.94);
-
-      transform: scale(0.9, 0.9) translateY(-4px);
-
-      &.no_variants {
-        background: unset !important;
-      }
-
-      &:hover {
-        transform: scale(0.96, 0.96);
-      }
+      height: 100%;
+      top: 0;
+      opacity: 1;
     }
 
-    .card-wrap {
-      border-radius: 12px;
+    .card:hover {
+      .card__info {
+        backdrop-filter: none;
+        border-radius: 16px;
+        //  transform: scale(0.75, 0.75);
+        background-color: rgba(255, 255, 255, 0.94);
+
+        transform: scale(0.9, 0.9) translateY(-4px);
+
+        &.no_variants {
+          background: unset !important;
+        }
+
+        &:hover {
+          transform: scale(0.96, 0.96);
+        }
+      }
+
+      .card-wrap {
+        border-radius: 12px;
+      }
     }
   }
 
@@ -1172,57 +1165,58 @@ export default {
     position: relative;
     width: 100%;
   }
+  @media (hover: hover) and (pointer: fine) { // Not be in mobile - touch screens
+    .card:hover {
+      border-radius: 12px;
 
-  .card:hover {
-    border-radius: 12px;
+      .card__info-hover {
+        transition-delay: 0s;
+        opacity: 1;
+      }
 
-    .card__info-hover {
-      transition-delay: 0s;
-      opacity: 1;
-    }
+      .offer-top-end {
+        transform: translate(90%, -90%);
+      }
 
-    .offer-top-end {
-      transform: translate(90%, -90%);
-    }
+      .top-title {
+        transition-delay: 0s;
+        transform: translateY(-100%);
+      }
 
-    .top-title {
-      transition-delay: 0s;
-      transform: translateY(-100%);
-    }
+      .flow-top-label {
+        // font-size: 0.8em;
+        transform: scale(0.7, 0.7);
 
-    .flow-top-label {
-      // font-size: 0.8em;
-      transform: scale(0.7, 0.7);
+        top: 8px;
+        left: -10px;
+      }
 
-      top: 8px;
-      left: -10px;
-    }
+      .date {
+      }
 
-    .date {
-    }
+      .card__clock-info {
+        transition-delay: 0.2s;
+        transform: translateY(0px);
+      }
 
-    .card__clock-info {
-      transition-delay: 0.2s;
-      transform: translateY(0px);
-    }
+      .card__copy-product-badge {
+        transition-delay: 0.2s;
+        transform: translateX(0px);
+      }
 
-    .card__copy-product-badge {
-      transition-delay: 0.2s;
-      transform: translateX(0px);
-    }
+      .toggle-visible-on-hover {
+        transition-delay: 0.35s;
+        opacity: 1;
+      }
 
-    .toggle-visible-on-hover {
-      transition-delay: 0.35s;
-      opacity: 1;
-    }
+      .quick-buy {
+        visibility: visible;
+        opacity: 1;
+      }
 
-    .quick-buy {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .toggle-hidden-on-hover {
-      opacity: 0;
+      .toggle-hidden-on-hover {
+        opacity: 0;
+      }
     }
   }
 
@@ -1417,10 +1411,12 @@ export default {
     }
 
     .s--product-card {
-      .card:hover {
-        &:hover {
-          .offer-top-end {
-            transform: translate(-90%, -90%);
+      @media (hover: hover) and (pointer: fine) { // Not be in mobile - touch screens
+        .card:hover {
+          &:hover {
+            .offer-top-end {
+              transform: translate(-90%, -90%);
+            }
           }
         }
       }
@@ -1429,11 +1425,12 @@ export default {
         text-align: left !important;
       }
     }
-
-    .row-box {
-      &:hover {
-        .offer-top-end {
-          transform: translate(-90%, -90%);
+    @media (hover: hover) and (pointer: fine) { // Not be in mobile - touch screens
+      .row-box {
+        &:hover {
+          .offer-top-end {
+            transform: translate(-90%, -90%);
+          }
         }
       }
     }
@@ -1533,6 +1530,109 @@ export default {
 }
 
 .-insta-mode {
+  --footer-height: 50px;
+  // Fix Flickering in Safari in Safari: (Apple bug)
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+
+  &:hover {
+    -webkit-transform: unset; // Make sure card be on top!
+  }
+
+  max-width: max-content !important;
+  height: var(--insta-size) !important;
+  min-width: var(--insta-size) !important;
+  padding: 0 !important;
+
+  .card--1 {
+    height: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    border: 1px solid rgba(0, 0, 0, 0.03) !important;
+
+    .card__info-hover {
+      display: none;
+    }
+
+    .card__img--hover {
+      top: 0 !important;
+      bottom: 0;
+      height: 100% !important;
+    }
+
+    .top-title {
+      background: transparent;
+
+      h3 {
+        font-size: 0.8rem !important;
+        margin: 4px !important;
+        white-space: nowrap;
+      }
+    }
+
+    .count-down-bg {
+      transition: all 0.5s !important;
+    }
+    @media (hover: hover) and (pointer: fine) { // Not be in mobile - touch screens
+      &:hover {
+        transform: scale(1.2, 1.2) !important;
+        z-index: 20;
+
+        // Hide discount bar on hover:
+        .count-down-bg {
+          //  transform: scale(0);
+          // transform-origin: top right;
+        }
+
+        .count-down-container {
+          //opacity: 0 !important;
+        }
+      }
+    }
+
+    @media only screen and (max-width: 600px) {
+      .top-title {
+        h3 {
+          font-size: 0.6rem !important;
+          font-weight: 500;
+        }
+      }
+
+      .card__info {
+        .sec--price {
+          .main-price-label {
+            padding: 4px !important;
+
+            .dis-val {
+              display: none;
+            }
+
+            .u--price.large {
+              font-size: 0.9rem !important;
+            }
+          }
+        }
+
+        .product-variant-view {
+          > div {
+            padding: 0 !important;
+            font-size: 8px;
+          }
+
+          .v-icon {
+            font-size: 9px !important;
+          }
+        }
+      }
+    }
+  }
+
+  // Position quick by at center:
+  .quick-buy {
+    top: 30% !important;
+    bottom: unset !important;
+  }
+
   .card__info {
     background-color: #fff !important;
     backdrop-filter: unset !important;

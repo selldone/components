@@ -113,6 +113,7 @@
                   :key="'f' + category.id"
                   :category="category"
                   :class="[class_items_categories]"
+                  :mode="mode_view_categories"
                   :static="no_animation"
                   :to="
                     viewOnly || window.ExternalWidget
@@ -228,7 +229,8 @@
                   :dense="show_filter_menu"
                   :is-row="isRow"
                   :is-small="isSmallItem"
-                  :isInsta="isInsta"
+                  :mode="mode_view_products"
+                  :free-mode="freeMode"
                   :product="product"
                   :quick-buy="hover_actions"
                   :rounded="freeMode"
@@ -605,7 +607,7 @@ export default {
       else if (this.mode_view_categories.code === ModeView.LIST.code)
         return "v-col-12 v-col-sm-6 v-col-sm-4 v-col-lg-3 pa-2";
       else if (this.mode_view_categories.code === ModeView.INSTA.code)
-        return "insta-cat";
+        return "";
 
       return "";
     },
@@ -622,7 +624,7 @@ export default {
       else if (this.mode_view_products.code === ModeView.LIST.code)
         return "v-col-12 v-col-lg-6 pa-0";
       else if (this.mode_view_products.code === ModeView.INSTA.code)
-        return "insta-prod";
+        return "";
 
       return "";
     },
@@ -657,11 +659,7 @@ export default {
         !this.freeMode && this.mode_view_products.code === ModeView.LIST.code
       );
     },
-    isInsta() {
-      return (
-        !this.freeMode && this.mode_view_products.code === ModeView.INSTA.code
-      );
-    },
+
     has_breaker() {
       return true; // (this.isInsta || this.isRow) && this.folders.length > 0;
     },
@@ -1372,258 +1370,9 @@ export default {
     }
   }
 
-  // ─────────── Insta mode view ───────────
-  .insta-cat {
-    max-width: 50%;
-    min-height: 160px;
-    padding: 0 8px;
-    overflow: visible;
 
-    // Fix Flickering in Safari in Safari: (Apple bug)
-    -webkit-transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
 
-    @media only screen and (max-width: 1200px) {
-      .category-card-root {
-        .box {
-          padding: 0 !important;
-        }
-      }
-    }
 
-    .category-card-root {
-      .folder-card {
-        // Fix Flickering in Safari in Safari: (Apple bug)
-        -webkit-backface-visibility: hidden;
-
-        --f-size: 200px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 50%;
-        height: var(--f-size);
-        width: var(--f-size);
-
-        &:after {
-          border-radius: 35% !important;
-        }
-
-        &:before {
-          border-radius: 30% !important;
-        }
-
-        &:hover {
-          .imgBx {
-            top: calc(var(--f-size) / 2);
-            bottom: calc(var(--f-size) / 2);
-            left: calc(var(--f-size) / 2);
-            right: calc(var(--f-size) / 2);
-          }
-
-          .details {
-            display: flex;
-          }
-        }
-
-        .imgBx {
-          border-radius: 50%;
-
-          img {
-            border-radius: 50%;
-          }
-
-          p {
-            font-size: 8px;
-            background: transparent;
-            border-radius: 15px;
-            bottom: -40px;
-            top: unset;
-            transform: translate(-50%, 0%);
-            width: 90%;
-          }
-
-          .category-title {
-            font-size: 11px;
-            overflow: visible;
-            width: max-content;
-          }
-        }
-
-        .details {
-          display: none;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-          left: unset;
-          right: unset;
-          top: unset;
-          bottom: unset;
-          flex-direction: column;
-
-          h2 {
-            font-size: 0px !important;
-          }
-
-          span {
-            font-size: 10px !important;
-
-            overflow: hidden;
-            padding: 5px;
-            line-height: normal;
-            max-height: var(--f-size);
-          }
-
-          @media only screen and (min-width: 600px) and (max-width: 1200px) {
-            span {
-              font-size: 8px !important;
-              line-height: 11px;
-            }
-          }
-          @media only screen and (max-width: 600px) {
-            span {
-              font-size: 7px !important;
-              line-height: 10px;
-            }
-          }
-        }
-
-        @media only screen and (min-width: 600px) and (max-width: 1200px) {
-          --f-size: 120px;
-
-          //  height: 120px !important;
-          // width: 120px !important;
-
-          .imgBx {
-            .category-title {
-              font-size: 9px;
-              overflow: visible;
-              width: max-content;
-            }
-          }
-        }
-
-        @media only screen and (max-width: 600px) {
-          --f-size: 100px;
-          // height: 100px !important;
-          //  width: 100px !important;
-
-          .imgBx {
-            .category-title {
-              font-size: 8px;
-              overflow: hidden;
-              width: 90%;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .insta-prod {
-    --footer-height: 50px;
-    // Fix Flickering in Safari in Safari: (Apple bug)
-    -webkit-transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-
-    &:hover {
-      -webkit-transform: unset; // Make sure card be on top!
-    }
-
-    max-width: max-content !important;
-    height: var(--insta-size) !important;
-    min-width: var(--insta-size) !important;
-    padding: 0 !important;
-
-    .card--1 {
-      height: 100% !important;
-      min-width: 100% !important;
-      max-width: 100% !important;
-      border: 1px solid rgba(0, 0, 0, 0.03) !important;
-
-      .card__info-hover {
-        display: none;
-      }
-
-      .card__img--hover {
-        top: 0 !important;
-        bottom: 0;
-        height: 100% !important;
-      }
-
-      .top-title {
-        background: transparent;
-
-        h3 {
-          font-size: 0.8rem !important;
-          margin: 4px !important;
-          white-space: nowrap;
-        }
-      }
-
-      .count-down-bg {
-        transition: all 0.5s !important;
-      }
-
-      &:hover {
-        transform: scale(1.2, 1.2) !important;
-        z-index: 20;
-
-        // Hide discount bar on hover:
-        .count-down-bg {
-          //  transform: scale(0);
-          // transform-origin: top right;
-        }
-
-        .count-down-container {
-          //opacity: 0 !important;
-        }
-      }
-
-      @media only screen and (max-width: 600px) {
-        .top-title {
-          h3 {
-            font-size: 0.6rem !important;
-            font-weight: 500;
-          }
-        }
-
-        .card__info {
-          .sec--price {
-            .main-price-label {
-              padding: 4px !important;
-
-              .dis-val {
-                display: none;
-              }
-
-              .u--price.large {
-                font-size: 0.9rem !important;
-              }
-            }
-          }
-
-          .product-variant-view {
-            > div {
-              padding: 0 !important;
-              font-size: 8px;
-            }
-
-            .v-icon {
-              font-size: 9px !important;
-            }
-          }
-        }
-      }
-    }
-
-    // Position quick by at center:
-    .quick-buy {
-      top: 30% !important;
-      bottom: unset !important;
-    }
-  }
 
   .insta-row {
     justify-content: center;
