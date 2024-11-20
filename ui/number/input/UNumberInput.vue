@@ -332,6 +332,9 @@ export default {
     },
 
     newValue(newVal) {
+
+      if(newVal==='-')return;
+
       if(!newVal && newVal!==0) return;
       let newValue = NumberHelper.toEnglishFloat(newVal, this.decimal);
 
@@ -339,6 +342,7 @@ export default {
       if (this.min !== undefined && newValue < this.min) newValue = this.min;
 
       // console.log('newValue',newValue)
+
       this.$emit("update:modelValue", newValue);
 
       if (this.focus) return;

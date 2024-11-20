@@ -57,7 +57,7 @@
       :lock="lock"
       :max="99999"
       :messages="messages"
-      :min="-99999"
+      :min="!onlyPositiveValue ? -99999 : 0"
       :prepend-icon="prependIcon"
       :prependIcon="prependIcon"
       :readonly="readonly"
@@ -68,7 +68,7 @@
       :suffix="suffix"
       :textCenter="true"
       :variant="variant"
-      class="flex-grow-1"
+      class="-number-input flex-grow-1"
       @blur="$emit('blur')"
       @clear="
         dim_val = 'unset';
@@ -200,6 +200,11 @@ export default {
     },
 
     variant: {},
+
+    onlyPositiveValue: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -270,20 +275,27 @@ export default {
         this.dim_val = null;
         return;
       }
+
       let num = 0;
       let dim = "px";
 
       try {
-        const split_string = value.match(/(-?\d+(\.\d+)?)([a-z%]+)/i);
+        const regex = !this.onlyPositiveValue
+          ? /(-?\d+(\.\d+)?)([a-z%]+)/i
+          : /(\d+(\.\d+)?)([a-z%]+)/i;
+        const split_string = value.match(regex);
 
-        // console.log("extractValue:", split_string);
+        if (!split_string) {
+          throw new Error("Invalid value");
+        }
 
         num = parseFloat(split_string[1]);
         dim = split_string[3];
-
-        ////  console.log("Text:" + dim + " & Number:" + num);
       } catch (e) {
-        // console.error(e);
+        console.error("Invalid input format:", e);
+        this.number_val = null;
+        this.dim_val = null;
+        return;
       }
 
       this.number_val = num;
@@ -298,6 +310,14 @@ export default {
   ::v-deep(.v-select__menu-icon) {
     margin-inline-end: -14px !important;
     margin: 0;
+  }
+}
+
+::v-deep(.-number-input) {
+  .v-field {
+    padding-left: 2px;
+    padding-right: 2px;
+    font-size: 14px;
   }
 }
 </style>
