@@ -1114,6 +1114,10 @@ not need!
 
             // External
             external: this.$product.external,
+
+
+            // Shortcut categories:
+            shortcuts:this.$product.shortcuts
           },
         )
         .then(({ data }) => {
@@ -1242,6 +1246,9 @@ not need!
 
             // External
             external: this.$product.external,
+
+            // Shortcut categories:
+            shortcuts:this.$product.shortcuts
           },
         )
         .then(({ data }) => {

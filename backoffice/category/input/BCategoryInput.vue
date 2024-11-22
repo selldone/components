@@ -41,11 +41,23 @@
     item-value="id"
     messages=" "
     @update:model-value="$emit('change')"
+    @click:clear="$emit('click:clear')"
+    @blur="$emit('blur')"
+    v-model:focused="focused"
   >
     <!-- ―――――――――――――――――― message ―――――――――――――――――― -->
 
     <template v-slot:message>
-      <v-btn @click="dialog = true" size="small" slim variant="text" color="primary" prepend-icon="drive_folder_upload">{{$t('global.actions.select_category')}}</v-btn>
+      <v-btn
+        @click="dialog = true"
+        size="small"
+        slim
+        variant="text"
+        color="primary"
+        prepend-icon="drive_folder_upload"
+      >
+        {{ $t("global.actions.select_category") }}
+      </v-btn>
       <b-category-parent
         v-if="
           !multiple /*Show the category detail on the single mode!*/ &&
@@ -56,7 +68,6 @@
       >
       </b-category-parent>
       <div v-if="messages">{{ messages }}</div>
-
     </template>
 
     <!-- ―――――――――――――――――― items ―――――――――――――――――― -->
@@ -227,7 +238,7 @@ export default {
   name: "BCategoryInput",
   mixins: [],
   components: { BProductsWindow, UAvatarFolder, BCategoryParent, CircleImage },
-  emits: ["change", "update:modelValue"],
+  emits: ["change", "update:modelValue", "click:clear", "blur"],
   inject: ["$shop", "$vendor"],
   props: {
     modelValue: {},
@@ -299,6 +310,7 @@ export default {
     busy_create: false,
 
     dialog: false,
+    focused: false,
   }),
 
   computed: {
@@ -392,40 +404,43 @@ export default {
     fetchCategories() {
       this.busy = true;
 
-      axios
-        .get(
-          this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-            ? window.VAPI.GET_MY_VENDOR_CATEGORIES(this.$route.params.vendor_id)
-            : window.API.GET_MY_SHOP_CATEGORIES(this.$route.params.shop_id),
-          {
-            params: {
-              contain: this.isObject(this.modelValue)
-                ? this.modelValue.id
-                : this.modelValue,
-              search: this.search,
+      const offset = 0;
+      const limit =
+        this.modelValue && !this.focused ? 0 : this.search ? 20 : 100;
 
-              children: false,
-              parent: true,
+      const params = {
+        contain: this.isObject(this.modelValue)
+          ? this.modelValue.id
+          : this.modelValue,
+        search: this.search,
 
-              offset: 0,
-              limit: this.search ? 20 : 100,
-            },
-          },
-        )
-        .then(({ data }) => {
-          this.categories = data.categories;
-          this.total = data.total;
+        children: false,
+        parent: true,
+      };
 
-          if (!this.noHome)
-            this.categories.unshift({
-              id: null,
-              title: this.$t("global.commons.home"),
-            });
-        })
+      const handleSuccessResponse = ({ categories,total }) => {
+        this.categories = categories;
+        this.total = total;
 
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
+        // Add home category to the list:
+        if (!this.noHome && !this.categories.some(c=>c.id===null))
+          this.categories.unshift({
+            id: null,
+            title: this.$t("global.commons.home"),
+          });
+      };
+
+      (this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+        ? window.$vendor.category
+            .optimize(120)
+            .list(this.$vendor.id, offset, limit, params)
+        : window.$backoffice.category
+            .optimize(120)
+            .list(this.$shop.id, offset, limit, params)
+      )
+
+        .cache(handleSuccessResponse)
+        .then(handleSuccessResponse)
         .finally(() => {
           this.busy = false;
         });
@@ -487,7 +502,7 @@ export default {
       if (!this.multiple) {
         this.dialog = false;
       }
-      console.log("category", category, this.category);
+      //console.log("category", category, this.category);
     },
   },
 };

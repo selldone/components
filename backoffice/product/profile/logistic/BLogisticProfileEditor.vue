@@ -20,7 +20,7 @@
         icon="language"
         add-icon="translate"
         @click:add="addNew"
-        :add-caption="$t('logistic_profile_editor.languages.add_caption')"
+        :add-caption="editable?$t('logistic_profile_editor.languages.add_caption'):undefined"
         :disabled="!free_languages || !free_languages.length || !editable"
         :disabled-reason="
           $t('logistic_profile_editor.languages.no_more_language')
@@ -38,13 +38,14 @@
             'bg-blue-soft text-white': article && item.id === article.id,
           }"
           class="ma-1"
-          icon
+          variant="outlined"
           @click="selectArticle(item)"
+          stacked
         >
-          <b>{{ item.lang }}</b>
-          <v-tooltip activator="parent" class="text-start" location="top"
+          <b class="mb-1">{{ item.lang }}</b>
+          <small
             >{{ getLanguageName(item.lang) }}
-          </v-tooltip>
+          </small>
         </v-btn>
         <v-spacer></v-spacer>
       </v-row>
@@ -102,7 +103,7 @@
                 window.ARTICLE_API.UPLOAD_ARTICLE_BLOG_IMAGE(shop.id)
               "
               class="article min-height-60vh"
-              edit
+              :edit="editable"
               @change="changed = true"
             ></s-article-editor>
           </div>
@@ -110,13 +111,13 @@
           <s-widget-buttons v-if="editable && changed" auto-fixed-position>
             <v-btn
               :loading="busy_save"
-              color="primary"
+              color="#000"
               size="x-large"
               variant="elevated"
               @click="saveArticle"
             >
               <v-icon start>save</v-icon>
-              {{ $t("global.actions.save") }}
+              {{ $t("global.actions.save_changes") }}
             </v-btn>
           </s-widget-buttons>
         </div>
@@ -219,7 +220,12 @@ export default defineComponent({
     },
   },
 
-  watch: {},
+  watch: {
+    profile() {
+      // Auto select first:
+      if (this.articles.length) this.article = this.articles[0];
+    },
+  },
 
   created() {},
 

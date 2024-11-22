@@ -35,6 +35,12 @@
       max-width="360"
     >
       {{ $t(profile_type.desc) }}
+
+      <b-product-profile-location-preview
+        class="py-2 px-6"
+        :title="$t(profile_type.title)"
+        :orderKey="getOrderKey(profile_type.value)"
+      ></b-product-profile-location-preview>
     </v-tooltip>
 
     <template v-slot:append>
@@ -81,23 +87,26 @@
             add-text
           >
           </u-widget-header>
-          <v-list-subheader>{{
-            $t(selected_profile_type.desc)
-          }}</v-list-subheader>
-          <v-locale-provider :rtl="false"><!-- Fix Open menu bug in RTL Vuetify 3 -->
+          <v-list-subheader
+            >{{ $t(selected_profile_type.desc) }}
+          </v-list-subheader>
+          <v-locale-provider :rtl="false"
+            ><!-- Fix Open menu bug in RTL Vuetify 3 -->
             <b-logistic-profile-input
-                v-model="profile_input"
-                :shop="shop"
-                :type="selected_profile_type"
+              v-model="profile_input"
+              :shop="shop"
+              :type="selected_profile_type"
             ></b-logistic-profile-input>
           </v-locale-provider>
         </div>
 
         <div v-if="articles && profile">
           <b-logistic-profile-editor
+            :key="profile.id"
             :articles="articles"
             :profile="profile"
             :shop="shop"
+            :editable="!IS_VENDOR_PANEL"
           ></b-logistic-profile-editor>
         </div>
       </v-card-text>
@@ -131,10 +140,16 @@ import { defineComponent } from "vue";
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import BLogisticProfileInput from "../../../logistic/profile/input/BLogisticProfileInput.vue";
 import BLogisticProfileEditor from "../../../product/profile/logistic/BLogisticProfileEditor.vue";
+import BProductProfileLocationPreview from "@selldone/components-vue/backoffice/product/profile/location-preview/BProductProfileLocationPreview.vue";
+import ProductSection from "@selldone/core-js/enums/product/ProductSection.ts";
 
 export default defineComponent({
   name: "BProductProfileLogistic",
-  components: { BLogisticProfileEditor, BLogisticProfileInput },
+  components: {
+    BProductProfileLocationPreview,
+    BLogisticProfileEditor,
+    BLogisticProfileInput,
+  },
 
   props: {
     product: {
@@ -233,6 +248,14 @@ export default defineComponent({
         .finally(() => {
           this.busy = false;
         });
+    },
+
+    getOrderKey(code) {
+      if (code === LogisticProfileType.GUIDE.value) return ProductSection.guide.code;
+      else if (code === LogisticProfileType.RETURN_POLICY.value)
+        return ProductSection.return_policy.code;
+      else if (code === LogisticProfileType.SHIPPING.value) return ProductSection.shipping.code;
+      else if (code === LogisticProfileType.WARRANTY.value) return ProductSection.warranty.code;
     },
   },
 });

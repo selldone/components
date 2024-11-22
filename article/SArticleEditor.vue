@@ -896,14 +896,19 @@ export default defineComponent({
       // this.$emit('update:body',this.purifyBody())
     },
 
-    onEdited($event) {
+    // Define the debounced version of onEdited
+    onEdited: debounce(function() {
+      console.log("🍒 Article Editor | Edited (debounced)");
+
       if (this.edit) this.state = "changed";
 
       this.$emit("change", {
         title: this.title,
         body: this.body,
       });
-    },
+    }, 1000), // Wait for 1000ms before the last call
+
+
 
     setDirection() {
       this.$nextTick(() => {

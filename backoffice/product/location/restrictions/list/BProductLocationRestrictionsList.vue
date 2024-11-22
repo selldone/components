@@ -14,7 +14,7 @@
 
 <template>
   <div>
-    <div :class="{ '-large': !collapse }" class="widget-box mb-5">
+    <div class="widget-box -large mb-5">
       <u-widget-header
         :disabled="!locations"
         :add-caption="$t('product_location_restrictions.add_location_action')"
@@ -457,10 +457,6 @@ export default {
     },
     isFile() {
       return this.product && this.product.type === ProductType.FILE.code;
-    },
-
-    collapse() {
-      return this.isFile && !this.has_location;
     },
   },
 

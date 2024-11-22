@@ -14,8 +14,6 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="pb-16" v-bind="$attrs">
-    <v-toolbar color="transparent" flat></v-toolbar>
-
     <!-- ██████████████████████████ Config ██████████████████████████ -->
 
     <div class="widget-box -large mb-5">

@@ -18,7 +18,11 @@
     class="s--product-section-incentivise px-2 mb-2 flex-grow-0"
   >
     <div v-html="message"></div>
-    <div v-if="show_progress" style="max-width: 360px" class="mt-1">
+    <div
+      v-if="has_progress && show_progress"
+      style="max-width: 360px"
+      class="mt-1"
+    >
       <v-progress-linear
         :model-value="sells"
         :max="sells + quantity"
@@ -29,11 +33,11 @@
       ></v-progress-linear>
       <div class="d-flex align-center justify-space-between small">
         <span v-if="sells > 0"
-          >{{ $t("product_section_incentivise.total_sold") }}:
+          >{{ $t("global.product_section_incentivise.total_sold") }}:
           <b>{{ numeralFormat(sells, "0.[0]a") }}</b></span
         >
         <span v-if="has_quantity > 0"
-          >{{ $t("product_section_incentivise.available_items") }}:
+          >{{ $t("global.product_section_incentivise.available_items") }}:
           <b>{{ numeralFormat(quantity, "0.[0]a") }}</b></span
         >
       </div>
@@ -45,6 +49,7 @@
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import numeral from "numeral";
+import { GenerateProductThresholdsConditions } from "@selldone/core-js/enums/product/ProductThresholds.ts";
 
 export default {
   name: "SProductSectionIncentivise",
@@ -66,6 +71,19 @@ export default {
   }),
 
   computed: {
+    /**
+     * Custom thresholds for the product
+     */
+    thresholds() {
+      return this.$product.thresholds;
+    },
+    carts_threshold_portion() {
+      return this.thresholds?.custom ? this.thresholds.carts : 0.1;
+    },
+    progress_threshold_portion() {
+      return this.thresholds?.custom ? this.thresholds.progress : 0.1;
+    },
+
     has_quantity() {
       return (
         this.$product.type === ProductType.PHYSICAL.code ||
@@ -84,8 +102,23 @@ export default {
     sells() {
       return this.$product.sells;
     },
+    has_progress() {
+      return [ProductType.PHYSICAL.code, ProductType.VIRTUAL.code].includes(
+        this.$product.type,
+      );
+    },
+    has_in_cart_count() {
+      return [ProductType.PHYSICAL.code, ProductType.VIRTUAL.code].includes(
+        this.$product.type,
+      );
+    },
+
     show_progress() {
-      return this.sells > 0 && this.sells / (this.quantity + this.sells) > 0.1;
+      return (
+        this.sells > 0 &&
+        this.sells / (this.quantity + this.sells) >
+          this.progress_threshold_portion
+      );
     },
     in_carts() {
       return this.$product.in_carts;
@@ -99,88 +132,34 @@ export default {
 
       const is_physical = this.$product.type === ProductType.PHYSICAL.code;
       const is_virtual = this.$product.type === ProductType.VIRTUAL.code;
-      const is_file = this.$product.type === ProductType.FILE.code;
-      let conditions = [];
 
       if (is_physical || is_virtual) {
         if (!this.quantity) return null; // if quantity is not set, don't show any message
-        conditions = [
-          {
-            minSells: 50,
-            maxQuantity: 100,
-            message: this.$t(
-              "product_section_incentivise.physical.popular_selling_with_low_quantity",
-            ),
-          },
-          {
-            minSells: 5,
-            maxQuantity: Infinity,
-            message: this.$t(
-              "product_section_incentivise.physical.has_sell_has_quantity",
-            ),
-          },
-          {
-            minQuantity: 20,
-            maxQuantity: 200,
-            message: this.$t(
-              "product_section_incentivise.physical.just_has_low_quantity",
-            ),
-          },
-          {
-            minQuantity: 1,
-            maxQuantity: 20,
-            message: this.$t(
-              "product_section_incentivise.physical.just_has_very_low_quantity",
-            ),
-          },
-        ];
-      } else if (is_file) {
-        conditions = [
-          {
-            minSells: 100,
-            message: this.$t(
-              "product_section_incentivise.file.very_popular_selling",
-            ),
-          },
-          {
-            minSells: 50,
-            message: this.$t(
-              "product_section_incentivise.file.popular_selling",
-            ),
-          },
-          {
-            minSells: 10,
-            message: this.$t(
-              "product_section_incentivise.file.has_normal_selling",
-            ),
-          },
-          {
-            minSells: 1,
-            message: this.$t(
-              "product_section_incentivise.file.just_release_has_some_sales",
-            ),
-          },
-        ];
       }
 
+      let conditions = GenerateProductThresholdsConditions(this.$product);
+
+     // console.log("conditions", conditions,'quantity',this.quantity,'sells',this.sells);
       const cartMessage =
-        (is_physical || is_virtual) && this.in_carts >= this.quantity * 0.1 // if added to cart more than 10% of stock
-          ? this.$t("product_section_incentivise.have_in_their_bag", {
+        this.has_in_cart_count &&
+        this.in_carts >= this.quantity * this.carts_threshold_portion // if added to cart more than 10% of stock
+          ? this.$t("global.product_section_incentivise.have_in_their_bag", {
               in_carts: numeral(this.in_carts).format("0a"),
             })
           : "";
 
       for (const condition of conditions) {
         const isSellsInRange =
-          condition.minSells === undefined || this.sells > condition.minSells;
+          condition.minSells == null || this.sells > condition.minSells;
         const isQuantityInRange =
-          (condition.minQuantity === undefined ||
+          (condition.minQuantity == null ||
             this.quantity >= condition.minQuantity) &&
-          (condition.maxQuantity === undefined ||
+          (condition.maxQuantity == null ||
             this.quantity <= condition.maxQuantity);
 
+       // console.log(condition,"isSellsInRange", isSellsInRange,'isQuantityInRange',isQuantityInRange);
         if (isSellsInRange && isQuantityInRange) {
-          return `${condition.message} ${cartMessage}`;
+          return `${this.$t(condition.message)} ${cartMessage}`;
         }
       }
 

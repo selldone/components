@@ -205,7 +205,7 @@
         <template v-slot:append-inner>
           <products-dense-images-circles
             v-if="$product?.shortcuts?.length"
-            :ids="$product.shortcuts.map((i) => 'c-' + i)"
+            :ids="$product.shortcuts.filter(v=>v).map((i) => 'c-' + i)"
             :size="32"
             class="pa-0 mx-1"
           ></products-dense-images-circles>
@@ -217,21 +217,21 @@
               size="32"
               variant="elevated"
               @click.stop="showShortcuts()"
-              :class="{ disabled: !$product?.id }"
             >
               <v-icon size="18">create_new_folder</v-icon>
             </v-btn>
-            <v-tooltip activator="parent" content-class="bg-black text-start" max-width="320">
+            <v-tooltip
+              activator="parent"
+              content-class="bg-black text-start"
+              max-width="320"
+            >
               <div>
                 <b class="me-1">Shortcuts</b>
               </div>
               <p>
-                You can add this product to multiple categories. This will act like creating shortcut of the product in other categories.
+                You can add this product to multiple categories. This will act
+                like creating shortcut of the product in other categories.
               </p>
-              <div v-if="!$product?.id" class="text-amber small py-1">
-                <v-icon class="me-1">info_outline</v-icon>
-                Save the product first to enable this option.
-              </div>
             </v-tooltip>
           </span>
         </template>
@@ -1004,7 +1004,11 @@
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="shortcut_dialog = false">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="closeShortcutsWithoutSave"
+          >
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -1400,7 +1404,22 @@ export default {
 
       this.shortcut_dialog = true;
     },
+    closeShortcutsWithoutSave() {
+      /*Remove null values!*/
+      this.shortcuts = this.shortcuts?.filter((v) => v);
+      this.$product.shortcuts = this.shortcuts;
+      this.shortcut_dialog = false;
+    },
     setShortcuts() {
+      if (!this.$product.id) {
+        // We can not set shortcuts for new product! So we postpone it on save product!
+        this.shortcuts = this.shortcuts?.filter((v) => v);
+        this.$product.shortcuts = this.shortcuts;
+        this.shortcut_dialog = false;
+        return;
+      }
+      // We can save here:
+
       this.busy_set_shortcuts = true;
       axios
         .post(

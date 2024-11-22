@@ -4993,3 +4993,8 @@ ol, ul {
     transition: none !important;
   }
 }
+
+.vertical-text{
+  writing-mode: vertical-rl; /* Rotates text top-to-bottom */
+  text-orientation: mixed; /* Ensures proper character orientation */
+}

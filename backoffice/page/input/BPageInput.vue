@@ -34,7 +34,7 @@
     @click:clear="$emit('click:clear')"
   >
     <template
-      v-if="modelValue?.id && $route.params.shop_id"
+      v-if="!noEditButton && modelValue?.id && $route.params.shop_id"
       v-slot:append-inner
     >
       <v-btn
@@ -55,7 +55,7 @@
     </template>
 
     <template v-slot:chip="{ item }">
-      <div class="mb-n3">
+      <div>
         <v-avatar :color="item.raw.color" class="me-2" size="24">
           <v-img
             v-if="item.raw.image"
@@ -163,6 +163,10 @@ export default {
     },
     disabled: Boolean,
     message:{},
+    noEditButton: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   data() {

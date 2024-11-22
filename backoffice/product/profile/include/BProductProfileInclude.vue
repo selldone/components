@@ -51,7 +51,7 @@
     </v-list-item-subtitle>
 
     <template v-slot:append>
-      <v-list-item-action>
+      <v-list-item-action end>
         <v-btn
           :color="product.includes?.length ? 'success' : 'primary'"
           icon

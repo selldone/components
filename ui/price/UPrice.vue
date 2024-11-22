@@ -200,7 +200,7 @@ export default {
   }
 
   .small {
-    font-size: 0.7em !important;
+    font-size: 0.65em !important;
     font-weight: 500;
   }
 
