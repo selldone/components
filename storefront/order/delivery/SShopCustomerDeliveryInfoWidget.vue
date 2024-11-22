@@ -19,13 +19,13 @@
     <h2 class="d-flex align-center">
       <v-icon class="me-1" color="#111"
         >{{
-          has_goods_delivery ? "local_shipping" : "switch_access_shortcut_add"
+          has_goods_delivery ? "share_location" : "switch_access_shortcut_add"
         }}
       </v-icon>
-      {{ $t("order_page.delivery.title") }}
+      {{ $t("global.commons.receiver") }}
 
       <v-chip
-        v-if="is_pickup"
+        v-if="is_pickup && !has_vendor_orders /*Separate fulfillment*/"
         class="skew-n20 ms-2"
         color="success"
         label
@@ -36,9 +36,7 @@
       <v-spacer></v-spacer>
     </h2>
 
-    <v-list-subheader class="px-0">
-      {{ $t("order_page.delivery.subtitle") }}
-    </v-list-subheader>
+    <v-list-subheader></v-list-subheader>
 
     <div v-if="canConfirmReceived" class="mt-3 mb-5 p-2">
       <div class="widget-buttons">
@@ -87,7 +85,14 @@
             </div>
           </div>
           <div v-else>
-            <div class="mt-5 mb-2" style=" border-bottom: 2px dotted rgba(255, 255, 255, 0.18);  width: 60%; margin: 0 auto;"></div>
+            <div
+              class="mt-5 mb-2"
+              style="
+                border-bottom: 2px dotted rgba(255, 255, 255, 0.18);
+                width: 60%;
+                margin: 0 auto;
+              "
+            ></div>
 
             <u-smart-toggle
               v-model="same_billing"
@@ -143,10 +148,18 @@
 
       <v-col class=" " cols="12" md="4" sm="6">
         <p class="font-weight-bold">
-          {{ $t("global.basket_order_info_summery.address") }}
-          <span v-if="is_pickup" class="mx-2"
-            >({{ $t("global.commons.pickup") }})</span
-          >
+          <template v-if="is_pickup">
+            {{ $t("global.commons.billing_address") }}
+
+            <span
+              v-if="!has_vendor_orders /*Separate fulfillment*/"
+              class="mx-2"
+              >({{ $t("global.commons.pickup") }})</span
+            >
+          </template>
+          <template v-else>
+            {{ $t("global.commons.shipping_address") }}
+          </template>
         </p>
 
         <p v-if="receiver_info.name" class="mb-1">
@@ -197,29 +210,31 @@
           >{{ receiver_info.message }}
         </p>
 
-        <div
-          v-if="can_edit_address && !is_pickup"
-          class="d-flex justify-end my-2"
-        >
-          <v-btn
-            :loading="busy_edit_receiver"
-            class="nbt"
-            variant="flat"
-            @click="showEditAddress"
+        <template v-if="!has_vendor_orders /*Separate fulfillment*/">
+          <div
+            v-if="can_edit_address && !is_pickup"
+            class="d-flex justify-end my-2"
           >
-            <v-icon start>edit</v-icon>
-            {{ $t("global.actions.edit") }}
-          </v-btn>
-        </div>
+            <v-btn
+              :loading="busy_edit_receiver"
+              class="nbt"
+              variant="flat"
+              @click="showEditAddress"
+            >
+              <v-icon start>edit</v-icon>
+              {{ $t("global.actions.edit") }}
+            </v-btn>
+          </div>
 
-        <p v-else-if="is_pickup" class="mb-1">
-          <small>
-            <v-icon class="me-1" size="small">pin_drop</v-icon>
-            {{ $t("global.commons.pickup") }}:
-          </small>
-          <u-map-geo-button :location="receiver_info.location" class="ma-1">
-          </u-map-geo-button>
-        </p>
+          <p v-else-if="is_pickup" class="mb-1">
+            <small>
+              <v-icon class="me-1" size="small">pin_drop</v-icon>
+              {{ $t("global.commons.pickup") }}:
+            </small>
+            <u-map-geo-button :location="receiver_info.location" class="ma-1">
+            </u-map-geo-button>
+          </p>
+        </template>
 
         <!-- ========================================= RECEIVER ========================================= -->
 
@@ -248,17 +263,24 @@
       <!-- ========================================= MAP ========================================= -->
 
       <v-col class="" cols="12" md="4" sm="12">
-        <u-map-view
-          v-if="receiver_info.location"
-          v-model="receiver_info"
-          :center="center"
-          :class="{ blurred: busy_edit_receiver }"
-          :marker-position="receiver_info.location"
-          :zoom="15"
-          class="blur-animate rounded-28px overflow-hidden"
-          show-user-location
-          style="width: 100%; height: 350px"
-        />
+        <!--   <u-map-view
+             v-if="receiver_info.location"
+             v-model="receiver_info"
+             :center="center"
+             :class="{ blurred: busy_edit_receiver }"
+             :marker-position="receiver_info.location"
+             :zoom="15"
+             class="blur-animate rounded-28px overflow-hidden"
+             show-user-location
+             style="width: 100%; height: 350px"
+           />-->
+        <u-map-image
+          :location="receiver_info.location"
+          aspect-ratio="1"
+          class="overflow-hidden rounded-18px border"
+          size="100%"
+        >
+        </u-map-image>
 
         <div
           v-if="
@@ -321,7 +343,7 @@
       </p>
     </v-alert>
 
-    <!-- ********************** انتخاب آدرس گیرنده **********************  -->
+    <!-- ********************** Select Address **********************  -->
     <v-dialog
       v-if="has_address"
       v-model="map_dialog"
@@ -370,13 +392,14 @@ import { Basket } from "@selldone/core-js";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
-
+import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
-  mixins: [TemplateMixin,DateMixin ],
+  mixins: [TemplateMixin, DateMixin],
 
   components: {
+    UMapImage,
     UMapView,
     USmartToggle,
     UMapGeoButton,
@@ -394,7 +417,6 @@ export default {
 
   data: function () {
     return {
-
       PhysicalOrderStates: Basket.PhysicalOrderStates,
 
       center: { lat: 0, lng: 0 },
@@ -486,6 +508,14 @@ export default {
       );
     },
 
+    vendor_orders() {
+      return this.basket.vendor_orders;
+    },
+
+    has_vendor_orders() {
+      return this.vendor_orders && this.vendor_orders.length > 0;
+    },
+
     delivery_info() {
       return this.basket.delivery_info;
     },
@@ -497,6 +527,8 @@ export default {
     },
 
     can_edit_address() {
+      if (this.isAvocado) return false; // Not implemented yet!
+
       return (
         this.basket.delivery_state !==
           Basket.PhysicalOrderStates.SentOrder.code &&

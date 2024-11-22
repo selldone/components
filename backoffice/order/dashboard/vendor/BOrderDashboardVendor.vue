@@ -24,7 +24,7 @@
         <img
           class="me-1"
           height="24"
-          src="../../../../assets/icons/marketplace.svg"
+          :src="require('@selldone/components-vue/assets/icons/marketplace.svg')"
           width="24"
         />
         {{ $t("global.commons.vendors_panel") }}
