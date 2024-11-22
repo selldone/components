@@ -194,6 +194,24 @@
                     </v-row>
                   </div>
                 </div>
+
+                <ul class="small">
+                  <li>
+                    Conditions are checked in order from top to bottom.
+                  </li>
+                  <li>
+                    To show progress initially, set 'Show Progress' to zero.
+                  </li>
+                  <li>
+                    The system compares Min Sells with the product's total sales (all variants included).
+                  </li>
+                  <li>
+                    The system compares Min/Max Quantity with the selected variant's stock, or for marketplaces, the vendor's inventory.
+                  </li>
+                </ul>
+
+
+
               </div>
             </v-expand-transition>
 
