@@ -47,6 +47,7 @@
               :variables="variables"
               :progress="progress"
               :carts="carts"
+              :custom="custom"
               class="flex-grow-1"
             >
             </b-product-thresholding-preview>

@@ -25,6 +25,17 @@
     </BProductThresholdingPreviewItem>
 
     <v-chip
+      v-if="custom"
+      label
+      size="x-small"
+      color="#000"
+      variant="flat"
+      density="comfortable"
+      class="ma-1"
+      prepend-icon="draw"
+      >{{ $t("global.commons.custom") }}
+    </v-chip>
+    <v-chip
       v-if="has_progress"
       label
       size="x-small"
@@ -62,6 +73,7 @@ export default defineComponent({
     variables: {},
     carts: {},
     progress: {},
+    custom: Boolean,
   },
   computed: {
     has_progress() {
