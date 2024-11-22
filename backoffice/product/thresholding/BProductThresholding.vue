@@ -80,10 +80,11 @@
               <div v-if="custom" :class="{ disabled: IS_VENDOR_PANEL }">
                 <div v-if="has_progress">
                   <div>
+                    <b class="me-1">Progress | </b>
                     Show a progress bar when the product's sold proportion
-                    exceeds the defined threshold. Formula:
-                    <code>sold / (stock + sold) > {{ progress }}</code
-                    >.
+                    exceeds the defined threshold.
+                    <code>sold / (stock + sold) > {{ numeralFormat(progress, "0.00")  }}</code
+                    >
                   </div>
                   <v-slider
                     v-model="progress"
@@ -100,10 +101,11 @@
 
                 <div v-if="has_in_cart_count">
                   <div>
+                    <b class="me-1">In Cart | </b>
                     Show an indicator if more than the defined percentage of
-                    stock is added to carts. Formula:
-                    <code>in_carts >= stock * {{ carts }}</code
-                    >.
+                    stock is added to carts.
+                    <code>in_carts >= stock * {{ numeralFormat(carts, "0.00") }}</code
+                    >
                   </div>
                   <v-slider
                     v-model="carts"
