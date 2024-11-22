@@ -330,10 +330,10 @@ export default {
         ? JSON.parse(JSON.stringify(this.thresholds.variables))
         : {};
 
-      this.progress = this.thresholds?.progress
+      this.progress = this.thresholds?.progress!=null
         ? this.thresholds?.progress
         : 0.1;
-      this.carts = this.thresholds?.carts ? this.thresholds?.carts : 0.1;
+      this.carts = this.thresholds?.carts !=null ? this.thresholds?.carts : 0.1;
 
       if (this.variables) {
         // Add tiers to variables
