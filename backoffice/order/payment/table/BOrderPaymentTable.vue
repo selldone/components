@@ -41,6 +41,7 @@
               height="24"
               src="../../../../assets/icons/baskets.svg"
               width="24"
+              alt="Total Price"
             />
             {{ $t("process_center.payment_widget.total_price") }}
           </td>
@@ -68,6 +69,7 @@
               height="24"
               src="../../../../assets/icons/product-discount-outline.svg"
               width="24"
+              alt="Items Discount"
             />
             {{ $t("process_center.payment_widget.total_items_discount") }}
           </td>
@@ -90,6 +92,7 @@
               height="24"
               src="../../../../assets/icons/offer-outline.svg"
               width="24"
+              alt="offer"
             />
             {{ $t("global.commons.offer") }}
           </td>
@@ -108,10 +111,11 @@
               location="bottom"
             >
               <template v-slot:activator="{ props }">
-                <v-chip class="m-1" color="blue" v-bind="props">
+                <v-chip class="m-1" color="#000" v-bind="props" variant="tonal" size="small">
                   <v-avatar v-if="item.product_id" start>
                     <img
                       :src="getProductImage(item.product_id, IMAGE_SIZE_SMALL)"
+                      alt="Product"
                     />
                   </v-avatar>
                   <u-price
@@ -133,6 +137,7 @@
                   <img
                     v-if="item.product_id"
                     :src="getProductImage(item.product_id, IMAGE_SIZE_SMALL)"
+                    alt="Product"
                   />
                   <v-icon v-else>emoji_events</v-icon>
                 </v-avatar>
@@ -156,12 +161,14 @@
               v-for="(item, index) in offer_orders"
               :key="index"
               :content="item.count"
-              color="blue"
-              floating
+              color="#1976D2"
+
             >
-              <v-avatar :size="32" class="hover-scale force-top">
+              <v-avatar :size="32" class="hover-scale force-top ms-1" color="#fff">
                 <img
                   :src="getProductImage(item.product_id, IMAGE_SIZE_SMALL)"
+                  alt="Product"
+                  style="border: solid 2px #1976D2"
                 />
               </v-avatar>
             </v-badge>
@@ -177,6 +184,7 @@
               height="24"
               src="../../../../assets/icons/discount-code-outline.svg"
               width="24"
+              alt="Discount Code"
             />
             {{ $t("process_center.payment_widget.discount_code.title") }}
           </td>
@@ -233,6 +241,7 @@
               height="24"
               src="../../../../assets/icons/coupon-outline.svg"
               width="24"
+              alt="Coupon"
             />
             {{ $t("process_center.payment_widget.coupon.title") }}
           </td>
@@ -283,7 +292,7 @@
 
         <tr v-if="club_order && club" class="text-start">
           <td>
-            <img :src="club.icon_outline" class="mx-2" height="24" width="24" />
+            <img :src="club.icon_outline" class="mx-2" height="24" width="24" alt="Club" />
             {{ $t("process_center.payment_widget.club.title") }}
           </td>
           <td class="text-left">
@@ -327,6 +336,7 @@
               height="24"
               src="../../../../assets/icons/lottery-outline.svg"
               width="24"
+              alt="Lottery"
             />
             {{ $t("global.commons.prize") }}
           </td>
@@ -348,7 +358,7 @@
               "
             >
               <v-avatar class="me-2 hover-scale" size="28">
-                <img :src="getShopImagePath(lottery_order.product.icon)" />
+                <img :src="getShopImagePath(lottery_order.product.icon)" alt="Product" />
               </v-avatar>
             </router-link>
 
@@ -394,6 +404,7 @@
               height="24"
               src="../../../../assets/icons/cross-sell-outline.svg"
               width="24"
+              alt="Cross Sell"
             />
             {{ $t("global.commons.cross_sell") }}
           </td>
@@ -421,6 +432,7 @@
               height="24"
               src="../../../../assets/icons/shipping-outline.svg"
               width="24"
+              alt="Shipping"
             />
             {{ $t("process_center.payment_widget.delivery.title") }}
           </td>
@@ -447,6 +459,7 @@
                 "
                 class="me-1"
                 width="24px"
+                alt="Transportation"
               />
               <b class="mx-1 small">{{
                 shop_transportation?.title
@@ -479,6 +492,7 @@
               height="24"
               src="../../../../assets/icons/tax-outline.svg"
               width="24"
+              alt="Tax"
             />
             {{ $t("global.commons.tax") }}
           </td>
@@ -526,6 +540,7 @@
               height="24"
               src="../../../../assets/icons/shipping-tax-outline.svg"
               width="24"
+              alt="Shipping Tax"
             />
             {{ $t("global.commons.tax_shipping") }}
           </td>
@@ -632,6 +647,7 @@
                   v-else-if="bill.payment?.gateway?.logo"
                   :src="getShopImagePath(bill.payment?.gateway?.logo)"
                   height="20"
+                  alt="Payment Gateway"
                 />
               </div>
             </td>
@@ -841,6 +857,7 @@
                 class="mx-2"
                 height="24"
                 src="../../../../assets/icons/affiliate.svg"
+                alt="Affiliate"
               />
               {{ $t("process_center.payment_widget.affiliate.title") }}
               <v-spacer></v-spacer>
@@ -899,7 +916,7 @@
                 class="float-start hover-scale-small me-1"
                 size="2.6em"
               >
-                <v-img :src="getUserAvatar(affiliate.user_id)"></v-img>
+                <v-img :src="getUserAvatar(affiliate.user_id)" alt="Affiliate"></v-img>
               </v-avatar>
 
               <div class="w-50">
@@ -973,6 +990,7 @@
               class="mx-2"
               height="24"
               src="../../../../assets/icons/samin-token.svg"
+              alt="Selldone Fee"
             />
             {{ $t("process_center.payment_widget.samin.title") }}
           </td>
@@ -1283,6 +1301,7 @@
               :src="getShopImagePath(item.gateway.icon)"
               :width="24"
               class="mx-2"
+              alt="Cash Payment"
             />
 
             <p class="my-0 mx-2">
@@ -1329,6 +1348,7 @@
             rounded="lg"
             width="100%"
             @click="showFullscreen"
+            alt="Receipt"
           ></v-img>
         </div>
         <u-smart-verify v-model="accept_action"></u-smart-verify>
@@ -1360,6 +1380,7 @@
               :src="getShopImagePath(item.gateway.icon)"
               :width="24"
               class="mx-2"
+              alt="Direct Transfer"
             />
 
             <p class="my-0 mx-2">

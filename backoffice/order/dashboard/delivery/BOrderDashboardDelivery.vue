@@ -492,27 +492,29 @@
 
             <v-text-field
               v-model="tracking_code"
-              :disabled="!active_track"
+              :readonly="!active_track"
               :label="$t('order_delivery.tracking.code')"
               append-inner-icon="location_searching"
               flat
               variant="solo-filled"
+              :placeholder="active_track?'Enter code. e.g. ABC 100...':'Empty... Can not edit after delivery!'"
+              :persistent-placeholder="!active_track"
             />
 
             <v-text-field
               v-model="tracking_url"
-              :disabled="!active_track"
+              :readonly="!active_track"
               :label="$t('order_delivery.tracking.url')"
               append-inner-icon="link"
               flat
               variant="solo-filled"
               :rules="[GlobalRules.url()]"
-              placeholder="Enter full address here. e.g. https://track..."
+              :placeholder="active_track?'Enter full address here. e.g. https://track...':'Empty... Can not edit after delivery!'"
+              :persistent-placeholder="!active_track"
             />
 
-            <div class="widget-buttons">
+            <div v-if="active_track" class="widget-buttons">
               <v-btn
-                :disabled="!active_track"
                 :loading="busy_set_tracking"
                 color="primary"
                 size="x-large"

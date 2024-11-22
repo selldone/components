@@ -13,14 +13,24 @@
   -->
 
 <template>
-  <tr v-if="payment" :class="{ 'flex-row': flexMode }" class="text-start">
+  <tr
+    v-if="payment"
+    v-bind="$attrs"
+    :class="{ 'flex-row': flexMode }"
+    class="text-start"
+  >
     <td>
       <div class="d-flex align-center">
         <v-icon v-if="sub" class="ms-5 flip-ltr" color="black"
           >keyboard_return
         </v-icon>
 
-        <img :src="getShopImagePath(gateway?.icon)" class="mx-2" height="24" />
+        <img
+          :src="getShopImagePath(gateway?.icon)"
+          class="mx-2"
+          height="24"
+          alt="Gateway"
+        />
         <div class="flex-grow-1">
           {{ gateway?.name }}
           <small class="d-block">{{
@@ -111,6 +121,7 @@
             :src="getShopImagePath(gateway?.logo)"
             class="mx-1"
             height="24"
+            alt="Gateway"
           />
 
           <u-price
@@ -182,6 +193,7 @@
             :src="getShopImagePath(gateway?.logo)"
             height="24"
             max-width="36"
+            alt="Gateway"
           />
 
           <small class="mx-1">{{
@@ -224,6 +236,7 @@
   <tr
     v-for="refund in payment?.refunds"
     :key="refund.sd_unique_id"
+    v-bind="$attrs"
     :class="{ 'flex-row': flexMode }"
     class="text-start"
   >
@@ -234,6 +247,7 @@
         height="24"
         src="../../../../../assets/icons/refund.svg"
         width="24"
+        alt="Refund"
       />
 
       {{ $t("global.commons.refund") }}
@@ -273,7 +287,12 @@
   >
     <v-card class="text-start">
       <v-card-title>
-        <img :src="getShopImagePath(gateway?.icon)" class="me-2" height="24" />
+        <img
+          :src="getShopImagePath(gateway?.icon)"
+          class="me-2"
+          height="24"
+          alt="Gateway"
+        />
         Capture the funds | Payment {{ gateway?.name }}
         {{ payment.unique_id }}
       </v-card-title>
@@ -385,7 +404,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BOrderPaymentRowPayment",
-  mixins: [DateMixin ],
+  mixins: [DateMixin],
 
   components: {
     BOrderPaymentActionsDeliveryDialog,
@@ -500,7 +519,8 @@ export default {
           },
         )
         .then(({ data }) => {
-          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
+          if (data.error)
+            return NotificationService.showErrorAlert(null, data.error_msg);
 
           Object.assign(this.payment, data.payment);
           this.$emit("payment-captured");

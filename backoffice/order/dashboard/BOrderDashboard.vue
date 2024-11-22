@@ -122,18 +122,14 @@
       <slot name="pre-payment"></slot>
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Payment > Normal ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-      <v-lazy
+
+      <b-order-dashboard-payment
         v-if="basket && !IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
-        :options="{ threshold: 0 }"
-        min-height="200"
-      >
-        <b-order-dashboard-payment
-          :order="basket"
-          :shop="shop"
-          cod-enable
-          @fetch-order="$emit('fetch-order')"
-        ></b-order-dashboard-payment>
-      </v-lazy>
+        :order="basket"
+        :shop="shop"
+        cod-enable
+        @fetch-order="$emit('fetch-order')"
+      ></b-order-dashboard-payment>
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Payment > Vendor ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -408,7 +404,7 @@ import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts
 
 export default {
   name: "BOrderDashboard",
-  mixins: [BEventBusMixin, MapMixin, OrderMixin,ProductMixin],
+  mixins: [BEventBusMixin, MapMixin, OrderMixin, ProductMixin],
   components: {
     USmartSwitch,
     BShopCustomerBox,
@@ -905,7 +901,10 @@ export default {
       if (this.isFulfillment) return;
 
       if (!transportation_order.service) {
-        NotificationService.showWarningAlert(null, "Delivery service order not exist!");
+        NotificationService.showWarningAlert(
+          null,
+          "Delivery service order not exist!",
+        );
         if (callback) callback();
         return;
       }
