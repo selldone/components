@@ -18,8 +18,8 @@
       :key="key"
       :level="key"
       :variable="variable"
-      :quantityLimit="max_quantity_limit"
-      :minSellsLimit="min_sells_limit"
+      :quantity-limit="max_quantity_limit"
+      :min-sales-limit="min_sells_limit"
       class="mb-1"
     >
     </BProductThresholdingPreviewItem>
@@ -85,7 +85,7 @@ export default defineComponent({
     },
     min_sells_limit() {
       return Math.max(
-        Object.values(this.variables).maxByKey("minSells").minSells,
+        Object.values(this.variables).maxByKey("minSales").minSales,
         100,
       );
     },

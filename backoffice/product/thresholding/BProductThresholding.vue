@@ -148,8 +148,8 @@
 
                       <v-col cols="12" sm="4">
                         <v-number-input
-                          v-model="variables[item.key].minSells"
-                          label="Min Sells"
+                          v-model="variables[item.key].minSales"
+                          label="Min Sales"
                           :min="0"
                           variant="outlined"
                           density="compact"
@@ -339,7 +339,7 @@ export default {
         this.product_thresholds_obj.conditions.forEach((item, key) => {
           if (!this.variables[item.key]) {
             this.variables[item.key] = {
-              minSells: item.minSells,
+              minSales: item.minSales,
               minQuantity: item.minQuantity,
               maxQuantity: item.maxQuantity,
             };

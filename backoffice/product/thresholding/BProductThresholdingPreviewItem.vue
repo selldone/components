@@ -63,7 +63,7 @@
       </div>
     </div>
     <!-- Sell Bar -->
-    <div v-if="variable.minSells" class="d-flex align-center">
+    <div v-if="variable.minSales" class="d-flex align-center">
       <div style="min-width: 60px">
         <v-icon>local_mall</v-icon>
         {{ $t("global.commons.order") }}
@@ -83,7 +83,7 @@
             class="text-nowrap -badge"
             style="left: 0; background-color: #673ab7"
           >
-            {{ variable.minSells }}
+            {{ variable.minSales }}
           </span>
 
           <span
@@ -109,7 +109,7 @@ export default defineComponent({
     level: {},
     variable: {},
     quantityLimit: {},
-    minSellsLimit: {},
+    minSalesLimit: {},
   },
   computed: {
     pt() {
@@ -128,8 +128,8 @@ export default defineComponent({
     },
 
     left_sells() {
-      if (!this.variable.minSells) return 0;
-      let out = (100 * this.variable.minSells) / this.minSellsLimit;
+      if (!this.variable.minSales) return 0;
+      let out = (100 * this.variable.minSales) / this.minSalesLimit;
       return `${out}%`;
     },
   },

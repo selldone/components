@@ -150,7 +150,7 @@ export default {
 
       for (const condition of conditions) {
         const isSellsInRange =
-          condition.minSells == null || this.sells > condition.minSells;
+          condition.minSales == null || this.sells > condition.minSales;
         const isQuantityInRange =
           (condition.minQuantity == null ||
             this.quantity >= condition.minQuantity) &&
