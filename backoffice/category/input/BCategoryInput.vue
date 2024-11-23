@@ -418,12 +418,12 @@ export default {
         parent: true,
       };
 
-      const handleSuccessResponse = ({ categories,total }) => {
+      const handleSuccessResponse = ({ categories, total }) => {
         this.categories = categories;
         this.total = total;
 
         // Add home category to the list:
-        if (!this.noHome && !this.categories.some(c=>c.id===null))
+        if (!this.noHome && !this.categories.some((c) => c.id === null))
           this.categories.unshift({
             id: null,
             title: this.$t("global.commons.home"),
@@ -485,6 +485,11 @@ export default {
     },
 
     selectCategory(category) {
+      // Add to cached categories!
+      if (category) {
+        this.AddOrUpdateItemByID(this.categories, category);
+      }
+
       if (this.returnObject) {
         if (this.multiple) {
           this.category = [...this.category, category];
