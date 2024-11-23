@@ -13,6 +13,9 @@ interface DragState {
 
 const dragscrollDirective = {
   mounted(el: HTMLElement, binding: DirectiveBinding<boolean>) {
+
+    if(!binding.value)return;
+
     let state: DragState | null = null;
 
     const mouseMoveHandler = (e: MouseEvent) => {
