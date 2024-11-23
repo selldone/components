@@ -112,7 +112,7 @@ export default {
 
     show_progress() {
       return (
-        this.sells / (this.quantity + this.sells) > this.progress_threshold_portion
+        this.sells / (this.quantity + this.sells) >= this.progress_threshold_portion
       );
     },
     in_carts() {
