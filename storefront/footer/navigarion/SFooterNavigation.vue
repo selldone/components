@@ -238,6 +238,7 @@ import SStorefrontSearchBox from "../../../storefront/search/SStorefrontSearchBo
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
+import { debounce } from "lodash-es";
 
 export default {
   name: "SFooterNavigation",
@@ -399,10 +400,10 @@ export default {
   mounted() {
     this.$store.commit("setBottomNavShow", true);
 
-    window.addEventListener("scroll", this.onScroll);
+    window.addEventListener("scroll", this.debouncedOnScroll);
   },
   beforeUnmount() {
-    window.removeEventListener("scroll", this.onScroll);
+    window.removeEventListener("scroll", this.debouncedOnScroll);
   },
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -410,24 +411,38 @@ export default {
    * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
    */
   methods: {
+    debouncedOnScroll: debounce(function () {
+      this.onScroll();
+    }, 50), // Adjust the debounce delay (in milliseconds) as needed
+
     onScroll() {
       // Get the current scroll position
       const currentScrollPosition =
-        window.pageYOffset || document.documentElement.scrollTop; // Because of momentum scrolling on mobiles, we shouldn't continue if it is less than zero
+        window.pageYOffset || document.documentElement.scrollTop;
+
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight;
+
+      // Check if we're within 64px of the end of the page
+      if (scrollHeight - (currentScrollPosition + clientHeight) <= 64) {
+        this.showNavbar = true; // Show the navbar when near the bottom
+        this.$store.commit("setBottomNavShow", this.showNavbar);
+        return;
+      }
+
+      // Continue with your existing logic
       if (currentScrollPosition < 0) {
         return;
-      } // Here we determine whether we need to show or hide the navbar
+      }
 
-      const diff = currentScrollPosition - this.lastScrollPosition; // Set the current scroll position as the last scroll position
+      const diff = currentScrollPosition - this.lastScrollPosition;
 
       this.sum += diff;
-
-      // console.log("scroll", this.sum);
 
       if (Math.abs(this.sum) < 200) return;
 
       this.showNavbar = this.sum < 0;
-      this.sum = 0; // reset!
+      this.sum = 0;
 
       this.lastScrollPosition = currentScrollPosition;
 
