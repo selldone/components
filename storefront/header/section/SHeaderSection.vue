@@ -16,7 +16,7 @@
   <div>
     <v-toolbar
       v-if="!$store.getters.getIsNative && $shop"
-      :class="{ 'text-white': is_dark, '-dark': is_dark }"
+      :class="{ 'text-white': is_dark, '-dark': is_dark,'-border':border }"
       :color="HEADER_COLOR"
       :style="{ backdropFilter: backdrop_filter }"
       :theme="is_dark ? 'dark' : 'light'"
@@ -82,6 +82,7 @@ export default {
   inject: ["$shop"],
   props: {
     overlay: { type: Boolean, default: false },
+    border:Boolean,
     overlayDark: {
       default: false,
       type: Boolean,
@@ -219,10 +220,13 @@ export default {
 .s--storefront-primary-header {
   overflow-x: auto;
   overflow-y: hidden;
-  border-bottom: 1px solid rgba(10, 10, 10, 0.3) !important;
 
-  &.-dark {
-    border-bottom: 1px solid rgba(222, 226, 230, 0.3) !important;
+  &.-border{
+    border-bottom: 1px solid rgba(10, 10, 10, 0.3) !important;
+    &.-dark {
+      border-bottom: 1px solid rgba(222, 226, 230, 0.3) !important;
+    }
   }
+
 }
 </style>

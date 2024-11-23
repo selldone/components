@@ -26,9 +26,10 @@
     "
     :flat="flat"
     :rounded="rounded"
-    :style="{ '--justify': center ? 'center' : 'start',backdropFilter: backdrop_filter }"
+    :style="{ '--justify': center ? 'center' : 'start',backdropFilter: backdrop_filter,'-dark':dark }"
     :theme="dark ? 'dark' : 'light'"
     class="s--storefront-top-menu"
+    :class="{'-border':border}"
   >
     <template v-for="(tab, index) in tabs">
       <span v-if="tab.type === 'link'" :key="'l' + index">
@@ -199,6 +200,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    border:Boolean,
     outlined: {
       type: Boolean,
       default: false,
@@ -347,6 +349,15 @@ export default {
  */
 
 .s--storefront-top-menu {
+
+  &.-border{
+    border-bottom: 1px solid rgba(10, 10, 10, 0.3) !important;
+    &.-dark {
+      border-bottom: 1px solid rgba(222, 226, 230, 0.3) !important;
+    }
+  }
+
+
   .list-menu-item {
     font-weight: 500;
     font-size: 1rem;
