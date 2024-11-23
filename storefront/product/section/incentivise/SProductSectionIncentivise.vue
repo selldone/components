@@ -46,7 +46,6 @@
 </template>
 
 <script lang="ts">
-import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import numeral from "numeral";
 import { GenerateProductThresholdsConditions } from "@selldone/core-js/enums/product/ProductThresholds.ts";
@@ -66,9 +65,7 @@ export default {
     },
   },
 
-  data: () => ({
-    MapHelper: MapHelper,
-  }),
+  data: () => ({}),
 
   computed: {
     /**
@@ -115,9 +112,7 @@ export default {
 
     show_progress() {
       return (
-        this.sells > 0 &&
-        this.sells / (this.quantity + this.sells) >
-          this.progress_threshold_portion
+        this.sells / (this.quantity + this.sells) > this.progress_threshold_portion
       );
     },
     in_carts() {
@@ -139,7 +134,7 @@ export default {
 
       let conditions = GenerateProductThresholdsConditions(this.$product);
 
-     // console.log("conditions", conditions,'quantity',this.quantity,'sells',this.sells);
+      // console.log("conditions", conditions,'quantity',this.quantity,'sells',this.sells);
       const cartMessage =
         this.has_in_cart_count &&
         this.in_carts >= this.quantity * this.carts_threshold_portion // if added to cart more than 10% of stock
@@ -157,7 +152,7 @@ export default {
           (condition.maxQuantity == null ||
             this.quantity <= condition.maxQuantity);
 
-       // console.log(condition,"isSellsInRange", isSellsInRange,'isQuantityInRange',isQuantityInRange);
+        // console.log(condition,"isSellsInRange", isSellsInRange,'isQuantityInRange',isQuantityInRange);
         if (isSellsInRange && isQuantityInRange) {
           return `${this.$t(condition.message)} ${cartMessage}`;
         }
