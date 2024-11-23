@@ -26,7 +26,7 @@
     "
     :flat="flat"
     :rounded="rounded"
-    :style="{ '--justify': center ? 'center' : 'start' }"
+    :style="{ '--justify': center ? 'center' : 'start',backdropFilter: backdrop_filter }"
     :theme="dark ? 'dark' : 'light'"
     class="s--storefront-top-menu"
   >
@@ -174,6 +174,7 @@
 <script lang="ts">
 import MenuCategories from "./MenuCategories.vue";
 import { defineAsyncComponent } from "vue";
+import {LUtilsFilter} from "@selldone/page-builder/utils/filter/LUtilsFilter.ts";
 
 export default {
   name: "SStorefrontTopMenu",
@@ -259,6 +260,15 @@ export default {
     show_filter_menu() {
       return this.$store.getters.getShowFilterMenu;
     },
+    globalStyle() {
+      return this.$store.getters.getGlobalStyle;
+    },
+    backdrop_filter() {
+      return this.globalStyle?.header_filter
+          ? LUtilsFilter.CalcFilter(this.globalStyle.header_filter)
+          : undefined;
+    },
+
   },
 
   watch: {

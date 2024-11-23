@@ -18,19 +18,11 @@
       v-if="!$store.getters.getIsNative && $shop"
       :class="{ 'text-white': is_dark, '-dark': is_dark }"
       :color="HEADER_COLOR"
-      :extended="!overlay"
-      :style="{
-        marginTop: overlay ? '64px' : 0 /*Cover -64px of main view of shop*/,
-      }"
+      :style="{ backdropFilter: backdrop_filter }"
       :theme="is_dark ? 'dark' : 'light'"
       class="s--storefront-primary-header px-2"
-      extension-height="64px"
       flat
     >
-      <template v-slot:extension>
-        <div v-if="!overlay" style="min-height: 64px"></div>
-      </template>
-
       <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
       <s-header-section-drawer-menu
         v-if="isMobile || isStandalone"
@@ -63,6 +55,7 @@ import SHeaderSectionButtons from "@selldone/components-vue/storefront/header/se
 import { ThemeHelper } from "@selldone/core-js";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import { defineAsyncComponent } from "vue";
+import { LUtilsFilter } from "@selldone/page-builder/utils/filter/LUtilsFilter.ts";
 
 export default {
   name: "SHeaderSection",
@@ -176,6 +169,12 @@ export default {
 
     globalStyle() {
       return this.$store.getters.getGlobalStyle;
+    },
+
+    backdrop_filter() {
+      return this.globalStyle?.header_filter
+        ? LUtilsFilter.CalcFilter(this.globalStyle.header_filter)
+        : undefined;
     },
   },
 
