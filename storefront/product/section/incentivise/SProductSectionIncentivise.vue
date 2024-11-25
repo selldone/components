@@ -31,7 +31,6 @@
         rounded-bar
         rounded
         height="12"
-        striped
       ></v-progress-linear>
       <div class="d-flex align-center justify-space-between small">
         <span v-if="sells > 0"
