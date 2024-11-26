@@ -61,6 +61,7 @@
             </v-list-subheader>
             <b-vendor-input
               v-model="vendor_id"
+              @update:model-value="getVendorProductVariants"
               :default-vendor="
                 IS_VENDOR_PANEL
                   ? vendor
@@ -82,6 +83,8 @@
             <v-list-subheader
               >Set the status of the vendor-product.
             </v-list-subheader>
+
+            <u-loading-progress v-if="busy_vpv"></u-loading-progress>
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Variant ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
             <template v-if="product_variants && product_variants.length">
@@ -95,6 +98,7 @@
                 :shop="shop"
                 :variants="product_variants"
                 class="my-3"
+                :disableItem="(i)=>added_variants_ids?.includes(i.id)"
               ></u-smart-variant>
               <v-expand-transition>
                 <div v-if="!variant_id">
@@ -747,12 +751,14 @@ import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 
 export default {
   name: "BProductVendorAdd",
-  mixins: [ProductMixin, CurrencyMixin ],
-
+  mixins: [ProductMixin, CurrencyMixin],
+  inject: ["$product"],
   components: {
+    ULoadingProgress,
     BProductExtraPricingRow,
     UTabsFloating,
     BProductExtraPricingAdd,
@@ -834,6 +840,11 @@ export default {
     selected_extra_price: null,
 
     random: 0, //Fix update issue!
+
+    //--------------------------------------------
+    //Show only available variants for vendor.
+    busy_vpv: false,
+    added_variants_ids: [],
   }),
   computed: {
     IS_VENDOR_PANEL() {
@@ -1225,6 +1236,50 @@ export default {
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     getColor(i) {
       return standardDesignColor[i % standardDesignColor.length];
+    },
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    getVendorProductVariants() {
+      this.added_variants_ids = [];
+
+      if (!this.vendor_id || this.is_edit_mode) return;
+
+      this.busy_vpv = true;
+
+      const params = {
+        sortBy: "id",
+        vendor_id: this.vendor_id,
+      };
+
+      const handleSuccessResponse = ({ vendor_products }) => {
+        this.added_variants_ids = vendor_products.map((v) => v.variant_id);
+
+        if(this.variant_id && this.added_variants_ids.includes(this.variant_id)) this.variant_id = null;
+      };
+
+      (this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+        ? window.$vendor.product.vendor
+            // .optimize(60)
+            .list(
+              this.$route.params.vendor_id,
+              this.$product.id,
+              0,
+              100,
+              params,
+            )
+        : window.$backoffice.product.vendor
+            // .optimize(60)
+            .list(this.shop.id, this.$product.id, 0, 100, params)
+      )
+
+        .cache(handleSuccessResponse)
+        .then(handleSuccessResponse)
+        .catch((error) => {
+          NotificationService.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_vpv = false;
+        });
     },
   },
 };

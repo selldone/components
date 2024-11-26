@@ -30,7 +30,7 @@
         :class="{
           'bg-dark': dark,
           'bg-white': !dark,
-          'disabled pen': task.disabled,
+          'disabled pen': task.disabled || (disableItem && disableItem(task)),
           pen: !clearable && forceShowAll && modelValue === val(task),
         }"
         class="p-2 pp row-hover usn"
@@ -234,6 +234,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    disableItem:Function
   },
 
   data: function () {
