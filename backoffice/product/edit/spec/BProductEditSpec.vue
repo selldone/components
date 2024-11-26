@@ -297,6 +297,7 @@
         size="x-large"
         variant="elevated"
         @click="saveSpec(true)"
+        v-ctrl.s="()=>{saveSpec(true)}"
       >
         {{
           add_by_dropShipping
@@ -510,6 +511,10 @@
                 dialog_ai = false;
               }
             "
+            v-ctrl.s=" () => {
+                safeSetSpec(spec_generated);
+                dialog_ai = false;
+              }"
           >
             <v-icon class="me-1">copy_all</v-icon>
             {{

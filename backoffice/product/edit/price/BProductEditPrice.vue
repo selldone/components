@@ -487,6 +487,7 @@
         size="x-large"
         variant="elevated"
         @click="$emit('next')"
+        v-ctrl.s="()=>{$emit('next')}"
       >
         {{ $t("global.actions.save_continue") }}
 
@@ -530,6 +531,7 @@
           size="x-large"
           variant="elevated"
           @click="setProductPrice()"
+          v-ctrl.s="()=>{setProductPrice()}"
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}

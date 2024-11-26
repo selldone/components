@@ -218,6 +218,7 @@
         size="x-large"
         variant="elevated"
         @click="$emit('next')"
+        v-ctrl.s="()=>{$emit('next')}"
       >
         {{ $t("global.actions.save_continue") }}
 

@@ -328,6 +328,7 @@
           size="x-large"
           variant="elevated"
           @click="editCashback()"
+          v-ctrl.s="()=>{editCashback()}"
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -340,6 +341,7 @@
           size="x-large"
           variant="elevated"
           @click="createCashback()"
+          v-ctrl.s="()=>{createCashback()}"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

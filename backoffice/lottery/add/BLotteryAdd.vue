@@ -331,6 +331,7 @@
           size="x-large"
           variant="elevated"
           @click="editLottery()"
+          v-ctrl.s="()=>{editLottery()}"
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -343,6 +344,7 @@
           size="x-large"
           variant="elevated"
           @click="createLottery"
+          v-ctrl.s="()=>{createLottery()}"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

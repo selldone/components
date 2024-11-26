@@ -286,6 +286,7 @@
           size="x-large"
           variant="elevated"
           @click="editDiscountCode()"
+          v-ctrl.s="()=>{editDiscountCode()}"
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -299,6 +300,7 @@
           size="x-large"
           variant="elevated"
           @click="createDiscountCode"
+          v-ctrl.s="()=>{createDiscountCode()}"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}
@@ -398,6 +400,8 @@ export default {
     },
 
     createDiscountCode() {
+      if(!this.code)return;
+
       this.$refs.form.validate();
 
       this.busy_set = true;

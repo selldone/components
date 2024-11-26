@@ -377,6 +377,7 @@
           size="x-large"
           variant="elevated"
           @click="nextStep()"
+          v-ctrl.s="()=>{nextStep()}"
         >
           {{ $t("global.actions.save_continue") }}
 
@@ -399,7 +400,7 @@
         @update:withTrashed="(val) => $emit('update:withTrashed', val)"
       />
 
-      <div class="widget-buttons mb-5 mt-12">
+      <div v-if="!$route.params.product_id /*Not be in the product edit page!*/" class="widget-buttons mb-5 mt-12">
         <v-btn
           :loading="busy"
           class="my-5"

@@ -205,7 +205,7 @@
         <template v-slot:append-inner>
           <products-dense-images-circles
             v-if="$product?.shortcuts?.length"
-            :ids="$product.shortcuts.filter(v=>v).map((i) => 'c-' + i)"
+            :ids="$product.shortcuts.filter((v) => v).map((i) => 'c-' + i)"
             :size="32"
             class="pa-0 mx-1"
           ></products-dense-images-circles>
@@ -946,6 +946,11 @@
         size="x-large"
         variant="elevated"
         @click="$emit('next')"
+        v-ctrl.s="
+          () => {
+            $emit('next');
+          }
+        "
       >
         {{ $t("global.actions.save_continue") }}
 

@@ -464,6 +464,7 @@
           size="x-large"
           variant="elevated"
           @click="createCoupon()"
+          v-ctrl.s="()=>{createCoupon()}"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create_clone") }}
@@ -476,6 +477,7 @@
           size="x-large"
           variant="elevated"
           @click="editCoupon()"
+          v-ctrl.s="()=>{editCoupon()}"
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -488,6 +490,7 @@
           size="x-large"
           variant="elevated"
           @click="createCoupon"
+          v-ctrl.s="()=>{createCoupon()}"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

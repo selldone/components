@@ -137,6 +137,7 @@
         size="x-large"
         variant="elevated"
         @click="setExtraInfo()"
+        v-ctrl.s="()=>{setExtraInfo()}"
       >
         {{ $t("global.actions.save_continue") }}
 

@@ -314,6 +314,7 @@
           size="x-large"
           variant="elevated"
           @click="createOffer()"
+          v-ctrl.s="()=>{createOffer()}"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create_clone") }}
@@ -326,6 +327,7 @@
           size="x-large"
           variant="elevated"
           @click="editOffer()"
+          v-ctrl.s="()=>{editOffer()}"
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -338,6 +340,7 @@
           size="x-large"
           variant="elevated"
           @click="createOffer"
+          v-ctrl.s="()=>{createOffer()}"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

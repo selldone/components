@@ -107,6 +107,7 @@
           size="x-large"
           variant="elevated"
           @click="createGift"
+          v-ctrl.s="()=>{createGift()}"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

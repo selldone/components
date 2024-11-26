@@ -207,6 +207,7 @@
           size="x-large"
           variant="elevated"
           @click="editGiftType(editGiftCardType)"
+          v-ctrl.s="()=>{editGiftType(editGiftCardType)}"
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -220,6 +221,7 @@
           size="x-large"
           variant="elevated"
           @click="createGiftType"
+          v-ctrl.s="()=>{createGiftType()}"
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}
