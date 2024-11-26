@@ -404,14 +404,36 @@ export default {
     fetchCategories() {
       this.busy = true;
 
+      let contain = null;
+
+      if (this.modelValue) {
+        if (this.multiple) {
+          if (this.returnObject) {
+            contain = this.modelValue.map((i) => i.id);
+          } else {
+            contain = this.modelValue;
+          }
+        } else {
+          if (this.returnObject) {
+            contain = this.modelValue.id;
+          } else {
+            contain = this.modelValue;
+          }
+        }
+      }
+
       const offset = 0;
       const limit =
-        this.modelValue && !this.focused ? 0 : this.search ? 20 : 100;
+        (Array.isArray(this.modelValue)
+          ? this.modelValue?.length
+          : this.modelValue) && !this.focused
+          ? 0
+          : this.search
+            ? 20
+            : 100;
 
       const params = {
-        contain: this.isObject(this.modelValue)
-          ? this.modelValue.id
-          : this.modelValue,
+        contain: contain,
         search: this.search,
 
         children: false,
@@ -445,7 +467,6 @@ export default {
           this.busy = false;
         });
     },
-
     createCategory(title) {
       this.busy_create = true;
 
@@ -483,7 +504,6 @@ export default {
           this.busy_create = false;
         });
     },
-
     selectCategory(category) {
       // Add to cached categories!
       if (category) {
