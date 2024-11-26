@@ -163,6 +163,7 @@
               color.
             </small>
           </div>
+          <slot name="item-append" :item="task"></slot>
           <v-icon v-if="disabled" class="ma-1" size="x-small">lock</v-icon>
 
           <u-color-circle
@@ -234,7 +235,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    disableItem:Function
+    disableItem:Function,
   },
 
   data: function () {

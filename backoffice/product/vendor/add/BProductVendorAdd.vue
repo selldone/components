@@ -99,7 +99,16 @@
                 :variants="product_variants"
                 class="my-3"
                 :disableItem="(i)=>added_variants_ids?.includes(i.id)"
-              ></u-smart-variant>
+              >
+                <template v-slot:item-append="{item}">
+                  <template v-if="added_variants_ids?.includes(item.id)" >
+                    <small class="ms-1">{{$t('global.commons.added')}}</small>
+                    <v-icon class="ma-1" size="x-small">file_download_done</v-icon>
+                  </template>
+                </template>
+
+
+              </u-smart-variant>
               <v-expand-transition>
                 <div v-if="!variant_id">
                   <div class="py-3">
