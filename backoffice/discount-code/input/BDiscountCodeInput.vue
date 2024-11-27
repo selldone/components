@@ -31,6 +31,7 @@
       $emit('click:clear');
       getDiscounts();
     "
+    :return-object="returnObject"
   >
     <template v-slot:selection="{ item }">
       <v-avatar class="text-white bg-red m-2 small" size="32">
@@ -74,12 +75,8 @@ export default {
   name: "BDiscountCodeInput",
   emits: ["update:modelValue"],
   components: {},
+  inject: ["$shop"],
   props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
-
     modelValue: {},
     activeOnly: {
       default: false,
@@ -89,6 +86,8 @@ export default {
     variant: {
       default: "underlined",
     },
+    returnObject:Boolean,
+
   },
 
   data() {
@@ -116,7 +115,7 @@ export default {
     getDiscounts() {
       this.busy = true;
       axios
-        .get(window.API.GET_DISCOUNT_CODES(this.shop.id), {
+        .get(window.API.GET_DISCOUNT_CODES(this.$shop.id), {
           params: {
             // Must contain this id:
             contain:

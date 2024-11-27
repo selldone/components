@@ -149,11 +149,9 @@ export default {
   name: "BPageInput",
   components: {},
   emits: ["update:modelValue", "click:clear"],
+  inject:["$shop"],
   props: {
-    shop: {
-      require: true,
-      type: Object,
-    },
+
     clearable: Boolean,
     modelValue: {},
 
@@ -220,7 +218,7 @@ export default {
       window.$backoffice.page
         .optimize(60)
         .cancellation(true)
-        .list(this.shop.id, 0, 20, {
+        .list(this.$shop.id, 0, 20, {
           // Must contain this id:
           contain:
             this.modelValue && this.isObject(this.modelValue)
