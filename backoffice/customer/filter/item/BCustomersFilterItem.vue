@@ -23,8 +23,10 @@
       v-if="!noLabel"
       class="me-1"
       style="vertical-align: sub"
-      v-text="name"
-    ></span>
+
+    >
+      {{name}}
+    </span>
 
     <!-- Customer clubs -->
     <span v-if="filter.type === 'LEVEL' && filter.levels">
@@ -36,6 +38,7 @@
         class="me-1"
         height="20"
         width="20"
+        :alt="level"
       />
     </span>
 
@@ -83,10 +86,7 @@
       >
     </div>
 
-    <!-- Others -->
-    <b v-else class="small">
-      {{ filter.type }}
-    </b>
+
   </span>
 </template>
 
@@ -102,14 +102,19 @@ export default {
     filter: { required: true },
     dark: { default: false, type: Boolean },
     noLabel: { default: false, type: Boolean },
+    forceName:{},
+    forceIcon:{},
   },
 
   computed: {
     icon() {
+      if(this.forceIcon)return this.forceIcon;
+
       if (!Customer.Filters[this.filter.type]) return null;
       return Customer.Filters[this.filter.type].icon;
     },
     name() {
+      if(this.forceName)return this.forceName;
       if (!Customer.Filters[this.filter.type]) return null;
       return this.$t(Customer.Filters[this.filter.type].title);
     },

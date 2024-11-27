@@ -26,7 +26,7 @@
     >
       <template v-slot:item="{ element }">
         <li class="list-group-item" @click="editDialog(element)">
-          <v-tooltip location="bottom">
+          <v-tooltip location="bottom" content-class="bg-black text-start pa-2 ">
             <template v-slot:activator="{ props }">
               <v-icon
                 class="float-end ms-1 mt-1"
@@ -36,13 +36,13 @@
                 >info
               </v-icon>
             </template>
-            <p class="ma-1 font-weight-bold text-uppercase">
+            <p class="mb-1 font-weight-bold text-uppercase small">
               {{ getName(element) }}
             </p>
-            <p class="ma-1" v-html="getDescription(element.type)"></p>
+            <p class="small" v-html="getDescription(element.type)"></p>
           </v-tooltip>
 
-          <b-customers-filter-item :filter="element" dark>
+          <b-customers-filter-item :filter="element" :force-name="getName(element) " :force-icon="getIcon(element)" dark>
           </b-customers-filter-item>
 
           <v-btn
@@ -55,21 +55,21 @@
             @click="deleteItem(index)"
             @click.stop
           >
-            <v-icon color="red"> close</v-icon>
+            <v-icon color="red" class="hover-scale-small"> close</v-icon>
           </v-btn>
         </li>
       </template>
     </draggable>
 
-    <v-list v-if="hasAdd" class="my-2 text-start" density="compact" rounded>
+    <v-list v-if="hasAdd" class="py-0 text-start border-between-vertical border" density="compact" rounded slim lines="two">
       <v-list-item
         v-for="item in available_types"
         :key="item.type"
         :prepend-icon="item.icon"
         :subtitle="$t(item.description)"
         :title="$t(item.title)"
-        append-icon="add"
         variant="text"
+        class="row-hover"
         @click="addDialog(item.type)"
       >
       </v-list-item>
@@ -336,6 +336,10 @@ export default {
       return this.$t(this.types[item.type].title);
     },
 
+    getIcon(item) {
+      if (!this.types[item.type]) return null;
+      return this.types[item.type].icon;
+    },
     addDialog(type) {
       this.add_type = this.types[type];
       this.add_item = {
