@@ -61,7 +61,7 @@ export default defineComponent({
     },
     next() {
       if( this.index ===-1)return "";
-      return this.index < this.order.length - 1
+      return this.index < this.order?.length - 1
         ? this.order[this.index + 1]
         : "";
     },

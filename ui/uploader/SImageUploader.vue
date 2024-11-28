@@ -197,7 +197,7 @@ import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLo
 import { isString } from "lodash-es";
 
 // Define a regular expression to match "image-placeholder*.svg"
-const pattern = /^image-placeholder.*\.svg$/;
+const pattern = /(?:\/|^)(image-placeholder.*\.svg)$/;
 
 export default {
   name: "SImageUploader",
@@ -344,7 +344,7 @@ export default {
         this.autoCompact &&
         this.last_image &&
         !this.force_edit &&
-        !(isString(this.last_image) && !pattern.test(this.last_image))
+        !(isString(this.last_image) && pattern.test(this.last_image))
       ); // Define a regular expression to match "image-placeholder*.svg"
       // /image-placeholder -> default place holder image!
     },
