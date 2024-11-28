@@ -13,8 +13,9 @@
   -->
 
 <template>
-  <v-dialog v-model="dialog" :transition="false" fullscreen>
+  <v-dialog v-model="dialog" :transition="false" fullscreen opacity="0">
     <div
+      v-if="html"
       :class="classx"
       :style="stylex"
       class="no-scroll d-flex flex-column align-center safe-con pointer-zoom-out"
@@ -32,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+import { EventBus } from "@selldone/core-js/events/EventBus.ts";
 
 export default {
   name: "SFullscreenViewAnimator",
