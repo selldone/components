@@ -24,9 +24,16 @@
       @start="drag = true"
       @update:modelValue="(val) => $emit('update:modelValue', val)"
     >
-      <template v-slot:item="{ element }">
-        <li class="list-group-item" @click="editDialog(element)">
-          <v-tooltip location="bottom" content-class="bg-black text-start pa-2 ">
+      <template v-slot:item="{ element, index }">
+        <li
+          class="list-group-item"
+          @click="editDialog(element)"
+          :key="element.type"
+        >
+          <v-tooltip
+            location="bottom"
+            content-class="bg-black text-start pa-2 "
+          >
             <template v-slot:activator="{ props }">
               <v-icon
                 class="float-end ms-1 mt-1"
@@ -42,7 +49,12 @@
             <p class="small" v-html="getDescription(element.type)"></p>
           </v-tooltip>
 
-          <b-customers-filter-item :filter="element" :force-name="getName(element) " :force-icon="getIcon(element)" dark>
+          <b-customers-filter-item
+            :filter="element"
+            :force-name="getName(element)"
+            :force-icon="getIcon(element)"
+            dark
+          >
           </b-customers-filter-item>
 
           <v-btn
@@ -61,7 +73,14 @@
       </template>
     </draggable>
 
-    <v-list v-if="hasAdd" class="py-0 text-start border-between-vertical border" density="compact" rounded slim lines="two">
+    <v-list
+      v-if="hasAdd"
+      class="py-0 text-start border-between-vertical border"
+      density="compact"
+      rounded
+      slim
+      lines="two"
+    >
       <v-list-item
         v-for="item in available_types"
         :key="item.type"
