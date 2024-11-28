@@ -594,16 +594,16 @@ export default {
      * Use to automatically add product to cart
      */
     autoBuy() {
-      if (this.$route.query.buy !== "true" || this.busy_user) return;
+      if (this.$route?.query.buy !== "true" || this.busy_user) return;
 
       console.log("🧺 Auto buy...");
       let variant = null;
       if (
         this.$product.product_variants.length &&
-        this.$route.query.variant_id
+        this.$route?.query.variant_id
       ) {
         variant = this.$product.product_variants.find(
-          (v) => v.id === parseInt(this.$route.query.variant_id),
+          (v) => v.id === parseInt(this.$route?.query.variant_id),
         );
       }
 

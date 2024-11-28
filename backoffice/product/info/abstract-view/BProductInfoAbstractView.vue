@@ -632,7 +632,6 @@
     <v-dialog
       v-model="show_iframe_code"
       fullscreen
-      scrollable
       transition="dialog-bottom-transition"
     >
       <v-card class="text-start">
@@ -644,10 +643,24 @@
         </v-card-title>
         <v-card-text>
           <div
-            class="mx-auto mb-5 overflow-auto"
-            style="width: 1720px; max-width: 100%; max-height: 70vh"
-            v-html="iframe_code"
-          ></div>
+            class="mx-auto mb-5 border rounded-lg position-relative"
+            style="
+              width: 1720px;
+              max-width: 100%;
+              max-height: calc(100vh - 340px);
+            "
+          >
+            <v-chip
+              label
+              class="position-absolute pen usn"
+              style="top: -10px; left: 20px"
+              variant="flat"
+              color="#eee"
+              size="x-small"
+              >Embed Preview
+            </v-chip>
+            <div class="overflow-auto rounded-lg" style="height: inherit;max-height: inherit" v-html="iframe_code"></div>
+          </div>
 
           <v-container>
             <u-text-copy-box
@@ -673,6 +686,7 @@
             <v-btn
               color="primary"
               size="x-large"
+              variant="elevated"
               @click="copyToClipboard(iframe_code)"
             >
               <v-icon class="me-1">file_copy</v-icon>
@@ -702,7 +716,7 @@ import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import { ProductEmbedHelper } from "@selldone/core-js/helper/embed/ProductEmbedHelper";
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
-import {MapHelper, ShopURLs} from "@selldone/core-js";
+import { MapHelper, ShopURLs } from "@selldone/core-js";
 import { ProductExternal } from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
 import UChipDiscount from "@selldone/components-vue/ui/chip/discount/UChipDiscount.vue";
 import { defineAsyncComponent } from "vue";
@@ -711,7 +725,7 @@ import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts
 
 export default {
   name: "BProductInfoAbstractView",
-  mixins: [DateMixin,ProductMixin],
+  mixins: [DateMixin, ProductMixin],
 
   components: {
     UChipDiscount,

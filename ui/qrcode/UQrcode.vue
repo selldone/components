@@ -1,7 +1,20 @@
 <template>
   <!-- The template dynamically creates an element based on the 'tag' prop -->
   <!-- This will be a 'canvas', 'img', or 'svg' element, depending on the 'tag' prop value -->
-  <component :is="tag" ref="qrcodeElement"></component>
+  <div>
+    <!-- Show skeleton loader until the QR code is ready -->
+    <v-skeleton-loader
+      v-if="!isReady"
+      loading
+      :height="'200px'"
+      :width="'200px'"
+      :type="['image']"
+    >
+    </v-skeleton-loader>
+
+    <!-- The actual QR code component -->
+    <component :is="tag" ref="qrcodeElement" v-else></component>
+  </div>
 </template>
 
 <script lang="ts">
@@ -9,6 +22,7 @@ import { toCanvas, toDataURL, toString } from "qrcode";
 
 export default {
   name: "UQrcode",
+  emits: ["ready"],
 
   props: {
     // The value of the QR code.
@@ -29,7 +43,11 @@ export default {
     },
   },
 
-  emits: ["ready"],
+  data() {
+    return {
+      isReady: false, // Track whether the QR code has been generated
+    };
+  },
 
   watch: {
     // Watching all props for changes to regenerate the QR code
@@ -53,6 +71,7 @@ export default {
       const value = String(this.value);
 
       const done = () => {
+        this.isReady = true; // Set the flag to true when the QR code is ready
         this.$emit("ready", this.$refs.qrcodeElement);
       };
 

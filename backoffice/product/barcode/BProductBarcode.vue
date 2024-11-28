@@ -36,7 +36,7 @@
               :title="qrcode_value"
               :value="qrcode_value"
             />
-            <v-avatar class="center-absolute" size="38">
+            <v-avatar class="center-absolute" size="38" color="#fff">
               <v-img
                 v-if="product.icon"
                 :src="getShopImagePath(product.icon)"

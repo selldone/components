@@ -179,7 +179,7 @@
           >
             <template v-slot:append-inner>
               <div class="d-flex align-center">
-                <u-color-name :color="color" class="small mx-1"></u-color-name>
+                <u-color-name :color="color" class="x-small mx-1 min-width-75"></u-color-name>
                 <u-color-circle :color="color"></u-color-circle>
               </div>
             </template>

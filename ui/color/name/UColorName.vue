@@ -37,5 +37,6 @@ export default {
 
 <style lang="scss">
 .s--color-name {
+  text-align: center;
 }
 </style>

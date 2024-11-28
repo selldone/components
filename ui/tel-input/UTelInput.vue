@@ -18,6 +18,7 @@
       <v-text-field
         :id="inputOptions.id"
         ref="input"
+        :label="label"
         v-model="phone"
         :aria-describedby="inputOptions['aria-describedby']"
         :autocomplete="inputOptions.autocomplete"
@@ -44,6 +45,7 @@
         @update:model-value="onInput"
         @keyup.enter="onEnter"
         @keyup.space="onSpace"
+        :persistent-placeholder="persistentPlaceholder"
       >
         <template v-slot:prepend>
           <v-select
@@ -146,11 +148,12 @@ export default {
       default: "",
     },
     placeholder: {},
-
+    label:{},
     variant: {
       default: "underlined",
     },
     rounded: Boolean,
+    persistentPlaceholder: Boolean,
 
     allCountries: {
       type: Array,
