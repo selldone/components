@@ -18,14 +18,9 @@
     :title="filter.type"
     class="it"
   >
-    <v-icon v-if="icon" class="me-2" size="x-small">{{ icon }}</v-icon>
-    <span
-      v-if="!noLabel"
-      class="me-1"
-      style="vertical-align: sub"
-
-    >
-      {{name}}
+    <v-icon v-if="icon" class="me-2" size="small" >{{ icon }}</v-icon>
+    <span v-if="!noLabel" class="me-1" style="vertical-align: sub">
+      {{ name }}
     </span>
 
     <!-- Customer clubs -->
@@ -85,8 +80,6 @@
         {{ getLocalTimeStringSmall(filter.end) }}</small
       >
     </div>
-
-
   </span>
 </template>
 
@@ -97,26 +90,30 @@ import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 export default {
   name: "BCustomersFilterItem",
-  mixins: [DateMixin,ClubMixin],
+  mixins: [DateMixin, ClubMixin],
   props: {
     filter: { required: true },
     dark: { default: false, type: Boolean },
     noLabel: { default: false, type: Boolean },
-    forceName:{},
-    forceIcon:{},
+    forceName: {},
+    forceIcon: {},
+    types: {
+      type: Array,
+      default: () => Customer.Filters,
+    },
   },
 
   computed: {
     icon() {
-      if(this.forceIcon)return this.forceIcon;
+      if (this.forceIcon) return this.forceIcon;
 
-      if (!Customer.Filters[this.filter.type]) return null;
-      return Customer.Filters[this.filter.type].icon;
+      if (!this.types[this.filter.type]) return null;
+      return this.types[this.filter.type].icon;
     },
     name() {
-      if(this.forceName)return this.forceName;
-      if (!Customer.Filters[this.filter.type]) return null;
-      return this.$t(Customer.Filters[this.filter.type].title);
+      if (this.forceName) return this.forceName;
+      if (!this.types[this.filter.type]) return null;
+      return this.$t(this.types[this.filter.type].title);
     },
   },
   methods: {},

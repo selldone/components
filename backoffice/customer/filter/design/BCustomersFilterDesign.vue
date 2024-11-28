@@ -51,8 +51,7 @@
 
           <b-customers-filter-item
             :filter="element"
-            :force-name="getName(element)"
-            :force-icon="getIcon(element)"
+            :types="types"
             dark
           >
           </b-customers-filter-item>
