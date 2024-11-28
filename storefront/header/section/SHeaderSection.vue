@@ -45,6 +45,12 @@
       <s-header-section-user v-if="!isMobile" :dark="!is_light_header">
       </s-header-section-user>
     </v-toolbar>
+
+    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Decorative Extra ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+    <div v-if="!overlay" style="min-height: 80px;position: absolute;left: 0;right: 0" :style="{background:HEADER_COLOR}">
+
+    </div>
   </div>
 </template>
 

@@ -14,7 +14,7 @@
 
 <template>
   <div class="rounded-lg overflow-hidden" style="border: solid thin #ddd">
-    <v-sheet v-if="hasDelete" class="text-end mb-2 pa-1" color="#ddd">
+    <v-sheet v-if="hasDelete" class="text-end pa-1" color="#ddd">
       <v-btn
         class="ma-1"
         color="#000"
@@ -29,7 +29,7 @@
     <draggable
       :class="{ '-flat': flat }"
       :model-value="list"
-      class="list-group list-group-flush py-0"
+      class="list-group list-group-flush py-0 mt-2"
       style="list-style-type: none"
       tag="div"
       v-bind="dragOptions"
