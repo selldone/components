@@ -509,7 +509,7 @@
       </template>
     </v-data-table-server>
 
-    <div v-if="!$vuetify.display.xs || !showHeader" class="widget-buttons">
+    <div v-if="!showHeader" class="widget-buttons">
       <v-btn block color="primary" size="x-large" @click="showAddDomainDialog">
         <v-icon start>add</v-icon>
         <div>
