@@ -454,8 +454,8 @@
       max-width="640"
       scrollable
     >
-      <v-card min-height="420">
-        <v-card-title>
+      <v-card min-height="420" class="text-start">
+        <v-card-title class="d-flex align-center">
           {{ $t("community.commons.rules") }}
           <v-spacer></v-spacer>
           <v-btn icon size="large" @click="dialog_rule = false" variant="text">

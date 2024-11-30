@@ -241,7 +241,7 @@
               v-if="has_more"
               v-intersect.quiet="
                 (isIntersecting) => {
-                  if (isIntersecting) fetchPosts(page + 1);
+                  if (isIntersecting) fetchPosts(page + 1,false);
                 }
               "
               cols="12"
@@ -387,16 +387,16 @@ export default {
     },
 
     show_deletes() {
-      this.fetchPosts(1);
+      this.fetchPosts(1,false);
     },
 
     filter() {
-      this.fetchPosts(1);
+      this.fetchPosts(1,false);
     },
 
     search: debounce(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
-      this.fetchPosts(1);
+      this.fetchPosts(1,false);
     }, 1500),
   },
 
@@ -426,7 +426,7 @@ export default {
       this.sortBy = sortBy;
       this.sortDesc = sortDesc;
 
-      this.fetchPosts(1);
+      this.fetchPosts(1,false);
     },
     //――――――――――――――――――――――― Topic ―――――――――――――――――――――――
 
@@ -467,7 +467,7 @@ export default {
           // Signal to first post impression: (Not fire on first load)
           this.onCommunityPostImpression(this.topic, this.topic.question);
 
-          this.fetchPosts(1);
+          this.fetchPosts(1,false);
         })
         .catch((error) => {
           NotificationService.showLaravelError(error);
@@ -480,7 +480,7 @@ export default {
 
     //――――――――――――――――――――――― Posts ―――――――――――――――――――――――
 
-    fetchPosts(page) {
+    fetchPosts(page,scroll=false) {
       if (this.busy_posts) return; // Prevent multiple fetching!
 
       this.busy_posts = true;
@@ -532,6 +532,7 @@ export default {
           this.has_more = data.more;
 
           // Scroll to target:
+          if(scroll)
           this.$nextTick(() => {
             if (query_comment_id) {
               this.ScrollToComment(query_comment_id);

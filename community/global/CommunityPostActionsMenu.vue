@@ -20,8 +20,8 @@
       location="left bottom"
       max-width="360"
     >
-      <v-sheet class="p-3" color="#fff" rounded="xl">
-        <v-list class="text-start">
+      <v-card class="text-start" rounded="xl">
+        <v-list slim>
           <v-list-item
             v-for="(item, index) in items"
             :key="index"
@@ -37,7 +37,7 @@
             <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
           </v-list-item>
         </v-list>
-      </v-sheet>
+      </v-card>
     </v-menu>
 
     <!-- ------------------ Embed post dialog ------------------------ -->

@@ -34,7 +34,7 @@
           size="3.2em"
           @click="showCommunityUserProfile(post.profile)"
         >
-          <img :src="getUserAvatar(post.user_id)" />
+          <img :src="getUserAvatar(post.user_id)" alt="User" />
         </v-avatar>
         <div class="flex-grow-1 ps-3 pe-2 overflow-hidden">
           <b class="d-block single-line text-capitalize"
@@ -93,7 +93,7 @@
       <div v-if="post.cross" class="mt-1 mx-4 text-subtitle-2 text-end">
         {{ post.cross.title }}
         <v-avatar class="ms-1 hover-scale force-top" size="24"
-          ><img :src="getShopImagePath(post.cross.image)"
+          ><img :src="getShopImagePath(post.cross.image)" alt="Source"
         /></v-avatar>
         <v-icon class="ms-2 rotate-90-s">alt_route</v-icon>
       </div>
@@ -233,7 +233,12 @@
             <span
               class="pp hover-blue"
               @click="showCommunityPostReactions(post, item.act.code)"
-              ><img :src="item.act.image" height="16" width="16" />
+              ><img
+                :src="item.act.image"
+                height="16"
+                width="16"
+                :alt="item.act.code"
+              />
               {{ numeralFormat(item.value, "0.[0]a") }}
               <span v-if="i < 3" class="text-lowercase">{{
                 $t(item.act.name)
@@ -267,7 +272,7 @@
         <v-menu
           close-delay="300ms"
           close-on-content-click
-          content-class="rounded-28px bg-white overflow-hidden px-3"
+          content-class="rounded-0 bg-white px-3 border "
           location="top"
           open-delay="100ms"
           open-on-click
@@ -281,6 +286,7 @@
                   class="me-1 bounceIn"
                   height="24"
                   width="24"
+                  alt="reaction"
                 />
                 {{ $t(reaction.name) }}
               </template>
@@ -291,17 +297,21 @@
             </v-btn>
           </template>
 
-          <v-btn
+          <span
             v-for="(rec, key, i) in PostReaction"
             :key="key"
             :caption="$t(rec.name)"
-            :style="{ 'animation-delay': 50 * i + 'ms' }"
-            class="m-2 zoomIn anim-fast sub-caption -hover"
-            icon
-            variant="text"
-            @click="setReaction(rec.code)"
-            ><img :src="rec.image" height="24" width="24"
-          /></v-btn>
+            class="sub-caption -hover"
+          >
+            <v-btn
+              :style="{ 'animation-delay': 50 * i + 'ms' }"
+              class="m-2 zoomIn anim-fast"
+              icon
+              variant="text"
+              @click="setReaction(rec.code)"
+              ><img :src="rec.image" height="24" width="24" :alt="$t(rec.name)"
+            /></v-btn>
+          </span>
         </v-menu>
 
         <v-btn tile variant="text" @click="show_comments = !show_comments">
@@ -357,10 +367,9 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
-
 export default {
   name: "CPostWidget",
-  mixins: [DateMixin, AuthMixin, CommunityMixin ],
+  mixins: [DateMixin, AuthMixin, CommunityMixin],
   components: {
     CAttachViewer,
     CProductView,

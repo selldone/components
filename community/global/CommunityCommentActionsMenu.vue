@@ -21,8 +21,8 @@
       location="left bottom"
       max-width="320"
     >
-      <div>
-        <v-list class="text-start" rounded="xl">
+      <v-card class="text-start" rounded="xl">
+        <v-list slim >
           <v-list-item
             v-for="(item, index) in items"
             :key="index"
@@ -38,28 +38,31 @@
             <v-list-item-subtitle>{{ item.subtitle }}</v-list-item-subtitle>
           </v-list-item>
         </v-list>
-      </div>
+      </v-card>
     </v-menu>
 
     <!-- ------------------ Edit post dialog ------------------------ -->
-    <v-dialog
+    <v-bottom-sheet
       v-if="edit_dialog"
       v-model="edit_dialog"
-      content-class="no-shadow-dialog"
-      max-width="680"
+      content-class="rounded-t-xl"
+      max-width="1200"
+      width="98vw"
       scrollable
+
     >
-      <v-card>
-        <v-card-title>
+      <v-card rounded="t-xl" class="text-start">
+        <v-card-title class="d-flex align-center">
+          <v-icon class="me-2">comment</v-icon>
           {{ $t("community.comment_actions.edit") }}
 
           <v-spacer></v-spacer>
-          <v-btn icon size="large" @click="edit_dialog = false">
+          <v-btn icon size="large" @click="edit_dialog = false" variant="text">
             <v-icon>close</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <v-textarea v-model="comment_body" auto-grow></v-textarea>
+          <v-textarea v-model="comment_body" auto-grow variant="outlined"></v-textarea>
         </v-card-text>
         <v-card-actions>
           <div class="widget-buttons">
@@ -68,6 +71,7 @@
               color="primary"
               size="x-large"
               @click="editComment"
+              variant="elevated"
             >
               <v-icon start>save</v-icon>
               {{ $t("global.actions.save") }}
@@ -75,7 +79,7 @@
           </div>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-bottom-sheet>
 
     <!-- ------------------ Report post dialog ------------------------ -->
 

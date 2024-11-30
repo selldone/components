@@ -20,12 +20,12 @@
     max-width="560"
     scrollable
   >
-    <v-card min-height="220">
-      <v-card-title>
+    <v-card min-height="220" class="text-start">
+      <v-card-title class="d-flex align-center">
         Post reports
 
         <v-spacer></v-spacer>
-        <v-btn icon size="large" @click="dialog = false">
+        <v-btn icon size="large" @click="dialog = false" variant="text">
           <v-icon>close</v-icon>
         </v-btn>
       </v-card-title>

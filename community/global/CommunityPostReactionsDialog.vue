@@ -20,12 +20,12 @@
     max-width="560"
     scrollable
   >
-    <v-card class="text-start rcard">
-      <v-card-title>
+    <v-card class="text-start" min-height="50vh">
+      <v-card-title class="d-flex align-center">
         Reactions
 
         <v-spacer></v-spacer>
-        <v-btn icon size="large" @click="dialog = false">
+        <v-btn icon size="large" @click="dialog = false" variant="text">
           <v-icon>close</v-icon>
         </v-btn>
       </v-card-title>
@@ -42,19 +42,27 @@
           </v-tab>
         </v-tabs>
       </div>
-      <hr />
       <v-card-text>
-        <v-list class="border-between-vertical" lines="two">
+        <v-list
+          class="border-between-vertical"
+          lines="two"
+          density="comfortable"
+        >
           <v-list-item v-for="item in filtered_reactions" :key="item.user_id">
             <template v-slot:prepend>
-              <v-avatar size="56">
-                <v-img
-                  :src="getUserAvatar(item.user_id)"
-                  class="position-relative"
+              <span class="position-relative me-3">
+                <v-avatar
+                  size="56"
+                  :image="getUserAvatar(item.user_id)"
+                  alt="User"
                 >
-                  <img :src="PostReaction[item.reaction].image" class="ubadg" />
-                </v-img>
-              </v-avatar>
+                </v-avatar>
+                <img
+                  :src="PostReaction[item.reaction].image"
+                  class="ubadg"
+                  :alt="item.reaction"
+                />
+              </span>
             </template>
             <v-list-item-title class="uname"
               >{{ item.name }}
@@ -93,7 +101,6 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 import { CommunityPostReaction } from "@selldone/core-js";
 import { EventBus } from "@selldone/core-js/events/EventBus";
-
 
 export default {
   name: "CommunityPostReactionsDialog",
@@ -270,15 +277,13 @@ export default {
 
 .ubadg {
   position: absolute;
-  right: 8px;
-  bottom: 8px;
+  right: 0px;
+  bottom: 0px;
   width: 20px !important;
   height: 20px !important;
   padding: 4px;
   background-color: #fff;
-}
-
-.rcard {
-  min-height: 570px;
+  border-radius: 50%;
+  overflow: hidden;
 }
 </style>
