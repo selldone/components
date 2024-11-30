@@ -60,6 +60,10 @@
   max-width: 840px !important;
   margin-left: auto;
   margin-right: auto;
+
+  &.-extended{
+    max-width: 1200px !important;
+  }
 }
 
 .c-max-w {

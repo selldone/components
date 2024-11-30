@@ -28,7 +28,7 @@
       :post="target_post"
       :shop="shop"
       :topic="topic"
-      class="breadcrumb-max-w"
+      class="breadcrumb-max-w -extended"
       has-edit
       has-report
     ></c-breadcrumb>
