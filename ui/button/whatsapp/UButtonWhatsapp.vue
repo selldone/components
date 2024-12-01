@@ -22,13 +22,14 @@
       <v-btn
         v-if="user.phone"
         :href="link"
-        :size="xSmall ? '24' : small ? '28' : null"
+        :size="xSmall ? 24 : small ? 28 : 30"
         icon
         target="_blank"
         v-bind="props"
         variant="text"
         @click.stop
         aria-label="Call"
+        class="ms-1"
         ><img
           :height="xSmall ? 12 : small ? 18 : 20"
           :width="xSmall ? 12 : small ? 18 : 20"
