@@ -175,8 +175,7 @@
         <v-icon
           v-else
           color="#fff"
-          size="x-small"
-          style="height: 16px !important"
+          size="12"
           >storefront
         </v-icon>
       </v-avatar>
@@ -195,8 +194,7 @@
         <v-icon
           v-else
           color="#fff"
-          size="x-small"
-          style="height: 16px !important"
+          size="12"
           >storefront
         </v-icon>
       </v-avatar>
