@@ -191,10 +191,13 @@ BUG: vutify size table haa ro kheyli riz mikone!!!!
 
 .hover-smart-tree {
   &:hover {
-    --indent-padding: 0;
+    --indent-padding: -34px;
 
     .v-list-item {
-      padding-inline: 0;
+      padding-inline: -34px;
+    }
+    .v-list-group__header{
+      padding-inline: 8px;
     }
   }
 
