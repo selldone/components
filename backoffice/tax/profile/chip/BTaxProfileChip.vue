@@ -16,7 +16,7 @@
   <v-chip
     v-if="profile"
     :color="dark ? '#111' : '#fafafa'"
-    :small="small"
+    :size="size"
     title="Tax profile"
     variant="flat"
   >
@@ -33,8 +33,8 @@ export default {
   props: {
     shop: { required: true },
     profileId: { required: true },
-    small: { type: Boolean },
     dark: { type: Boolean },
+    size:{},
   },
   computed: {
     profiles() {

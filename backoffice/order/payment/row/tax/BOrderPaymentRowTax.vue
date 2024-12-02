@@ -38,7 +38,9 @@
                   item.product?.title?.limitWords(8)
                 }}</span>
               </td>
-              <td>{{ item.tax.tax_rate * 100 }}%</td>
+              <td>
+                {{ numeralFormat(item.tax.tax_rate * 100, "0,0.[000]") }}%
+              </td>
 
               <td>
                 <u-price
@@ -49,11 +51,12 @@
 
               <td>
                 <v-chip
-                  :color="item.tax.included ? '#FFC107' : '#8BC34A'"
-                  class="mx-2"
+                  :color="item.tax.included ? '#95771b' : '#4e7125'"
+                  class="mx-2 font-weight-bold"
                   label
                   size="x-small"
-                  >{{ item.tax.included ? "inclusive" : "exclusive" }}
+                  variant="tonal"
+                  >{{ item.tax.included ? "Inclusive" : "Exclusive" }}
                 </v-chip>
               </td>
 
@@ -64,7 +67,7 @@
                   :shop="shop"
                   class="my-1"
                   dark
-                  small
+                  size="x-small"
                 ></b-tax-profile-chip>
               </td>
 
@@ -106,11 +109,12 @@
 
               <td>
                 <v-chip
-                  :color="others_tax.tax_included ? '#FFC107' : '#8BC34A'"
-                  class="mx-2"
-                  label
+                  :color="others_tax.tax_included ?  '#95771b' : '#4e7125'"
+                  class="mx-2 font-weight-bold"
                   size="x-small"
-                  >{{ others_tax.tax_included ? "inclusive" : "exclusive" }}
+                  label
+                  variant="tonal"
+                  >{{ others_tax.tax_included ? "Inclusive" : "Exclusive" }}
                 </v-chip>
               </td>
 
