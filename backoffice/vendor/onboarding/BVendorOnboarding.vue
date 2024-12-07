@@ -611,7 +611,7 @@
 
         <v-btn
           v-if="modelValue"
-          :loading="busy_save"
+          :loading="busy_save || busy_upload"
           color="primary"
           size="x-large"
           variant="elevated"
@@ -699,11 +699,10 @@ import DynamicScriptDirective from "@selldone/components-vue/directives/script/D
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
-
 export default {
   name: "BVendorOnboarding",
-  mixins: [DateMixin ],
-  directives: { 'dynamic-scripts':DynamicScriptDirective },
+  mixins: [DateMixin],
+  directives: { "dynamic-scripts": DynamicScriptDirective },
   components: {
     UWidgetHeader,
     SCountrySelect,
@@ -784,7 +783,7 @@ export default {
     },
 
     documents_upload() {
-      return this.marketplace_documents.filter(
+      return this.marketplace_documents?.filter(
         (x) =>
           ![
             VendorDocumentType.Embed.code,
@@ -794,13 +793,13 @@ export default {
     },
 
     documents_embed() {
-      return this.marketplace_documents.filter(
+      return this.marketplace_documents?.filter(
         (x) => VendorDocumentType.Embed.code === x.type,
       );
     },
 
     documents_link() {
-      return this.marketplace_documents.filter(
+      return this.marketplace_documents?.filter(
         (x) => VendorDocumentType.Link.code === x.type,
       );
     },
@@ -872,13 +871,17 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             if (Object.values(this.files)?.some((f) => !!f)) {
-              this.uploadFiles();
+              this.$emit("update:modelValue", data.vendor_request);
+              this.uploadFiles(data.vendor_request);
               NotificationService.showSuccessAlert(
                 "Uploading files...",
                 "Your vendor request is received!",
               );
             } else {
-              NotificationService.showSuccessAlert(null, "Your vendor request is received!");
+              NotificationService.showSuccessAlert(
+                null,
+                "Your vendor request is received!",
+              );
               this.$emit("update:modelValue", data.vendor_request);
 
               this.close();
@@ -894,7 +897,7 @@ export default {
           this.busy_save = false;
         });
     },
-    uploadFiles() {
+    uploadFiles(vendor_request) {
       this.busy_upload = true;
 
       let formData = new FormData();
@@ -916,11 +919,16 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            this.modelValue.attachments.push(...data.attachments);
+
+            vendor_request.attachments.push(...data.attachments);
+            this.$emit("update:modelValue", vendor_request);
+
             this.files = {};
 
-            this.$emit("update:modelValue", this.modelValue);
-            NotificationService.showSuccessAlert(null, "Files uploaded successfully!");
+            NotificationService.showSuccessAlert(
+              null,
+              "Files uploaded successfully!",
+            );
             this.close();
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
@@ -957,7 +965,10 @@ export default {
               if (!data.error) {
                 this.DeleteItemByID(this.attachments, data.id);
 
-                NotificationService.showSuccessAlert(null, "Attachment removed successfully!");
+                NotificationService.showSuccessAlert(
+                  null,
+                  "Attachment removed successfully!",
+                );
               } else {
                 NotificationService.showErrorAlert(null, data.error_msg);
               }
