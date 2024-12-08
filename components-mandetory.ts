@@ -93,7 +93,6 @@ export function installGlobalComponents(app: App) {
   const SQrcode = defineAsyncComponent(
     () =>
       import(
-        // @ts-ignore
         /* webpackChunkName: "plug-miscellaneous" */ "./ui/qrcode/UQrcode.vue"
       ),
   );
@@ -104,11 +103,21 @@ export function installGlobalComponents(app: App) {
   const UBarcode = defineAsyncComponent(
     () =>
       import(
-        // @ts-ignore
         /* webpackChunkName: "plug-miscellaneous" */ "./ui/barcode/UBarcode.vue"
       ),
   );
   app.component("u-barcode", UBarcode);
+
+  const ULottie = defineAsyncComponent(
+      () =>
+          import(
+              /* webpackChunkName: "plug-lottie" */ "@selldone/components-vue/ui/lottie/ULottie.vue"
+              ),
+  );
+  app.component("u-lottie", ULottie);
+
+
+
 
   app.use(VueConfetti);
 

@@ -128,10 +128,7 @@ export default {
     placeholder: {
       default: "Select your shop",
     },
-    rounded: {
-      default: false,
-      type: Boolean,
-    },
+    rounded: {},
     outlined: {
       default: false,
       type: Boolean,

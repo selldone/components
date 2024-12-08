@@ -250,10 +250,7 @@ export default {
       default: false,
       type: Boolean,
     },
-    rounded: {
-      default: false,
-      type: Boolean,
-    },
+    rounded: {},
     outlined: {
       default: false,
       type: Boolean,

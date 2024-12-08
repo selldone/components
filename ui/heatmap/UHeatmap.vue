@@ -47,7 +47,7 @@ export default {
 
     drawingMode: {
       // Can be 'line' or 'line-vertical'
-      type: Screen,
+      type: String,
       default: null,
     },
 
@@ -120,7 +120,6 @@ export default {
     },
   },
   methods: {
-
     _draw: debounce(function (e, type) {
       if (type === "click" && !this.clickDrawable) return;
       if ((type === "mousemove" || type === "touchmove") && !this.moveDrawable)
