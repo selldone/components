@@ -186,10 +186,10 @@
 
           <div v-if="buyer" class="py-2 d-flex align-items-center">
             <small
-              class="font-weight-bold me-3 ms-1 flex-grow-0"
+              class="me-3 ms-1 flex-grow-1 flex-sm-grow-0 op-0-5"
               title="This is the user's profile on Selldone. It remains consistent across all stores on Selldone."
-              >{{ $t("global.commons.buyer") }} :</small
-            >
+              >{{ $t("global.commons.buyer") }}
+            </small>
             <component
               :is="order.customer_id ? 'router-link' : 'span'"
               :to="
@@ -225,9 +225,9 @@
           <!-- ⬬⬬⬬⬬⬬⬬⬬ Buyer > 🥶 Guest ⬬⬬⬬⬬⬬⬬⬬ -->
 
           <div v-else-if="!customer" class="py-2 d-flex align-items-center">
-            <small class="font-weight-bold me-3 ms-1 flex-grow-0"
-              >{{ $t("global.commons.buyer") }} :</small
-            >
+            <small class="me-3 ms-1 flex-grow-1 flex-sm-grow-0 op-0-5"
+              >{{ $t("global.commons.buyer") }}
+            </small>
 
             <v-avatar class="m-1 hover-scale force-top flex-grow-0" size="42">
               <img :src="require('../../../../assets/icons/user.svg')" />
@@ -248,9 +248,9 @@
 
           <div class="py-2 d-flex align-items-center">
             <small
-              class="font-weight-bold me-3 ms-1 flex-grow-0"
+              class="me-3 ms-1 flex-grow-1 flex-sm-grow-0 op-0-5"
               title="This is the user's profile in your shop, and you can edit it."
-              >{{ $t("global.commons.customer") }} :</small
+              >{{ $t("global.commons.customer") }}</small
             >
             <v-btn
               :to="
@@ -811,7 +811,7 @@ import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 export default {
   name: "BOrderDashboardPayment",
-  mixins: [DateMixin,ClubMixin ],
+  mixins: [DateMixin, ClubMixin],
 
   components: {
     UChartSankey,

@@ -28,7 +28,7 @@
           :src="getShopImagePath(connect.icon, 128)"
           side-icon="hub"
           is-green
-          size="64"
+          :size="64"
           elevated
         >
         </u-avatar-folder>

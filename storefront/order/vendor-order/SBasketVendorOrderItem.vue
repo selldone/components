@@ -21,7 +21,7 @@
           :src="getShopImagePath(vendor.icon, 128)"
           is-purple
           class="me-1"
-          size="64"
+          :size="64"
           side-icon="storefront"
           elevated
         >

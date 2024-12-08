@@ -415,7 +415,7 @@
       <v-card-title class="d-flex align-center">
         <u-avatar-folder
           class="me-2"
-          size="48"
+          :size="48"
           elevated
           side-icon="shelves"
           placeholder-icon="inventory"

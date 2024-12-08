@@ -307,8 +307,6 @@ export default {
   data: function () {
     return {
       PhysicalOrderStates: Basket.PhysicalOrderStates,
-
-      PhysicalOrderStates: Basket.PhysicalOrderStates,
       force_show_items: false,
       busy: false,
     };
@@ -405,6 +403,10 @@ export default {
     },
     need_to_refund_items() {
       return this.basket.price * this.portion_unavailable;
+    },
+
+    tax_included(){
+      return this.basket.tax_included;
     },
     need_to_refund_tax() {
       if (this.tax_included) return 0;

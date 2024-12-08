@@ -497,7 +497,11 @@
               append-inner-icon="location_searching"
               flat
               variant="solo-filled"
-              :placeholder="active_track?'Enter code. e.g. ABC 100...':'Empty... Can not edit after delivery!'"
+              :placeholder="
+                active_track
+                  ? 'Enter code. e.g. ABC 100...'
+                  : 'Empty... Can not edit after delivery!'
+              "
               :persistent-placeholder="!active_track"
             />
 
@@ -509,7 +513,11 @@
               flat
               variant="solo-filled"
               :rules="[GlobalRules.url()]"
-              :placeholder="active_track?'Enter full address here. e.g. https://track...':'Empty... Can not edit after delivery!'"
+              :placeholder="
+                active_track
+                  ? 'Enter full address here. e.g. https://track...'
+                  : 'Empty... Can not edit after delivery!'
+              "
               :persistent-placeholder="!active_track"
             />
 
@@ -737,110 +745,110 @@
         </p>
       </v-alert>
     </div>
+
+    <!-- █████████████████████████ Dialog Delivery > Success █████████████████████████ -->
+
+    <v-bottom-sheet
+      v-model="dialog_received_by_customer"
+      content-class="rounded-t-xl"
+      max-width="98vw"
+      width="640"
+    >
+      <v-card class="text-start" rounded="t-xl">
+        <v-card-title class="text-wrap">
+          <v-icon class="me-2">assignment_turned_in</v-icon>
+
+          {{ $t("process_center.delivered_dialog.title") }}
+        </v-card-title>
+
+        <v-card-text>
+          {{ $t("process_center.delivered_dialog.message") }}
+
+          <u-smart-verify
+            v-model="accept_action"
+            class="my-3"
+            :true-title="$t('order_delivery.verify_delivery_input.true_title')"
+            :true-description="
+              $t('order_delivery.verify_delivery_input.true_description')
+            "
+          ></u-smart-verify>
+        </v-card-text>
+
+        <v-card-actions>
+          <div class="widget-buttons">
+            <v-btn
+              size="x-large"
+              variant="text"
+              @click="dialog_received_by_customer = false"
+            >
+              <v-icon start>close</v-icon>
+              {{ $t("global.actions.cancel") }}
+            </v-btn>
+
+            <v-btn
+              :class="{ disabled: !accept_action }"
+              :loading="busy_toCustomer"
+              color="primary"
+              size="x-large"
+              variant="elevated"
+              @click="toCustomer()"
+              prepend-icon="where_to_vote"
+            >
+              {{ $t("process_center.delivered_dialog.confirm_action") }}
+            </v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-bottom-sheet>
+
+    <!-- █████████████████████████ Dialog Delivery > Failed █████████████████████████ -->
+
+    <v-bottom-sheet
+      v-model="dialog_returned_by_customer"
+      content-class="rounded-t-xl"
+      max-width="98vw"
+      width="640"
+    >
+      <v-card class="text-start" rounded="t-xl">
+        <v-card-title class="text-wrap">
+          <v-icon class="me-2">assignment_return</v-icon>
+          {{ $t("process_center.return_delivery_dialog.title") }}
+        </v-card-title>
+
+        <v-card-text>
+          {{ $t("process_center.return_delivery_dialog.message") }}
+
+          <u-smart-verify v-model="accept_action" class="my-3"></u-smart-verify>
+        </v-card-text>
+
+        <v-card-actions>
+          <div class="widget-buttons">
+            <v-btn
+              size="x-large"
+              variant="text"
+              @click="dialog_returned_by_customer = false"
+            >
+              <v-icon start>close</v-icon>
+              {{ $t("global.actions.cancel") }}
+            </v-btn>
+
+            <v-btn
+              :class="{ disabled: !accept_action }"
+              :loading="busy_return"
+              color="red-darken-1"
+              size="x-large"
+              variant="flat"
+              @click="returnDelivery()"
+            >
+              <v-icon class="me-1">airline_stops</v-icon>
+
+              {{ $t("process_center.return_delivery_dialog.confirm_action") }}
+            </v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-bottom-sheet>
   </div>
-
-  <!-- █████████████████████████ Dialog Delivery > Success █████████████████████████ -->
-
-  <v-bottom-sheet
-    v-model="dialog_received_by_customer"
-    content-class="rounded-t-xl"
-    max-width="98vw"
-    width="640"
-  >
-    <v-card class="text-start" rounded="t-xl">
-      <v-card-title class="text-wrap">
-        <v-icon class="me-2">assignment_turned_in</v-icon>
-
-        {{ $t("process_center.delivered_dialog.title") }}
-      </v-card-title>
-
-      <v-card-text>
-        {{ $t("process_center.delivered_dialog.message") }}
-
-        <u-smart-verify
-          v-model="accept_action"
-          class="my-3"
-          :true-title="$t('order_delivery.verify_delivery_input.true_title')"
-          :true-description="
-            $t('order_delivery.verify_delivery_input.true_description')
-          "
-        ></u-smart-verify>
-      </v-card-text>
-
-      <v-card-actions>
-        <div class="widget-buttons">
-          <v-btn
-            size="x-large"
-            variant="text"
-            @click="dialog_received_by_customer = false"
-          >
-            <v-icon start>close</v-icon>
-            {{ $t("global.actions.cancel") }}
-          </v-btn>
-
-          <v-btn
-            :class="{ disabled: !accept_action }"
-            :loading="busy_toCustomer"
-            color="primary"
-            size="x-large"
-            variant="elevated"
-            @click="toCustomer()"
-            prepend-icon="where_to_vote"
-          >
-            {{ $t("process_center.delivered_dialog.confirm_action") }}
-          </v-btn>
-        </div>
-      </v-card-actions>
-    </v-card>
-  </v-bottom-sheet>
-
-  <!-- █████████████████████████ Dialog Delivery > Failed █████████████████████████ -->
-
-  <v-bottom-sheet
-    v-model="dialog_returned_by_customer"
-    content-class="rounded-t-xl"
-    max-width="98vw"
-    width="640"
-  >
-    <v-card class="text-start" rounded="t-xl">
-      <v-card-title class="text-wrap">
-        <v-icon class="me-2">assignment_return</v-icon>
-        {{ $t("process_center.return_delivery_dialog.title") }}
-      </v-card-title>
-
-      <v-card-text>
-        {{ $t("process_center.return_delivery_dialog.message") }}
-
-        <u-smart-verify v-model="accept_action" class="my-3"></u-smart-verify>
-      </v-card-text>
-
-      <v-card-actions>
-        <div class="widget-buttons">
-          <v-btn
-            size="x-large"
-            variant="text"
-            @click="dialog_returned_by_customer = false"
-          >
-            <v-icon start>close</v-icon>
-            {{ $t("global.actions.cancel") }}
-          </v-btn>
-
-          <v-btn
-            :class="{ disabled: !accept_action }"
-            :loading="busy_return"
-            color="red-darken-1"
-            size="x-large"
-            variant="flat"
-            @click="returnDelivery()"
-          >
-            <v-icon class="me-1">airline_stops</v-icon>
-
-            {{ $t("process_center.return_delivery_dialog.confirm_action") }}
-          </v-btn>
-        </div>
-      </v-card-actions>
-    </v-card>
-  </v-bottom-sheet>
 </template>
 
 <script lang="ts">
