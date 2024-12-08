@@ -14,7 +14,7 @@
 
 <template>
   <div
-    class="s--widget-header d-flex align-stretch align-sm-start flex-column flex-sm-row"
+    class="s--widget-header d-flex align-stretch align-sm-start flex-column flex-sm-row text-start"
   >
     <div class="d-flex align-center flex-grow-1">
       <h2 class="d-flex align-center">
@@ -33,6 +33,7 @@
           width="24"
         />
         <slot name="icon"></slot>
+        <slot name="title"></slot>
         {{ title }}
         <sup
           v-if="dot"
@@ -107,6 +108,7 @@
       </v-btn>
     </div>
     <slot v-if="!$vuetify.display.xs" name="actions"></slot>
+    <slot name="append-actions"></slot>
   </div>
 </template>
 

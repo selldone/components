@@ -19,19 +19,19 @@
   >
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Header ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-    <div class="d-flex align-center">
-      <h2>
-        <v-icon class="me-1" color="#111">shopping_basket</v-icon>
-        {{ $t("process_center.basket_items") }}
-      </h2>
-      <v-spacer></v-spacer>
-      <small
-        :title="'Checkout date: ' + getLocalTimeString(basket.reserved_at)"
-        class="text-capitalize"
-      >
-        {{ getFromNowString(basket.reserved_at) }}</small
-      >
-    </div>
+    <u-widget-header
+      icon="shopping_basket"
+      :title="$t('process_center.basket_items')"
+    >
+      <template v-slot:append-actions>
+        <small
+          :title="'Checkout date: ' + getLocalTimeString(basket.reserved_at)"
+          class="text-capitalize my-auto"
+        >
+          {{ getFromNowString(basket.reserved_at) }}</small
+        >
+      </template>
+    </u-widget-header>
 
     <v-list-subheader class="px-0 text-start">
       <span v-html="$t('process_center.basket_list.message')"></span>
@@ -270,11 +270,13 @@ import { Basket, BasketItem, PriceHelper } from "@selldone/core-js";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import BOrderPaymentActionsRefundButton from "@selldone/components-vue/backoffice/order/payment/actions/refund/button/BOrderPaymentActionsRefundButton.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BOrderDashboardCart",
   mixins: [DateMixin],
   components: {
+    UWidgetHeader,
     BOrderPaymentActionsRefundButton,
     UPrice,
     VariantItemViewMicro,
@@ -405,7 +407,7 @@ export default {
       return this.basket.price * this.portion_unavailable;
     },
 
-    tax_included(){
+    tax_included() {
       return this.basket.tax_included;
     },
     need_to_refund_tax() {

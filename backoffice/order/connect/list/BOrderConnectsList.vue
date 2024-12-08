@@ -13,20 +13,21 @@
   -->
 
 <template>
-  <div class="widget shadow my-3 mx-1 mx-md-3" >
-    <div class="d-flex align-center">
-      <h2>
-        <v-icon class="me-1" color="#111">hub</v-icon>
+  <div class="widget shadow my-3 mx-1 mx-md-3">
+    <u-widget-header icon="hub">
+      <template v-slot:title>
         Connect <span class="text-gradient bg-desert-hump">OS</span>
-      </h2>
-      <v-spacer></v-spacer>
-    </div>
+      </template>
+    </u-widget-header>
 
     <v-list-subheader class="px-0">
-      {{$t('order_connect_list.subtitle')}}
+      {{ $t("order_connect_list.subtitle") }}
     </v-list-subheader>
 
-    <div class="text-start border-between-vertical -dashed" style="--border-color:#999">
+    <div
+      class="text-start border-between-vertical -dashed"
+      style="--border-color: #999"
+    >
       <b-order-connect-item
         v-for="connect_order in connect_orders"
         :key="connect_order.id"
@@ -42,10 +43,11 @@
 
 <script lang="ts">
 import BOrderConnectItem from "../../../order/connect/item/BOrderConnectItem.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BOrderConnectsList",
-  components: { BOrderConnectItem },
+  components: { UWidgetHeader, BOrderConnectItem },
   props: {
     shop: {
       require: true,

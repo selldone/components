@@ -18,28 +18,29 @@
     class="widget shadow my-3 mx-1 mx-md-3"
     v-bind="$attrs"
   >
-    <div class="d-flex align-center">
-      <h2>
-        <v-icon class="me-1" color="#111">local_shipping</v-icon>
-        {{ $t("order_delivery.title") }}
-
+    <u-widget-header :title="$t('order_delivery.title')" icon="local_shipping">
+      <template v-slot:append-title>
         <v-chip
           v-if="is_pickup"
-          class="skew-n20 ms-2"
-          color="success"
+          class="skew-n20 mx-2"
+          color="#000"
           label
           variant="elevated"
+          prepend-icon="person_pin"
           >{{ $t("global.commons.pickup") }}
         </v-chip>
-      </h2>
-      <v-spacer></v-spacer>
-      <img
-        v-if="transportation_icon"
-        :src="transportation_icon"
-        height="24"
-        width="24"
-      />
-    </div>
+      </template>
+
+      <template v-slot:actions>
+        <img
+          v-if="transportation_icon"
+          :src="transportation_icon"
+          height="24"
+          width="24"
+        />
+      </template>
+    </u-widget-header>
+
     <v-list-subheader></v-list-subheader>
 
     <div class="text-start">
@@ -874,11 +875,13 @@ import {
 import BTransportationServiceLabels from "@selldone/components-vue/backoffice/transportation/service/labels/BTransportationServiceLabels.vue";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BOrderDashboardDelivery",
   mixins: [BEventBusMixin, DateMixin],
   components: {
+    UWidgetHeader,
     UMapImage,
     UMapView,
     SDenseImagesCircles,

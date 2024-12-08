@@ -29,58 +29,68 @@
   >
     <!-- █████████████████████ Header █████████████████████ -->
 
-    <div class="d-flex align-center">
-      <h2>
-        <v-icon class="me-1" color="#111">payment</v-icon>
-        {{ $t("process_center.payment_widget.title") }}
-      </h2>
-      <v-spacer></v-spacer>
-      <span>
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Main payment check button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-        <v-btn
-          v-if="gateway && payment.unique_id"
-          :loading="busy_check"
-          class="mx-2"
-          color="green"
-          size="small"
-          variant="outlined"
-          @click="
-            checkPaymentStatus(gateway.code, payment.unique_id, gateway.name)
-          "
+    <u-widget-header
+      :title="$t('process_center.payment_widget.title')"
+      icon="payment"
+    >
+      <template v-slot:actions>
+        <v-sheet
+          color="#fff"
+          rounded="xl"
+          class="pa-1 d-flex align-center justify-space-between"
         >
-          <v-icon start>refresh</v-icon>
-          {{ $t("global.actions.check") }}
-          <img :src="getShopImagePath(gateway.icon)" class="ms-2" height="20" />
-        </v-btn>
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Main payment check button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Pending payment check button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <v-btn
+            v-if="gateway && payment.unique_id"
+            :loading="busy_check"
+            class="me-2 tnt"
+            color="#333"
+            size="small"
+            rounded="xl"
+            variant="elevated"
+            @click="
+              checkPaymentStatus(gateway.code, payment.unique_id, gateway.name)
+            "
+          >
+            <v-icon start>refresh</v-icon>
+            {{ $t("global.actions.check") }}
+            <img
+              :src="getShopImagePath(gateway.icon)"
+              class="ms-2"
+              height="20"
+            />
+          </v-btn>
 
-        <v-btn
-          v-for="(item, index) in transactions_pending"
-          :key="index"
-          :disabled="!item.unique_id"
-          :loading="busy_check"
-          class="mx-2"
-          color="#333"
-          size="small"
-          variant="outlined"
-          @click="
-            checkPaymentStatus(item.gateway_code, item.unique_id, item.name)
-          "
-        >
-          <v-icon start>refresh</v-icon>
-          {{ $t("global.actions.check") }}
-          <img :src="getShopImagePath(item.logo)" class="mx-1" height="20" />
-        </v-btn>
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Pending payment check button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <u-currency-icon
-          :currency="order.currency"
-          flag
-          small
-        ></u-currency-icon>
-      </span>
-    </div>
+          <v-btn
+            v-for="(item, index) in transactions_pending"
+            :key="index"
+            :disabled="!item.unique_id"
+            :loading="busy_check"
+            class="me-2 tnt"
+            rounded="xl"
+            color="#333"
+            size="small"
+            variant="elevated"
+            @click="
+              checkPaymentStatus(item.gateway_code, item.unique_id, item.name)
+            "
+          >
+            <v-icon start>refresh</v-icon>
+            {{ $t("global.actions.check") }}
+            <img :src="getShopImagePath(item.logo)" class="mx-1" height="20" />
+          </v-btn>
+
+          <u-currency-icon
+            :currency="order.currency"
+            flag
+            small
+          ></u-currency-icon>
+        </v-sheet>
+      </template>
+    </u-widget-header>
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Live/Debug mode ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <v-list-subheader class="px-0">
@@ -808,12 +818,14 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BOrderDashboardPayment",
   mixins: [DateMixin, ClubMixin],
 
   components: {
+    UWidgetHeader,
     UChartSankey,
     BOrderPaymentTable,
     UTextValueBox,
@@ -1544,11 +1556,11 @@ export default {
                 this.$t(
                   "process_center.payment_widget.notifications.pay_confirm_message",
                   {
-                    payment_at: this.getLocalTimeString(data.payment_at),
-                    gateway_name: gateway_name,
+                    payment_at: `<b>${this.getLocalTimeString(data.payment_at)}</b>`,
+                    gateway_name: `<b>${gateway_name}</b>`,
                   },
                 ) +
-                  `<br>Last status: ${data.status}` +
+                  `<br>Last status: <b>${data.status}</b>` +
                   (data.message ? `<hr>${data.message}` : ""), // Add extra message!
               );
             } else {

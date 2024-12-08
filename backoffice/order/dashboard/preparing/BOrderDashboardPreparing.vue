@@ -17,14 +17,11 @@
     :class="{ '-activated': in_this_step }"
     class="widget shadow my-3 mx-1 mx-md-3"
   >
-    <div class="d-flex align-center">
-      <h2>
-        <v-icon class="me-1" color="#111">precision_manufacturing</v-icon>
-        {{ $t("process_center.preparing.title") }}
-      </h2>
-
-      <v-spacer></v-spacer>
-    </div>
+    <u-widget-header
+      icon="precision_manufacturing"
+      :title="$t('process_center.preparing.title')"
+    >
+    </u-widget-header>
 
     <v-list-subheader class="px-0">
       <span v-html="$t('process_center.preparing.message')"></span>
@@ -350,11 +347,13 @@ import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import UDenseCirclesUsers from "../../../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
-import {Basket, DeliveryServiceHelper} from "@selldone/core-js";
+import { Basket, DeliveryServiceHelper } from "@selldone/core-js";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BOrderDashboardPreparing",
   components: {
+    UWidgetHeader,
     SDenseImagesCircles,
     UDenseCirclesUsers,
     USmartSelect,
@@ -402,7 +401,7 @@ export default {
 
   computed: {
     DeliveryServiceHelper() {
-      return DeliveryServiceHelper
+      return DeliveryServiceHelper;
     },
     has_shipping_services() {
       return (
