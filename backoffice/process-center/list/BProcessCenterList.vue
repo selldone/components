@@ -57,7 +57,7 @@
 
       <v-text-field
         v-model="search"
-        :label="$t('global.commons.search')"
+        :placeholder="$t('global.commons.search')"
         bg-color="transparent"
         class="min-width-200 max-width-field"
         clearable

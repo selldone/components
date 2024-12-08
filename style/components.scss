@@ -54,7 +54,6 @@
 @import "animation/master-animations";
 
 
-
 html {
 
   --base-font-standard: 15px;
@@ -1026,12 +1025,14 @@ $size: 2.8rem;
     transform: translateY(-2px);
   }
 }
+
 //-------------------------------------------------------------------------
 
 :root {
   --hover-bg-color: #fff; /* Default hover background color */
   --hover-text-color: #333; /* Default hover text color */
 }
+
 .v-theme--dark {
   --hover-bg-color: #333; /* Default hover background color for dark theme */
   --hover-text-color: #fff; /* Default hover text color for dark theme */
@@ -1063,6 +1064,7 @@ $size: 2.8rem;
     }
   }
 }
+
 //-------------------------------------------------------------------------
 
 .shadow-hover {
@@ -3977,6 +3979,19 @@ Fix snaky chart overflow problem!
   &-white-thin {
     box-shadow: inset 2px 0 0 0 #fff;
   }
+
+  &-amber-thin {
+    box-shadow: inset 2px 0 0 0 #FFA000;
+  }
+
+  &-red-thin {
+    box-shadow: inset 2px 0 0 0 #D32F2F;
+  }
+
+  &-blue-thin {
+    box-shadow: inset 2px 0 0 0 #03A9F4;
+  }
+
 }
 
 .v-locale--is-rtl {
@@ -4011,6 +4026,18 @@ Fix snaky chart overflow problem!
 
     &-white-thin {
       box-shadow: inset -2px 0 0 0 #fff;
+    }
+
+    &-amber-thin {
+      box-shadow: inset -2px 0 0 0 #FFA000;
+    }
+
+    &-red-thin {
+      box-shadow: inset -2px 0 0 0 #D32F2F;
+    }
+
+    &-blue-thin {
+      box-shadow: inset -2px 0 0 0 #03A9F4;
     }
   }
 }
@@ -4994,7 +5021,7 @@ ol, ul {
   }
 }
 
-.vertical-text{
+.vertical-text {
   writing-mode: vertical-rl; /* Rotates text top-to-bottom */
   text-orientation: mixed; /* Ensures proper character orientation */
 }

@@ -33,22 +33,6 @@
       </template>
     </v-list-item>
 
-    <!-- --------------------------------------- Excel --------------------------------------- -->
-    <v-list-item
-      v-if="excel"
-      :href="excel"
-      :subtitle="excelMessage"
-      :title="`${type} Excel`"
-      append-icon="download"
-      target="_blank"
-    >
-      <template v-slot:prepend>
-        <v-avatar rounded="0">
-          <v-img :src="require('../../../assets/file/excel.svg')"></v-img>
-        </v-avatar>
-      </template>
-    </v-list-item>
-
     <!-- --------------------------------------- CSV --------------------------------------- -->
 
     <v-list-item
@@ -62,6 +46,22 @@
       <template v-slot:prepend>
         <v-avatar rounded="0">
           <v-img :src="require('../../../assets/file/csv.svg')"></v-img>
+        </v-avatar>
+      </template>
+    </v-list-item>
+
+    <!-- --------------------------------------- Excel --------------------------------------- -->
+    <v-list-item
+      v-if="excel"
+      :href="excel"
+      :subtitle="excelMessage"
+      :title="`${type} Excel`"
+      append-icon="download"
+      target="_blank"
+    >
+      <template v-slot:prepend>
+        <v-avatar rounded="0">
+          <v-img :src="require('../../../assets/file/excel.svg')"></v-img>
         </v-avatar>
       </template>
     </v-list-item>

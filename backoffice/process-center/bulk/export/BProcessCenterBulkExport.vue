@@ -13,169 +13,199 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
-    <div class="widget-box mb-5">
-      <u-widget-header
-        :title="$t('orders_bulk_export.title')"
-        icon="auto_fix_normal"
-      >
-      </u-widget-header>
+  <v-bottom-sheet
+    :model-value="modelValue"
+    @update:model-value="(v) => $emit('update:modelValue', v)"
+    width="840"
+    max-width="98vw"
+    scrollable
+    content-class="rounded-t-xl"
+  >
+    <v-card rounded="t-xl" class="text-start">
+      <v-card-title>
+        <v-icon class="me-2">auto_fix_normal</v-icon>
+        {{ $t("orders_bulk_export.title") }}
+        | <img v-if="type" :src="type.basket" width="24" height="24" class="mx-1">
+        {{ $t(type.name )}}
+      </v-card-title>
+      <v-card-text>
+        <div class="widget-box mb-5">
+          <u-widget-header
+            :title="$t('orders_bulk_export.timespan.title')"
+            icon="date_range"
+          >
+          </u-widget-header>
 
-      <v-list-subheader
-        >{{ $t("orders_bulk_export.subtitle") }}
-      </v-list-subheader>
+          <v-list-subheader
+            >{{ $t("orders_bulk_export.subtitle") }}
+          </v-list-subheader>
 
-      <h3>
-        <v-icon class="me-1">date_range</v-icon>
-        {{ $t("orders_bulk_export.timespan.title") }}
-      </h3>
-      <v-list-subheader>
-        {{ $t("orders_bulk_export.timespan.subtitle") }}
-      </v-list-subheader>
+          <v-list-subheader>
+            {{ $t("orders_bulk_export.timespan.subtitle") }}
+          </v-list-subheader>
 
-      <u-date-input
-        v-model="start"
-        :label="$t('global.commons.start_date')"
-        :placeholder="$t('global.placeholders.select_date')"
-        clearable
-        date-only
-        return-utc
-      />
+          <u-date-input
+            v-model="start"
+            :label="$t('global.commons.start_date')"
+            :placeholder="$t('global.placeholders.select_date')"
+            clearable
+            date-only
+            return-utc
+          />
 
-      <u-date-input
-        v-model="end"
-        :disabled="!start"
-        :label="$t('global.commons.end_date')"
-        :min="start"
-        :placeholder="$t('global.commons.now')"
-        clearable
-        date-only
-        return-utc
-      />
+          <u-date-input
+            v-model="end"
+            :disabled="!start"
+            :label="$t('global.commons.end_date')"
+            :min="start"
+            :placeholder="$t('global.commons.now')"
+            clearable
+            date-only
+            return-utc
+          />
+        </div>
 
-      <h3 class="mt-3">
-        <v-icon class="me-1">splitscreen</v-icon>
-        {{ $t("orders_bulk_export.tasks.title") }}
-      </h3>
-      <v-list-subheader>
-        {{ $t("orders_bulk_export.tasks.subtitle") }}
-      </v-list-subheader>
+        <div class="widget-box mb-5">
+          <u-widget-header
+            :title="$t('orders_bulk_export.tasks.title')"
+            icon="splitscreen"
+          >
+          </u-widget-header>
 
-      <s-export-format-select
-        :csv="csv"
-        :excel="excel"
-        :pdf="pdf"
-        :type="$t('orders_bulk_export.tasks.export_title')"
-        dense
-      >
-      </s-export-format-select>
+          <v-list-subheader>
+            {{ $t("orders_bulk_export.tasks.subtitle") }}
+          </v-list-subheader>
 
-      <h3 class="mt-3">
-        <v-icon class="me-1">bookmark_border</v-icon>
-        {{ $t("orders_bulk_export.labels.title") }}
-      </h3>
-      <v-list-subheader>
-        {{ $t("orders_bulk_export.labels.subtitle") }}
-      </v-list-subheader>
+          <s-export-format-select
+            :csv="csv"
+            :excel="excel"
+            :pdf="pdf"
+            :type="$t('orders_bulk_export.tasks.export_title')"
+            dense
+          >
+          </s-export-format-select>
+        </div>
 
-      <!-- Orders delivery state -->
+        <div class="widget-box mb-5">
+          <u-widget-header
+            :title="$t('orders_bulk_export.labels.title')"
+            icon="bookmark_border"
+          >
+          </u-widget-header>
 
-      <v-btn-toggle
-        v-model="delivery_states"
-        class="widget-toggle flex-grow-0"
-        density="compact"
-        mandatory
-        multiple
-        rounded
-        selected-class="blue-flat"
-      >
-        <v-btn
-          v-for="state in all_delivery_states"
-          :key="state.code"
-          :value="state.code"
-          min-height="42"
-        >
-          <div class="d-flex flex-column align-center small">
-            <v-icon class="mb-1" size="small"> {{ $t(state.icon) }}</v-icon>
-            {{ $t(state.name) }}
-          </div>
-        </v-btn>
-      </v-btn-toggle>
-      <!-- Page size -->
+          <v-list-subheader>
+            {{ $t("orders_bulk_export.labels.subtitle") }}
+          </v-list-subheader>
 
-      <v-btn-toggle
-        v-model="page"
-        class="widget-toggle flex-grow-0"
-        density="compact"
-        mandatory
-        rounded
-        selected-class="blue-flat "
-        title="Page size"
-      >
-        <v-btn
-          v-for="it in ['A4', 'A5']"
-          :key="it"
-          :value="it"
-          class="w-50"
-          min-height="42"
-        >
-          <v-icon :size="it === 'A5' ? 12 : 16" class="me-1"
-            >fa:fas fa-file
-          </v-icon>
-          {{ it }}
-        </v-btn>
-      </v-btn-toggle>
-      <!-- Detail of basket items -->
-      <v-btn-toggle
-        v-model="detail"
-        class="widget-toggle flex-grow-0"
-        density="compact"
-        mandatory
-        rounded
-        selected-class="blue-flat "
-      >
-        <v-btn :value="false" class="w-50" min-height="42">
-          <v-icon class="me-1" size="small">fa:fas fa-pager</v-icon>
-          Label only
-        </v-btn>
-        <v-btn :value="true" class="w-50" min-height="42">
-          <v-icon class="me-1" size="small">fa:fas fa-pager</v-icon>
-          Label
-          <span class="mx-1">+</span>
-          <v-icon class="me-1" size="small">fa:fas fa-rectangle-list</v-icon>
-          Items
-        </v-btn>
-      </v-btn-toggle>
+          <!-- Orders delivery state -->
 
-      <s-export-format-select
-        :pdf="pdf_labels"
-        :type="$t('orders_bulk_export.labels.export_title')"
-        dense
-      >
-      </s-export-format-select>
+          <v-btn-toggle
+            v-model="delivery_states"
+            class="widget-toggle flex-grow-0"
+            density="compact"
+            mandatory
+            multiple
+            rounded
+            selected-class="blue-flat"
+          >
+            <v-btn
+              v-for="state in all_delivery_states"
+              :key="state.code"
+              :value="state.code"
+              min-height="42"
+            >
+              <div class="d-flex flex-column align-center small">
+                <v-icon class="mb-1" size="small"> {{ $t(state.icon) }}</v-icon>
+                {{ $t(state.name) }}
+              </div>
+            </v-btn>
+          </v-btn-toggle>
+          <!-- Page size -->
 
-      <div class="widget-buttons">
-        <v-btn size="x-large" variant="text" @click="$emit('close')">
-          <v-icon start>close</v-icon>
-          {{ $t("global.actions.close") }}
-        </v-btn>
-      </div>
-    </div>
-  </div>
+          <v-btn-toggle
+            v-model="page"
+            class="widget-toggle flex-grow-0"
+            density="compact"
+            mandatory
+            rounded
+            selected-class="blue-flat "
+            title="Page size"
+          >
+            <v-btn
+              v-for="it in ['A4', 'A5']"
+              :key="it"
+              :value="it"
+              class="w-50"
+              min-height="42"
+            >
+              <v-icon :size="it === 'A5' ? 12 : 16" class="me-1"
+                >fa:fas fa-file
+              </v-icon>
+              {{ it }}
+            </v-btn>
+          </v-btn-toggle>
+          <!-- Detail of basket items -->
+          <v-btn-toggle
+            v-model="detail"
+            class="widget-toggle flex-grow-0"
+            density="compact"
+            mandatory
+            rounded
+            selected-class="blue-flat "
+          >
+            <v-btn :value="false" class="w-50" min-height="42">
+              <v-icon class="me-1" size="small">fa:fas fa-pager</v-icon>
+              Label only
+            </v-btn>
+            <v-btn :value="true" class="w-50" min-height="42">
+              <v-icon class="me-1" size="small">fa:fas fa-pager</v-icon>
+              Label
+              <span class="mx-1">+</span>
+              <v-icon class="me-1" size="small"
+                >fa:fas fa-rectangle-list
+              </v-icon>
+              Items
+            </v-btn>
+          </v-btn-toggle>
+
+          <s-export-format-select
+            :pdf="pdf_labels"
+            :type="$t('orders_bulk_export.labels.export_title')"
+            dense
+          >
+          </s-export-format-select>
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="$emit('update:modelValue', false)"
+          >
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-bottom-sheet>
 </template>
 
 <script lang="ts">
-import SExportFormatSelect from "../../../../ui/file/export-format-select/SExportFormatSelect.vue";
-import UDateInput from "../../../../ui/date/input/UDateInput.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
-import UWidgetHeader from "../../../../ui/widget/header/UWidgetHeader.vue";
 import { Basket } from "@selldone/core-js";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
+import UDateInput from "@selldone/components-vue/ui/date/input/UDateInput.vue";
+import SExportFormatSelect from "@selldone/components-vue/ui/file/export-format-select/SExportFormatSelect.vue";
 
 export default {
   name: "BProcessCenterBulkExport",
   components: { UWidgetHeader, UDateInput, SExportFormatSelect },
   props: {
+    modelValue: {},
+
     shop: {
       required: true,
     },

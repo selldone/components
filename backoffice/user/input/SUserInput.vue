@@ -49,11 +49,11 @@
     no-filter
     return-object
     @click:clear="
-       $emit('update:modelValue', null);
+      $emit('update:modelValue', null);
       $emit('update:user-id', null);
       $emit('update:user', null);
-
     "
+    :persistent-placeholder="persistentPlaceholder"
   >
     <template v-slot:chip="{ item, props }">
       <v-chip
@@ -231,6 +231,7 @@ export default {
 
     staffOfShopId: {},
     variant: {},
+    persistentPlaceholder: Boolean,
   },
 
   data() {
@@ -262,11 +263,9 @@ export default {
     },
   },
   watch: {
-
     search: threads.debounceSearch(function (val) {
       val && val !== this.select && this.querySelections(val);
     }),
-
 
     select(select) {
       if (!select) {
