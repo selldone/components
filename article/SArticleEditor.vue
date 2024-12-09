@@ -1803,6 +1803,7 @@ export default defineComponent({
 }
 
 .s--article-editor-container {
+  // OLD !DEPRECATED!
   .link-preview a {
     border-bottom: unset !important;
 
@@ -2214,7 +2215,7 @@ p iframe {
   .medium-insert-embed {
     max-width: 1200px;
 
-    .link-preview {
+    .link-preview {   // OLD! DEPRECATED AND REPLACE WITH .s--link-preview-...
       border-radius: 16px !important;
 
       .v-row,
@@ -2233,7 +2234,27 @@ p iframe {
     }
   }
 
+  &.medium-insert-embeds-left ,&.medium-insert-embeds-right{
+    // NEW
+    .s--link-preview-card{
+      .s--link-preview-row{
+        flex-direction: column;
+        .s--link-preview-main-image{
+          display: block;
+          padding: 0 !important;
+          margin: 0 !important;
+          .s--link-preview-image-container{
+            min-height: 160px;
+          }
+        }
+      }
+    }
+  }
+
   &.medium-insert-embeds-left {
+
+
+    // OLD !DEPRECATED!
     .link-preview {
       .v-row,
       .row {
@@ -2255,6 +2276,7 @@ p iframe {
   }
 
   &.medium-insert-embeds-right {
+    // OLD !DEPRECATED!
     .link-preview {
       .v-row,
       .row {
@@ -2274,7 +2296,7 @@ p iframe {
       }
     }
   }
-
+  // OLD !DEPRECATED!
   .link-preview {
     margin: 12px 0 24px 0 !important;
     position: relative;

@@ -433,6 +433,7 @@
                 @blur="submitLink()"
                 @keydown.enter="submitLink()"
                 @click:append-inner="submitLink()"
+                variant="outlined"
               >
               </v-text-field>
             </div>
@@ -1438,6 +1439,7 @@ export default {
     min-height: 420px;
   }
 }
+
 
 /*.brt12px {
   @media only screen and (max-width: 600px) {

@@ -61,7 +61,7 @@
   margin-left: auto;
   margin-right: auto;
 
-  &.-extended{
+  &.-extended {
     max-width: 1200px !important;
   }
 }
@@ -99,24 +99,47 @@
       max-width: 100%;
     }
   }
+
+// Fix link preview cards OLD! DEPRECATED AND REPLACE WITH .s--link-preview-...
+  .link-preview{
+    .v-image {
+      .v-image__image {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .row{
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+  }
+
 }
-:not(.v-locale--is-rtl){
-  .rounded-ts-16px{
+
+:not(.v-locale--is-rtl) {
+  .rounded-ts-16px {
     border-top-left-radius: 16px !important;
   }
-  .rounded-bs-16px{
+
+  .rounded-bs-16px {
     border-bottom-left-radius: 16px !important;
   }
 }
 
 .v-locale--is-rtl {
-  .rounded-ts-16px{
+  .rounded-ts-16px {
     border-top-right-radius: 16px !important;
   }
-  .rounded-bs-16px{
+
+  .rounded-bs-16px {
     border-bottom-right-radius: 16px !important;
   }
- }
+}
 
 .c-widget {
   box-sizing: border-box;
