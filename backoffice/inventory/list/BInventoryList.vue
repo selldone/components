@@ -78,7 +78,7 @@
         :dark="false"
         :label="$t('inventory_list.search_input')"
         is-admin
-        :title="$t('inventory_list.search_input_title')"
+        persistent-placeholder
         background-color="transparent"
         block
         class="search-inline mx-2 max-width-field min-width-250 flex-grow-1"
@@ -86,6 +86,7 @@
         variant="plain"
         @onClear="onClear()"
         @onSearch="(event) => onSearch(event)"
+        single-line
       />
     </v-row>
 

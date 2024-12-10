@@ -79,7 +79,7 @@
       <template v-slot:prepend-inner>
         <v-btn
           v-if="!noQr"
-          :class="negativeQrMargin ? 'mt-n3' : ''"
+          :class="negativeQrMargin ? 'mt-n2' : ''"
           class="hoverable-icon zoomIn delay_500 flex-grow-0"
           icon
           size="small"
@@ -346,8 +346,8 @@ export default {
     placeholder: {},
     messages: {},
     hint: {},
-    persistentPlaceholder: {},
-    singleLine: { default: true },
+    persistentPlaceholder: Boolean,
+    singleLine: { default: true ,type:Boolean},
 
     outlined: {
       type: Boolean,
