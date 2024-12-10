@@ -902,14 +902,17 @@ export default {
     transition: 0.2s transform ease-out;
     transform: translateY(-50px);
     transition-delay: 0.15s;
-    @media (max-width: $max_width_to_delay_reverse) {
-      transition-delay: 0.15s + $delay_reverse;
-    }
+
 
     //   float: right;
     // background-image: linear-gradient(to bottom right, #00796b, #0097a7);
     border-radius: 4px;
     padding: 3px;
+
+    @media (max-width: $max_width_to_delay_reverse) {
+      transition-delay: 0.15s + $delay_reverse;
+    }
+
   }
 
   .card__copy-product-badge {
@@ -917,9 +920,7 @@ export default {
     transition: 0.2s transform ease-out;
     transform: translateX(80%);
     transition-delay: 0.15s;
-    @media (max-width: $max_width_to_delay_reverse) {
-      transition-delay: 0.15s + $delay_reverse;
-    }
+
 
     position: absolute;
     top: 0;
@@ -928,6 +929,10 @@ export default {
     border-radius: 0 0 0 12px;
     padding: 8px;
     color: white;
+
+    @media (max-width: $max_width_to_delay_reverse) {
+      transition-delay: 0.15s + $delay_reverse;
+    }
 
     &.is-small {
       font-size: 0.9rem;
@@ -953,23 +958,24 @@ export default {
   .card__info-hover {
     transition: transform 0.4s ease-in-out;
     transition-delay: 0s;
-    @media (max-width: $max_width_to_delay_reverse) {
-      transition-delay: $delay_reverse;
-    }
+
     position: absolute;
     padding: 16px;
     width: 100%;
     opacity: 0;
     top: 0;
     z-index: 1;
+
+    @media (max-width: $max_width_to_delay_reverse) {
+      transition-delay: $delay_reverse;
+    }
+
   }
 
   .card__img--hover {
     transition: 0.2s all ease-out;
     transition-delay: 0s;
-    @media (max-width: $max_width_to_delay_reverse) {
-      transition-delay: $delay_reverse;
-    }
+
     background-size: cover; //cover   contain
     background-position: center;
     background-repeat: no-repeat;
@@ -983,6 +989,10 @@ export default {
       var(--image-center-height-contain) + var(--header-size) +
         var(--footer-height)
     );
+
+    @media (max-width: $max_width_to_delay_reverse) {
+      transition-delay: $delay_reverse;
+    }
 
     &.contain {
       background-size: contain;
@@ -1002,9 +1012,7 @@ export default {
 
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0, 1);
     transition-delay: 0s;
-    @media (max-width: $max_width_to_delay_reverse) {
-      transition-delay: $delay_reverse;
-    }
+
     background-color: #fff;
     width: 100%;
     position: relative;
@@ -1016,6 +1024,11 @@ export default {
     overflow: hidden;
     //box-shadow: 0px 13px 10px -7px rgba(0, 0, 0, 0.1);
     box-shadow: unset;
+
+    @media (max-width: $max_width_to_delay_reverse) {
+      transition-delay: $delay_reverse;
+    }
+
   }
 
   @media (hover: hover) and (pointer: fine) { // Not be in mobile - touch screens
@@ -1064,9 +1077,7 @@ export default {
       border-radius 0.1s linear; // Flicker animation border-radius problem!!!
 
     transition-delay: 0.25s;
-    @media (max-width: $max_width_to_delay_reverse) {
-      transition-delay: 0.25s + $delay_reverse;
-    }
+
     z-index: 0;
 
     //  border-bottom-left-radius: 12px;
@@ -1078,6 +1089,9 @@ export default {
 
     overflow: hidden;
 
+    @media (max-width: $max_width_to_delay_reverse) {
+      transition-delay: 0.25s + $delay_reverse;
+    }
     @media (max-width: 800px) {
       min-height: var(--footer-height);
     }

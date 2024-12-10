@@ -343,7 +343,6 @@ export default {
 
       dialog_received_by_customer: false,
 
-      PhysicalOrderStates: Basket.PhysicalOrderStates,
 
       center: { lat: 0, lng: 0 },
 

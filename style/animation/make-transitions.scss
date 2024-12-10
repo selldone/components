@@ -16,6 +16,14 @@
 This is a mixin that generates CSS for transitions. It's compatible with Vue2 and have not test in Vue3!
  */
 
+$animationDuration: 1s !default;
+
+// W3C disallow quote on animate name, so this variable set to false as default after 2.1.0.
+// @see https://github.com/asika32764/vue2-animate/pull/20
+// @deprecated 3.0
+$quoteAnimationNames: false !default;
+
+
 @function quoteIf($property, $condition) {
   @if ($condition == true) {
     @return '#{$property}';

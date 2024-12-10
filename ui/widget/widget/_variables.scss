@@ -11,6 +11,7 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use "sass:color";
 
 // Meta
 
@@ -100,7 +101,7 @@ $font-weight-base: $font-weight-thin !default;
 $addition-bg: $gray-100 !default;
 
 $body-bg: #fdfdff !default;
-$body-bg-light: lighten($body-bg, 3%);
+$body-bg-light: color.adjust($body-bg, $lightness: 3%);
 
 //== Components
 //
@@ -139,7 +140,6 @@ $breadcrumb-bg: transparent;
 
 
 $widget-title-color: #444;
-//$widget-shadow: 0 0 40px darken($body-bg, 2%);
 $widget-shadow: none;
 $widget-shadow-designated: -1px 0 8px $gray-400;
 

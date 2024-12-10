@@ -12,11 +12,11 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import 'rotate';
-@import 'rotateDownLeft';
-@import 'rotateDownRight';
-@import 'rotateUpLeft';
-@import 'rotateUpRight';
-
+@use 'rotate';
+@use 'rotateDownLeft';
+@use 'rotateDownRight';
+@use 'rotateUpLeft';
+@use 'rotateUpRight';
+@use "../../make-transitions" as *;
 $rotates: DownLeft, DownRight, UpLeft, UpRight;
 @include make-transitions(rotate, $rotates);

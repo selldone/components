@@ -13,33 +13,33 @@
  */
 
 // Variables
-@import "variables";
+@use "variables";
 
-/*! Devices.css v#{$version} | MIT License | github.com/picturepan2/devices.css */
-@import "reset";
+
+@use "reset";
 
 // Phones
-@import "iphone-x";
-@import "iphone-8";
-@import "google-pixel-2-xl";
-@import "google-pixel";
-@import "galaxy-s8";
+@use "iphone-x";
+@use "iphone-8";
+@use "google-pixel-2-xl";
+@use "google-pixel";
+@use "galaxy-s8";
 
 // Tablets
-@import "ipad-pro";
-@import "surface-pro";
+@use "ipad-pro";
+@use "surface-pro";
 
 // Laptops
-@import "surface-book";
-@import "macbook-pro";
-@import "macbook";
+@use "surface-book";
+@use "macbook-pro";
+@use "macbook";
 
 // Desktops
-@import "surface-studio";
-@import "imac-pro";
+@use "surface-studio";
+@use "imac-pro";
 
 // Others
-@import "apple-watch";
+@use "apple-watch";
 
 
 .device-frame {

@@ -12,10 +12,10 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import 'slideDown';
-@import 'slideLeft';
-@import 'slideRight';
-@import 'slideUp';
-
+@use 'slideDown';
+@use 'slideLeft';
+@use 'slideRight';
+@use 'slideUp';
+@use "../../make-transitions" as *;
 $slides: Down, Left, Right, Up, DownSmall;
 @include make-transitions(slide, $slides);

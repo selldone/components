@@ -12,11 +12,11 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import 'zoom';
-@import 'zoomDown';
-@import 'zoomLeft';
-@import 'zoomRight';
-@import 'zoomUp';
-
+@use 'zoom';
+@use 'zoomDown';
+@use 'zoomLeft';
+@use 'zoomRight';
+@use 'zoomUp';
+@use "../../make-transitions" as *;
 $zooms: Down, Left, Right, Up;
 @include make-transitions(zoom, $zooms);

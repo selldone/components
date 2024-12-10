@@ -11,33 +11,34 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use "sass:color";
 
 // Version
 $version: "0.1.16";
 
 // Core variables
 $primary-color: #5764c6 !default;
-$primary-color-dark: darken($primary-color, 3%) !default;
-$primary-color-light: lighten($primary-color, 3%) !default;
-$secondary-color: lighten($primary-color, 40%) !default;
-$secondary-color-dark: darken($secondary-color, 3%) !default;
-$secondary-color-light: lighten($secondary-color, 3%) !default;
+$primary-color-dark: color.adjust($primary-color, $lightness: -3%) !default;
+$primary-color-light: color.adjust($primary-color, $lightness: 3%) !default;
+$secondary-color: color.adjust($primary-color, $lightness: 40%) !default;
+$secondary-color-dark: color.adjust($secondary-color, $lightness: -3%) !default;
+$secondary-color-light: color.adjust($secondary-color, $lightness: 3%) !default;
 
 // Gray colors
 $dark-color: #454d5d !default;
 $light-color: #fff !default;
-$gray-color: lighten($dark-color, 40%) !default;
-$gray-color-dark: darken($gray-color, 20%) !default;
-$gray-color-light: lighten($gray-color, 20%) !default;
+$gray-color: color.adjust($dark-color, $lightness: 40%) !default;
+$gray-color-dark: color.adjust($gray-color, $lightness: -20%) !default;
+$gray-color-light: color.adjust($gray-color, $lightness: 20%) !default;
 
-$bg-color: lighten($dark-color, 66%) !default;
-$bg-color-dark: darken($bg-color, 3%) !default;
+$bg-color: color.adjust($dark-color, $lightness: 66%) !default;
+$bg-color-dark: color.adjust($bg-color, $lightness: -3%) !default;
 $bg-color-light: $light-color !default;
 
 // Sizes
-$layout-spacing: .4rem !default;
-$layout-spacing-sm: .2rem !default;
-$layout-spacing-lg: .8rem !default;
+$layout-spacing: 0.4rem !default;
+$layout-spacing-sm: 0.2rem !default;
+$layout-spacing-lg: 0.8rem !default;
 
 // Responsive breakpoints
 $size-xs: 480px !default;

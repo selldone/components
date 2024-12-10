@@ -11,13 +11,15 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use "sass:color";
 
 // MacBook Pro
 $device-silver: #e2e3e4;
-$device-silver-dark: darken($device-silver, 10%);
+$device-silver-dark: color.adjust($device-silver, $lightness: -10%);
 $device-silver-panel: #0d0d0d;
+
 $device-spacegray: #83878a;
-$device-spacegray-dark: darken($device-spacegray, 5%);
+$device-spacegray-dark: color.adjust($device-spacegray, $lightness: -5%);
 $device-spacegray-panel: #0d0d0d;
 
 .device-macbook-pro {
@@ -35,7 +37,7 @@ $device-spacegray-panel: #0d0d0d;
     width: 614px;
 
     &::after {
-      background: lighten($device-silver-panel, 10%);
+      background: color.adjust($device-silver-panel, $lightness: 10%);
       border-radius: 0 0 20px 20px;
       bottom: 2px;
       content: "";
@@ -63,7 +65,7 @@ $device-spacegray-panel: #0d0d0d;
 
   // 1680-by-1050-pixel resolution
   .device-content {
-    border: 2px solid lighten($device-silver-panel, 2%);
+    border: 2px solid color.adjust($device-silver-panel, $lightness: 2%);
     border-radius: 2px;
     height: 360px;
     width: 576px;
@@ -71,7 +73,7 @@ $device-spacegray-panel: #0d0d0d;
 
   .device-power {
     background: $device-silver;
-    border: solid darken($device-silver, 5%);
+    border: solid color.adjust($device-silver, $lightness: -5%);
     border-radius: 2px 2px 0 0;
     border-width: 2px 4px 0 4px;
     height: 14px;
@@ -87,9 +89,9 @@ $device-spacegray-panel: #0d0d0d;
     }
 
     &::after {
-      background: lighten($device-silver-dark, 5%);
+      background: color.adjust($device-silver-dark, $lightness: 5%);
       border-radius: 0 0 10px 10px;
-      box-shadow: inset 0 0 4px 2px darken($device-silver-dark, 5%);
+      box-shadow: inset 0 0 4px 2px color.adjust($device-silver-dark, $lightness: -5%);
       height: 10px;
       left: 50%;
       margin-left: -60px;
@@ -98,9 +100,9 @@ $device-spacegray-panel: #0d0d0d;
     }
 
     &::before {
-      background: darken($device-silver-dark, 15%);
+      background: color.adjust($device-silver-dark, $lightness: -15%);
       border-radius: 0 0 180px 180px/ 0 0 12px 12px;
-      box-shadow: inset 0 -2px 6px 0 darken($device-silver-dark, 50%);
+      box-shadow: inset 0 -2px 6px 0 color.adjust($device-silver-dark, $lightness: -50%);
       height: 12px;
       left: -4px;
       margin: 0 auto;
@@ -116,17 +118,17 @@ $device-spacegray-panel: #0d0d0d;
     }
 
     .device-power {
-      background: lighten($device-spacegray, 5%);
+      background: color.adjust($device-spacegray, $lightness: 5%);
       border-color: $device-spacegray-dark;
 
       &::after {
-        background: lighten($device-spacegray-dark, 5%);
-        box-shadow: inset 0 0 4px 2px darken($device-spacegray-dark, 5%);
+        background: color.adjust($device-spacegray-dark, $lightness: 5%);
+        box-shadow: inset 0 0 4px 2px color.adjust($device-spacegray-dark, $lightness: -5%);
       }
 
       &::before {
-        background: darken($device-spacegray-dark, 15%);
-        box-shadow: inset 0 -2px 6px 0 darken($device-spacegray-dark, 50%);
+        background: color.adjust($device-spacegray-dark, $lightness: -15%);
+        box-shadow: inset 0 -2px 6px 0 color.adjust($device-spacegray-dark, $lightness: -50%);
       }
     }
   }

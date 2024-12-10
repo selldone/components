@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import 'lightSpeed';
-
+@use 'lightSpeed';
+@use "../../make-transitions" as *;
 $lightSpeeds: [];
 @include make-transitions(lightSpeed, $lightSpeeds);

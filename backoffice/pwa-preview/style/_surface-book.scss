@@ -11,10 +11,10 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-
+@use "sass:color";
 // Surface Book
 $device-silver: #eee;
-$device-silver-dark: darken($device-silver, 15%);
+$device-silver-dark: color.adjust($device-silver, $lightness: -15%);
 $device-silver-panel: #0d0d0d;
 
 .device-surface-book {
@@ -34,7 +34,7 @@ $device-silver-panel: #0d0d0d;
 
   // 3000-by-2000-pixel resolution
   .device-content {
-    border: 2px solid lighten($device-silver-panel, 2%);
+    border: 2px solid color.adjust($device-silver-panel, $lightness: 2%);
     border-radius: 2px;
     height: 360px;
     width: 540px;
@@ -78,7 +78,12 @@ $device-silver-panel: #0d0d0d;
     }
 
     &::after {
-      background: radial-gradient(circle at center, $device-silver 0, $device-silver 95%, darken($device-silver-dark, 15%) 100%);;
+      background: radial-gradient(
+                      circle at center,
+                      $device-silver 0,
+                      $device-silver 95%,
+                      color.adjust($device-silver-dark, $lightness: -15%) 100%
+      );
       border-radius: 0 0 6px 6px;
       height: 8px;
       left: 50%;

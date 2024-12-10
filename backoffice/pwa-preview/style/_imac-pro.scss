@@ -11,10 +11,10 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-
+@use "sass:color";
 // iMac Pro
 $device-spacegray: #fefefe;
-$device-spacegray-dark: darken($device-spacegray, 8%);
+$device-spacegray-dark: color.adjust($device-spacegray, $lightness: -8%);
 $device-spacegray-panel: #fefefe;
 
 .device-imac-pro {
@@ -24,7 +24,7 @@ $device-spacegray-panel: #fefefe;
   .device-frame {
     background: $device-spacegray-panel;
     border-radius: 18px;
-    box-shadow: inset 0 0 0 2px darken($device-spacegray-panel, 2%);
+    box-shadow: inset 0 0 0 2px color.adjust($device-spacegray-panel, $lightness: -2%);
     height: 428px;
     padding: 24px 24px 80px 24px;
     position: relative;
@@ -59,7 +59,7 @@ $device-spacegray-panel: #fefefe;
 
   // 5120‑by‑2880-pixel resolution
   .device-content {
-    border: 2px solid lighten($device-spacegray-panel, 2%);
+    border: 2px solid color.adjust($device-spacegray-panel, $lightness: 2%);
     border-radius: 2px;
     height: 324px;
     width: 576px;
@@ -72,7 +72,7 @@ $device-spacegray-panel: #fefefe;
     }
 
     &::after {
-      background: darken($device-spacegray-dark, 5%);
+      background: color.adjust($device-spacegray-dark, $lightness: -5%);
       border-radius: 2px;
       height: 6px;
       margin: 0 auto;
@@ -82,7 +82,7 @@ $device-spacegray-panel: #fefefe;
 
     &::before {
       border: solid transparent;
-      border-bottom-color: lighten($device-spacegray-panel, 15%);
+      border-bottom-color: color.adjust($device-spacegray-panel, $lightness: 15%);
       border-width: 0 8px 50px 8px;
       height: 50px;
       margin: 0 auto;

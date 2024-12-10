@@ -12,8 +12,9 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import 'mixins';
-@import 'variables';
+@use 'mixins'  as *;
+@use 'variables'  as *;
+@use "sass:list";
 
 @mixin clearfix() {
   &::after {
@@ -28,9 +29,9 @@ $transition-base: all .2s ease-in-out !default;
 $enable-prefers-reduced-motion-media-query: true !default;
 
 // stylelint-disable property-blacklist
-@mixin transition($transition...) {
+@mixin transition($transition: ()) {
   @if $enable-transitions {
-    @if length($transition) == 0 {
+    @if list.length($transition) == 0 {
       transition: $transition-base;
     } @else {
       transition: $transition;
@@ -39,10 +40,11 @@ $enable-prefers-reduced-motion-media-query: true !default;
 
   @if $enable-prefers-reduced-motion-media-query {
     @media (prefers-reduced-motion: reduce) {
-      transition: none;
+      & { transition: none; }
     }
   }
 }
+
 
 
 .title-widget {
@@ -51,7 +53,6 @@ $enable-prefers-reduced-motion-media-query: true !default;
   // color: $widget-title-color;
   // font-family: var(--font) !important;
   font-weight: 500;
-  @include clearfix();
 
   .small, small {
     font-weight: 400;
@@ -59,6 +60,10 @@ $enable-prefers-reduced-motion-media-query: true !default;
     display: block;
     //color: #aaa;
   }
+
+  @include clearfix();
+
+
 }
 
 // Widgets:
@@ -74,6 +79,9 @@ $enable-prefers-reduced-motion-media-query: true !default;
   border-radius: 24px;
   display: flex;
   flex-direction: column;
+  transition: all 0.4s;
+
+
 
   .widget-body {
     flex-grow: 1;
@@ -106,10 +114,6 @@ $enable-prefers-reduced-motion-media-query: true !default;
     box-shadow: $widget-shadow;
   }
 
-  @media only screen and (max-width: 460px) {
-    padding: 5px 12px;
-
-  }
 
   &.h100 {
     min-height: 100% !important; // I added to fix same height
@@ -192,7 +196,6 @@ $enable-prefers-reduced-motion-media-query: true !default;
 
   }
 
-  transition: all 0.4s;
 
   &.-activated {
     box-shadow: 0 5px 40px 15px rgba(166, 166, 166, 0.57) !important;
@@ -203,16 +206,25 @@ $enable-prefers-reduced-motion-media-query: true !default;
   button {
     transition: all 0.35s;
   }
+
+  @media only screen and (max-width: 460px) {
+    padding: 5px 12px;
+
+  }
+
 }
 
 
 .widgetBody {
-  @include clearfix();
 
   > footer {
     margin: 0.5rem (-$widget-padding-horizontal) (-$widget-padding-vertical);
     padding: 10px 20px;
   }
+
+  @include clearfix();
+
+
 }
 
 .widgetControls + .widgetBody {

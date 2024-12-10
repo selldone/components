@@ -11,10 +11,10 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-
+@use "sass:color";
 // Surface Studio
 $device-silver: #e2e3e4;
-$device-silver-dark: darken($device-silver, 10%);
+$device-silver-dark: color.adjust($device-silver, $lightness: -10%);
 $device-silver-panel: #0d0d0d;
 
 .device-surface-studio {
@@ -24,7 +24,7 @@ $device-silver-panel: #0d0d0d;
   .device-frame {
     background: $device-silver-panel;
     border-radius: 10px;
-    box-shadow: inset 0 0 0 2px darken($device-silver-panel, 5%);
+    box-shadow: inset 0 0 0 2px color.adjust($device-silver-panel, $lightness: -5%);
     height: 440px;
     padding: 20px;
     width: 640px;
@@ -32,7 +32,7 @@ $device-silver-panel: #0d0d0d;
 
   // 4500-by-3000-pixel resolution
   .device-content {
-    border: 2px solid lighten($device-silver-panel, 2%);
+    border: 2px solid color.adjust($device-silver-panel, $lightness: 2%);
     border-radius: 2px;
     height: 400px;
     width: 600px;
@@ -57,7 +57,7 @@ $device-silver-panel: #0d0d0d;
     }
 
     &::after {
-      border: 6px solid darken($device-silver, 5%);
+      border: 6px solid color.adjust($device-silver, $lightness: -5%);
       border-top: 0;
       border-radius: 0 0 18px 18px;
       box-shadow: inset 0 0 0 4px $device-silver-dark;
@@ -79,7 +79,7 @@ $device-silver-panel: #0d0d0d;
   }
 
   .device-power {
-    background: lighten($device-silver, 5%);
+    background: color.adjust($device-silver, $lightness: 5%);
     border: solid $device-silver;
     border-radius: 0 0 2px 2px;
     border-width: 0 4px 2px 4px;
@@ -89,7 +89,7 @@ $device-silver-panel: #0d0d0d;
     width: 250px;
 
     &::after {
-      background: darken($device-silver-dark, 10%);
+      background: color.adjust($device-silver-dark, $lightness: -10%);
       content: "";
       height: 2px;
       left: -4px;
@@ -97,5 +97,6 @@ $device-silver-panel: #0d0d0d;
       top: 4px;
       width: 250px;
     }
+
   }
 }

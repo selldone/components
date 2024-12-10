@@ -11,10 +11,11 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use "sass:color";
 
 // iPhone X
 $device-silver: #e2e3e4;
-$device-silver-dark: darken($device-silver, 10%);
+$device-silver-dark: color.adjust($device-silver, $lightness: -10%);
 $device-silver-panel: #f7f7f7; // #222;
 
 .device-iphone-x {

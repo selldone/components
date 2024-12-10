@@ -12,47 +12,47 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import "selldone/buttons";
-@import "selldone/animate-underline";
+@use "selldone/buttons";
+@use "selldone/animate-underline";
 
-@import "selldone/bootstrap";
-@import "selldone/animations";
-@import "selldone/vuetify";
-@import "selldone/widgets";
-@import "selldone/responsives";
-@import "selldone/landings";
-@import "avocado/avocado";
-@import "selldone/brush.css";
-@import "selldone/dragable";
-@import "selldone/markdown";
-@import "selldone/onboarding";
-@import "selldone/svg";
-@import "selldone/prism-dark";
-@import "selldone/pods";
-@import "selldone/drop-zone";
-@import "selldone/text-shadow";
-@import "selldone/html-style";
-@import "selldone/scale";
-@import "selldone/cursor";
-@import "selldone/hover/all";
-@import "selldone/general_animates";
-@import "selldone/cards/link-preview";
+@use "selldone/bootstrap";
+@use "selldone/animations";
+@use "selldone/vuetify";
+@use "selldone/widgets";
+@use "selldone/responsives";
+@use "selldone/landings";
+@use "avocado/avocado";
+@use "selldone/brush.css";
+@use "selldone/dragable";
+@use "selldone/markdown";
+@use "selldone/onboarding";
+@use "selldone/svg";
+@use "selldone/prism-dark";
+@use "selldone/pods";
+@use "selldone/drop-zone";
+@use "selldone/text-shadow";
+@use "selldone/html-style";
+@use "selldone/scale";
+@use "selldone/cursor";
+@use "selldone/hover/all";
+@use "selldone/general_animates";
+@use "selldone/cards/link-preview";
 
-@import "../article/Article";
-@import "selldone/pages/pages";
-@import "selldone/animations/transitions";
+@use "../article/Article";
+@use "selldone/pages/pages";
+@use "selldone/animations/transitions";
 
-@import "../community/style/community";
+@use "../community/style/community";
 
-@import "../ui/uploader/style/uploader";
-@import "selldone/border/borders";
-@import "selldone/overlays";
-@import "selldone/ratios";
-@import "selldone/pointer";
-@import "selldone/background";
-@import "dynamic-backgrounds/dynamic-background-layouts";
+@use "../ui/uploader/style/uploader";
+@use "selldone/border/borders";
+@use "selldone/overlays";
+@use "selldone/ratios";
+@use "selldone/pointer";
+@use "selldone/background";
+@use "dynamic-backgrounds/dynamic-background-layouts";
 
-@import "animation/master-animations";
+@use "animation/master-animations";
 
 
 html {
@@ -4960,7 +4960,18 @@ canvas.heatmap-canvas {
   --bapp-size: 90px;
   font-family: sans-serif;
   font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20%;
+  background: #fff;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2), /* Drop shadow */
+  inset 0 0 15px rgba(255, 255, 255, 0.5); /* Inner white glow */
+  // border:  solid medium rgba(255, 255, 255, 0.8);
+  // backdrop-filter: saturate(180%) blur(10px);
 
+  width: var(--bapp-size);
+  height: var(--bapp-size);
 
   @media only screen and (max-width: 992px) {
     --bapp-size: 64px;
@@ -4972,17 +4983,8 @@ canvas.heatmap-canvas {
     --bapp-size: 40px;
   }
 
-  width: var(--bapp-size);
-  height: var(--bapp-size);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20%;
-  background: #fff;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2), /* Drop shadow */
-  inset 0 0 15px rgba(255, 255, 255, 0.5); /* Inner white glow */
-  // border:  solid medium rgba(255, 255, 255, 0.8);
-  // backdrop-filter: saturate(180%) blur(10px);
+
+
 }
 
 

@@ -16,21 +16,14 @@
 
 
 
-$animationDuration: 1s !default;
 
-// W3C disallow quote on animate name, so this variable set to false as default after 2.1.0.
-// @see https://github.com/asika32764/vue2-animate/pull/20
-// @deprecated 3.0
-$quoteAnimationNames: false !default;
 
-// Main mixin
-@import "make-transitions";
 
 // Our animations
-@import "./animations/bouncing/all";
-@import "./animations/fading/all";
-@import "./animations/rotating/all";
-@import "./animations/sliding/all";
-@import "./animations/zooming/all";
-@import "./animations/flipping/all";
-@import "./animations/lightspeeding/all";
+@use "./animations/bouncing/all" as bouncing;
+@use "./animations/fading/all" as fading;
+@use "./animations/rotating/all" as rotating;
+@use "./animations/sliding/all" as sliding;
+@use "./animations/zooming/all" as zooming;
+@use "./animations/flipping/all" as flipping;
+@use "./animations/lightspeeding/all" as lightspeeding;

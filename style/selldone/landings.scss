@@ -19,10 +19,10 @@
 }
 
 @mixin fluid-type($min-vw, $max-vw, $min-font-size, $max-font-size) {
-  $u1: unit($min-vw);
-  $u2: unit($max-vw);
-  $u3: unit($min-font-size);
-  $u4: unit($max-font-size);
+  $u1: math.unit($min-vw);
+  $u2: math.unit($max-vw);
+  $u3: math.unit($min-font-size);
+  $u4: math.unit($max-font-size);
 
   @if $u1 == $u2 and $u1 == $u3 and $u1 == $u4 {
     & {
@@ -52,35 +52,40 @@ $mod_2: 1.5; // desktop
 
   h1 {
     font-size: $mod_1*$mod_1*$mod_1*$mod_1 *1rem;
+    line-height: 140%;
+
     @include fluid-type($min_width, $max_width, $mod_1*$mod_1*$mod_1 *$min_font, $mod_2*$mod_2*$mod_2 *$min_font);
 
-    line-height: 140%;
   }
 
   h2 {
     font-size: $mod_1*$mod_1*$mod_1 *1rem;
+    line-height: 140%;
+
     @include fluid-type($min_width, $max_width, $mod_1*$mod_1*$mod_1 *$min_font, $mod_2*$mod_2*$mod_2 *$min_font);
 
-    line-height: 140%;
   }
 
   h3 {
     font-size: $mod_1*$mod_1 *1rem;
+    line-height: 3rem;
+
     @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
 
-    line-height: 3rem;
   }
 
   h4 {
     font-size: $mod_1*$mod_1 *0.9rem;
-    @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
     line-height: 140%;
+
+    @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
   }
 
   h5 {
     font-size: $mod_1*$mod_1 *0.75rem;
-    @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
     line-height: 140%;
+
+    @include fluid-type($min_width, $max_width, $mod_1*$mod_1 *$min_font, $mod_2*$mod_2 *$min_font);
   }
 
 
@@ -277,16 +282,18 @@ $mod_2: 1.5; // desktop
 
 .h1-big {
   font-size: $mod_1*$mod_1*$mod_1*$mod_1 *1rem;
+  line-height: 140%;
+
   @include fluid-type($min_width, 1200px, 28px, 90px);
 
-  line-height: 140%;
 }
 
 .h1-medium {
   font-size: $mod_1*$mod_1*$mod_1 *1.2rem;
+  line-height: 140%;
+
   @include fluid-type($min_width, $max_width, 24px, 48px);
 
-  line-height: 140%;
 }
 
 .v-theme--dark {

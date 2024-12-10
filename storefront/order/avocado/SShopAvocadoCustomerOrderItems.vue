@@ -128,10 +128,9 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import { AvocadoItem, Basket } from "@selldone/core-js";
 import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
 
-
 export default {
   name: "SShopAvocadoCustomerOrderItems",
-  mixins:[ImageMixin],
+  mixins: [ImageMixin],
 
   props: {
     avocado: { required: true },

@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import "medium-editor-insert-plugin-frontend";
-@import "core";
-@import "images";
-@import "embeds";
+@use "medium-editor-insert-plugin-frontend";
+@use "core";
+@use "images";
+@use "embeds";

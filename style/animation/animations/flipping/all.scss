@@ -12,12 +12,12 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import 'flip';
-@import 'flipInX';
-@import 'flipInY';
-@import 'flipOutX';
-@import 'flipOutY';
-
+@use 'flip';
+@use 'flipInX';
+@use 'flipInY';
+@use 'flipOutX';
+@use 'flipOutY';
+@use "../../make-transitions" as *;
 $flips: X, Y;
 
 @include make-transitions(flip, $flips);

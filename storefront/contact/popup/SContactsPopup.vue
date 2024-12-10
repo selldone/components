@@ -130,6 +130,8 @@ export default {
   max-height: 800px;
 
   &.expand {
+    z-index: 99999999;
+
     @media screen and (max-width: 500px) {
       max-width: 100%;
       left: 0;
@@ -155,7 +157,6 @@ export default {
       }
     }
 
-    z-index: 99999999;
   }
 
   .view-box {

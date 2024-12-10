@@ -11,17 +11,19 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use "sass:color";
 
 // Google Pixel
 $device-silver: #e2e3e4;
-$device-silver-dark: darken($device-silver, 10%);
+$device-silver-dark: color.adjust($device-silver, $lightness: -10%);
 $device-silver-panel: #f7f7f8;
 $device-black: #6a6967;
-$device-black-dark: darken($device-black, 20%);
+$device-black-dark: color.adjust($device-black, $lightness: -20%);
 $device-black-panel: #211d1c;
 $device-blue: #7695ff;
-$device-blue-dark: darken($device-blue, 15%);
+$device-blue-dark: color.adjust($device-blue, $lightness: -15%);
 $device-blue-panel: #f7f7f8;
+
 
 .device-google-pixel {
   height: 744px;
@@ -30,7 +32,11 @@ $device-blue-panel: #f7f7f8;
   .device-frame {
     background: $device-silver-panel;
     border-radius: 54px;
-    box-shadow: inset 0 0 0 2px $device-silver-dark, inset 0 0 0 6px $device-silver, inset 0 0 0 10px lighten($device-silver-panel, 10%);
+
+    box-shadow: inset 0 0 0 2px $device-silver-dark,
+    inset 0 0 0 6px $device-silver,
+    inset 0 0 0 10px color.scale($device-silver-panel, $lightness: 10%);
+
     height: 744px;
     padding: 82px 18px 86px 18px;
     width: 360px;
@@ -131,7 +137,9 @@ $device-blue-panel: #f7f7f8;
   &.device-black {
     .device-frame {
       background: $device-black-panel;
-      box-shadow: inset 0 0 0 2px $device-black-dark, inset 0 0 0 6px $device-black, inset 0 0 0 10px lighten($device-black-panel, 10%);
+      box-shadow: inset 0 0 0 2px $device-black-dark,
+      inset 0 0 0 6px $device-black,
+      inset 0 0 0 10px color.adjust($device-black-panel, $lightness: 10%);
     }
 
     .device-stripe {
@@ -166,7 +174,9 @@ $device-blue-panel: #f7f7f8;
   // Blue edition
   &.device-blue {
     .device-frame {
-      box-shadow: inset 0 0 0 2px $device-blue-dark, inset 0 0 0 6px $device-blue, inset 0 0 0 10px lighten($device-blue-panel, 10%);
+      box-shadow: inset 0 0 0 2px $device-blue-dark,
+      inset 0 0 0 6px $device-blue,
+      inset 0 0 0 10px color.adjust($device-blue-panel, $lightness: 10%);
     }
 
     .device-btns {

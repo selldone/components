@@ -879,7 +879,6 @@ export default {
       dialog_customer_pay_money_cod: false,
       accept_action: false,
 
-      PhysicalOrderStates: Basket.PhysicalOrderStates,
 
       busy_check: false,
 

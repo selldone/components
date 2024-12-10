@@ -11,11 +11,13 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use "sass:color";
 
 // Apple Watch
 $device-gray: #e2e3e4;
-$device-gray-dark: darken($device-gray, 20%);
+$device-gray-dark: color.adjust($device-gray, $lightness: -20%);
 $device-gray-panel: #0d0d0d;
+$device-silver-panel: #0d0d0d;
 
 .device-apple-watch {
   height: 234px;
@@ -44,7 +46,7 @@ $device-gray-panel: #0d0d0d;
 
   // 272-by-340-pixel resolution
   .device-content {
-    border: 2px solid lighten($device-silver-panel, 2%);
+    border: 2px solid color.adjust($device-silver-panel, $lightness: 2%);
     border-radius: 2px;
     height: 170px;
     width: 136px;

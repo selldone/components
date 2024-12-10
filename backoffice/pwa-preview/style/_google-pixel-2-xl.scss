@@ -11,10 +11,11 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use "sass:color";
 
 // Google Pixel 2 XL
 $device-black: #cfcfcf;
-$device-black-dark: darken($device-black, 20%);
+$device-black-dark: color.adjust($device-black, $lightness: -20%);
 $device-black-panel: #121212;
 
 .device-google-pixel-2-xl {

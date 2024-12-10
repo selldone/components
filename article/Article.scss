@@ -12,11 +12,11 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import './insert/sass/medium-editor-insert-plugin';
+@use './insert/sass/medium-editor-insert-plugin';
 
-@import 'medium-editor/dist/css/themes/default.css';
-@import 'medium-editor/dist/css/medium-editor.css';
-@import 'comment/comment-style';
+@use 'medium-editor/dist/css/themes/default.css';
+@use 'medium-editor/dist/css/medium-editor.css';
+@use 'comment/comment-style';
 
 
 .master-article-container {

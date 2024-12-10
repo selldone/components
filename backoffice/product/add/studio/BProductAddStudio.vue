@@ -376,7 +376,6 @@ export default {
       TAB_PRODUCT: TAB_PRODUCT,
       TAB_CATEGORY: TAB_CATEGORY,
 
-      ProductType: ProductType,
 
       //-------- Google Preview ----------
       busy_render_google: false,

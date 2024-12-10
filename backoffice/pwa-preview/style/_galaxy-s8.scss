@@ -11,14 +11,17 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use "sass:color";
 
 // Galaxy S8
+
 $device-black: #cfcfcf;
-$device-black-dark: darken($device-black, 20%);
+$device-black-dark: color.adjust($device-black, $lightness: -20%);
 $device-black-panel: #fefefe;
 $device-blue: #a3c5e8;
-$device-blue-dark: darken($device-blue, 20%);
+$device-blue-dark: color.adjust($device-blue, $lightness: -20%);
 $device-blue-panel: #222;
+
 
 .device-galaxy-s8 {
   height: 828px;

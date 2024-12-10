@@ -11,20 +11,26 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use "sass:color";
 
 // MacBook
 $device-silver: #e2e3e4;
-$device-silver-dark: darken($device-silver, 10%);
+$device-silver-dark: color.adjust($device-silver, $lightness: -10%);
 $device-silver-panel: #fefefe;
+
 $device-spacegray: #83878a;
-$device-spacegray-dark: darken($device-spacegray, 5%);
+$device-spacegray-dark: color.adjust($device-spacegray, $lightness: -5%);
 $device-spacegray-panel: #0d0d0d;
+
 $device-gold: #f7e8dd;
-$device-gold-dark: darken($device-gold, 10%);
+$device-gold-dark: color.adjust($device-gold, $lightness: -10%);
 $device-gold-panel: #0d0d0d;
+
 $device-rosegold: #fefefe;
-$device-rosegold-dark: darken($device-rosegold, 10%);
+$device-rosegold-dark: color.adjust($device-rosegold, $lightness: -10%);
 $device-rosegold-panel: #0d0d0d;
+
+
 
 
 .device-macbook {
@@ -42,7 +48,7 @@ $device-rosegold-panel: #0d0d0d;
     width: 614px;
 
     &::after {
-      background: lighten($device-silver-panel, 10%);
+      background: color.adjust($device-silver-panel, $lightness: 10%);
       border-radius: 0 0 20px 20px;
       bottom: 2px;
       content: "";
@@ -70,7 +76,7 @@ $device-rosegold-panel: #0d0d0d;
 
   // 1440-by-900-pixel resolution
   .device-content {
-    border: 2px solid lighten($device-silver-panel, 2%);
+    border: 2px solid color.adjust($device-silver-panel, $lightness: 2%);
     border-radius: 2px;
     height: 360px;
     width: 576px;
@@ -78,7 +84,7 @@ $device-rosegold-panel: #0d0d0d;
 
   .device-power {
     background: $device-silver;
-    border: solid darken($device-silver, 5%);
+    border: solid color.adjust($device-silver, $lightness: -5%);
     border-radius: 2px 2px 0 0;
     border-width: 0 4px;
     height: 4px;
@@ -94,8 +100,13 @@ $device-rosegold-panel: #0d0d0d;
     }
 
     &::after {
-      background: radial-gradient(circle at center, $device-silver 0, $device-silver 85%, darken($device-silver-dark, 15%) 100%);
-      border: solid darken($device-silver-dark, 10%);
+      background: radial-gradient(
+                      circle at center,
+                      $device-silver 0,
+                      $device-silver 85%,
+                      color.adjust($device-silver-dark, $lightness: -15%) 100%
+      );
+      border: solid color.adjust($device-silver-dark, $lightness: -10%);
       border-width: 0 2px;
       height: 4px;
       left: 50%;
@@ -104,9 +115,9 @@ $device-rosegold-panel: #0d0d0d;
     }
 
     &::before {
-      background: darken($device-silver-dark, 15%);
-      border-radius: 0 0 180px 180px/ 0 0 10px 10px;
-      box-shadow: inset 0 -2px 6px 0 darken($device-silver-dark, 50%);
+      background: color.adjust($device-silver-dark, $lightness: -15%);
+      border-radius: 0 0 180px 180px / 0 0 10px 10px;
+      box-shadow: inset 0 -2px 6px 0 color.adjust($device-silver-dark, $lightness: -50%);
       height: 10px;
       left: -4px;
       margin: 0 auto;
@@ -126,13 +137,18 @@ $device-rosegold-panel: #0d0d0d;
       border-color: $device-gold-dark;
 
       &::after {
-        background: radial-gradient(circle at center, $device-gold 0, $device-gold 85%, darken($device-gold-dark, 15%) 100%);
-        border-color: darken($device-gold-dark, 10%);
+        background: radial-gradient(
+                        circle at center,
+                        $device-gold 0,
+                        $device-gold 85%,
+                        color.adjust($device-gold-dark, $lightness: -15%) 100%
+        );
+        border-color: color.adjust($device-gold-dark, $lightness: -10%);
       }
 
       &::before {
         background: $device-gold-dark;
-        box-shadow: inset 0 -2px 6px 0 darken($device-gold-dark, 50%);
+        box-shadow: inset 0 -2px 6px 0 color.adjust($device-gold-dark, $lightness: -50%);
       }
     }
   }
@@ -148,13 +164,18 @@ $device-rosegold-panel: #0d0d0d;
       border-color: $device-rosegold-dark;
 
       &::after {
-        background: radial-gradient(circle at center, $device-rosegold 0, $device-rosegold 85%, darken($device-rosegold-dark, 15%) 100%);
+        background: radial-gradient(
+                        circle at center,
+                        $device-rosegold 0,
+                        $device-rosegold 85%,
+                        color.adjust($device-rosegold-dark, $lightness: -15%) 100%
+        );
         border-color: $device-rosegold-dark;
       }
 
       &::before {
         background: $device-rosegold-dark;
-        box-shadow: inset 0 -2px 6px 0 darken($device-rosegold-dark, 50%);
+        box-shadow: inset 0 -2px 6px 0 color.adjust($device-rosegold-dark, $lightness: -50%);
       }
     }
   }
@@ -166,17 +187,22 @@ $device-rosegold-panel: #0d0d0d;
     }
 
     .device-power {
-      background: lighten($device-spacegray, 5%);
+      background: color.adjust($device-spacegray, $lightness: 5%);
       border-color: $device-spacegray-dark;
 
       &::after {
-        background: radial-gradient(circle at center, lighten($device-spacegray, 5%) 0, lighten($device-spacegray, 5%) 85%, darken($device-spacegray-dark, 15%) 100%);
-        border-color: darken($device-spacegray-dark, 10%);
+        background: radial-gradient(
+                        circle at center,
+                        color.adjust($device-spacegray, $lightness: 5%) 0,
+                        color.adjust($device-spacegray, $lightness: 5%) 85%,
+                        color.adjust($device-spacegray-dark, $lightness: -15%) 100%
+        );
+        border-color: color.adjust($device-spacegray-dark, $lightness: -10%);
       }
 
       &::before {
-        background: darken($device-spacegray-dark, 15%);
-        box-shadow: inset 0 -2px 6px 0 darken($device-spacegray-dark, 50%);
+        background: color.adjust($device-spacegray-dark, $lightness: -15%);
+        box-shadow: inset 0 -2px 6px 0 color.adjust($device-spacegray-dark, $lightness: -50%);
       }
     }
   }

@@ -12,15 +12,16 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import 'fade';
-@import 'fadeDown';
-@import 'fadeDownBig';
-@import 'fadeLeft';
-@import 'fadeLeftBig';
-@import 'fadeRight';
-@import 'fadeRightBig';
-@import 'fadeUp';
-@import 'fadeUpBig';
+@use 'fade';
+@use 'fadeDown';
+@use 'fadeDownBig';
+@use 'fadeLeft';
+@use 'fadeLeftBig';
+@use 'fadeRight';
+@use 'fadeRightBig';
+@use 'fadeUp';
+@use 'fadeUpBig';
+@use "../../make-transitions" as *;
 
 $fades: Down, DownBig, Left, LeftBig, Right, RightBig, Up, UpBig;
 

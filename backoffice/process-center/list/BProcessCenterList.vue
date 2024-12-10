@@ -912,7 +912,6 @@ export default {
       ProductType: ProductType,
 
       BasketStatus: Basket.Status,
-      ProductType: ProductType,
 
       activator: null,
       activator_item: null,

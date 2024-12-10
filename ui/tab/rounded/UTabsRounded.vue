@@ -171,6 +171,7 @@ export default {
   position: relative;
   flex-grow: 1;
   min-width: 100px !important;
+  border-radius: 36px;
 
   &:before {
     content: "";
@@ -208,7 +209,6 @@ export default {
     margin: 0 2px;
   }
 
-  border-radius: 36px;
 
   &.is-active {
     box-shadow: 0px 7px 15px 8px rgba(113, 112, 112, 0.24);

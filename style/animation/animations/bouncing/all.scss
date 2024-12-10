@@ -12,11 +12,11 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-@import 'bounce';
-@import 'bounceDown';
-@import 'bounceLeft';
-@import 'bounceRight';
-@import 'bounceUp';
-
+@use 'bounce';
+@use 'bounceDown';
+@use 'bounceLeft';
+@use 'bounceRight';
+@use 'bounceUp';
+@use "../../make-transitions" as *;
 $bounces: Down, Left, Right, Up;
 @include make-transitions(bounce, $bounces);

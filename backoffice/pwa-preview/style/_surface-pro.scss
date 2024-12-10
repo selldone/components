@@ -11,10 +11,10 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-
+@use "sass:color";
 // Surface Pro
 $device-silver: #eee;
-$device-silver-dark: darken($device-silver, 15%);
+$device-silver-dark: color.adjust($device-silver, $lightness: -15%);
 $device-silver-panel: #0d0d0d;
 
 .device-surface-pro {
@@ -33,7 +33,7 @@ $device-silver-panel: #0d0d0d;
 
   // 2736-by-1824-pixel resolution
   .device-content {
-    border: 2px solid lighten($device-silver-panel, 2%);
+    border: 2px solid color.adjust($device-silver-panel, $lightness: 2%);
     border-radius: 2px;
     height: 342px;
     width: 513px;

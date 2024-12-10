@@ -12,15 +12,19 @@
  * Tread carefully, for you're treading on dreams.
  */
 
+@use "sass:color";
+
 // iPhone 8
 $device-silver: #e2e3e4;
-$device-silver-dark: darken($device-silver, 10%);
+$device-silver-dark: color.adjust($device-silver, $lightness: -10%);
 $device-silver-panel: #fff;
+
 $device-gold: #f7e8dd;
-$device-gold-dark: darken($device-gold, 20%);
+$device-gold-dark: color.adjust($device-gold, $lightness: -20%);
 $device-gold-panel: #fff;
+
 $device-spacegray: #9b9ba0;
-$device-spacegray-dark: darken($device-spacegray, 15%);
+$device-spacegray-dark: color.adjust($device-spacegray, $lightness: -15%);
 $device-spacegray-panel: #222;
 
 .device-iphone-8 {

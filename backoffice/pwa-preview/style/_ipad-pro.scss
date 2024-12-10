@@ -11,19 +11,22 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-
+@use "sass:color";
 // iPad Pro
 $device-silver: #e2e3e4;
-$device-silver-dark: darken($device-silver, 10%);
+$device-silver-dark: color.adjust($device-silver, $lightness: -10%);
 $device-silver-panel: #fafafa;
+
 $device-gold: #f7e8dd;
-$device-gold-dark: darken($device-gold, 20%);
+$device-gold-dark: color.adjust($device-gold, $lightness: -20%);
 $device-gold-panel: #fff;
+
 $device-rosegold: #facfc9;
-$device-rosegold-dark: darken($device-rosegold, 10%);
+$device-rosegold-dark: color.adjust($device-rosegold, $lightness: -10%);
 $device-rosegold-panel: #fff;
+
 $device-spacegray: #9b9ba0;
-$device-spacegray-dark: darken($device-spacegray, 10%);
+$device-spacegray-dark: color.adjust($device-spacegray, $lightness: -10%);
 $device-spacegray-panel: #fafafa;
 
 .device-ipad-pro {
