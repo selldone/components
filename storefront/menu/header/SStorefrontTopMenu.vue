@@ -93,8 +93,9 @@
           :z-index="100"
           activator="parent"
           location="bottom"
-          open-delay="0"
+          :open-delay="0"
           theme="light"
+          :offset="10"
         >
           <!-- Menu > default -->
           <v-sheet :rounded="tab.rounded" class="shadow-box">
@@ -144,6 +145,7 @@
               :preview="preview"
               class="my-2 ms-2"
               style="width: 98vw; max-height: 90vh"
+              :rounded-preview="tab.rounded"
               :dark="dark"
             ></menu-categories>
 

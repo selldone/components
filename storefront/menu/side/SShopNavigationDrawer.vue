@@ -48,7 +48,12 @@
           />
           <v-spacer></v-spacer>
 
-          <v-btn icon variant="text" @click="$emit('update:modelValue', false)" aria-label="Close menu">
+          <v-btn
+            icon
+            variant="text"
+            @click="$emit('update:modelValue', false)"
+            aria-label="Close menu"
+          >
             <v-icon>close</v-icon>
           </v-btn>
         </div>
@@ -193,6 +198,7 @@
                   style="--item-heigh: 42px"
                   :dark="dark"
                   zero-padding
+                  navigation
                 ></menu-categories>
               </v-expansion-panel-text>
             </v-expansion-panel>
@@ -201,41 +207,36 @@
           <!-- ――――――――――――――――――――― Footer Menu ――――――――――――――――――――― -->
 
           <v-expansion-panel hide-actions>
-            <v-expansion-panel-title >
+            <v-expansion-panel-title>
               <div class="ssnd-title text-center flex-grow-1 text-uppercase">
-                {{$t('global.commons.more')}}...
+                {{ $t("global.commons.more") }}...
               </div>
-
             </v-expansion-panel-title>
             <v-expansion-panel-text class="no-exp-padding">
-              <div class="border-between-vertical" >
+              <div class="border-between-vertical">
                 <v-list-item
-                    v-for="(item, i) in menu"
-                    :key="'f-' + i"
-                    :to="item.to"
-                    active-class="bg-primary text-white ps-2"
-                    exact
-                    class="py-3"
-                    nav
-                    :aria-selected="null"
-                    slim
-                    min-height="48"
+                  v-for="(item, i) in menu"
+                  :key="'f-' + i"
+                  :to="item.to"
+                  active-class="bg-primary text-white ps-2"
+                  exact
+                  class="py-3"
+                  nav
+                  :aria-selected="null"
+                  slim
+                  min-height="48"
                 >
                   <v-list-item-title class="ssnd-title"
-                  >{{ item.name }}
+                    >{{ item.name }}
                   </v-list-item-title>
                   <template v-if="item.src" v-slot:append
-                  ><img :src="item.src" height="24" width="24" alt="Icon"
+                    ><img :src="item.src" height="24" width="24" alt="Icon"
                   /></template>
                 </v-list-item>
               </div>
             </v-expansion-panel-text>
           </v-expansion-panel>
-
-
         </v-expansion-panels>
-
-
 
         <!-- ――――――――――――――――――――― Social links ――――――――――――――――――――― -->
 
@@ -417,8 +418,8 @@ export default {
     font-weight: 500;
   }
 
-  .no-exp-padding{
-    .v-expansion-panel-text__wrapper{
+  .no-exp-padding {
+    .v-expansion-panel-text__wrapper {
       padding: 0 !important;
     }
   }

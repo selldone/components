@@ -13,8 +13,15 @@
   -->
 
 <template>
-  <div class="s--top-menu-categories" :style="{'--background':dark?'#111':'#fff'}">
-    <v-container class="-container" @click.stop :class="{'pa-0':zeroPadding}">
+  <div
+    class="s--top-menu-categories"
+    :style="{ '--background': dark ? '#111' : '#fff' }"
+  >
+    <v-container
+      class="-container"
+      @click.stop
+      :class="{ 'pa-0': zeroPadding }"
+    >
       <v-row>
         <v-col class="-categories-wrap" cols="12" lg="10">
           <v-row>
@@ -161,20 +168,39 @@
           </v-row>
         </v-col>
 
-        <v-col v-if="selected_category && $vuetify.display.lgAndUp" cols="2">
-          <div class="pa-2">
-            <v-img
-              v-if="selected_category.icon"
-              :lazy-src="getShopImagePath(selected_category.icon, 64)"
-              :src="getShopImagePath(selected_category.icon)"
-              aspect-ratio="1"
-              cover
-              rounded="xl"
-            ></v-img>
-            <h3 class="mt-2 mb-1">{{ selected_category.title }}</h3>
-            <p class="typo-body">
-              {{ selected_category.description }}
-            </p>
+        <v-col v-if="$vuetify.display.lgAndUp" cols="2">
+          <v-img
+            :lazy-src="
+              selected_category
+                ? getShopImagePath(selected_category.icon, 64)
+                : undefined
+            "
+            :src="
+              selected_category
+                ? getShopImagePath(selected_category.icon)
+                : undefined
+            "
+            aspect-ratio="1"
+            cover
+            :rounded="roundedPreview"
+          >
+          </v-img>
+          <div style="min-height: 8rem">
+            <template v-if="selected_category">
+              <h3 class="mt-2 mb-1">{{ selected_category.title }}</h3>
+              <p
+                class=""
+                style="
+                  display: -webkit-box;
+                  -webkit-line-clamp: 3;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                  text-wrap: balance;
+                "
+              >
+                {{ selected_category.description }}
+              </p>
+            </template>
           </div>
         </v-col>
       </v-row>
@@ -188,7 +214,7 @@
               width: 100 / columns_count + '%',
               flex: 100 / columns_count + '%',
               'max-width': 100 / columns_count + '%',
-              'min-width': '200px',
+              'min-width': '120px',
             }"
           >
             <router-link
@@ -201,7 +227,9 @@
               <v-img
                 :alt="cat.description"
                 :aspect-ratio="small_mode ? 1 : 3 / 2"
-                :class="{ 'rounded-circle': small_mode, rounded: !small_mode }"
+                :class="[
+                  { 'rounded-circle': small_mode, 'rounded-sm': !small_mode },
+                ]"
                 :gradient="'to top, rgba(0,0,0,0.4), rgba(0,0,0,0)'"
                 :src="getShopImagePath(cat.icon)"
                 class="cat-hover"
@@ -243,8 +271,13 @@ export default {
       default: false,
       type: Boolean,
     },
-    dark:Boolean,
-    zeroPadding:Boolean,
+    roundedPreview: {},
+    dark: Boolean,
+    zeroPadding: Boolean,
+    /**
+     * Show in left navigation
+     */
+    navigation: Boolean,
   },
   data: () => ({
     selected_category: null,
@@ -262,11 +295,12 @@ export default {
     },
 
     columns_count() {
+      if (this.navigation) return 1;
       let width = this.preview
         ? 1040 /*In shop dashboard editor!*/
         : window.innerWidth;
       if (width > 992)
-        width = (0.9 /*90vw max width of container!*/ * width * 10) / 12; //Right column!
+        width = (0.95 /*90vw max width of container!*/ * width * 10) / 12; //Right column!
 
       return Math.floor(width / 250);
     },
@@ -366,7 +400,6 @@ export default {
   --item-heigh: 28px;
   --font-size: 14px;
 
-
   text-align: start;
   min-height: calc(100vh - 200px);
   font-size: var(--font-size);
@@ -375,7 +408,7 @@ export default {
 
   .-container {
     flex-grow: 1;
-    max-width: 90vw !important;
+    max-width: 100vw !important;
     margin: auto;
     min-height: 100%;
     padding-bottom: 10vh;
@@ -397,7 +430,7 @@ export default {
       align-items: center;
       font-weight: 600;
       text-transform: uppercase;
-     // color: #000 !important;
+      // color: #000 !important;
       height: var(--item-heigh);
       max-height: var(--item-heigh);
       margin-bottom: 4px;
@@ -435,12 +468,12 @@ export default {
   }
 
   .cat-hover {
-    .v-img__image {
+    img {
       transition: all 0.3s ease-in-out;
     }
 
     &:hover {
-      .v-img__image {
+      img {
         transform: scale(1.2);
       }
     }
