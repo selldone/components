@@ -37,8 +37,20 @@
         {{ $t(type.name) }}
       </v-card-title>
       <v-card-text>
-        <div class="widget-box mb-5">
-          <u-widget-header title="Daily Email" icon="email"></u-widget-header>
+        <u-tabs-rounded
+          v-model="tab"
+          small
+          :tabs="tabs"
+          class="mx-auto mb-5"
+          scrollable
+        >
+        </u-tabs-rounded>
+
+        <div v-if="tab === 'config'" class="widget-box mb-5">
+          <u-widget-header
+            title="Daily Email"
+            icon="forward_to_inbox"
+          ></u-widget-header>
 
           <v-list-subheader
             >Automatically send received order notifications to the designated
@@ -62,6 +74,22 @@
           >
           </s-user-input>
         </div>
+
+        <div v-if="tab === 'send'" class="widget-box mb-5">
+          <u-widget-header
+            title="Manually Send Email"
+            icon="science"
+          ></u-widget-header>
+          <v-list-subheader> </v-list-subheader>
+
+          <v-date-picker
+            v-model="date_input"
+            width="100%"
+            bg-color="transparent"
+            :max="new Date()"
+          >
+          </v-date-picker>
+        </div>
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
@@ -75,14 +103,34 @@
           </v-btn>
 
           <v-btn
+            v-if="tab === 'config'"
             size="x-large"
             variant="elevated"
             color="primary"
             @click="saveChange()"
             prepend-icon="save"
-            :loading="busy"
+            :loading="busy_save"
           >
             {{ $t("global.actions.save") }}
+          </v-btn>
+
+          <v-btn
+            v-else-if="tab === 'send'"
+            size="x-large"
+            variant="elevated"
+            color="#000"
+            @click="sendManually()"
+            :disabled="!date_input"
+            prepend-icon="check"
+            :loading="busy_send"
+          >
+
+            <div>
+              {{ $t("global.actions.send") }}
+              <div class="small">
+                {{USER().email}}
+              </div>
+            </div>
           </v-btn>
         </div>
       </v-card-actions>
@@ -95,10 +143,11 @@ import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHead
 import SUserInput from "@selldone/components-vue/backoffice/user/input/SUserInput.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
+import UTabsRounded from "@selldone/components-vue/ui/tab/rounded/UTabsRounded.vue";
 
 export default {
   name: "BProcessCenterAutomation",
-  components: { USmartToggle, SUserInput, UWidgetHeader },
+  components: { UTabsRounded, USmartToggle, SUserInput, UWidgetHeader },
   props: {
     modelValue: {},
 
@@ -116,7 +165,25 @@ export default {
       selected_user: null,
       enable: false,
 
-      busy: false,
+      busy_save: false,
+      busy_send: false,
+
+      tab: "config",
+      date_input: null,
+      tabs: [
+        {
+          title: "Config Receiver",
+          value: "config",
+          color: "#f3801e",
+          icon: "forward_to_inbox",
+        },
+        {
+          title: "Send Manually",
+          value: "send",
+          color: "#1ab453",
+          icon: "science ",
+        },
+      ],
     };
   },
   computed: {
@@ -132,7 +199,7 @@ export default {
 
   methods: {
     saveChange() {
-      this.busy = true;
+      this.busy_save = true;
       axios
         .put(window.API.SET_SHOP_PREFERENCES(this.shop.id), {
           key: "bulk",
@@ -155,7 +222,34 @@ export default {
           NotificationService.showLaravelError(e);
         })
         .finally(() => {
-          this.busy = false;
+          this.busy_save = false;
+        });
+    },
+
+    sendManually() {
+      this.busy_send = true;
+
+      axios
+        .post(
+          window.API.POST_SHOP_EMAIL_SEND_ME(this.shop.id, "bulk-orders"),
+          {
+            date:this.date_input.toISOString()
+          },
+        )
+        .then(({ data }) => {
+          if (data.error) {
+            return NotificationService.showErrorAlert(null, data.error_msg);
+          }
+          NotificationService.showSuccessAlert(
+            null,
+            "Successfully sent email.",
+          );
+        })
+        .catch((e) => {
+          NotificationService.showLaravelError(e);
+        })
+        .finally(() => {
+          this.busy_send = false;
         });
     },
   },
