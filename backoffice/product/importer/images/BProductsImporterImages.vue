@@ -19,7 +19,7 @@
 
       <v-text-field
         v-model="search"
-        :label="$t('global.commons.search')"
+        :placeholder="$t('global.commons.search')"
         class="max-width-field"
         clearable
         hide-details

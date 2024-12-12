@@ -49,7 +49,7 @@
       ></s-country-select>
       <v-text-field
         v-model="search"
-        :label="$t('global.commons.search')"
+        :placeholder="$t('global.commons.search')"
         class="max-width-field ma-1"
         clearable
         hide-details
