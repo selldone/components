@@ -23,7 +23,6 @@
   >
     <v-card
       :disabled="busy_ai"
-      :loading="busy_ai"
       class="text-start"
       color="#673AB7"
       rounded="xl"
@@ -31,7 +30,7 @@
       <v-card-text>
         <div class="text-h4 text-lg-h3 font-weight-thin py-3">
           <u-button-ai-small
-            :loading="busy_ai"
+            :class="{pen:busy_ai}"
             class="ms-2 float-end pen"
             variant="text"
           ></u-button-ai-small>

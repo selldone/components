@@ -14,7 +14,7 @@
 
 <template>
   <v-btn
-    :class="{ '-loading': loading }"
+    :class="{ '-loading': loading || gradientLive,'-rotate':commander}"
     :color="color"
     :icon="icon"
     :loading="loading"
@@ -29,6 +29,7 @@
       :src="require('../../../../assets/icons/ci-logo.png')"
       :width="imageSize ? imageSize : xLarge ? 36 : 24"
       alt="AI"
+      class="-g-image"
     />
     <v-icon
       v-if="placeholderIcon"
@@ -37,6 +38,17 @@
       style="text-shadow: rgba(0, 0, 0, 0.8) 1px 2px 3px"
       >{{ placeholderIcon }}
     </v-icon>
+
+    <img
+        v-if="commander"
+      :height="imageSize ? imageSize : xLarge ? 30 : 20"
+      :width="imageSize ? imageSize : xLarge ? 30 : 20"
+      :src="require('../../../../assets/icons/selldone-ai-commander.svg')"
+      class="center-absolute"
+      aria-hidden="true"
+      style="filter: drop-shadow(-2px -2px 2px rgba(0, 0, 0, 0.2))"
+    />
+
     <v-tooltip
       v-if="tooltip"
       :location="tooltipLocation"
@@ -56,7 +68,8 @@
 export default {
   name: "UButtonAiSmall",
   props: {
-    loading: {},
+    loading: Boolean,
+    gradientLive: Boolean,
     xLarge: { type: Boolean, default: false },
     tooltip: {
       default: "<b>AI</b> | Automatically generate contents or do process.",
@@ -79,6 +92,7 @@ export default {
     placeholderIcon: {},
     placeholderColor: {},
     openDelay: {},
+    commander: Boolean,
   },
 };
 </script>
@@ -121,6 +135,21 @@ export default {
     background: #fff;
     border-radius: 50%;
   }
+
+  &.-rotate{
+
+    .-g-image{
+      animation: rotate 4s linear infinite;
+    }
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
 }
 
 @keyframes scale-infinite {
@@ -134,4 +163,6 @@ export default {
     transform: scale(1.15) translate(-45%, -45%); //fix un center bug!
   }
 }
+
+
 </style>

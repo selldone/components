@@ -17,7 +17,7 @@
     <h2>🎙️ Record voice</h2>
 
     <template v-if="showError">
-      Your browser does’t support audio recording or you’ve blocked microphone
+      Your browser doesn't support audio recording or you’ve blocked microphone
       access.
     </template>
 
@@ -34,7 +34,7 @@
 
             <v-avatar
               v-if="!isRecording"
-              class="mt-3 avatar-gradient -thin -blue"
+              class="mt-3 avatar-gradient -thin -blue elevation-5"
               size="64"
             >
               <v-btn
