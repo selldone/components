@@ -63,9 +63,12 @@
 
 <script lang="ts">
 import WebhookTypes from "@selldone/core-js/enums/webhook/WebhookTypes";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BWebhookItem",
+  mixins: [DateMixin],
+
   components: {},
   props: {
     webhook: {

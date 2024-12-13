@@ -65,8 +65,8 @@
          </v-avatar>-->
 
         <!--  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Mode > In Recording ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-        <div v-else>
-          <v-avatar class="avatar-gradient -thin -red" size="36">
+        <div v-else class="d-flex align-center " :class="{'flex-row-reverse':alignEnd}">
+          <v-avatar class="avatar-gradient -thin -red zoomIn" size="36">
             <v-btn
               class="border-w-medium"
               color="#FFCDD2"
@@ -147,6 +147,7 @@ export default {
     endpoint: {
       required: true,
     },
+    alignEnd:Boolean,
   },
 
   data: () => ({
