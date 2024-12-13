@@ -65,7 +65,11 @@
          </v-avatar>-->
 
         <!--  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Mode > In Recording ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-        <div v-else class="d-flex align-center " :class="{'flex-row-reverse':alignEnd}">
+        <div
+          v-else
+          class="d-flex align-center"
+          :class="{ 'flex-row-reverse': alignEnd }"
+        >
           <v-avatar class="avatar-gradient -thin -red zoomIn" size="36">
             <v-btn
               class="border-w-medium"
@@ -111,7 +115,7 @@
         max-width="360"
         content-class="text-start bg-black"
       >
-        {{ error_msg ? error_msg : error }}
+        <div v-html="error_msg ? error_msg : error"></div>
       </v-tooltip>
     </template>
   </u-voice-recorder-continues>
@@ -147,7 +151,7 @@ export default {
     endpoint: {
       required: true,
     },
-    alignEnd:Boolean,
+    alignEnd: Boolean,
   },
 
   data: () => ({
@@ -220,7 +224,7 @@ export default {
         .post(this.endpoint, formData, config)
         .then(({ data }) => {
           if (data.error) {
-            NotificationService.showErrorAlert(null, data.error_msg);
+            NotificationService.showNotificationAlert(null, data.error_msg);
             this.error_msg = data.error_msg;
           } else {
             this.$emit("response", data);

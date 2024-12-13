@@ -10,7 +10,14 @@
     >
     </slot>
   </div>
-  <v-icon v-else>hourglass_empty</v-icon>
+  <span v-else>
+    <v-icon>hourglass_empty</v-icon>
+    <v-tooltip content-class="text-start bg-red">
+      We can not initialize the voice recorder. Please make sure you have a
+      microphone connected and enabled. If it's ok reassign permission to
+      microphone and refresh page.
+    </v-tooltip>
+  </span>
 </template>
 
 <script lang="ts">
@@ -104,7 +111,8 @@ export default {
         !("webkitSpeechRecognition" in window) &&
         !("SpeechRecognition" in window)
       ) {
-        this.error = "The Speech Recognition API is not supported in this browser. Please use the buttons to manually start and stop recording.";
+        this.error =
+          "The Speech Recognition API is not supported in this browser. Please use the buttons to manually start and stop recording.";
 
         this.$emit("error", this.error);
         return;
@@ -148,11 +156,11 @@ export default {
 
       recognition.start();
     },
-    startRecording() {
+    async startRecording() {
       if (this.isRecording) return; // Prevent starting a new recording if already recording
 
       this.error = null;
-      SoundHelper.playBubble();
+      await SoundHelper.playBubble();
       this.isRecording = true;
       this.mediaRecorder.start();
 
@@ -166,10 +174,11 @@ export default {
     },
     stopRecording() {
       if (!this.isRecording) return; // Prevent stopping if not currently recording
-      SoundHelper.playDoubleBubble();
 
       this.isRecording = false;
       this.mediaRecorder.stop();
+
+      SoundHelper.playDoubleBubble();
 
       if (this.recordTimeout) {
         clearTimeout(this.recordTimeout);
