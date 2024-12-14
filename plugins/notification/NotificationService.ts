@@ -280,6 +280,26 @@ class NotificationService {
           `<div class="text-start">${data.message}</div>`,
       );
     } else {
+
+      // 403 Error:
+        if (error.response.status === 403) {
+            NotificationService.showErrorAlert(
+                window.$t("global.notification.error") + " " + error.response.status+" | Forbidden",
+                window.$t("global.errors.403"),
+            );
+            return;
+        }
+        // 404 Error:
+        if (error.response.status === 404) {
+            NotificationService.showErrorAlert(
+                window.$t("global.notification.error") + " " + error.response.status+" | Not Found",
+                window.$t("global.errors.404"),
+            );
+            return;
+        }
+
+
+
       NotificationService.showErrorAlert(
           window.$t("global.notification.error") + " " + error.response.status,
           window.$t("global.notification.error_message") as string,

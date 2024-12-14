@@ -27,7 +27,7 @@
       :size="size - borderSize"
       :style="{ 'border-radius': `${border_radius - 2}px` }"
       cover
-      :class="{'elevation-3':elevated}"
+      :class="{ 'elevation-3': elevated }"
       class="hover-scale force-top"
     >
       <v-img v-if="src" :src="getShopImagePath(src)" :alt="text_avatar_value">
@@ -53,8 +53,7 @@
       v-if="!hideSideIcon"
       :style="{ backgroundImage: bg }"
       class="absolute-bottom-end-0 rounded-ts-circle h-auto w-auto pe-2 pb-2 pen"
-
-      style="background-size: 300% 300%; line-height: 0 ;padding: 6px"
+      style="background-size: 300% 300%; line-height: 0; padding: 6px"
     >
       <img
         v-if="sideImage"
@@ -65,8 +64,12 @@
         :src="sideImage"
         :width="side_size / (smallSideIcon ? 2 : 1)"
         alt="Side Icon"
+      />
+      <v-icon
+        v-else
+        :size="side_size / (smallSideIcon ? 2 : 1)"
+        :color="sideIconColor"
       >
-      <v-icon v-else :size="side_size / (smallSideIcon ? 2 : 1)" color="#fff">
         {{ sideIcon }}
       </v-icon>
     </div>
@@ -123,6 +126,9 @@ export default defineComponent({
     },
     sideImage: {},
     smallSideIcon: Boolean,
+    sideIconColor: {
+      default: "#fff",
+    },
 
     caption: {},
     loading: Boolean,
@@ -135,7 +141,7 @@ export default defineComponent({
       type: Boolean,
     },
     textAvatar: {},
-    elevated:Boolean
+    elevated: Boolean,
   },
 
   computed: {
@@ -167,10 +173,9 @@ export default defineComponent({
                 ? "#ddd"
                 : this.isGreen
                   ? "#4CAF50"
-                              : this.isPurple
-                                  ? "#5f36f4"
-
-                  : "#000";
+                  : this.isPurple
+                    ? "#5f36f4"
+                    : "#000";
     },
     color2() {
       return this.isAmber
@@ -185,11 +190,9 @@ export default defineComponent({
                 ? "#eee"
                 : this.isGreen
                   ? "#388E3C"
-
-                              : this.isPurple
-                                  ? "#673AB7"
-                  : "#000";
-
+                  : this.isPurple
+                    ? "#673AB7"
+                    : "#000";
     },
 
     text_avatar_value() {
