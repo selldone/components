@@ -13,15 +13,15 @@
   -->
 
 <template>
-  <v-list-item v-if="customer" class="text-start">
+  <v-list-item v-if="customer" class="text-start" :density="small?'compact':undefined" :slim="small">
     <template v-slot:prepend>
-      <v-avatar class="avatar-gradient -thin -customer" size="48">
+      <v-avatar class="avatar-gradient -thin -customer"  :size="small ? 32 : 42">
         <v-img v-if="customer.user_id" :src="getUserAvatar(customer.user_id)" />
         <v-icon v-else size="large">person_outline</v-icon>
       </v-avatar>
     </template>
 
-    <v-list-item-title>
+    <v-list-item-title :class="{small:small}">
       <b>{{ customer.name }}</b>
     </v-list-item-title>
     <v-list-item-subtitle>
@@ -46,6 +46,7 @@ export default defineComponent({
     customer: {
       type: Object,
     },
+    small:Boolean,
   },
 });
 </script>

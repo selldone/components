@@ -58,6 +58,7 @@
       $emit('update:user-id', null);
       $emit('update:user', null);
     "
+    v-model:focused="focused"
   >
     <template v-slot:selection="{ item }">
       <v-avatar :size="24" class="me-2">
@@ -131,7 +132,6 @@
 </template>
 
 <script lang="ts">
-
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
@@ -203,6 +203,8 @@ export default {
       items: [],
       search: null,
       select: null,
+
+      focused: false,
     };
   },
   computed: {
@@ -227,7 +229,7 @@ export default {
   },
   watch: {
     search(val) {
-      val && val !== this.select && this.querySelections(val);
+      val && val !== this.select && this.querySelections();
     },
 
     select(select) {
@@ -245,7 +247,11 @@ export default {
         const obj = { email: select, name: select };
         this.items.push(obj);
         this.select = obj;
-      } else {
+      } else if (typeof select === "number") {
+        // Nothing to do! value is customer id.
+        this.querySelections();// Force get user info!
+      }
+      else {
         this.$emit("update:modelValue", select.id);
         this.$emit("update:user-id", select.id);
         this.$emit("update:user", select);
@@ -254,17 +260,37 @@ export default {
     modelValue(value) {
       if (!value) this.select = this.modelValue;
     },
+
+    focused(focused) {
+      if (focused) {
+        this.querySelections();
+      }
+    },
   },
   created() {
     this.select = this.modelValue;
   },
   methods: {
-    querySelections(v) {
+    querySelections() {
       if (!window.API) return; // Only in shop community add moderators!
       this.loading = true;
 
       axios
-        .get(window.API.GET_SUGGESTION_CUSTOMERS(this.shop.id, v))
+        .get(
+          window.API.GET_SUGGESTION_CUSTOMERS(
+            this.shop.id,
+            this.search ? this.search : "*",
+          ),
+          {
+            params: {
+              // Must contain this id:
+              contain:
+                this.modelValue && this.isObject(this.modelValue)
+                  ? this.modelValue.id
+                  : this.modelValue,
+            },
+          },
+        )
         .then(({ data }) => {
           if (data.error) {
             NotificationService.showErrorAlert(null, data.error_msg);

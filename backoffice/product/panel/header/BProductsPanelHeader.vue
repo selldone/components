@@ -20,7 +20,7 @@
     </template>
 
     <div class="body-title px-2">
-      <v-btn color="primary" icon variant="text">
+      <v-btn color="#000" icon variant="text">
         <v-icon>more_vert</v-icon>
 
         <v-menu activator="parent">
@@ -172,7 +172,7 @@
           </v-list>
         </v-menu>
       </v-btn>
-
+<!--
       <router-link
         v-if="$vuetify.display.smAndUp"
         :to="{
@@ -184,7 +184,7 @@
         exact
       >
         {{ $t("admin_shop.products.title") }}
-      </router-link>
+      </router-link>-->
     </div>
 
     <v-chip
