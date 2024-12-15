@@ -13,9 +13,9 @@
   -->
 
 <template>
-  <v-row align="center" no-gutters>
+  <v-row    v-if="isMarketplace" align="center" no-gutters>
     <v-list-item
-      v-if="isMarketplace"
+
       :title="
         $t('global.commons.marketplace') +
         (vendor_owner
