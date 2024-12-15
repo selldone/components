@@ -79,8 +79,17 @@
           <u-widget-header
             title="Manually Send Email"
             icon="science"
+            add-text
+            add-caption="Download Excel"
+            :add-sub-caption="`For ${date_input.toLocaleDateString()}`"
+            add-icon="download"
+            target="_blank"
+            :href="download_link"
           ></u-widget-header>
-          <v-list-subheader> </v-list-subheader>
+          <v-list-subheader>
+            Select a date and click to manually send a test email. You can also
+            download the Excel output for the selected date here.
+          </v-list-subheader>
 
           <v-date-picker
             v-model="date_input"
@@ -124,11 +133,10 @@
             prepend-icon="check"
             :loading="busy_send"
           >
-
             <div>
               {{ $t("global.actions.send") }}
               <div class="small">
-                {{USER().email}}
+                {{ USER().email }}
               </div>
             </div>
           </v-btn>
@@ -144,9 +152,12 @@ import SUserInput from "@selldone/components-vue/backoffice/user/input/SUserInpu
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 import UTabsRounded from "@selldone/components-vue/ui/tab/rounded/UTabsRounded.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import { DateConverter } from "@selldone/core-js/helper";
 
 export default {
   name: "BProcessCenterAutomation",
+  mixins: [DateMixin],
   components: { UTabsRounded, USmartToggle, SUserInput, UWidgetHeader },
   props: {
     modelValue: {},
@@ -169,7 +180,7 @@ export default {
       busy_send: false,
 
       tab: "config",
-      date_input: null,
+      date_input: new Date(),
       tabs: [
         {
           title: "Config Receiver",
@@ -187,8 +198,17 @@ export default {
     };
   },
   computed: {
+    DateConverter() {
+      return DateConverter;
+    },
     preferences() {
       return this.shop.preferences;
+    },
+    download_link() {
+      return (
+        window.API.DOWNLOAD_DAILY_ORDERS(this.shop.id) +
+        `?date=${DateConverter.dateToString(this.date_input)}`
+      );
     },
   },
   watch: {},
@@ -230,12 +250,9 @@ export default {
       this.busy_send = true;
 
       axios
-        .post(
-          window.API.POST_SHOP_EMAIL_SEND_ME(this.shop.id, "bulk-orders"),
-          {
-            date:this.date_input.toISOString()
-          },
-        )
+        .post(window.API.POST_SHOP_EMAIL_SEND_ME(this.shop.id, "bulk-orders"), {
+          date: this.date_input.toISOString(),
+        })
         .then(({ data }) => {
           if (data.error) {
             return NotificationService.showErrorAlert(null, data.error_msg);
