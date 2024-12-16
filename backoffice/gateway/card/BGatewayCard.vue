@@ -53,7 +53,8 @@
           v-if="!gateway?.enable"
           color="red"
           prepend-icon="gpp_bad"
-          size="x-small" variant="flat"
+          size="x-small"
+          variant="flat"
         >
           Gateway disabled
         </v-chip>
@@ -62,7 +63,8 @@
           v-else-if="shopGateway.enable && shopGateway.livemode"
           color="green"
           prepend-icon="verified_user"
-          size="x-small" variant="flat"
+          size="x-small"
+          variant="flat"
         >
           {{ $t("global.status.active") }}
         </v-chip>
@@ -71,7 +73,8 @@
           v-else-if="shopGateway.enable && !shopGateway.livemode"
           color="orange"
           prepend-icon="science"
-          size="x-small" variant="flat"
+          size="x-small"
+          variant="flat"
         >
           {{ $t("global.status.debug") }}
         </v-chip>
@@ -95,13 +98,54 @@
           </v-tooltip>
         </v-chip>
 
-        <v-chip v-if="gateway.cod" size="x-small" color="blue" variant="flat" class="ms-1">COD</v-chip>
-        <v-chip v-if="gateway.cash" size="x-small" color="#009688" variant="flat" class="ms-1">Cash</v-chip>
-        <v-chip v-if="gateway.dir" size="x-small" color="#303F9F" variant="flat" class="ms-1">Direct</v-chip>
-        <v-chip v-if="gateway.blockchain" size="x-small" color="#C2185B" variant="flat" class="ms-1">Blockchain</v-chip>
-        <v-chip v-if="gateway.subscription" size="x-small" color="#673AB7" variant="flat" class="ms-1">Subscription</v-chip>
-        <v-chip v-if="gateway.pos" size="x-small" color="#000" variant="flat" class="ms-1">POS</v-chip>
-
+        <v-chip
+          v-if="gateway.cod"
+          size="x-small"
+          color="blue"
+          variant="flat"
+          class="ms-1"
+          >COD</v-chip
+        >
+        <v-chip
+          v-if="gateway.cash"
+          size="x-small"
+          color="#009688"
+          variant="flat"
+          class="ms-1"
+          >Cash</v-chip
+        >
+        <v-chip
+          v-if="gateway.dir"
+          size="x-small"
+          color="#303F9F"
+          variant="flat"
+          class="ms-1"
+          >Direct</v-chip
+        >
+        <v-chip
+          v-if="gateway.blockchain"
+          size="x-small"
+          color="#C2185B"
+          variant="flat"
+          class="ms-1"
+          >Blockchain</v-chip
+        >
+        <v-chip
+          v-if="gateway.subscription"
+          size="x-small"
+          color="#673AB7"
+          variant="flat"
+          class="ms-1"
+          >Subscription
+        </v-chip>
+        <v-chip
+          v-if="gateway.pos"
+          size="x-small"
+          color="#000"
+          variant="flat"
+          class="ms-1"
+          >POS</v-chip
+        >
 
         <v-spacer></v-spacer>
         <v-btn
@@ -111,7 +155,7 @@
           @click="goToEditGateway()"
           @click.stop
         >
-          <v-icon :color="dark ? '#fff' : '#444'" size="small"> tune </v-icon>
+          <v-icon :color="dark ? '#fff' : '#444'" size="small"> tune</v-icon>
         </v-btn>
       </div>
 
@@ -256,8 +300,17 @@
           <v-icon color="red" class="blink-me">warning</v-icon>
           This shop currently doesn't have a shipping method that supports COD.
           Please add at least one COD-supported shipping method in the settings.
-          <br>
-          <v-btn @click.stop size="small" class="mt-2" append-icon="launch" :to="{name:'BPageShopLogisticShipping'}" target="_blank" color="primary">Shippings Methods</v-btn>
+          <br />
+          <v-btn
+            @click.stop
+            size="small"
+            class="mt-2"
+            append-icon="launch"
+            :to="{ name: 'BPageShopLogisticShipping' }"
+            target="_blank"
+            color="primary"
+            >Shippings Methods
+          </v-btn>
         </div>
       </template>
 
@@ -302,7 +355,7 @@
           currency: gateway?.currency,
         })
       "
-      class="overlay-block clickable blink --red text-uppercase rounded-xl"
+      class="overlay-block clickable --red rounded-xl"
       @click.stop="$router.push({ name: 'BPageShopFinanceBill' })"
     ></div>
   </div>
@@ -318,7 +371,7 @@ import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts
 
 export default {
   name: "BGatewayCard",
-  mixins: [CurrencyMixin,AccountMixin],
+  mixins: [CurrencyMixin, AccountMixin],
   components: {
     UCurrencyIcon,
     BGatewayNetworkStatus,

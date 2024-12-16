@@ -2374,6 +2374,8 @@ Overlays
   color: white;
   z-index: 2;
   user-select: none;
+  backdrop-filter: blur(8px);
+  text-align: center;
 
   &.--red {
     background-image: linear-gradient(-225deg, rgba(164, 69, 178, 0.8) 0%, rgba(212, 24, 114, 0.81) 52%, rgba(255, 0, 102, 0.81) 100%);

@@ -161,7 +161,7 @@
         class="text-start"
         append-icon="open_in_new"
         target="_blank"
-        title="Add new account"
+        title="Add new wallet"
         prepend-icon="add_box"
         subtitle="Go to my wallets to add a new account"
       >
