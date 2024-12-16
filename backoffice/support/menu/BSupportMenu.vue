@@ -13,28 +13,28 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
-    <!------------------------------- Support ------------------------------->
+  <!------------------------------- Support ------------------------------->
+
+  <v-list-item
+    :title="$t('global.commons.support')"
+    prepend-icon="fa:fas fa-headset"
+    append-icon="expand_more"
+    class="pp"
+  >
+    <v-list-item-subtitle class="small op-0-5">
+      Hire experts to help you with your business.
+    </v-list-item-subtitle>
 
     <v-menu
       v-if="shop"
       :persistent="false"
       close-on-content-click
       min-width="240"
+      activator="parent"
+      max-width="428"
+      location="bottom center"
     >
-      <template v-slot:activator="{ props }">
-        <span
-          :caption="$t('global.commons.support')"
-          class="sub-caption -hover d-inline-block fadeIn delay_200"
-          v-bind="props"
-        >
-          <v-btn color="#fff" icon variant="text"
-            ><v-icon>fa:fas fa-headset</v-icon></v-btn
-          >
-        </span>
-      </template>
-
-      <v-sheet class="text-start" rounded="xl">
+      <v-sheet class="text-start" rounded="b-xl">
         <v-list max-width="480">
           <v-list-item
             v-for="(support, index) in supports"
@@ -127,8 +127,6 @@
             {{ $t("support.request") }}
           </v-btn>
         </div>
-
-        <small>{{ $t("global.commons.or") }}</small>
 
         <div class="widget-buttons">
           <v-btn
@@ -436,7 +434,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-list-item>
 </template>
 
 <script lang="ts">
@@ -454,7 +452,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BSupportMenu",
-  mixins: [DateMixin ],
+  mixins: [DateMixin],
 
   components: {
     USmartSelect,
@@ -656,7 +654,10 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            NotificationService.showSuccessAlert(null, "Thanks, Your rate has been saved.");
+            NotificationService.showSuccessAlert(
+              null,
+              "Thanks, Your rate has been saved.",
+            );
             this.AddOrUpdateItemByID(this.shop.supports, data.support);
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);

@@ -202,14 +202,18 @@
 
               <!-- Placeholder -->
 
-              <v-col v-if="!current_cluster && !sub_clusters?.length" cols="12" class="min-height-50vh d-flex align-center flex-column justify-center" style="text-wrap: balance">
+              <v-col
+                v-if="!current_cluster && !sub_clusters?.length"
+                cols="12"
+                class="min-height-50vh d-flex align-center flex-column justify-center"
+                style="text-wrap: balance"
+              >
                 <h1 class="mb-3 font-weight-light">Empty Cluster Panel</h1>
                 <p>
-                  You can create new clusters in the
-                  Clusters Management page and assign them to your assets, such
-                  as discount codes, offers, landing pages, campaigns, and more.
-                  This makes it easier to access each of them quickly through
-                  the panel.
+                  You can create new clusters in the Clusters Management page
+                  and assign them to your assets, such as discount codes,
+                  offers, landing pages, campaigns, and more. This makes it
+                  easier to access each of them quickly through the panel.
                 </p>
               </v-col>
             </v-row>

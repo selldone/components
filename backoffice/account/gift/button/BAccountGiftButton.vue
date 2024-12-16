@@ -13,8 +13,8 @@
   -->
 
 <template>
-  <div>
-    <v-badge v-if="gift" :offset-y="18" color="blue">
+  <div v-if="gift">
+    <v-badge :offset-y="18" color="blue">
       <template v-slot:badge
         ><span>{{ count }}</span></template
       >

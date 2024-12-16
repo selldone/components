@@ -11,38 +11,41 @@
   - Our journey is not just about reaching a destination, but about creating a masterpiece.
   - Tread carefully, for you're treading on dreams.
   -->
+<!------------------------------- Server Messages ------------------------------->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-if="has_message">
-    <!------------------------------- Messages ------------------------------->
+  <v-list-item
+    v-if="shop && has_message"
+    :title="$t('global.commons.messages')"
+    prepend-icon="mail"
+    append-icon="expand_more"
+    class="pp"
+  >
+    <v-list-item-subtitle class="small op-0-5">
+      Hire experts to help you with your business.
+    </v-list-item-subtitle>
+
+    <template>
+      <v-badge
+        :content="messages.length"
+        :dot="messages.length === 1"
+        :model-value="messages.length > 0"
+        color="blue"
+        inline
+      ></v-badge>
+    </template>
+
 
     <v-menu
       v-if="shop && messages?.length"
       :persistent="false"
       close-on-content-click
       min-width="240"
+      activator="parent"
+      max-width="428"
+      location="bottom center"
     >
-      <template v-slot:activator="{ props }">
-        <span
-          :caption="$t('global.commons.messages')"
-          class="sub-caption -hover d-inline-block fadeIn delay_200"
-          v-bind="props"
-        >
-          <v-btn icon variant="text">
-            <v-badge
-              :content="messages.length"
-              :dot="messages.length === 1"
-              :model-value="messages.length > 0"
-              color="blue"
-              floating
-            >
-              <v-icon>mail</v-icon>
-            </v-badge>
-          </v-btn>
-        </span>
-      </template>
-
-      <v-sheet class="text-start" rounded="xl">
+      <v-sheet class="text-start" rounded="b-xl">
         <v-list max-width="480">
           <v-list-item
             v-for="(message, index) in messages"
@@ -89,7 +92,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-list-item>
 </template>
 
 <script lang="ts">
