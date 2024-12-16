@@ -19,20 +19,28 @@
       'text-center': !horizontal,
     }"
   >
-    <v-chip v-if="card" size="small" density="comfortable" label color="#fff" variant="flat" class="ps-1">
+    <v-chip
+      v-if="card"
+      size="small"
+      density="comfortable"
+      label
+      color="#fff"
+      variant="flat"
+      class="ps-1"
+    >
       <span
-          v-if="card && image.startsWith('<svg')"
-          class=" me-1 d-block flex-grow-0"
-          style="width: 24px; height: auto"
-          v-html="image"
+        v-if="card && image.startsWith('<svg')"
+        class="me-1 d-block flex-grow-0"
+        style="width: 24px; height: auto"
+        v-html="image"
       />
       <img
-          v-else-if="card"
-          :src="image"
-          class=" me-1 d-block flex-grow-0"
-          height="24"
+        v-else-if="card"
+        :src="image"
+        class="me-1 d-block flex-grow-0"
+        height="24"
       />
-      {{card.brand}}
+      {{ card.brand }}
     </v-chip>
 
     <!-- Blockchain -->
