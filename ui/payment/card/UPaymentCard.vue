@@ -26,7 +26,7 @@
       label
       color="#fff"
       variant="flat"
-      class="ps-1"
+      class="ps-1 text-uppercase"
     >
       <span
         v-if="card && image.startsWith('<svg')"
