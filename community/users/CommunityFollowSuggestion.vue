@@ -31,13 +31,14 @@
             :height="$vuetify.display.xs ? 160 : 200"
             :width="$vuetify.display.xs ? 100 : 150"
             class="ma-2 ma-sm-3 ma-md-4 user-select-none"
-            rounded
-            variant="outlined"
+            rounded="xl"
+            variant="flat"
+            color="#fafafa"
           >
             <v-card-text
               class="d-flex align-center justify-center flex-column h-100"
             >
-              <v-avatar :size="$vuetify.display.xs ? 64 : 86">
+              <v-avatar :size="$vuetify.display.xs ? 64 : 86" class="avatar-gradient -blue">
                 <img :src="getUserAvatar(profile.user_id)" />
               </v-avatar>
 
@@ -51,7 +52,7 @@
                   :loading="busy_follow === profile.user_id"
                   :size="$vuetify.display.xs ? 'small' : undefined"
                   :variant="!profile.follow ? 'outlined' : 'elevated'"
-                  color="#1976D2"
+                  color="#000"
                   width="100%"
                   @click="follow(profile, !profile.follow)"
                 >
