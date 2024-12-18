@@ -13,14 +13,14 @@
   -->
 
 <template>
-  <v-col
+  <div
     v-if="!post_restricted"
     :class="{
       my10vh:
         body || video || voice || image || title || focus || tab !== 'text',
       'border-top-thick -red': private,
     }"
-    class="c-container -force-rounded position-relative bg-white nopx"
+    class="c-container -force-rounded position-relative bg-white nopx pa-3 t-all-400"
     cols="12"
   >
     <!-- tips: overflow-visible: show discount ribbon of product -->
@@ -30,7 +30,7 @@
         'blurred pointer-event-none': !can_post,
         'overflow-y-auto': scrollable,
       }"
-      class="bg-white z2 blur-animate nopx overflow-visible"
+      class="bg-white z2 blur-animate nopx overflow-visible t-all-400"
     >
       <div class="pb-2" style="overflow-x: auto; overflow-y: visible">
         <u-tabs-rounded
@@ -657,7 +657,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-col>
+  </div>
 </template>
 
 <script lang="ts">

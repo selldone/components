@@ -19,6 +19,7 @@
       :activator="activator"
       location="left bottom"
       max-width="360"
+      :open-on-click="false"
     >
       <v-card class="text-start" rounded="xl">
         <v-list slim>
@@ -79,37 +80,40 @@
     </v-dialog>
 
     <!-- ------------------ Edit post dialog ------------------------ -->
-    <v-dialog
-      v-if="edit_dialog"
+    <v-bottom-sheet
       v-model="edit_dialog"
+      width="98vw"
+      max-width="700"
       content-class="no-shadow-dialog"
-      max-width="680"
-      scrollable
     >
-      <v-btn
-        class="absolute-top-end"
-        icon
-        size="large"
-        @click="edit_dialog = false"
-      >
-        <v-icon>close</v-icon>
-      </v-btn>
+      <template v-if="edit_dialog_pre">
+        <v-btn
+          icon
+          size="large"
+          variant="text"
+          @click="edit_dialog = false"
+          color="#fff"
+          class="mx-auto mb-1"
+        >
+          <v-icon>close</v-icon>
+        </v-btn>
 
-      <c-post-editor
-        :community="community"
-        :post="post"
-        :shop="shop"
-        class="my-0"
-        scrollable
-        @update:post="
-          (val) => {
-            if (val.id === post.id) Object.assign(post, val);
-            edit_dialog = false;
-          }
-        "
-      >
-      </c-post-editor>
-    </v-dialog>
+        <c-post-editor
+          :community="community"
+          :post="post"
+          :shop="shop"
+          class="mb-5 mt-0 overflow-auto"
+          scrollable
+          @update:post="
+            (val) => {
+              if (val.id === post.id) Object.assign(post, val);
+              edit_dialog = false;
+            }
+          "
+        >
+        </c-post-editor>
+      </template>
+    </v-bottom-sheet>
 
     <!-- ------------------ Report post dialog ------------------------ -->
 
@@ -132,10 +136,9 @@ import { EventBus } from "@selldone/core-js/events/EventBus";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import CommunityMixin from "@selldone/components-vue/mixin/community/CommunityMixin.ts";
 
-
 export default {
   name: "CommunityPostActionsMenu",
-  mixins: [AuthMixin, CommunityMixin ],
+  mixins: [AuthMixin, CommunityMixin],
 
   components: { AFeedbackContentViolationReport, CPostEditor },
   props: {
@@ -160,6 +163,7 @@ export default {
       embed_dialog: false,
 
       edit_dialog: false,
+      edit_dialog_pre: false,
 
       report_dialog: false,
       busy_report: false,
@@ -429,7 +433,11 @@ export default {
     },
     //――――――――――――――――――――――――― Edit ―――――――――――――――――――――――――
     editPost() {
-      this.edit_dialog = true;
+      this.edit_dialog_pre = false;
+      this.$nextTick(() => {
+        this.edit_dialog_pre = true;
+        this.edit_dialog = true;
+      });
     },
     //――――――――――――――――――――――――― Link ―――――――――――――――――――――――――
     copyLink() {
