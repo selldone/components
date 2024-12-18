@@ -23,6 +23,7 @@
           height="10"
           rounded
           striped
+          rounded-bar
         ></v-progress-linear>
       </div>
     </v-slide-y-transition>
