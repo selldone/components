@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Package Profile ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
-  <v-list-item class="row-hover" prepend-icon="bento" @click="showIncludes()">
+  <v-list-item class="row-hover" prepend-icon="bento" @click="showIncludes()" slim>
     <v-list-item-title>
       <b
         >{{ $t("global.commons.included_in_the_product") }}

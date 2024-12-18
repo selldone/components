@@ -156,6 +156,8 @@
         >
         </u-widget-header>
 
+        <!-- ━━━━━━━━━━━━━━ Value > color ━━━━━━━━━━━━━━ -->
+
         <template v-if="hasColor">
           <v-list-subheader>
             <div
@@ -166,52 +168,13 @@
               "
             ></div>
           </v-list-subheader>
-          <v-text-field
+
+          <b-product-variant-value-input
+            variantCode="color"
             v-model="color"
-            :counter="32"
             :disabled="add_by_dropShipping"
-            :label="$t(ProductVariants.color.name)"
-            :prepend-inner-icon="ProductVariants.color.icon"
             class="input-variant"
-            required
-            variant="underlined"
-            @blur="validateColor"
-          >
-            <template v-slot:append-inner>
-              <div class="d-flex align-center">
-                <u-color-name :color="color" class="x-small mx-1 min-width-75"></u-color-name>
-                <u-color-circle :color="color"></u-color-circle>
-              </div>
-            </template>
-          </v-text-field>
-
-          <div v-if="!add_by_dropShipping" class="text-center">
-            <v-btn
-              v-for="item in show_all_colors ? colors : colors.limit(22)"
-              :key="item"
-              :title="GetNameOfColor(item)"
-              class="mx-1 color-button-ball no-inv"
-              icon
-              variant="text"
-              @click="color = item"
-            >
-              <u-color-circle
-                :color="item"
-                :size="16"
-                class="circle-border m-1"
-              >
-              </u-color-circle>
-            </v-btn>
-
-            <v-btn
-              v-if="!show_all_colors"
-              class="m-1 tnt"
-              color="primary"
-              variant="text"
-              @click="show_all_colors = true"
-              >{{ $t("global.actions.show_all") }}...
-            </v-btn>
-          </div>
+          ></b-product-variant-value-input>
         </template>
 
         <!-- ============= Variant Info Form ============= -->
@@ -228,143 +191,55 @@
           ></div>
         </v-list-subheader>
 
-        <v-text-field
+        <!-- ━━━━━━━━━━━━━━ Value > style ━━━━━━━━━━━━━━ -->
+
+        <b-product-variant-value-input
           v-if="hasStyle"
+          variantCode="style"
           v-model="style"
-          :counter="21"
           :disabled="add_by_dropShipping"
-          :label="$t(ProductVariants.style.name)"
-          :prepend-inner-icon="ProductVariants.style.icon"
           class="input-variant"
-          messages=" "
-          required
-          variant="underlined"
-        >
-          <template v-if="style" v-slot:append-inner>
-            <u-variant-asset-image
-              :size="24"
-              :value="style"
-            ></u-variant-asset-image>
-          </template>
+        ></b-product-variant-value-input>
 
-          <template v-slot:message>
-            <b-product-graphical-assets-selector
-              :shop="shop"
-              @select="(v) => (style = v)"
-            ></b-product-graphical-assets-selector>
-          </template>
-        </v-text-field>
+        <!-- ━━━━━━━━━━━━━━ Value > volume ━━━━━━━━━━━━━━ -->
 
-        <v-text-field
+        <b-product-variant-value-input
           v-if="hasVolume"
+          variantCode="volume"
           v-model="volume"
-          :counter="21"
           :disabled="add_by_dropShipping"
-          :label="$t(ProductVariants.volume.name)"
-          :prepend-inner-icon="ProductVariants.volume.icon"
           class="input-variant"
-          messages=" "
-          required
-          variant="underlined"
-        >
-          <template v-if="volume" v-slot:append-inner>
-            <u-variant-asset-image
-              :size="24"
-              :value="volume"
-            ></u-variant-asset-image>
-          </template>
+        ></b-product-variant-value-input>
 
-          <template v-slot:message>
-            <b-product-graphical-assets-selector
-              :shop="shop"
-              @select="(v) => (volume = v)"
-            ></b-product-graphical-assets-selector>
-          </template>
-        </v-text-field>
+        <!-- ━━━━━━━━━━━━━━ Value > weight ━━━━━━━━━━━━━━ -->
 
-        <v-text-field
+        <b-product-variant-value-input
           v-if="hasWeight"
+          variantCode="weight"
           v-model="weight"
-          :counter="21"
           :disabled="add_by_dropShipping"
-          :label="$t(ProductVariants.weight.name)"
-          :prepend-inner-icon="ProductVariants.weight.icon"
           class="input-variant"
-          messages=" "
-          required
-          variant="underlined"
-        >
-          <template v-if="weight" v-slot:append-inner>
-            <u-variant-asset-image
-              :size="24"
-              :value="weight"
-            ></u-variant-asset-image>
-          </template>
+        ></b-product-variant-value-input>
 
-          <template v-slot:message>
-            <b-product-graphical-assets-selector
-              :shop="shop"
-              @select="(v) => (weight = v)"
-            ></b-product-graphical-assets-selector>
-          </template>
-        </v-text-field>
+        <!-- ━━━━━━━━━━━━━━ Value > pack ━━━━━━━━━━━━━━ -->
 
-        <v-text-field
+        <b-product-variant-value-input
           v-if="hasPack"
+          variantCode="pack"
           v-model="pack"
-          :counter="21"
           :disabled="add_by_dropShipping"
-          :label="$t(ProductVariants.pack.name)"
-          :prepend-inner-icon="ProductVariants.pack.icon"
-          :suffix="
-            $t('product_admin.inventory.variant_add_edit.inventory_unit')
-          "
-          class="input-variant sm-suffix"
-          messages=" "
-          required
-          variant="underlined"
-        >
-          <template v-if="pack" v-slot:append-inner>
-            <u-variant-asset-image
-              :size="24"
-              :value="pack"
-            ></u-variant-asset-image>
-          </template>
-
-          <template v-slot:message>
-            <b-product-graphical-assets-selector
-              :shop="shop"
-              @select="(v) => (pack = v)"
-            ></b-product-graphical-assets-selector>
-          </template>
-        </v-text-field>
-
-        <v-text-field
-          v-if="hasType"
-          v-model="type"
-          :counter="21"
-          :disabled="add_by_dropShipping"
-          :label="$t(ProductVariants.type.name)"
-          :prepend-inner-icon="ProductVariants.type.icon"
           class="input-variant"
-          messages=" "
-          required
-          variant="underlined"
-        >
-          <template v-if="type" v-slot:append-inner>
-            <u-variant-asset-image
-              :size="24"
-              :value="type"
-            ></u-variant-asset-image>
-          </template>
+        ></b-product-variant-value-input>
 
-          <template v-slot:message>
-            <b-product-graphical-assets-selector
-              :shop="shop"
-              @select="(v) => (type = v)"
-            ></b-product-graphical-assets-selector>
-          </template>
-        </v-text-field>
+        <!-- ━━━━━━━━━━━━━━ Value > type ━━━━━━━━━━━━━━ -->
+
+        <b-product-variant-value-input
+          v-if="hasType"
+          variantCode="type"
+          v-model="type"
+          :disabled="add_by_dropShipping"
+          class="input-variant"
+        ></b-product-variant-value-input>
 
         <v-row
           v-if="smart_price_enable && (hasVolume || hasWeight || hasPack)"
@@ -667,26 +542,20 @@ import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 import VariantGraphicalAssetsList from "../../../product/graphical-assets/VariantGraphicalAssetsList.vue";
-import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
-import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
-import UColorName from "../../../../ui/color/name/UColorName.vue";
 import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
-import BProductGraphicalAssetsSelector from "../../../product/graphical-assets/selector/BProductGraphicalAssetsSelector.vue";
-import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
-import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
+import { GetNameOfColor } from "@selldone/core-js/helper/color/ColorHelper.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import BProductVariantValueInput from "@selldone/components-vue/backoffice/product/variants/value-input/BProductVariantValueInput.vue";
 
 export default {
   name: "BProductVariantAdd",
   mixins: [],
   components: {
+    BProductVariantValueInput,
     UAvatarFolder,
-    BProductGraphicalAssetsSelector,
-    UColorName,
-    UColorCircle,
-    UVariantAssetImage,
+
     VariantGraphicalAssetsList,
 
     USmartToggle,
@@ -758,8 +627,6 @@ export default {
       GetNameOfColor: GetNameOfColor,
       ProductVariants: ProductVariants,
 
-      colors: VariantColorsSet,
-
       sku: "",
       mpn: "",
       gtin: "",
@@ -783,8 +650,6 @@ export default {
       lead: -1,
 
       extra: {},
-
-      show_all_colors: false,
 
       show_graphical_asset_dialog: false,
 

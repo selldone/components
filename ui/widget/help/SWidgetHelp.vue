@@ -18,7 +18,7 @@
       @click="dialog = true"
       class="tnt"
       variant="text"
-      color="#4f46e5"
+      :color="color"
       slim
       prepend-icon="tips_and_updates"
       :density="inline ? 'compact' : undefined"
@@ -79,6 +79,23 @@
       </v-card>
     </v-dialog>
   </template>
+  <template v-else-if="link">
+    <v-btn
+      :href="link"
+      target="_blank"
+      class="tnt"
+      variant="text"
+      :color="color"
+      slim
+      append-icon="open_in_new"
+      :density="inline ? 'compact' : undefined"
+      :class="{ 'px-1': inline }"
+    >
+      <span style="text-decoration: underline">
+        {{ title }}
+      </span>
+    </v-btn>
+  </template>
 </template>
 
 <script lang="ts">
@@ -91,6 +108,9 @@ export default defineComponent({
       required: true,
     },
     inline: Boolean,
+    color: {
+      default: "#4f46e5",
+    },
   },
   data: () => ({
     dialog: false,
@@ -98,6 +118,9 @@ export default defineComponent({
   computed: {
     embed_code() {
       return this.$tm("help." + this.code)?.embed;
+    },
+    link() {
+      return this.$tm("help." + this.code)?.link;
     },
     title() {
       return this.$tm("help." + this.code)?.title;

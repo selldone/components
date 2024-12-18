@@ -377,7 +377,11 @@
           size="x-large"
           variant="elevated"
           @click="nextStep()"
-          v-ctrl.s="()=>{nextStep()}"
+          v-ctrl.s="
+            () => {
+              nextStep();
+            }
+          "
         >
           {{ $t("global.actions.save_continue") }}
 
@@ -400,7 +404,10 @@
         @update:withTrashed="(val) => $emit('update:withTrashed', val)"
       />
 
-      <div v-if="!$route.params.product_id /*Not be in the product edit page!*/" class="widget-buttons mb-5 mt-12">
+      <div
+        v-if="!$route.params.product_id /*Not be in the product edit page!*/"
+        class="widget-buttons mb-5 mt-12"
+      >
         <v-btn
           :loading="busy"
           class="my-5"
@@ -1116,9 +1123,11 @@ not need!
             // External
             external: this.$product.external,
 
-
             // Shortcut categories:
-            shortcuts:this.$product.shortcuts
+            shortcuts: this.$product.shortcuts,
+
+            // Property Set
+            property_set_id: this.$product.property_set_id,
           },
         )
         .then(({ data }) => {
@@ -1249,7 +1258,10 @@ not need!
             external: this.$product.external,
 
             // Shortcut categories:
-            shortcuts:this.$product.shortcuts
+            shortcuts: this.$product.shortcuts,
+
+            // Property Set
+            property_set_id: this.$product.property_set_id,
           },
         )
         .then(({ data }) => {
@@ -1348,8 +1360,8 @@ not need!
 
         this.step =
           /* this.hasStep__Inputs
-                                                  ? TAB_INPUTS
-                                                  :*/
+                                                    ? TAB_INPUTS
+                                                    :*/
           this.hasStep__Outputs
             ? TAB_OUTPUTS
             : this.hasStep__physicalExtra

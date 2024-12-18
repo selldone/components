@@ -86,6 +86,8 @@ export default {
 .s--color-circle {
   border-radius: 50%;
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
   line-height: 0;
   padding: calc(var(--size) / 12);

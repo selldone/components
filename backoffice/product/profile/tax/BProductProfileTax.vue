@@ -22,6 +22,7 @@
     class="row-hover"
     v-bind="$attrs"
     @click="showSetTax()"
+    slim
   >
     <v-list-item-title>
       <b

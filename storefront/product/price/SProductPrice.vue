@@ -71,7 +71,7 @@ export default {
       if (this.volume_label) out.push(this.volume_label);
       if (this.pack_label) out.push(this.pack_label);
 
-      return out.join(" ˟ ");
+      return out.join(" ˟ ").removeVariantAsset();
     },
 
     weight_factor() {

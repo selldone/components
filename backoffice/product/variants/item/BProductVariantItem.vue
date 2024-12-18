@@ -81,7 +81,7 @@
     </div>
 
     <div
-      class="flex-grow-1 border-end-grater-md d-flex align-items-center justify-center max-w-300 text-left"
+      class="border-end-grater-md d-flex align-items-center justify-center max-w-300 text-left"
     >
       <div class="min-width-150 py-1 px-2">
         <p class="mb-1"><small>Code:</small> SPV{{ code }}</p>
@@ -103,12 +103,12 @@
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Color ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
         <div v-if="color" class="my-1 d-flex align-center">
           <v-icon
-            :title="$t(ProductVariants.color.name)"
+            :title="$t(GetVariantNameByCode('color', product))"
             class="me-2"
             color="#777"
             size="small"
           >
-            {{ ProductVariants.color.icon }}
+            {{ GetVariantIconByCode("color", product) }}
           </v-icon>
 
           <u-color-circle :color="color" :size="24"></u-color-circle>
@@ -125,12 +125,12 @@
 
         <div v-if="volume" class="my-1">
           <v-icon
-            :title="$t(ProductVariants.volume.name)"
+            :title="$t(GetVariantNameByCode('volume', product))"
             class="me-2"
             color="#777"
             size="small"
           >
-            {{ ProductVariants.volume.icon }}
+            {{ GetVariantIconByCode("volume", product) }}
           </v-icon>
           <u-variant-asset-image
             :size="24"
@@ -153,12 +153,12 @@
 
         <div v-if="pack" class="my-1">
           <v-icon
-            :title="$t(ProductVariants.pack.name)"
+            :title="$t(GetVariantNameByCode('pack', product))"
             class="me-2"
             color="#777"
             size="small"
           >
-            {{ ProductVariants.pack.icon }}
+            {{ GetVariantIconByCode("pack", product) }}
           </v-icon>
 
           <span class="card-badge-info">
@@ -182,12 +182,12 @@
 
         <div v-if="weight" class="my-1">
           <v-icon
-            :title="$t(ProductVariants.weight.name)"
+            :title="$t(GetVariantNameByCode('weight', product))"
             class="me-2"
             color="#777"
             size="small"
           >
-            {{ ProductVariants.weight.icon }}
+            {{ GetVariantIconByCode("weight", product) }}
           </v-icon>
 
           <u-variant-asset-image
@@ -211,12 +211,12 @@
 
         <div v-if="type" class="my-1">
           <v-icon
-            :title="$t(ProductVariants.type.name)"
+            :title="$t(GetVariantNameByCode('type', product))"
             class="me-2"
             color="#777"
             size="small"
           >
-            {{ ProductVariants.type.icon }}
+            {{ GetVariantIconByCode("type", product) }}
           </v-icon>
           <u-variant-asset-image
             :size="24"
@@ -237,12 +237,12 @@
 
         <div v-if="style" class="my-1">
           <v-icon
-            :title="$t(ProductVariants.style.name)"
+            :title="$t(GetVariantNameByCode('style', product))"
             class="me-2"
             color="#777"
             size="small"
           >
-            {{ ProductVariants.style.icon }}
+            {{ GetVariantIconByCode("style", product) }}
           </v-icon>
           <u-variant-asset-image
             :size="24"
@@ -262,6 +262,7 @@
         </div>
       </div>
     </div>
+    <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Pricing ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
     <div
       class="flex-grow-1 border-end-grater-md p-1 d-flex align-items-center justify-center max-w-300"
@@ -397,7 +398,11 @@ import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.
 import ExtraPricingLevels from "../../../extra-pricing/ExtraPricingLevels.vue";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
-import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
+import {
+  GetVariantIconByCode,
+  GetVariantNameByCode,
+  ProductVariants,
+} from "@selldone/core-js/enums/product/ProductVariants";
 import { UploadHelper } from "@selldone/core-js/helper/upload/UploadHelper";
 import UAvatarFolder from "../../../../ui/avatar/folder/UAvatarFolder.vue";
 import UCube from "../../../../ui/cube/UCube.vue";
@@ -438,6 +443,8 @@ export default {
   data() {
     return {
       ProductVariants: ProductVariants,
+      GetVariantNameByCode: GetVariantNameByCode,
+      GetVariantIconByCode: GetVariantIconByCode,
 
       busy_restore: false,
       busy_delete: false,

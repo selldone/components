@@ -45,6 +45,7 @@
     <!-- █████████████████████ Transactions █████████████████████ -->
     <v-list-subheader
       >{{ $t("order_vendor_payment.message") }}
+      <s-widget-help code="Marketplace.Payout.Overview" inline></s-widget-help>
     </v-list-subheader>
 
     <div class="max-widget-width mx-auto my-3">
@@ -104,7 +105,7 @@
                     >remove_shopping_cart
                   </v-icon>
 
-                  {{$t('order_vendor_payment.refund_order_action')}}
+                  {{ $t("order_vendor_payment.refund_order_action") }}
                 </v-btn>
               </td>
             </tr>
@@ -115,10 +116,8 @@
 
     <!-- █████████████████████ Payments █████████████████████ -->
     <template v-if="payments?.length">
-      <v-list-subheader class="mt-5"
-        >
-        {{$t('order_vendor_payment.automatic_payout_list.subtitle')}}
-
+      <v-list-subheader class="mt-5">
+        {{ $t("order_vendor_payment.automatic_payout_list.subtitle") }}
       </v-list-subheader>
 
       <div class="max-widget-width mx-auto my-3">
@@ -158,7 +157,7 @@
                   >
                     <v-img :src="getUserAvatar(payment.staff_id)" />
                   </v-avatar>
-                  <small v-else>{{$t('global.commons.system')}}</small>
+                  <small v-else>{{ $t("global.commons.system") }}</small>
                 </td>
                 <td
                   :title="$t('global.commons.note')"
@@ -189,7 +188,7 @@
                   >
                     <v-icon class="me-1" size="small">move_up</v-icon>
 
-                    {{$t('order_vendor_payment.reversal_transfer_action')}}
+                    {{ $t("order_vendor_payment.reversal_transfer_action") }}
                   </v-btn>
                 </td>
               </tr>
@@ -277,10 +276,12 @@ import UPodsPanel from "../../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../../ui/pod/wire/UPodWire.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 
 export default {
   name: "BOrderVendorPaymentManagement",
   components: {
+    SWidgetHelp,
     UPodWire,
     UPodNode,
     UPodsPanel,

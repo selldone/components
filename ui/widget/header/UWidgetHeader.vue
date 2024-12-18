@@ -75,7 +75,7 @@
       <v-btn
         v-if="addCaption"
         :block="$vuetify.display.xs"
-        :class="{ disabled: disabled || disabledAccess}"
+        :class="{ disabled: disabled || disabledAccess }"
         :color="buttonColor"
         :href="href"
         :loading="addLoading"
@@ -87,15 +87,22 @@
         size="large"
         style="font-size: 0.875rem"
         @click="$emit('click:add')"
+        :append-icon="target === '_blank' ? 'open_in_new' : null"
       >
         <v-icon :size="20" class="me-1">{{ addIcon }}</v-icon>
 
         <div v-if="disabled || disabledAccess">
           {{ addCaption }}
           <small class="d-block tnt">
-            <v-icon size="x-small">{{disabledAccess?'lock':'error_outline'}}</v-icon>
+            <v-icon size="x-small">{{
+              disabledAccess ? "lock" : "error_outline"
+            }}</v-icon>
             {{
-              disabledAccess?$t("error.no_write_access"):   disabledReason ? disabledReason : $t("error.license_max_limit")
+              disabledAccess
+                ? $t("error.no_write_access")
+                : disabledReason
+                  ? disabledReason
+                  : $t("error.license_max_limit")
             }}</small
           >
         </div>

@@ -100,11 +100,10 @@ export default {
   name: "BProductGraphicalAssetsSelector",
   mixins: [],
   components: {},
+  inject: ["$shop"],
   emits: ["select"],
   props: {
-    shop: {
-      required: true,
-    },
+
   },
   data: () => ({
     dialog_pre: false,
@@ -116,7 +115,7 @@ export default {
   computed: {
     stored() {
       const out = this.$store.getters.getShopVariantAssets;
-      if (out?.shop_id === this.shop.id) return out;
+      if (out?.shop_id === this.$shop.id) return out;
       return null;
     },
     variant_assets() {
@@ -146,12 +145,12 @@ export default {
     fetchVariantAssets() {
       if (this.stored) return;
 
-      this.$store.commit("setShopVariantAssets", { shop_id: this.shop.id });
+      this.$store.commit("setShopVariantAssets", { shop_id: this.$shop.id });
 
       this.busy_fetch = true;
 
       axios
-        .get(window.API.GET_SHOP_VARIANT_ASSETS(this.shop.id), {
+        .get(window.API.GET_SHOP_VARIANT_ASSETS(this.$shop.id), {
           params: {
             offset: 0,
             limit: 100,
@@ -162,7 +161,7 @@ export default {
           if (!data.error) {
             // Keep data saved:
             this.$store.commit("setShopVariantAssets", {
-              shop_id: this.shop.id,
+              shop_id: this.$shop.id,
               variant_assets: data.variant_assets,
               totalItems: data.totalItems,
             });

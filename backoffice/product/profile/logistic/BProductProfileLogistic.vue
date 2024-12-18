@@ -20,11 +20,13 @@
     class="row-hover"
     v-bind="$attrs"
     @click="showSetProfile(profile_type, product[profile_type.product_column])"
+    slim
+    lines="one"
   >
     <v-list-item-title>
       <b>{{ $t(profile_type.title) }}</b>
     </v-list-item-title>
-    <v-list-item-subtitle class="single-line">
+    <v-list-item-subtitle>
       {{ $t(profile_type.desc) }}
     </v-list-item-subtitle>
 

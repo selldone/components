@@ -471,7 +471,7 @@
       <!-- ------------------- End No variants list ------------------- -->
 
       <v-col class="border-end-grater-xs pa-1 text-center" cols="12" sm="4">
-        <div class="d-flex align-center text-start justify-center">
+        <div class="d-flex align-center text-start justify-sm-center justify-start">
           <img
             :src="getProductTypeImage(product.type)"
             class="me-2 flex-grow-0"
@@ -487,7 +487,7 @@
       </v-col>
 
       <v-col class="border-end-grater-xs pa-1 text-center" cols="12" sm="4">
-        <div class="d-flex align-center text-start justify-center">
+        <div class="d-flex align-center text-start justify-sm-center justify-start">
           <u-avatar-folder
             :size="38"
             :border-size="4"
@@ -537,10 +537,10 @@
             </small>
           </p>
         </template>
-        <template v-if="product.includes?.length">
-          <small class="d-block">
+        <div v-if="product.includes?.length" class="text-start text-sm-center">
+          <b class="d-block small">
             {{ $t("global.commons.included_in_the_product") }}
-          </small>
+          </b>
 
           <v-avatar
             v-for="include in product.includes"
@@ -553,7 +553,7 @@
           >
             <img :src="getShopImagePath(include.image)" />
           </v-avatar>
-        </template>
+        </div>
       </v-col>
     </v-row>
 

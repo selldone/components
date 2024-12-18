@@ -33,6 +33,7 @@
     "
     class="v-input-auto-height"
     item-title="account_number"
+    item-value="account_number"
     :placeholder="$t('global.placeholders.select_wallet')"
     prepend-inner-icon="wallet"
   >

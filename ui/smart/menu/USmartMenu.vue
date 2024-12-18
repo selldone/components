@@ -24,6 +24,7 @@
           icon
           v-bind="props"
           variant="text"
+          density="comfortable"
         >
           <v-icon>{{ icon }}</v-icon>
         </v-btn>
@@ -33,6 +34,8 @@
           v-for="item in items"
           :key="item.title"
           :disabled="!!item.disabled"
+          density="compact"
+          slim
           :href="item.href"
           :prepend-icon="item.icon"
           :target="item.target"
@@ -60,7 +63,7 @@
           :prepend-icon="withTrashed ? 'circle' : 'radio_button_unchecked'"
           @click="$emit('update:withTrashed', !withTrashed)"
         >
-          <v-list-item-title class="d-flex align-center"
+          <v-list-item-title class="d-flex align-center text-capitalize"
             >{{$t('smart_menu.show_delete_items')}}
             <v-spacer></v-spacer>
             <v-icon class="ms-1">delete_outline</v-icon>

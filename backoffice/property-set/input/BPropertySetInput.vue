@@ -16,12 +16,10 @@
   <v-combobox
     v-model:search="search"
     :customFilter="() => true"
-    :items="discount_codes"
-    :label="$t('global.commons.discount_code')"
+    :items="property_sets"
+    :label="$t('global.commons.property_set')"
     :loading="busy"
-    :messages="
-      modelValue && modelValue.description ? modelValue.description : ''
-    "
+    :messages="description ? description : undefined"
     :model-value="modelValue"
     :variant="variant"
     clearable
@@ -30,40 +28,42 @@
     @update:model-value="(val) => $emit('update:modelValue', val)"
     @click:clear="
       $emit('click:clear');
-      getDiscounts();
+      getPropertySets();
     "
     :return-object="returnObject"
   >
     <template v-slot:selection="{ item }">
-      <v-avatar class="text-white bg-red m-2 small" size="32">
-        %{{ item.raw.percent }}
-      </v-avatar>
       {{ item.raw.title }}
+      <img v-for="it in         item.raw.products?.map((x) => getShopImagePath(x.icon, 64))" :src="it" width="20" height="20" class="ms-1 border rounded-sm">
 
-      <small class="mx-1">
-        {{ $t("global.commons.limit") }}:
-        {{ item.raw.limit }}
-        {{ item.raw.currency }}
-      </small>
-
-      <small class="mx-1">
-        {{ $t("global.commons.max") }}:
-        {{ item.raw.max === -1 ? $t("global.commons.infinite") : item.raw.max }}
-      </small>
     </template>
     <template v-slot:item="{ item, props }">
-      <v-list-item :title="item.raw.title" class="text-start" v-bind="props">
-        <template v-slot:prepend>
-          <v-avatar class="text-white bg-red m-2 small" size="32">
-            %{{ item.raw.percent }}
-          </v-avatar>
-        </template>
+      <v-list-item
+        :subtitle="item.raw.description"
+        class="text-start"
+        v-bind="props"
+      >
+        <template v-slot:title>
+          {{item.raw.title}}
+          <img v-for="it in         item.raw.products?.map((x) => getShopImagePath(x.icon, 64))" :src="it" width="20" height="20" class="ms-1 border rounded-sm">
 
-        <v-list-item-subtitle>
-          {{ $t("global.commons.limit") }}:
-          {{ item.raw.limit }}
-          {{ item.raw.currency }}
-        </v-list-item-subtitle>
+        </template>
+        <template v-if="item.raw.variants">
+          <v-chip
+            v-for="it in item.raw.variants"
+            :key="it.code"
+            size="x-small"
+            :prepend-icon="
+              GetVariantIconByCode(it.code, { property_set: item })
+            "
+            style="margin: 1px"
+            color="#fff"
+            variant="flat"
+          >
+            {{ $t(GetVariantNameByCode(it.code, { property_set: item })) }}
+          </v-chip>
+        </template>
+        <small v-else>{{ $t("global.commons.empty") }}</small>
       </v-list-item>
     </template>
   </v-combobox>
@@ -71,30 +71,31 @@
 
 <script lang="ts">
 import { throttle } from "lodash-es";
+import {
+  GetVariantIconByCode,
+  GetVariantNameByCode,
+} from "@selldone/core-js/enums/product/ProductVariants.ts";
 
 export default {
-  name: "BDiscountCodeInput",
+  name: "BPropertySetInput",
   emits: ["update:modelValue"],
   components: {},
   inject: ["$shop"],
   props: {
     modelValue: {},
-    activeOnly: {
-      default: false,
-      type: Boolean,
-    },
-    currency: {},
+
     variant: {
       default: "underlined",
     },
-    returnObject:Boolean,
-
+    returnObject: Boolean,
   },
 
   data() {
     return {
-      // Discount:
-      discount_codes: [],
+      GetVariantNameByCode: GetVariantNameByCode,
+      GetVariantIconByCode: GetVariantIconByCode,
+
+      property_sets: [],
       total: false,
 
       busy: false,
@@ -102,21 +103,33 @@ export default {
     };
   },
 
+  computed: {
+    description(val) {
+      if (!this.modelValue) return undefined;
+
+      if (this.modelValue?.description) return this.modelValue.description;
+
+      const obj = this.property_sets.find((it) => it.id === this.modelValue);
+
+      return obj?.description;
+    },
+  },
+
   watch: {
     search: throttle(function (newVal, oldVal) {
-      this.getDiscounts();
+      this.getPropertySets();
     }, window.SERACH_THROTTLE),
   },
 
   created() {
-    this.getDiscounts();
+    this.getPropertySets();
   },
 
   methods: {
-    getDiscounts() {
+    getPropertySets() {
       this.busy = true;
       axios
-        .get(window.API.GET_DISCOUNT_CODES(this.$shop.id), {
+        .get(window.API.GET_PROPERTY_SETS(this.$shop.id), {
           params: {
             // Must contain this id:
             contain:
@@ -128,29 +141,26 @@ export default {
             offset: 0,
             count: 20,
 
-            active_only: this.activeOnly,
-            compact: true,
-
-            currency: this.currency,
+            with_samples:3
           },
         })
         .then(({ data }) => {
-          this.discount_codes = data.discount_codes;
+          this.property_sets = data.property_sets;
           this.total = data.total;
 
-          const val = this.discount_codes.find((discount) => {
+          const val = this.property_sets.find((it) => {
             return (
-              discount.id ===
+              it.id ===
               (this.modelValue && this.isObject(this.modelValue)
                 ? this.modelValue.id
                 : this.modelValue)
             );
           });
 
-          this.$emit("update:modelValue", val);
-          if (this.modelValue && !val) {
-            // Value not found auto call click clear!
-            this.$emit("click:clear");
+          if (this.returnObject) {
+            this.$emit("update:modelValue", val);
+          } else {
+            this.$emit("update:modelValue", val?.id);
           }
         })
         .finally(() => {

@@ -935,6 +935,13 @@
         :vendor="vendor"
       >
       </b-product-profile-include>
+
+      <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Property Set ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
+      <b-product-profile-property-set
+        :product="$product"
+        :shop="shop"
+        :vendor="vendor"
+      ></b-product-profile-property-set>
     </div>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Actions ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -1067,12 +1074,14 @@ import SProductSectionValuation from "@selldone/components-vue/storefront/produc
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import BProductProfilePropertySet from "@selldone/components-vue/backoffice/product/profile/property-set/BProductProfilePropertySet.vue";
 
 export default {
   name: "BProductEditInfo",
   mixins: [ProductMixin],
 
   components: {
+    BProductProfilePropertySet,
     SProductSectionValuation,
     SDenseImagesCircles,
     UAvatarFolder,

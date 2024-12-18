@@ -25,17 +25,16 @@
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1" color="#111">auto_fix_high</v-icon>
 
-        {{$t('product_variants_bulk_add.title')}}
+        {{ $t("product_variants_bulk_add.title") }}
       </v-card-title>
       <v-card-text>
         <div class="widget-box mb-5">
           <u-widget-header
             icon="conveyor_belt"
-            :title="$t('product_variants_bulk_add.variants.title') "
+            :title="$t('product_variants_bulk_add.variants.title')"
           ></u-widget-header>
           <v-list-subheader>
-            {{$t('product_variants_bulk_add.variants.subtitle')}}
-
+            {{ $t("product_variants_bulk_add.variants.subtitle") }}
           </v-list-subheader>
 
           <u-smart-select
@@ -46,8 +45,10 @@
               )
             "
             class="my-3"
-            item-icon="icon"
-            item-text="name"
+            :item-icon="
+              (x) => GetVariantIconByCode(x.code, product)
+            "
+            :item-text="(x) => GetVariantNameByCode(x.code, product)"
             item-value="code"
           ></u-smart-select>
           <u-smart-select
@@ -55,38 +56,47 @@
             :items="items_2"
             class="my-3"
             item-description="description"
-            item-icon="icon"
-            item-text="name"
+
             item-value="code"
+            :item-icon="
+              (x) => GetVariantIconByCode(x.code, product)
+            "
+            :item-text="(x) => GetVariantNameByCode(x.code, product)"
+
           ></u-smart-select>
         </div>
 
         <div class="widget-box mb-5">
-          <u-widget-header icon="table_view" :title="$t('product_variants_bulk_add.values.title') "></u-widget-header>
+          <u-widget-header
+            icon="table_view"
+            :title="$t('product_variants_bulk_add.values.title')"
+          ></u-widget-header>
           <v-list-subheader>
-            {{$t('product_variants_bulk_add.values.subtitle') }}
+            {{ $t("product_variants_bulk_add.values.subtitle") }}
           </v-list-subheader>
 
-          <b-product-variant-value-input
+          <b-product-variant-multiple-values-input
             v-if="input_variant_1"
             v-model="input_options_1"
             :shop="shop"
             :variant-code="input_variant_1"
           >
-          </b-product-variant-value-input>
+          </b-product-variant-multiple-values-input>
 
-          <b-product-variant-value-input
+          <b-product-variant-multiple-values-input
             v-if="input_variant_2 && input_variant_2 !== 'empty'"
             v-model="input_options_2"
             :shop="shop"
             :variant-code="input_variant_2"
           >
-          </b-product-variant-value-input>
+          </b-product-variant-multiple-values-input>
 
           <v-list-subheader>
-            <div v-html="$t('product_variants_bulk_add.values.prevent_duplicates_tips')">
-
-            </div>
+            <div
+              v-html="
+                $t('product_variants_bulk_add.values.prevent_duplicates_tips')
+              "
+            ></div>
           </v-list-subheader>
 
           <v-table
@@ -94,6 +104,7 @@
               input_variant_1 && input_variant_2 && input_variant_2 !== 'empty'
             "
             class="mt-3 rounded-16px"
+            density="compact"
           >
             <template v-slot:default>
               <thead>
@@ -158,11 +169,13 @@
         </div>
 
         <div class="widget-box mb-5">
-          <u-widget-header icon="shelves" :title="$t('product_variants_bulk_add.inventory.title') "></u-widget-header>
+          <u-widget-header
+            icon="shelves"
+            :title="$t('product_variants_bulk_add.inventory.title')"
+          ></u-widget-header>
 
           <v-list-subheader>
-            {{$t('product_variants_bulk_add.inventory.subtitle')}}
-
+            {{ $t("product_variants_bulk_add.inventory.subtitle") }}
           </v-list-subheader>
 
           <u-number-input
@@ -190,7 +203,9 @@
             variant="elevated"
           >
             <v-icon start>check</v-icon>
-         {{$t('product_variants_bulk_add.add_variants_action')}}    ({{ add_variants_count }}🞫)
+            {{ $t("product_variants_bulk_add.add_variants_action") }} ({{
+              add_variants_count
+            }}🞫)
           </v-btn>
         </div>
       </v-card-actions>
@@ -200,11 +215,15 @@
 
 <script lang="ts">
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
-import BProductVariantValueInput from "../../../product/variants/value-input/BProductVariantValueInput.vue";
+import BProductVariantMultipleValuesInput from "../multiple-values-input/BProductVariantMultipleValuesInput.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
-import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
+import {
+  GetVariantIconByCode,
+  GetVariantNameByCode,
+  ProductVariants,
+} from "@selldone/core-js/enums/product/ProductVariants";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -215,7 +234,7 @@ export default {
   components: {
     UVariantAssetImage,
     UColorCircle,
-    BProductVariantValueInput,
+    BProductVariantMultipleValuesInput,
     USmartSelect,
 
     UNumberInput,
@@ -240,6 +259,9 @@ export default {
   },
   data() {
     return {
+      GetVariantNameByCode: GetVariantNameByCode,
+      GetVariantIconByCode: GetVariantIconByCode,
+
       ProductVariants: ProductVariants,
 
       input_quantity: 10,

@@ -84,13 +84,23 @@ export default {
     circleColor: {
       default: "#ffffffbb",
     },
+
+    externalCount: {
+      type: Number,
+    }
   },
 
   computed: {
     images_limited() {
-      return this.images.unique().slice(0, this.limit).filter((i) => !!i);
+      return this.images
+        .unique()
+        .slice(0, this.limit)
+        .filter((i) => !!i);
     },
     more_items() {
+      if(this.externalCount){
+        return this.externalCount - this.images_limited.length;
+      }
       return this.images.length - this.images_limited.length;
     },
   },

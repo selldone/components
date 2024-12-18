@@ -43,15 +43,15 @@
           </v-icon>
         </v-btn>
       </template>
-      <template v-else>
-        <div v-for="(it, index) in AvailableProductVariants" :key="index">
+      <div v-else class="d-flex flex-column align-stretch">
+        <div v-for="(it, index) in AvailableProductVariants" :key="index" :style="{order:GetVariantOrderIndexByCode(it.code,$product)}">
           <!-- Variant title -->
 
           <div class="my-2">
             <v-icon class="me-1" color="#111" size="small"
-              >{{ it.icon }}
+              >{{ GetVariantIconByCode(it.code,$product) }}
             </v-icon>
-            <b class="me-2">{{ $t(it.name) }}</b>
+            <b class="me-2">{{ $t(GetVariantNameByCode(it.code,$product)) }}</b>
             <span v-if="currentVariant">{{
               it.code === "color"
                 ? GetNameOfColor(currentVariant.color)
@@ -76,6 +76,7 @@
               }"
               class="var-sel"
               @click="selectVarF(it.code, selection)"
+              :style="{order:GetVariantValueIndexCode(it.code,$product,selection)}"
             >
               <!-- Is Color ? -->
               <template v-if="it.code === 'color'">
@@ -127,7 +128,7 @@
             </div>
           </v-row>
         </div>
-      </template>
+      </div>
     </template>
   </div>
 </template>
@@ -135,7 +136,11 @@
 <script lang="ts">
 import VariantFilter from "../../variant/variant-filter/VariantFilter.vue";
 import VariantItemMini from "../../../../storefront/product/variant/VariantItemMini.vue";
-import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
+import {
+  GetVariantIconByCode,
+  GetVariantNameByCode, GetVariantOrderIndexByCode, GetVariantValueIndexCode,
+  ProductVariants
+} from "@selldone/core-js/enums/product/ProductVariants";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
 import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
@@ -157,6 +162,11 @@ export default {
   },
 
   data: () => ({
+    GetVariantNameByCode: GetVariantNameByCode,
+    GetVariantIconByCode: GetVariantIconByCode,
+    GetVariantOrderIndexByCode: GetVariantOrderIndexByCode,
+    GetVariantValueIndexCode: GetVariantValueIndexCode,
+
     GetNameOfColor: GetNameOfColor,
     show_all: false,
   }),
@@ -357,13 +367,13 @@ export default {
       &:after {
         position: absolute;
         content: "";
-        left: 6px;
+        left: 0px;
         top: 50%;
-        right: 6px;
+        right: 0px;
         border-top: 1px solid;
         border-color: #111;
 
-        transform: rotate(-5deg);
+        transform: rotate(-45deg);
       }
     }
 

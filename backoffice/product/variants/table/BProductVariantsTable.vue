@@ -25,8 +25,8 @@
           :key="key"
           class="text-center min-width-100"
         >
-          <v-icon size="small">{{ val.icon }}</v-icon>
-          {{ $t(val.name) }}
+          <v-icon size="small">{{ GetVariantIconByCode(val.code,product) }}</v-icon>
+          {{ $t(GetVariantNameByCode(val.code,product)) }}
         </th>
         <th class="min-width-100">
           {{ $t("global.commons.Price") }}
@@ -312,7 +312,11 @@
 </template>
 
 <script lang="ts">
-import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
+import {
+  GetVariantIconByCode,
+  GetVariantNameByCode,
+  ProductVariants
+} from "@selldone/core-js/enums/product/ProductVariants";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
@@ -366,6 +370,9 @@ export default {
     },
   },
   data: () => ({
+    GetVariantNameByCode: GetVariantNameByCode,
+    GetVariantIconByCode: GetVariantIconByCode,
+
     barcode_variant: null,
     barcode2d: false,
     show_barcode: false,

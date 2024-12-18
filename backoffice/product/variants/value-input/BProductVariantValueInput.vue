@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -13,129 +13,185 @@
   -->
 
 <template>
-  <v-combobox
-    v-if="variantType"
-    :label="$t(variantType.name)"
-    :model-value="modelValue"
-    :prepend-inner-icon="variantType.icon"
-    chips
-    closable-chips
-    hide-details
-    multiple
-    variant="underlined"
-    @update:model-value="(v) => $emit('update:modelValue', v)"
-  >
-    <template v-slot:chip="{ item, props }">
-      <v-chip v-bind="props" variant="text">
-        <template v-if="is_color">
-          <u-color-circle
-            :color="item.raw"
-            :size="16"
-            class="circle-border m-1"
-          >
-          </u-color-circle>
-        </template>
-        <template v-else>
-          <u-variant-asset-image
-            :size="24"
-            :value="item.raw"
-          ></u-variant-asset-image>
-
-          {{ item.raw.removeVariantAsset() }}
-        </template>
-      </v-chip>
-    </template>
-  </v-combobox>
-
-  <v-expand-transition>
-    <div v-if="is_color">
-      <v-list-subheader>
-        <div>
-          Enter a hex color code here. You can enter a single color like
-          <b>#654FFF</b> or dual colors separated by a slash, such as
-          <b>#764FFA/#000000</b>.
+  <!-- ━━━━━━━━━━━━━━ Color ━━━━━━━━━━━━━━ -->
+  <div v-if="variantCode === 'color'">
+    <v-text-field
+      :model-value="modelValue"
+      @update:model-value="(v) => $emit('update:modelValue', v)"
+      :counter="32"
+      :disabled="disabled"
+      :label="name"
+      :prepend-inner-icon="icon"
+      required
+      variant="underlined"
+      @blur="validateColor"
+    >
+      <template v-slot:append-inner>
+        <div class="d-flex align-center">
+          <u-color-name
+            :color="modelValue"
+            class="x-small mx-1 min-width-75"
+          ></u-color-name>
+          <u-color-circle :color="color"></u-color-circle>
         </div>
-      </v-list-subheader>
-      <div class="text-center">
+      </template>
+    </v-text-field>
+
+    <div v-if="!disabled" class="text-center">
+      <v-expand-transition group>
         <v-btn
           v-for="item in show_all_colors ? colors : colors.limit(22)"
           :key="item"
           :title="GetNameOfColor(item)"
-          class="ma-1 hover-scale-tiny no-inv border"
+          class="mx-1 color-button-ball no-inv"
           icon
-          size="small"
+          size="32"
           variant="text"
-          @click="modelValue.add(item)"
+          @click="$emit('update:modelValue', item)"
         >
           <u-color-circle :color="item" :size="20" class="circle-border m-1">
           </u-color-circle>
         </v-btn>
+      </v-expand-transition>
 
-        <v-btn
-          v-if="!show_all_colors"
-          class="m-1 tnt"
-          color="primary"
-          variant="text"
-          @click="show_all_colors = true"
-          >{{ $t("global.actions.show_all") }}...
-        </v-btn>
-      </div>
+      <v-btn
+        v-if="!show_all_colors"
+        class="m-1 tnt"
+        color="primary"
+        variant="text"
+        @click="show_all_colors = true"
+        >{{ $t("global.actions.show_all") }}...
+      </v-btn>
     </div>
-    <b-product-graphical-assets-selector
-      v-else
-      :shop="shop"
-      @select="(v) => modelValue.add(v)"
-    ></b-product-graphical-assets-selector>
-  </v-expand-transition>
+  </div>
+  <!-- ━━━━━━━━━━━━━━ Other > With suggested items in property set ━━━━━━━━━━━━━━ -->
+
+  <v-combobox
+    v-else-if="items?.length"
+    :model-value="modelValue"
+    @update:model-value="(v) => $emit('update:modelValue', v)"
+    :counter="21"
+    :disabled="disabled"
+    :label="name"
+    :prepend-inner-icon="icon"
+    class="input-variant"
+    messages=" "
+    required
+    variant="underlined"
+    :items="items"
+  >
+    <template v-if="modelValue" v-slot:append-inner>
+      <u-variant-asset-image
+        :size="24"
+        :value="modelValue"
+      ></u-variant-asset-image>
+    </template>
+
+    <template v-slot:message>
+      <b-product-graphical-assets-selector
+        @select="(v) => $emit('update:modelValue', v)"
+      ></b-product-graphical-assets-selector>
+    </template>
+  </v-combobox>
+  <!-- ━━━━━━━━━━━━━━ Other > Default ━━━━━━━━━━━━━━ -->
+  <v-text-field
+    v-else
+    :model-value="modelValue"
+    @update:model-value="(v) => $emit('update:modelValue', v)"
+    :counter="21"
+    :disabled="disabled"
+    :label="name"
+    :prepend-inner-icon="icon"
+    class="input-variant"
+    messages=" "
+    required
+    variant="underlined"
+  >
+    <template v-if="modelValue" v-slot:append-inner>
+      <u-variant-asset-image
+        :size="24"
+        :value="modelValue"
+      ></u-variant-asset-image>
+    </template>
+
+    <template v-slot:message>
+      <b-product-graphical-assets-selector
+        @select="(v) => $emit('update:modelValue', v)"
+      ></b-product-graphical-assets-selector>
+    </template>
+  </v-text-field>
 </template>
 
 <script lang="ts">
-import BProductGraphicalAssetsSelector from "../../../product/graphical-assets/selector/BProductGraphicalAssetsSelector.vue";
-import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
-import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
-import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet";
-import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
-import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
+import { defineComponent } from "vue";
+import UColorName from "@selldone/components-vue/ui/color/name/UColorName.vue";
+import UColorCircle from "@selldone/components-vue/ui/color/circle/UColorCircle.vue";
+import {
+  GetVariantDefaultValuesByCode,
+  GetVariantIconByCode,
+  GetVariantNameByCode,
+  ProductVariants,
+} from "@selldone/core-js/enums/product/ProductVariants.ts";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet.ts";
+import { GetNameOfColor } from "@selldone/core-js/helper/color/ColorHelper.ts";
+import BProductGraphicalAssetsSelector from "@selldone/components-vue/backoffice/product/graphical-assets/selector/BProductGraphicalAssetsSelector.vue";
+import UVariantAssetImage from "@selldone/components-vue/ui/variant/asset/image/UVariantAssetImage.vue";
 
-export default {
+export default defineComponent({
   name: "BProductVariantValueInput",
   components: {
     UVariantAssetImage,
-    UColorCircle,
     BProductGraphicalAssetsSelector,
+    UColorCircle,
+    UColorName,
   },
+  inject: ["$product"],
   emits: ["update:modelValue"],
   props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
-
     modelValue: {},
-    variantCode: { required: true },
+    variantCode: {
+      type: String,
+      required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   data() {
     return {
       GetNameOfColor: GetNameOfColor,
-
       ProductVariants: ProductVariants,
-      show_all_colors: false,
-
       colors: VariantColorsSet,
+
+      show_all_colors: false,
     };
   },
+
   computed: {
-    variantType() {
-      if (this.isObject(this.variantCode)) return this.variantCode;
-      return ProductVariants[this.variantCode];
+    name() {
+      return this.$t(GetVariantNameByCode(this.variantCode, this.$product));
+    },
+    icon() {
+      return GetVariantIconByCode(this.variantCode, this.$product);
     },
 
-    is_color() {
-      return this.variantType.code === ProductVariants.color.code;
+    items() {
+      return GetVariantDefaultValuesByCode(this.variantCode, this.$product);
     },
   },
-  methods: {},
-};
+
+  methods: {
+    validateColor() {
+      if (!this.color?.startsWith("#")) {
+        this.color = "#FFFFFF";
+        NotificationService.showErrorAlert(null, "Invalid color code!");
+      }
+    },
+  },
+});
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped lang="scss"></style>

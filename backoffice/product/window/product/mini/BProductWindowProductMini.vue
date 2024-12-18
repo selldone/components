@@ -69,15 +69,15 @@
       <!-- Bottom icons -->
 
       <div class="bottom-b">
-        <v-icon v-if="product.ar_src" size="x-small" title="AR \ 3D">
+        <v-icon v-if="product.ar_src" size="14" title="AR \ 3D"  style="margin-inline-start: 1px">
           3d_rotation
         </v-icon>
 
-        <v-icon v-if="product.video" size="x-small" title="Video">
+        <v-icon v-if="product.video" size="14" title="Video"  style="margin-inline-start: 1px">
           fa:fab fa-youtube
         </v-icon>
 
-        <v-icon v-if="product.reselling" size="x-small" title="Drop shipping">
+        <v-icon v-if="product.reselling" size="14" title="Drop shipping" style="margin-inline-start: 1px">
           airline_stops
         </v-icon>
       </div>
@@ -520,7 +520,7 @@ export default {
 
 .bottom-b {
   position: absolute;
-  top: 63px;
+  top: 60px;
   right: 12px;
 
   .v-icon {

@@ -13,9 +13,14 @@
   -->
 
 <template>
-  <v-btn variant="elevated" icon density="compact">
+  <v-btn variant="elevated" icon density="compact" :loading="loading">
     <v-icon size="small">more_vert</v-icon>
-    <v-menu open-on-hover activator="parent" location="start center" offset="-32">
+    <v-menu
+      open-on-hover
+      activator="parent"
+      location="start center"
+      offset="-32"
+    >
       <v-sheet class="mx-1 pa-1" color="#fff" rounded="lg">
         <slot></slot>
       </v-sheet>
@@ -28,6 +33,9 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "UMenuExpandable",
+  props: {
+    loading: Boolean,
+  },
 });
 </script>
 

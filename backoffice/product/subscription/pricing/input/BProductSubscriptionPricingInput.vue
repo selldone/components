@@ -33,6 +33,7 @@
     :singleLine="singleLine"
     :variant="variant"
     item-title="title"
+    item-value="id"
     @focus="onFocus"
     @update:model-value="(val) => $emit('update:modelValue', val)"
     @click:clear="$emit('click:clear')"

@@ -18,6 +18,7 @@
     prepend-icon="map"
     v-bind="$attrs"
     @click="showSetMapTag()"
+    slim
   >
     <v-list-item-title class="d-flex align-center">
       <b>{{ $t("product_location_profile.title") }}</b>

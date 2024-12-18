@@ -41,6 +41,18 @@
                 disabled: add_by_dropShipping,
                 click: () => showBulkAdd(),
               },
+              {
+           title: $t(
+                  'product_inventory_management_physical.menu.edit_property_set.title',
+                ),
+                subtitle: $t(
+                  'product_inventory_management_physical.menu.edit_property_set.subtitle',
+                ),
+                icon: 'app_registration',
+                click: () => {
+                  edit_property_set_dialog = true;
+                },
+              },
             ]"
             :with-trashed="withTrashed"
             class="mt-1 ms-2"
@@ -62,107 +74,74 @@
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Variants ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-      <div :class="{ disabled: add_by_dropShipping }">
-        <v-btn
-          :color="has_color ? '#222' : '#aaa'"
-          class="m-1 tnt"
-          @click="
-            () => {
-              has_color = !has_color;
-              reassign();
-            }
-          "
+      <div
+        :class="{ disabled: add_by_dropShipping }"
+        class="d-flex flex-wrap h--border-dash-long pa-2 position-relative"
+        style="border-radius: 8px"
+      >
+        <v-chip
+          style="right: 12px; top: -10px; z-index: 1"
+          class="position-absolute hover-scale-tiny"
+          color="#000"
+          size="x-small"
+          variant="flat"
+          @click="edit_property_set_dialog = true"
+          prepend-icon="edit"
         >
-          <v-icon start>
-            {{ ProductVariants.color.icon }}
-          </v-icon>
-          {{ $t(ProductVariants.color.name) }}
-        </v-btn>
+          {{
+            product.property_set
+              ? product.property_set.title
+              : "Default Property Set"
+          }}
+        </v-chip>
 
-        <v-btn
-          :color="has_style ? '#222' : '#aaa'"
-          class="m-1 tnt"
-          @click="
-            () => {
-              has_style = !has_style;
-              reassign();
-            }
-          "
+        <b-product-variants-option-button
+          v-model="has_color"
+          :product="product"
+          variant-code="color"
+          @update:model-value="reassign"
         >
-          <v-icon start>
-            {{ ProductVariants.style.icon }}
-          </v-icon>
+        </b-product-variants-option-button>
 
-          {{ $t(ProductVariants.style.name) }}
-        </v-btn>
-
-        <v-btn
-          :color="has_volume ? '#222' : '#aaa'"
-          class="m-1 tnt"
-          @click="
-            () => {
-              has_volume = !has_volume;
-              reassign();
-            }
-          "
+        <b-product-variants-option-button
+          v-model="has_style"
+          :product="product"
+          variant-code="style"
+          @update:model-value="reassign"
         >
-          <v-icon start>
-            {{ ProductVariants.volume.icon }}
-          </v-icon>
+        </b-product-variants-option-button>
 
-          {{ $t(ProductVariants.volume.name) }}
-        </v-btn>
-
-        <v-btn
-          :color="has_weight ? '#222' : '#aaa'"
-          class="m-1 tnt"
-          @click="
-            () => {
-              has_weight = !has_weight;
-              reassign();
-            }
-          "
+        <b-product-variants-option-button
+          v-model="has_volume"
+          :product="product"
+          variant-code="volume"
+          @update:model-value="reassign"
         >
-          <v-icon start>
-            {{ ProductVariants.weight.icon }}
-          </v-icon>
+        </b-product-variants-option-button>
 
-          {{ $t(ProductVariants.weight.name) }}
-        </v-btn>
-
-        <v-btn
-          :color="has_pack ? '#222' : '#aaa'"
-          class="m-1 tnt"
-          @click="
-            () => {
-              has_pack = !has_pack;
-              reassign();
-            }
-          "
+        <b-product-variants-option-button
+          v-model="has_weight"
+          :product="product"
+          variant-code="weight"
+          @update:model-value="reassign"
         >
-          <v-icon start>
-            {{ ProductVariants.pack.icon }}
-          </v-icon>
+        </b-product-variants-option-button>
 
-          {{ $t(ProductVariants.pack.name) }}
-        </v-btn>
-
-        <v-btn
-          :color="has_type ? '#222' : '#aaa'"
-          class="m-1 tnt"
-          @click="
-            () => {
-              has_type = !has_type;
-              reassign();
-            }
-          "
+        <b-product-variants-option-button
+          v-model="has_pack"
+          :product="product"
+          variant-code="pack"
+          @update:model-value="reassign"
         >
-          <v-icon start>
-            {{ ProductVariants.type.icon }}
-          </v-icon>
+        </b-product-variants-option-button>
 
-          {{ $t(ProductVariants.type.name) }}
-        </v-btn>
+        <b-product-variants-option-button
+          v-model="has_type"
+          :product="product"
+          variant-code="type"
+          @update:model-value="reassign"
+        >
+        </b-product-variants-option-button>
       </div>
     </div>
 
@@ -320,6 +299,12 @@
     :vendor="vendor"
     @add="(items) => onUpdateVariants(...items)"
   ></b-product-variants-bulk-add>
+
+  <!-- ███████████████████████ Dialog > Set Property Set ███████████████████████ -->
+
+  <b-property-set-product-dialog
+    v-model="edit_property_set_dialog"
+  ></b-property-set-product-dialog>
 </template>
 
 <script lang="ts">
@@ -329,16 +314,24 @@ import UNumberInput from "../../../../../ui/number/input/UNumberInput.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 import USmartMenu from "../../../../../ui/smart/menu/USmartMenu.vue";
-import { ProductVariants } from "@selldone/core-js/enums/product/ProductVariants";
+import {
+  GetVariantIconByCode,
+  GetVariantNameByCode,
+  ProductVariants,
+} from "@selldone/core-js/enums/product/ProductVariants";
 import BProductVariantsBulkAdd from "../../../../product/variants/bulk-add/BProductVariantsBulkAdd.vue";
 import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import BProductVariantsOptionButton from "@selldone/components-vue/backoffice/product/variants/option-button/BProductVariantsOptionButton.vue";
+import BPropertySetProductDialog from "@selldone/components-vue/backoffice/property-set/product/BPropertySetProductDialog.vue";
 
 export default {
   name: "BProductInventoryManagementPhysical",
   mixins: [],
   components: {
+    BPropertySetProductDialog,
+    BProductVariantsOptionButton,
     SWidgetHelp,
     BProductVariantsBulkAdd,
 
@@ -373,6 +366,8 @@ export default {
   data() {
     return {
       ProductVariants: ProductVariants,
+      GetVariantNameByCode: GetVariantNameByCode,
+      GetVariantIconByCode: GetVariantIconByCode,
 
       page: 1,
       product_variants: [],
@@ -403,6 +398,9 @@ export default {
       busy_save: false,
 
       dialog_bulk: false,
+
+      //--------------------------
+      edit_property_set_dialog: false,
     };
   },
 
@@ -443,22 +441,6 @@ export default {
       if (this.has_pack) out.push("pack");
       if (this.has_type) out.push("type");
       return out;
-    },
-    excludes_count() {
-      return Object.values(this.excludes).reduce(
-        (sum, current) => sum + current.length,
-        0,
-      );
-    },
-
-    add_variants_count() {
-      if (this.input_variant_2) {
-        return (
-          this.input_options_1.length * this.input_options_2.length -
-          this.excludes_count
-        );
-      }
-      return this.input_options_1.length - this.excludes_count;
     },
 
     pages_count() {
