@@ -135,46 +135,53 @@
     </draggable>
   </div>
 
+  <!-- Edit Link -->
+
   <v-bottom-sheet
     v-model="link_dialog"
     content-class="rounded-t-xl"
-    max-width="640"
+    max-width="720"
     width="98vw"
   >
     <v-card v-if="selected_item" class="text-start" rounded="t-xl">
       <v-card-title>
         <v-icon class="me-1">link</v-icon>
-        {{ $t("global.commons.edit") }}
+        {{ $t("global.commons.edit") }} | {{selected_item.name}}
       </v-card-title>
       <v-card-text>
-        <v-text-field
-          v-model="selected_item.name"
-          :label="$t('global.commons.label')"
-          variant="outlined"
-        >
-        </v-text-field>
+        <div class="widget-box mb-5">
+          <v-text-field
+            v-model="selected_item.name"
+            :label="$t('global.commons.label')"
+            variant="underlined"
+          >
+          </v-text-field>
 
-        <v-text-field
-          v-model="selected_item.href"
-          :label="$t('global.commons.link')"
-          variant="outlined"
-        >
-        </v-text-field>
+          <v-text-field
+            v-model="selected_item.href"
+            :label="$t('global.commons.link')"
+            variant="underlined"
+          >
+          </v-text-field>
 
-        <u-smart-select
-          v-model="selected_item.target"
-          :items="[
-            { value: '_blank', text: 'Open In New Page', icon: 'open_in_new' },
-          ]"
-          item-value="value"
-          item-text="text"
-          item-icon="icon"
-          force-show-all
-          border
-          color="#000"
-          clearable
-        >
-        </u-smart-select>
+          <u-smart-select
+            v-model="selected_item.target"
+            :items="[
+              {
+                value: '_blank',
+                text: 'Open In New Page',
+                icon: 'open_in_new',
+              },
+            ]"
+            item-value="value"
+            item-text="text"
+            item-icon="icon"
+            force-show-all
+            color="#000"
+            clearable
+          >
+          </u-smart-select>
+        </div>
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
@@ -182,9 +189,9 @@
             size="x-large"
             variant="text"
             @click="link_dialog = false"
-            prepend-icon="close"
+            prepend-icon="check"
           >
-            {{ $t("global.actions.close") }}
+            {{ $t("global.actions.done") }}
           </v-btn>
         </div>
       </v-card-actions>
