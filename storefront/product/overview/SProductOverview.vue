@@ -49,6 +49,16 @@
             :current-variant="current_variant"
             :vertical="$vuetify.display.smAndUp"
           ></s-shop-product-slide-show>
+
+          <!-- ▁▁▁▁▁▁ 🞇 Share 🞇 ▁▁▁▁▁▁ -->
+          <u-button-share-group
+            :title="$product.title"
+            :url="ShopURLs.GetProductLink(shop, $product.id, $product.slug)"
+            class="mt-3"
+            small
+            :description="$product.title_en"
+            :media="getShopImagePath($product.icon)"
+          ></u-button-share-group>
         </v-col>
 
         <!--  ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Info ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
@@ -107,21 +117,26 @@
 
             <div class="flex-grow-1 ps-0 ps-sm-1 py-2">
               {{ $product.title_en?.limitWords(limit_title_en) }}
-
             </div>
 
             <v-btn
-                v-if="$product.title_en?.wordsCount() > 20"
-                class="tnt" slim
-                color="#444"
-                variant="text"
-                @click="limit_title_en = limit_title_en > 20 ? 20 : 2000"
-            >{{
+              v-if="$product.title_en?.wordsCount() > 20"
+              class="tnt"
+              slim
+              color="#444"
+              variant="text"
+              @click="limit_title_en = limit_title_en > 20 ? 20 : 2000"
+              >{{
                 limit_title_en > 20
-                    ? $t("global.actions.collapse")
-                    : $t("global.actions.view_all")
+                  ? $t("global.actions.collapse")
+                  : $t("global.actions.view_all")
               }}
-              <v-icon end class="t-all-400" :class="{'rotate-180':limit_title_en > 20 }">expand_more</v-icon>
+              <v-icon
+                end
+                class="t-all-400"
+                :class="{ 'rotate-180': limit_title_en > 20 }"
+                >expand_more
+              </v-icon>
             </v-btn>
 
             <template v-if="$product.rate_count && $product.rate">
@@ -368,11 +383,15 @@ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin
 import { Product } from "@selldone/core-js/models";
 import { ShopURLs } from "@selldone/core-js";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import UButtonShareGroup from "@selldone/components-vue/ui/button/share/group/UButtonShareGroup.vue";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "SProductOverview",
   mixins: [CurrencyMixin, ProductMixin],
   components: {
+    UWidgetHeader,
+    UButtonShareGroup,
     SProductSectionIncentivise,
     SProductSectionCashback,
     UPaymentStripeSplit,

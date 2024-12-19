@@ -19,7 +19,13 @@
         v-for="item in items"
         :key="item.code"
         :network="item.code"
-        v-bind="commonProps"
+        :url="url"
+        :title="title"
+        :description="description"
+        :quote="quote"
+        :hashtags="hashtags_string"
+        :media="media"
+        :twitterUser="twitter_user"
       >
         <a :class="`btn ${item.code}`" @click="$emit('share', item.code)"
           ><i :class="item.icon"
@@ -38,7 +44,7 @@
 
       <a
         v-if="networks.includes('copy') && url"
-        class="btn copy"
+        class="btn copy pp"
         @click="
           copyToClipboard(url);
           $emit('share', 'copy');
@@ -158,113 +164,109 @@ export default {
       return out;
     },
 
-    commonProps() {
-      return {
-        url: this.url,
-        title: this.title,
-        description: this.description,
-        quote: this.quote,
-        hashtags: this.hashtags ? this.hashtags.replace(/-/g, "_") : "",
-        media: this.media,
-        twitterUser: SetupService.GetTwitterAccount(), // Assuming this function returns a string
-      };
+    hashtags_string() {
+      return this.hashtags ? this.hashtags.replace(/-/g, "") : "";
+    },
+
+    twitter_user() {
+      return SetupService.GetTwitterAccount(); // Assuming this function returns a string
     },
   },
   methods: {},
 };
 </script>
 
-<style lang="stylus" scoped>
+<style lang="scss" scoped>
+// Variables
+$btn-size: 70px;
 
-btn-size = 70px
+$sites: (
+  "facebook": #3b5998,
+  "twitter": #33ccff,
+  // Expanded from #3CF
+  "google": #dc4a38,
+  "linkedin": #0080d1,
+  "dribbble": #f26798,
+  "skype": #00aff0,
+  "email": #ffa000,
+  "pinterest": #d32f2f,
+  "reddit": #e64a19,
+  "sms": #455a64,
+  "telegram": #0288d1,
+  "whatsapp": #689f38,
+  "tumblr": #35465c,
+  "line": #5cd037,
+  "embed": #70557e,
+  "copy": #333333,
+);
 
-
-sites = {
-  'facebook': #3B5998
-  'twitter': #3CF
-  'google': #DC4A38
-  'linkedin': #0080d1
-  'dribbble': #F26798
-  'skype': #00AFF0
-  'email': #FFA000
-  'pinterest':#D32F2F
-  'reddit': #E64A19
-  'sms':#455A64
-  'telegram':#0288D1
-  'whatsapp':#689F38
-  'tumblr':#35465c
-  'line':#5cd037
-  'embed':#70557e
-  'copy':#333
-
+// Mixins
+@mixin animate {
+  transition: all 0.35s;
+  transition-timing-function: cubic-bezier(0.31, -0.105, 0.43, 1.59);
 }
 
-$animate {
-  transition: all .35s
-  transition-timing-function: cubic-bezier(
-      0.310,
-      -0.105,
-      0.430,
-      1.590
-  )
+@mixin btn__inactive {
+  &:before {
+    top: 90%;
+    left: -110%;
+  }
+
+  .fab,
+  .fas {
+    transform: scale(0.8);
+  }
+
+  @each $name, $color in $sites {
+    &.#{$name} {
+      &:before {
+        background-color: $color;
+      }
+
+      .fab,
+      .fas {
+        //  color: $color;
+        color: #000;
+      }
+    }
+  }
 }
 
-$btn__inactive
-  &:before
-    top: 90%
-    left: -110%
+@mixin btn__active {
+  &:before {
+    top: -10%;
+    left: -10%;
+  }
 
-  .fab
-    transform: scale(.8)
+  .fab,
+  .fas {
+    color: #ffffff;
+    transform: scale(1);
+  }
+}
 
-  .fas
-    transform: scale(.8)
-  for name, color in sites // variants
-    &.{name}
-      &:before
-        background-color: color
-
-      .fab
-        color: color
-
-      .fas
-        color: color
-
-
-$btn__active
-  &:before
-    top: -10%
-    left: -10%
-
-  .fab
-    color: #fff
-    transform: scale(1)
-
-  .fas
-    color: #fff
-    transform: scale(1)
-
-
+// Main Styles
 .social-btns {
-  // height: btn-size
-  margin: auto
-  font-size: 0
-  text-align: center
-  position: relative
-  top: 0
-  bottom: 0
-  left: 0
-  right: 0
+  // height: $btn-size; // Uncomment if height is needed
+  margin: auto;
+  font-size: 0;
+  text-align: center;
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 
   &.-small {
     .btn {
-      width: 42px
-      height: 42px
-      line-height: 42px
-      margin: 6px !important
+      width: 42px;
+      height: 42px;
+      line-height: 42px;
+      margin: 6px !important;
 
-      .fab, .fas {
-        font-size: 18px
+      .fab,
+      .fas {
+        font-size: 18px;
       }
     }
   }
@@ -272,60 +274,55 @@ $btn__active
   &:not(.-large) {
     .btn {
       @media only screen and (max-width: 600px) {
-        width: 42px
-        height: 42px
-        line-height: 42px
-        margin: 6px !important
+        width: 42px;
+        height: 42px;
+        line-height: 42px;
+        margin: 6px !important;
 
-        .fab, .fas {
-          font-size: 18px
+        .fab,
+        .fas {
+          font-size: 18px;
         }
       }
     }
   }
 
   .btn {
-    @extends $btn__inactive
-    @extends $animate
-    margin: 4px 10px !important
-    display: inline-block
-    background-color: #fff
-    width: btn-size
-    height: btn-size
-    line-height: btn-size
-
-
-    text-align: center
-    position: relative
-    overflow: hidden
-    border-radius: 28%
-    box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.1) !important
-    //overflow bug fix
-    opacity: .99
+    @include btn__inactive;
+    @include animate;
+    margin: 4px 10px !important;
+    display: inline-block;
+    background-color: #ffffff;
+    width: $btn-size;
+    height: $btn-size;
+    line-height: $btn-size;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 28%;
+    box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.1) !important;
+    opacity: 0.99; // Overflow bug fix
 
     &:before {
-      @extends $animate
-      content: ''
-      width: 120%
-      height: 120%
-      position: absolute
-      transform: rotate(45deg)
+      @include animate;
+      content: "";
+      width: 120%;
+      height: 120%;
+      position: absolute;
+      transform: rotate(45deg);
     }
 
-
-    .fab, .fas {
-      @extends $animate
-      font-size: 38px
-      vertical-align middle
+    .fab,
+    .fas {
+      @include animate;
+      font-size: 38px;
+      vertical-align: middle;
     }
-
 
     &:focus,
     &:hover {
-      @extends $btn__active
+      @include btn__active;
     }
   }
-
-
 }
 </style>

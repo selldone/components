@@ -23,7 +23,7 @@
     rounded="xl"
     top
   >
-    <div class="p-3 bg-white">
+    <div class="p-3 bg-white border rounded-lg">
       <u-button-share-group
         :description="post.body"
         :force-large="$vuetify.display.xs"
