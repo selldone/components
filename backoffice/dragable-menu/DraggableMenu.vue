@@ -13,7 +13,11 @@
   -->
 
 <template>
-  <div class="rounded-lg overflow-hidden" style="border: solid thin #ddd">
+  <div
+    v-bind="$attrs"
+    class="rounded-lg overflow-hidden"
+    style="border: solid thin #ddd"
+  >
     <v-sheet v-if="hasDelete" class="text-end pa-1" color="#ddd">
       <v-btn
         class="ma-1"
@@ -77,7 +81,11 @@
             content-class="text-start bg-black"
           >
             <template v-slot:activator="{ props }">
-              <v-icon class="float-right m-2" size="small" v-bind="props"
+              <v-icon
+                class="float-right m-2"
+                size="small"
+                v-bind="props"
+                @click="showEditLink(element)"
                 >link
               </v-icon>
             </template>
@@ -86,6 +94,8 @@
             <div v-if="element.target" class="small">
               <b>Target:</b> {{ element.target }}
             </div>
+            <br />
+            <i>Click to edit more...</i>
           </v-tooltip>
 
           <span
@@ -124,14 +134,72 @@
       </template>
     </draggable>
   </div>
+
+  <v-bottom-sheet
+    v-model="link_dialog"
+    content-class="rounded-t-xl"
+    max-width="640"
+    width="98vw"
+  >
+    <v-card v-if="selected_item" class="text-start" rounded="t-xl">
+      <v-card-title>
+        <v-icon class="me-1">link</v-icon>
+        {{ $t("global.commons.edit") }}
+      </v-card-title>
+      <v-card-text>
+        <v-text-field
+          v-model="selected_item.name"
+          :label="$t('global.commons.label')"
+          variant="outlined"
+        >
+        </v-text-field>
+
+        <v-text-field
+          v-model="selected_item.href"
+          :label="$t('global.commons.link')"
+          variant="outlined"
+        >
+        </v-text-field>
+
+        <u-smart-select
+          v-model="selected_item.target"
+          :items="[
+            { value: '_blank', text: 'Open In New Page', icon: 'open_in_new' },
+          ]"
+          item-value="value"
+          item-text="text"
+          item-icon="icon"
+          force-show-all
+          border
+          color="#000"
+          clearable
+        >
+        </u-smart-select>
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="link_dialog = false"
+            prepend-icon="close"
+          >
+            {{ $t("global.actions.close") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-bottom-sheet>
 </template>
 
 <script lang="ts">
 import { defineAsyncComponent } from "vue";
+import USmartSelect from "@selldone/components-vue/ui/smart/select/USmartSelect.vue";
 
 export default {
   name: "DraggableMenu",
   components: {
+    USmartSelect,
     draggable: defineAsyncComponent(() => import("vuedraggable")),
   },
   emits: ["update:modelValue", "add-click", "click:delete"],
@@ -155,6 +223,8 @@ export default {
     drag: false,
     index: 0,
     list: [],
+    link_dialog: false,
+    selected_item: null,
   }),
 
   computed: {
@@ -181,6 +251,11 @@ export default {
     deleteItem(index) {
       this.list.splice(index, 1);
       this.$emit("update:modelValue", this.list);
+    },
+
+    showEditLink(item) {
+      this.selected_item = item;
+      this.link_dialog = true;
     },
   },
 };
