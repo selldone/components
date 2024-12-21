@@ -51,14 +51,19 @@
           ></s-shop-product-slide-show>
 
           <!-- ▁▁▁▁▁▁ 🞇 Share 🞇 ▁▁▁▁▁▁ -->
-          <u-button-share-group
-            :title="$product.title"
-            :url="ShopURLs.GetProductLink(shop, $product.id, $product.slug)"
-            class="mt-3"
-            small
-            :description="$product.title_en"
-            :media="getShopImagePath($product.icon)"
-          ></u-button-share-group>
+          <div class="d-flex align-center flex-wrap mt-3">
+            <div class="text-start small me-2"><v-icon class="me-1">share</v-icon> {{$t('global.commons.share')}}</div>
+            <v-spacer></v-spacer>
+            <u-button-share-group
+                :title="$product.title"
+                :url="ShopURLs.GetProductLink(shop, $product.id, $product.slug)"
+
+                small
+                :description="$product.title_en"
+                :media="getShopImagePath($product.icon)"
+            ></u-button-share-group>
+            <v-spacer></v-spacer>
+          </div>
         </v-col>
 
         <!--  ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Info ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->

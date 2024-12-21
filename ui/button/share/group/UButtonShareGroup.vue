@@ -214,7 +214,7 @@ $sites: (
 
   .fab,
   .fas {
-    transform: scale(0.8);
+    transform: scale(1);
   }
 
   @each $name, $color in $sites {
@@ -241,7 +241,7 @@ $sites: (
   .fab,
   .fas {
     color: #ffffff;
-    transform: scale(1);
+    transform: scale(1.4);
   }
 }
 
