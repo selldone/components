@@ -13,7 +13,10 @@
   -->
 
 <template>
+  <!-- UDateInput -->
+
   <v-text-field
+    :model-value="getLocalTimeString(modelValue, false, false, this.dateOnly)"
     :append-inner-icon="appendInnerIcon"
     :bg-color="backgroundColor"
     :class="{ pp: !disable }"
@@ -26,7 +29,6 @@
     :hide-details="hideDetails"
     :label="label"
     :messages="getFromNowString(modelValue)"
-    :model-value="getLocalTimeString(modelValue, false, false, this.dateOnly)"
     :placeholder="placeholder"
     :prepend-inner-icon="prependInnerIcon"
     :rounded="rounded"
@@ -60,12 +62,12 @@
         {{ getLocalTimeString(date_time) }}
         <v-spacer></v-spacer>
         <v-btn
-          v-if="clearable"
+          v-if="clearable && modelValue"
           class="ma-1 tnt"
           color="red"
           rounded="xl"
           size="x-large"
-          variant="outlined"
+          variant="text"
           @click="
             clear();
             dialog = false;
@@ -91,16 +93,31 @@
           width="400"
         ></v-date-picker>
 
-        <div class="my-3 max-w-400 mx-auto">
-          <u-time-input
-            v-if="!dateOnly /** TODO: NOt added yet! I should add this!*/"
-            v-model="time"
-            :max="max_time"
-            :min="min_time"
-            class="border rounded-xl"
-            variant="flat"
-          ></u-time-input>
-        </div>
+        <template
+          v-if="!dateOnly /** TODO: NOt added yet! I should add this!*/"
+        >
+          <div class="my-3 max-w-400 mx-auto">
+            <u-time-input
+              v-model="time"
+              class="border rounded-xl"
+              variant="flat"
+            ></u-time-input>
+          </div>
+
+          <div class="d-flex align-stretch justify-start overflow-auto py-3" v-dragscroll="true">
+            <u-date-clock
+              v-for="(clock, index) in clocks"
+              :key="index"
+              :time="time_to_date"
+              stop
+              :city="clock.city"
+              :flag="clock.flag"
+              :target-timezone="clock.targetTimezone"
+              class="ma-2"
+              small
+            ></u-date-clock>
+          </div>
+        </template>
       </v-card-text>
       <v-card-actions class="border-top">
         <div class="widget-buttons">
@@ -157,11 +174,12 @@
 <script lang="ts">
 import UTimeInput from "../../../ui/time/input/UTimeInput.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import UDateClock from "@selldone/components-vue/ui/date/clock/UDateClock.vue";
 
 export default {
   name: "UDateInput",
   mixins: [DateMixin],
-  components: { UTimeInput },
+  components: { UDateClock, UTimeInput },
   emits: ["update:modelValue", "change", "enter", "click:clear"],
   props: {
     modelValue: {},
@@ -247,9 +265,57 @@ export default {
     dialog: false,
 
     date_key: 0, // To force update date picker when set now is clicked
+
+    clocks: [
+      {
+        city: "Sydney",
+        flag: "au",
+        targetTimezone: "Australia/Sydney",
+      },
+      {
+        city: "Los Angeles",
+        flag: "us",
+        targetTimezone: "America/Los_Angeles",
+      },
+      {
+        city: "Paris",
+        flag: "fr",
+        targetTimezone: "Europe/Paris",
+      },
+      {
+        city: "Tokyo",
+        flag: "jp",
+        targetTimezone: "Asia/Tokyo",
+      },
+      {
+        city: "Berlin",
+        flag: "de",
+        targetTimezone: "Europe/Berlin",
+      },
+      {
+        city: "Greenwich",
+        flag: "gb",
+        targetTimezone: "Etc/Greenwich",
+      },
+      {
+        city: "New Delhi",
+        flag: "in",
+        targetTimezone: "Asia/Kolkata", // India Standard Time (UTC+5:30)
+      },
+    ],
   }),
 
   computed: {
+    time_to_date(){
+      const out= new Date(this.date)
+      if (this.time) {
+        const [hours, minutes] = this.time.split(":").map(Number); // Split the time string into hours and minutes and convert to numbers
+        out.setHours(hours, minutes, 0, 0); // Set hours and minutes to the date object
+      }
+      return out;
+    },
+
+
     date_time() {
       if (!this.date) return null;
 
