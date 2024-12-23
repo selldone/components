@@ -212,7 +212,7 @@
 
       <template v-slot:item.url="{ item }">
         <div class="py-2" dir="ltr">
-          <u-text-copy-box :value="item.url" small small-width-mode text-start>
+          <u-text-copy-box :value="item.url" small small-width-mode text-start color="#000">
             <template v-slot:prepend-value>
               <v-icon
                 v-if="item.ssl"
