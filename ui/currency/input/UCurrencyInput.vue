@@ -54,6 +54,8 @@
     @update:model-value="(val) => $emit('change', val)"
     :persistent-placeholder="persistentPlaceholder"
     aria-label="Select Currency"
+    :returnObject="currencyObject"
+    closable-chips
   >
     <template v-slot:item="{ item, props }">
       <v-list-item
@@ -88,14 +90,8 @@
       </v-list-item>
     </template>
 
-    <template v-slot:chip="{ item, parent }">
-      <v-chip
-        v-if="chips"
-        :color="dark ? '#111' : '#fff'"
-        class="ma-1"
-        closable
-        @click:close="parent.selectItem(item.raw)"
-      >
+    <template v-slot:chip="{ item, props }">
+      <v-chip v-bind="props" v-if="chips">
         <flag
           v-if="item.raw.flag"
           :iso="item.raw.flag"
@@ -277,26 +273,39 @@ export default {
   },
 
   watch: {
-    currency(currency) {
-      this.$emit(
-        "update:modelValue",
-        currency
-          ? this.returnObject
-            ? this.currencyObject
-            : this.currencyObject.code
-          : null,
-      );
+    currency: {
+      handler(currency) {
+        // console.log("currency update", currency);
+        if (this.multiple) {
+          this.$emit("update:modelValue", currency);
+          return;
+        }
+
+        this.$emit(
+          "update:modelValue",
+          currency
+            ? this.returnObject
+              ? this.currencyObject
+              : this.currencyObject.code
+            : null,
+        );
+      },
+      deep: true,
     },
+
     modelValue(currency) {
       this.currency = currency;
     },
   },
   created() {
-    this.currency = this.GetCurrency(this.modelValue);
-
-    if (this.currency && !this.returnObject) this.currency = this.currency.code;
-
-    console.log("currency", this.currency, "modelValue", this.modelValue);
+    if (this.multiple) {
+      this.currency = this.modelValue;
+      return;
+    } else {
+      this.currency = this.GetCurrency(this.modelValue);
+      if (this.currency && !this.returnObject)
+        this.currency = this.currency.code;
+    }
   },
 };
 </script>

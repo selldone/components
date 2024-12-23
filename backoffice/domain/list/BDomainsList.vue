@@ -95,6 +95,38 @@
       item-value="url"
       show-expand
     >
+      <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Headers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+      <template v-slot:header.indexed="{}">
+        <img
+          class="me-1"
+          src="../../../assets/trademark/google.svg"
+          title="Google"
+          width="12"
+        />
+        <img
+          class="me-1"
+          src="../../../assets/trademark/bing.svg"
+          title="Bing"
+          width="12"
+        />
+        <img
+          class="me-1"
+          src="../../../assets/trademark/yahoo.svg"
+          title="Yahoo"
+          width="12"
+        />
+        <img
+          class="me-1"
+          src="../../../assets/trademark/baidu.svg"
+          title="Baidu"
+          width="12"
+        />
+        <small class="d-block"
+          >{{ $t("admin_shop.dashboard.info.table.and_more") }}
+        </small>
+      </template>
+
       <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Primary ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
       <template v-slot:item.primary="{ item }">
@@ -118,6 +150,62 @@
           <v-icon v-if="item.primary">star</v-icon>
           <v-icon v-else>star_border</v-icon>
         </v-btn>
+      </template>
+
+      <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Home Page ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+
+      <template v-slot:item.home="{ item }">
+        <div class="py-1">
+          <v-btn
+            v-if="!item.official && item.domain"
+            :title="`Set custom home page for ${item.domain.domain}`"
+            block
+            border="2px"
+            size="large"
+            variant="text"
+            @click.stop="showSetHomeDialog(item.domain)"
+          >
+            <img
+              :src="
+                GetDomainHomeIcon(
+                  item.primary || !item.domain.home
+                    ? shop.home
+                    : item.domain.home,
+                )
+              "
+              class="me-2 ms-n2"
+              height="24"
+              width="24"
+            />
+
+            <div class="text-start min-width-100">
+              <span class="text-uppercase small d-block">{{
+                GetDomainHomeName(getCorrespondingHomePageValue(item))
+              }}</span>
+              <div
+                v-if="
+                  getCorrespondingHomePageValue(item) &&
+                  ('' + getCorrespondingHomePageValue(item)).startsWith('/')
+                "
+                class="small text-no-transform"
+                title="Files location"
+              >
+                <v-icon class="me-1" size="small">storage</v-icon>
+                {{ getCorrespondingHomePageValue(item) }}
+              </div>
+
+              <v-chip
+                v-if="item.primary || !item.domain.home"
+                class="tnt"
+                label
+                prepend-icon="home"
+                size="x-small"
+                variant="tonal"
+                >Default Home
+              </v-chip>
+            </div>
+          </v-btn>
+        </div>
       </template>
 
       <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Url ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -191,187 +279,6 @@
               </div>
             </template>
           </u-text-copy-box>
-        </div>
-      </template>
-
-      <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Expanded Row ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-      <template v-slot:expanded-row="{ columns, item }">
-        <tr>
-          <td :colspan="3">
-            <v-chip
-              v-if="!item.domain?.home"
-              class="ma-1"
-              pill
-              size="small"
-              title="Same as main home!"
-              variant="flat"
-              color="#000"
-            >
-              <v-icon start>home</v-icon>
-              {{ $t("global.commons.default") }}
-            </v-chip>
-
-            <v-chip
-              v-if="item.affiliate_id"
-              :title="'🛒 + 💲 ' + $t('global.commons.affiliate')"
-              class="ma-1"
-              pill
-              size="small"
-              variant="flat"
-              color="#000"
-            >
-              <v-icon start> assignment_ind</v-icon>
-              Affiliate
-            </v-chip>
-            <br />
-
-            <v-chip
-              v-if="item.certificate"
-              class="ma-1"
-              pill
-              size="small"
-              title="Last SSL certificate issued by Selldone."
-              variant="flat"
-              color="#000"
-            >
-              <v-icon start> verified_user</v-icon>
-              {{ item.certificate.Name }} <span class="mx-2">|</span>
-              {{ getLocalDateString(item.certificate["Issue Date"]) }} ~
-              {{ getLocalDateString(item.certificate["Expiry Date"]) }}
-
-              <v-chip
-                v-if="
-                  item.certificate['Expiry Date']
-                    ?.convertToLocalDate(item.certificate['Expiry Date'])
-                    ?.isBeforeToday()
-                "
-                class="ms-2 me-n2"
-                color="red"
-                prepend-icon="error"
-                size="x-small"
-              >
-                Expire
-              </v-chip>
-            </v-chip>
-          </td>
-
-          <td
-            v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-            :colspan="columns.length - 3"
-          >
-            <span class="float-end">
-              <v-btn
-                v-if="item.domain"
-                class="ma-1 tnt"
-                size="small"
-                @click="showSetting(item.domain)"
-              >
-                <v-icon start>settings</v-icon>
-                {{ $t("global.commons.setting") }}
-              </v-btn>
-
-              <v-btn
-                :loading="
-                  busy_add_client &&
-                  add_client_code ===
-                    (item.domain ? item.domain.id : item.official)
-                "
-                class="ma-1 tnt"
-                variant="elevated"
-                size="small"
-                @click="
-                  createClientSecret(
-                    item.domain ? item.domain.id : item.official,
-                  )
-                "
-              >
-                <v-icon start>build</v-icon>
-                {{ $t("admin_shop.dashboard.info.table.auto_repair") }}
-              </v-btn>
-
-              <u-smart-menu
-                v-if="item.domain"
-                class="ms-2"
-                :items="[
-                  {
-                    title: 'Edit Domain',
-                    click: () => showEditDomainDialog(item.domain),
-                    icon: 'edit',
-                  },
-                  {
-                    title: $t('global.actions.delete'),
-                    click: () => deleteShopDomain(item.domain),
-                    icon: 'close',
-                  },
-                ]"
-                :loading="busy_delete === item.domain.id"
-              >
-              </u-smart-menu>
-            </span>
-          </td>
-        </tr>
-        <tr v-if="item.error">
-          <td :colspan="columns.length">
-            <v-icon class="me-1" color="red">error</v-icon>
-            {{ item.error }}
-          </td>
-        </tr>
-      </template>
-
-      <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Home Page ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-
-      <template v-slot:item.home="{ item }">
-        <div class="py-1">
-          <v-btn
-            v-if="!item.official && item.domain"
-            :title="`Set custom home page for ${item.domain.domain}`"
-            block
-            border="2px"
-            size="large"
-            variant="text"
-            @click.stop="showSetHomeDialog(item.domain)"
-          >
-            <img
-              :src="
-                GetDomainHomeIcon(
-                  item.primary || !item.domain.home
-                    ? shop.home
-                    : item.domain.home,
-                )
-              "
-              class="me-2 ms-n2"
-              height="24"
-              width="24"
-            />
-
-            <div class="text-start min-width-100">
-              <span class="text-uppercase small d-block">{{
-                GetDomainHomeName(getCorrespondingHomePageValue(item))
-              }}</span>
-              <div
-                v-if="
-                  getCorrespondingHomePageValue(item) &&
-                  ('' + getCorrespondingHomePageValue(item)).startsWith('/')
-                "
-                class="small text-no-transform"
-                title="Files location"
-              >
-                <v-icon class="me-1" size="small">storage</v-icon>
-                {{ getCorrespondingHomePageValue(item) }}
-              </div>
-
-              <v-chip
-                v-if="item.primary || !item.domain.home"
-                class="tnt"
-                label
-                prepend-icon="home"
-                size="x-small"
-                variant="tonal"
-                >Default Home
-              </v-chip>
-            </div>
-          </v-btn>
         </div>
       </template>
 
@@ -470,36 +377,201 @@
         </div>
       </template>
 
-      <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Headers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+      <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Expanded Row ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-      <template v-slot:header.indexed="{}">
-        <img
-          class="me-1"
-          src="../../../assets/trademark/google.svg"
-          title="Google"
-          width="12"
-        />
-        <img
-          class="me-1"
-          src="../../../assets/trademark/bing.svg"
-          title="Bing"
-          width="12"
-        />
-        <img
-          class="me-1"
-          src="../../../assets/trademark/yahoo.svg"
-          title="Yahoo"
-          width="12"
-        />
-        <img
-          class="me-1"
-          src="../../../assets/trademark/baidu.svg"
-          title="Baidu"
-          width="12"
-        />
-        <small class="d-block"
-          >{{ $t("admin_shop.dashboard.info.table.and_more") }}
-        </small>
+      <template v-slot:expanded-row="{ columns, item }">
+        <tr>
+          <td :colspan="columns.length">
+            <div class="d-flex align-center py-1">
+              <div class="flex-grow-1">
+                <v-chip
+                  v-if="!item.domain?.home"
+                  class=""
+                  pill
+                  size="x-small"
+                  title="Same as main home!"
+                  variant="flat"
+                  color="#fff"
+                  style="margin: 2px"
+                  prepend-icon="home"
+                >
+                  {{ $t("global.commons.default") }}
+                </v-chip>
+
+                <v-chip
+                  v-if="item.affiliate_id"
+                  :title="'🛒 + 💲 ' + $t('global.commons.affiliate')"
+                  class=""
+                  pill
+                  size="x-small"
+                  variant="flat"
+                  color="#fff"
+                  style="margin: 2px"
+                  prepend-icon="assignment_ind"
+                >
+                  Affiliate
+                </v-chip>
+
+                <!-- Currencies -->
+                <v-chip
+                  v-if="!item?.domain.currencies?.length"
+                  size="x-small"
+                  color="#fff"
+                  variant="flat"
+                  prepend-icon="all_inclusive"
+                  style="margin: 2px"
+                >
+                  *.* All Currencies
+                </v-chip>
+
+                <v-chip
+                  v-for="it in item.domain?.currencies"
+                  :key="it"
+                  size="x-small"
+                  color="#fff"
+                  variant="flat"
+                  style="margin: 2px"
+                >
+                  <flag
+                    :iso="GetCurrency(it)?.flag"
+                    class="ms-n1 me-1"
+                    :squared="false"
+                  ></flag>
+
+                  {{ it }}
+                </v-chip>
+
+                <!-- Languages -->
+                <v-chip
+                  v-if="!item.domain?.languages?.length"
+                  size="x-small"
+                  color="#fff"
+                  variant="flat"
+                  prepend-icon="translate"
+                  style="margin: 2px"
+                >
+                  *.* All Languages
+                </v-chip>
+                <v-chip
+                  v-for="it in item.domain?.languages"
+                  :key="it"
+                  size="x-small"
+                  color="#fff"
+                  variant="flat"
+                  prepend-icon="translate"
+                  style="margin: 2px"
+                >
+                  {{ getLanguageName(it) }}
+                </v-chip>
+
+                <v-chip
+                  v-if="item.certificate"
+                  class=""
+                  pill
+                  size="x-small"
+                  title="Last SSL certificate issued by Selldone."
+                  variant="flat"
+                  color="#fff"
+                  style="margin: 2px"
+                  prepend-icon="verified_user"
+                >
+                  <b>{{ item.certificate.Name }}</b>
+                  <span class="mx-2">|</span>
+                  {{ getLocalDateString(item.certificate["Issue Date"]) }} ~
+                  {{ getLocalDateString(item.certificate["Expiry Date"]) }}
+
+                  <v-chip
+                    v-if="
+                      item.certificate['Expiry Date']
+                        ?.convertToLocalDate(item.certificate['Expiry Date'])
+                        ?.isBeforeToday()
+                    "
+                    class="ms-2 me-n2"
+                    color="red"
+                    prepend-icon="error"
+                    size="x-small"
+                    variant="text"
+                    style="margin: 2px"
+                  >
+                    Expired
+                  </v-chip>
+                </v-chip>
+              </div>
+
+              <v-spacer></v-spacer>
+
+              <u-menu-expandable
+                v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+                class="ms-1"
+                :loading="
+                  (busy_add_client &&
+                    add_client_code ===
+                      (item.domain ? item.domain?.id : item.official)) ||
+                  busy_delete === item.domain?.id
+                "
+              >
+                <v-btn
+                  v-if="item.domain"
+                  @click="deleteShopDomain(item.domain)"
+                  prepend-icon="close"
+                  :loading="busy_delete === item.domain.id"
+                  class="ma-1 tnt border"
+                  variant="flat"
+                  size="small"
+                >
+                  {{ $t("global.actions.delete") }}
+                </v-btn>
+
+                <v-btn
+                  :loading="
+                    busy_add_client &&
+                    add_client_code ===
+                      (item.domain ? item.domain.id : item.official)
+                  "
+                  class="ma-1 tnt border"
+                  size="small"
+                  @click="
+                    createClientSecret(
+                      item.domain ? item.domain.id : item.official,
+                    )
+                  "
+                  variant="flat"
+                  prepend-icon="build"
+                >
+                  {{ $t("admin_shop.dashboard.info.table.auto_repair") }}
+                </v-btn>
+
+                <template v-if="item.domain">
+                  <v-btn
+                    @click="showEditDomainDialog(item.domain)"
+                    prepend-icon="edit"
+                    class="ma-1 tnt border"
+                    variant="flat"
+                    size="small"
+                  >
+                    Edit Domain
+                  </v-btn>
+
+                  <v-btn
+                    class="ma-1 tnt"
+                    size="small"
+                    variant="elevated"
+                    @click="showSetting(item.domain)"
+                    prepend-icon="settings"
+                  >
+                    {{ $t("global.commons.setting") }}
+                  </v-btn>
+                </template>
+              </u-menu-expandable>
+            </div>
+          </td>
+        </tr>
+        <tr v-if="item.error">
+          <td :colspan="columns.length">
+            <v-icon class="me-1" color="red">error</v-icon>
+            {{ item.error }}
+          </td>
+        </tr>
       </template>
 
       <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Pagination ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -641,7 +713,6 @@ import BShopLicenseBlockIcon from "../../shop/license/block/icon/BShopLicenseBlo
 import BShopHomeSelect from "../../shop/home/select/BShopHomeSelect.vue";
 import BDomainAdd from "../add/BDomainAdd.vue";
 import InlineHelp from "../../help/InlineHelp.vue";
-import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import BDomainSetting from "../../domain/setting/BDomainSetting.vue";
 import { throttle } from "lodash-es";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
@@ -652,16 +723,18 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import DomainMixin from "@selldone/components-vue/mixin/domain/DomainMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import UMenuExpandable from "@selldone/components-vue/ui/menu/expandable/UMenuExpandable.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "BDomainsList",
-  mixins: [DateMixin, DomainMixin ],
+  mixins: [DateMixin, DomainMixin, CurrencyMixin],
 
   components: {
+    UMenuExpandable,
     SWidgetHelp,
     UTextCopyBox,
     BDomainSetting,
-    USmartMenu,
     InlineHelp,
     BDomainAdd,
     BShopHomeSelect,

@@ -14,13 +14,22 @@
 
 <template>
   <v-card class="text-start" rounded="0">
-    <v-card-title>
-      <span>
-        <v-icon class="me-1">settings</v-icon>
-        {{ $t("global.commons.setting") }}
-      </span>
+    <v-card-title class="d-flex align-center">
+      <v-avatar
+        class="avatar-gradient -thin -shop me-2"
+        size="36"
+        :image="getShopImagePath(shop.icon, 96)"
+      >
+      </v-avatar>
+      <div>
+        <b>
+          <v-icon class="me-1">settings</v-icon>
+          {{ $t("global.commons.domain") }}
+        </b>
+        |
+        {{ domain.domain }}
+      </div>
     </v-card-title>
-    <v-card-subtitle class="mt-0">{{ domain.domain }}</v-card-subtitle>
 
     <v-card-text>
       <!-- ████████████████████████ SSL ████████████████████████ -->
@@ -45,12 +54,49 @@
           false-icon="http"
           false-title="Allow HTTP traffic"
           hint="Redirect traffic from HTTP to HTTPS automatically in the application layer. Also, we recommend you enable force HTTP to HTTPS in your CDN."
-          label="Encrypt all visitor traffic"
+          label="HTTPS Force Redirect"
           true-description="When attempting to redirect HTTP requests to HTTPS, it is crucial to ensure that you have a valid SSL certificate."
           true-icon="https"
           true-title="Force redirect HTTP to HTTPS"
         >
         </u-smart-switch>
+      </div>
+
+      <!-- ████████████████████████ Resource Customization ████████████████████████ -->
+      <div class="widget-box mb-5">
+        <u-widget-header
+          icon="ballot"
+          title="Resource Customization"
+        ></u-widget-header>
+        <v-list-subheader>
+          You can restrict the available languages and currencies for this
+          domain. By default, all languages and currencies are accessible. If
+          you select specific currencies, only the associated payment will be
+          displayed to customers.
+        </v-list-subheader>
+
+        <u-language-input
+          :available-languages="available_languages"
+          v-model="languages"
+          multiple
+          label="Available Languages"
+          max-width="null"
+          clearable
+          chips
+          placeholder="*.* All languages are available"
+          persistent-placeholder
+        ></u-language-input>
+
+        <u-currency-input
+          :active-currencies="shop.currencies"
+          v-model="currencies"
+          chips
+          clearable
+          multiple
+          label="Available Currencies"
+          placeholder="*.* All currencies are available"
+          persistent-placeholder
+        ></u-currency-input>
       </div>
 
       <!-- ████████████████████████ Certificate ████████████████████████ -->
@@ -64,7 +110,7 @@
         </v-list-subheader>
 
         <div class="d-flex align-center mb-3">
-          <span class="text-h4"
+          <span class="font-weight-black"
             >{{ certificate["Name"] }} - {{ certificate["Key Type"] }}</span
           >
           <v-chip
@@ -73,11 +119,19 @@
             color="success"
             variant="flat"
             label
+            size="small"
           >
             <v-icon start>check_circle</v-icon>
             Valid
           </v-chip>
-          <v-chip v-else class="mx-2" color="red" variant="flat" label>
+          <v-chip
+            v-else
+            class="mx-2"
+            color="red"
+            variant="flat"
+            label
+            size="small"
+          >
             <v-icon start>cancel</v-icon>
             Expired
           </v-chip>
@@ -111,7 +165,7 @@
           :loading="busy_save"
           color="primary"
           size="x-large"
-          variant="flat"
+          variant="elevated"
           @click="save"
         >
           <v-icon start>save</v-icon>
@@ -129,12 +183,15 @@ import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import ULanguageInput from "@selldone/components-vue/ui/language/input/ULanguageInput.vue";
+import { ShopOptionsHelper } from "@selldone/core-js/helper";
+import UCurrencyInput from "@selldone/components-vue/ui/currency/input/UCurrencyInput.vue";
 
 export default {
   name: "BDomainSetting",
-  mixins: [DateMixin ],
+  mixins: [DateMixin],
 
-  components: { USmartSwitch, UTextValueBox },
+  components: { UCurrencyInput, ULanguageInput, USmartSwitch, UTextValueBox },
   props: {
     shop: {
       required: true,
@@ -150,6 +207,9 @@ export default {
     https: false,
     busy_save: false,
     busy_check_ssl: false,
+
+    languages: [],
+    currencies: [],
   }),
 
   computed: {
@@ -163,6 +223,17 @@ export default {
           this.certificate["Expiry Date"],
         )?.isAfterToday()
       );
+    },
+
+    // ▃▃▃▃▃▃▃▃▃▃▃▃▃ Languages ▃▃▃▃▃▃▃▃▃▃▃▃▃
+    available_languages() {
+      // Available languages of shop!
+      return this.shop && ShopOptionsHelper.GetLanguages(this.shop);
+    },
+  },
+  watch: {
+    domain() {
+      this.init();
     },
   },
 
@@ -178,6 +249,8 @@ export default {
           window.API.POST_SET_DOMAIN_SETTING(this.shop.id, this.domain.id),
           {
             https: this.https,
+            currencies: this.currencies,
+            languages: this.languages,
           },
         )
         .then(({ data }) => {
@@ -210,7 +283,10 @@ export default {
         .post(window.API.POST_DOMAIN_CHECK_SSL(this.shop.id, this.domain.id))
         .then(({ data }) => {
           if (!data.error) {
-            NotificationService.showSuccessAlert(null, "Your domain is secure.");
+            NotificationService.showSuccessAlert(
+              null,
+              "Your domain is secure.",
+            );
             Object.assign(this.domain, data.domain); // Update shop domains & domains list!
 
             this.UpdateItemByID(this.shop.domains, data.domain);
@@ -225,9 +301,15 @@ export default {
           this.busy_check_ssl = false;
         });
     },
+
+    init() {
+      this.https = this.domain.https;
+      this.languages = this.domain.languages;
+      this.currencies = this.domain.currencies;
+    },
   },
   created() {
-    this.https = this.domain.https;
+    this.init();
   },
 };
 </script>
