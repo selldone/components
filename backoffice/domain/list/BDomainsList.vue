@@ -581,6 +581,8 @@
       </template>
     </v-data-table-server>
 
+
+
     <div v-if="!showHeader" class="widget-buttons">
       <v-btn block color="primary" size="x-large" @click="showAddDomainDialog">
         <v-icon start>add</v-icon>
@@ -590,6 +592,11 @@
         </div>
       </v-btn>
     </div>
+
+    <v-list-subheader>
+      <v-icon>domain</v-icon>
+      Main Domain: {{ shop.domain }}
+    </v-list-subheader>
   </div>
 
   <!-- ██████████████████████ Sitemap Dialog ██████████████████████ -->
