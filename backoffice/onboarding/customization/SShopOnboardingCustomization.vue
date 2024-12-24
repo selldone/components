@@ -15,6 +15,80 @@
 <template>
   <v-card class="s--shop-onboarding-customization" color="transparent" flat>
     <v-card-text>
+
+
+
+      <u-widget-header
+          :title="$t('onboarding.customize.template.title')"
+          icon="auto_awesome_motion"
+      >
+      </u-widget-header>
+
+      <div class="d-flex align-center">
+        <p class="typo-body flex-grow-1">
+          {{ $t("onboarding.customize.template.msg") }}
+        </p>
+
+        <v-img
+            :src="require('../assets/template.svg')"
+            class="m-2 imgi"
+        ></v-img>
+      </div>
+
+      <u-fade-scroll
+          v-if="templates?.length"
+          drag-scroll
+          show-arrow
+          stick-class="min-width-250"
+          class="mx-n3"
+      >
+        <div class="d-flex px-3 py-10 justify-start">
+          <l-template-card
+              v-for="template in templates"
+              :key="template.id"
+              :template="template"
+              class="me-2"
+              min-width="250"
+              size="default"
+              variant="flat"
+          ></l-template-card>
+        </div>
+      </u-fade-scroll>
+      <div v-if="busy_fetch" class="py-16 text-center">
+        <v-progress-circular
+            color="#999"
+            indeterminate
+            size="100"
+            width="4"
+        ></v-progress-circular>
+      </div>
+
+      <div class="widget-buttons">
+        <v-btn
+            :to="{ name: 'LandingTemplatesListPage' }"
+            color="#000"
+            size="x-large"
+            target="_blank"
+            variant="elevated"
+        >
+          {{ $t("onboarding.customize.template.action") }}
+          <v-icon end>open_in_new</v-icon>
+        </v-btn>
+      </div>
+
+      <hr class="my-5" />
+
+
+
+
+
+
+
+
+
+
+
+
       <u-widget-header
         :title="$t('onboarding.customize.tour.title')"
         icon="movie_filter"
@@ -27,66 +101,6 @@
         :shop="shop"
         class="mx-n3"
       ></b-shop-onboarding-tour>
-
-      <hr class="my-5" />
-
-      <u-widget-header
-        :title="$t('onboarding.customize.template.title')"
-        icon="auto_awesome_motion"
-      >
-      </u-widget-header>
-
-      <div class="d-flex align-center">
-        <p class="typo-body flex-grow-1">
-          {{ $t("onboarding.customize.template.msg") }}
-        </p>
-
-        <v-img
-          :src="require('../assets/template.svg')"
-          class="m-2 imgi"
-        ></v-img>
-      </div>
-
-      <u-fade-scroll
-        v-if="templates?.length"
-        drag-scroll
-        show-arrow
-        stick-class="min-width-250"
-        class="mx-n3"
-      >
-        <div class="d-flex px-3 py-10 justify-start">
-          <l-template-card
-            v-for="template in templates"
-            :key="template.id"
-            :template="template"
-            class="me-2"
-            min-width="250"
-            size="default"
-            variant="flat"
-          ></l-template-card>
-        </div>
-      </u-fade-scroll>
-      <div v-if="busy_fetch" class="py-16 text-center">
-        <v-progress-circular
-          color="#999"
-          indeterminate
-          size="100"
-          width="4"
-        ></v-progress-circular>
-      </div>
-
-      <div class="widget-buttons">
-        <v-btn
-          :to="{ name: 'LandingTemplatesListPage' }"
-          color="#000"
-          size="x-large"
-          target="_blank"
-          variant="elevated"
-        >
-          {{ $t("onboarding.customize.template.action") }}
-          <v-icon end>open_in_new</v-icon>
-        </v-btn>
-      </div>
 
       <hr class="my-5" />
 
