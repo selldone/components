@@ -130,7 +130,7 @@ export default {
 
   &.-limited-width {
     max-width: 1000px;
-    margin: 0 auto 12px auto;
+    margin: 0 auto 0 auto;
   }
 
   &.-small {

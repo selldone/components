@@ -42,81 +42,88 @@
               </template>
             </u-widget-header>
 
-            <v-text-field
-              v-model="input_domain"
-              :disabled="inDomainEditMode"
-              :hint="
+            <v-locale-provider :rtl="false">
+              <v-text-field
+                  v-model="input_domain"
+                  :disabled="inDomainEditMode"
+                  :hint="
                 $t('admin_shop.dashboard.info.add_dialog.input_domain_message')
               "
-              :label="$t('admin_shop.dashboard.info.add_dialog.input_domain')"
-              :rules="[GlobalRules.required()]"
-              class="english-field strong-field"
-              color="green"
-              placeholder="your-shop-domain.com"
-              single-line
-              variant="underlined"
-              @keydown.enter="setShopDomain()"
-            >
-              <template v-slot:prepend-inner>
-                <b
-                  class="me-2 pt-2 text-success small text-no-wrap"
-                  dir="ltr"
-                  @click="show_ssl_message = !show_ssl_message"
-                >
-                  <v-icon class="me-1 mb-1" color="success" size="small">
-                    lock
-                  </v-icon>
-                  https://
-                </b>
-              </template>
-            </v-text-field>
+                  :label="$t('admin_shop.dashboard.info.add_dialog.input_domain')"
+                  :rules="[GlobalRules.required()]"
+                  class="english-field strong-field"
+                  color="green"
+                  placeholder="your-shop-domain.com"
+                  single-line
+                  variant="underlined"
+                  @keydown.enter="setShopDomain()"
+                  messages=" "
+              >
+                <template v-slot:prepend-inner>
+                  <b
+                      class="me-2 pt-2 text-success small text-no-wrap"
+                      dir="ltr"
+                      @click="show_ssl_message = !show_ssl_message"
+                  >
+                    <v-icon class="me-1 mb-1" color="success" size="small">
+                      lock
+                    </v-icon>
+                    https://
+                  </b>
+                </template>
 
-            <div class="d-flex">
-              <v-spacer></v-spacer>
-              <v-slide-x-reverse-transition group leave-absolute>
-                <v-chip
-                  v-if="is_wild_card"
-                  key="1"
-                  class="skew-n20 mx-1"
-                  color="#C2185B"
-                  label
-                  size="small"
-                  >Wildcard
-                </v-chip>
+                <template v-slot:message>
+                  <v-slide-x-reverse-transition group leave-absolute>
+                    <v-chip
+                        v-if="is_wild_card"
+                        key="1"
+                        class="skew-n20 mx-1"
+                        color="#C2185B"
+                        label
+                        size="x-small"
+                        variant="flat"
+                    >Wildcard
+                    </v-chip>
 
-                <v-chip
-                  v-if="!is_valid_domain"
-                  key="2"
-                  class="skew-n20 mx-1"
-                  color="#eee"
-                  label
-                  size="small"
-                >
-                  <v-icon class="me-1" color="red" size="small"
-                    >warning
-                  </v-icon>
-                  Invalid domain
-                </v-chip>
-                <v-chip
-                  v-else-if="is_subdomain"
-                  key="3"
-                  class="skew-n20 mx-1"
-                  color="#673AB7"
-                  label
-                  size="small"
-                  >Sub domain
-                </v-chip>
-                <v-chip
-                  v-else
-                  key="4"
-                  class="skew-n20 mx-1"
-                  color="#009688"
-                  label
-                  size="small"
-                  >Root domain
-                </v-chip>
-              </v-slide-x-reverse-transition>
-            </div>
+                    <v-chip
+                        v-if="!is_valid_domain"
+                        key="2"
+                        class="skew-n20 mx-1"
+                        color="#eee"
+                        label
+                        size="x-small"
+                        variant="flat"
+                    >
+                      <v-icon class="me-1" color="red" size="small"
+                      >warning
+                      </v-icon>
+                      Invalid domain
+                    </v-chip>
+                    <v-chip
+                        v-else-if="is_subdomain"
+                        key="3"
+                        class="skew-n20 mx-1"
+                        color="#673AB7"
+                        label
+                        size="x-small"
+                        variant="flat"
+                    >Sub domain
+                    </v-chip>
+                    <v-chip
+                        v-else
+                        key="4"
+                        class="skew-n20 mx-1"
+                        color="#009688"
+                        label
+                        size="x-small"
+                        variant="flat"
+                    >Root domain
+                    </v-chip>
+                  </v-slide-x-reverse-transition>
+                </template>
+              </v-text-field>
+            </v-locale-provider>
+
 
             <v-alert
               :model-value="show_ssl_message"

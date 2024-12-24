@@ -79,6 +79,7 @@
     <v-data-table-server
       v-if="$vuetify.display.smAndUp || show_domains || showHeader || search"
       v-model:expanded="expanded"
+      expand-on-click
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -94,6 +95,11 @@
       hide-default-footer
       item-value="url"
       show-expand
+      :row-props="
+        (_data) => {
+        //  return { class: 'row-hover' };
+        }
+      "
     >
       <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Headers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -160,9 +166,9 @@
             v-if="!item.official && item.domain"
             :title="`Set custom home page for ${item.domain.domain}`"
             block
-            border="2px"
             size="large"
-            variant="text"
+            variant="elevated"
+            color="#000"
             @click.stop="showSetHomeDialog(item.domain)"
           >
             <img
@@ -199,8 +205,9 @@
                 class="tnt"
                 label
                 prepend-icon="home"
+                style="margin-top: 2px"
                 size="x-small"
-                variant="tonal"
+                variant="text"
                 >Default Home
               </v-chip>
             </div>
@@ -414,7 +421,7 @@
 
                 <!-- Currencies -->
                 <v-chip
-                  v-if="!item?.domain.currencies?.length"
+                  v-if="!item.domain?.currencies?.length"
                   size="x-small"
                   color="#fff"
                   variant="flat"
