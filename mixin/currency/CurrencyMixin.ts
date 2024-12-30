@@ -140,7 +140,7 @@ const CurrencyMixin = {
       return amount
         .toString()
         .replace(/^[^.]+/, "")
-        .substring(0, 6);
+        .substring(0, 9);
     },
 
     getBasketItemPrice(shop: Shop, item: BasketItem) {
@@ -173,6 +173,15 @@ const CurrencyMixin = {
       const value =
           _value * (currency_obj.alt_factor ? currency_obj.alt_factor : 1);
 
+      if (Math.abs(value) < Math.pow(10, -currency_obj.floats)) return '0.00';
+
+      if (Math.abs(value) < 1e-6) {
+        const smallValue = value.toFixed(currency_obj.floats); // Ensures currency_obj.floats decimal places for very small values
+        // Maintain consistent format
+        return smallValue.replace(/^0\.000000/, "0.000000");
+      }
+
+      //console.log('--->',numeral(value).format(currency_obj.format),'value:',value,'format:',currency_obj.format)
       return numeral(value).format(currency_obj.format);
     },
 
