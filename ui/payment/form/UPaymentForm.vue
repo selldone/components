@@ -483,7 +483,7 @@
                 <u-payment-button
                   :blue="gateway.cod"
                   :pos="GetUserSelectedCurrencyName(gateway.currency, true)"
-                  :disabled="gateway.limit>0 && gateway.limit > final_payment"
+                  :disabled="gateway.limit > 0 && gateway.limit > final_payment"
                   class="ma-auto pointer-pointer"
                   small
                   @click="
@@ -593,7 +593,7 @@
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ QR Code ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
 
-    <v-card-text v-if="qrCode" class="p-3">
+    <v-card-text v-if="qrCode" class="pa-3 text-center">
       <u-time-laps
         v-if="timeout && !success_end_countdown"
         :duration-ms="timeout"
@@ -613,21 +613,27 @@
         <v-icon>close</v-icon>
       </v-btn>
 
+      <p class="text-start typo-body mt-10 mb-3">
+        {{$t('global.payment_form.qr.guide')}}
+      </p>
+
       <div class="position-relative">
-        <u-qrcode
-          :class="{ blurred: success_end_countdown }"
-          :options="{
+          <div style="min-height: 300px">
+            <u-qrcode
+                :class="{ blurred: success_end_countdown }"
+                :options="{
             width: 300,
             color: { light: '#fff', dark: '#000' },
           }"
-          :value="qrCode"
-          class="my-6 mx-auto zoomIn delay_300 blur-animate"
-        >
-        </u-qrcode>
+                :value="qrCode"
+                class="my-6 mx-auto blur-animate"
+            >
+            </u-qrcode>
 
+          </div>
         <v-icon
           v-if="success_end_countdown"
-          class="zoomIn center-absolute delay_600"
+          class=" center-absolute "
           color="#4CAF50"
           size="120"
           >check_circle
@@ -638,20 +644,25 @@
         :color="currency.gradient[0]"
         :image="currency.icon"
         :message="$t('global.payment_form.qr.address')"
-        :value="address"
-        class="fadeInDown delay_100"
+        :value="address" small-width-mode
       >
       </u-text-copy-box>
-      <p class="mt-3 zoomIn delay_500">
-        {{ $t("global.payment_form.qr.amount") }}
-        :
-      </p>
-      <u-price
-        :amount="amount"
-        :currency="currency.code"
-        class="fadeIn delay_600"
-        large
-      ></u-price>
+
+      <u-text-copy-box
+        :color="currency.gradient[0]"
+        :message="$t('global.payment_form.qr.amount')"
+        class="mt-3  "
+        :value="amount"
+        hide-value small-width-mode
+      >
+        <template v-slot:prepend-value>
+          <u-price
+            :amount="amount"
+            :currency="currency.code"
+            large
+          ></u-price>
+        </template>
+      </u-text-copy-box>
     </v-card-text>
 
     <!-- ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Stripe ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ -->
@@ -770,14 +781,14 @@ import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import SWalletInput from "@selldone/components-vue/storefront/wallet/SWalletInput.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
-import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+import { EventBus } from "@selldone/core-js/events/EventBus.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 
 export default {
   name: "UPaymentForm",
-  mixins: [CurrencyMixin,ClubMixin],
+  mixins: [CurrencyMixin, ClubMixin],
   components: {
     ULoadingEllipsis,
     SWalletInput,
@@ -1149,7 +1160,10 @@ export default {
         if (createErr) {
           if (!this.selected_gateway) {
             // Prevent to show error when select other gateway (before UI create completely!
-            NotificationService.showErrorAlert(null, "Problem in creating payment UI!");
+            NotificationService.showErrorAlert(
+              null,
+              "Problem in creating payment UI!",
+            );
             console.error(createErr);
           }
         }

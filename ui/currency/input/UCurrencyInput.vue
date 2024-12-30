@@ -13,6 +13,7 @@
   -->
 
 <template>
+
   <v-autocomplete
     v-model="currency"
     :bg-color="transparent ? 'transparent' : undefined"
@@ -54,7 +55,7 @@
     @update:model-value="(val) => $emit('change', val)"
     :persistent-placeholder="persistentPlaceholder"
     aria-label="Select Currency"
-    :returnObject="currencyObject"
+    :returnObject="returnObject"
     closable-chips
   >
     <template v-slot:item="{ item, props }">
@@ -267,7 +268,6 @@ export default {
     },
 
     currencyObject() {
-      if (this.returnObject) return this.currency;
       return this.GetCurrency(this.currency);
     },
   },

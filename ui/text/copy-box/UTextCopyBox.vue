@@ -68,7 +68,7 @@
         >
         <div v-else :class="contentClass" class="">
           <slot name="prepend-value"></slot>
-          <span :style="{ 'letter-spacing': letterSpacing }"> {{ value }}</span>
+          <span v-if="!hideValue" :style="{ 'letter-spacing': letterSpacing }"> {{ value }}</span>
         </div>
         <v-spacer :style="message ? 'flex-basis: 14px;' : ''"></v-spacer>
       </div>
@@ -89,6 +89,7 @@ export default {
   name: "UTextCopyBox",
   props: {
     value: {},
+    hideValue:Boolean,
     message: {},
     icon: { default: "fa:fas fa-copy" },
     image: {},

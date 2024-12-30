@@ -142,7 +142,7 @@
     >
       <!-- █████████████████████ Blockchain mode █████████████████████ -->
 
-      <template v-if="gateway.blockchain && shopGateway">
+      <!--<template v-if="gateway.blockchain && shopGateway">
         <u-widget-header
           :title="$t('edit_gateway.wallet')"
           icon="account_balance_wallet"
@@ -171,18 +171,18 @@
         >
         </u-text-value-box>
 
-        <!-- -------------------------------- Dialog add wallet --------------------------- -->
+      -------------------------------- Dialog add wallet --------------------------
 
         <b-gateway-blockchain
           v-model="private_val"
           :gateway="gateway"
           :shopGateway="shopGateway"
         ></b-gateway-blockchain>
-      </template>
+      </template>-->
 
       <!-- █████████████████████ Normal mode █████████████████████ -->
 
-      <template v-else-if="!gateway.blockchain">
+      <!--  <template v-else-if="!gateway.blockchain">-->
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Public Variables ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
         <div v-if="has_public" class="mb-5">
           <u-widget-header
@@ -301,7 +301,7 @@
             />
           </v-form>
         </div>
-      </template>
+      <!-- </template>-->
     </div>
 
     <!-- █████████████████████ Limit █████████████████████ -->
