@@ -115,7 +115,7 @@
       </template>
 
       <template v-slot:item.card="{ item }">
-        <div class="min-width-200">
+        <div class="min-width-200 py-1">
           <u-payment-card
             :card="item.card"
             :currency="item.currency"
@@ -382,9 +382,9 @@ export default {
                 this.$t(
                   "process_center.payment_widget.notifications.pay_fail_message",
                 ) +
-                  `<br>${this.$t("global.commons.last_status")}: ${this.getName(
+                  `<br>${this.$t("global.commons.last_status")}: <b>${this.getName(
                     data.status,
-                  )}`,
+                  )}</b><hr>${data.message}`,
               );
             }
           }
