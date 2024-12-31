@@ -29,7 +29,7 @@
       class="ps-1 text-uppercase"
     >
       <span
-        v-if="card && image.startsWith('<svg')"
+        v-if="card && image?.startsWith('<svg')"
         class="me-1 d-block flex-grow-0"
         style="width: 24px; height: auto"
         v-html="image"
@@ -95,8 +95,10 @@
           class="me-1"
         />
 
-        <span dir="ltr">{{ card.card_no }}</span>
-        <v-icon class="mx-2" size="small"> lock</v-icon>
+        <span dir="ltr" v-copy="card.card_no" class="pa-0">{{
+          abstractCardNumber(card.card_no)
+        }}</span>
+        <v-icon class="mx-2" size="14"> lock</v-icon>
       </div>
       <!--
       <div v-if="card.bank" title="Bank" class="my-1">
@@ -116,9 +118,11 @@
 <script lang="ts">
 import { Cards } from "@selldone/core-js/enums/payment/Cards.ts";
 import SVGs from "@selldone/core-js/enums/payment/stripe/SVGs.ts";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
 export default {
   name: "UPaymentCard",
+  mixins: [CurrencyMixin],
 
   data: function () {
     return {};
@@ -138,6 +142,9 @@ export default {
     currency: {},
   },
   computed: {
+    currency_obj() {
+      return this.GetCurrency(this.currency);
+    },
     image() {
       // In-app purchase:
       if (this.store?.toLowerCase() === "appstore")
@@ -165,7 +172,22 @@ export default {
         out = SVGs[this.method.toLowerCase()];
       }
 
+      if (this.currency_obj?.blockchain) {
+        return require("../../../assets/icons/blockchain.svg");
+      }
+
       return out ? out : Cards.card;
+    },
+  },
+
+  methods: {
+    abstractCardNumber(cardNo) {
+      if (cardNo?.length > 16) {
+        const start = cardNo.slice(0, 6); // First 6 characters
+        const end = cardNo.slice(-4); // Last 4 characters
+        return `${start}...${end}`; // Truncated string
+      }
+      return cardNo; // Return original if 16 or fewer characters
     },
   },
 };
