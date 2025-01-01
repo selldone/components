@@ -13,26 +13,39 @@
   -->
 
 <template>
-  <v-menu max-width="720" min-width="400" content-class="rounded-lg">
+  <v-menu max-width="720" min-width="400" content-class="rounded-lg" open-on-hover>
     <template v-slot:activator="{ props }">
       <v-btn
-        :title="`${keywords}\n\nClick to view details...`"
-        icon
         variant="text"
         v-bind="props"
         @click.stop
+        density="comfortable"
+        min-width="30"
       >
         <img height="16" src="../../assets/trademark/google.svg" width="16" />
+        <v-badge
+          v-if="total_clicks"
+          :content="numeralFormat(total_clicks, '0.[0] a')"
+          inline
+          color="blue"
+          title="Clicks"
+        ></v-badge>
       </v-btn>
     </template>
     <v-sheet class="pa-3 small text-start" color="#fafafa" rounded="xl">
-      <img
-        class="me-1"
-        height="16"
-        src="../../assets/trademark/google.svg"
-        width="16"
-      />
-      <b>Google Search Console</b>
+
+      <div class="d-flex align-center">
+        <img
+            class="me-1"
+            height="16"
+            src="../../assets/trademark/google.svg"
+            width="16"
+        />
+        <b>Google Search Console</b>
+<v-spacer></v-spacer>
+        Last Audit:
+        {{getFromNowString(auditAt)}}
+      </div>
 
       <div v-if="queries" class="my-2">
         <v-table class="rounded-lg" density="compact">
@@ -60,7 +73,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item, index) in queries" :key="index">
+              <tr v-for="(item, index) in queries" :key="index" :class="{'border-start-green-thin':item.ctr>0}" >
                 <td class="text-muted text-center">{{ index + 1 }}</td>
                 <td>{{ decodeURIComponent(item.keys) }}</td>
                 <td>{{ numeralFormat(item.impressions, "0.[0]a") }}</td>
@@ -85,7 +98,7 @@
       </div>
 
       <div v-if="countries" class="my-2">
-        <v-table class="rounded-lg" dense>
+        <v-table class="rounded-lg" density="compact">
           <template v-slot:default>
             <thead>
               <tr>
@@ -147,12 +160,16 @@
 <script lang="ts">
 import UProgressScore from "../../ui/progress/score/UProgressScore.vue";
 import numeral from "numeral";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "SSearchConsoleAuditMenu",
+  mixins: [DateMixin],
+
   components: { UProgressScore },
   props: {
     audit: { required: true, type: Object },
+    auditAt:{},
   },
   data() {
     return {};
@@ -175,6 +192,10 @@ export default {
         );
       });
       return out.join("\n");
+    },
+
+    total_clicks() {
+      return this.queries.reduce((acc, it) => acc + it.clicks, 0);
     },
   },
   created() {},
