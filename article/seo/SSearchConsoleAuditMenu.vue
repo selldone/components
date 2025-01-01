@@ -13,23 +13,25 @@
   -->
 
 <template>
-  <v-menu max-width="720" min-width="400" content-class="rounded-lg" open-on-hover>
+  <v-menu max-width="720" min-width="400" content-class="rounded-lg" open-on-hover location="right center">
     <template v-slot:activator="{ props }">
       <v-btn
         variant="text"
         v-bind="props"
         @click.stop
-        density="comfortable"
-        min-width="30"
       >
         <img height="16" src="../../assets/trademark/google.svg" width="16" />
-        <v-badge
+        <v-chip
           v-if="total_clicks"
-          :content="numeralFormat(total_clicks, '0.[0] a')"
           inline
-          color="blue"
-          title="Clicks"
-        ></v-badge>
+          color="#512DA8"
+          prepend-icon="ads_click"
+          variant="flat"
+          size="x-small"
+          class="ms-1"
+        >
+          {{numeralFormat(total_clicks, '0.[0] a')}}
+        </v-chip>
       </v-btn>
     </template>
     <v-sheet class="pa-3 small text-start" color="#fafafa" rounded="xl">
