@@ -16,6 +16,7 @@
   <!------------------------------- Support ------------------------------->
 
   <v-list-item
+      v-if="shop"
     :title="$t('global.commons.support')"
     prepend-icon="fa:fas fa-headset"
     append-icon="expand_more"
@@ -26,7 +27,7 @@
     </v-list-item-subtitle>
 
     <v-menu
-      v-if="shop"
+
       :persistent="false"
       close-on-content-click
       min-width="240"
