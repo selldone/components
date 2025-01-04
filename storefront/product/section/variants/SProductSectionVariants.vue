@@ -16,10 +16,15 @@
   <div class="s--product-variants">
     <!-- █████████████████████ 💡 Product Variants █████████████████████ -->
     <template v-if="hasVariants">
-      <template v-if="MODE_DISPLAY_VARIANTS === 'row'">
+      <template v-if="variants_mode === ShopThemeVariantsMode.select.value">
         <variant-filter
           :variants="$product.product_variants"
-          @change="(filter) => $emit('update:filter', filter)"
+          @change="
+            (filter) => {
+              $emit('update:filter', filter);
+              show_all = true;
+            }
+          "
         />
         <v-slide-y-reverse-transition group hide-on-leave>
           <variant-item-mini
@@ -27,7 +32,8 @@
             :key="index"
             :product-variant="product_variant"
             :selected="product_variant === currentVariant"
-            class="m-2"
+            class="ma-1 border"
+
             force-enable
             @select="$emit('update:currentVariant', product_variant)"
           />
@@ -35,23 +41,33 @@
         <v-btn
           v-if="$product.product_variants.length > 3"
           class="crossRotate m-1"
-          icon
+          variant="text"
+          size="small"
           @click="show_all = !show_all"
         >
           <v-icon>
             {{ show_all ? "keyboard_arrow_up" : "more_horiz" }}
           </v-icon>
+          {{
+            show_all ? $t("global.actions.collapse") : $t("global.actions.more")
+          }}
         </v-btn>
       </template>
       <div v-else class="d-flex flex-column align-stretch">
-        <div v-for="(it, index) in AvailableProductVariants" :key="index" :style="{order:GetVariantOrderIndexByCode(it.code,$product)}">
+        <div
+          v-for="(it, index) in AvailableProductVariants"
+          :key="index"
+          :style="{ order: GetVariantOrderIndexByCode(it.code, $product) }"
+        >
           <!-- Variant title -->
 
           <div class="my-2">
             <v-icon class="me-1" color="#111" size="small"
-              >{{ GetVariantIconByCode(it.code,$product) }}
+              >{{ GetVariantIconByCode(it.code, $product) }}
             </v-icon>
-            <b class="me-2">{{ $t(GetVariantNameByCode(it.code,$product)) }}</b>
+            <b class="me-2">{{
+              $t(GetVariantNameByCode(it.code, $product))
+            }}</b>
             <span v-if="currentVariant">{{
               it.code === "color"
                 ? GetNameOfColor(currentVariant.color)
@@ -76,7 +92,9 @@
               }"
               class="var-sel"
               @click="selectVarF(it.code, selection)"
-              :style="{order:GetVariantValueIndexCode(it.code,$product,selection)}"
+              :style="{
+                order: GetVariantValueIndexCode(it.code, $product, selection),
+              }"
             >
               <!-- Is Color ? -->
               <template v-if="it.code === 'color'">
@@ -105,7 +123,9 @@
                 <template v-else>
                   <u-color-circle :color="selection"></u-color-circle>
 
-                  <span style="font-size: 70%">{{ GetNameOfColor(selection) }}</span>
+                  <span style="font-size: 70%">{{
+                    GetNameOfColor(selection)
+                  }}</span>
                 </template>
               </template>
               <!-- Normal -->
@@ -138,12 +158,15 @@ import VariantFilter from "../../variant/variant-filter/VariantFilter.vue";
 import VariantItemMini from "../../../../storefront/product/variant/VariantItemMini.vue";
 import {
   GetVariantIconByCode,
-  GetVariantNameByCode, GetVariantOrderIndexByCode, GetVariantValueIndexCode,
-  ProductVariants
+  GetVariantNameByCode,
+  GetVariantOrderIndexByCode,
+  GetVariantValueIndexCode,
+  ProductVariants,
 } from "@selldone/core-js/enums/product/ProductVariants";
 import UVariantAssetImage from "../../../../ui/variant/asset/image/UVariantAssetImage.vue";
 import UColorCircle from "../../../../ui/color/circle/UColorCircle.vue";
-import {GetNameOfColor} from "@selldone/core-js/helper/color/ColorHelper.ts";
+import { GetNameOfColor } from "@selldone/core-js/helper/color/ColorHelper.ts";
+import { ShopThemeVariantsMode } from "@selldone/core-js/enums/shop/theme/ShopThemeVariantsMode.ts";
 
 export default {
   name: "SProductSectionVariants",
@@ -169,9 +192,20 @@ export default {
 
     GetNameOfColor: GetNameOfColor,
     show_all: false,
+
+    // ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+    ShopThemeVariantsMode: ShopThemeVariantsMode,
   }),
 
   computed: {
+    theme() {
+      if (!this.$shop) return null;
+      return this.$shop.theme;
+    },
+    variants_mode() {
+      return this.theme?.variants_mode;
+    },
+
     image_mode() {
       return (
         this.AvailableProductVariants.length === 1 &&
@@ -182,11 +216,6 @@ export default {
 
     hasVariants() {
       return this.$product.product_variants?.length > 0;
-    },
-
-    MODE_DISPLAY_VARIANTS() {
-      // Can be : null , row
-      return null;
     },
 
     product_variants() {
@@ -227,7 +256,7 @@ export default {
       }
 
       // Row mode:
-      if (this.MODE_DISPLAY_VARIANTS === "row") {
+      if (this.variants_mode === ShopThemeVariantsMode.select.value) {
         if (this.show_all) return out;
 
         return out ? out.slice(0, 3) : [];

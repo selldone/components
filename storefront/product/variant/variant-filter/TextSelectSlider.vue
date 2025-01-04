@@ -14,43 +14,70 @@
 
 <template>
   <div
-    :class="selected ? 'active' : ''"
+    :class="selected && !show ? 'active' : ''"
     class="d-flex align-center justify-center slider-container pointer-pointer"
+    style="min-height: 32px"
     @click="toggle()"
   >
-    <v-icon class="ms-1" color="#fff" size="small">
+    <v-icon class="me-2" size="small">
       {{ icon }}
     </v-icon>
+    <v-scale-transition group leave-absolute>
+      <template v-if="show">
+        <v-btn
+          v-for="item in list"
+          :key="item"
+          dir="auto"
+          size="x-small"
+          variant="outlined"
+          color="#fff"
+          class="tnt ms-1"
+          @click="select(item)"
+          @click.stop
+          min-height="28"
+        >
 
-    <span v-if="show">
-      <span
-        v-for="item in list"
-        :key="item"
-        class="card-badge-info"
-        dir="auto"
-        @click="select(item)"
-        @click.stop
-      >
-        {{ item }}
-      </span>
-      <span
-        class="card-badge-info"
-        dir="auto"
-        @click="select(null)"
-        @click.stop
-      >
-        {{ $t("global.commons.all") }}
-      </span>
-    </span>
-    <span v-else class="card-badge-info" dir="auto">
-      {{ selected ? selected : title }}
-    </span>
+          <u-variant-asset-image :value="item" :size="20" class="ms-n1 me-1"></u-variant-asset-image>
+
+          {{item?.removeVariantAsset()}}
+        </v-btn>
+        <v-btn
+          class="ms-1"
+          dir="auto"
+          size="x-small"
+          variant="elevated"
+          @click="select(null)"
+          @click.stop
+          color="#000"
+          min-height="28"
+        >
+          {{ $t("global.commons.all") }}
+        </v-btn>
+      </template>
+      <template v-else >
+        <b v-if="selected" dir="auto">
+
+          <u-variant-asset-image :value="selected" :size="24"></u-variant-asset-image>
+
+          {{selected.removeVariantAsset()}}
+        </b>
+        <b v-else dir="auto">
+          {{  title }}
+        </b>
+      </template>
+
+
+
+    </v-scale-transition>
   </div>
 </template>
 
 <script lang="ts">
+import UVariantAssetImage from "@selldone/components-vue/ui/variant/asset/image/UVariantAssetImage.vue";
+
 export default {
   name: "TextSelectSlider",
+  components: { UVariantAssetImage },
   emits: ["select", "open", "close"],
   props: {
     icon: {
@@ -101,8 +128,14 @@ export default {
   methods: {
     toggle() {
       this.show = !this.show;
-      if (this.show) this.$emit("open");
-      else this.$emit("close");
+      if (this.show) {
+        this.$emit("open");
+        this.selected = null;
+        this.$emit("select", null);
+      }
+      else {
+        this.$emit("close");
+      }
     },
     select(item) {
       this.selected = item;
@@ -117,30 +150,16 @@ export default {
 .slider-container {
   user-select: none;
 
-  background: #999;
-
   color: #fff;
+  background: #333;
+
   border-radius: 8px;
   margin: 3px;
   padding: 4px 8px;
 
   &.active {
-    background: var(--theme-dark);
-  }
-}
-
-.card-badge-info {
-  color: #eee;
-  user-select: none;
-  cursor: pointer;
-
-  padding: 0 4px;
-  font-weight: 400;
-  margin-right: 4px;
-
-  &:hover {
-    color: #ffa000;
-    font-weight: 600;
+    background: #eee;
+    color: #333;
   }
 }
 </style>

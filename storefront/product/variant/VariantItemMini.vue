@@ -198,7 +198,7 @@ export default {
 
   &.selected {
     color: #fff;
-    background: var(--theme-dark);
+    background: #000;
 
     .card-badge-info {
       color: white;
@@ -221,7 +221,7 @@ export default {
     }
 
     &.selected {
-      background: var(--theme-dark);
+      background: #000;
     }
   }
 

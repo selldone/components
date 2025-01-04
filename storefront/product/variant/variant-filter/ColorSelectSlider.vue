@@ -13,54 +13,57 @@
   -->
 
 <template>
-  <v-col
-    :class="selected ? 'active' : ''"
+  <div
+    :class="selected && !show ? 'active' : ''"
     class="slider-container pointer-pointer d-flex align-center justify-center"
     @click="toggle()"
+    style="min-height: 32px"
   >
-    <v-icon
-      :color="selected ? '#444' : '#fff'"
-      class="ms-1 no-inv"
-      size="small"
-    >
+    <v-icon class="me-2 no-inv" size="small">
       {{ icon }}
     </v-icon>
+    <v-scale-transition group leave-absolute>
+      <template v-if="show">
+        <u-color-circle
+          v-for="item in list"
+          :key="item"
+          :color="item"
+          class="me-1 hover-scale"
+          :size="19"
+          @click="select(item)"
+          @click.stop
+        ></u-color-circle>
 
-    <span v-if="show" class="mb-1">
-      <v-icon
-        v-for="item in list"
-        :key="item"
-        :color="item"
-        class="me-1 hover-scale"
-        size="small"
-        @click="select(item)"
-        @click.stop
-        >brightness_1</v-icon
-      >
-
-      <span
-        class="card-badge-info"
-        dir="auto"
-        @click="select(null)"
-        @click.stop
-      >
-        {{ $t("global.commons.all") }}
-      </span>
-    </span>
-    <span v-else :color="selected">
-      <v-icon v-if="selected" :color="selected" class="hover-scale" size="small"
-        >brightness_1</v-icon
-      >
-      <span v-else class="card-badge-info">{{
-        $t("global.variants.color")
-      }}</span>
-    </span>
-  </v-col>
+        <v-btn
+          class="ms-1"
+          dir="auto"
+          size="x-small"
+          variant="elevated"
+          @click="select(null)"
+          @click.stop
+          color="#000"
+          min-height="28"
+        >
+          {{ $t("global.commons.all") }}
+        </v-btn>
+      </template>
+      <template v-else>
+        <u-color-circle v-if="selected" :color="selected" :size="19">
+        </u-color-circle>
+        <b v-else>
+          {{ $t("global.commons.all") }}
+        </b>
+      </template>
+    </v-scale-transition>
+  </div>
 </template>
 
 <script lang="ts">
+import UColorCircle from "@selldone/components-vue/ui/color/circle/UColorCircle.vue";
+
 export default {
   name: "ColorSelectSlider",
+  components: { UColorCircle },
   emits: ["open", "close", "select"],
   props: {
     icon: {
@@ -106,8 +109,15 @@ export default {
   methods: {
     toggle() {
       this.show = !this.show;
-      if (this.show) this.$emit("open");
-      else this.$emit("close");
+
+      if (this.show) {
+        this.$emit("open");
+        this.selected = null;
+        this.$emit("select", null);
+      }
+      else{
+        this.$emit("close");
+      }
     },
     select(item) {
       this.selected = item;
@@ -123,7 +133,7 @@ export default {
   user-select: none;
 
   color: #fff;
-  background: #999;
+  background: #333;
   border-radius: 8px;
   margin: 3px;
   padding: 4px 8px;
@@ -131,20 +141,6 @@ export default {
   &.active {
     background: #eee;
     color: #333;
-  }
-}
-
-.card-badge-info {
-  user-select: none;
-  cursor: pointer;
-
-  padding: 0 4px;
-  font-weight: 400;
-  margin-right: 4px;
-
-  &:hover {
-    color: #ffa000;
-    font-weight: 600;
   }
 }
 

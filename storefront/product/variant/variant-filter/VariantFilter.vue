@@ -13,18 +13,18 @@
   -->
 
 <template>
-  <v-col class="d-inline-flex">
-    <v-btn class="ms-2" icon @click="show_filter = !show_filter">
+  <div class="d-flex align-center overflow-auto thin-scroll justify-start" style="min-height: 44px">
+    <v-btn class="ms-2" icon variant="text" size="36" @click="show_filter = !show_filter">
       <v-icon class="crossRotate">
-        {{ show_filter ? "close" : "more_vert" }}
+        {{ show_filter ? "close" : "filter_alt" }}
       </v-icon>
     </v-btn>
 
     <v-slide-x-transition hide-on-leave>
-      <small v-if="!show_filter" style="margin: auto">
-        <i class="fas fa-arrow-right" />
+      <div v-if="!show_filter" class="text-start small">
+        <i class="fas fa-arrow-right me-1" />
         {{ $t("global.variant_filter.title") }}
-      </small>
+      </div>
     </v-slide-x-transition>
 
     <v-fade-transition>
@@ -139,30 +139,39 @@
 
         <!-- ============== quantities ============== -->
 
-        <div class="p-1 m-0 d-flex align-center">
-          <v-switch
+        <div class="pa-1">
+          <v-btn-toggle
             v-model="only_available"
-            :label="$t('global.variant_filter.only_available')"
-            class="inline-block ms-2 my-0 py-0 small-label"
+            selected-class="dark-flat elevation-3"
+
             color="success"
             density="compact"
-            hide-details
-            inset
             @update:model-value="onChange"
-          ></v-switch>
+            variant="outlined"
+            rounded="lg"
+            class="ms-1"
+          >
+            <v-btn :value="false"  class="tnt" prepend-icon="all_inclusive" >
+              {{$t('global.commons.all')}}
+            </v-btn>
+            <v-btn  :value="true"  class="tnt" prepend-icon="check_box">
+              {{$t('global.variant_filter.only_available')}}
+            </v-btn>
+          </v-btn-toggle>
         </div>
       </v-row>
     </v-fade-transition>
-  </v-col>
+  </div>
 </template>
 
 <script lang="ts">
 import TextSelectSlider from "./TextSelectSlider.vue";
 import ColorSelectSlider from "./ColorSelectSlider.vue";
+import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 
 export default {
   name: "VariantFilter",
-  components: { ColorSelectSlider, TextSelectSlider },
+  components: {USmartToggle, ColorSelectSlider, TextSelectSlider },
   props: {
     variants: {
       required: true,
@@ -217,6 +226,15 @@ export default {
     types() {
       return this.getItemsInArray(this.variants, "type");
     },
+  },
+  watch:{
+    show_filter(val){
+      if(val){
+        this.onChange() // Trigger change event when filter is shown to apply last selected filter
+      }else{
+        this.$emit("change", null); // Reset filter when filter is hidden
+      }
+    }
   },
   methods: {
     onChange() {
