@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--form-builder-container">
-    <v-row align="center" class="py-1" no-gutters>
+    <v-row align="center" class="py-1 flex-nowrap" no-gutters>
       <v-icon class="me-3 cursor-move drag--handle" title="Drag and move"
         >unfold_more
       </v-icon>
@@ -22,7 +22,7 @@
       <v-icon>{{ type?.icon }}</v-icon>
 
       <b class="mx-1 small">{{ item.title }}</b>
-      <span class="mx-1 small">/ {{ getName(type?.title) }}</span>
+      <span class="mx-1 small text-nowrap">/ {{ getName(type?.title) }}</span>
 
       <v-spacer></v-spacer>
 
