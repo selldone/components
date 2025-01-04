@@ -314,6 +314,21 @@
           </div>
         </v-col>
       </v-row>
+      <!-- █████████████████████ Custom Checkout Input Form █████████████████████ -->
+      <div v-if="checkout_form?.length" class="max-w-550">
+        <u-text-value-box v-for="(_item) in checkout_form?.filter(x=>x.type!=='note'/*No need to show notes!*/)" vb75
+            :label="_item.title?_item.title:_item.name" :value="order_form?order_form[_item.name]:null">
+          <template v-if="!_item.type || _item.type==='text'">
+            <v-icon v-if="order_form && order_form[_item.name]" class="ms-1" size="small" color="green">check_circle</v-icon>
+            <template v-else >
+              <v-icon class="me-1" size="small" color="red">cancel</v-icon>
+              <small class="op-0-7">{{$t('global.commons.empty')}}</small>
+            </template>
+
+          </template>
+        </u-text-value-box>
+      </div>
+
 
       <!-- █████████████████████ Campaign █████████████████████ -->
 
@@ -813,7 +828,7 @@ import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import BOrderPaymentTable from "../../../order/payment/table/BOrderPaymentTable.vue";
 import UChartSankey from "../../../../ui/chart/sankey/UChartSankey.vue";
-import { Basket, Bill } from "@selldone/core-js";
+import {Basket, Bill, ShopOptionsHelper} from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
@@ -823,6 +838,7 @@ import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHead
 export default {
   name: "BOrderDashboardPayment",
   mixins: [DateMixin, ClubMixin],
+  inject: ["$shop"],
 
   components: {
     UWidgetHeader,
@@ -927,6 +943,25 @@ export default {
     isPOS() {
       return this.order.type === "POS";
     },
+
+    //------------------------------------------------------------------------
+    checkout() {
+      return ShopOptionsHelper.GetCheckout(this.$shop);
+    },
+
+    /**
+     * Select custom checkout form
+     */
+    checkout_form() {
+      return this.checkout?.form;
+    },
+    order_form(){
+      return this.order?.form;
+    },
+    //------------------------------------------------------------------------
+
+
+
     in_this_step() {
       const reserved = this.order.status === Basket.Status.Reserved.code;
 

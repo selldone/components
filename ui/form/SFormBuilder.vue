@@ -14,8 +14,8 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="s--form-builder widget-box">
-    <u-widget-header :icon="icon" :title="title"></u-widget-header>
-    <v-list-subheader>{{ hint }}</v-list-subheader>
+    <u-widget-header v-if="title" :icon="icon" :title="title"></u-widget-header>
+    <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
     <draggable
       :animation="200"
       :disabled="false"
@@ -76,6 +76,7 @@ export default {
     draggable: defineAsyncComponent(() => import("vuedraggable")),
     SFormBuilderRow,
   },
+  emits: ["update:structure"],
   props: {
     structure: {
       required: false,

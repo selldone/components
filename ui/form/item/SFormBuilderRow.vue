@@ -35,7 +35,7 @@
     </v-row>
 
     <v-expand-transition>
-      <div v-if="!collapse">
+      <div v-if="!collapse" class="elevation-3">
         <div
           :class="{
             '-locked':

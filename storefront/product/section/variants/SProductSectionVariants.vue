@@ -40,16 +40,16 @@
         </v-slide-y-reverse-transition>
         <v-btn
           v-if="$product.product_variants.length > 3"
-          class="crossRotate m-1"
+          class="ma-1"
           variant="text"
           size="small"
           @click="show_all = !show_all"
         >
-          <v-icon>
-            {{ show_all ? "keyboard_arrow_up" : "more_horiz" }}
+          <v-icon :class="{'rotate-180':!show_all}" start class="t-all-400">
+            keyboard_arrow_up
           </v-icon>
           {{
-            show_all ? $t("global.actions.collapse") : $t("global.actions.more")
+            show_all ? $t("global.actions.collapse") : $t("global.commons.more")
           }}
         </v-btn>
       </template>
