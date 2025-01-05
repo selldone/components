@@ -321,7 +321,18 @@
           <v-expand-transition>
             <ul v-if="capture_amount !== payment.amount">
               <li>
-                This will replace the 'amount' value in Selldone's payment
+
+             Authorized amount by customer:   <u-price :amount="payment.amount" :currency="payment.currency"></u-price>
+                <v-chip v-if="percentageChange" :color="percentageChange>0?'green':'red'" class="ms-2" size="small" variant="flat">
+                  {{ percentageChange }}%
+                </v-chip>
+
+              </li>
+              <li v-if="percentageChange>0">
+                Capture more than the authorized amount on a payment has limits.
+              </li>
+              <li>
+                This will replace the 'amount' value in Selldone payment
                 details.
               </li>
               <li>
@@ -497,6 +508,18 @@ export default {
 
       return out;
     },
+
+    percentageChange() {
+      if (!this.capture_amount || !this.payment.amount) return null;
+      const change =
+          ((this.capture_amount - this.payment.amount) / this.payment.amount) * 100;
+
+      // Format the percentage with a sign
+      const sign = change > 0 ? "+" : ""; // Add "+" for positive values
+      return `${sign}${change.toFixed(2)}`; // Include the sign with the formatted value
+    },
+
+
   },
   created() {
     this.capture_amount = this.payment.amount;
