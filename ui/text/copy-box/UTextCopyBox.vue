@@ -180,6 +180,10 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: stretch;
+      word-break: break-all;       /* Break long words at arbitrary points */
+      overflow-wrap: anywhere;     /* Ensure breaking is possible within words */
+
+
 
       @media only screen and (max-width: 850px) {
         font-size: 0.8rem;
