@@ -50,6 +50,7 @@
       v-if="hasAddressBook"
       style="position: absolute; top: 84px; left: 8px; z-index: 1000"
     >
+      <!-- Address book -->
       <div class="mb-5">
         <v-btn
           v-if="mode_bottom_card !== 'detail'"
