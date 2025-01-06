@@ -143,7 +143,7 @@ export default {
       }
       // Set default values:
       try {
-        this.form.forEach((input) => {
+        this.form?.forEach((input) => {
           if (input.default && this.local_value[input.name] === undefined) {
             this.local_value[input.name] = input.default;
           }
