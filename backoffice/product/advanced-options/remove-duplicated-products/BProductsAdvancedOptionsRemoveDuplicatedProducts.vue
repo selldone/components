@@ -20,73 +20,80 @@
     ></u-widget-header>
 
     <v-list-subheader>
-      Automatically remove duplicate products from your shop. Choose the criteria below for removing duplicates:
+      Automatically remove duplicate products from your shop. Choose the
+      criteria below for removing duplicates:
     </v-list-subheader>
 
     <u-smart-select
-        v-model="mode"
-        :items="[
-    {
-      value: 'sku',
-      text: 'Duplicate by SKU',
-      description: 'Remove duplicate products that share the same SKU. Products without an SKU will be ignored.',
-    },
-    {
-      value: 'title',
-      text: 'Duplicate by Title',
-      description: 'Remove duplicate products that share the same Title.',
-    },
-    {
-      value: 'sku-title',
-      text: 'Duplicate by SKU & Title (✨ Recommended)',
-      description: 'Safely remove duplicates that share both the same SKU and Title.',
-    }
-  ]"
-        item-value="value"
-        item-text="text"
-        item-description="description"
-        item-icon="icon"
-        force-show-all
-        class="my-3"
+      v-model="mode"
+      :items="[
+        {
+          value: 'sku',
+          text: 'Duplicate by SKU',
+          description:
+            'Remove duplicate products that share the same SKU. Products without an SKU will be ignored.',
+        },
+        {
+          value: 'title',
+          text: 'Duplicate by Title',
+          description: 'Remove duplicate products that share the same Title.',
+        },
+        {
+          value: 'sku-title',
+          text: 'Duplicate by SKU & Title (✨ Recommended)',
+          description:
+            'Safely remove duplicates that share both the same SKU and Title.',
+        },
+      ]"
+      item-value="value"
+      item-text="text"
+      item-description="description"
+      item-icon="icon"
+      force-show-all
+      class="my-3"
     />
 
-<div class="my-5 bg-white rounded-18px">
-  <b-category-input
-      v-model="category_id"
-      placeholder="Leave empty to include all categories (*)"
-      variant="solo"
-      flat
-      label="Filter by Category"
-      persistent-placeholder
-      clearable
-      no-home>
-  </b-category-input>
-
-</div>
+    <div class="my-5 bg-white rounded-18px">
+      <b-category-input
+        v-model="category_id"
+        placeholder="Leave empty to include all categories (*)"
+        variant="solo"
+        flat
+        label="Filter by Category"
+        persistent-placeholder
+        clearable
+        no-home
+      >
+      </b-category-input>
+    </div>
 
     <v-list-subheader>Preview Products to Be Removed</v-list-subheader>
 
-    <v-data-table-server v-if="products" :loading="busy_fetch" :items="products"
-
-    v-model:page="page"
-                         v-model:items-per-page="limit"
-                         :items-length="total"
-                         :items-per-page-options="[5,10, 25, 50, 100]"
-
-                         :headers="headers"
-
+    <v-data-table-server
+      v-if="products"
+      :loading="busy_fetch"
+      :items="products"
+      v-model:page="page"
+      v-model:items-per-page="limit"
+      :items-length="total"
+      :items-per-page-options="[5, 10, 25, 50, 100]"
+      :headers="headers"
     >
-      <template v-slot:item.title="{item}">
-        <u-avatar-folder :src="getShopImagePath(item.icon, 128)" is-gray :size="48" :border-size="4" class="me-1 my-1" elevated hide-side-icon>
-
+      <template v-slot:item.title="{ item }">
+        <u-avatar-folder
+          :src="getShopImagePath(item.icon, 128)"
+          is-gray
+          :size="48"
+          :border-size="4"
+          class="me-1 my-1"
+          elevated
+          hide-side-icon
+        >
         </u-avatar-folder>
 
-        {{item.title}}
+        {{ item.title }}
       </template>
-
-
     </v-data-table-server>
-
 
     <u-smart-verify
       v-model="verify_action"
@@ -141,9 +148,9 @@ export default {
     busy_remove: false,
     mode: "sku-title",
 
-    products:[],
-    total:0,
-    busy_fetch:false,
+    products: [],
+    total: 0,
+    busy_fetch: false,
 
     page: 1,
     limit: 5,
@@ -159,7 +166,7 @@ export default {
       );
     },
 
-    headers(){
+    headers() {
       return [
         {
           title: "Title",
@@ -177,25 +184,23 @@ export default {
           align: "start",
           value: "sku",
         },
-
-
-      ]
-    }
+      ];
+    },
   },
 
   watch: {
-    mode(){
+    mode() {
       this.fetchPreviewProducts();
     },
-    page(){
+    page() {
       this.fetchPreviewProducts();
     },
-    limit(){
+    limit() {
       this.fetchPreviewProducts();
     },
-    category_id(){
+    category_id() {
       this.fetchPreviewProducts();
-    }
+    },
   },
 
   created() {
@@ -206,40 +211,38 @@ export default {
 
   beforeUnmount() {},
   methods: {
-    fetchPreviewProducts(){
+    fetchPreviewProducts() {
       this.busy_fetch = true;
       axios
-          .get(
-              window.ARTICLE_API.GET_SHOP_AUTO_REMOVE_DUPLICATED_PRODUCTS_PREVIEW(
-                  this.shop.id,
-              ),
-              {
-                params:{
-                  mode: this.mode,
-                  category_id: this.category_id?this.category_id:"*",
-                  offset: (this.page - 1) * this.limit,
-                  limit:this.limit,
-                }
-              },
-          )
-          .then(({ data }) => {
-            if (data.error) {
-              // Error!
-              NotificationService.showErrorAlert(null, data.error_msg);
-              return;
-            }
+        .get(
+          window.ARTICLE_API.GET_SHOP_AUTO_REMOVE_DUPLICATED_PRODUCTS_PREVIEW(
+            this.shop.id,
+          ),
+          {
+            params: {
+              mode: this.mode,
+              category_id: this.category_id ? this.category_id : "*",
+              offset: (this.page - 1) * this.limit,
+              limit: this.limit,
+            },
+          },
+        )
+        .then(({ data }) => {
+          if (data.error) {
+            // Error!
+            NotificationService.showErrorAlert(null, data.error_msg);
+            return;
+          }
 
-            this.products = data.products;
-            this.total = data.total;
-
-
-          })
-          .catch((e) => {
-            NotificationService.showLaravelError(e);
-          })
-          .finally(() => {
-            this.busy_fetch = false;
-          });
+          this.products = data.products;
+          this.total = data.total;
+        })
+        .catch((e) => {
+          NotificationService.showLaravelError(e);
+        })
+        .finally(() => {
+          this.busy_fetch = false;
+        });
     },
     autoRemoveDuplicatedProducts() {
       this.busy_remove = true;
@@ -250,7 +253,7 @@ export default {
           ),
           {
             mode: this.mode,
-            category_id: this.category_id?this.category_id:"*",
+            category_id: this.category_id ? this.category_id : "*",
           },
         )
         .then(({ data }) => {
