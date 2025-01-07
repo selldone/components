@@ -101,6 +101,17 @@
           :vendor="vendor"
           @close="$emit('update:modelValue', false)"
         ></b-products-advanced-options-google-sheet>
+
+        <!-- ━━━━━━━━━━━━━━━ BProductsAdvancedOptions > Remove Duplicated Products ━━━━━━━━━━━━━━━ -->
+
+        <b-products-advanced-options-remove-duplicated-products
+            v-else-if="action?.code === 'remove-duplicates'"
+            :shop="shop"
+            :vendor="vendor"
+            @close="$emit('update:modelValue', false)"
+        ></b-products-advanced-options-remove-duplicated-products>
+
+
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
@@ -121,10 +132,13 @@
 <script lang="ts">
 import BProductsAdvancedOptionsFixArticles from "../../product/advanced-options/fix-articles/BProductsAdvancedOptionsFixArticles.vue";
 import BProductsAdvancedOptionsGoogleSheet from "../../product/advanced-options/google-sheet/BProductsAdvancedOptionsGoogleSheet.vue";
+import BProductsAdvancedOptionsRemoveDuplicatedProducts
+  from "@selldone/components-vue/backoffice/product/advanced-options/remove-duplicated-products/BProductsAdvancedOptionsRemoveDuplicatedProducts.vue";
 
 export default {
   name: "BProductsAdvancedOptions",
   components: {
+    BProductsAdvancedOptionsRemoveDuplicatedProducts,
     BProductsAdvancedOptionsGoogleSheet,
     BProductsAdvancedOptionsFixArticles,
   },
@@ -169,6 +183,18 @@ export default {
           description:
             "You have the option to link your shop with your Google Drive™. ",
         },
+
+        ...(!this.IS_VENDOR_PANEL
+          ? [
+              {
+                code: "remove-duplicates",
+                icon: "cleaning_services",
+                title: "Remove Duplicate Products",
+                description:
+                  "Easily remove duplicate products from your shop with a single click.",
+              },
+            ]
+          : []),
       ];
     },
   },

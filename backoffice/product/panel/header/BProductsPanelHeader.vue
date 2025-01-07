@@ -24,7 +24,7 @@
         <v-icon>more_vert</v-icon>
 
         <v-menu activator="parent">
-          <v-list class="text-start pa-0" density="compact" rounded="lg">
+          <v-list class="text-start pa-0" slim rounded="lg">
             <v-list-item
               :to="{
                 name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -124,6 +124,9 @@
                 <v-list-item-title>
                   {{ $t("admin_shop.products.menu_advanced_options") }}
                 </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ $t("admin_shop.products.menu_advanced_options_description") }}
+                </v-list-item-subtitle>
               </v-list-item>
             </template>
 
