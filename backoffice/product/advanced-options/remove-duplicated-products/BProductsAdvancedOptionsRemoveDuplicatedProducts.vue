@@ -49,6 +49,21 @@
         force-show-all
         class="my-3"
     />
+
+<div class="my-5 bg-white rounded-18px">
+  <b-category-input
+      v-model="category_id"
+      placeholder="Leave empty to include all categories (*)"
+      variant="solo"
+      flat
+      label="Filter by Category"
+      persistent-placeholder
+      clearable
+      no-home>
+  </b-category-input>
+
+</div>
+
     <v-list-subheader>Preview Products to Be Removed</v-list-subheader>
 
     <v-data-table-server v-if="products" :loading="busy_fetch" :items="products"
@@ -101,11 +116,13 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
 import USmartSelect from "@selldone/components-vue/ui/smart/select/USmartSelect.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import BCategoryInput from "@selldone/components-vue/backoffice/category/input/BCategoryInput.vue";
 
 export default {
   name: "BProductsAdvancedOptionsRemoveDuplicatedProducts",
   mixins: [],
   components: {
+    BCategoryInput,
     UAvatarFolder,
     USmartSelect,
     USmartSwitch,
@@ -130,6 +147,7 @@ export default {
 
     page: 1,
     limit: 5,
+    category_id: null,
   }),
 
   computed: {
@@ -174,6 +192,9 @@ export default {
     },
     limit(){
       this.fetchPreviewProducts();
+    },
+    category_id(){
+      this.fetchPreviewProducts();
     }
   },
 
@@ -195,7 +216,7 @@ export default {
               {
                 params:{
                   mode: this.mode,
-                  category_id: "*",
+                  category_id: this.category_id?this.category_id:"*",
                   offset: (this.page - 1) * this.limit,
                   limit:this.limit,
                 }
@@ -229,7 +250,7 @@ export default {
           ),
           {
             mode: this.mode,
-            category_id: "*",
+            category_id: this.category_id?this.category_id:"*",
           },
         )
         .then(({ data }) => {
