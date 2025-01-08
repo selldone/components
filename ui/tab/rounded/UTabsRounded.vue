@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <u-fade-scroll center>
+  <u-fade-scroll center drag-scroll>
     <div
       :class="{ 'is-table': scrollable, disabled: disabled }"
       :style="{ '--radius': radius }"

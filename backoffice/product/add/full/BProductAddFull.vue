@@ -58,13 +58,12 @@
       </v-row>
     </template>
 
-    <v-container v-if="type" class="pt-0 fadeIn" fluid>
-      <v-row class="tab-container">
+    <div v-if="type" >
         <u-tabs-rounded
           v-model="step"
           :src="type.image"
           :tabs="tabs"
-          class="mt-4 mb-5 mx-auto"
+          class="mt-4 mb-5 mx-1"
           scrollable
           small
           :disabled="!$product?.id"
@@ -216,8 +215,7 @@
             </div>
           </template>
         </u-tabs-rounded>
-      </v-row>
-    </v-container>
+    </div>
 
     <!-- ███████████████████████ Product Type ███████████████████████ -->
 
@@ -1430,9 +1428,4 @@ not need!
   }
 }
 
-.tab-container {
-  overflow-x: auto;
-  min-height: 72px;
-  -webkit-overflow-scrolling: touch;
-}
 </style>

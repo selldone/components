@@ -45,7 +45,7 @@
         :disabled="!shop"
         :src="icon_pic ? getShopImagePath(icon_pic) : null"
         :tabs="tabs"
-        class="mt-4 mb-5 mx-auto"
+        class="mt-4 mb-5 mx-1"
         icon="storefront"
         scrollable
         small
