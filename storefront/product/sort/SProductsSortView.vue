@@ -291,8 +291,9 @@ export default {
 .s--sort-view {
   display: flex;
   align-items: center;
-  min-height: 54px;
   overflow: auto;
+  min-height: 84px;
+
 
   .search-box {
     max-width: 360px;
