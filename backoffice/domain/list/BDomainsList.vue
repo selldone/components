@@ -602,7 +602,7 @@
 
     <v-list-subheader>
       <v-icon>domain</v-icon>
-      Main Domain: {{ shop.domain }}
+      {{$t('commons.main_domain')}}: {{ shop.domain }}
     </v-list-subheader>
   </div>
 

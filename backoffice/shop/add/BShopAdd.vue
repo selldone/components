@@ -425,10 +425,9 @@
       </div>
 
       <div key="slide-5" class="widget-box mb-5">
-        <u-widget-header icon="photo" title="Favicons"></u-widget-header>
+        <u-widget-header icon="photo" :title="$t('admin_shop.edit.info.favicon.title') "></u-widget-header>
         <v-list-subheader>
-          Favicons are small, iconic images that represent a website in browser
-          tabs, bookmarks, and mobile app interfaces.
+          {{$t('admin_shop.edit.info.favicon.subtitle')}}
         </v-list-subheader>
 
         <s-image-uploader
@@ -517,7 +516,7 @@
         add-icon="refresh"
         add-text
         icon="fa:fa-brands fa-google"
-        title="SEO Preview"
+        :title="$t('global.commons.seo_preview')"
         @click:add="getRenderedOnGoogle"
       ></u-widget-header>
 

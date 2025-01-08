@@ -19,7 +19,7 @@
     <v-card-title class="d-flex align-center">
       <v-icon class="me-2">hive</v-icon>
 
-      {{ propertySet ? "Edit Property Set" : "Add Property Set" }}
+      {{ propertySet ? $t('property_set_add.edit_title') : $t('property_set_add.add_title') }}
     </v-card-title>
     <v-card-text>
       <div class="widget-box mb-5">
@@ -28,15 +28,15 @@
           :title="$t('global.commons.general_config')"
         ></u-widget-header>
         <v-list-subheader>
-          Set title and description for your property set. It will be visible to
-          staff only.
+          {{$t('property_set_add.config.subtitle')}}
+
         </v-list-subheader>
 
         <v-text-field
           v-model="title"
           :label="$t('global.commons.title')"
           variant="underlined"
-          placeholder="Enter a title for property set..."
+          :placeholder="$t('property_set_add.inputs.title.placeholder') "
           persistent-placeholder
           messages=" "
         >
@@ -52,7 +52,7 @@
           v-model="description"
           :label="$t('global.commons.description')"
           variant="underlined"
-          placeholder="Enter a short description... (optional)"
+          :placeholder="$t('property_set_add.inputs.description.placeholder') "
           persistent-placeholder
           messages=" "
         >
@@ -68,20 +68,18 @@
       <div class="widget-box mb-5">
         <u-widget-header
           icon="fa:fas fa-cubes-stacked"
-          title="Variants"
+          :title="$t('property_set_add.variants.title') "
         ></u-widget-header>
         <v-list-subheader>
-          You can customize the variant name, icon, and order here. If you have
-          a variety of products with unique variants that don’t fit default 6
-          variants, you can set custom variants for each product here.
+          {{$t('property_set_add.variants.subtitle')}}
         </v-list-subheader>
 
         <u-smart-switch
           v-model="custom_variants"
-          true-title="Custom Variants"
-          false-title="Default Variants"
-          true-description="Customize your product variants."
-          false-description="Use default global variants."
+          :true-title="$t('property_set_add.inputs.custom_variants.true_title')"
+          :false-title="$t('property_set_add.inputs.custom_variants.false_title')"
+          :true-description="$t('property_set_add.inputs.custom_variants.true_description')"
+          :false-description="$t('property_set_add.inputs.custom_variants.false_description')"
           false-gray
           class="mb-5"
         >
@@ -134,7 +132,7 @@
                 <code>tapas</code>
               </div>
 
-              <div class="mt-1">Fontawesome (V5) sample:</div>
+              <div class="mt-1">Fontawesome (V6) sample:</div>
               <div class="my-1">
                 <v-icon class="me-2" size="small">fa:fas fa-toolbox</v-icon>
                 <code>fa:fas fa-toolbox</code>

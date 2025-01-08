@@ -31,14 +31,8 @@
       </b-options-login-method-row>
     </v-list>
     <v-list-subheader>
-      <div>
-        <b>Important.</b> When a user registers with your shop, a corresponding
-        Selldone user is created, if one doesn't already exist. This user will
-        have access to their address book across all shops and can view their
-        order history, even if a shop has closed. We do not use this information
-        for marketing purposes but require it to prevent fraud on both sides. To
-        maintain transparency, we'll send an email to the user informing them of
-        their registration.
+      <div v-html="$t('shop_configuration.login.tips')">
+
       </div>
     </v-list-subheader>
   </div>
@@ -119,8 +113,7 @@ export default {
       out.push({
         code: "sms",
         title: this.$t("global.need_login.login_sms"),
-        subtitle:
-          "In some countries it's free. We try to make this feature free for all. More information will be available soon.",
+        subtitle: this.$t("global.need_login.login_sms_description"),
         image: require("../../../../assets/icons/sms.svg"),
         available: this.login_modes.includes("sms"),
         paid: true,

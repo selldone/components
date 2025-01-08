@@ -457,7 +457,7 @@
               add-icon="refresh"
               add-text
               icon="fa:fa-brands fa-google"
-              title="SEO Preview"
+              :title="$t('global.commons.seo_preview')"
               @click:add="getRenderedOnGoogle"
             ></u-widget-header>
 
@@ -558,6 +558,7 @@ import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 const TAB_TYPE = 1;
 const TAB_GENERAL_INFO = 2;
@@ -582,6 +583,7 @@ export default {
   name: "BProductAddFull",
   mixins: [],
   components: {
+    UWidgetHeader,
     UPrice,
     SWidgetButtons,
     BProductEditType,

@@ -82,7 +82,7 @@
                         </v-btn>
                       </div>
 
-                      <div class="mt-1">● Fontawesome (V5) sample:</div>
+                      <div class="mt-1">● Fontawesome (V6) sample:</div>
                       <div class="my-1">
                         <v-icon class="me-2" size="small"
                           >fa:fas fa-toolbox

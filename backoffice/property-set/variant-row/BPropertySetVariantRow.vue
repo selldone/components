@@ -54,7 +54,7 @@
             flat
             hide-details
             persistent-placeholder
-            prefix="Icon: "
+            :prefix="`${$t('global.commons.icon')}: `"
             variant="solo"
             density="compact"
           >
@@ -68,15 +68,15 @@
     <div class="px-2">
       <v-combobox
         v-model="modelValue.values"
-        variant="outlined"
-        density="compact"
-        label="Values"
-        placeholder="Set values set... (optional)"
+        variant="solo"
+        density="comfortable"
+        :label="$t('global.commons.values')"
+        :placeholder="$t('property_set_variant_row.inputs.values.placeholder') "
         multiple
         chips
         closable-chips
         clearable
-        messages="You can provide suggestions for the values and customize order."
+        :messages="$t('property_set_variant_row.inputs.values.messages') "
       >
         <template v-slot:chip="{ props, index }">
           <v-chip v-bind="props" @click="openEditDialog(index)"> </v-chip>

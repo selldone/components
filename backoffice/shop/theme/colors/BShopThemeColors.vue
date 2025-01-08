@@ -18,10 +18,8 @@
       :title="$t('shop_theme.theme_colors')"
       icon="palette"
     ></u-widget-header>
-    <v-list-subheader
-      >You can personalize the primary color palette of your shop here. Each
-      template can utilize these colors to automatically generate a complete
-      color range that aligns with your brand.
+    <v-list-subheader>
+      {{$t('shop_theme.theme_colors_description')}}
     </v-list-subheader>
 
     <u-smart-switch
@@ -108,7 +106,7 @@
       :model-value="colorBill"
       no-alpha
       prepend-icon="looks_3"
-      title="Checkout color"
+      :title="$t('shop_theme.checkout_color')"
       @update:model-value="(v) => $emit('update:colorBill', v)"
     ></u-color-selector>
 
