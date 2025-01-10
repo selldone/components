@@ -242,9 +242,12 @@
                 ></u-avatar-folder>
               </a>
             </template>
-            <span class="small">
+            <v-list-item-title class="small">
               {{ getVideoUrl(product_video.path) }}
-            </span>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              {{ numeralFormat(product_video.size, "0,0.[0] b") }}
+            </v-list-item-subtitle>
 
             <template v-slot:append>
               <v-btn
@@ -757,6 +760,8 @@ export default {
       this.$emit("update:video", this.video_id);
     },
 
+
+    //-------------------------------- Upload Video --------------------------------
     handleProcessFile(path) {
       //  console.log("handleProcessFile",path);
       this.force_preview = true;
