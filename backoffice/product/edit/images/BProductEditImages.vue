@@ -83,7 +83,7 @@
                 "
               ></u-smart-toggle>
 
-              <template v-if="product.icon && !forStudio">
+              <template v-if="product.icon && !forStudio && !IS_VENDOR_PANEL /*Not yet implemented to vendors!*/">
                 <!-- ━━━━━━━━━━━━━━━━━━━━━ Upscale ━━━━━━━━━━━━━━━━━━━━━ -->
                 <u-button-ai-large
                   v-if="need_upscale"
@@ -226,19 +226,23 @@
         >
           <v-list-item v-for="product_video in product.videos">
             <template v-slot:prepend>
-              <a :href="getVideoUrl(product_video.path)" target="_blank" class="d-block me-3">
+              <a
+                :href="getVideoUrl(product_video.path)"
+                target="_blank"
+                class="d-block me-3"
+              >
                 <u-avatar-folder
-                    :src="
-                  product_video.thumbnail_path
-                    ? getShopImagePath(product_video.thumbnail_path)
-                    : undefined
-                "
-                    :size="64"
-                    :border-size="8"
-                    elevated
-                    is-red
-                    placeholder-icon="videocam"
-                    side-icon="theaters"
+                  :src="
+                    product_video.thumbnail_path
+                      ? getShopImagePath(product_video.thumbnail_path)
+                      : undefined
+                  "
+                  :size="64"
+                  :border-size="8"
+                  elevated
+                  is-red
+                  placeholder-icon="videocam"
+                  side-icon="theaters"
                 ></u-avatar-folder>
               </a>
             </template>
@@ -587,6 +591,13 @@ export default {
     },
 
     upload_video_url() {
+      if (this.IS_VENDOR_PANEL) {
+        return window.VAPI.POST_MY_VENDOR_PRODUCT_VIDEO_UPLOAD(
+          this.product.vendor_id,
+          this.product.id,
+        );
+      }
+
       return window.API.POST_PRODUCT_VIDEO_UPLOAD(
         this.product.shop_id,
         this.product.id,
@@ -760,7 +771,6 @@ export default {
       this.$emit("update:video", this.video_id);
     },
 
-
     //-------------------------------- Upload Video --------------------------------
     handleProcessFile(path) {
       //  console.log("handleProcessFile",path);
@@ -781,11 +791,17 @@ export default {
       this.busy_remove_video = product_video.id;
       axios
         .delete(
-          window.API.DELETE_PRODUCT_VIDEO(
-            this.product.shop_id,
-            this.product.id,
-            product_video.id,
-          ),
+          this.IS_VENDOR_PANEL
+            ? window.VAPI.DELETE_MY_VENDOR_PRODUCT_VIDEO(
+                this.product.vendor_id,
+                this.product.id,
+                product_video.id,
+              )
+            : window.API.DELETE_PRODUCT_VIDEO(
+                this.product.shop_id,
+                this.product.id,
+                product_video.id,
+              ),
         )
         .then(({ data }) => {
           if (!data.error) {
