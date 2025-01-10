@@ -200,7 +200,7 @@
         hide-details
         label="Youtube video"
         messages="Enter youtube video url or video ID"
-        rounded
+        rounded="lg"
         variant="solo-filled"
         @blur="correctVideoId"
       >
@@ -210,6 +210,70 @@
         :video-id="video_id"
         class="max-width-field-large mx-auto"
       ></u-youtube-preview>
+
+      <template v-if="max_videos_count > 0">
+        <hr class="my-5" />
+
+        <v-list-subheader>
+          You can upload up to {{ max_videos_count }} videos. The limit is set
+          by your plan.
+        </v-list-subheader>
+
+        <v-list
+          max-width="640"
+          class="mx-auto border-between-vertical"
+          bg-color="transparent"
+        >
+          <v-list-item v-for="product_video in product.videos">
+            <template v-slot:prepend>
+              <a :href="getVideoUrl(product_video.path)" target="_blank" class="d-block me-3">
+                <u-avatar-folder
+                    :src="
+                  product_video.thumbnail_path
+                    ? getShopImagePath(product_video.thumbnail_path)
+                    : undefined
+                "
+                    :size="64"
+                    :border-size="8"
+                    elevated
+                    is-red
+                    placeholder-icon="videocam"
+                    side-icon="theaters"
+                ></u-avatar-folder>
+              </a>
+            </template>
+            <span class="small">
+              {{ getVideoUrl(product_video.path) }}
+            </span>
+
+            <template v-slot:append>
+              <v-btn
+                icon
+                variant="text"
+                color="red"
+                @click="removeVideo(product_video)"
+                :loading="busy_remove_video === product_video.id"
+              >
+                <v-icon>close</v-icon>
+              </v-btn>
+            </template>
+          </v-list-item>
+        </v-list>
+
+        <v-expand-transition>
+          <s-video-uploader
+            v-if="product.videos.length < max_videos_count"
+            :server="upload_video_url"
+            auto-compact
+            max-file-size="20MB"
+            @new-item="onUploadVideoItem"
+          ></s-video-uploader>
+        </v-expand-transition>
+      </template>
+      <v-list-subheader v-else class="mt-3">
+        <v-icon class="me-1">warning_amber</v-icon>
+        Update your shop plan to upload videos for the product.
+      </v-list-subheader>
     </div>
 
     <s-widget-buttons v-if="!forStudio" auto-fixed-position class="my-5">
@@ -218,7 +282,11 @@
         size="x-large"
         variant="elevated"
         @click="$emit('next')"
-        v-ctrl.s="()=>{$emit('next')}"
+        v-ctrl.s="
+          () => {
+            $emit('next');
+          }
+        "
       >
         {{ $t("global.actions.save_continue") }}
 
@@ -349,11 +417,17 @@ import { ImageHelper } from "@selldone/core-js/utils/image/ImageHelper.ts";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import SVideoUploader from "@selldone/components-vue/ui/uploader/SVideoUploader.vue";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
+import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense.ts";
 
 export default {
   name: "BProductEditImages",
-  mixins: [BEventBusMixin ],
+  mixins: [BEventBusMixin],
+  inject: ["$shop"],
   components: {
+    UAvatarFolder,
+    SVideoUploader,
     SWidgetButtons,
     UButtonAiLarge,
     UYoutubePreview,
@@ -491,6 +565,9 @@ export default {
         src: require("./assets/a-chic-minimalist-coffee-shop-featuring-sleek-modern.webp"),
       },
     ],
+
+    //------------------------
+    busy_remove_video: null,
   }),
 
   computed: {
@@ -504,6 +581,17 @@ export default {
 
     preview_available() {
       return this.product.icon || this.force_preview;
+    },
+
+    upload_video_url() {
+      return window.API.POST_PRODUCT_VIDEO_UPLOAD(
+        this.product.shop_id,
+        this.product.id,
+      );
+    },
+
+    max_videos_count() {
+      return Eligible.MaxUploadVideosForProduct(this.$shop);
     },
   },
   watch: {
@@ -564,7 +652,10 @@ export default {
             this.$forceUpdate();
             this.$emit("update:icon", data.product.icon);
 
-            NotificationService.showSuccessAlert(null, "Background removed successfully!");
+            NotificationService.showSuccessAlert(
+              null,
+              "Background removed successfully!",
+            );
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
           }
@@ -593,7 +684,10 @@ export default {
             this.$forceUpdate();
             this.$emit("update:icon", data.product.icon);
 
-            NotificationService.showSuccessAlert(null, "Image upscaled successfully!");
+            NotificationService.showSuccessAlert(
+              null,
+              "Image upscaled successfully!",
+            );
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
           }
@@ -635,7 +729,10 @@ export default {
 
             this.dialog_replace_bg = false;
 
-            NotificationService.showSuccessAlert(null, "Image created successfully!");
+            NotificationService.showSuccessAlert(
+              null,
+              "Image created successfully!",
+            );
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
           }
@@ -666,6 +763,42 @@ export default {
       this.product.icon = path;
       this.$forceUpdate();
       this.$emit("update:icon", path);
+    },
+
+    getVideoUrl(file_name: string) {
+      return window.CDN.GET_VIDEO_URL(file_name);
+    },
+
+    onUploadVideoItem(product_video) {
+      this.product.videos.push(product_video);
+    },
+    removeVideo(product_video) {
+      this.busy_remove_video = product_video.id;
+      axios
+        .delete(
+          window.API.DELETE_PRODUCT_VIDEO(
+            this.product.shop_id,
+            this.product.id,
+            product_video.id,
+          ),
+        )
+        .then(({ data }) => {
+          if (!data.error) {
+            this.DeleteItemByID(this.product.videos, data.id);
+            NotificationService.showSuccessAlert(
+              null,
+              "Video removed successfully!",
+            );
+          } else {
+            NotificationService.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          NotificationService.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_remove_video = null;
+        });
     },
   },
 };

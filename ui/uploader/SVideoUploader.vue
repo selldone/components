@@ -242,7 +242,17 @@ export default {
     },
 
     acceptedFileTypes() {
-      return "video/mp4";
+      return [
+        "video/mp4",
+        "video/m4v",
+        "video/mkv",
+        "video/3gp",
+        "video/avi",
+        "video/wmv",
+        "video/mov",
+        "video/ogg",
+        "video/webm",
+      ];
     },
 
     server_credential() {

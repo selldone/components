@@ -242,6 +242,7 @@
           "
           class="ma-1"
           size="x-small"
+          variant="tonal"
         >
         </v-chip>
 
@@ -257,6 +258,7 @@
           "
           class="ma-1"
           size="x-small"
+          variant="tonal"
         >
         </v-chip>
 
@@ -267,6 +269,7 @@
           color="#673AB7"
           prepend-icon="watch_later"
           size="x-small"
+          variant="tonal"
         >
         </v-chip>
       </div>

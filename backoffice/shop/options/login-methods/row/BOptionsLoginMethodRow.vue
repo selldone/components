@@ -35,7 +35,7 @@
         label
         size="x-small"
         prepend-icon="military_tech"
-        variant="flat"
+        variant="elevated"
       >
         {{ $t("global.commons.premium") }}
       </v-chip>
@@ -46,7 +46,7 @@
         label
         size="x-small"
         prepend-icon="paid"
-        variant="flat"
+        variant="elevated"
       >
         {{ $t("global.commons.paid") }}
       </v-chip>
@@ -58,7 +58,7 @@
         label
         size="x-small"
         prepend-icon="token"
-        variant="flat"
+        variant="elevated"
       >
         Custom Token
       </v-chip>

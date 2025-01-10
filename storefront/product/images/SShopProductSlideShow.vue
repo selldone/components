@@ -144,6 +144,7 @@
         <template v-else-if="item.video">
           <v-responsive aspect-ratio="1" class="position-relative">
             <u-youtube-player
+              v-if="item.type === 'youtube'"
               :player-vars="{
                 color: 'white',
                 controls: 1,
@@ -155,6 +156,19 @@
               style="border-radius: 8px"
               width="100%"
             ></u-youtube-player>
+            <video
+              controls
+              height="100%"
+              fullscreen
+              preload="metadata"
+              style="position: relative; background-color: #000"
+              width="100%"
+            >
+              <source
+                :src="getVideoUrl(item.video)"
+                :type="VideoHelper.GetMime(item.video)"
+              />
+            </video>
           </v-responsive>
         </template>
 
@@ -185,6 +199,7 @@
         <v-avatar
           v-if="prev_item"
           class="pp overflow-visible t-all-400"
+          style="backdrop-filter: blur(8px)"
           color="#33333333"
           size="84"
           v-bind="props"
@@ -197,8 +212,10 @@
               class="pa-2 hover-scale-small"
               alt="Previous"
             />
-            <v-icon v-else-if="prev_item.video">smart_display</v-icon>
-            <v-icon v-else-if="prev_item.ar">view_in_ar</v-icon>
+            <v-icon v-else-if="prev_item.video" color="#fff"
+              >smart_display</v-icon
+            >
+            <v-icon v-else-if="prev_item.ar" color="#fff">view_in_ar</v-icon>
           </v-scale-transition>
         </v-avatar>
       </template>
@@ -206,6 +223,7 @@
         <v-avatar
           v-if="next_item"
           class="pp overflow-visible t-all-400"
+          style="backdrop-filter: blur(8px)"
           color="#33333333"
           size="84"
           v-bind="props"
@@ -218,8 +236,10 @@
               class="pa-2 hover-scale-small"
               alt="Next"
             />
-            <v-icon v-else-if="next_item.video">smart_display</v-icon>
-            <v-icon v-else-if="next_item.ar">view_in_ar</v-icon>
+            <v-icon v-else-if="next_item.video" color="#fff"
+              >smart_display</v-icon
+            >
+            <v-icon v-else-if="next_item.ar" color="#fff">view_in_ar</v-icon>
           </v-scale-transition>
         </v-avatar>
       </template>
@@ -233,6 +253,7 @@ import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import UYoutubePlayer from "../../../ui/youtube/player/UYoutubePlayer.vue";
 import SImage from "../../../storefront/product/images/SImage.vue";
 import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
+import { VideoHelper } from "@selldone/core-js/helper";
 
 export default {
   name: "SShopProductSlideShow",
@@ -252,6 +273,8 @@ export default {
   },
 
   data: () => ({
+    VideoHelper: VideoHelper,
+
     offset_images: 1, // Number of images forces to show at first to prevent loading video or ar as default!
     index: 0,
 
@@ -307,6 +330,11 @@ export default {
 
       return out;
     },
+
+    product_videos() {
+      return this.$product.videos;
+    },
+
     images_list_embedded() {
       const out = [];
 
@@ -325,6 +353,13 @@ export default {
         out.splice(this.offset_images, 0, {
           video: this.current_youtube,
           key: this.current_youtube,
+          type: "youtube",
+        });
+      }
+
+      if (this.product_videos) {
+        this.product_videos.forEach((video) => {
+          out.push({ video: video.path, key: video.path });
         });
       }
 
@@ -400,6 +435,11 @@ export default {
         // Do something when right arrow key is pressed
         this.goToSlide(this.index + 1);
       }
+    },
+
+    //--------------------------------------------------------------------------------
+    getVideoUrl(file_name: string) {
+      return window.CDN.GET_VIDEO_URL(file_name);
     },
   },
 
