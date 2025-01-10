@@ -215,9 +215,10 @@
         <hr class="my-5" />
 
         <v-list-subheader>
-          You can upload up to {{ max_videos_count }} videos. The limit is set
-          by your plan.
+          You can upload a maximum of {{ max_videos_count }} videos, as determined by your current plan. To reduce and optimize your video size, use this free software:
+          <a href="https://handbrake.fr" target="_blank"><b>HandBrake</b> <v-icon size="small">open_in_new</v-icon> </a>.
         </v-list-subheader>
+
 
         <v-list
           max-width="640"
