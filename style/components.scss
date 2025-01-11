@@ -2834,6 +2834,49 @@ Fix snaky chart overflow problem!
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
 }
+.bg-gradient-sunset {
+  background-image: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+.bg-gradient-ocean {
+  background-image: linear-gradient(-45deg, #00c6ff, #0072ff, #3a7bd5, #3a6073);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+.bg-gradient-tropical {
+  background-image: linear-gradient(-45deg, #ff7e5f, #feb47b, #86e3ce, #d4fc79);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+.bg-gradient-galaxy {
+  background-image: linear-gradient(-45deg, #6441a5, #2a0845, #1e3c72, #2a5298);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+.bg-gradient-sunrise {
+  background-image: linear-gradient(-45deg, #ff5f6d, #ffc371, #ff7e5f, #feb47b);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+.bg-gradient-aurora {
+  background-image: linear-gradient(-45deg, #00f260, #0575e6, #833ab4, #fcb045);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+.bg-gradient-candy {
+  background-image: linear-gradient(-45deg, #ff6a88, #ffb199, #f3e5ab, #fdc2c2);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+
+
+
+
+
+
+
 
 
 @keyframes gradient {
