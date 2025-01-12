@@ -551,12 +551,12 @@ export default {
       }
     },
     getDefaultText() {
-      this.getDefault(SmsTemplateMode.text.code, (body) => {
+      this.getDefault(SmsTemplateMode.text.code, (body,tokens,language) => {
         this.text = body;
         NotificationService.showSuccessAlert(
-          this.sms.title + " | " + this.getLanguageName(data.language),
+          this.sms.title + " | " + this.getLanguageName(language),
           `The default message for <b>${this.getLanguageName(
-            data.language,
+            language,
           )}</b> been loaded successfully.`,
         );
       });
@@ -595,7 +595,7 @@ export default {
             NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.defaults[mode + data.language] = data.body;
-            callback(data.body,data.tokens);
+            callback(data.body,data.tokens,data.language);
           }
         })
         .catch((error) => {

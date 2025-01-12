@@ -310,7 +310,7 @@
           <span class="small">now</span>
         </div>
         <b class="px-2 pt-1 d-block">{{ shop.title }}</b>
-        <div style="padding: 8px" v-html="sms.sample"></div>
+        <div style="padding: 8px;font-size: 10px" v-html="sms.sample"></div>
       </div>
     </frame-view>
 
