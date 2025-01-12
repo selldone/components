@@ -270,8 +270,48 @@
       class="max-width-field mx-auto mt-5 mb-n4"
       style="height: 250px; overflow: hidden"
     >
-      <span class="sms-time">Today 1:12 PM</span>
-      <div v-if="sms" class="sms-box" v-html="sms.sample"></div>
+      <v-img
+        :src="
+          require('@selldone/components-vue/assets/background/bg-gradient-iphone.jpg')
+        "
+        cover
+        style="position: absolute; left: 10%; right: 10%; top: 5%; bottom: 0"
+      ></v-img>
+
+      <div
+        v-if="sms"
+        style="
+          background-color: #ffffff88;
+          backdrop-filter: blur(12px);
+          border-radius: 12px;
+
+          font-size: 12px;
+          text-align: start;
+          margin: 8px;
+          font-weight: 500;
+          overflow: hidden;
+          z-index: 1;
+        "
+
+      >
+        <div
+          style="padding: 6px; background: #eeeeee44; font-size: 10px"
+          class="d-flex align-center"
+        >
+          <span
+            style="padding: 2px 4px; background: #0a9928"
+            class="me-2 rounded-sm"
+          >
+            <v-icon color="#fff" size="12">chat_bubble</v-icon>
+          </span>
+
+          MESSAGES
+          <v-spacer></v-spacer>
+          <span class="small">now</span>
+        </div>
+        <b class="px-2 pt-1 d-block">{{ shop.title }}</b>
+        <div style="padding: 8px" v-html="sms.sample"></div>
+      </div>
     </frame-view>
 
     <!-- ███████████████████████ Dialog > Add / Edit ███████████████████████ -->
@@ -382,7 +422,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BShopSmsTemplateList",
-  mixins: [DateMixin ],
+  mixins: [DateMixin],
 
   components: {
     UWidgetHeader,
@@ -599,7 +639,10 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.AddOrUpdateItemByID(this.templates, data.template);
-            NotificationService.showSuccessAlert(null, "SMS template errors reset!");
+            NotificationService.showSuccessAlert(
+              null,
+              "SMS template errors reset!",
+            );
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
           }
