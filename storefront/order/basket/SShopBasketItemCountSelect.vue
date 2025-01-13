@@ -52,6 +52,7 @@
           $refs.self.blur();
         }
       "
+      :item-title="(it)=>it===0?$t('global.commons.remove_item'):it"
     >
       <template v-slot:item="{ item, props }">
         <v-list-item v-if="item.raw" v-bind="props" class="text-start">
@@ -163,6 +164,11 @@ export default {
       default: false,
     },
     rounded: {},
+    decimal: {
+      type: Number,
+      default: 0, // Default to 0 decimal places
+    },
+
   },
   data: () => {
     return {
@@ -190,9 +196,11 @@ export default {
 
   methods: {
     correctValue(val) {
-      let out = NumberHelper.toEnglishFloat(val, 0);
+      let out = NumberHelper.toEnglishFloat(val, this.decimal);
       if (out > this.max) out = this.max;
       if (out < this.min) out = this.min;
+
+      // Format the output to the correct number of decimal places
       return out;
     },
   },

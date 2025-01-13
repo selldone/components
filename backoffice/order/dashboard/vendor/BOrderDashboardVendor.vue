@@ -286,6 +286,7 @@
           :items="items"
           :select-all="initial_select_all"
           :shop="shop"
+          :basket="basket"
           :type="basket.type"
           class="pb-4 mb-2"
         />

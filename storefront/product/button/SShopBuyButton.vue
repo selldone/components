@@ -128,6 +128,7 @@
         clearable
         dark
         flat
+        :decimal="unit_float?3:0"
         hide-details
         hot-update-mode
         rounded="lg"
@@ -150,6 +151,7 @@
           clearable
           dark
           flat
+          :decimal="unit_float?3:0"
           hide-details
           hot-update-mode
           rounded="lg"
@@ -168,6 +170,7 @@
           clearable
           dark
           flat
+          :decimal="unit_float?3:0"
           hide-details
           hot-update-mode
           rounded="lg"
@@ -188,6 +191,7 @@
           clearable
           dark
           flat
+          :decimal="unit_float?3:0"
           hide-details
           hot-update-mode
           rounded="lg"
@@ -375,6 +379,10 @@ export default {
       return this.product.unit
         ? this.product.unit
         : this.$t("buy_button.count_unit");
+    },
+
+    unit_float(){
+      return this.product.unit_float
     },
 
     basket() {

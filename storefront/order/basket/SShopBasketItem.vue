@@ -221,6 +221,7 @@
           class="my-1"
           dark
           flat
+          :decimal="product?.unit_float ? 3 : 0"
           has-delete
           variant="solo"
           @change="(count) => spinnerSelectAction(count)"
@@ -260,11 +261,13 @@ import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import UNumberInput from "@selldone/components-vue/ui/number/input/UNumberInput.vue";
 
 export default {
   name: "SShopBasketItem",
   mixins: [CurrencyMixin, ProductMixin],
   components: {
+    UNumberInput,
     SProductServiceForm,
     SShopBasketItemCountSelect,
     BasketItemUserMessageForm,

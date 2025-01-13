@@ -143,7 +143,7 @@
 
         <v-chip v-if="isFulfillment" size="x-small">
           <v-avatar
-            :image="getShopImagePath(item.product.icon, IMAGE_SIZE_SMALL)"
+            :image="getShopImagePath(getProduct(item).icon, IMAGE_SIZE_SMALL)"
             start
           ></v-avatar>
           Reseller
@@ -153,7 +153,7 @@
             max-width="360"
           >
             <v-avatar
-              :image="getShopIcon(item.product.shop_id)"
+              :image="getShopIcon(getProduct(item).shop_id)"
               class="me-2 avatar-gradient -thin -shop"
               size="24"
             >
@@ -163,17 +163,17 @@
 
             <v-row class="mt-2" no-gutters>
               <v-avatar
-                :image="getShopImagePath(item.product.icon, IMAGE_SIZE_SMALL)"
+                :image="getShopImagePath(getProduct(item).icon, IMAGE_SIZE_SMALL)"
                 class="me-2"
                 rounded="lg"
                 size="64"
               ></v-avatar>
               <div>
                 <div>
-                  {{ item.product.title?.limitWords(12) }}
+                  {{ getProduct(item)?.title?.limitWords(12) }}
                 </div>
                 <div class="small">
-                  {{ item.product.title_en?.limitWords(24) }}
+                  {{ getProduct(item)?.title_en?.limitWords(24) }}
                 </div>
 
                 <variant-item-view-micro
@@ -242,7 +242,7 @@
         v-if="
           item.preferences && item.preferences.dim_1 && item.preferences.dim_2
         "
-        class="mt-2 d-flex align-stretch"
+        class="mt-2 d-flex align-stretch align-center"
       >
         <div
           :title="$t('global.commons.width')"
@@ -250,7 +250,7 @@
         >
           {{ item.preferences.dim_1 }}
         </div>
-        <v-icon size="x-small">close</v-icon>
+        <v-icon size="x-small" class="my-auto">close</v-icon>
         <div
           :title="$t('global.commons.length')"
           class="pa-1 m-1 rounded border flex-grow-1"
@@ -262,7 +262,7 @@
             item.preferences.dim_3 && getProduct(item)?.price_input === 'volume'
           "
         >
-          <v-icon size="x-small">close</v-icon>
+          <v-icon size="x-small" class="my-auto">close</v-icon>
           <div
             :title="$t('global.commons.height')"
             class="pa-1 m-1 rounded border flex-grow-1"
@@ -303,9 +303,7 @@
         class="my-1 min-width-150"
       >
         <v-icon class="me-1" color="blue" size="small">verified</v-icon>
-        <span class="small">{{
-          $t("global.original_warranty")?.limitWords(2)
-        }}</span>
+        <span class="small">{{ $t("global.commons.original") }}</span>
       </div>
 
       <div
@@ -340,10 +338,8 @@
         </span>
       </div>
 
-      <div v-else class="my-1 text-red">
-        <v-icon class="me-1" color="red" size="small"
-          >disabled_by_default
-        </v-icon>
+      <div v-else class="my-1">
+        <v-icon class="me-1" size="small">disabled_by_default</v-icon>
 
         <span class="small"> {{ $t("global.no_return_warranty") }}</span>
       </div>
@@ -351,22 +347,56 @@
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ count ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
     <template v-slot:item.count="{ item }">
-      <div class="min-width-150">
-        <b class="text-h4 font-weight-black">{{ item.count }}</b>
+      <div
+        class="min-width-150 mb-1"
+        @click="
+          can_set_count_adjustment ? showCountAdjustmentDialog(item) : undefined
+        "
+        :class="{ 'hover-editable': can_set_count_adjustment }"
+      >
+        <b class="text-h4 font-weight-black">{{ item.count + (item.count_adjustment?item.count_adjustment:0)}}</b>
         {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}
+        <i v-if="can_set_count_adjustment" class="edit-icon fas fa-edit"></i>
       </div>
+      <v-chip v-if="item.count_adjustment" size="x-small" color="#333" variant="flat" class="ma-1">
+        Adjust:  {{item.count_adjustment}}
+
+        <v-tooltip activator="parent" location="bottom" content-class="bg-black text-start">
+          Original Amount: <b>{{item.count}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b><br>
+          Adjustment Amount: <b>{{item.count_adjustment}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b>
+
+          <div class="border-top border-white mt-1 pt-1">
+            Final Amount: <b>{{item.count + item.count_adjustment}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b>
+          </div>
+        </v-tooltip>
+      </v-chip>
+      <v-chip
+        v-if="
+          !item.check &&
+          basket.delivery_state === PhysicalOrderStates.CheckQueue.code
+        "
+        color="amber"
+        pill
+        size="x-small"
+        variant="flat"
+        class="ma-1"
+      >
+        <v-icon start>hourglass_empty</v-icon>
+        {{ $t("global.commons.waiting") }}
+      </v-chip>
 
       <v-chip
-        v-if="readonly || item.check"
+        v-else-if="readonly || item.check"
         color="green"
         pill
         size="x-small"
         variant="flat"
+        class="ma-1"
       >
         <v-icon start>check_circle</v-icon>
         {{ $t("global.commons.available") }}
       </v-chip>
-      <v-chip v-else color="red" pill size="x-small" variant="flat">
+      <v-chip v-else color="red" pill size="x-small" variant="flat" class="ma-1">
         <v-icon start>cancel</v-icon>
         {{ $t("global.commons.not_available") }}
       </v-chip>
@@ -374,7 +404,7 @@
       <v-btn
         v-if="item.return_request"
         :color="getReturnRequestStateObject(item.return_request.state).color"
-        class="mx-1"
+        class="ma-1"
         rounded
         size="small"
         variant="flat"
@@ -527,7 +557,7 @@
     </template>
   </v-data-table>
 
-  <!-- ██████████████████████ Dialog ██████████████████████ -->
+  <!-- ██████████████████████ Dialog > Valuation Details ██████████████████████ -->
 
   <v-dialog
     v-model="customize_detail_dialog"
@@ -543,13 +573,13 @@
           src="../../../assets/icons/valuation.svg"
           width="24"
         />
-        Custom valuation pricing
+        Custom Valuation Pricing
       </v-card-title>
       <v-card-text v-if="selected_item">
         <s-product-section-valuation
           :current-variant="selected_item.variant"
           :preferences="selected_item.preferences"
-          :product="selected_item.product"
+          :product="getProduct(selected_item)"
           readonly
         ></s-product-section-valuation>
       </v-card-text>
@@ -567,6 +597,143 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <!-- ██████████████████████ Dialog > Count Adjustment ██████████████████████ -->
+
+  <v-bottom-sheet
+    v-model="count_adjustment_dialog"
+    max-width="98vw"
+    width="640"
+    scrollable
+    content-class="rounded-t-xl"
+  >
+    <v-card class="text-start" rounded="t-xl">
+      <v-card-title>
+        <v-icon class="me-2">content_cut</v-icon>
+        Count Adjustment
+      </v-card-title>
+      <v-card-text v-if="selected_item" :class="{disabled:IS_MARKETPLACE && !IS_VENDOR_PANEL}" class="position-relative">
+
+        <div  v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL" class="py-3 typo-body">
+          <v-icon>warning_amber</v-icon>
+          <b class="mx-1">{{$t('global.commons.marketplace')}} | </b>
+          In vendor panel vendor and you can adjust this option.
+        </div>
+
+        <p>
+          If you can only fulfill a portion of the order for this item, you can
+          specify the adjustment amount here. If the product supports floating
+          units, you can enter a decimal value. The adjustment can be either
+          positive or negative.
+        </p>
+
+        <u-number-input
+          v-model="count_adjustment_input"
+          variant="outlined"
+          :decimal="unit_float ? 3 : 0"
+          label="Count Adjustment"
+          rounded="lg"
+          class="strong-field mt-5"
+          :disabled="(IS_MARKETPLACE && !IS_VENDOR_PANEL)"
+          :show-buttons="!(IS_MARKETPLACE && !IS_VENDOR_PANEL)"
+          :min="-selected_item.count"
+        ></u-number-input>
+
+        <div class="d-flex align-center">
+          <div class="text-center">
+            <small>Final Count</small>
+            <div
+                class="text-h3 font-weight-black"
+                :class="{
+              'text-green': count_adjustment_input > 0,
+              'text-red': count_adjustment_input < 0,
+            }"
+            >
+              {{ selected_item.count + count_adjustment_input }}
+              <small style="font-size: 12px">{{getProduct(selected_item)?.unit}}</small>
+            </div>
+          </div>
+
+          <div class="d-flex align-center justify-center text-center px-3 py-3 flex-grow-1">
+            <div>
+              <v-avatar size="92" variant="elevated" class="elevation-5">
+                <v-avatar
+                    :image="getShopImagePath(getProduct(selected_item)?.icon, 256)"
+                    size="84"
+                    class="elevation-1"
+                />
+              </v-avatar>
+              <br />
+              <small>
+                {{ selected_item.count }}   <small >{{getProduct(selected_item)?.unit}}</small>
+              </small>
+            </div>
+
+            <v-scale-transition hide-on-leave>
+              <div v-if="count_adjustment_input < 0" class="ms-2">
+
+                <div class="d-inline-block">
+                  <v-icon color="red">remove</v-icon>
+                  <v-avatar
+                      :image="getShopImagePath(getProduct(selected_item)?.icon, 256)"
+                      :size="(84 * -count_adjustment_input) / selected_item.count"
+                      style="border: solid red 3px"
+                      class="elevation-3 t-all-400"
+                  />
+                  <br />
+                  <small>
+                    {{ count_adjustment_input }}   <small >{{getProduct(selected_item)?.unit}}</small>
+                  </small>
+                </div>
+              </div>
+
+              <div v-else-if="count_adjustment_input > 0" class="ms-2">
+
+                <div class="d-inline-block">
+                  <v-icon color="green">add</v-icon>
+
+                  <v-avatar
+                      :image="getShopImagePath(getProduct(selected_item)?.icon, 256)"
+                      :size="(84 * count_adjustment_input) / selected_item.count"
+                      style="border: solid green 3px"
+                      class="elevation-3 t-all-400"
+                  />
+                  <br />
+                  <small>
+                    {{ count_adjustment_input }}   <small >{{getProduct(selected_item)?.unit}}</small>
+                  </small>
+                </div>
+              </div>
+            </v-scale-transition>
+          </div>
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn
+            size="x-large"
+            variant="text"
+            @click="count_adjustment_dialog = false"
+            prepend-icon="close"
+          >
+            {{ $t("global.actions.close") }}
+          </v-btn>
+
+          <v-btn
+              v-if="!(IS_MARKETPLACE && !IS_VENDOR_PANEL)"
+              size="x-large"
+            color="primary"
+            prepend-icon="check"
+            variant="elevated"
+            @click="setCountAdjustment"
+            :loading="busy_set_count_adjustment"
+          >
+            {{ $t("global.actions.save") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-bottom-sheet>
 </template>
 
 <script lang="ts">
@@ -577,15 +744,21 @@ import UTextValueDashed from "../../../ui/text/value-dashed/UTextValueDashed.vue
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import { OrderTypeCode } from "@selldone/core-js/enums/order/OrderTypeCode";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
-import { BasketItemReturn } from "@selldone/core-js";
+import { Basket, BasketItemReturn } from "@selldone/core-js";
 import UTooltipTips from "@selldone/components-vue/ui/tooltip/tips/UTooltipTips.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
+import UNumberInput from "@selldone/components-vue/ui/number/input/UNumberInput.vue";
+import SImageUploader from "@selldone/components-vue/ui/uploader/SImageUploader.vue";
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import {BusinessModel} from "@selldone/core-js/enums/shop/BusinessModel.ts";
 
 export default {
   name: "BOrderCart",
   mixins: [OrderMixin],
   components: {
+    SImageUploader,
+    UNumberInput,
     UTooltipTips,
     UTextValueDashed,
     SProductSectionValuation,
@@ -593,6 +766,10 @@ export default {
   },
   props: {
     shop: {
+      required: true,
+      type: Object,
+    },
+    basket: {
       required: true,
       type: Object,
     },
@@ -623,6 +800,8 @@ export default {
 
   data: function () {
     return {
+      PhysicalOrderStates: Basket.PhysicalOrderStates,
+
       ProductType: ProductType,
 
       BillingPeriod: BillingPeriod,
@@ -684,10 +863,21 @@ export default {
       //-----------------------------------
       selected_item: null,
       customize_detail_dialog: false,
+
+      //-----------------------------------
+      count_adjustment_dialog: false,
+      count_adjustment_input: 0,
+
+      busy_set_count_adjustment: false,
     };
   },
 
   computed: {
+    IS_MARKETPLACE() {
+      return this.shop.model === BusinessModel.MARKETPLACE.code;
+    },
+
+
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -710,6 +900,23 @@ export default {
 
     isFulfillment() {
       return this.type === OrderTypeCode.Fulfillment;
+    },
+
+    unit_float() {
+      return this.selected_item && this.getProduct(this.selected_item)?.unit_float;
+    },
+
+    can_set_count_adjustment() {
+      return (
+        /* Qualified basket type:*/ this.basket.type ===
+          ProductType.PHYSICAL.code &&
+        /*Qualified delivery states:*/
+        [
+          Basket.PhysicalOrderStates.CheckQueue.code,
+          Basket.PhysicalOrderStates.OrderConfirm.code,
+          Basket.PhysicalOrderStates.PreparingOrder.code,
+        ].includes(this.basket.delivery_state)
+      );
     },
   },
 
@@ -762,6 +969,52 @@ export default {
     showCustomizeDetail(item) {
       this.selected_item = item;
       this.customize_detail_dialog = true;
+    },
+    showCountAdjustmentDialog(item) {
+      this.selected_item = item;
+      this.count_adjustment_dialog = true;
+      this.count_adjustment_input = item.count_adjustment;
+    },
+
+    setCountAdjustment() {
+      this.busy_set_count_adjustment = true;
+
+      axios
+        .put(
+            this.IS_VENDOR_PANEL?
+                window.VAPI.PUT_MY_VENDOR_ORDER_ITEM_SET_COUNT_ADJUSTMENT(
+                    this.$route.params.vendor_id,
+                    this.$route.params.vendor_order_id,
+                    this.selected_item.id,
+                ):
+          window.API.PUT_SHOP_ORDER_ITEM_SET_COUNT_ADJUSTMENT(
+            this.shop.id,
+            this.basket.id,
+            this.selected_item.id,
+          ),
+          {
+            count_adjustment: this.count_adjustment_input,
+          },
+        )
+        .then(({ data }) => {
+          if (data.error) {
+            return NotificationService.showErrorAlert(null, data.error_msg);
+          }
+
+          this.AddOrUpdateItemByID(this.basket.items, data.item);
+
+          NotificationService.showSuccessAlert(
+            null,
+            "Count adjustment has been successfully set.",
+          );
+          this.count_adjustment_dialog = false;
+        })
+        .catch((e) => {
+          NotificationService.showLaravelError(e);
+        })
+        .finally(() => {
+          this.busy_set_count_adjustment = false;
+        });
     },
   },
 };

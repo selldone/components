@@ -199,6 +199,9 @@
 
               <v-list-item-subtitle
                 v-if="item.data.payment && isObject(item.data.payment)"
+                style=" word-break: break-word; /* For most modern browsers */
+  overflow-wrap: break-word; /* Ensures compatibility */
+  white-space: normal; /* Allows the text to wrap */"
               >
                 <u-price
                   :amount="item.data.payment.amount"

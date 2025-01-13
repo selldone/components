@@ -37,6 +37,7 @@
 @use "selldone/hover/all";
 @use "selldone/general_animates";
 @use "selldone/cards/link-preview";
+@use "selldone/morph/morph";
 
 @use "../article/Article";
 @use "selldone/pages/pages";
@@ -3958,9 +3959,35 @@ Fix snaky chart overflow problem!
   color: #00376b !important
 }
 
+/**
+Hover Editable
+Add this to show edit icon:   <i class="edit-icon fas fa-edit"></i>
+ */
 .hover-editable {
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
   &:hover {
-    background-color: rgba(153, 153, 153, 0.36);
+    background-color: rgba(153, 153, 153, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .edit-icon {
+      opacity: 1;
+      transform: translateY(-50%) scale(1);
+    }
+  }
+
+  .edit-icon {
+    position: absolute;
+    top: 50%;
+    right: 16px; // Adjust the spacing from the right edge
+    transform: translateY(-50%) scale(0.9); // Ensures it's centered and slightly scaled
+    opacity: 0; // Initially hidden
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    font-size: 1.2rem; // Adjust icon size
+    color: #666; // Icon color
+    pointer-events: none; // Prevent interference with the hover effect
   }
 }
 

@@ -87,6 +87,10 @@
     "
   >
     <template v-slot:append-inner>
+
+      <v-chip v-if="decimal" size="x-small" color="#000" variant="flat" :title="`Accept Decimal | Floats: ${decimal} | e.g. 10.5`" label>D {{decimal}}</v-chip>
+
+
       <v-btn
         v-if="lock"
         :title="lock ? 'Click to edit value.' : 'Click to lock input'"

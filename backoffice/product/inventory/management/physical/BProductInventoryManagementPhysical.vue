@@ -213,6 +213,7 @@
           :disabled="add_by_dropShipping || is_marketplace"
           :label="$t('product_admin.inventory.variants.count_input')"
           :min="0"
+          :decimal="unit_float?3:0"
           class="strong-field mt-5"
           show-buttons
         >
@@ -448,6 +449,9 @@ export default {
     },
     paged_variants() {
       return this.product_variants.slice((this.page - 1) * 5, this.page * 5);
+    },
+    unit_float(){
+      return this.product.unit_float
     },
   },
 

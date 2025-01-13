@@ -57,10 +57,28 @@
         <v-badge
           v-for="item in items"
           :key="item.id"
-          :color="readonly || item.check ? 'green' : 'red'"
+          :color="
+            basket.delivery_state === PhysicalOrderStates.CheckQueue.code
+              ? 'amber'
+              : readonly || item.check
+                ? 'green'
+                : 'red'
+          "
           class="m-2"
         >
-          <template v-slot:badge>{{ item.count }}</template>
+          <template v-slot:badge
+            >{{ item.count +(item.count_adjustment?item.count_adjustment:0) }}
+
+
+            <i
+              v-if="
+                !item.check &&
+                basket.delivery_state === PhysicalOrderStates.CheckQueue.code
+              "
+              class="fa fa-spinner fa-pulse fa-fw ms-1"
+              title="Waiting to confirm by seller..."
+            />
+          </template>
           <v-avatar color="#fff" style="border: solid thin #999">
             <img :src="getProductImage(item.product_id)" />
           </v-avatar>
@@ -80,6 +98,7 @@
           :readonly="readonly"
           :select-all="initial_select_all"
           :shop="shop"
+          :basket="basket"
           :type="basket.type"
         />
       </div>
@@ -144,6 +163,7 @@
         "
         class="text-start"
       >
+        <!-- Refund/Charge Customer -->
         <v-row align="stretch" class="my-0">
           <v-col cols="12" sm="6">
             <v-card variant="flat" class="pa-2 h-100">
@@ -170,20 +190,117 @@
                 {{ $t("process_center.basket_list.need_payback.message") }}
               </small>
 
-              <v-card-actions>
-                <u-price
-                  :amount="need_to_refund"
-                  :currency="basket.currency"
-                  large
-                ></u-price>
-                <v-spacer></v-spacer>
+              <u-pods-panel dense class="py-2" color="#000" dot-color="#FFC107">
 
-                <b-order-payment-actions-refund-button
-                  v-if="need_to_refund > 0"
-                  :suggested-amount="need_to_refund"
-                  :payment="payment"
+
+                <template v-if="IS_MARKETPLACE">
+                  <u-pod-node
+                      icon="storefront"
+                      title="Vendors"
+                  >
+                  </u-pod-node>
+
+
+                  <u-pod-wire
+                      :forward="need_to_refund > 0"
+                      :backward="need_to_refund < 0"
+                  >
+                    <template v-slot:forward>
+                      <u-price
+                          :amount="Math.abs(need_to_refund)"
+                          :currency="basket.currency"
+                          compact
+                          class="absolute-top-center mt-1"
+                      ></u-price>
+                    </template>
+                    <template v-slot:backward>
+                      <u-price
+                          :amount="Math.abs(need_to_refund)"
+                          :currency="basket.currency"
+                          compact
+                          class="absolute-top-center mt-1"
+                      ></u-price>
+                    </template>
+                  </u-pod-wire>
+
+
+                </template>
+
+
+                <u-pod-node
+                  :image="getShopImagePath(shop.icon, 96)"
+                  :title="shop.title"
                 >
-                </b-order-payment-actions-refund-button>
+                </u-pod-node>
+                <u-pod-wire
+                  :forward="need_to_refund > 0"
+                  :backward="need_to_refund < 0"
+                >
+                  <template v-slot:forward>
+                    <u-price
+                      :amount="Math.abs(need_to_refund)"
+                      :currency="basket.currency"
+                      compact
+                      class="absolute-top-center mt-1"
+                    ></u-price>
+                  </template>
+                  <template v-slot:backward>
+                    <u-price
+                      :amount="Math.abs(need_to_refund)"
+                      :currency="basket.currency"
+                      compact
+                      class="absolute-top-center mt-1"
+                    ></u-price>
+                  </template>
+                </u-pod-wire>
+                <u-pod-node
+                  icon="person"
+                  :image="getUserAvatar(basket.user_id)"
+                  :title="basket.buyer?.name"
+                >
+                </u-pod-node>
+              </u-pods-panel>
+
+              <v-card-actions>
+                <div>
+                  <u-price
+                    :amount="need_to_refund"
+                    :currency="basket.currency"
+                    large
+                  ></u-price>
+                  <div class="small">
+                    {{$t('global.commons.items')}}:
+                    <u-price
+                      :amount="need_to_refund_items"
+                      :currency="basket.currency"
+                    ></u-price>
+                    /
+                    {{$t('global.commons.tax')}}:
+                    <u-price
+                      :amount="need_to_refund_tax"
+                      :currency="basket.currency"
+                    ></u-price>
+                  </div>
+                </div>
+                <v-spacer></v-spacer>
+               <div>
+                 <b-order-payment-actions-refund-button
+                     v-if="need_to_refund > 0"
+                     :suggested-amount="refund_by_payment"
+                     :payment="payment"
+                 >
+                 </b-order-payment-actions-refund-button>
+                 <div v-if="refund_by_giftcards" class="small">
+                   Refund giftcards: <u-price
+                     :amount="refund_by_giftcards"
+                     :currency="basket.currency"></u-price>
+                 </div>
+                 <div class="small">
+                   Refund payment: <u-price
+                     :amount="refund_by_payment"
+                     :currency="basket.currency"></u-price>
+                 </div>
+               </div>
               </v-card-actions>
               <small>
                 <v-icon class="me-1">warning_amber</v-icon>
@@ -271,11 +388,21 @@ import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import BOrderPaymentActionsRefundButton from "@selldone/components-vue/backoffice/order/payment/actions/refund/button/BOrderPaymentActionsRefundButton.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
+import UPodsPanel from "@selldone/components-vue/ui/pod/panel/UPodsPanel.vue";
+import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";
+import UPodCut from "@selldone/components-vue/ui/pod/cut/UPodCut.vue";
+import UPodWire from "@selldone/components-vue/ui/pod/wire/UPodWire.vue";
+import {BusinessModel} from "@selldone/core-js/enums/shop/BusinessModel.ts";
 
 export default {
   name: "BOrderDashboardCart",
   mixins: [DateMixin],
+  inject:['$vendor'],
   components: {
+    UPodWire,
+    UPodCut,
+    UPodNode,
+    UPodsPanel,
     UWidgetHeader,
     BOrderPaymentActionsRefundButton,
     UPrice,
@@ -315,6 +442,12 @@ export default {
   },
 
   computed: {
+
+    IS_MARKETPLACE() {
+      return this.shop.model === BusinessModel.MARKETPLACE.code;
+    },
+
+
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -393,7 +526,11 @@ export default {
     portion_unavailable() {
       const sum_unavailable_items = this.basket.items.reduce((acc, item) => {
         if (!item.check) {
+          // Totally not available:
           acc += item.price * item.count;
+        } else {
+          // Partial not available:
+          acc += item.price * -(item.count_adjustment?item.count_adjustment:0); // Negative count_adjustment: means less will be shipped | Positive count_adjustment: means more will bve shipped
         }
         return acc;
       }, 0);
@@ -413,6 +550,18 @@ export default {
     need_to_refund_tax() {
       if (this.tax_included) return 0;
       return this.basket.tax * this.portion_unavailable;
+    },
+
+    sum_payment_giftcards() {
+      return this.basket.gift_cards.sumByKey("amount");
+    },
+    refund_by_giftcards() {
+      if (this.need_to_refund < this.sum_payment_giftcards)
+        return this.need_to_refund;
+      return this.sum_payment_giftcards;
+    },
+    refund_by_payment() {
+      return this.need_to_refund - this.refund_by_giftcards;
     },
   },
   methods: {

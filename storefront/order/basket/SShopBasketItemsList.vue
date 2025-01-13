@@ -135,7 +135,8 @@
       <template v-slot:item.count="{ item }">
         {{ item.count }}
 
-        <i v-if="item.check" class="fas fa-check-circle text-success" />
+        <i v-if="!item.check && basket.delivery_state===Basket.PhysicalOrderStates.CheckQueue.code" class="fa fa-spinner fa-pulse fa-fw" title="Waiting to confirm by seller..." />
+        <i v-else-if="item.check" class="fas fa-check-circle text-success" />
         <i v-else class="fas fa-times-circle text-danger" />
         <div v-if="item.product.inputs && item.product.inputs.length">
           <v-btn
@@ -161,6 +162,42 @@
             style="max-width: 166px"
           ></v-progress-linear>
         </div>
+
+
+        <!-- ▃▃▃▃▃▃▃▃▃ Price input mode for physical products ▃▃▃▃▃▃▃▃▃ -->
+        <div
+            v-if="
+          item.preferences && item.preferences.dim_1 && item.preferences.dim_2
+        "
+            class="mt-2 d-flex align-stretch align-center"
+        >
+          <div
+              :title="$t('global.commons.width')"
+              class="pa-1 m-1 rounded border flex-grow-1"
+          >
+            {{ item.preferences.dim_1 }}
+          </div>
+          <v-icon size="x-small" class="my-auto">close</v-icon>
+          <div
+              :title="$t('global.commons.length')"
+              class="pa-1 m-1 rounded border flex-grow-1"
+          >
+            {{ item.preferences.dim_2 }}
+          </div>
+          <template
+              v-if="
+            item.preferences.dim_3 && item.product?.price_input === 'volume'
+          "
+          >
+            <v-icon size="x-small" class="my-auto">close</v-icon>
+            <div
+                :title="$t('global.commons.height')"
+                class="pa-1 m-1 rounded border flex-grow-1"
+            >
+              {{ item.preferences.dim_3 }}
+            </div>
+          </template>
+        </div>
       </template>
 
       <template v-slot:item.price="{ item }">
@@ -175,6 +212,8 @@
           :amount="item.count * (item.price + item.dis)"
           :currency="item.currency"
         ></u-price>
+
+
       </template>
 
       <template v-slot:item.dis="{ item }">
@@ -366,7 +405,7 @@ import SShopBasketItemReturnForm from "../../../storefront/order/return/SShopBas
 import BasketItemUserMessageForm from "../../../storefront/order/product-input/BasketItemUserMessageForm.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
-import { BasketItemReturn } from "@selldone/core-js";
+import {Basket, BasketItemReturn} from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
@@ -408,6 +447,9 @@ export default {
   },
 
   computed: {
+    Basket() {
+      return Basket
+    },
     type() {
       return this.basket.type;
     },

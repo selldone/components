@@ -328,29 +328,27 @@
       >
       </u-smart-select>
 
-      <!--
-      <v-switch
-        disabled
-        v-model="product.unit_float"
-        inset
-        :label="$t('add_product.edit_info.unit_float')"
-        :hint="$t('add_product.edit_info.unit_float_hint')"
-        color="blue"
-        persistent-hint
-      ></v-switch>
-      <v-expand-transition>
-        <div v-if="product.unit_float">
-          <v-alert
-            text
-            color="blue"
-            class="text-start body-1"
-            rounded="lg"
-            type="info"
-            >{{ $t("add_product.edit_info.unit_float_message") }}</v-alert
-          >
-        </div>
-      </v-expand-transition>
-      -->
+
+      <!-- Float unit option -->
+<template v-if="isPhysical ">
+  <hr class="my-5">
+
+  <u-smart-toggle
+      v-model="$product.unit_float"
+      :true-title="$t('add_product.edit_info.unit_float')"
+      :true-description="$t('add_product.edit_info.unit_float_hint')"
+      false-gray
+  ></u-smart-toggle>
+  <v-expand-transition>
+    <div v-if="$product.unit_float">
+      <v-list-subheader>
+        <v-icon>info</v-icon>
+        {{ $t("add_product.edit_info.unit_float_message") }}</v-list-subheader>
+    </div>
+  </v-expand-transition>
+</template>
+
+      <hr class="my-5">
 
       <v-combobox
         v-model="$product.action"
@@ -1075,12 +1073,14 @@ import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import BProductProfilePropertySet from "@selldone/components-vue/backoffice/product/profile/property-set/BProductProfilePropertySet.vue";
+import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 
 export default {
   name: "BProductEditInfo",
   mixins: [ProductMixin],
 
   components: {
+    USmartToggle,
     BProductProfilePropertySet,
     SProductSectionValuation,
     SDenseImagesCircles,
