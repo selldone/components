@@ -360,14 +360,14 @@
         <i v-if="can_set_count_adjustment" class="edit-icon fas fa-edit me-n3"></i>
       </div>
       <v-chip v-if="item.count_adjustment" size="x-small" color="#333" variant="flat" class="ma-1">
-        Adjusted:  {{item.count_adjustment}}
+        {{$t('global.commons.adjusted')}}:  {{item.count_adjustment}}
 
         <v-tooltip activator="parent" location="bottom" content-class="bg-black text-start">
-          Original Amount: <b>{{item.count}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b><br>
-          Adjustment Amount: <b>{{item.count_adjustment}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b>
+          {{$t('global.commons.original_amount')}}: <b>{{item.count}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b><br>
+          {{$t('global.commons.adjustment_amount')}}: <b>{{item.count_adjustment}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b>
 
           <div class="border-top border-white mt-1 pt-1">
-            Final Amount: <b>{{item.count + item.count_adjustment}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b>
+            {{$t('global.commons.final_amount')}}: <b>{{item.count + item.count_adjustment}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b>
           </div>
         </v-tooltip>
       </v-chip>

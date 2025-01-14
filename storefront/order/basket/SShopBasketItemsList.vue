@@ -133,11 +133,39 @@
       </template>
 
       <template v-slot:item.count="{ item }">
-        {{ item.count }}
+        <u-text-decimal
+          class="font-weight-black me-2"
+          :value="
+            item.count + (item.count_adjustment ? item.count_adjustment : 0)
+          "
+          :decimals="item.product?.unit_float ? 3 : 0"
+          compact
+        ></u-text-decimal>
 
-        <i v-if="!item.check && basket.delivery_state===Basket.PhysicalOrderStates.CheckQueue.code" class="fa fa-spinner fa-pulse fa-fw" title="Waiting to confirm by seller..." />
+        <i
+          v-if="
+            !item.check &&
+            basket.delivery_state === Basket.PhysicalOrderStates.CheckQueue.code
+          "
+          class="fa fa-spinner fa-pulse fa-fw"
+          title="Waiting to confirm by seller..."
+        />
         <i v-else-if="item.check" class="fas fa-check-circle text-success" />
         <i v-else class="fas fa-times-circle text-danger" />
+
+        <v-chip v-if="item.count_adjustment" size="x-small" color="#333" variant="flat" class="ma-1">
+          {{$t('global.commons.adjusted')}}:  {{item.count_adjustment}}
+
+          <v-tooltip activator="parent" location="bottom" content-class="bg-black text-start">
+            {{$t('global.commons.original_amount')}}: <b>{{item.count}}  {{ item.product?.unit ? item.product.unit : "🞪" }}</b><br>
+            {{$t('global.commons.adjustment_amount')}}: <b>{{item.count_adjustment}}  {{ item.product?.unit ? item.product.unit : "🞪" }}</b>
+
+            <div class="border-top border-white mt-1 pt-1">
+              {{$t('global.commons.final_amount')}}: <b>{{item.count + item.count_adjustment}}  {{ item.product?.unit ? item.product.unit : "🞪" }}</b>
+            </div>
+          </v-tooltip>
+        </v-chip>
+
         <div v-if="item.product.inputs && item.product.inputs.length">
           <v-btn
             class="tnt my-1"
@@ -163,36 +191,35 @@
           ></v-progress-linear>
         </div>
 
-
         <!-- ▃▃▃▃▃▃▃▃▃ Price input mode for physical products ▃▃▃▃▃▃▃▃▃ -->
         <div
-            v-if="
-          item.preferences && item.preferences.dim_1 && item.preferences.dim_2
-        "
-            class="mt-2 d-flex align-stretch align-center"
+          v-if="
+            item.preferences && item.preferences.dim_1 && item.preferences.dim_2
+          "
+          class="mt-2 d-flex align-stretch align-center"
         >
           <div
-              :title="$t('global.commons.width')"
-              class="pa-1 m-1 rounded border flex-grow-1"
+            :title="$t('global.commons.width')"
+            class="pa-1 m-1 rounded border flex-grow-1"
           >
             {{ item.preferences.dim_1 }}
           </div>
           <v-icon size="x-small" class="my-auto">close</v-icon>
           <div
-              :title="$t('global.commons.length')"
-              class="pa-1 m-1 rounded border flex-grow-1"
+            :title="$t('global.commons.length')"
+            class="pa-1 m-1 rounded border flex-grow-1"
           >
             {{ item.preferences.dim_2 }}
           </div>
           <template
-              v-if="
-            item.preferences.dim_3 && item.product?.price_input === 'volume'
-          "
+            v-if="
+              item.preferences.dim_3 && item.product?.price_input === 'volume'
+            "
           >
             <v-icon size="x-small" class="my-auto">close</v-icon>
             <div
-                :title="$t('global.commons.height')"
-                class="pa-1 m-1 rounded border flex-grow-1"
+              :title="$t('global.commons.height')"
+              class="pa-1 m-1 rounded border flex-grow-1"
             >
               {{ item.preferences.dim_3 }}
             </div>
@@ -212,8 +239,6 @@
           :amount="item.count * (item.price + item.dis)"
           :currency="item.currency"
         ></u-price>
-
-
       </template>
 
       <template v-slot:item.dis="{ item }">
@@ -405,13 +430,15 @@ import SShopBasketItemReturnForm from "../../../storefront/order/return/SShopBas
 import BasketItemUserMessageForm from "../../../storefront/order/product-input/BasketItemUserMessageForm.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SProductSectionValuation from "../../../storefront/product/section/valuation/SProductSectionValuation.vue";
-import {Basket, BasketItemReturn} from "@selldone/core-js";
+import { Basket, BasketItemReturn } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import UTextDecimal from "@selldone/components-vue/ui/text/decimal/UTextDecimal.vue";
 
 export default {
   name: "SShopBasketItemsList",
   mixins: [DateMixin],
   components: {
+    UTextDecimal,
     SProductSectionValuation,
     BasketItemUserMessageForm,
     SShopBasketItemReturnForm,
@@ -448,7 +475,7 @@ export default {
 
   computed: {
     Basket() {
-      return Basket
+      return Basket;
     },
     type() {
       return this.basket.type;
