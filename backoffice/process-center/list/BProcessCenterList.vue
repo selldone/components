@@ -596,10 +596,7 @@
         <s-order-status-view
           :gateway-processing="item.gateway_processing"
           :payment-require-capture="
-            item.payment_id /*Has attached success payment*/ &&
-            item.status ===
-              BasketStatus.Reserved
-                .code /*But basket not changed to paid status.*/
+            item.payment?.status ===TransactionStatus.RequireCapture.code
           "
           :status="item.status"
           class="mt-3 inline-block"
@@ -818,6 +815,7 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import {TransactionStatus} from "@selldone/core-js/enums/payment/TransactionStatus.ts";
 
 export default {
   name: "BProcessCenterList",
@@ -910,7 +908,7 @@ export default {
   data: function () {
     return {
       ProductType: ProductType,
-
+      TransactionStatus:TransactionStatus,
       BasketStatus: Basket.Status,
 
       activator: null,
@@ -936,6 +934,7 @@ export default {
     };
   },
   computed: {
+
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
@@ -1426,6 +1425,8 @@ export default {
               reseller_shop_id: this.isDropShipping
                 ? this.resellerShopId
                 : null, // Only for this reseller shop ID.
+
+              payment:true // Return payment!
             },
           },
         )

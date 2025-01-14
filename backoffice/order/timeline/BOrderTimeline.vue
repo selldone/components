@@ -73,60 +73,65 @@
         </div>
       </div>
     </v-expand-transition>
-    <v-fade-transition
+
+<div class="position-relative">
+  <u-arrow   v-if="$vuetify.display.mdAndUp" direction="up" class="position-absolute op-0-2" style="top:0;bottom: 0;right: -48px" :top-label="$t('global.commons.new')" :bottom-label="$t('global.commons.old')"></u-arrow>
+
+
+  <v-fade-transition
       class="bg-transparent"
       group
       hide-on-leave
       tag="v-list"
       two-line
-    >
-      <template v-for="(item, i) in timelines" :key="item.id">
-        <div
+  >
+    <template v-for="(item, i) in timelines" :key="item.id">
+      <div
           :class="{
             'bg-light': item.pin,
             '': !item.pin,
             disabled: busy_delete === item.id,
           }"
-        >
-          <v-fade-transition hide-on-leave>
-            <div
+      >
+        <v-fade-transition hide-on-leave>
+          <div
               v-if="getTimelineStatus(item.type).editable && item.editing"
               key="x1"
               class="px-3 py-2"
-            >
-              <u-text-mention-input
+          >
+            <u-text-mention-input
                 v-model="item.data.message"
                 :label="$t('order_timeline.message_input')"
                 auto-grow
                 class="mb-2"
                 outlined
-              ></u-text-mention-input>
+            ></u-text-mention-input>
 
-              <v-row justify="end" no-gutters>
-                <v-btn
+            <v-row justify="end" no-gutters>
+              <v-btn
                   :loading="busy_edit === item"
                   class="m-1"
                   color="primary"
                   size="small"
                   variant="flat"
                   @click="editNote(item)"
-                >
-                  <v-icon class="me-1" size="small">save</v-icon>
-                  {{ $t("global.actions.save") }}
-                </v-btn>
-                <v-btn
+              >
+                <v-icon class="me-1" size="small">save</v-icon>
+                {{ $t("global.actions.save") }}
+              </v-btn>
+              <v-btn
                   class="m-1"
                   size="small"
                   variant="outlined"
                   @click="showEdit(item, false)"
-                >
-                  <v-icon class="me-1" size="small">close</v-icon>
-                  {{ $t("global.actions.cancel") }}
-                </v-btn>
-              </v-row>
-            </div>
+              >
+                <v-icon class="me-1" size="small">close</v-icon>
+                {{ $t("global.actions.cancel") }}
+              </v-btn>
+            </v-row>
+          </div>
 
-            <v-list-item
+          <v-list-item
               v-else
               key="x2"
               :class="{ 'row-hover': isEmail(item) }"
@@ -137,9 +142,9 @@
               class="fadeInUp -timeline-list-item"
               lines="two"
               @click.stop="isEmail(item) ? clickItem(item) : undefined"
-            >
-              <template v-slot:prepend>
-                <v-avatar
+          >
+            <template v-slot:prepend>
+              <v-avatar
                   :class="!item.pin && getTimelineStatus(item.type).iclass"
                   :color="
                     item.pin ? '#607D8B' : getTimelineStatus(item.type).color
@@ -147,28 +152,28 @@
                   :style="{ 'animation-delay': 350 + i * 50 + 'ms' }"
                   class="zoomIn p-1"
                   size="42"
-                >
-                  <v-avatar color="#fff" size="36">
-                    <!-- 1. Custom image url -->
-                    <v-img
+              >
+                <v-avatar color="#fff" size="36">
+                  <!-- 1. Custom image url -->
+                  <v-img
                       v-if="item.data && item.data.image"
                       :src="item.data.image"
                       cover
-                    />
-                    <!-- 2. Icon -->
-                    <v-icon v-else size="small">
-                      {{
-                        item.pin
+                  />
+                  <!-- 2. Icon -->
+                  <v-icon v-else size="small">
+                    {{
+                      item.pin
                           ? "fa:fas fa-thumbtack"
                           : getTimelineStatus(item.type).icon
-                      }}
-                    </v-icon>
-                  </v-avatar>
+                    }}
+                  </v-icon>
                 </v-avatar>
-              </template>
+              </v-avatar>
+            </template>
 
-              <template v-slot:title>
-                <v-list-item-title
+            <template v-slot:title>
+              <v-list-item-title
                   class="text-wrap mb-2 html-style overflow-visible"
                   v-html="
                     (item.type === 'note'
@@ -192,74 +197,74 @@
                       ? smartBeautify(compileMarkdown(item.data?.message))
                       : '')
                   "
-                ></v-list-item-title>
-              </template>
+              ></v-list-item-title>
+            </template>
 
-              <!-- ---------------------- Payment object (in data) ----------------- -->
+            <!-- ---------------------- Payment object (in data) ----------------- -->
 
-              <v-list-item-subtitle
+            <v-list-item-subtitle
                 v-if="item.data.payment && isObject(item.data.payment)"
                 style=" word-break: break-word; /* For most modern browsers */
   overflow-wrap: break-word; /* Ensures compatibility */
   white-space: normal; /* Allows the text to wrap */"
-              >
-                <u-price
+            >
+              <u-price
                   :amount="item.data.payment.amount"
                   :currency="item.data.payment.currency"
-                ></u-price>
+              ></u-price>
 
-                <v-icon class="mx-2">trending_flat</v-icon>
-                <span class="text-subtitle-2">{{
+              <v-icon class="mx-2">trending_flat</v-icon>
+              <span class="text-subtitle-2">{{
                   item.data.payment.message
                 }}</span>
-              </v-list-item-subtitle>
+            </v-list-item-subtitle>
 
-              <v-list-item-subtitle
+            <v-list-item-subtitle
                 class="text-muted"
                 style="display: contents"
-              >
-                <div class="d-flex align-center py-1">
-                  <v-chip
+            >
+              <div class="d-flex align-center py-1">
+                <v-chip
                     v-if="item.by"
                     class="overflow-visible me-2"
                     color="#fff"
                     size="small"
                     variant="flat"
-                  >
-                    <v-avatar class="hover-scale" start>
-                      <v-img :src="getUserAvatar(item.by.id)" />
-                    </v-avatar>
-                    {{ item.by.name }}
-                  </v-chip>
+                >
+                  <v-avatar class="hover-scale" start>
+                    <v-img :src="getUserAvatar(item.by.id)" />
+                  </v-avatar>
+                  {{ item.by.name }}
+                </v-chip>
 
-                  <span class="d-none d-sm-inline-block">{{
+                <span class="d-none d-sm-inline-block">{{
                     getLocalTimeString(item.created_at)
                   }}</span>
-                  <span class="mx-2 font-weight-bold">{{
+                <span class="mx-2 font-weight-bold">{{
                     getFromNowString(item.created_at)
                   }}</span>
-                </div>
+              </div>
 
-                <span class="flex-grow-1">
+              <span class="flex-grow-1">
                   <!-- ---------------------- Delivery person / service Icon ----------------- -->
                   <img
-                    v-if="
+                      v-if="
                       item.data &&
                       (item.data.delivery_user_id || item.data.delivery_user_id)
                     "
-                    class="mx-2"
-                    height="16"
-                    src="../../../assets/icons/wire.svg"
-                    width="16"
+                      class="mx-2"
+                      height="16"
+                      src="../../../assets/icons/wire.svg"
+                      width="16"
                   />
                   <v-avatar
-                    v-if="item.data && item.data.delivery_service_id"
-                    class="mx-1 hover-scale"
-                    size="18"
-                    tile
+                      v-if="item.data && item.data.delivery_service_id"
+                      class="mx-1 hover-scale"
+                      size="18"
+                      tile
                   >
                     <v-img
-                      :src="
+                        :src="
                         DeliveryServiceHelper.GetDeliveryServiceIconById(
                           item.data.delivery_service_id,
                         )
@@ -268,29 +273,29 @@
                   </v-avatar>
 
                   <v-avatar
-                    v-if="item.data && item.data.delivery_user_id"
-                    class="mx-1 hover-scale"
-                    size="18"
+                      v-if="item.data && item.data.delivery_user_id"
+                      class="mx-1 hover-scale"
+                      size="18"
                   >
                     <v-img :src="getUserAvatar(item.data.delivery_user_id)" />
                   </v-avatar>
-                  <!------------------------------------------------------------------------------->
+                <!------------------------------------------------------------------------------->
 
-                  <!-- ---------------------- Item ----------------- -->
+                <!-- ---------------------- Item ----------------- -->
                   <div
-                    v-if="item.data && item.data.old && item.data.new"
-                    class="mt-2 pt-2 border-top-dashed"
+                      v-if="item.data && item.data.old && item.data.new"
+                      class="mt-2 pt-2 border-top-dashed"
                   >
                     <div>
                       <v-icon color="red" size="small">close</v-icon>
                       <small>{{ $t("global.commons.old") }}:</small>
                       <b>{{ MapHelper.GenerateFullAddressFromMapInfo(item.data.old) }}</b>
                       <u-map-geo-button
-                        v-if="item.data.old && item.data.old.location"
-                        :icon="true"
-                        :location="item.data.old.location"
-                        class="ma-1"
-                        small
+                          v-if="item.data.old && item.data.old.location"
+                          :icon="true"
+                          :location="item.data.old.location"
+                          class="ma-1"
+                          small
                       ></u-map-geo-button>
                     </div>
                     <div class="mt-2">
@@ -298,20 +303,20 @@
                       <small>{{ $t("global.commons.new") }}:</small>
                       <b>{{ MapHelper.GenerateFullAddressFromMapInfo(item.data.new) }}</b>
                       <u-map-geo-button
-                        v-if="item.data.new && item.data.new.location"
-                        :icon="true"
-                        :location="item.data.new.location"
-                        class="ma-1"
-                        small
+                          v-if="item.data.new && item.data.new.location"
+                          :icon="true"
+                          :location="item.data.new.location"
+                          class="ma-1"
+                          small
                       ></u-map-geo-button>
                     </div>
                   </div>
                 </span>
-              </v-list-item-subtitle>
+            </v-list-item-subtitle>
 
-              <template v-slot:append>
-                <v-list-item-action style="min-width: 36px">
-                  <u-smart-menu
+            <template v-slot:append>
+              <v-list-item-action style="min-width: 36px">
+                <u-smart-menu
                     v-if="getTimelineStatus(item.type).editable"
                     :items="[
                       {
@@ -334,10 +339,10 @@
                       },
                     ]"
                     icon="more_horiz"
-                  >
-                  </u-smart-menu>
+                >
+                </u-smart-menu>
 
-                  <v-btn
+                <v-btn
                     v-if="
                       isEmail(item) &&
                       (item.data.can_resend || item.data.resend)
@@ -349,38 +354,39 @@
                     size="small"
                     variant="flat"
                     @click.stop="resendEmail(item)"
-                  >
-                    <v-icon start>send</v-icon>
-                    {{
-                      item.data.resend
+                >
+                  <v-icon start>send</v-icon>
+                  {{
+                    item.data.resend
                         ? getLocalTimeStringSmall(item.data.resend)
                         : $t("global.actions.resend")
-                    }}
-                  </v-btn>
+                  }}
+                </v-btn>
 
-                  <!-- Connect -->
-                  <v-img
+                <!-- Connect -->
+                <v-img
                     v-if="item.data && item.data.connect_id"
                     :src="getConnectIcon(item.data.connect_id)"
                     class="m-1"
                     height="24"
                     width="24"
-                  ></v-img>
-                </v-list-item-action>
-              </template>
-            </v-list-item>
-          </v-fade-transition>
-        </div>
-        <hr
+                ></v-img>
+              </v-list-item-action>
+            </template>
+          </v-list-item>
+        </v-fade-transition>
+      </div>
+      <hr
           v-if="i < timelines.length - 1"
           :style="{
             'animation-delay': 500 + i * 50 + 'ms',
             cursor: isEmail(item) ? undefined : 'initial',
           }"
           class="ma-0 fadeIn"
-        />
-      </template>
-    </v-fade-transition>
+      />
+    </template>
+  </v-fade-transition>
+</div>
   </div>
 
   <!-- ----------------------- Email Preview Dialog ----------------------------- -->
@@ -447,12 +453,14 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import UArrow from "@selldone/components-vue/ui/arrow/UArrow.vue";
 
 export default {
   name: "BOrderTimeline",
   mixins: [DateMixin, MapMixin],
 
   components: {
+    UArrow,
     ULoadingEllipsis,
     USmartMenu,
     UMapGeoButton,

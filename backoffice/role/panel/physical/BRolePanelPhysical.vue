@@ -79,6 +79,7 @@
                   null,
                 )
             "
+            @fetch-order="$emit('fetch-order')"
           ></b-order-dashboard-cart>
 
           <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Package info ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -175,7 +176,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BRolePanelPhysical",
-  mixins:[],
+  mixins: [],
   components: {
     SWidgetButtons,
     SOrderBasketReturn,
@@ -186,7 +187,7 @@ export default {
 
     BRolePanelOrdersList,
   },
-
+  emits: ["fetch-order"],
   props: {
     role: {
       require: true,

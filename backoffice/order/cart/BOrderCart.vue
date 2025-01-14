@@ -354,12 +354,13 @@
         "
         :class="{ 'hover-editable': can_set_count_adjustment }"
       >
-        <b class="text-h4 font-weight-black">{{ item.count + (item.count_adjustment?item.count_adjustment:0)}}</b>
+
+          <u-text-decimal class="text-h4 font-weight-black" :value="item.count + (item.count_adjustment?item.count_adjustment:0)" :decimals="item.product?.unit_float?3:0" compact></u-text-decimal>
         {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}
-        <i v-if="can_set_count_adjustment" class="edit-icon fas fa-edit"></i>
+        <i v-if="can_set_count_adjustment" class="edit-icon fas fa-edit me-n3"></i>
       </div>
       <v-chip v-if="item.count_adjustment" size="x-small" color="#333" variant="flat" class="ma-1">
-        Adjust:  {{item.count_adjustment}}
+        Adjusted:  {{item.count_adjustment}}
 
         <v-tooltip activator="parent" location="bottom" content-class="bg-black text-start">
           Original Amount: <b>{{item.count}}  {{ getProduct(item)?.unit ? getProduct(item).unit : "🞪" }}</b><br>
@@ -626,11 +627,10 @@
           units, you can enter a decimal value. The adjustment can be either
           positive or negative.
         </p>
-
         <u-number-input
           v-model="count_adjustment_input"
           variant="outlined"
-          :decimal="unit_float ? 3 : 0"
+          :decimal="selected_item_unit_float ? 3 : 0"
           label="Count Adjustment"
           rounded="lg"
           class="strong-field mt-5"
@@ -639,7 +639,7 @@
           :min="-selected_item.count"
         ></u-number-input>
 
-        <div class="d-flex align-center">
+        <div class=" ">
           <div class="text-center">
             <small>Final Count</small>
             <div
@@ -649,7 +649,11 @@
               'text-red': count_adjustment_input < 0,
             }"
             >
-              {{ selected_item.count + count_adjustment_input }}
+              <u-text-decimal
+                              :value="selected_item.count + count_adjustment_input"
+                              :decimals="selected_item_unit_float?3:0"></u-text-decimal>
+
+
               <small style="font-size: 12px">{{getProduct(selected_item)?.unit}}</small>
             </div>
           </div>
@@ -694,7 +698,7 @@
 
                   <v-avatar
                       :image="getShopImagePath(getProduct(selected_item)?.icon, 256)"
-                      :size="(84 * count_adjustment_input) / selected_item.count"
+                      :size="Math.min((84 * count_adjustment_input) / selected_item.count,2.5*84)"
                       style="border: solid green 3px"
                       class="elevation-3 t-all-400"
                   />
@@ -752,11 +756,14 @@ import UNumberInput from "@selldone/components-vue/ui/number/input/UNumberInput.
 import SImageUploader from "@selldone/components-vue/ui/uploader/SImageUploader.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import {BusinessModel} from "@selldone/core-js/enums/shop/BusinessModel.ts";
+import UTextDecimal from "@selldone/components-vue/ui/text/decimal/UTextDecimal.vue";
 
 export default {
   name: "BOrderCart",
   mixins: [OrderMixin],
+  emits: ["fetch-order"],
   components: {
+    UTextDecimal,
     SImageUploader,
     UNumberInput,
     UTooltipTips,
@@ -902,7 +909,7 @@ export default {
       return this.type === OrderTypeCode.Fulfillment;
     },
 
-    unit_float() {
+    selected_item_unit_float() {
       return this.selected_item && this.getProduct(this.selected_item)?.unit_float;
     },
 
@@ -1010,6 +1017,7 @@ export default {
             "Count adjustment has been successfully set.",
           );
           this.count_adjustment_dialog = false;
+          this.$emit("fetch-order"); //refresh order
         })
         .catch((e) => {
           NotificationService.showLaravelError(e);

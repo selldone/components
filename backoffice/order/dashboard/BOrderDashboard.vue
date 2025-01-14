@@ -160,6 +160,7 @@
                 null,
               )
           "
+          @fetch-order="$emit('fetch-order')"
         ></b-order-dashboard-cart>
       </v-lazy>
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ List > Drop Shipping Fulfillment (Middle Seller) ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -185,6 +186,7 @@
               ({ fulfillment, check, callback }) =>
                 checkFulfillment(fulfillment, check, callback)
             "
+            @fetch-order="$emit('fetch-order')"
           >
           </b-order-dashboard-dropshipping-fulfillment>
         </div>
@@ -220,6 +222,7 @@
               ({ vendor_order, delivery_state, callback }) =>
                 updateVendorOrderStatus(vendor_order, delivery_state, callback)
             "
+            @fetch-order="$emit('fetch-order')"
           >
           </b-order-dashboard-vendor>
         </div>

@@ -53,37 +53,13 @@
         {{ $t("process_center.basket_list.list_of_items") }}
       </span>
 
-      <div class="d-flex overflow-auto pt-5 pb-2">
-        <v-badge
-          v-for="item in items"
-          :key="item.id"
-          :color="
-            basket.delivery_state === PhysicalOrderStates.CheckQueue.code
-              ? 'amber'
-              : readonly || item.check
-                ? 'green'
-                : 'red'
-          "
-          class="m-2"
-        >
-          <template v-slot:badge
-            >{{ item.count +(item.count_adjustment?item.count_adjustment:0) }}
-
-
-            <i
-              v-if="
-                !item.check &&
-                basket.delivery_state === PhysicalOrderStates.CheckQueue.code
-              "
-              class="fa fa-spinner fa-pulse fa-fw ms-1"
-              title="Waiting to confirm by seller..."
-            />
-          </template>
-          <v-avatar color="#fff" style="border: solid thin #999">
-            <img :src="getProductImage(item.product_id)" />
-          </v-avatar>
-        </v-badge>
-      </div>
+      <b-order-cart-items-circle
+        class="d-flex overflow-auto pt-5 pb-2"
+        :delivery-state="basket.delivery_state"
+        :items="items"
+        :readonly="readonly"
+      >
+      </b-order-cart-items-circle>
     </div>
 
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ List of Cart Items ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
@@ -100,6 +76,7 @@
           :shop="shop"
           :basket="basket"
           :type="basket.type"
+          @fetch-order="$emit('fetch-order')"
         />
       </div>
     </v-expand-transition>
@@ -191,41 +168,31 @@
               </small>
 
               <u-pods-panel dense class="py-2" color="#000" dot-color="#FFC107">
-
-
                 <template v-if="IS_MARKETPLACE">
-                  <u-pod-node
-                      icon="storefront"
-                      title="Vendors"
-                  >
-                  </u-pod-node>
-
+                  <u-pod-node icon="storefront" title="Vendors"> </u-pod-node>
 
                   <u-pod-wire
-                      :forward="need_to_refund > 0"
-                      :backward="need_to_refund < 0"
+                    :forward="need_to_refund > 0"
+                    :backward="need_to_refund < 0"
                   >
                     <template v-slot:forward>
                       <u-price
-                          :amount="Math.abs(need_to_refund)"
-                          :currency="basket.currency"
-                          compact
-                          class="absolute-top-center mt-1"
+                        :amount="Math.abs(need_to_refund)"
+                        :currency="basket.currency"
+                        compact
+                        class="absolute-top-center mt-1"
                       ></u-price>
                     </template>
                     <template v-slot:backward>
                       <u-price
-                          :amount="Math.abs(need_to_refund)"
-                          :currency="basket.currency"
-                          compact
-                          class="absolute-top-center mt-1"
+                        :amount="Math.abs(need_to_refund)"
+                        :currency="basket.currency"
+                        compact
+                        class="absolute-top-center mt-1"
                       ></u-price>
                     </template>
                   </u-pod-wire>
-
-
                 </template>
-
 
                 <u-pod-node
                   :image="getShopImagePath(shop.icon, 96)"
@@ -269,13 +236,13 @@
                     large
                   ></u-price>
                   <div class="small">
-                    {{$t('global.commons.items')}}:
+                    {{ $t("global.commons.items") }}:
                     <u-price
                       :amount="need_to_refund_items"
                       :currency="basket.currency"
                     ></u-price>
                     /
-                    {{$t('global.commons.tax')}}:
+                    {{ $t("global.commons.tax") }}:
                     <u-price
                       :amount="need_to_refund_tax"
                       :currency="basket.currency"
@@ -283,24 +250,28 @@
                   </div>
                 </div>
                 <v-spacer></v-spacer>
-               <div>
-                 <b-order-payment-actions-refund-button
-                     v-if="need_to_refund > 0"
-                     :suggested-amount="refund_by_payment"
-                     :payment="payment"
-                 >
-                 </b-order-payment-actions-refund-button>
-                 <div v-if="refund_by_giftcards" class="small">
-                   Refund giftcards: <u-price
-                     :amount="refund_by_giftcards"
-                     :currency="basket.currency"></u-price>
-                 </div>
-                 <div class="small">
-                   Refund payment: <u-price
-                     :amount="refund_by_payment"
-                     :currency="basket.currency"></u-price>
-                 </div>
-               </div>
+                <div>
+                  <b-order-payment-actions-refund-button
+                    v-if="need_to_refund > 0"
+                    :suggested-amount="refund_by_payment"
+                    :payment="payment"
+                  >
+                  </b-order-payment-actions-refund-button>
+                  <div v-if="refund_by_giftcards" class="small">
+                    Refund giftcards:
+                    <u-price
+                      :amount="refund_by_giftcards"
+                      :currency="basket.currency"
+                    ></u-price>
+                  </div>
+                  <div class="small">
+                    Refund payment:
+                    <u-price
+                      :amount="refund_by_payment"
+                      :currency="basket.currency"
+                    ></u-price>
+                  </div>
+                </div>
               </v-card-actions>
               <small>
                 <v-icon class="me-1">warning_amber</v-icon>
@@ -392,13 +363,15 @@ import UPodsPanel from "@selldone/components-vue/ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";
 import UPodCut from "@selldone/components-vue/ui/pod/cut/UPodCut.vue";
 import UPodWire from "@selldone/components-vue/ui/pod/wire/UPodWire.vue";
-import {BusinessModel} from "@selldone/core-js/enums/shop/BusinessModel.ts";
+import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel.ts";
+import BOrderCartItemsCircle from "@selldone/components-vue/backoffice/order/cart/items/circle/BOrderCartItemsCircle.vue";
 
 export default {
   name: "BOrderDashboardCart",
   mixins: [DateMixin],
-  inject:['$vendor'],
+  inject: ["$vendor"],
   components: {
+    BOrderCartItemsCircle,
     UPodWire,
     UPodCut,
     UPodNode,
@@ -409,7 +382,7 @@ export default {
     VariantItemViewMicro,
     BOrderCart,
   },
-  emits: ["confirm-order"],
+  emits: ["confirm-order","fetch-order"],
   props: {
     shop: {
       require: true,
@@ -442,11 +415,9 @@ export default {
   },
 
   computed: {
-
     IS_MARKETPLACE() {
       return this.shop.model === BusinessModel.MARKETPLACE.code;
     },
-
 
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
@@ -530,7 +501,8 @@ export default {
           acc += item.price * item.count;
         } else {
           // Partial not available:
-          acc += item.price * -(item.count_adjustment?item.count_adjustment:0); // Negative count_adjustment: means less will be shipped | Positive count_adjustment: means more will bve shipped
+          acc +=
+            item.price * -(item.count_adjustment ? item.count_adjustment : 0); // Negative count_adjustment: means less will be shipped | Positive count_adjustment: means more will bve shipped
         }
         return acc;
       }, 0);

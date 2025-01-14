@@ -105,6 +105,7 @@
         :basket="basket"
         :type="basket.type"
         class="pb-4"
+        @fetch-order="$emit('fetch-order')"
       />
     </v-expand-transition>
 
@@ -209,6 +210,7 @@ export default {
   name: "BOrderDashboardDropshippingFulfillment",
   mixins: [DateMixin],
   components: { SOrderDeliveryStatusStepper, BOrderCart },
+  emits: ["confirm-fulfillment", "fetch-order"],
   props: {
     shop: {
       require: true,

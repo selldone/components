@@ -43,13 +43,12 @@
         >cancel</v-icon
       >
 
-      <v-icon
-        v-if="paymentRequireCapture"
-        class="sup-icon fa-pulse"
-        color="success"
-        size="small"
-        >fa:fas fa-spinner</v-icon
-      >
+      <span v-if="paymentRequireCapture" class="sup-icon"
+        ><i
+          class="fa-pulse fas fa-spinner text-green"
+          style="font-size: 16px"
+        ></i
+      ></span>
     </div>
 
     <small class="d-block text-ellipsis">{{ title }}</small>

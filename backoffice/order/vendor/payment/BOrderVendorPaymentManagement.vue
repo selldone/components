@@ -42,7 +42,7 @@
     </u-widget-header>
     <v-spacer></v-spacer>
 
-    <!-- █████████████████████ Transactions █████████████████████ -->
+    <!-- █████████████████████ Vendor Wallet Transactions █████████████████████ -->
     <v-list-subheader
       >{{ $t("order_vendor_payment.message") }}
       <s-widget-help code="Marketplace.Payout.Overview" inline></s-widget-help>
@@ -65,54 +65,67 @@
       </u-pods-panel>
     </div>
 
-    <v-table class="rounded-lg bg-table-gray">
-      <template v-slot:default>
-        <tbody class="text-start">
-          <template
-            v-for="transaction in transactions"
-            :key="'t' + transaction.id"
-          >
-            <tr>
-              <td :title="$t('global.commons.amount')" class="min-width-150">
-                <v-icon class="me-1" color="#333">wallet</v-icon>
-                <u-price
-                  :amount="transaction.amount"
-                  :currency="transaction.currency"
-                ></u-price>
-              </td>
-              <td :title="$t('global.commons.officer')">
-                <v-avatar
-                  v-if="transaction.officer_id"
-                  class="avatar-gradient -thin -staff"
-                  size="24"
-                >
-                  <v-img :src="getUserAvatar(transaction.officer_id)" />
-                </v-avatar>
-                <small v-else>System</small>
-              </td>
-              <td :title="$t('global.commons.note')" class="min-width-200">
-                {{ transaction.note }}
-              </td>
 
-              <td v-if="IS_MARKETPLACE_OWNER" class="text-end">
-                <v-btn
-                  v-if="transaction.amount > 0"
-                  color="nbt"
-                  size="small"
-                  @click="showRefundVendorOrderDialog()"
-                >
-                  <v-icon class="me-1" size="small"
-                    >remove_shopping_cart
-                  </v-icon>
+   <div class="position-relative">
+     <u-arrow   v-if="$vuetify.display.mdAndUp" direction="down" class="position-absolute op-0-2" style="top:0;bottom: 0;right: -48px" :top-label="$t('global.commons.old')" :bottom-label="$t('global.commons.new')"></u-arrow>
 
-                  {{ $t("order_vendor_payment.refund_order_action") }}
-                </v-btn>
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </template>
-    </v-table>
+     <v-table class="rounded-lg bg-table-gray ">
+
+       <template v-slot:default>
+         <tbody class="text-start">
+         <template
+             v-for="transaction in transactions"
+             :key="'t' + transaction.id"
+         >
+           <tr>
+             <td :title="$t('global.commons.amount')" class="min-width-150">
+               <v-icon class="me-1" color="#333">wallet</v-icon>
+               <u-price
+                   :amount="transaction.amount"
+                   :currency="transaction.currency"
+               ></u-price>
+             </td>
+             <td :title="$t('global.commons.officer')">
+               <v-avatar
+                   v-if="transaction.officer_id"
+                   class="avatar-gradient -thin -staff"
+                   size="24"
+               >
+                 <v-img :src="getUserAvatar(transaction.officer_id)" />
+               </v-avatar>
+               <small v-else>System</small>
+             </td>
+             <td :title="$t('global.commons.note')" class="min-width-200">
+               {{ transaction.note }}
+             </td>
+             <td class="min-width-200">
+               {{ getFromNowString(transaction.created_at) }}<br />
+               <small>
+                 {{ getLocalTimeString(transaction.created_at) }}
+               </small>
+             </td>
+
+             <td v-if="IS_MARKETPLACE_OWNER" class="text-end">
+               <v-btn
+                   v-if="transaction.amount > 0"
+                   color="nbt"
+                   size="small"
+                   @click="showRefundVendorOrderDialog()"
+               >
+                 <v-icon class="me-1" size="small"
+                 >remove_shopping_cart
+                 </v-icon>
+
+                 {{ $t("order_vendor_payment.refund_order_action") }}
+               </v-btn>
+             </td>
+
+           </tr>
+         </template>
+         </tbody>
+       </template>
+     </v-table>
+   </div>
 
     <!-- █████████████████████ Payments █████████████████████ -->
     <template v-if="payments?.length">
@@ -277,10 +290,14 @@ import UPodNode from "../../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../../ui/pod/wire/UPodWire.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import UArrow from "@selldone/components-vue/ui/arrow/UArrow.vue";
 
 export default {
   name: "BOrderVendorPaymentManagement",
+  mixins: [DateMixin],
   components: {
+    UArrow,
     SWidgetHelp,
     UPodWire,
     UPodNode,

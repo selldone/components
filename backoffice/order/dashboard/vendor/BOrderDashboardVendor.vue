@@ -24,7 +24,9 @@
         <img
           class="me-1"
           height="24"
-          :src="require('@selldone/components-vue/assets/icons/marketplace.svg')"
+          :src="
+            require('@selldone/components-vue/assets/icons/marketplace.svg')
+          "
           width="24"
         />
         {{ $t("global.commons.vendors_panel") }}
@@ -252,6 +254,8 @@
       {{ vendor.description }}
     </p>
 
+    <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Vendor cart count ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
+
     <div
       class="expand-button mb-2 mt-2 px-2 widget-hover rounded position-relative pointer-pointer"
       @click="force_show_items = !force_show_items"
@@ -265,20 +269,16 @@
         >{{ $t("fulfilment_order_widget.list_of_items") }}
       </span>
 
-      <div class="d-flex pt-5 pb-2">
-        <v-badge
-          v-for="item in items"
-          :key="item.id"
-          :color="item.check ? 'green' : 'amber'"
-          class="m-2"
-        >
-          <template v-slot:badge>{{ item.count }}</template>
-          <v-avatar class="border">
-            <v-img :src="getProductImage(item.product_id)" />
-          </v-avatar>
-        </v-badge>
-      </div>
+      <b-order-cart-items-circle
+        class="d-flex overflow-auto pt-5 pb-2"
+        :delivery-state="vendorOrder.delivery_state"
+        :items="items"
+      >
+      </b-order-cart-items-circle>
+
+
     </div>
+    <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Vendor cart Table ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
     <v-expand-transition>
       <div v-if="force_show_items">
@@ -289,6 +289,7 @@
           :basket="basket"
           :type="basket.type"
           class="pb-4 mb-2"
+          @fetch-order="$emit('fetch-order')"
         />
       </div>
     </v-expand-transition>
@@ -538,12 +539,14 @@ import UCountDown from "@selldone/components-vue/ui/count-down/UCountDown.vue";
 import UFadeScroll from "@selldone/components-vue/ui/fade-scroll/UFadeScroll.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
+import BOrderCartItemsCircle from "@selldone/components-vue/backoffice/order/cart/items/circle/BOrderCartItemsCircle.vue";
 
 export default {
   name: "BOrderDashboardVendor",
   mixins: [DateMixin, OrderMixin],
 
   components: {
+    BOrderCartItemsCircle,
     UFadeScroll,
     UCountDown,
     UAvatarFolder,
@@ -552,6 +555,7 @@ export default {
     SOrderDeliveryStatusStepper,
     BOrderCart,
   },
+  emits: ["update-vendor-order-status", "fetch-order"],
   props: {
     shop: {
       require: true,
