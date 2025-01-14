@@ -599,6 +599,7 @@
             item.payment?.status ===TransactionStatus.RequireCapture.code
           "
           :status="item.status"
+          :payment="item.payment"
           class="mt-3 inline-block"
         ></s-order-status-view>
       </template>
@@ -1413,7 +1414,6 @@ export default {
 
               search: this.search,
 
-              buyer: true,
 
               affiliate_id: this.filterAffiliateId,
 
@@ -1426,7 +1426,7 @@ export default {
                 ? this.resellerShopId
                 : null, // Only for this reseller shop ID.
 
-              payment:true // Return payment!
+              with:['buyer','payment-compact'] // Return payment card + status + risk only!
             },
           },
         )

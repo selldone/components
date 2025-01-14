@@ -17,38 +17,47 @@
     :class="{
       'd-flex text-start align-center': horizontal,
       'text-center': !horizontal,
+      small: small,
     }"
   >
     <v-chip
       v-if="card"
-      size="small"
-      density="comfortable"
+      :size="small ? 'x-small' : 'small'"
+      :density="small ? 'compact' : 'comfortable'"
       label
       color="#fff"
       variant="flat"
-      class="ps-1 text-uppercase"
+      class="text-uppercase"
+      :class="{ 'pa-0': small, 'ps-1': !small }"
     >
       <span
         v-if="card && image?.startsWith('<svg')"
-        class="me-1 d-block flex-grow-0"
-        style="width: 24px; height: auto"
+        class="d-block flex-grow-0"
+        :class="{ 'me-1': !small }"
+        style="height: auto"
+        :style="{ width: small ? '20px' : '24px' }"
         v-html="image"
       />
       <img
         v-else-if="card"
         :src="image"
-        class="me-1 d-block flex-grow-0"
-        height="24"
+        class="d-block flex-grow-0"
+        :class="{ 'me-1': !small }"
+        :height="small ? 20 : 24"
       />
-      {{ card.brand }}
+      {{ small ? "" : card.brand }}
+      <span v-if="card.network" > | {{ card.network }}</span>
     </v-chip>
 
     <!-- Blockchain -->
 
-    <div v-if="card && card.blockchain" class="m-1 flex-grow-1" dir="ltr">
-      <span class="d-block text-subtitle-2"> {{ card.network }}</span>
-
-      <div class="d-flex text-subtitle-2">
+    <div
+      v-if="card && card.blockchain && !small"
+      class="flex-grow-1"
+      dir="ltr"
+      :class="{ 'ma-1': !small }"
+    >
+      <div class="d-flex">
         <div class="w-50" title="Address balance">
           <u-price
             :amount="card.balance"
@@ -86,19 +95,19 @@
 
     <!-- Traditional payment -->
 
-    <div v-else-if="card" class="m-1 flex-grow-1">
+    <div v-else-if="card" class="flex-grow-1" :class="{ 'ma-1': !small }">
       <div>
         <flag
           v-if="showCountry && card.country"
           :iso="card.country"
           :squared="false"
-          class="me-1"
+          class="mx-1"
         />
 
-        <span dir="ltr" v-copy="card.card_no" class="pa-0">{{
+        <span dir="ltr" class="pa-0">{{
           abstractCardNumber(card.card_no)
         }}</span>
-        <v-icon class="mx-2" size="14"> lock</v-icon>
+        <v-icon v-if="!small" class="mx-2" size="14"> lock</v-icon>
       </div>
       <!--
       <div v-if="card.bank" title="Bank" class="my-1">
@@ -139,6 +148,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    small: Boolean,
     currency: {},
   },
   computed: {

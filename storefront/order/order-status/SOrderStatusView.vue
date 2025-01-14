@@ -13,7 +13,11 @@
   -->
 
 <template>
-  <span v-if="statusObject" class="position-relative text-center">
+  <div
+    v-if="statusObject"
+    class="s--order-status-view"
+    :class="{ '-rtl': $vuetify.locale.isRtl }"
+  >
     <div class="inline-block position-relative">
       <img
         :src="
@@ -29,19 +33,16 @@
         alt="Status"
       />
 
-      <v-icon
-        v-if="processing"
-        class="sup-icon fa-spin"
-        color="blue"
-        size="small"
-        >fa:fas fa-cog</v-icon
-      >
-      <v-icon v-else-if="ticked" class="sup-icon" color="success" size="small"
-        >check_circle</v-icon
-      >
-      <v-icon v-else-if="canceled" class="sup-icon" color="red" size="small"
-        >cancel</v-icon
-      >
+      <span v-if="processing" class="sup-icon">
+        <i class="fa-spin fas fa-cog text-blue" style="font-size: 16px"></i>
+      </span>
+      <span v-else-if="ticked" class="sup-icon">
+        <v-icon color="success" size="small">check_circle</v-icon>
+      </span>
+
+      <span v-else-if="canceled" class="sup-icon">
+        <v-icon color="red" size="small">cancel</v-icon>
+      </span>
 
       <span v-if="paymentRequireCapture" class="sup-icon"
         ><i
@@ -60,22 +61,39 @@
       class="min-width-100"
       small
     ></u-time-progress-bar>
-  </span>
+  </div>
+  <div v-if="payment?.card" class="d-flex justify-end justify-sm-center">
+    <u-payment-card
+      :card="payment.card"
+      horizontal
+      show-country
+      small
+    ></u-payment-card>
+  </div>
 </template>
 
 <script lang="ts">
 import UTimeProgressBar from "../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import { Basket } from "@selldone/core-js";
+import UPaymentCard from "@selldone/components-vue/ui/payment/card/UPaymentCard.vue";
 
 export default {
   name: "SOrderStatusView",
-  components: { UTimeProgressBar },
+  components: { UPaymentCard, UTimeProgressBar },
   props: {
+    /**
+     * Order status (Payed, ...)
+     */
     status: {
       require: true,
     },
     gatewayProcessing: {},
+
+    /**
+     * Payment details
+     */
     payment: {},
+
     paymentRequireCapture: {
       default: false,
       type: Boolean,
@@ -119,4 +137,33 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+// ---------------------------------------- Over icon (Ex. Tick) ----------------------------------------
+.s--order-status-view {
+  position: relative;
+  text-align: center;
+
+  .sup-icon {
+    left: -10px;
+    top: -5px;
+    position: absolute !important;
+    background: #fff;
+    border-radius: 50%;
+    padding: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    min-height: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &.-rtl {
+    .sup-icon {
+      right: -10px;
+      left: unset;
+    }
+  }
+}
+</style>

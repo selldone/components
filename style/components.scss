@@ -4121,28 +4121,7 @@ Add this to show edit icon:   <i class="edit-icon fas fa-edit"></i>
   }
 }
 
-// ---------------------------------------- Over icon (Ex. Tick) ----------------------------------------
 
-.sup-icon {
-  left: -10px;
-  top: -8px;
-  position: absolute !important;
-  background: #fff;
-  border-radius: 50%;
-  padding: 1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  min-height: 22px;
-}
-
-.v-locale--is-rtl {
-  .sup-icon {
-    right: -10px;
-    left: unset;
-  }
-}
 
 // ---------------------------------------- Blob background effect ----------------------------------------
 
