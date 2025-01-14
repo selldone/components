@@ -63,10 +63,6 @@
       </v-chip>
     </v-row>
 
-    <hr />
-    <v-list-subheader
-      >{{ $t("add_product.rating_pros_cons.cons_group_messages") }}
-    </v-list-subheader>
 
     <v-text-field
       v-model="cons_name"

@@ -68,7 +68,7 @@
                   ? 'Vendor_ProductDashboard'
                   : 'BPageProductDashboard',
                 params: {
-                  product_id: getProduct(item).id,
+                  product_id: getProduct(item)?.id,
                 },
               }
         "
@@ -979,6 +979,7 @@ export default {
     setCountAdjustment() {
       this.busy_set_count_adjustment = true;
 
+      const item=this.selected_item;
       axios
         .put(
             this.IS_VENDOR_PANEL?
@@ -1001,7 +1002,8 @@ export default {
             return NotificationService.showErrorAlert(null, data.error_msg);
           }
 
-          this.AddOrUpdateItemByID(this.basket.items, data.item);
+          Object.assign(item, data.item);
+         // this.AddOrUpdateItemByID(this.basket.items, data.item);
 
           NotificationService.showSuccessAlert(
             null,

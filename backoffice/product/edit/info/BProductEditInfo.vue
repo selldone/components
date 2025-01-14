@@ -328,27 +328,27 @@
       >
       </u-smart-select>
 
-
       <!-- Float unit option -->
-<template v-if="isPhysical ">
-  <hr class="my-5">
+      <template v-if="isPhysical">
+        <hr class="my-5" />
 
-  <u-smart-toggle
-      v-model="$product.unit_float"
-      :true-title="$t('add_product.edit_info.unit_float')"
-      :true-description="$t('add_product.edit_info.unit_float_hint')"
-      false-gray
-  ></u-smart-toggle>
-  <v-expand-transition>
-    <div v-if="$product.unit_float">
-      <v-list-subheader>
-        <v-icon>info</v-icon>
-        {{ $t("add_product.edit_info.unit_float_message") }}</v-list-subheader>
-    </div>
-  </v-expand-transition>
-</template>
+        <u-smart-toggle
+          v-model="$product.unit_float"
+          :true-title="$t('add_product.edit_info.unit_float')"
+          :true-description="$t('add_product.edit_info.unit_float_hint')"
+          false-gray
+        ></u-smart-toggle>
+        <v-expand-transition>
+          <div v-if="$product.unit_float">
+            <v-list-subheader>
+              <v-icon>info</v-icon>
+              {{ $t("add_product.edit_info.unit_float_message") }}
+            </v-list-subheader>
+          </div>
+        </v-expand-transition>
+      </template>
 
-      <hr class="my-5">
+      <hr class="my-5" />
 
       <v-combobox
         v-model="$product.action"
