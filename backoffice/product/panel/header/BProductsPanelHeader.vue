@@ -264,6 +264,7 @@
           :value="products_feed"
           message="Products RSS"
           small-width-mode
+          class="mb-3"
         ></u-text-copy-box>
 
         <u-text-copy-box
@@ -271,6 +272,7 @@
           :value="products_feed_google"
           message="Google Merchants Feed"
           small-width-mode
+          class="mb-3"
         ></u-text-copy-box>
 
         <u-text-copy-box
@@ -278,6 +280,7 @@
           :value="products_feed_facebook"
           message="Facebook Business Feed"
           small-width-mode
+          class="mb-3"
         ></u-text-copy-box>
       </v-card-text>
     </v-card>
@@ -305,6 +308,7 @@
           :value="products_api_feed"
           message="Products API"
           small-width-mode
+          class="mb-3"
         ></u-text-copy-box>
 
         <u-text-copy-box
@@ -314,6 +318,7 @@
           :message="item.title"
           :value="generateApiFeedUrl(item)"
           small-width-mode
+          class="mb-3"
         ></u-text-copy-box>
       </v-card-text>
     </v-card>
