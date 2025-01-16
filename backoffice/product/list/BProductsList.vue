@@ -43,22 +43,24 @@
     <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ title ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
     <template v-slot:item.title="{ item }">
       <div class="d-flex align-center overflow-hidden">
-        <b-product-window-product-mini
-          :product="item"
-          :shop="$shop"
-          :show-notes="false"
-          :show-select="false"
-          icon-only
-          class="my-n3"
-          @select="() =>
-          $router.push({
+
+        <router-link :to="{
             name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
               ? 'Vendor_ProductDashboard'
               : 'BPageProductDashboard',
             params: { product_id: item.id },
-          })"
-        >
-        </b-product-window-product-mini>
+          }">
+          <b-product-window-product-mini
+              :product="item"
+              :shop="$shop"
+              :show-notes="false"
+              :show-select="false"
+              icon-only
+              class="my-n3"
+          >
+          </b-product-window-product-mini>
+        </router-link>
+
 
         <div class="text-start py-1 max-w-300">
           <div class="font-weight-bold">{{ item.title?.limitWords(8) }}</div>
