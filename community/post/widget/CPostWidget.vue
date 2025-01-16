@@ -498,7 +498,7 @@ export default {
     },
 
     smartText(text) {
-      return SmartConvertTextToHtmlHashtags(text, false, true);
+      return SmartConvertTextToHtmlHashtags(text, false, true,'/community'/*Search in community!*/);
     },
     share(e) {
       this.showCommunitySharePost(e.target, this.shop, this.topic, this.post);

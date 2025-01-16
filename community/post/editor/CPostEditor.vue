@@ -1043,7 +1043,7 @@ export default {
 
     purify(message) {
       // Hashtag pages :
-      return SmartConvertTextToHtmlHashtags(message, false, true, "/trends");
+      return SmartConvertTextToHtmlHashtags(message, false, true, "/community"/*Search in community!*/);
     },
 
     //――――――――――――――――――――――― Post > Cover ―――――――――――――――――――――――

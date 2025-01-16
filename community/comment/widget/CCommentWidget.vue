@@ -88,7 +88,7 @@ export default {
 
   methods: {
     smartText(text) {
-      return SmartConvertTextToHtmlHashtags(text);
+      return SmartConvertTextToHtmlHashtags(text,false,false,'/community'/*Search in community!*/);
     },
   },
 };

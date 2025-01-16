@@ -212,7 +212,11 @@ export default {
   },
 
   created() {
+
     this.search = this.$route.query.search ? this.$route.query.search : "";
+    if(this.$route.query.hashtag){
+      this.search = '#'+this.$route.query.hashtag;
+    }
     this.fetchCommunity();
   },
   mounted() {},
