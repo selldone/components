@@ -16,6 +16,8 @@
   <div v-if="vendor" class="d-flex align-center py-1 text-start">
     <u-avatar-folder
       :size="small ? 32 : 62"
+      :border-size="small?4:10"
+      :hide-side-icon="small"
       class="hover-scale-small me-2"
       :src="vendor.icon?getShopImagePath(vendor.icon,128):undefined"
       placeholder-icon="business"

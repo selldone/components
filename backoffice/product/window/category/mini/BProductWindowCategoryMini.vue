@@ -15,11 +15,11 @@
 <template>
   <div
     :category-id="category.id"
-    :class="{ disabled: clicked }"
+    :class="{ disabled:grayOnClicked && clicked }"
     class="position-relative d-flex flex-column align-center justify-center hover-up"
     @click="
       $emit('select');
-      clicked = true;
+      clicked =  true;
     "
   >
     <div class="position-relative">
@@ -87,21 +87,26 @@
       </div>
     </div>
 
-    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Title ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+    <template v-if="!iconOnly">
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Title ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+      <small class="d-block single-line">{{
+          category.title.limitWords(3)
+        }}</small>
 
-    <small class="d-block single-line">{{
-      category.title.limitWords(3)
-    }}</small>
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Visits Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+      <div
+          :title="$t('admin_shop.products.folder_widget.views')"
+          class="small text-muted"
+      >
+        <v-icon class="me-1" size="x-small">fa:fas fa-eye</v-icon>
+        {{ numeralFormat(category.visits, "0,0a") }}
+      </div>
 
-    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Visits Count ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <div
-      :title="$t('admin_shop.products.folder_widget.views')"
-      class="small text-muted"
-    >
-      <v-icon class="me-1" size="x-small">fa:fas fa-eye</v-icon>
-      {{ numeralFormat(category.visits, "0,0a") }}
-    </div>
+    </template>
+
+
+
   </div>
 </template>
 
@@ -111,12 +116,18 @@ import CircleImage from "../../../../../ui/image/CircleImage.vue";
 export default {
   name: "BProductWindowCategoryMini",
   components: { CircleImage },
+  emits: ["select"],
   props: {
     category: {
       required: true,
       type: Object,
     },
     isEmpty: Boolean,
+    iconOnly: Boolean,
+    grayOnClicked: {
+      default:true,
+      type: Boolean,
+    }
   },
   data() {
     return {

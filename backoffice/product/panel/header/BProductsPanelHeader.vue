@@ -125,69 +125,72 @@
                   {{ $t("admin_shop.products.menu_advanced_options") }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  {{ $t("admin_shop.products.menu_advanced_options_description") }}
+                  {{
+                    $t("admin_shop.products.menu_advanced_options_description")
+                  }}
                 </v-list-item-subtitle>
               </v-list-item>
             </template>
 
-            <v-divider class="my-1"></v-divider>
-            <v-list-item>
-              <u-smart-toggle
-                :model-value="showDeletes"
-                :true-description="$t('admin_shop.products.menu_show_deletes')"
-                color="red"
-                false-gray
-                :false-title="
-                  $t('admin_shop.products.show_deletes.false_title')
-                "
-                :true-title="$t('admin_shop.products.show_deletes.true_title')"
-                @update:model-value="(v) => $emit('update:showDeletes', v)"
-              ></u-smart-toggle>
-            </v-list-item>
+            <v-divider class="my-2" thickness="2" opacity="1"></v-divider>
 
-            <v-list-item v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL">
-              <u-smart-toggle
-                :model-value="showVendors"
-                false-gray
-                :false-title="
-                  $t('admin_shop.products.show_vendors.false_title')
-                "
-                :true-description="
-                  $t('admin_shop.products.show_vendors.false_description')
-                "
-                :true-title="$t('admin_shop.products.show_vendors.true_title')"
-                @update:model-value="(v) => $emit('update:showVendors', v)"
-              ></u-smart-toggle>
-            </v-list-item>
-
-            <v-list-item>
-              <u-smart-toggle
-                :model-value="showNotes"
-                false-gray
-                :false-title="$t('admin_shop.products.show_notes.false_title')"
-                :true-description="
-                  $t('admin_shop.products.show_notes.false_description')
-                "
-                :true-title="$t('admin_shop.products.show_notes.true_title')"
-                @update:model-value="(v) => $emit('update:showNotes', v)"
-              ></u-smart-toggle>
-            </v-list-item>
+            <div class="text-center px-1 d-flex flex-column align-center">
+              <div v-for="(toggle, index) in toggles" :key="index">
+                <v-icon class="me-2">{{ toggle.icon }}</v-icon>
+                <v-btn-toggle
+                  :model-value="$props[toggle.modelValue]"
+                  @update:model-value="
+                    (v) => $emit(`update:${toggle.emitKey}`, v)
+                  "
+                  selected-class="black-flat"
+                  class="mb-1"
+                  divided
+                  mandatory
+                  rounded="lg"
+                >
+                  <v-btn
+                    :value="true"
+                    stacked
+                    size="small"
+                    width="200"
+                    max-width="200"
+                    height="auto"
+                    rounded="lg"
+                  >
+                    {{ $t(toggle.trueTitle) }}
+                    <small class="tnt">{{ $t(toggle.trueDescription) }}</small>
+                  </v-btn>
+                  <v-btn
+                    :value="false"
+                    stacked
+                    size="small"
+                    width="200"
+                    max-width="200"
+                    height="auto"
+                    rounded="lg"
+                  >
+                    {{ $t(toggle.falseTitle) }}
+                    <small class="tnt">{{ $t(toggle.falseDescription) }}</small>
+                  </v-btn>
+                </v-btn-toggle>
+              </div>
+            </div>
           </v-list>
         </v-menu>
       </v-btn>
-<!--
-      <router-link
-        v-if="$vuetify.display.smAndUp"
-        :to="{
-          name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-            ? 'VPageVendorProducts'
-            : 'BPageShopProductsList',
-        }"
-        class="text-primary ms-1"
-        exact
-      >
-        {{ $t("admin_shop.products.title") }}
-      </router-link>-->
+      <!--
+            <router-link
+              v-if="$vuetify.display.smAndUp"
+              :to="{
+                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                  ? 'VPageVendorProducts'
+                  : 'BPageShopProductsList',
+              }"
+              class="text-primary ms-1"
+              exact
+            >
+              {{ $t("admin_shop.products.title") }}
+            </router-link>-->
     </div>
 
     <v-chip
@@ -363,11 +366,13 @@ export default {
     "update:showNotes",
     "click:addProduct",
     "click:addCategory",
+    "update:tableMode",
   ],
   props: {
     showDeletes: Boolean,
     showVendors: Boolean,
     showNotes: Boolean,
+    tableMode: Boolean,
 
     shop: {
       required: true,
@@ -448,6 +453,57 @@ export default {
 
     service_google_sheet() {
       return this.shop.service_google_sheet;
+    },
+
+    toggles() {
+      return [
+        {
+          modelValue: "tableMode",
+          emitKey: "tableMode",
+          trueTitle: "admin_shop.products.table_mode.true_title",
+          trueDescription: "admin_shop.products.table_mode.true_description",
+          falseTitle: "admin_shop.products.table_mode.false_title",
+          falseDescription: "admin_shop.products.table_mode.false_description",
+          icon: "view_list",
+        },
+
+        {
+          modelValue: "showDeletes",
+          emitKey: "showDeletes",
+          trueTitle: "admin_shop.products.show_deletes.true_title",
+          trueDescription: "admin_shop.products.show_deletes.true_description",
+          falseTitle: "admin_shop.products.show_deletes.false_title",
+          falseDescription:
+            "admin_shop.products.show_deletes.false_description",
+          icon: "delete_outline",
+        },
+        ...(this.IS_MARKETPLACE && !this.IS_VENDOR_PANEL
+          ? [
+              {
+                modelValue: "showVendors",
+                emitKey: "showVendors",
+                trueTitle: "admin_shop.products.show_vendors.true_title",
+                trueDescription:
+                  "admin_shop.products.show_vendors.true_description",
+                falseTitle: "admin_shop.products.show_vendors.false_title",
+                falseDescription:
+                  "admin_shop.products.show_vendors.false_description",
+                condition: "IS_MARKETPLACE && !IS_VENDOR_PANEL",
+                icon: "storefront",
+              },
+            ]
+          : []),
+
+        {
+          modelValue: "showNotes",
+          emitKey: "showNotes",
+          trueTitle: "admin_shop.products.show_notes.true_title",
+          trueDescription: "admin_shop.products.show_notes.true_description",
+          falseTitle: "admin_shop.products.show_notes.false_title",
+          falseDescription: "admin_shop.products.show_notes.false_description",
+          icon: "sticky_note_2",
+        },
+      ];
     },
   },
 

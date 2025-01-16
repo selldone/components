@@ -66,6 +66,7 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 export default {
   name: "BNoteButton",
   mixins: [DateMixin],
+  emits: ["click"],
 
   props: {
     note: {},

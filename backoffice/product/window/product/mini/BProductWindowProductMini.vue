@@ -163,57 +163,58 @@
       </v-progress-circular>
     </div>
 
-    <!-- Title -->
-    <small class="d-block single-line">
-      <v-avatar
+<template v-if="!iconOnly">
+  <!-- Title -->
+  <small class="d-block single-line">
+    <v-avatar
         v-if="vendor"
         :class="vendor.enable ? '-blue' : '-red'"
         :title="vendor.name"
         class="avatar-gradient -thin me-1"
         size="20"
-        ><img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 64)" />
-        <v-icon
+    ><img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 64)" />
+      <v-icon
           v-else
           color="#fff"
           size="12"
-          >storefront
-        </v-icon>
-      </v-avatar>
-      {{ product.title.limitWords(3) }}</small
-    >
-    <!-- Vendors -->
-    <div v-if="vendors && vendors.length && !vendor" class="my-1">
-      <v-avatar
+      >storefront
+      </v-icon>
+    </v-avatar>
+    {{ product.title.limitWords(3) }}</small
+  >
+  <!-- Vendors -->
+  <div v-if="vendors && vendors.length && !vendor" class="my-1">
+    <v-avatar
         v-for="v in vendors"
         :key="v.id"
         :class="v.enable ? '-blue' : '-red'"
         :title="v.name"
         class="avatar-gradient -thin me-1 hover-scale"
         size="20"
-        ><img v-if="v.icon" :src="getShopImagePath(v.icon, 64)" />
-        <v-icon
+    ><img v-if="v.icon" :src="getShopImagePath(v.icon, 64)" />
+      <v-icon
           v-else
           color="#fff"
           size="12"
-          >storefront
-        </v-icon>
-      </v-avatar>
-    </div>
+      >storefront
+      </v-icon>
+    </v-avatar>
+  </div>
 
-    <!-- Price -->
+  <!-- Price -->
 
-    <div>
-      <!-- Price > ⛔ Invalid exchange rate -->
-      <u-price-invalid
+  <div>
+    <!-- Price > ⛔ Invalid exchange rate -->
+    <u-price-invalid
         v-if="isNaN(price_converted)"
         :currency="product.currency"
         small
-      >
-      </u-price-invalid>
+    >
+    </u-price-invalid>
 
-      <u-price v-else :amount="price_converted"></u-price>
+    <u-price v-else :amount="price_converted"></u-price>
 
-      <v-chip
+    <v-chip
         v-if="
           discount_percent /*It will return value if discount be valid in this time*/
         "
@@ -223,42 +224,42 @@
         size="x-small"
         variant="flat"
         :class="{ disabled: finished }"
-      >
-        <div style="line-height: 8px">
-          {{ discount_percent }}%
-          <span class="d-block" style="font-size: 6px; font-weight: 500">{{
+    >
+      <div style="line-height: 8px">
+        {{ discount_percent }}%
+        <span class="d-block" style="font-size: 6px; font-weight: 500">{{
             finished
-              ? $t("global.commons.finished")
-              : $t("global.commons.discount")
+                ? $t("global.commons.finished")
+                : $t("global.commons.discount")
           }}</span>
-        </div>
-      </v-chip>
-    </div>
+      </div>
+    </v-chip>
+  </div>
 
-    <div
+  <div
       v-if="(product.variants && product.variants.length) || vendor"
       :class="{ '-offset-v': vendors && vendors.length }"
       class="tooltip"
-    >
-      <div
+  >
+    <div
         v-if="vendor"
         class="pa-2 text-white text-start mb-1 tsec d-flex align-center small"
-      >
-        <div class="flex-grow-1">
-          <small class="d-block">{{ $t("global.commons.vendor") }}</small>
-          <b>{{ vendor.name }}</b>
-        </div>
-        <v-avatar
+    >
+      <div class="flex-grow-1">
+        <small class="d-block">{{ $t("global.commons.vendor") }}</small>
+        <b>{{ vendor.name }}</b>
+      </div>
+      <v-avatar
           v-if="vendor"
           :class="vendor.enable ? '-blue' : '-red'"
           class="avatar-gradient -thin ms-1"
           size="32"
-          ><img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 64)" />
-          <v-icon v-else color="#fff">storefront</v-icon>
-        </v-avatar>
-      </div>
+      ><img v-if="vendor.icon" :src="getShopImagePath(vendor.icon, 64)" />
+        <v-icon v-else color="#fff">storefront</v-icon>
+      </v-avatar>
+    </div>
 
-      <product-variants-view
+    <product-variants-view
         v-if="product.variants && product.variants.length"
         :variants="product.variants"
         class="tsec"
@@ -267,18 +268,20 @@
         dense
         small
         force-ultra-dense
-      ></product-variants-view>
-    </div>
-
-    <!-- Add Note Button -->
-    <b-note-button
+    ></product-variants-view>
+  </div>
+  <!-- Add Note Button -->
+  <b-note-button
       v-if="showNotes || (product.note && product.note.length)"
       :activeColor="showNotes ? undefined : '#333'"
       :note="product.note"
       class="position-absolute z2"
       style="top: -6px; left: -6px"
       @click="$emit('onShowNote', product)"
-    ></b-note-button>
+  ></b-note-button>
+</template>
+
+
 
     <!-- Selectable -->
     <template v-if="showSelect">
@@ -368,6 +371,8 @@ export default {
       type: Number,
       default: BackofficeLocalStorages.IMAGE_SIZE_SMALL,
     },
+
+    iconOnly:Boolean,
   },
   data() {
     return {

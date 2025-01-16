@@ -33,6 +33,7 @@
       v-model:showDeletes="show_deletes"
       v-model:showNotes="show_notes"
       v-model:showVendors="show_vendors"
+      v-model:tableMode="table_mode"
       :shop="shop"
       :vendor="vendor"
       @click:addProduct="add_product_dialog = true"
@@ -93,7 +94,20 @@
 
     <!-- ███████████████████████████ Products List ███████████████████████████ -->
 
+    <b-products-list
+        v-if="table_mode"
+        ref="products_list"
+        :show-deletes="show_deletes"
+        :show-notes="show_notes"
+        :show-vendors="show_vendors"
+        :add-product-button="CAN_ADD_PRODUCT"
+    >
+
+    </b-products-list>
+
+
     <b-products-window
+        v-else
       ref="products_list"
       :shop="shop"
       :show-deletes="show_deletes"
@@ -403,11 +417,13 @@ import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 import { ShopURLs } from "@selldone/core-js/helper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import BProductsList from "@selldone/components-vue/backoffice/product/list/BProductsList.vue";
 
 export default {
   name: "BProductsPanel",
   mixins: [],
   components: {
+    BProductsList,
     BProductsPanelAddProduct,
     BProductsPanelHeader,
     BShopProductsImportProcessing,
@@ -446,12 +462,12 @@ export default {
     parent_folders: null,
 
     show_drop: false,
-    relase_to_leave: true, //Solve chrome and fire fox bug!
     dragged_external: false,
 
-    show_deletes: window.show_deletes,
-    show_vendors: window.show_vendors,
-    show_notes: window.show_notes,
+    show_deletes: window.show_deletes?window.show_deletes:false,
+    show_vendors: window.show_vendors?window.show_vendors:false,
+    show_notes: window.show_notes?window.show_notes:false,
+    table_mode: window.table_mode?window.table_mode:false,
 
     dialog_sample: false,
 
@@ -535,6 +551,11 @@ export default {
     show_vendors(val) {
       window.show_vendors = val; // Keep value temporary!
     },
+
+    table_mode(val) {
+      window.table_mode = val; // Keep value temporary!
+    },
+
     show_notes(val) {
       window.show_notes = val; // Keep value temporary!
     },
