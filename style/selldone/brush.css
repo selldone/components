@@ -17,7 +17,7 @@ https://www.onlygfx.com/8-brush-stroke-banners-vector-svg-png-transparent-vol-2/
  */
 
 .highlight-yellow {
-  background: url('../selldone/brushs/yellow-brushstroke.webp') no-repeat;
+  background: url('@selldone/components-vue/style/selldone/brushs/yellow-brushstroke.webp') no-repeat;
   background-size: 100% 95%;
 }
 
