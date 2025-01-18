@@ -267,6 +267,16 @@ export default {
             this.product.limit_min = data.limit_min;
             this.product.limit_max = data.limit_max;
 
+            if(data.bulk && this.product.product_variants){
+              // Variants have been updated because of bulk action
+              this.product.product_variants.forEach((variant) => {
+                Object.assign(variant, {
+                  extra: data.extra,
+                  lead: data.lead,
+                });
+              });
+            }
+
             this.$emit("next");
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
