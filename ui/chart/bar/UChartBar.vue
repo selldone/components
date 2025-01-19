@@ -27,6 +27,7 @@
       class="font-weight-bold mb-2 small text-start px-2 d-flex align-center"
     >
       <slot name="title"></slot>
+      <v-icon v-if="icon" class="me-1">{{icon}}</v-icon>
       {{ title }}
       <v-spacer></v-spacer>
       <span
@@ -49,7 +50,6 @@
         {{ numeralFormat(max, "0.[0]a") }}
       </span>
     </div>
-
     <div
       :class="{ 'px-4': !dense, '-grouped': grouped }"
       class="d-flex justify-space-between w-100"
@@ -64,11 +64,12 @@
         }"
         class="d-flex justify-center flex-grow-1 --bars"
         @mouseenter.stop="mouseEnter(i)"
-        @mouseleave.stop="index = null"
+        @mouseleave.stop="index = null;show_tooltip = false"
+        :id="'c_' + i"
       >
         <div
           v-for="(col, j) in it"
-          :id="'c_' + i"
+
           :key="'c-' + j"
           :style="{
             height: Math.abs(col) + '%',
@@ -83,9 +84,8 @@
 
     <u-fade-scroll>
       <div
-        v-if="legend && labels"
+        v-if="legend && labels && !hideLegend"
         class="d-flex text-start mx-2 small text-nowrap"
-        no-gutters
       >
         <div v-for="i in count" :key="'l-' + i" class="p-1">
           <v-icon :color="colors[i - 1]" class="me-1" size="x-small"
@@ -96,20 +96,22 @@
       </div>
     </u-fade-scroll>
 
-    <div class="d-flex p-2">
+    <div v-if="!hideDates" class="d-flex p-2">
       <small v-if="startDate">{{ start_date }}</small>
       <v-spacer></v-spacer>
       <small v-if="endDate">{{ end_date }}</small>
     </div>
 
     <v-tooltip
+        v-model="show_tooltip"
       :activator="`#${uid} #c_${index}`"
       :open-delay="350"
       color="#222"
       location="bottom"
       transition="scale-transition"
+      content-class="bg-black text-start"
     >
-      <div class="text-start pa-1">
+      <div class="text-start">
         <div v-if="startDate" class="py-2">
           {{ getLocalDateString(startDate.addDays(index)) }}
         </div>
@@ -159,6 +161,7 @@ export default {
       type: Boolean,
       default: true,
     },
+    icon:{},
     title: {},
     labels: {},
     height: {
@@ -179,12 +182,15 @@ export default {
     highlightedGroupColor: {
       default: "rgba(230, 230, 230, 0.1)",
     },
+    hideDates:Boolean,
+    hideLegend:Boolean
   },
 
   data: () => ({
     uid: "ch_" + Math.round(Math.random() * 9999999),
     index: null,
     selected: null,
+    show_tooltip: false,
   }),
 
   computed: {
@@ -236,6 +242,10 @@ export default {
     mouseEnter(i) {
       this.index = i;
       this.selected = this.dataset[i];
+
+      this.$nextTick(() => {
+        this.show_tooltip = true;
+      });
     },
   },
 };
