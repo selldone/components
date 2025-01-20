@@ -67,6 +67,7 @@
           modelValue !== null && modelValue !== undefined && modelValue !== ''
         "
         :amount="modelValue"
+        @update:amount="(v) => $emit('update:modelValue', v)/*Auto correct value*/"
         :currency="rowValue[currency_col]"
       ></u-price>
     </span>

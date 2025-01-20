@@ -78,6 +78,7 @@ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin
 export default {
   name: "UPrice",
   mixins: [CurrencyMixin],
+  emits: ["update:amount"],
   props: {
     amount: {},
     currency: {}, // null: apply user selected currency (+ Accept currency object / string code)
@@ -166,6 +167,30 @@ export default {
       );
     },
   },
+
+  watch:{
+    amount(){
+    this.autoFix()
+    }
+  },
+
+  created() {
+    this.autoFix()
+  },
+
+  methods:{
+    autoFix(){
+      // if number contains ',' for string part then remove it
+      if (this.amount && typeof this.amount === 'string') {
+        let corrected = this.amount.replace(/,/g, '');
+        // Remove other strings:
+        corrected = corrected.replace(/[^0-9.]/g, '');
+        this.$emit('update:amount', parseFloat(corrected));
+
+       // console.log('Invalid number as price | Auto corrected:',this.amount  ,'-.',corrected);
+      }
+    }
+  }
 };
 </script>
 
