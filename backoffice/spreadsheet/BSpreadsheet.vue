@@ -45,40 +45,13 @@
       <template v-slot:default>
         <thead>
           <tr>
-            <th
+            <b-spreadsheet-header-column
               v-for="(header, index) in headers"
               :key="index"
               :class="show_all || cols.includes(header) ? '' : 'no-display'"
-              class="text-center"
-            >
-              <v-tooltip
-                v-if="styler[header]?.tooltip"
-                color="#000"
-                content-class="rounded-xl"
-                location="bottom"
-                max-width="420"
-              >
-                <template v-slot:activator="{ props }">
-                  <span v-bind="props"> {{ header }}</span>
-                </template>
-                <v-sheet class="text-start py-2" color="transparent" dark>
-                  <h3 v-if="styler[header].tooltip.title" class="mb-2">
-                    {{ styler[header].tooltip.title }}
-                  </h3>
-                  <p
-                    v-if="styler[header].tooltip.message"
-                    class="mb-0"
-                    v-html="styler[header].tooltip.message"
-                  ></p>
-                  <v-img
-                    v-if="styler[header].tooltip.image"
-                    :src="styler[header].tooltip.image"
-                    class="rounded-xl my-2"
-                  ></v-img>
-                </v-sheet>
-              </v-tooltip>
-              <span v-else> {{ header }}</span>
-            </th>
+              :styler="styler"
+              :header="header"
+            ></b-spreadsheet-header-column>
           </tr>
         </thead>
         <tbody>
@@ -218,10 +191,12 @@ import SArticleStructuredData from "../../article/SArticleStructuredData.vue";
 import USmartToggle from "../../ui/smart/toggle/USmartToggle.vue";
 import BSpreadsheetValueInput from "../spreadsheet/value/input/BSpreadsheetValueInput.vue";
 import BSpreadsheetValueCell from "../spreadsheet/value/cell/BSpreadsheetValueCell.vue";
+import BSpreadsheetHeaderColumn from "@selldone/components-vue/backoffice/spreadsheet/header/column/BSpreadsheetHeaderColumn.vue";
 
 export default {
   name: "BSpreadsheet",
   components: {
+    BSpreadsheetHeaderColumn,
     BSpreadsheetValueCell,
     BSpreadsheetValueInput,
     USmartToggle,

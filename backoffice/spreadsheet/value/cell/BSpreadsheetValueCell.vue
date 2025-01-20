@@ -97,8 +97,17 @@
     </span>
     <!-- --------------- Color --------------- -->
     <template v-else-if="styler[headers[col]]?.type === 'color'">
+      <v-btn
+        v-if="!modelValue"
+        variant="tonal"
+        class="tnt"
+        size="x-small"
+        @click="(v) => $emit('update:modelValue', '#ffffff')"
+      >
+        Set Color
+      </v-btn>
       <u-color-circle
-        v-if="modelValue?.includes('/')"
+        v-else-if="modelValue?.includes('/')"
         :color="modelValue"
         :size="30"
         class="ma-2"
@@ -107,6 +116,7 @@
         v-else
         :model-value="modelValue"
         default="#ffffff"
+        nullable
         @update:model-value="(v) => $emit('update:modelValue', v)"
       ></u-color-selector>
     </template>
@@ -209,46 +219,49 @@
 
     <!-- ═════════ Start > Extra chips ═════════ -->
 
-    <v-tooltip
+    <v-chip
       v-if="modelValue && styler[headers[col]]?.value_exist"
-      color="#000"
-      location="bottom"
-      max-width="320"
+      :color="styler[headers[col]]?.value_exist.color"
+      class="mt-1"
+      label
+      size="x-small"
+      v-bind="props"
+      variant="flat"
+      :prepend-icon="styler[headers[col]]?.value_exist.icon"
     >
-      <template v-slot:activator="{ props }">
-        <v-chip
-          :color="styler[headers[col]]?.value_exist.color"
-          class="mt-1"
-          label
-          size="x-small"
-          v-bind="props"
-          variant="flat"
-        >
-          {{ styler[headers[col]]?.value_exist.title }}
-        </v-chip>
-      </template>
-      {{ styler[headers[col]]?.value_exist.message }}
-    </v-tooltip>
-    <v-tooltip
+      {{ styler[headers[col]]?.value_exist.title }}
+
+      <v-tooltip
+        content-class="bg-black text-start"
+        location="bottom"
+        max-width="360"
+        activator="parent"
+      >
+        {{ styler[headers[col]]?.value_exist.message }}
+      </v-tooltip>
+    </v-chip>
+
+    <v-chip
       v-else-if="styler[headers[col]]?.value_empty"
-      color="#000"
-      location="bottom"
-      max-width="320"
+      :color="styler[headers[col]]?.value_empty.color"
+      class="mt-1"
+      label
+      size="x-small"
+      v-bind="props"
+      variant="flat"
+      :prepend-icon="styler[headers[col]]?.value_empty.icon"
     >
-      <template v-slot:activator="{ props }">
-        <v-chip
-          :color="styler[headers[col]]?.value_empty.color"
-          class="mt-1"
-          label
-          size="x-small"
-          v-bind="props"
-          variant="flat"
-        >
-          {{ styler[headers[col]]?.value_empty.title }}
-        </v-chip>
-      </template>
-      {{ styler[headers[col]]?.value_empty.message }}
-    </v-tooltip>
+      {{ styler[headers[col]]?.value_empty.title }}
+      <v-tooltip
+        content-class="bg-black text-start"
+        location="bottom"
+        max-width="360"
+        activator="parent"
+      >
+        {{ styler[headers[col]]?.value_empty.message }}
+      </v-tooltip>
+    </v-chip>
+
     <!-- ═════════ End > Extra chips ═════════ -->
   </div>
 
