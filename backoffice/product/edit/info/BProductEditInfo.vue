@@ -1251,6 +1251,7 @@ export default {
       return [
         ProductStatus.Open,
         ProductStatus.Close,
+        ProductStatus.Unlisted,
         ...(this.marketplace_has_verification_step
           ? [ProductStatus.Pending, ProductStatus.Rejected]
           : []),

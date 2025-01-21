@@ -115,6 +115,7 @@
             '-close': product.status === ProductStatus.Close.code,
             '-pending': product.status === ProductStatus.Pending.code,
             '-rejected': product.status === ProductStatus.Rejected.code,
+            '-unlisted': product.status === ProductStatus.Unlisted.code,
 
             '-available': product.status === 'Open' && quantity > 0,
             '-dropshipping': add_by_dropShipping,
@@ -503,6 +504,10 @@ export default {
 
   &.-rejected {
     border-color: #212121 !important;
+  }
+
+  &.-unlisted{
+    border-color: #000 !important;
   }
 }
 
