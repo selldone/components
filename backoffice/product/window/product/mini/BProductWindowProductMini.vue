@@ -103,6 +103,7 @@
         class="product-status px-1"
         label
         size="x-small"
+        variant="flat"
         >{{ $t(status_obj.name) }}
       </v-chip>
 
@@ -503,7 +504,7 @@ export default {
   }
 
   &.-rejected {
-    border-color: #212121 !important;
+    border-color: #616161 !important;
   }
 
   &.-unlisted{
