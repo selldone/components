@@ -29,7 +29,7 @@
     :h100="false"
     :product-id="product.id"
     :style="{ '--card-color': color }"
-    :title="`<h5 class='align-items-center pb-1'  style='font-size: 1.16rem;min-height: 42px'>    <span class='circle ${state_class}' style='font-size: 6px;'></span>  ${product.title?.limitWords(
+    :title="`<h5 class='align-items-center pb-1'  style='font-size: 1.16rem;min-height: 42px;padding-inline-end: 40px'>    <span class='circle ${state_class}' style='font-size: 6px;'></span>  ${product.title?.limitWords(
       12,
     )}  </h5>`"
     body-class="pa-0"
@@ -46,14 +46,14 @@
           params: { product_id: product.id },
           hash: '#general',
         }"
-        class="z2 mx-1"
+        class="z2 me-1"
         icon
-        size="small"
+        size="36"
         title="Edit product."
         variant="text"
         @click.stop
       >
-        <v-icon size="24"> edit_square</v-icon>
+        <v-icon size="20">fa:fas fa-pen-to-square</v-icon>
       </v-btn>
 
       <!-- Add Note Button -->
@@ -61,7 +61,7 @@
         v-if="showNotes || (product.note && product.note.length)"
         :activeColor="showNotes ? undefined : '#333'"
         :note="product.note"
-        class="z2 mx-1"
+        class="z2 me-1"
         @click="$emit('onShowNote', product)"
       ></b-note-button>
 
@@ -114,6 +114,20 @@
         class="float-end"
         height="16px"
       />
+      <v-chip
+        v-if="status_obj && status_obj.code !== ProductStatus.Open.code"
+        :color="status_obj.color"
+        variant="elevated"
+        :theme="
+          status_obj.code !== ProductStatus.Pending.code ? 'dark' : 'light'
+        "
+        :title="$t(status_obj.description)"
+        class="product-status mx-1 px-1 float-end"
+        label
+        size="x-small"
+        >{{ $t(status_obj.name) }}
+      </v-chip>
+
       <h6
         :class="small ? 'small' : ''"
         class="fw-semi-bold mb-1 small"
@@ -525,10 +539,11 @@ import BNoteButton from "../../../../note/button/BNoteButton.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus.ts";
 
 export default {
   name: "BProductWindowProductLarge",
-  mixins: [ProductMixin,DateMixin],
+  mixins: [ProductMixin, DateMixin],
 
   components: {
     UPriceInvalid,
@@ -633,6 +648,7 @@ export default {
   data() {
     return {
       ProductType: ProductType,
+      ProductStatus: ProductStatus,
 
       show_price_detail: false,
       ProductCondition: ProductCondition,
@@ -718,6 +734,10 @@ export default {
 
       // It's not a product of the vendor! It has multi vendors, so vendor can not edit it in their panel.
       return !this.vendor;
+    },
+
+    status_obj() {
+      return ProductStatus[this.product.status];
     },
   },
   mounted() {},
