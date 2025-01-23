@@ -15,9 +15,10 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
     :class="{
+    '-dense':dense,
+    '-rect':rect,
       'min-height-80vh': !inlineMode,
       '-right': !inlineMode && !LOGIN_POPUP_LOGIN,
-      'my-6': inlineMode,
       disabled: !!busy_redirect || !!window.auth_user,
     }"
     class="login-form-container"
@@ -385,17 +386,19 @@
         <!------------------------------ Login ------------------------------>
 
         <div v-else key="login">
-          <v-btn
-            block
-            class="m-2 untransform font-weight-black"
-            size="large"
-            variant="text"
-            @click="setMode('register')"
-          >
-            <v-icon>{{ $t("icons.chevron_back") }}</v-icon>
+          <div class="d-flex justify-center">
+            <v-btn
+                class="m-2 tnt font-weight-black"
+                width="98%"
+                size="large"
+                variant="text"
+                @click="setMode('register')"
+            >
+              <v-icon start>{{ $t("icons.chevron_back") }}</v-icon>
 
-            {{ $t("login.login_your_account") }}
-          </v-btn>
+              {{ $t("login.login_your_account") }}
+            </v-btn>
+          </div>
 
           <!----- Login > Step 1 ------>
 
@@ -1002,6 +1005,8 @@ export default {
       default: false,
       type: Boolean,
     },
+    dense:Boolean,
+    rect:Boolean,
     flat: {
       default: false,
       type: Boolean,
@@ -1591,6 +1596,18 @@ ul {
   display: flex;
   justify-content: center;
   flex-direction: column;
+
+  &.-dense{
+    .login-form {
+      padding: 8px;
+    }
+  }
+  &.-rect{
+    .login-form {
+      border-radius: 0;
+    }
+
+  }
 
   &.-right {
     padding-left: 60%;
