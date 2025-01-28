@@ -18,13 +18,14 @@
     v-model:search="search"
     :clearable="clearable"
     :items="pages"
-    :label="$t('campaign.setting.general_setting.page_input')"
+    :label="label?label:$t('campaign.setting.general_setting.page_input')"
     :loading="busy"
     :messages="message"
     :model-value="modelValue"
     item-title="title"
+    item-value="id"
     no-filter
-    return-object
+    :return-object="returnObject"
     variant="underlined"
     @update:model-value="
       (val) => {
@@ -34,13 +35,13 @@
     @click:clear="$emit('click:clear')"
   >
     <template
-      v-if="!noEditButton && modelValue?.id && $route.params.shop_id"
+      v-if="!noEditButton && (returnObject?modelValue?.id:modelValue) && $route.params.shop_id"
       v-slot:append-inner
     >
       <v-btn
         :to="{
           name: 'BPageLandingEditor',
-          params: { page_id: modelValue.id },
+          params: { page_id: returnObject?modelValue.id:modelValue },
         }"
         class="tnt"
         size="small"
@@ -48,8 +49,9 @@
         title="Edit page"
         variant="elevated"
         @click.stop
+        prepend-icon="edit"
+        append-icon="launch"
       >
-        <v-icon start>edit</v-icon>
         {{ $t("global.actions.edit") }}
       </v-btn>
     </template>
@@ -160,9 +162,14 @@ export default {
       type: Boolean,
     },
     disabled: Boolean,
+    label:{},
     message:{},
     noEditButton: {
       default: false,
+      type: Boolean,
+    },
+    returnObject: {
+      default: true,
       type: Boolean,
     },
   },
@@ -217,7 +224,7 @@ export default {
 
       window.$backoffice.page
         .optimize(60)
-        .cancellation(true)
+      //  .cancellation(true) disable to support multi page-inputs!
         .list(this.$shop.id, 0, 20, {
           // Must contain this id:
           contain:

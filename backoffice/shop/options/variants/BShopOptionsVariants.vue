@@ -15,13 +15,10 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Custom Variants ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
   <div class="widget-box -large mb-5">
-    <u-widget-header icon="autofps_select" title="Custom Variants">
+    <u-widget-header icon="autofps_select" :title="$t('b_shop_options_variants.custom_variants.title')">
     </u-widget-header>
     <v-list-subheader>
-      Physical products can have variants. You can change the default name of
-      variants. Our suggestion is to leave these items as default and empty so
-      that selldone will automatically translate them for your customers into
-      their languages. The maximum length is 24.
+      {{$t('b_shop_options_variants.custom_variants.subtitle')}}
     </v-list-subheader>
 
     <v-list class="rounded-18px border-between-vertical" density="compact">
@@ -34,7 +31,7 @@
             <v-text-field
               v-model="variants[variant.code]"
               :placeholder="$t(variant.name)"
-              :prefix="`${getName(variant.code)}: `"
+              :prefix="`${$t(variant.name)}: `"
               flat
               hide-details
               persistent-placeholder
@@ -49,7 +46,7 @@
               flat
               hide-details
               persistent-placeholder
-              prefix="Icon: "
+              :prefix="`${$t('global.commons.icon')}: `"
               variant="solo"
               @change="variants_change = true"
             >
@@ -65,7 +62,7 @@
                     open-on-hover
                   >
                     <v-sheet class="text-start pa-3" color="#111" rounded="xl">
-                      <div>● Google font sample:</div>
+                      <div>● {{$t('commons.google_icon_font_sample')}}:</div>
                       <div class="my-1">
                         <v-icon class="me-2" size="small">tapas</v-icon>
                         <code>tapas</code>
@@ -82,7 +79,7 @@
                         </v-btn>
                       </div>
 
-                      <div class="mt-1">● Fontawesome (V6) sample:</div>
+                      <div class="mt-1">● {{$t('commons.fontawesome_icon_font_sample')}}:</div>
                       <div class="my-1">
                         <v-icon class="me-2" size="small"
                           >fa:fas fa-toolbox
