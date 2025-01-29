@@ -23,7 +23,7 @@
     }"
     class="ribbon"
   >
-    <img :src="src" class="approved-bg" :class="{'op-0-8':transparent}" />
+    <img :src="src" class="approved-bg" :class="{ 'op-0-8': transparent }" />
 
     <div class="approved-container single-line">
       <slot></slot>
@@ -43,6 +43,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    amber: Boolean,
 
     top: {
       default: "-4px",
@@ -53,14 +54,16 @@ export default {
 
     top680: {},
     left680: {},
-    transparent:Boolean
+    transparent: Boolean,
   },
 
   computed: {
     src() {
       return this.green
         ? require("../../assets/icons/approve-badge.svg")
-        : require("../../assets/icons/countdown-badge.svg");
+        : this.amber
+          ? require("../../assets/icons/ribbon-amber.svg")
+          : require("../../assets/icons/countdown-badge.svg");
     },
   },
 };

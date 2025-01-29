@@ -23,6 +23,9 @@
       custom-header
       style="border-radius: 24px; min-height: 160px; height: inherit"
     >
+      <u-ribbon v-if="account.deleted_at" red>{{$t('global.commons.archived')}}</u-ribbon>
+      <u-ribbon v-else-if="account.status === 'Payment'" amber>{{$t('global.commons.pending')}}</u-ribbon>
+
       <template v-slot:top-left>
         <template v-if="currency">
           <u-currency-icon
@@ -71,8 +74,7 @@
           color="primary"
           rounded
           variant="elevated"
-          @click="ShowReceiptPaymentDialog(account.fee_receipt.receipt_number)"
-          @click.stop
+          @click.stop="ShowReceiptPaymentDialog(account.fee_receipt.receipt_number)"
         >
           {{ $t("account_card.pay_create_receipt") }}
         </v-btn>
@@ -143,11 +145,12 @@ import { AccountStatus } from "@selldone/core-js/enums/wallet/AccountStatus";
 import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
 import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
+import URibbon from "@selldone/components-vue/ui/ribbon/URibbon.vue";
 
 export default {
   name: "BAccountCard",
   mixins: [BEventBusMixin,AccountMixin],
-  components: { UCurrencyIcon },
+  components: {URibbon, UCurrencyIcon },
   props: {
     account: {
       required: true,
