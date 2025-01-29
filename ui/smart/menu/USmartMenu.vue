@@ -78,6 +78,7 @@
 <script lang="ts">
 export default {
   name: "USmartMenu",
+  emits: ["update:withTrashed"],
   props: {
     icon: { default: "more_vert" },
     items: { type: Array },
