@@ -35,19 +35,18 @@
       >
     </a-addon-toolbar>
 
-    <flipbook
+    <u-flipbook
       v-if="show"
       ref="flipbook"
       :pages="pages"
       :style="{ maxHeight: max_height }"
-      :zooms="null"
       class="flipbook"
     />
   </div>
 </template>
 
 <script lang="ts">
-import Flipbook from "flipbook-vue";
+import UFlipbook from "./flipbook/UFlipbook.vue";
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { defineComponent } from "vue";
 import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
@@ -55,7 +54,7 @@ import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
 export default defineComponent({
   name: "AAddonCatalog",
   mixins: [ArticleMixin],
-  components: { AAddonToolbar, Flipbook },
+  components: { AAddonToolbar,  UFlipbook },
   props: {
     pack: {},
     editable: {

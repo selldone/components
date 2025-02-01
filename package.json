@@ -44,7 +44,6 @@
     "filepond-plugin-image-resize": "^2.0.10",
     "filepond-plugin-image-transform": "^3.8.7",
     "firebase": "^11.2.0",
-    "flipbook-vue": "^1.0.0-beta.4",
     "handlebars": "^4.7.8",
     "jquery": "^3.7.1",
     "jsbarcode": "^3.11.6",
