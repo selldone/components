@@ -295,9 +295,9 @@ export default {
         return this.activeCursor;
       } else if (this.IE) {
         return "auto";
-      } else if (this.clickToZoom && this.canZoomIn) {
+      } else if (this.clickToZoom && this.canZoomIn && this.zoom!==1) {
         return "zoom-in";
-      } else if (this.clickToZoom && this.canZoomOut) {
+      } else if (this.clickToZoom && this.canZoomOut  && this.zoom!==1) {
         return "zoom-out";
       } else if (this.dragToFlip) {
         return "grab";
