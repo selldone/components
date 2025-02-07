@@ -1291,7 +1291,15 @@ export default defineComponent({
       div
         .find("*")
         .not(
-          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,iframe,strike,blockquote,script,span,table,tbody,thead,tr,td,th,br,style",
+          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,iframe,strike,blockquote,script,span,table,tbody,thead,tr,td,th,br,style"+
+            ",math,semantics,mrow,msub,mi,mo" /*Math Formula*/ +
+            ",mfrac,msup,msubsup,mmultiscripts,mprescripts,msqrt,mroot,mstyle,mpadded,mphantom,menclose" /*Math Layout*/ +
+            ",mo,mn,mtext,mspace,maligngroup,malignmark" /*Math Tokens*/ +
+            ",mtable,mtr,mtd,mlabeledtr" /*Math Tables*/ +
+            ",munder,mover,munderover" /*Math Under/Over Notation*/ +
+            ",none,mprescripts" /*Other Math Elements*/ +
+            ",mfenced,mrow,mstyle,ms,maction" /*More Grouping Elements*/ +
+            ",annotation,annotation-xml" /*Annotations*/
         ) // script: for embed link!
         .each(function () {
           if (!$(this).closest(".medium-insert-embed").length)
@@ -1366,6 +1374,8 @@ export default defineComponent({
               "data-tweet-id",
               "width",
               "height",
+                "xmlns",
+                "display"
             ].indexOf(item) === -1
           )
             if (!$(this).closest(".medium-insert-embed").length)
@@ -1879,6 +1889,11 @@ export default defineComponent({
   --ol-li-dot-bg: linear-gradient(to right bottom, #333, #222);
 
   ol {
+
+
+
+
+
     li:before {
       content: counter(li);
       counter-increment: li;
@@ -1907,6 +1922,7 @@ export default defineComponent({
 
   --ul-li-dot-bg: linear-gradient(to right bottom, #333, #222);
 
+
   ul {
     display: flow-root;
     margin: 1em 1em;
@@ -1921,9 +1937,7 @@ export default defineComponent({
       margin: 1.5em 0;
     }
 
-    ul {
-      margin: 0 0 0 2em;
-    }
+
 
     li {
       position: relative;
@@ -1933,9 +1947,6 @@ export default defineComponent({
       //   background: #fafbfb;
       color: #444;
       text-decoration: none;
-      -moz-border-radius: 0.3em;
-      -webkit-border-radius: 0.3em;
-      border-radius: 2em;
 
       line-height: 1.7em;
 
@@ -1959,8 +1970,6 @@ export default defineComponent({
         border: 0.3em solid #fff;
         text-align: center;
         font-weight: bold;
-        -moz-border-radius: 2em;
-        -webkit-border-radius: 2em;
         border-radius: 2em;
         color: #fff;
         display: flex;
@@ -1979,6 +1988,64 @@ export default defineComponent({
       }
     }
   }
+
+  /**
+-------------------- 🐜🐜🐜 Nested Lists 🐜🐜🐜 --------------------
+*/
+  ol,ul{
+
+    ul {
+      margin: 0;
+      margin-inline-start: 1em;
+      li {
+        padding: 0;
+        &:before{
+          content: " ";
+          height: 100%;
+          width: 1px;
+          border: none;
+          border-inline-start: 0.2em solid #000;
+          border-radius: 0;
+          top: 0;
+          bottom: 0;
+          display: block;
+          margin: 0;
+
+
+        }
+      }
+    }
+    ol{
+      margin: 0;
+      margin-inline-start: 1em;
+      li {
+        padding: 0;
+        &:before{
+          content: counter(li) ' .';
+          counter-increment: li;
+          height: 100%;
+          background: none;
+          border: none;
+          border-inline-start: 0.2em solid #000;
+          border-radius: 0;
+          top: 0;
+          bottom: 0;
+          display: inline-block;
+          position: relative;
+          margin: 0;
+          color: currentColor;
+
+
+        }
+      }
+    }
+
+
+
+  }
+  /**
+--------------------------------------------------------
+ */
 
   //--------------------------------------------------------------------------------
   // MEDIUM INSERT BUTTON
