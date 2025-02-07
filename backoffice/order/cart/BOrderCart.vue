@@ -662,7 +662,7 @@
             <div>
               <v-avatar size="92" variant="elevated" class="elevation-5">
                 <v-avatar
-                    :image="getShopImagePath(getProduct(selected_item)?.icon, 256)"
+                    :image="getShopImagePath(getProduct(selected_item)?.icon)"
                     size="84"
                     class="elevation-1"
                 />
@@ -679,7 +679,7 @@
                 <div class="d-inline-block">
                   <v-icon color="red">remove</v-icon>
                   <v-avatar
-                      :image="getShopImagePath(getProduct(selected_item)?.icon, 256)"
+                      :image="getShopImagePath(getProduct(selected_item)?.icon)"
                       :size="(84 * -count_adjustment_input) / selected_item.count"
                       style="border: solid red 3px"
                       class="elevation-3 t-all-400"
