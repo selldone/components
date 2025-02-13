@@ -16,7 +16,7 @@
   <div v-if="content">
     <v-btn
       :loading="busy_fetch"
-      :small="small"
+      :size="small?'small':undefined"
       class="fadeIn help-btn"
       color="#fff"
       variant="flat"

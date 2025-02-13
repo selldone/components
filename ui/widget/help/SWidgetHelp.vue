@@ -14,15 +14,18 @@
 
 <template>
   <template v-if="embed_code">
+    <!-- Inline Help -->
     <v-btn
       @click="dialog = true"
       class="tnt"
       variant="text"
       :color="color"
+      :block="block"
       slim
       prepend-icon="tips_and_updates"
       :density="inline ? 'compact' : undefined"
       :class="{ 'px-1': inline }"
+      :title="description"
     >
       <span style="text-decoration: underline">
         {{ title }}
@@ -100,6 +103,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import {isObject} from "lodash-es";
 
 export default defineComponent({
   name: "SWidgetHelp",
@@ -108,6 +112,7 @@ export default defineComponent({
       required: true,
     },
     inline: Boolean,
+    block: Boolean,
     color: {
       default: "#4f46e5",
     },
@@ -117,14 +122,21 @@ export default defineComponent({
   }),
   computed: {
     embed_code() {
+      if(isObject(this.code))return this.code.embed;
       return this.$tm("help." + this.code)?.embed;
     },
     link() {
+      if(isObject(this.code))return this.code.link;
       return this.$tm("help." + this.code)?.link;
     },
     title() {
+      if(isObject(this.code))return this.code.title;
       return this.$tm("help." + this.code)?.title;
     },
+    description(){
+      if(isObject(this.code))return this.code.description;
+      return this.$tm("help." + this.code)?.description;
+    }
   },
 });
 </script>
