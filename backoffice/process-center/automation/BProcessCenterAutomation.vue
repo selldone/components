@@ -79,7 +79,6 @@
           <u-widget-header
             title="Manually Send Email"
             icon="science"
-            add-text
             add-caption="Download Excel"
             :add-sub-caption="`For ${date_input.toLocaleDateString()}`"
             add-icon="download"
