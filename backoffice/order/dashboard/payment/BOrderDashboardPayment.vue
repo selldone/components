@@ -243,13 +243,17 @@
               <img :src="require('../../../../assets/icons/user.svg')" />
             </v-avatar>
 
-            <span class="ps-2">
+            <div class="ps-2">
               <p class="m-0 font-weight-bold">
                 <span class="highlight-yellow">{{
                   $t("global.commons.guest")
                 }}</span>
               </p>
-            </span>
+              <p v-if="order.guest_email" class="m-0 text-subtitle-2">
+                <v-icon class="me-1" size="small">email</v-icon>
+                <span v-copy class="p-0">{{ order.guest_email }}</span>
+              </p>
+            </div>
           </div>
         </v-col>
 
