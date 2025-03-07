@@ -13,7 +13,7 @@
  */
 
 import {notify} from "@kyvg/vue3-notification";
-import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+import {EventBus} from "@selldone/core-js/events/EventBus";
 import {isString} from "lodash-es";
 
 // Event listener to detect when the user is refreshing or navigating away from the page.
