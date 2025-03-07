@@ -103,18 +103,13 @@
             color="#0061e0"
             hide-details
             readonly
-            @click="show_sms_agreement = !show_sms_agreement"
           ></v-checkbox>
 
-          <v-expand-transition>
-            <div v-if="show_sms_agreement">
               <div
                 class="text-justify my-4 blue-links"
                 style="font-size: 12px; line-height: 1.5rem"
                 v-html="window.sms_agreement"
               ></div>
-            </div>
-          </v-expand-transition>
         </div>
       </div>
 
@@ -481,7 +476,6 @@ export default {
   },
   data() {
     return {
-      show_sms_agreement: false,
       busy_redirect: null,
       country: null,
       phone: null,
