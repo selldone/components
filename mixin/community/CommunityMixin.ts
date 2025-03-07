@@ -14,7 +14,7 @@
 
 
 import {CommunityComment, CommunityPost, CommunityTopic, Shop, UserProfile} from "@selldone/core-js/models";
-import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+import {EventBus} from "@selldone/components-vue/utils/events/EventBus.ts";
 
 const CommunityMixin = {
   methods: {

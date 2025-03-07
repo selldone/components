@@ -13,7 +13,7 @@
  */
 
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-import {EventBus, EventName} from "@selldone/core-js/events/EventBus.ts";
+import {EventBus, EventName} from "@selldone/components-vue/utils/events/EventBus.ts";
 import {Map, Order} from "@selldone/core-js/models";
 
 const MapMixin = {

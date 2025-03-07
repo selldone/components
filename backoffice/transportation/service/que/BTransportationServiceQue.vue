@@ -323,7 +323,7 @@ import UMapGeoButton from "../../../../ui/map/geo-button/UMapGeoButton.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import UDrag from "../../../../ui/drag/core/UDrag.vue";
-import { EventBus } from "@selldone/core-js/events/EventBus";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import {DeliveryServiceHelper} from "@selldone/core-js/helper";
 
 export default {

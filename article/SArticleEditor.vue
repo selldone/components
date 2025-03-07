@@ -161,7 +161,7 @@ import AAddonCodeEditorDialog from "./add-on/code-editor/dialog/AAddonCodeEditor
 import AAddonCatalogDialog from "../article/add-on/catalog/dialog/AAddonCatalogDialog.vue";
 import AAddonComparisonDialog from "./add-on/comparison/dialog/AAddonComparisonDialog.vue";
 import SArticleTableOfContents from "./widgets/SArticleTableOfContents.vue";
-import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
+import { FileFormatConverterOnline } from "@selldone/components-vue/utils/converters/FileFormatConverterOnline.ts";
 import { installGlobalComponents } from "../components-mandetory";
 import { debounce } from "lodash-es";
 

@@ -281,7 +281,7 @@ import BClusterResource from "../../cluster/resource/BClusterResource.vue";
 import { throttle } from "lodash-es";
 import { Cluster } from "@selldone/core-js";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import { EventBus } from "@selldone/core-js/events/EventBus.ts";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 

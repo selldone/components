@@ -21,7 +21,7 @@ import {
   isSupported,
 } from "firebase/messaging";
 import { getAnalytics } from "firebase/analytics";
-import { EventBus, EventName } from "@selldone/core-js/events/EventBus";
+import { EventBus, EventName } from "@selldone/components-vue/utils/events/EventBus.ts";
 
 const firebaseConfig = {
   apiKey: "{!! enter here e.g. AIzaSyBlMGghN...!!}",

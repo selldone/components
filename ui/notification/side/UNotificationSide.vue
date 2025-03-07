@@ -117,7 +117,7 @@
 
 <script lang="ts">
 import { Notifications } from "@kyvg/vue3-notification";
-import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+import {EventBus} from "@selldone/components-vue/utils/events/EventBus.ts";
 
 export default {
   name: "UNotificationSide",

@@ -61,7 +61,7 @@
 import SShopLogin from "../../storefront/login/SShopLogin.vue";
 import { throttle } from "lodash-es";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+import {EventBus} from "@selldone/components-vue/utils/events/EventBus.ts";
 
 export default {
   name: "SStorefrontNeedLoginDialog",

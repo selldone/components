@@ -148,7 +148,7 @@
 <script lang="ts">
 import SImageUploader from "../../../../ui/uploader/SImageUploader.vue";
 import DraggableImagesList from "../../../../ui/image/draggableImagesList.vue";
-import { EventBus, EventName } from "@selldone/core-js/events/EventBus";
+import { EventBus, EventName } from "@selldone/components-vue/utils/events/EventBus.ts";
 import UTabsRounded from "../../../../ui/tab/rounded/UTabsRounded.vue";
 
 export default {

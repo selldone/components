@@ -1,6 +1,6 @@
 import { defineComponent } from "vue";
 import { RouteRecordRaw } from "vue-router";
-import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
+import { FileFormatConverterOnline } from "@selldone/components-vue/utils/converters/FileFormatConverterOnline.ts";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";
 
 export default defineComponent({

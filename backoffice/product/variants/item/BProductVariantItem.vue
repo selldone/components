@@ -403,7 +403,7 @@ import {
   GetVariantNameByCode,
   ProductVariants,
 } from "@selldone/core-js/enums/product/ProductVariants";
-import { UploadHelper } from "@selldone/core-js/helper/upload/UploadHelper";
+import { UploadHelper } from "@selldone/components-vue/utils/upload/UploadHelper.ts";
 import UAvatarFolder from "../../../../ui/avatar/folder/UAvatarFolder.vue";
 import UCube from "../../../../ui/cube/UCube.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";

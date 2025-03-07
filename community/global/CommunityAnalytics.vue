@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import {EventBus} from "@selldone/core-js/events/EventBus";
+import {EventBus} from "@selldone/components-vue/utils/events/EventBus.ts";
 
 function safeIncrementProperty(obj, key, count) {
   if (!key) return;

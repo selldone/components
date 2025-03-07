@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
+import {EventBus, EventName} from "@selldone/components-vue/utils/events/EventBus.ts";
 import { defineAsyncComponent } from "vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 

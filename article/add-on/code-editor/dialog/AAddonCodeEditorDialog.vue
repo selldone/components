@@ -92,7 +92,7 @@ import "prismjs/themes/prism.css";
 
 import "vue-prism-editor/dist/prismeditor.min.css";
 
-import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
+import {EventBus, EventName} from "@selldone/components-vue/utils/events/EventBus.ts";
 import { PrismEditor } from "vue-prism-editor";
 
 export default {

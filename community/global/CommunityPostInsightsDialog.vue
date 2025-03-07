@@ -73,7 +73,7 @@
 <script lang="ts">
 import { CommunityPost } from "@selldone/core-js";
 import { CommunityPostReaction } from "@selldone/core-js/models";
-import { EventBus } from "@selldone/core-js/events/EventBus";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 
 export default {
   name: "CommunityPostInsightsDialog",

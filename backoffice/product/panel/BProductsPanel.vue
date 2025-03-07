@@ -398,8 +398,8 @@
 import BProductsWindow from "../../product/window/BProductsWindow.vue";
 import BProductAddStudio from "../add/studio/BProductAddStudio.vue";
 import BCategoryAdd from "../../category/add/BCategoryAdd.vue";
-import { UploadHelper } from "@selldone/core-js/helper/upload/UploadHelper";
-import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
+import { UploadHelper } from "@selldone/components-vue/utils/upload/UploadHelper.ts";
+import { FileFormatConverterOnline } from "@selldone/components-vue/utils/converters/FileFormatConverterOnline.ts";
 import BProductImporterSampleDialog from "../../product/importer/sample-dialog/BProductImporterSampleDialog.vue";
 import InlineHelp from "../../help/InlineHelp.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";

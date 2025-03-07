@@ -98,7 +98,7 @@ import AFeedbackContentViolationReport from "../../article/feedback/conent-viola
 import { CommunityURLs } from "@selldone/sdk-community/url/CommunityURLs";
 import { delay } from "lodash-es";
 import { ArticleReport } from "@selldone/core-js";
-import { EventBus } from "@selldone/core-js/events/EventBus";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 
 
 export default {

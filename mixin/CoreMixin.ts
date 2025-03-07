@@ -15,7 +15,7 @@
 import {ProductType} from "@selldone/core-js/enums/product/ProductType";
 import {type ILanguage, Language,} from "@selldone/core-js/enums/language/Language";
 //―――――――――――――――――――――― Event Bus ――――――――――――――――――――
-import {EventBus, EventName} from "@selldone/core-js/events/EventBus";
+import {EventBus, EventName} from "@selldone/components-vue/utils/events/EventBus.ts";
 
 //―――――――――――――――――――――― Country ――――――――――――――――――――
 import {getCountryName} from "@selldone/core-js/models/general/country/country-helper.ts";

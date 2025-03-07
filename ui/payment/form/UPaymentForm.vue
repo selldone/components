@@ -781,7 +781,7 @@ import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import SWalletInput from "@selldone/components-vue/storefront/wallet/SWalletInput.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { ScriptHelper } from "@selldone/components-vue/plugins/jquery/ScriptHelper";
-import { EventBus } from "@selldone/core-js/events/EventBus.ts";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";

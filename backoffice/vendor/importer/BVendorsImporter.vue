@@ -242,7 +242,7 @@
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
-import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
+import { FileFormatConverterOnline } from "@selldone/components-vue/utils/converters/FileFormatConverterOnline.ts";
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import BSpreadsheetVendors from "../../spreadsheet/vendors/BSpreadsheetVendors.vue";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";

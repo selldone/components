@@ -241,7 +241,7 @@
 </template>
 
 <script lang="ts">
-import { FileFormatConverterOnline } from "@selldone/core-js/helper/converters/FileFormatConverterOnline";
+import { FileFormatConverterOnline } from "@selldone/components-vue/utils/converters/FileFormatConverterOnline.ts";
 import BSpreadsheetCustomers from "../../spreadsheet/customers/BSpreadsheetCustomers.vue";
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";

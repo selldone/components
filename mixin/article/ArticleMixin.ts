@@ -12,7 +12,7 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import {EventBus, EventName} from "@selldone/core-js/events/EventBus.ts";
+import {EventBus, EventName} from "@selldone/components-vue/utils/events/EventBus.ts";
 import {Language} from "@selldone/core-js/enums/language/Language.ts";
 
 export const ArticleMixin = {

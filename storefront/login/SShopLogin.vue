@@ -447,7 +447,7 @@ import { XapiAuthSMSVerifyOtpTypes } from "@selldone/sdk-storefront";
 import { defineAsyncComponent } from "vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
-import {EventBus} from "@selldone/core-js/events/EventBus.ts";
+import {EventBus} from "@selldone/components-vue/utils/events/EventBus.ts";
 
 export default {
   name: "SShopLogin",

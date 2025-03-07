@@ -164,7 +164,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UDenseCirclesUsers from "../../ui/dense-circles/users/UDenseCirclesUsers.vue";
 import UTextValueBox from "../../ui/text/value-box/UTextValueBox.vue";
-import { EventBus } from "@selldone/core-js/events/EventBus";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 
