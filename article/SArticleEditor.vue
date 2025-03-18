@@ -1607,7 +1607,7 @@ export default defineComponent({
       background: var(--background);
       width: 3rem;
       height: 2rem;
-      font-family: "Font Awesome 5 Free";
+      font-family: "Font Awesome 6 Free";
       font-weight: 900;
       font-size: 6em/1.08em;
       color: #666;
@@ -2528,7 +2528,7 @@ p iframe {
       color: #fff;
       font-size: 16px;
       z-index: 2;
-      font-family: "Font Awesome 5 Free";
+      font-family: "Font Awesome 6 Free";
       font-weight: 900;
       content: "\f065";
       padding: 6px;

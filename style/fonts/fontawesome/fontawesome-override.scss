@@ -14,7 +14,31 @@
 
 @import "@fortawesome/fontawesome-free/css/all.css";
 
+/* Then override the font-display property for all Font Awesome fonts */
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  font-display: swap !important;
+}
 
+@font-face {
+  font-family: 'Font Awesome 5 Free';
+  font-display: swap !important;
+}
+
+@font-face {
+  font-family: 'Font Awesome 5 Brands';
+  font-display: swap !important;
+}
+
+@font-face {
+  font-family: 'FontAwesome';
+  font-display: swap !important;
+}
+
+
+/*
+Make error in load fontawesome 6
+Ive added this to make swap to prevent blocking render
 @font-face {
   font-family: 'Font Awesome 6 Free';
   font-style: normal;
@@ -32,3 +56,4 @@
   font-display: swap;
   src: url("~@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2") format("woff2"), url("~@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf") format("truetype");
 }
+*/

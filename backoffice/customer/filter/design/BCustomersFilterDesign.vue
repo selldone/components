@@ -424,7 +424,7 @@ export default {
 
   /* &:after {
     float: end;
-    font-family: "Font Awesome 5 Free";
+    font-family: "Font Awesome 6 Free";
     font-weight: 900;
     content: " \f0dd";
   }*/

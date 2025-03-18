@@ -813,7 +813,7 @@ export default {
  */
 
 .s--product-info {
-  --h1-size: 3rem;
+  --h1-size: clamp(1.6rem, 5vw, 3rem);
   --h1-margin: 8px 12px 32px 12px;
   --title-en-margin: 8px 12px 0 12px;
   --hr-color: #efefef;
