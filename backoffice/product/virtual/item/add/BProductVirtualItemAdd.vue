@@ -51,6 +51,53 @@
     </v-card-title>
 
     <v-card-text>
+      <div class="text-center">
+        <v-btn-toggle
+          v-model="bulk"
+          selected-class="black-flat"
+          class="mb-3"
+          divided
+          mandatory
+          rounded="lg"
+        >
+          <v-btn
+            :value="true"
+            stacked
+            size="small"
+            width="260"
+            max-width="400"
+            height="auto"
+            rounded="lg"
+          >
+            <span>
+              <img
+                class="me-1"
+                height="20"
+                src="../../../../../assets/file/excel.svg"
+                width="20"
+              />
+              Bulk Mode</span
+            >
+
+            <small class="tnt mt-1">
+              Import a CSV file with multiple virtual items.
+            </small>
+          </v-btn>
+          <v-btn
+            :value="false"
+            stacked
+            size="small"
+            width="260"
+            max-width="400"
+            height="auto"
+            rounded="lg"
+          >
+            Manual Mode
+            <small class="tnt mt-1"> Add virtual items manually. </small>
+          </v-btn>
+        </v-btn-toggle>
+      </div>
+
       <div
         v-if="!virtualItem"
         :class="{ '-x-large': expand }"
@@ -72,18 +119,6 @@
         {{ $t("add_virtual_item.message") }}
 
         <div v-if="!virtualItem" class="py-2 text-end">
-          <v-btn class="tnt" color="primary" @click="bulk = !bulk">
-            <img
-              v-if="!bulk"
-              class="me-1"
-              height="20"
-              src="../../../../../assets/file/excel.svg"
-              width="20"
-            />
-            <v-icon v-else class="me-1" size="20">keyboard</v-icon>
-            {{ bulk ? "Switch to manual mode" : "Switch to bulk mode" }}
-          </v-btn>
-
           <v-alert v-if="!outputs?.length" class="mt-3 text-start">
             <v-icon class="me-1">info</v-icon>
             You did not define the data structure in the output form.
@@ -97,7 +132,7 @@
                   <v-btn
                     class="ms-2"
                     size="small"
-                    color="primary"
+                    color="black"
                     variant="outlined"
                     prepend-icon="download"
                     @click="downloadSampleCsv"
@@ -113,10 +148,13 @@
                     <thead>
                       <tr>
                         <th
-                          v-for="(out, i) in outputs"
+                          v-for="(out, i) in output_header_fields"
                           :key="i"
                           :title="out.title"
                         >
+                          <span v-if="!out.name" class="text-red small">
+                            <v-icon>warning</v-icon> Field Needs Name!
+                          </span>
                           <b v-copy>{{ out.name }}</b>
                         </th>
                       </tr>
@@ -124,7 +162,7 @@
                     <tbody>
                       <tr v-for="x in 3" :key="'x' + x">
                         <td
-                          v-for="(out, i) in outputs"
+                          v-for="(out, i) in output_header_fields"
                           :key="i"
                           class="text-muted"
                         >
@@ -392,6 +430,9 @@ export default {
     outputs() {
       return this.product.outputs;
     },
+    output_header_fields() {
+      return this.outputs.filter((o) => o.type !== "note");
+    },
   },
 
   watch: {
@@ -574,12 +615,16 @@ export default {
 
     downloadSampleCsv() {
       // Create header row from output names
-      const headers = this.outputs.map((out) => out.name).join(",");
+      const headers = this.output_header_fields
+        .map((out) => out.name)
+        .join(",");
 
       // Create 3 sample rows with dummy data
       const sampleRows = [];
-      for (let i = 0; i < 3; i++) {
-        const row = this.outputs.map(() => "sample_value").join(",");
+      for (let i = 0; i < headers.length; i++) {
+        const row = this.output_header_fields
+          .map(() => "sample_value")
+          .join(",");
         sampleRows.push(row);
       }
 
