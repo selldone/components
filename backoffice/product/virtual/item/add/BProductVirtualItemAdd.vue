@@ -15,16 +15,25 @@
 <template>
   <v-card class="text-start">
     <v-card-title class="d-flex align-center">
-      {{
-        virtualItem
-          ? $t("add_virtual_item.title_edit")
-          : $t("add_virtual_item.title_add")
-      }}
-      <variant-item-view-micro
-        v-if="selected_variant"
-        :product-variant="selected_variant"
-        class="mx-2"
-      ></variant-item-view-micro>
+      <v-icon class="me-2">data_object</v-icon>
+      <div>
+        <div class="d-flex">
+          {{
+            virtualItem
+              ? $t("add_virtual_item.title_edit")
+              : $t("add_virtual_item.title_add")
+          }}
+          <variant-item-view-micro
+            v-if="selected_variant"
+            :product-variant="selected_variant"
+            class="mx-2"
+          ></variant-item-view-micro>
+        </div>
+
+        <small class="d-block">
+          {{ $t("add_virtual_item.sub_title") }}
+        </small>
+      </div>
       <v-spacer></v-spacer>
       <v-btn
         v-if="!virtualItem"
@@ -40,9 +49,6 @@
         <v-icon>close</v-icon>
       </v-btn>
     </v-card-title>
-    <v-card-subtitle>
-      {{ $t("add_virtual_item.sub_title") }}
-    </v-card-subtitle>
 
     <v-card-text>
       <div
@@ -86,8 +92,23 @@
           <v-expand-transition>
             <div v-if="bulk">
               <div class="my-5 text-start">
-                <b>Csv file template:</b>
-                <v-table class="rounded-lg overflow-hidden mt-2" dense>
+                <div class="d-flex align-items-center mb-2">
+                  <b>Csv file template:</b>
+                  <v-btn
+                    class="ms-2"
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                    prepend-icon="download"
+                    @click="downloadSampleCsv"
+                  >
+                    Download Sample
+                  </v-btn>
+                </div>
+                <v-table
+                  class="rounded-lg overflow-hidden mt-2"
+                  density="compact"
+                >
                   <template v-slot:default>
                     <thead>
                       <tr>
@@ -319,7 +340,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BProductVirtualItemAdd",
-  mixins:[],
+  mixins: [],
   components: {
     VariantItemViewMicro,
     BProductVariantInput,
@@ -396,6 +417,10 @@ export default {
         Array.isArray(this.new_virtual_product_data)
       ) {
         this.new_virtual_product_data = {};
+      }
+
+      if (!this.selected_variant && !this.virtualItem) {
+        this.selected_variant = this.product.product_variants[0];
       }
     },
 
@@ -497,6 +522,9 @@ export default {
                 this.product.id,
               ),
               {
+                variant_id: this.selected_variant
+                  ? this.selected_variant.id
+                  : null,
                 dataset: values,
               },
             )
@@ -542,6 +570,36 @@ export default {
     endBulk() {
       this.$emit("close"); // Close after edit completed!
       this.resetToDefault(); // 🞇 Reset to default
+    },
+
+    downloadSampleCsv() {
+      // Create header row from output names
+      const headers = this.outputs.map((out) => out.name).join(",");
+
+      // Create 3 sample rows with dummy data
+      const sampleRows = [];
+      for (let i = 0; i < 3; i++) {
+        const row = this.outputs.map(() => "sample_value").join(",");
+        sampleRows.push(row);
+      }
+
+      // Combine headers and rows
+      const csvContent = [headers, ...sampleRows].join("\n");
+
+      // Create a blob and download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      // Set up and trigger download
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        `${this.product.title || "sample"}_template.csv`,
+      );
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
   },
 };

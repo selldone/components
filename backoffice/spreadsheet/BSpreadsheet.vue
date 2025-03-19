@@ -37,6 +37,7 @@
           v-model="show_all"
           :true-title="$t('global.actions.show_all')"
           color="success"
+          false-gray
         ></u-smart-toggle>
       </v-col>
     </v-row>

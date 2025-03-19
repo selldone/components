@@ -19,12 +19,13 @@
       v-model="input_files"
       :disabled="!canSelectFile"
       accept=".csv"
-      append-icon="attach"
+      prepend-icon=""
       hide-details
       label="Select virtual items .csv file"
       show-size
-      variant="outlined"
+      variant="solo"
       @update:model-value="selectFile"
+      class="mb-6"
     >
       <template v-slot:prepend-inner>
         <img
