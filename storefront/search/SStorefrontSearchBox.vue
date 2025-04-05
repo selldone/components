@@ -195,6 +195,13 @@
                 goToResult(item);
               "
             >
+              <template v-slot:title>
+                <div v-if="!item.query" v-html="highlightMatches(item.title, search)"></div>
+                <div v-else>
+                  {{item.title}}
+                </div>
+              </template>
+
               <template v-slot:prepend>
                 <u-avatar-folder
                   v-if="item.icon"
@@ -513,6 +520,22 @@ export default {
       this.model = item;
       this.goToResult(item);
     },
+
+    highlightMatches(text: string, search: string): string {
+      if (!search || !text) return text;
+
+      const words = search.trim().split(/\s+/).filter(w => w.length > 1);
+
+      const escapedWords = words.map(word =>
+          word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      );
+
+      const regex = new RegExp(`(${escapedWords.join('|')})`, 'gi');
+
+      return text.replace(regex, '<mark><b>$1</b></mark>');
+    }
+
+
   },
 };
 </script>
