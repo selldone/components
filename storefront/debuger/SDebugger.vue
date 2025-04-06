@@ -129,6 +129,12 @@
           intended solely for debugging purposes and is primarily useful for
           shop owners, developers, and technically savvy users.
         </div>
+        <u-smart-toggle
+          v-model="DEBUG_MODE"
+          true-title="Log Analytics and Events"
+          true-description="You can see the log of events in the console F12."
+          false-gray
+        ></u-smart-toggle>
         <v-list-item
           v-for="(item, key) in errors.entries()"
           :key="key"
@@ -193,12 +199,12 @@ import { StorefrontDebugEvents } from "@selldone/core-js/enums/debug/StorefrontD
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import { delay } from "lodash-es";
 import UTextValueBox from "../../ui/text/value-box/UTextValueBox.vue";
-
+import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 
 export default {
   name: "SDebugger",
   mixins: [],
-  components: { UTextValueBox },
+  components: { USmartToggle, UTextValueBox },
   props: {},
   data() {
     return {
@@ -223,6 +229,8 @@ export default {
       count_down_refresh: false,
 
       show_dev_badge: true,
+
+      DEBUG_MODE: false,
     };
   },
   computed: {
@@ -244,6 +252,12 @@ export default {
     },
     in_layout_test_mode() {
       return this.layout_operator === "test";
+    },
+  },
+
+  watch: {
+    DEBUG_MODE(value) {
+      window.DEBUG_MODE = value;
     },
   },
   mounted() {
@@ -521,7 +535,10 @@ export default {
         })
         .then(({ data }) => {
           if (!data.error) {
-            NotificationService.showSuccessAlert(null, "Dev server config successfully!");
+            NotificationService.showSuccessAlert(
+              null,
+              "Dev server config successfully!",
+            );
 
             this.count_down_refresh = true;
 

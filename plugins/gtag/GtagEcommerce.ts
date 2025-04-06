@@ -14,6 +14,7 @@
 
 /**
  * @link https://developers.google.com/tag-manager/enhanced-ecommerce
+ * If user manually et window.DEBUG_MODE=true then it will log all events to console
  */
 
 import type { ProductVariant } from "@selldone/core-js/models/shop/product/product_variant.model";
@@ -25,115 +26,167 @@ import type { Basket } from "@selldone/core-js/models/shop/order/basket/basket.m
 import type { Shop } from "@selldone/core-js/models/shop/shop.model";
 import { PriceHelper } from "@selldone/core-js/helper/price/PriceHelper";
 
+// Extend Window interface to support Google Tag Manager and Facebook Pixel
 declare global {
   interface Window {
     dataLayer: any;
+    fbq?: Function;
   }
 }
 
 export class GtagEcommerce {
   /**
-   * To measure product impressions, send a view_item_list with the product information:
-   * @param shop
-   * @param products
-   * @param currency
-   * @param _list
-   * @param category
+   * Helper method to send an event to Facebook Pixel if available.
+   *
+   * @param eventName - The name of the event (e.g., 'Purchase', 'AddToCart', 'ViewContent').
+   * @param parameters - An object containing event parameters.
+   * @param useCustom - If true, sends a custom event using 'trackCustom' instead of a standard 'track'.
    */
-  static MeasuringProductImpressions(
-    shop: Shop,
-    products: (Product & { category: Category })[],
-    currency: keyof typeof Currency,
-    _list: string | null,
-    category: Category | null,
-  ) {
-    window.dataLayer = window.dataLayer || [];
-
-    const products_list: object[] = [];
-
-    let index = 1;
-    products
-      ?.filter((x) => !!x?.id) // Remove null values!
-      .forEach((product) => {
-        const category_name = product.category
-          ? product.category.title
-          : category
-            ? category.title
-            : "Home";
-        const list = _list ? _list : `${category_name} Gallery`;
-
-        try {
-          const price = PriceHelper.priceProductByCurrency(
-            shop,
-            product,
-            null,
-            currency,
-          );
-          products_list.push({
-            name: product.title, // Name or ID is required.
-            id: product.id,
-            price: price,
-            brand: product.brand,
-            category: category_name,
-            variant: "",
-            list: list,
-            position: index++,
-          });
-        } catch (e) {
-          console.error(e);
-          return;
-        }
-      });
-
-    window.dataLayer.push({
-      ecommerce: {
-        currencyCode: currency, // Local currency is optional.
-        impressions: products_list,
-      },
-    });
+  private static sendFacebookEvent(
+      eventName: string,
+      parameters: Record<string, any>,
+      useCustom: boolean = false
+  ): void {
+    if (typeof window.fbq === "function") {
+      if(window.DEBUG_MODE)
+      console.log("Send Facebook Pixel event:", eventName, parameters);
+      if (useCustom) {
+        window.fbq("trackCustom", eventName, parameters);
+      } else {
+        window.fbq("track", eventName, parameters);
+      }
+    }
   }
 
   /**
-   * To measure a product click, send a select_content event, specify product as the content_type, and provide the product information:
-   * @param shop
-   * @param product
-   * @param currency
-   * @param position
-   * @param category
-   * @constructor
+   * Measure product impressions by pushing the product list details to the dataLayer.
+   * Additionally, sends a custom 'ProductImpressions' event to Facebook Pixel if available.
+   *
+   * @param shop - The shop object.
+   * @param products - Array of products with an associated category.
+   * @param currency - Currency key.
+   * @param _list - Optional list name.
+   * @param category - Fallback category if product category is missing.
+   */
+  static MeasuringProductImpressions(
+      shop: Shop,
+      products: (Product & { category: Category })[],
+      currency: keyof typeof Currency,
+      _list: string | null,
+      category: Category | null
+  ) {
+    window.dataLayer = window.dataLayer || [];
+
+    const products_list: {
+      name: string;
+      id: any;
+      price: number;
+      brand: any;
+      category: string;
+      variant: string;
+      list: string;
+      position: number;
+    }[] = [];
+
+    let index = 1;
+    products
+        ?.filter((x) => !!x?.id) // Remove null values!
+        .forEach((product) => {
+          const category_name = product.category
+              ? product.category.title
+              : category
+                  ? category.title
+                  : "Home";
+          const list = _list ? _list : `${category_name} Gallery`;
+
+          try {
+            const price = PriceHelper.priceProductByCurrency(
+                shop,
+                product,
+                null,
+                currency
+            );
+            products_list.push({
+              name: product.title, // Name or ID is required.
+              id: product.id,
+              price: price,
+              brand: product.brand,
+              category: category_name,
+              variant: "",
+              list: list,
+              position: index++,
+            });
+          } catch (e) {
+            console.error(e);
+            return;
+          }
+        });
+
+    // Push to dataLayer for Google Tag Manager
+    window.dataLayer.push({
+      ecommerce: {
+        currencyCode: currency,
+        impressions: products_list,
+      },
+    });
+    if(window.DEBUG_MODE)
+      console.log("GTAG | Added product impressions to dataLayer:", products_list);
+
+    // Send custom Facebook Pixel event with list of product IDs and names
+    this.sendFacebookEvent(
+        "ProductImpressions",
+        {
+          content_ids: products_list.map((p) => p.id),
+          content_names: products_list.map((p) => p.name),
+          currency: currency,
+        },
+        true
+    );
+  }
+
+  /**
+   * Measure a product click by pushing event details to the dataLayer.
+   * Also sends a 'ViewContent' event to Facebook Pixel for product click.
+   *
+   * @param shop - The shop object.
+   * @param product - The clicked product with its category.
+   * @param currency - Currency key.
+   * @param position - Position of the product in the list.
+   * @param category - Fallback category if product category is missing.
    */
   static MeasuringProductClicks(
-    shop: Shop,
-    product: Product & { category: Category },
-    currency: keyof typeof Currency,
-    position: number,
-    category: Category | null,
+      shop: Shop,
+      product: Product & { category: Category },
+      currency: keyof typeof Currency,
+      position: number,
+      category: Category | null
   ) {
     window.dataLayer = window.dataLayer || [];
 
     const category_name = product.category
-      ? product.category.title
-      : category
-        ? category.title
-        : "Home";
+        ? product.category.title
+        : category
+            ? category.title
+            : "Home";
 
     try {
       const price = PriceHelper.priceProductByCurrency(
-        shop,
-        product,
-        null,
-        currency,
+          shop,
+          product,
+          null,
+          currency
       );
 
+      // Push click event to dataLayer (Google Tag Manager)
       window.dataLayer.push({
         event: "productClick",
-        currencyCode: currency, // Pajuhaan: Added by me! not in Google docs!
+        currencyCode: currency,
         ecommerce: {
           click: {
-            actionField: { list: "Search Results" }, // Optional list property.
+            actionField: { list: "Search Results" },
             products: [
               {
-                name: product.title, // Name or ID is required.
+                name: product.title,
                 id: product.id,
                 price: price,
                 brand: product.brand,
@@ -145,6 +198,18 @@ export class GtagEcommerce {
           },
         },
       });
+
+      if(window.DEBUG_MODE)
+        console.log("GTAG | Added product click to dataLayer:", product);
+
+      // Send Facebook Pixel 'ViewContent' event for product click
+      this.sendFacebookEvent("ViewContent", {
+        content_name: product.title,
+        content_category: category_name,
+        content_ids: [product.id],
+        value: price,
+        currency: currency,
+      });
     } catch (e) {
       console.error(e);
       return;
@@ -152,35 +217,43 @@ export class GtagEcommerce {
   }
 
   /**
-   * Measure a view of product details by pushing a detail action to the data layer, along with one or more productFieldObjects representing the products being viewed:
-   * @param shop
-   * @param product
-   * @param currency
-   * @param _list       product-page    quick-view
-   * @constructor
+   * Measure views of product details by pushing a 'detail' action to the dataLayer.
+   * Also sends a 'ViewContent' event to Facebook Pixel.
+   *
+   * @param shop - The shop object.
+   * @param product - The product being viewed with its category.
+   * @param currency - Currency key.
+   * @param _list - Optional list identifier ('product-page' or 'quick-view').
    */
   static MeasuringViewsOfProductDetails(
-    shop: Shop,
-    product: Product & { category: Category },
-    currency: keyof typeof Currency,
-    _list?: "product-page" | "quick-view" | null,
+      shop: Shop,
+      product: Product & { category: Category },
+      currency: keyof typeof Currency,
+      _list?: "product-page" | "quick-view" | null
   ) {
     window.dataLayer = window.dataLayer || [];
     const category_name = product.category ? product.category.title : "Home";
     const list = _list ? _list : `${category_name} Gallery`;
 
-    const products_list = [];
+    const products_list: {
+      name: string;
+      id: any;
+      price: number;
+      brand: any;
+      category: string;
+      variant: string;
+    }[] = [];
 
     try {
       const price = PriceHelper.priceProductByCurrency(
-        shop,
-        product,
-        null,
-        currency,
+          shop,
+          product,
+          null,
+          currency
       );
 
       products_list.push({
-        name: product.title, // Name or ID is required.
+        name: product.title,
         id: product.id,
         price: price,
         brand: product.brand,
@@ -188,15 +261,27 @@ export class GtagEcommerce {
         variant: "",
       });
 
+      // Push detail view event to dataLayer (Google Tag Manager)
       window.dataLayer.push({
-        currencyCode: currency, // Pajuhaan: Added by me! not in Google docs!
-
+        currencyCode: currency,
         ecommerce: {
           detail: {
-            actionField: { list: list }, // 'detail' actions have an optional list property.
+            actionField: { list: list },
             products: products_list,
           },
         },
+      });
+
+      if(window.DEBUG_MODE)
+        console.log("GTAG | Added product detail view to dataLayer:", product);
+
+      // Send Facebook Pixel 'ViewContent' event for product details
+      this.sendFacebookEvent("ViewContent", {
+        content_name: product.title,
+        content_category: category_name,
+        content_ids: [product.id],
+        value: price,
+        currency: currency,
       });
     } catch (e) {
       console.error(e);
@@ -205,51 +290,68 @@ export class GtagEcommerce {
   }
 
   /**
-   * Measure adding a product to a shopping cart by using an 'add' actionFieldObject and a list of productFieldObjects.
-   * @param shop
-   * @param product
-   * @param variant
-   * @param quantity
-   * @param currency
+   * Measure adding a product to the shopping cart by pushing an 'add' event to the dataLayer.
+   * Also sends an 'AddToCart' event to Facebook Pixel.
+   *
+   * @param shop - The shop object.
+   * @param product - The product being added with its category.
+   * @param variant - Optional product variant.
+   * @param quantity - Number of units added.
+   * @param currency - Currency key.
    */
   static AddingProductToShoppingCart(
-    shop: Shop,
-    product: Product & { category: Category },
-    variant: ProductVariant | null,
-    quantity: number,
-    currency: keyof typeof Currency,
+      shop: Shop,
+      product: Product & { category: Category },
+      variant: ProductVariant | null,
+      quantity: number,
+      currency: keyof typeof Currency
   ) {
     window.dataLayer = window.dataLayer || [];
     const category_name = product.category ? product.category.title : "Home";
 
     try {
       const price = PriceHelper.priceProductByCurrency(
-        shop,
-        product,
-        variant,
-        currency,
+          shop,
+          product,
+          variant,
+          currency
       );
 
-      const products_list = [];
-      products_list.push({
-        name: product.title, // Name or ID is required.
-        id: product.id,
-        price: price,
-        brand: product.brand,
-        category: category_name,
-        variant: variant,
-        quantity: quantity,
-      });
+      const products_list = [
+        {
+          name: product.title,
+          id: product.id,
+          price: price,
+          brand: product.brand,
+          category: category_name,
+          variant: variant,
+          quantity: quantity,
+        },
+      ];
 
+      // Push add-to-cart event to dataLayer (Google Tag Manager)
       window.dataLayer.push({
         event: "addToCart",
         ecommerce: {
           currencyCode: currency,
           add: {
-            // 'add' actionFieldObject measures.
-            products: products_list, //  adding a product to a shopping cart.
+            products: products_list,
           },
         },
+      });
+
+      if(window.DEBUG_MODE)
+        console.log("GTAG | Added product to cart in dataLayer:", product);
+
+      // Send Facebook Pixel 'AddToCart' event
+      this.sendFacebookEvent("AddToCart", {
+        content_name: product.title,
+        content_category: category_name,
+        content_ids: [product.id],
+        value: price,
+        currency: currency,
+        quantity: quantity,
+        content_type: "product",
       });
     } catch (e) {
       console.error(e);
@@ -258,53 +360,71 @@ export class GtagEcommerce {
   }
 
   /**
-   * Measure the removal of a product from a shopping cart.
-   * @param shop
-   * @param product
-   * @param variant
-   * @param quantity
-   * @param currency
-   * @constructor
+   * Measure the removal of a product from the shopping cart by pushing a removal event to the dataLayer.
+   * Also sends a custom 'RemoveFromCart' event to Facebook Pixel.
+   *
+   * @param shop - The shop object.
+   * @param product - The product being removed with its category.
+   * @param variant - Optional product variant.
+   * @param quantity - Number of units removed.
+   * @param currency - Currency key.
    */
   static RemovingProductFromShoppingCart(
-    shop: Shop,
-    product: Product & { category: Category },
-    variant: ProductVariant | null,
-    quantity: number,
-    currency: keyof typeof Currency,
+      shop: Shop,
+      product: Product & { category: Category },
+      variant: ProductVariant | null,
+      quantity: number,
+      currency: keyof typeof Currency
   ) {
     window.dataLayer = window.dataLayer || [];
     const category_name = product.category ? product.category.title : "Home";
 
     try {
       const price = PriceHelper.priceProductByCurrency(
-        shop,
-        product,
-        variant,
-        currency,
+          shop,
+          product,
+          variant,
+          currency
       );
 
-      const products_list = [];
-      products_list.push({
-        name: product.title, // Name or ID is required.
-        id: product.id,
-        price: price,
-        brand: product.brand,
-        category: category_name,
-        variant: variant,
-        quantity: quantity,
-      });
+      const products_list = [
+        {
+          name: product.title,
+          id: product.id,
+          price: price,
+          brand: product.brand,
+          category: category_name,
+          variant: variant,
+          quantity: quantity,
+        },
+      ];
 
+      // Push removal event to dataLayer (Google Tag Manager)
       window.dataLayer.push({
         event: "removeFromCart",
         ecommerce: {
           currencyCode: currency,
           add: {
-            // 'add' actionFieldObject measures.
-            products: products_list, //  adding a product to a shopping cart.
+            products: products_list,
           },
         },
       });
+      if(window.DEBUG_MODE)
+        console.log("GTAG | Removed product from cart in dataLayer:", product);
+
+      // Send custom Facebook Pixel event 'RemoveFromCart'
+      this.sendFacebookEvent(
+          "RemoveFromCart",
+          {
+            content_name: product.title,
+            content_category: category_name,
+            content_ids: [product.id],
+            value: price,
+            currency: currency,
+            quantity: quantity,
+          },
+          true
+      );
     } catch (e) {
       console.error(e);
       return;
@@ -312,28 +432,25 @@ export class GtagEcommerce {
   }
 
   /**
-   * The checkout option is useful in cases where you've already measured a checkout step but you want to capture
-   * additional information about the same checkout step. For example, the shipping method selected by a user.
-   * To measure this use the checkout_option action along with the step and option fields.
+   * Measure checkout steps by pushing a checkout event to the dataLayer.
+   * Depending on the checkout step, different Facebook Pixel events are sent:
+   *  - Step 0: Custom 'ViewCart'
+   *  - Step 1: Standard 'InitiateCheckout'
+   *  - Step 2: Standard 'AddPaymentInfo'
    *
-   * step 0: View basket
-   * step 1: Select location
-   * step 2: Select payment button
-   *
-   * @param basket
-   * @param step
-   * @param option
-   * @constructor
+   * @param basket - The shopping basket object.
+   * @param step - The current checkout step (0: view basket, 1: select location, 2: select payment).
+   * @param option - Optional additional option detail.
    */
   static MeasuringCheckoutSteps(
-    basket: Basket,
-    step: number,
-    option: string | null,
+      basket: Basket,
+      step: number,
+      option: string | null
   ) {
     if (!basket) return;
     window.dataLayer = window.dataLayer || [];
     const products_list: {
-      name: any; // Name or ID is required.
+      name: any;
       id: any;
       price: any;
       currencyCode: any;
@@ -345,40 +462,38 @@ export class GtagEcommerce {
 
     try {
       if (
-        basket.items &&
-        [
-          ProductType.PHYSICAL.code,
-          ProductType.VIRTUAL.code,
-          ProductType.SERVICE.code,
-          ProductType.FILE.code,
-          "POS",
-        ].includes(basket.type)
+          basket.items &&
+          [
+            ProductType.PHYSICAL.code,
+            ProductType.VIRTUAL.code,
+            ProductType.SERVICE.code,
+            ProductType.FILE.code,
+            "POS",
+          ].includes(basket.type)
       ) {
         basket.items
-          ?.filter((item) => !!item?.product) // Must have product!
-          .forEach((item) => {
-            // let category_name = product.category ? product.category.title : "Home";
-
-            products_list.push({
-              name: item.product?.title, // Name or ID is required.
-              id: item.product?.id,
-              price: item.price,
-              currencyCode: item.currency,
-              brand: item.product?.brand,
-              category: "",
-              variant: item.variant,
-              quantity: item.count,
+            ?.filter((item) => !!item?.product)
+            .forEach((item) => {
+              products_list.push({
+                name: item.product?.title,
+                id: item.product?.id,
+                price: item.price,
+                currencyCode: item.currency,
+                brand: item.product?.brand,
+                category: "",
+                variant: item.variant,
+                quantity: item.count,
+              });
             });
-          });
       }
     } catch (e) {
       console.error(e);
     }
 
+    // Push checkout step event to dataLayer (Google Tag Manager)
     window.dataLayer.push({
       event: "checkout",
-      currencyCode: basket.currency, // Pajuhaan: Added by me! not in Google docs!
-
+      currencyCode: basket.currency,
       ecommerce: {
         checkout: {
           actionField: { step: step, option: option },
@@ -386,11 +501,39 @@ export class GtagEcommerce {
         },
       },
     });
+
+    if(window.DEBUG_MODE)
+      console.log("GTAG | Added checkout step to dataLayer:", step, option);
+
+    // Determine and send corresponding Facebook Pixel event based on the step
+    const contentIds = products_list.map((p) => p.id);
+    const fbParams = {
+      content_ids: contentIds,
+      value: basket.price,
+      currency: basket.currency,
+    };
+
+    if (step === 0) {
+      // Custom event for viewing the cart/basket
+      this.sendFacebookEvent("ViewCart", fbParams, true);
+    } else if (step === 1) {
+      // Standard event when checkout is initiated
+      this.sendFacebookEvent("InitiateCheckout", fbParams);
+    } else if (step === 2) {
+      // Standard event when payment information is added
+      this.sendFacebookEvent("AddPaymentInfo", fbParams);
+    }
   }
 
+  /**
+   * Measure purchase completion by pushing a purchase event to the dataLayer.
+   * Also sends a 'Purchase' event to Facebook Pixel.
+   *
+   * @param basket - The shopping basket object.
+   */
   static MeasuringPurchasesBasket(basket: Basket) {
     const products_list: {
-      name: any; // Name or ID is required.
+      name: any;
       id: any;
       price: any;
       currency: any;
@@ -403,53 +546,62 @@ export class GtagEcommerce {
 
     try {
       if (
-        basket.items &&
-        [
-          ProductType.PHYSICAL.code,
-          ProductType.VIRTUAL.code,
-          ProductType.SERVICE.code,
-          ProductType.FILE.code,
-          "POS",
-        ].includes(basket.type)
+          basket.items &&
+          [
+            ProductType.PHYSICAL.code,
+            ProductType.VIRTUAL.code,
+            ProductType.SERVICE.code,
+            ProductType.FILE.code,
+            "POS",
+          ].includes(basket.type)
       ) {
         basket.items
-          ?.filter((item) => !!item?.product) // Must have product!
-          .forEach((item) => {
-            // let category_name = product.category ? product.category.title : "Home";
-
-            products_list.push({
-              name: item.product?.title, // Name or ID is required.
-              id: item.product?.id,
-              price: item.price,
-              currency: item.currency,
-              brand: item.product?.brand,
-              category: "",
-              variant: item.variant,
-              quantity: item.count,
-              coupon: basket.discount_id ? `${basket.discount_id}` : "", // Optional fields may be omitted or set to empty string.
+            ?.filter((item) => !!item?.product)
+            .forEach((item) => {
+              products_list.push({
+                name: item.product?.title,
+                id: item.product?.id,
+                price: item.price,
+                currency: item.currency,
+                brand: item.product?.brand,
+                category: "",
+                variant: item.variant,
+                quantity: item.count,
+                coupon: basket.discount_id ? `${basket.discount_id}` : "",
+              });
             });
-          });
       }
     } catch (e) {
       console.error(e);
     }
 
+    // Push purchase event to dataLayer (Google Tag Manager)
     window.dataLayer.push({
-      currencyCode: basket.currency, // Pajuhaan: Added by me! not in Google docs!
-
+      currencyCode: basket.currency,
       ecommerce: {
         purchase: {
           actionField: {
-            id: `${basket.type}-${basket.id}`, // Transaction ID. Required for purchases and refunds.
+            id: `${basket.type}-${basket.id}`,
             affiliation: "Online Store",
-            revenue: basket.price, // Total transaction value (incl. tax and shipping)
+            revenue: basket.price,
             tax: "0",
-            shipping: basket.delivery_price > 0 ? basket.delivery_price : 0, // -1: reserved for free shipping!
+            shipping: basket.delivery_price > 0 ? basket.delivery_price : 0,
             coupon: "",
           },
           products: products_list,
         },
       },
+    });
+
+    if(window.DEBUG_MODE)
+      console.log("GTAG | Added purchase to dataLayer:", basket);
+
+    // Send Facebook Pixel 'Purchase' event
+    this.sendFacebookEvent("Purchase", {
+      content_ids: products_list.map((p) => p.id),
+      value: basket.price,
+      currency: basket.currency,
+      order_id: `${basket.type}-${basket.id}`,
     });
   }
 }
