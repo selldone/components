@@ -457,7 +457,7 @@ export default {
             this.$emit("new-path", file.path);
             this.$emit("new-url", file.url);
           });
-        } else {
+        } else if(response.files) {
           //console.log("done", response.files.path);
           this.$emit("new-path", response.files.path);
           this.$emit("new-url", response.files.url);
