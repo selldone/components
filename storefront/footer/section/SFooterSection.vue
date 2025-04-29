@@ -13,8 +13,14 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+  <div  v-if="custom_footer_code">
+    <component
+      :is="generated_component"
+      v-dynamic-scripts="true"
+    ></component>
+  </div>
   <v-sheet
-    v-if="!disabled"
+    v-else-if="!disabled"
     :class="{ '-dark': dark, '-rtl': $vuetify.locale.isRtl }"
     :color="dark ? ThemeColorDeepDark : '#fff'"
     :style="{
@@ -149,11 +155,15 @@ import SFooterSectionMenu from "@selldone/components-vue/storefront/footer/secti
 import SFooterSectionContact from "@selldone/components-vue/storefront/footer/section/contact/SFooterSectionContact.vue";
 import SFooterSectionCopyright from "@selldone/components-vue/storefront/footer/section/copyright/SFooterSectionCopyright.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import DynamicScriptDirective from "@selldone/components-vue/directives/script/DynamicScriptDirective.ts";
+import { VueComponentBuilder } from "@selldone/components-vue/storefront/custom/VueComponentBuilder.ts";
 
 export default {
   name: "SFooterSection",
   mixins: [TemplateMixin],
-
+  directives: {
+    "dynamic-scripts": DynamicScriptDirective,
+  },
   components: {
     SFooterSectionCopyright,
     SFooterSectionContact,
@@ -198,6 +208,15 @@ export default {
     disabled() {
       return this.menu_footer && this.menu_footer.enable === false;
     },
+
+    custom_footer_code() {
+      return this.theme.custom_footer_code;
+    },
+
+    generated_component() {
+      return new VueComponentBuilder().create(this.custom_footer_code, this);
+    },
+
   },
 
   watch: {},

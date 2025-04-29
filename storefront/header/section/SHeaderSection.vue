@@ -12,45 +12,55 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+<template>
   <div>
-    <v-toolbar
-      v-if="!$store.getters.getIsNative && $shop"
-      :class="{ 'text-white': is_dark, '-dark': is_dark,'-border':border }"
-      :color="HEADER_COLOR"
-      :style="{ backdropFilter: backdrop_filter }"
-      :theme="is_dark ? 'dark' : 'light'"
-      class="s--storefront-primary-header px-2"
-      flat
-    >
-      <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
-      <s-header-section-drawer-menu
-        v-if="isMobile || isStandalone"
-      ></s-header-section-drawer-menu>
+    <component
+      v-if="custom_header_code"
+      :is="generated_component"
+      v-dynamic-scripts="true"
+    ></component>
 
-      <s-header-section-logo class="mx-1"></s-header-section-logo>
+    <template v-else>
+      <v-toolbar
+        v-if="!$store.getters.getIsNative && $shop"
+        :class="{ 'text-white': is_dark, '-dark': is_dark, '-border': border }"
+        :color="HEADER_COLOR"
+        :style="{ backdropFilter: backdrop_filter }"
+        :theme="is_dark ? 'dark' : 'light'"
+        class="s--storefront-primary-header px-2"
+        flat
+      >
+        <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
+        <s-header-section-drawer-menu
+          v-if="isMobile || isStandalone"
+        ></s-header-section-drawer-menu>
 
-      <v-spacer />
+        <s-header-section-logo class="mx-1"></s-header-section-logo>
 
-      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Lottery ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+        <v-spacer />
 
-      <s-storefront-lottery-wheel-of-fortune
-        class="fadeIn delay_200 me-3"
-      ></s-storefront-lottery-wheel-of-fortune>
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Lottery ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-      <s-header-section-buttons :dark="!is_light_header">
-      </s-header-section-buttons>
+        <s-storefront-lottery-wheel-of-fortune
+          class="fadeIn delay_200 me-3"
+        ></s-storefront-lottery-wheel-of-fortune>
 
-      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <s-header-section-user v-if="!isMobile" :dark="!is_light_header">
-      </s-header-section-user>
-    </v-toolbar>
+        <s-header-section-buttons :dark="!is_light_header">
+        </s-header-section-buttons>
 
-    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Decorative Extra ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+        <s-header-section-user v-if="!isMobile" :dark="!is_light_header">
+        </s-header-section-user>
+      </v-toolbar>
 
-    <div v-if="!overlay" style="min-height: 80px;position: absolute;left: 0;right: 0" :style="{background:HEADER_COLOR}">
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Decorative Extra ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    </div>
+      <div
+        v-if="!overlay"
+        style="min-height: 80px; position: absolute; left: 0; right: 0"
+        :style="{ background: HEADER_COLOR }"
+      ></div>
+    </template>
   </div>
 </template>
 
@@ -62,10 +72,15 @@ import { ThemeHelper } from "@selldone/core-js";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import { defineAsyncComponent } from "vue";
 import { LUtilsFilter } from "@selldone/page-builder/utils/filter/LUtilsFilter.ts";
+import DynamicScriptDirective from "@selldone/components-vue/directives/script/DynamicScriptDirective.ts";
+import { VueComponentBuilder } from "@selldone/components-vue/storefront/custom/VueComponentBuilder.ts";
 
 export default {
   name: "SHeaderSection",
   mixins: [TemplateMixin],
+  directives: {
+    "dynamic-scripts": DynamicScriptDirective,
+  },
   components: {
     SHeaderSectionUser: defineAsyncComponent(
       () =>
@@ -88,7 +103,7 @@ export default {
   inject: ["$shop"],
   props: {
     overlay: { type: Boolean, default: false },
-    border:Boolean,
+    border: Boolean,
     overlayDark: {
       default: false,
       type: Boolean,
@@ -129,6 +144,14 @@ export default {
     theme() {
       if (!this.$shop) return null;
       return this.$shop.theme;
+    },
+
+    custom_header_code() {
+      return this.theme.custom_header_code;
+    },
+
+    generated_component() {
+      return new VueComponentBuilder().create(this.custom_header_code, this);
     },
 
     is_dark() {
@@ -227,12 +250,12 @@ export default {
   overflow-x: auto;
   overflow-y: hidden;
 
-  &.-border{
+  &.-border {
     border-bottom: 1px solid rgba(10, 10, 10, 0.3) !important;
+
     &.-dark {
       border-bottom: 1px solid rgba(222, 226, 230, 0.3) !important;
     }
   }
-
 }
 </style>
