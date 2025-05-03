@@ -24,25 +24,61 @@
     <v-list-subheader>
       {{ $t("shop_configuration.checkout_form.subtitle") }}
     </v-list-subheader>
+
+    <s-country-select
+      v-model="country"
+      clearable
+      :label="$t('global.commons.country')"
+      :placeholder="$t('global.commons.default') + ' *.*'"
+      persistent-placeholder
+      :prepend-inner-icon="country ? null : 'public'"
+      item-value="alpha2"
+      :messages="
+        country
+          ? `Override the form to show only for ${getCountryName(country)}`
+          : 'Default for all countries.'
+      "
+    ></s-country-select>
+
+    <v-chip v-if="overridden_country_codes.length>0" @click="country = null" class="ma-1" prepend-icon="public" :color="!country?'primary':'#eee'" variant="flat">
+      {{$t('global.commons.default')}}
+    </v-chip>
+    <v-chip v-for="key in overridden_country_codes" @click="country = key" class="ma-1" :color="country===key?'primary':'#eee'" variant="flat">
+      <flag :iso="key" :squared="false" class="me-3" />
+      <b class="me-1">{{ key }} | </b>
+      <small class="d-block mt-1">{{ getCountryName(key) }}</small>
+
+      <v-icon end @click.stop="delectOverrideForm()">cancel</v-icon>
+    </v-chip>
+
+
     <s-form-builder
+      :title="
+        `Checkout Form: ` +
+        (country ? getCountryName(country) : $t('global.commons.default'))
+      "
       v-model:structure="checkout_form"
       class="mb-5"
       @update:structure="changed = true"
+      :key="form_key"
+      has-required
     >
     </s-form-builder>
 
-    <s-widget-buttons v-if="changed" auto-fixed-position>
-      <v-btn
-        @click="setOptionCheckout('form', checkout_form)"
-        :loading="busy"
-        size="x-large"
-        prepend-icon="save"
-        variant="elevated"
-        color="primary"
-      >
-        {{ $t("global.actions.save_changes") }}
-      </v-btn>
-    </s-widget-buttons>
+    <v-slide-y-reverse-transition>
+      <s-widget-buttons v-if="changed" auto-fixed-position>
+        <v-btn
+          @click="setOptionCheckout(form_key, checkout_form)"
+          :loading="busy"
+          size="x-large"
+          prepend-icon="save"
+          variant="elevated"
+          color="primary"
+        >
+          {{ $t("global.actions.save_changes") }}
+        </v-btn>
+      </s-widget-buttons>
+    </v-slide-y-reverse-transition>
   </div>
 </template>
 
@@ -55,12 +91,14 @@ import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import SFormBuilder from "@selldone/components-vue/ui/form/SFormBuilder.vue";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
-import {ShopOptionsHelper} from "@selldone/core-js/helper";
+import { ShopOptionsHelper } from "@selldone/core-js/helper";
+import SCountrySelect from "@selldone/components-vue/ui/country/select/SCountrySelect.vue";
 
 export default {
   name: "BShopOptionsCheckoutForm",
   mixins: [],
   components: {
+    SCountrySelect,
     SWidgetButtons,
     SFormBuilder,
     USmartSwitch,
@@ -81,15 +119,35 @@ export default {
     checkout_form: null,
 
     changed: false,
+    country: null,
   }),
 
   computed: {
     checkout() {
       return ShopOptionsHelper.GetCheckout(this.shop);
     },
-
+    form_key() {
+      if (this.country) {
+        return `form_${this.country}`;
+      } else {
+        return "form";
+      }
+    },
+    overridden_country_codes() {
+      const keys_checkout = Object.keys(this.checkout);
+      const keys_checkout_form = keys_checkout.filter((key) =>
+        key.startsWith("form_"),
+      );
+      return keys_checkout_form.map((key) => key.replace("form_", ""));
+    },
   },
-  watch: {},
+  watch: {
+    country() {
+      return (this.checkout_form = this.checkout
+        ? this.checkout[this.form_key]
+        : null);
+    },
+  },
 
   created() {
     this.checkout_form = this.checkout?.form;
@@ -120,6 +178,13 @@ export default {
         .finally(() => {
           this.busy = false;
         });
+    },
+
+    delectOverrideForm(country) {
+      NotificationService.openDeleteAlert(() => {
+        this.setOptionCheckout(`form_${country}`, null);
+        this.country = null;
+      });
     },
   },
 };

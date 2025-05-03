@@ -258,6 +258,33 @@
           </small>
           {{ getLocalTimeString(basket.reserved_at) }}
         </p>
+
+        <!-- █████████████████████ Custom Checkout Input Form █████████████████████ -->
+        <div v-if="checkout_form?.length"  class="mt-2">
+          <u-text-value-box
+            v-for="_item in checkout_form?.filter(
+              (x) => x.type !== 'note' /*No need to show notes!*/,
+            )"
+            vb50
+            :label="_item.title ? _item.title : _item.name"
+            :value="order_form ? order_form[_item.name] : null"
+
+          >
+            <template v-if="!_item.type || _item.type === 'text'">
+              <v-icon
+                v-if="order_form && order_form[_item.name]"
+                class="ms-1"
+                size="small"
+                color="green"
+                >check_circle
+              </v-icon>
+              <template v-else>
+                <v-icon class="me-1" size="small" color="red">cancel</v-icon>
+                <small class="op-0-7">{{ $t("global.commons.empty") }}</small>
+              </template>
+            </template>
+          </u-text-value-box>
+        </div>
       </v-col>
 
       <!-- ========================================= MAP ========================================= -->
@@ -388,17 +415,19 @@ import DeliveryTimelineTransportationOrder from "../../../storefront/order/deliv
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import UMapGeoButton from "../../../ui/map/geo-button/UMapGeoButton.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
-import { Basket } from "@selldone/core-js";
+import { Basket, ShopOptionsHelper } from "@selldone/core-js";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import UMapImage from "@selldone/components-vue/ui/map/image/UMapImage.vue";
+import UTextValueBox from "@selldone/components-vue/ui/text/value-box/UTextValueBox.vue";
 
 export default {
   name: "SShopCustomerDeliveryInfoWidget",
   mixins: [TemplateMixin, DateMixin],
 
   components: {
+    UTextValueBox,
     UMapImage,
     UMapView,
     USmartToggle,
@@ -540,6 +569,28 @@ export default {
     transportation_order() {
       return this.basket.transportation_order;
     },
+
+    //------------------------------------------------------------------------
+    checkout() {
+      return ShopOptionsHelper.GetCheckout(this.$shop);
+    },
+    /**
+     * Select the custom checkout form
+     */
+    checkout_form() {
+      const country = this.basket.receiver_info?.country
+        ? this.basket.receiver_info.country
+        : this.basket.billing?.country;
+      if (country && this.checkout[`form_${country}`]) {
+        return this.checkout[`form_${country}`];
+      }
+      return this.checkout?.form;
+    },
+    order_form() {
+      return this.basket?.form;
+    },
+    //------------------------------------------------------------------------
+
   },
   methods: {
     showEditAddress() {

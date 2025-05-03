@@ -36,6 +36,8 @@
         @blur="$emit('changed')"
       >
         <template v-slot:append-inner>
+          <flag v-if="is_override" :iso="country" :squared="false" class="me-2" />
+
           <v-chip v-if="item.required" label size="x-small" color="#000" variant="flat">{{$t('global.commons.required')}}</v-chip>
         </template>
 
@@ -96,6 +98,15 @@ export default {
   inject: ["$shop"],
   emits: ["update:modelValue", "changed"],
   props: {
+    /**
+     * Receiver country (override the checkout form for the country)
+     */
+    country:{
+      default: null,
+      type: String,
+    },
+
+
     modelValue: {},
 
     readonly: {
@@ -106,6 +117,7 @@ export default {
       default: false,
       type: Boolean,
     },
+
   },
   data: () => ({
     local_value: {},
@@ -120,11 +132,17 @@ export default {
     },
 
     /**
-     * Select custom checkout form
+     * Select the custom checkout form
      */
     form() {
+      if(this.country && this.checkout[`form_${this.country}`]){
+        return this.checkout[`form_${this.country}`];
+      }
       return this.checkout?.form;
     },
+    is_override(){
+      return (this.country && this.checkout[`form_${this.country}`])
+    }
   },
 
   watch: {

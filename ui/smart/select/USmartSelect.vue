@@ -111,10 +111,16 @@
 
 <script lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
+import {isFunction} from "lodash-es";
 
 export default {
   name: "USmartSelect",
   emits: ["change", "update:modelValue"],
+  data() {
+    return {
+      isFunction: isFunction,
+    };
+  },
   props: {
     modelValue: {},
     items: { type: Array },

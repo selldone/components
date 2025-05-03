@@ -320,19 +320,29 @@
       </v-row>
       <!-- █████████████████████ Custom Checkout Input Form █████████████████████ -->
       <div v-if="checkout_form?.length" class="max-w-550">
-        <u-text-value-box v-for="(_item) in checkout_form?.filter(x=>x.type!=='note'/*No need to show notes!*/)" vb75
-            :label="_item.title?_item.title:_item.name" :value="order_form?order_form[_item.name]:null">
-          <template v-if="!_item.type || _item.type==='text'">
-            <v-icon v-if="order_form && order_form[_item.name]" class="ms-1" size="small" color="green">check_circle</v-icon>
-            <template v-else >
+        <u-text-value-box
+          v-for="_item in checkout_form?.filter(
+            (x) => x.type !== 'note' /*No need to show notes!*/,
+          )"
+          vb75
+          :label="_item.title ? _item.title : _item.name"
+          :value="order_form ? order_form[_item.name] : null"
+        >
+          <template v-if="!_item.type || _item.type === 'text'">
+            <v-icon
+              v-if="order_form && order_form[_item.name]"
+              class="ms-1"
+              size="small"
+              color="green"
+              >check_circle
+            </v-icon>
+            <template v-else>
               <v-icon class="me-1" size="small" color="red">cancel</v-icon>
-              <small class="op-0-7">{{$t('global.commons.empty')}}</small>
+              <small class="op-0-7">{{ $t("global.commons.empty") }}</small>
             </template>
-
           </template>
         </u-text-value-box>
       </div>
-
 
       <!-- █████████████████████ Campaign █████████████████████ -->
 
@@ -832,7 +842,7 @@ import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import BOrderPaymentTable from "../../../order/payment/table/BOrderPaymentTable.vue";
 import UChartSankey from "../../../../ui/chart/sankey/UChartSankey.vue";
-import {Basket, Bill, ShopOptionsHelper} from "@selldone/core-js";
+import { Basket, Bill, ShopOptionsHelper } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
@@ -899,7 +909,6 @@ export default {
       dialog_customer_pay_money_cod: false,
       accept_action: false,
 
-
       busy_check: false,
 
       busy_affiliate: false,
@@ -954,17 +963,21 @@ export default {
     },
 
     /**
-     * Select custom checkout form
+     * Select the custom checkout form
      */
     checkout_form() {
+      const country = this.order.receiver_info?.country
+        ? this.order.receiver_info.country
+        : this.order.billing?.country;
+      if (country && this.checkout[`form_${country}`]) {
+        return this.checkout[`form_${country}`];
+      }
       return this.checkout?.form;
     },
-    order_form(){
+    order_form() {
       return this.order?.form;
     },
     //------------------------------------------------------------------------
-
-
 
     in_this_step() {
       const reserved = this.order.status === Basket.Status.Reserved.code;

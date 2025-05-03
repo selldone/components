@@ -36,6 +36,8 @@
           :item-types="item_types"
           class="mt-5"
           @remove="removeField(index)"
+          @change="$emit('update:structure', structure)"
+          :hasRequired="hasRequired"
         >
         </s-form-builder-row>
       </template>
@@ -92,6 +94,10 @@ export default {
     },
     icon: {},
     hint: {},
+    hasRequired: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   data: () => ({

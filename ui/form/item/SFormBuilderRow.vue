@@ -199,6 +199,10 @@
               Edit hints
             </v-btn>
 
+            <v-btn v-if="hasRequired" @click.stop="item.required =!item.required " :variant="item.required ?'flat':'tonal'" class="tnt mt-2" color="#000" size="small">
+              {{item.required ? $t('global.commons.required') : $t('global.commons.optional')}}
+            </v-btn>
+
             <v-expand-transition>
               <div v-if="show_hints && item.type === 'switch'">
                 <v-text-field
@@ -240,7 +244,7 @@ import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 export default {
   name: "SFormBuilderRow",
   components: { USmartSwitch },
-  emits: ["remove"],
+  emits: ["remove","change"],
   props: {
     item: {
       required: true,
@@ -252,6 +256,7 @@ export default {
       type: Array,
     },
     collapse: Boolean,
+    hasRequired: Boolean,
   },
 
   data: () => ({
@@ -268,6 +273,15 @@ export default {
       );
       return found ? found : this.itemTypes[0];
     },
+  },
+  watch:{
+    item: {
+      handler() {
+        this.$emit("change", this.item);
+      },
+      deep: true,
+    },
+
   },
   created() {},
   methods: {
