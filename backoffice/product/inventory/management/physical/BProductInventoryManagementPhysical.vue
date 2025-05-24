@@ -572,36 +572,7 @@ export default {
       }
 
       axios
-        .post(url, {
-          sku: variant.sku,
-          mpn: variant.mpn,
-
-          color: variant.color,
-          style: variant.style,
-          volume: variant.volume,
-          weight: variant.weight,
-          pack: variant.pack,
-          type: variant.type,
-
-          pricing: variant.pricing,
-
-          price: variant.price,
-          currency: variant.currency,
-          commission: variant.commission,
-          discount: variant.discount,
-
-          dis_start: variant.dis_start,
-          dis_end: variant.dis_end,
-
-          price_label: variant.price_label,
-
-          quantity: variant.quantity,
-          image: variant.image,
-          enable: variant.enable,
-
-          lead: variant.lead,
-          extra: variant.extra,
-        })
+        .post(url, variant)
         .then(async ({ data }) => {
           if (!data.error) {
             this.product.variants = data.variants;

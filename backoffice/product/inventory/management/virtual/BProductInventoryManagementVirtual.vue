@@ -724,29 +724,7 @@ export default {
       }
 
       axios
-        .post(url, {
-          sku: variant.sku,
-          mpn: variant.mpn,
-
-          color: variant.color,
-          type: variant.type,
-
-          pricing: variant.pricing,
-
-          price: variant.price,
-          currency: variant.currency,
-          commission: variant.commission,
-          discount: variant.discount,
-
-          dis_start: variant.dis_start,
-          dis_end: variant.dis_end,
-
-          price_label: variant.price_label,
-
-          quantity: variant.quantity,
-          image: variant.image,
-          enable: variant.enable,
-        })
+        .post(url, variant)
         .then(({ data }) => {
           if (!data.error) {
             NotificationService.showSuccessAlert(

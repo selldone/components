@@ -566,6 +566,7 @@ export default {
     BProductExtraInput,
     BProductEditPrice,
   },
+  emits: ["add", "update", "close"],
   props: {
     shop: {
       required: true,

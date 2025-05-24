@@ -32,7 +32,7 @@
             :color="modelValue"
             class="x-small mx-1 min-width-75"
           ></u-color-name>
-          <u-color-circle :color="color"></u-color-circle>
+          <u-color-circle :color="modelValue"></u-color-circle>
         </div>
       </template>
     </v-text-field>
