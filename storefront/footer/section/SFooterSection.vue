@@ -210,7 +210,7 @@ export default {
     },
 
     custom_footer_code() {
-      return this.theme.custom_footer_code;
+      return this.theme?.custom_footer_code;
     },
 
     generated_component() {

@@ -147,7 +147,7 @@ export default {
     },
 
     custom_header_code() {
-      return this.theme.custom_header_code;
+      return this.theme?.custom_header_code;
     },
 
     generated_component() {
@@ -173,17 +173,17 @@ export default {
     // --------------------------------------------------------------------------------
 
     logo() {
-      if (this.theme && this.theme.logo)
-        return this.getShopImagePath(this.theme.logo);
+      if (this.theme && this.theme?.logo)
+        return this.getShopImagePath(this.theme?.logo);
 
       return this.getShopImagePath(this.$shop.icon, 128);
     },
 
     title() {
       return this.theme &&
-        this.theme.title !== null &&
-        this.theme.title !== undefined
-        ? this.theme.title
+        this.theme?.title !== null &&
+        this.theme?.title !== undefined
+        ? this.theme?.title
         : this.$shop.title;
     },
 

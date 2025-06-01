@@ -115,15 +115,15 @@ export default {
     is_light_header() {
       return (
         this.$route.matched.some((record) => record.meta.light_header) ||
-        (this.theme && this.theme.light_header)
+        (this.theme && this.theme?.light_header)
       );
     },
 
     // --------------------------------------------------------------------------------
 
     logo() {
-      if (this.theme && this.theme.logo)
-        return this.getShopImagePath(this.theme.logo);
+      if (this.theme && this.theme?.logo)
+        return this.getShopImagePath(this.theme?.logo);
 
       return this.getShopImagePath(this.$shop.icon, 128);
     },

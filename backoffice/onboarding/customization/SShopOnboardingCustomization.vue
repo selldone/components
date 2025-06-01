@@ -181,20 +181,20 @@ export default {
     },
 
     color_light() {
-      return this.theme && this.theme.color_light
-        ? this.theme.color_light
+      return this.theme && this.theme?.color_light
+        ? this.theme?.color_light
         : "#70557e";
     },
 
     color_dark() {
-      return this.theme && this.theme.color_dark
-        ? this.theme.color_dark
+      return this.theme && this.theme?.color_dark
+        ? this.theme?.color_dark
         : "#3a2c41";
     },
 
     color_deep_dark() {
-      return this.theme && this.theme.color_deep_dark
-        ? this.theme.color_deep_dark
+      return this.theme && this.theme?.color_deep_dark
+        ? this.theme?.color_deep_dark
         : "#261b2d";
     },
   },

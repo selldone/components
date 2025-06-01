@@ -370,8 +370,8 @@ export default {
       return this.shop.theme;
     },
     default_color() {
-      return this.theme && this.theme.color_buy
-        ? this.theme.color_buy
+      return this.theme && this.theme?.color_buy
+        ? this.theme?.color_buy
         : "#0061e0";
     },
 
