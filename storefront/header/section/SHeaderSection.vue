@@ -23,11 +23,11 @@
     <template v-else>
       <v-toolbar
         v-if="!$store.getters.getIsNative && $shop"
-        :class="{ 'text-white': is_dark, '-dark': is_dark, '-border': border }"
+        :class="{ 'text-white': is_dark, '-dark': is_dark, '-border': border}"
         :color="HEADER_COLOR"
         :style="{ backdropFilter: backdrop_filter }"
         :theme="is_dark ? 'dark' : 'light'"
-        class="s--storefront-primary-header px-2"
+        class="s--storefront-primary-header px-2 mx-auto"
         flat
       >
         <!-- ―――――――――― Navigation drawer (Mobile & Instance app) : Action ―――――――――― -->
@@ -249,6 +249,8 @@ export default {
 .s--storefront-primary-header {
   overflow-x: auto;
   overflow-y: hidden;
+
+
 
   &.-border {
     border-bottom: 1px solid rgba(10, 10, 10, 0.3) !important;

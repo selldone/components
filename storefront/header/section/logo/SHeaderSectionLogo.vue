@@ -26,7 +26,7 @@
                   : 'ShopPage',
             }
       "
-      class="mx-1 zoomIn"
+      class="mx-1"
       icon
     >
       <img
@@ -34,7 +34,7 @@
         :height="theme.logo_h"
         :src="logo"
         :width="theme.logo_w"
-        style="object-fit: contain"
+        style="object-fit: contain;max-width: calc(100vw - 240px)"
         :alt="`${$shop.title} Logo`"
       />
       <v-avatar
@@ -58,10 +58,10 @@
       </v-avatar>
     </component>
 
-    <template v-if="$shop && $vuetify.display.smAndUp">
+    <template v-if="$shop && $vuetify.display.smAndUp && title">
       <span
         v-if="isMobile"
-        class="z2 ms-2 font-weight-bold zoomIn d-block single-line"
+        class="z2 ms-2 font-weight-bold d-block single-line"
         style="font-size: 22px"
         @click="goToShopInfoPage()"
       >
@@ -79,7 +79,7 @@
                     : 'ShopPage',
               }
         "
-        class="z2 ms-2 font-weight-bold zoomIn"
+        class="z2 ms-2 font-weight-bold"
         style="font-size: 22px; color: currentColor"
       >
         {{ title }}
@@ -137,6 +137,7 @@ export default {
     },
 
     title() {
+      if(this.theme?.title==='⠀' || this.theme?.title === null)return null;
       return this.theme &&
         this.theme.title !== null &&
         this.theme.title !== undefined

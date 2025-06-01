@@ -55,20 +55,21 @@
                   </v-avatar>
                   <span>{{ cat.title }}</span>
                 </router-link>
-                <v-expansion-panels flat>
+                <v-expansion-panels flat >
                   <v-expansion-panel
                     v-for="child in cat.children
                       ?.filter((c) => c.children?.length)
                       .limit(6) /*Only has children*/"
                     :key="child.id"
+
                   >
                     <v-expansion-panel-title
-                      class="parent-cat"
+                      class="parent-cat pa-0 ps-2"
                       @mouseenter="selected_category = child"
                     >
                       {{ child.title }}
                     </v-expansion-panel-title>
-                    <v-expansion-panel-text>
+                    <v-expansion-panel-text >
                       <v-list-item
                         v-for="_child in child.children"
                         :key="'_' + _child.id"
@@ -84,8 +85,11 @@
                                 },
                               }
                         "
+                        density="compact"
+                        slim
                       >
-                        <v-list-item-title>
+                        <v-list-item-title class="--caption">
+
                           {{ _child.title }}
                         </v-list-item-title>
                       </v-list-item>
@@ -94,6 +98,8 @@
                       <v-list-item
                         append-icon="more_horiz"
                         class="-route"
+                        density="compact"
+                        slim
                         v-bind="
                           preview
                             ? {}
@@ -107,7 +113,7 @@
                         "
                         @mouseenter="selected_category = cat"
                       >
-                        <v-list-item-title>
+                        <v-list-item-title class="--caption">
                           {{ $t("global.actions.view_all") }}
                         </v-list-item-title>
                       </v-list-item>
@@ -135,8 +141,10 @@
                           }
                     "
                     @mouseenter="selected_category = child"
+                    density="compact"
+                    slim
                   >
-                    <v-list-item-title class="parent-cat">
+                    <v-list-item-title class="parent-cat --caption">
                       {{ child.title }}
                     </v-list-item-title>
                   </v-list-item>
@@ -158,8 +166,10 @@
                         }
                   "
                   @mouseenter="selected_category = cat"
+                  density="compact"
+                  slim
                 >
-                  <v-list-item-title class="parent-cat text-capitalize">
+                  <v-list-item-title class="parent-cat text-capitalize --caption">
                     {{ $t("global.actions.view_all") }}
                   </v-list-item-title>
                 </v-list-item>
@@ -430,7 +440,7 @@ export default {
       align-items: center;
       font-weight: 600;
       text-transform: uppercase;
-      // color: #000 !important;
+       color: #000 !important;
       height: var(--item-heigh);
       max-height: var(--item-heigh);
       margin-bottom: 4px;
@@ -483,6 +493,9 @@ export default {
     .v-expansion-panel {
       background: transparent; // Override default expansion headers
     }
+  }
+  .v-expansion-panel-text__wrapper{
+    padding: 4px;
   }
 }
 </style>

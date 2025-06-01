@@ -26,10 +26,14 @@
     "
     :flat="flat"
     :rounded="rounded"
-    :style="{ '--justify': center ? 'center' : 'start',backdropFilter: backdrop_filter,'-dark':dark }"
+    :style="{
+      '--justify': center ? 'center' : 'start',
+      backdropFilter: backdrop_filter,
+      '-dark': dark,
+    }"
     :theme="dark ? 'dark' : 'light'"
     class="s--storefront-top-menu"
-    :class="{'-border':border}"
+    :class="{ '-border': border }"
   >
     <template v-for="(tab, index) in tabs">
       <span v-if="tab.type === 'link'" :key="'l' + index">
@@ -38,11 +42,40 @@
           :href="preview ? undefined : tab.link"
           :target="tab.link?.startsWith('http') ? '_blank' : undefined"
           class="me-2"
-          rounded
           variant="text"
           :aria-label="`${tab.title} Link`"
           role="link"
         >
+          <span class="--caption">
+            <v-icon
+              v-if="tab.icon"
+              :size="
+                tab.icon_size === 'large'
+                  ? 'large'
+                  : tab.icon_size === 'small'
+                    ? 'small'
+                    : undefined
+              "
+              start
+              >{{ tab.icon }}</v-icon
+            >
+
+            {{ tab.title }}
+          </span>
+        </v-btn>
+      </span>
+
+      <v-btn
+        v-else
+        :key="'m' + index"
+        :ref="`tab_${index}`"
+        :color="dark ? '#fff' : '#000'"
+        class="me-2"
+        variant="text"
+        :aria-label="`${tab.title} Menu`"
+        role="button"
+      >
+        <span class="--caption">
           <v-icon
             v-if="tab.icon"
             :size="
@@ -53,38 +86,12 @@
                   : undefined
             "
             start
-            >{{ tab.icon }}</v-icon
-          >
+            >{{ tab.icon }}
+          </v-icon>
 
           {{ tab.title }}
-        </v-btn>
-      </span>
-
-      <v-btn
-        v-else
-        :key="'m' + index"
-        :ref="`tab_${index}`"
-        :color="dark ? '#fff' : '#000'"
-        class="me-2"
-        rounded
-        variant="text"
-        :aria-label="`${tab.title} Menu`"
-        role="button"
-      >
-        <v-icon
-          v-if="tab.icon"
-          :size="
-            tab.icon_size === 'large'
-              ? 'large'
-              : tab.icon_size === 'small'
-                ? 'small'
-                : undefined
-          "
-          start
-          >{{ tab.icon }}
-        </v-icon>
-
-        {{ tab.title }}
+        </span>
+        <v-icon>expand_more</v-icon>
 
         <v-menu
           v-model="visibles[index]"
@@ -92,17 +99,27 @@
           :transition="tab.transition"
           :z-index="100"
           activator="parent"
-          location="bottom"
+          location="bottom center"
+          origin="top center"
           :open-delay="0"
           theme="light"
-          :offset="10"
+          :offset="[10, 0]"
+          :max-height="window.innerHeight * 0.8"
+          eager
+          :width="tab.cols?.length <=3?undefined:'100%'"
+
         >
           <!-- Menu > default -->
-          <v-sheet :rounded="tab.rounded" class="shadow-box">
+          <v-sheet
+            :rounded="tab.rounded"
+            class="s--storefront-top-menu-submenu"
+            elevation="0"
+            border
+          >
             <v-container
               v-if="tab.type === 'default'"
-              class="py-4 text-start"
-              fluid
+              class="py-8 text-start"
+              max-width="1720"
             >
               <v-row dense align="start" justify="start">
                 <v-col
@@ -118,9 +135,16 @@
                     :to="preview ? undefined : item.to"
                     exact
                     min-width="200"
+                    slim
+                    density="compact"
                   >
-                    <v-list-item-title class="list-menu-item text-wrap"
-                      >{{ item.name }}
+                    <v-list-item-title
+                      class="text-wrap "
+                      >
+                      <span class="--caption">
+                            {{ item.name }}
+                      </span>
+
                     </v-list-item-title>
                     <template v-slot:append>
                       <v-avatar
@@ -177,7 +201,7 @@
 <script lang="ts">
 import MenuCategories from "./MenuCategories.vue";
 import { defineAsyncComponent } from "vue";
-import {LUtilsFilter} from "@selldone/page-builder/utils/filter/LUtilsFilter.ts";
+import { LUtilsFilter } from "@selldone/page-builder/utils/filter/LUtilsFilter.ts";
 
 export default {
   name: "SStorefrontTopMenu",
@@ -202,7 +226,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    border:Boolean,
+    border: Boolean,
     outlined: {
       type: Boolean,
       default: false,
@@ -228,6 +252,9 @@ export default {
   }),
 
   computed: {
+    some_menu_opened() {
+      return this.visibles.some((v) => v);
+    },
     columns_count() {
       let width = this.preview
         ? 1040 /*In shop dashboard editor!*/
@@ -269,10 +296,9 @@ export default {
     },
     backdrop_filter() {
       return this.globalStyle?.header_filter
-          ? LUtilsFilter.CalcFilter(this.globalStyle.header_filter)
-          : undefined;
+        ? LUtilsFilter.CalcFilter(this.globalStyle.header_filter)
+        : undefined;
     },
-
   },
 
   watch: {
@@ -280,7 +306,6 @@ export default {
       this.visibles = new Array(this.visibles.length).fill(false);
     },
   },
-
 
   created() {
     this.visibles = Array(this.tabs.length).fill(false);
@@ -351,27 +376,80 @@ export default {
  */
 
 .s--storefront-top-menu {
-
-  &.-border{
+  &.-border {
     border-bottom: 1px solid rgba(10, 10, 10, 0.3) !important;
+
     &.-dark {
       border-bottom: 1px solid rgba(222, 226, 230, 0.3) !important;
     }
   }
 
 
-  .list-menu-item {
-    font-weight: 500;
-    font-size: 1rem;
-  }
-
   .v-toolbar__content {
     justify-content: var(--justify);
+  }
 
-    button,
-    .v-btn {
-      font-size: var(--font-size);
-      text-transform: var(--text-transform);
+  .v-btn {
+    .v-btn__overlay {
+      display: none;
+    }
+  }
+}
+
+.s--storefront-top-menu-submenu {
+  .v-list-item {
+    .v-list-item__overlay {
+      display: none;
+    }
+  }
+}
+
+.s--storefront-top-menu,
+.s--storefront-top-menu-submenu {
+
+  .v-list-item {
+    --caption-underline-bottom:0;
+    --caption-underline-height:1px;
+  }
+  .v-btn{
+    --caption-underline-bottom:-4px;
+    --caption-underline-height:2px;
+  }
+
+
+
+  .v-btn,
+  .v-list-item {
+    font-size: var(--font-size);
+    text-transform: var(--text-transform);
+    background-color: transparent !important;
+
+    .--caption {
+      font-weight: 600;
+      position: relative;
+      font-size: 0.9rem;
+
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: var(--caption-underline-bottom);
+        left: 0;
+        width: 0%;
+        height: var(--caption-underline-height);
+        background-color: currentColor;
+        transition: width 0.3s ease-in-out;
+      }
+    }
+
+
+
+
+    &:hover {
+      .--caption {
+        &::after {
+          width: 100%;
+        }
+      }
     }
   }
 }

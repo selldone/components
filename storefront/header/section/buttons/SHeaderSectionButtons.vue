@@ -14,6 +14,39 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ―――――――――― Buttons ―――――――――― -->
+
+  <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
+  <s-language-selector
+    v-if="$shop"
+    :iconColor="!dark ? '#333' : '#fff'"
+    class="me-3"
+    icon-only
+  ></s-language-selector>
+
+  <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
+  <u-currency-selector
+    v-if="
+      /* isMobile &&*/ $shop && $shop.currencies && $shop.currencies.length > 1
+    "
+    :iconColor="!dark ? '#333' : '#fff'"
+    :shop="$shop"
+    class="me-3"
+    dense
+    hideDetails
+    icon
+    icon-only
+    max-width="80px"
+    outlined
+    singleLine
+    small
+    @change="
+      () => {
+        onChangeUserSelectedCurrency();
+      }
+    "
+  />
+
+
   <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Orders history ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
   <u-button-circle
@@ -55,36 +88,6 @@
   >
   </u-button-circle>
 
-  <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Language (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-  <s-language-selector
-    v-if="$shop"
-    :iconColor="!dark ? '#333' : '#fff'"
-    class="me-3"
-    icon-only
-  ></s-language-selector>
-
-  <!--- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select  Currency (in mobile mode) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ --->
-  <u-currency-selector
-    v-if="
-      /* isMobile &&*/ $shop && $shop.currencies && $shop.currencies.length > 1
-    "
-    :iconColor="!dark ? '#333' : '#fff'"
-    :shop="$shop"
-    class="me-3"
-    dense
-    hideDetails
-    icon
-    icon-only
-    max-width="80px"
-    outlined
-    singleLine
-    small
-    @change="
-      () => {
-        onChangeUserSelectedCurrency();
-      }
-    "
-  />
 
   <!-- ―――――――――― Shop Drawer ―――――――――― -->
 

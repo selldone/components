@@ -15,15 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ―――――――――― User ―――――――――― -->
 
-  <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User Badges ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-  <img
-    v-if="club"
-    :src="getCustomerClubLevel(club.level).icon"
-    class="absolute-top-end fadeIn z1"
-    height="20px"
-    width="20px"
-  />
 
   <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
@@ -38,7 +30,18 @@
       rounded
       variant="outlined"
     >
-      <v-icon :color="!dark ? '#222' : '#fff'" start>menu</v-icon>
+
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ User Badges ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+      <img
+        v-if="club"
+        :src="getCustomerClubLevel(club.level).icon"
+        height="22"
+        width="22"
+        class="me-3 ms-n1"
+      />
+      <v-icon v-else :color="!dark ? '#222' : '#fff'" start>menu</v-icon>
+
       <v-avatar
         :color="!dark ? '#fff' : ThemeColorDeepDark"
         class="me-n3"
@@ -46,6 +49,10 @@
       >
         <img :src="getUserAvatar(USER_ID())" />
       </v-avatar>
+
+
+
+
       <v-menu
         v-model="menu"
         :close-on-content-click="true"
@@ -217,27 +224,25 @@
       </v-menu>
     </v-btn>
 
-    <v-btn
+    <u-button-circle
       v-else-if="!busy_user"
       key="kav2"
-      :color="ThemeColorInfo"
-      :icon="!$shop"
+      :color="!dark ? '#333' : '#fff'"
+      dense
+      exact
+      tile
       :loading="!$shop"
-      class="s--storefront-primary-header-login-button"
-      roundedripple
-      variant="elevated"
-      @click.stop="NeedLogin()"
+      @click="NeedLogin()"
+      :tooltip="$t('layout_shop.login_to_shop_short')"
+      class="me-3 fadeIn"
+
+      :src="
+      dark
+        ? require('./assets/user.svg')
+        : require('./assets/user.svg')
+    "
     >
-      <v-icon start> login</v-icon>
-      <div v-if="!!$shop">
-        <span class="hide-on-small-600"
-          >{{ $t("layout_shop.login_to_shop") }}
-        </span>
-        <span class="show-on-small-600">{{
-          $t("layout_shop.login_to_shop_short")
-        }}</span>
-      </div>
-    </v-btn>
+    </u-button-circle>
   </v-slide-y-reverse-transition>
 </template>
 
@@ -322,14 +327,5 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
 
-.s--storefront-primary-header-login-button {
-  //  background-color: var(--theme-dark);
-  //  color: #fff;
 
-  top: -14px !important;
-  padding-top: 42px !important;
-  max-height: 84px !important;
-  height: auto !important;
-  padding-bottom: 22px !important;
-}
 </style>

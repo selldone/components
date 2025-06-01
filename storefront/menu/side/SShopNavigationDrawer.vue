@@ -146,7 +146,7 @@
               slim
               min-height="48"
             >
-              <v-list-item-title class="ssnd-title">
+              <v-list-item-title class="s--title">
                 {{ tab.title }}
               </v-list-item-title>
             </v-list-item>
@@ -160,7 +160,7 @@
                   :prepend-icon="tab.icon"
                   min-height="48"
                 >
-                  <v-list-item-title class="ssnd-title">
+                  <v-list-item-title class="s--title">
                     {{ tab.title }}
                   </v-list-item-title>
                 </v-list-item>
@@ -184,7 +184,7 @@
                       :aria-selected="null"
                       min-height="42"
                     >
-                      <v-list-item-title class="ssnd-title"
+                      <v-list-item-title class="s--title"
                         >{{ item.name }}
                       </v-list-item-title>
                     </v-list-item>
@@ -208,7 +208,7 @@
 
           <v-expansion-panel hide-actions>
             <v-expansion-panel-title>
-              <div class="ssnd-title text-center flex-grow-1 text-uppercase">
+              <div class="s--title text-center flex-grow-1 text-uppercase">
                 {{ $t("global.commons.more") }}...
               </div>
             </v-expansion-panel-title>
@@ -226,7 +226,7 @@
                   slim
                   min-height="48"
                 >
-                  <v-list-item-title class="ssnd-title"
+                  <v-list-item-title class="s--title"
                     >{{ item.name }}
                   </v-list-item-title>
                   <template v-if="item.src" v-slot:append
@@ -272,6 +272,7 @@
           </div>
           <s-storefront-social-buttons
             class="justify-center mt-5"
+            :size="24"
           ></s-storefront-social-buttons>
           <div style="height: 15vh"></div>
         </v-sheet>
@@ -413,7 +414,7 @@ export default {
   text-align: start;
   min-height: 100%;
 
-  .ssnd-title {
+  .s--title {
     font-size: 14px !important;
     font-weight: 500;
   }

@@ -78,7 +78,7 @@
             </v-avatar>
           </v-btn>
 
-          <span class="ms-2 font-weight-bold" style="font-size: 22px">
+          <span v-if="title!==null && title!==''" class="ms-2 font-weight-bold" style="font-size: 22px">
             {{ title ? title : $shop.title }}
           </span>
 
@@ -155,6 +155,8 @@
           variant="underlined"
           :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
           clearable
+          persistent-placeholder
+          placeholder="Do not show shop name!"
         ></v-text-field>
         <div
           v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
@@ -164,7 +166,7 @@
             class="tnt"
             size="small"
             variant="text"
-            @click="$emit('update:title', '⠀')"
+            @click="$emit('update:title', '')"
           >
             <v-icon start>space_bar</v-icon>
             {{ $t("b_shop_theme_header.inputs.title.set_empty") }}
