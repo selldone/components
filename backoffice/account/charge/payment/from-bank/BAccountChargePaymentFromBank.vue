@@ -13,202 +13,191 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="widget-box">
-    <u-widget-header
-      :title="$t('account_page.deposit.form.title')"
-      icon="add_box"
-    ></u-widget-header>
+  <u-pods-panel color="#fff">
+    <u-pod-node icon="credit_card" title="My Bank"></u-pod-node>
+    <u-pod-wire forward></u-pod-wire>
 
-    <v-list-subheader>
-      {{ $t("account_page.deposit.form.sub_title") }}
-    </v-list-subheader>
+    <u-pod-node is-selldone-icon title="This Wallet"></u-pod-node>
+  </u-pods-panel>
 
-    <u-pods-panel color="#fff">
-      <u-pod-node icon="credit_card" title="Your Bank"></u-pod-node>
-      <u-pod-wire forward></u-pod-wire>
-
-      <u-pod-node is-selldone-icon title="This Wallet"></u-pod-node>
-    </u-pods-panel>
-
-    <div v-if="!personal_information_verified" class="py-5">
-      <v-icon class="me-1" color="red">warning</v-icon>
-      Please, first complete your KYC,
-      <span class="text-muted"
-        ><v-icon size="small">fingerprint</v-icon> Identity information</span
-      >,
-      <router-link :to="{ name: 'BPageShuttleIdentity' }"
-        ><b>here</b></router-link
-      >
-      . It takes only 60 seconds.
-    </div>
-    <!-- ------------------- Deposit Form ------------------- -->
-
-    <u-price-input
-      v-model="amount"
-      :decimal="currency.floats"
-      :disabled="!personal_information_verified"
-      :label="`${$t('account_page.deposit.form.amount_input')}*`"
-      :messages="`${FormatNumberCurrency(
-        amount,
-        account.currency,
-      )} ${GetUserSelectedCurrencyName(account.currency)}`"
-      class="strong-field"
-      required
-      suffix=""
+  <div v-if="!personal_information_verified" class="py-5">
+    <v-icon class="me-1" color="red">warning</v-icon>
+    Please, first complete your KYC,
+    <span class="text-muted"
+      ><v-icon size="small">fingerprint</v-icon> Identity information</span
+    >,
+    <router-link :to="{ name: 'BPageShuttleIdentity' }"
+      ><b>here</b></router-link
     >
-      <template v-slot:append-inner>
-        <u-currency-icon :currency="currency" flag gradient></u-currency-icon>
-      </template>
-    </u-price-input>
-
-    <b-account-tax
-      v-if="personal_information_verified"
-      v-model="account.company_id"
-      v-model:vat-percent="vat_percent"
-      auto-collapse
-      has-vat-calculation
-      read-only
-    >
-      <template v-slot:append-inner>
-        <div>
-          <v-btn
-            :to="{
-              name: 'BPageAccountEdit',
-              params: { account_number: account.account_number },
-            }"
-            class="nbt"
-            >Change linked business profile
-            <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
-          </v-btn>
-        </div>
-      </template>
-    </b-account-tax>
-
-    <div class="my-5 text-muted small">
-      <ul>
-        <li>
-          You can transfer funds between virtual accounts in Selldone. In this
-          case, you should have the virtual account number XXXX-XXXX-XXXX-XXXX.
-        </li>
-        <li>
-          You <b>can not</b> withdraw from your virtual wallets to bank account
-          - because of money laundering and legal issues.
-        </li>
-      </ul>
-    </div>
-
-    <div class="widget-buttons">
-      <v-btn
-        :disabled="!(amount > 0) || !is_available"
-        color="primary"
-        rounded
-        size="x-large"
-        stacked
-        variant="elevated"
-        @click.stop="showDialog()"
-      >
-        <div>
-          {{ $t("account_page.deposit.form.charge_action") }}
-
-          <u-price
-            v-if="amount > 0"
-            :amount="amount"
-            :currency="account.currency"
-            class="ms-2"
-          >
-          </u-price>
-
-          <template v-if="vat > 0">
-            <span class="mx-2">+</span>
-            <u-price :amount="vat" :currency="account.currency" class="me-1">
-            </u-price>
-            <span class="small">VAT</span></template
-          >
-        </div>
-        <div v-if="amount <= 0" class="small mt-1">
-          ⚠ Please enter an amount to charge.
-        </div>
-        <div v-if="!is_available" class="small mt-1">
-          ⚠ Unfortunately no payment gateway is available.
-        </div>
-      </v-btn>
-    </div>
-
-    <div class="small text-end mt-2 text-muted">
-      <v-icon color="green" size="x-small" style="vertical-align: text-top"
-        >shield
-      </v-icon>
-      Payments are secured by
-      <img
-        height="16"
-        src="../../../../../assets/trademark/stripe.svg"
-        alt="Stripe"
-      />
-    </div>
-
-    <!-- ████████████████████████ PAYMENT > Start ████████████████████████ -->
-
-    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select Gateway Dialog ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-    <v-bottom-sheet
-      v-model="showSelectGateway"
-      max-width="98vw"
-      width="640"
-      persistent
-      scrollable
-      content-class="rounded-t-xl"
-    >
-      <u-payment-form
-        v-if="exist_payment_form"
-        ref="payment_form"
-        :address="payment_form_address"
-        :amount="payment_form_amount"
-        :available-gateways="gateways"
-        :bill="bill"
-        :billingAddress="billingAddress"
-        :billingEmail="billingEmail"
-        :billingName="billingName"
-        :billingPhone="billingPhone"
-        :currency="currency"
-        :discount-code="null"
-        :mode="special_payment_mode"
-        :order-url="order_url"
-        :pack="pack"
-        :payment-amount="amount"
-        :payment-fields="payment_fields"
-        :payment-form-method="payment_form_method"
-        :payment-form-url="payment_form_url"
-        :qr-code="payment_form_qr_code"
-        :timeout="timeout"
-        is-official-samin
-        @close="delayedHide()"
-        @onEndPayment="
-          (data) => {
-            onFinishCharge(data);
-          }
-        "
-        @select-gateway="depositToAccount"
-      />
-    </v-bottom-sheet>
-
-    <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Payment Form to submit programmatically ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-    <form
-      ref="form_payment_internal"
-      :action="payment_form_url"
-      :method="payment_form_method"
-      hidden
-    >
-      <input
-        v-for="(item, key) in payment_fields"
-        :key="key"
-        :name="key"
-        :value="item"
-        type="hidden"
-      />
-    </form>
-    <!-- ████████████████████████ PAYMENT > End ████████████████████████ -->
+    . It takes only 60 seconds.
   </div>
+  <!-- ------------------- Deposit Form ------------------- -->
+
+  <u-price-input
+    v-model="amount"
+    :decimal="currency.floats"
+    :disabled="!personal_information_verified"
+    :label="`${$t('account_page.deposit.form.amount_input')}*`"
+    :messages="`${FormatNumberCurrency(
+      amount,
+      account.currency,
+    )} ${GetUserSelectedCurrencyName(account.currency)}`"
+    class="strong-field"
+    required
+    suffix=""
+  >
+    <template v-slot:append-inner>
+      <u-currency-icon :currency="currency" flag gradient></u-currency-icon>
+    </template>
+  </u-price-input>
+
+  <b-account-tax
+    v-if="personal_information_verified"
+    v-model="account.company_id"
+    v-model:vat-percent="vat_percent"
+    auto-collapse
+    has-vat-calculation
+    read-only
+  >
+    <template v-slot:append-inner>
+      <div>
+        <v-btn
+          :to="{
+            name: 'BPageAccountEdit',
+            params: { account_number: account.account_number },
+          }"
+          class="nbt"
+          >Change linked business profile
+          <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
+        </v-btn>
+      </div>
+    </template>
+  </b-account-tax>
+
+  <div class="my-5 text-muted small">
+    <ul>
+      <li>
+        You can transfer funds between virtual accounts in Selldone. In this
+        case, you should have the virtual account number XXXX-XXXX-XXXX-XXXX.
+      </li>
+      <li>
+        You <b>can not</b> withdraw from your virtual wallets to bank account -
+        because of money laundering and legal issues.
+      </li>
+    </ul>
+  </div>
+
+  <div class="widget-buttons">
+    <v-btn
+      :disabled="!(amount > 0) || !is_available"
+      color="primary"
+      rounded
+      size="x-large"
+      stacked
+      variant="elevated"
+      @click.stop="showDialog()"
+    >
+      <div>
+        {{ $t("account_page.deposit.form.charge_action") }}
+
+        <u-price
+          v-if="amount > 0"
+          :amount="amount"
+          :currency="account.currency"
+          class="ms-2"
+        >
+        </u-price>
+
+        <template v-if="vat > 0">
+          <span class="mx-2">+</span>
+          <u-price :amount="vat" :currency="account.currency" class="me-1">
+          </u-price>
+          <span class="small">VAT</span></template
+        >
+      </div>
+      <div v-if="amount <= 0" class="small mt-1">
+        ⚠ Please enter an amount to charge.
+      </div>
+      <div v-if="!is_available" class="small mt-1">
+        ⚠ Unfortunately no payment gateway is available.
+      </div>
+    </v-btn>
+  </div>
+
+  <div class="small text-end mt-2 text-muted">
+    <v-icon color="green" size="x-small" style="vertical-align: text-top"
+      >shield
+    </v-icon>
+    Payments are secured by
+    <img
+      height="16"
+      src="../../../../../assets/trademark/stripe.svg"
+      alt="Stripe"
+    />
+  </div>
+
+  <!-- ████████████████████████ PAYMENT > Start ████████████████████████ -->
+
+  <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Select Gateway Dialog ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+  <v-bottom-sheet
+    v-model="showSelectGateway"
+    max-width="98vw"
+    width="640"
+    persistent
+    scrollable
+    content-class="rounded-t-xl"
+  >
+    <u-payment-form
+      v-if="exist_payment_form"
+      ref="payment_form"
+      :address="payment_form_address"
+      :amount="payment_form_amount"
+      :available-gateways="gateways"
+      :bill="bill"
+      :billingAddress="billingAddress"
+      :billingEmail="billingEmail"
+      :billingName="billingName"
+      :billingPhone="billingPhone"
+      :currency="currency"
+      :discount-code="null"
+      :mode="special_payment_mode"
+      :order-url="order_url"
+      :pack="pack"
+      :payment-amount="amount"
+      :payment-fields="payment_fields"
+      :payment-form-method="payment_form_method"
+      :payment-form-url="payment_form_url"
+      :qr-code="payment_form_qr_code"
+      :timeout="timeout"
+      is-official-samin
+      @close="delayedHide()"
+      @onEndPayment="
+        (data) => {
+          onFinishCharge(data);
+        }
+      "
+      @select-gateway="depositToAccount"
+    />
+  </v-bottom-sheet>
+
+  <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Payment Form to submit programmatically ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+  <form
+    ref="form_payment_internal"
+    :action="payment_form_url"
+    :method="payment_form_method"
+    hidden
+  >
+    <input
+      v-for="(item, key) in payment_fields"
+      :key="key"
+      :name="key"
+      :value="item"
+      type="hidden"
+    />
+  </form>
+  <!-- ████████████████████████ PAYMENT > End ████████████████████████ -->
 </template>
 
 <script lang="ts">
@@ -227,7 +216,7 @@ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
-  name: "BAccountChargePaymentDialog",
+  name: "BAccountChargePaymentFromBank",
   mixins: [CurrencyMixin],
   components: {
     BAccountTax,
@@ -240,6 +229,7 @@ export default {
     UPriceInput,
   },
 
+  emits: ["request:refresh"],
   props: {
     account: {
       required: true,
@@ -440,7 +430,11 @@ export default {
 
           // Error response:
           else {
-            NotificationService.showErrorAlert(null, data.error_msg, data.error_detail);
+            NotificationService.showErrorAlert(
+              null,
+              data.error_msg,
+              data.error_detail,
+            );
             this.delayedHide();
           }
 
@@ -500,12 +494,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  font-size: 1.6rem;
-  text-align: right;
-}
 
-p {
-  text-align: right;
-}
 </style>

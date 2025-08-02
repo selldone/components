@@ -25,12 +25,12 @@ import { aliases, md } from "vuetify/iconsets/md";
 import { fa } from "vuetify/iconsets/fa";
 import { createVueI18nAdapter } from "vuetify/locale/adapters/vue-i18n";
 import { I18n, useI18n } from "vue-i18n";
-import { VTreeview } from "vuetify/labs/VTreeview";
+//import { VTreeview } from "vuetify/labs/VTreeview";
 // Define the Vuetify options.
 const vuetifyOptions: VuetifyOptions = {
   components: {
     ...components,
-    VTreeview,
+   // VTreeview,
   },
   directives,
 
