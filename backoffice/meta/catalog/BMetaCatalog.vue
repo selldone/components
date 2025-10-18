@@ -97,6 +97,9 @@
       small-width-mode
     >
     </u-text-copy-box>
+    <v-list-subheader>
+      You can change the feed language by appending '<code>?language=xx</code>' to the feed URL — replace <b>xx</b> with the desired language code (e.g., `fr`, `en`, `de`).
+    </v-list-subheader>
   </div>
 </template>
 
