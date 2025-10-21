@@ -186,7 +186,7 @@
         </v-col>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Weight ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <v-col class="border-end-grater-md p-2" cols="12" md="4">
+        <v-col class="border-end-grater-md pa-2" cols="12" md="4">
           <p class="mt-2 small text-muted">
             <v-icon size="small"> fa:fas fa-weight-hanging</v-icon>
             {{ $t("process_center.preparing.packing_weight") }}
@@ -279,7 +279,7 @@
         </v-col>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Size ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <v-col class="border-end-grater-md p-2" cols="12" md="4">
+        <v-col class="border-end-grater-md pa-2" cols="12" md="4">
           <p class="mt-2 small text-muted">
             <v-icon size="small"> fa:fas fa-box</v-icon>
             {{ $t("process_center.preparing.packing_size") }}
@@ -317,11 +317,21 @@
         </v-col>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 3D Box ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <v-col
-          class="p-2 position-relative d-flex justify-center align-items-center"
-          cols="12"
-          md="4"
-        >
+        <v-col class="pa-2 position-relative" cols="12" md="4">
+          <b-box-input
+            v-if="!IS_VENDOR_PANEL || CAN_ADD_SHIPPING"
+            v-model="box_id"
+            @update:model-value="
+              (v) => {
+                width = v.width;
+                length = v.length;
+                height = v.height;
+                weight = v.weight;
+              }
+            "
+            class="my-3 mx-auto"
+          ></b-box-input>
+
           <u-cube v-if="has_box_size" :x="width" :y="length" :z="height" />
           <p
             v-else
@@ -349,10 +359,12 @@ import UDenseCirclesUsers from "../../../../ui/dense-circles/users/UDenseCircles
 import SDenseImagesCircles from "../../../../ui/image/SDenseImagesCircles.vue";
 import { Basket, DeliveryServiceHelper } from "@selldone/core-js";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
+import BBoxInput from "@selldone/components-vue/backoffice/box/input/BBoxInput.vue";
 
 export default {
   name: "BOrderDashboardPreparing",
   components: {
+    BBoxInput,
     UWidgetHeader,
     SDenseImagesCircles,
     UDenseCirclesUsers,
@@ -387,6 +399,8 @@ export default {
       width: null,
       length: null,
       height: null,
+
+      box_id: null,
     };
   },
   watch: {
@@ -431,6 +445,20 @@ export default {
         this.$route.params.vendor_id &&
         this.$route.matched.some((record) => record.meta.vendor)
       );
+    },
+    /**
+     * Only in marketplaces
+     */
+    marketplace() {
+      return this.shop && this.shop.marketplace;
+    },
+
+    /**
+     * For vendor panel!
+     * @constructor
+     */
+    CAN_ADD_SHIPPING() {
+      return this.marketplace?.shipping;
     },
 
     size_unit() {

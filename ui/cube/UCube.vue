@@ -61,21 +61,21 @@ export default {
       return scale > 1 ? 1 : scale;
     },
   },
-  watch:{
-    x(){
-      this.draw()
+  watch: {
+    x() {
+      this.draw();
     },
-    y(){
-      this.draw()
+    y() {
+      this.draw();
     },
-    z(){
-      this.draw()
+    z() {
+      this.draw();
     },
-    size(){
-      this.draw()
+    size() {
+      this.draw();
     },
-    color(){
-      this.draw()
+    color() {
+      this.draw();
     },
   },
   data() {
@@ -99,6 +99,8 @@ export default {
     draw() {
       const size = this.size;
       const ctx = this.ctx;
+
+      if (!this.ctx) return;
 
       // clear the canvas
       ctx.clearRect(0, 0, size, size);
