@@ -363,6 +363,11 @@ export default {
       default: false,
       type: Boolean,
     },
+
+    variantsCountPerPage: {
+      type: Number,
+      default: 10,
+    },
   },
   data() {
     return {
@@ -445,10 +450,10 @@ export default {
     },
 
     pages_count() {
-      return Math.ceil(this.product_variants.length / 5);
+      return Math.ceil(this.product_variants.length / this.variantsCountPerPage);
     },
     paged_variants() {
-      return this.product_variants.slice((this.page - 1) * 5, this.page * 5);
+      return this.product_variants.slice((this.page - 1) * this.variantsCountPerPage, this.page * this.variantsCountPerPage);
     },
     unit_float(){
       return this.product.unit_float

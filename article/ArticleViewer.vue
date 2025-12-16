@@ -835,68 +835,66 @@
 
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article > Like / Star ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-        <div v-if="showUserFeedbackButtons && !isNew" style="min-height: 64px">
-          <v-badge
-            :color="catch_power ? '#025185' : '#0288D1'"
+        <div v-if="showUserFeedbackButtons && !isNew" style="min-height: 64px;" class="text-end">
+
+
+
+          <v-chip
+            v-if="!isNew"
+            :class="{
+                'disabled-no-filter': catch_power || power_busy,
+                bounceIn: catch_power
+              }"
+
+            :color="catch_power ? '#025185' : '#fff'"
             :title="
               catch_power
                 ? $t('global.article.claps')
                 : $t('global.article.claps_action')
             "
-            class="m-2 float-right"
-            offset-x="16"
+            class="ma-2"
+            @click="getPower"
+            prepend-icon="fa:fas fa-sign-language"
+            :variant="!catch_power ? 'elevated' : 'flat'"
+
           >
-            <template v-slot:badge>
               {{ numeralFormat(article.power, "0.[0] a") }}
-            </template>
 
-            <v-btn
-              v-if="!isNew"
-              :class="{
-                'disabled-no-filter': catch_power || power_busy || !USER(),
-              }"
-              :color="catch_power ? '#025185' : '#0288D1'"
-              :loading="power_busy"
-              :variant="!catch_power ? 'outlined' : 'flat'"
-              icon
-              @click="getPower"
-            >
-              <v-icon :class="{ bounceIn: catch_power }" class="mx-2">
-                fa:fas fa-sign-language
-              </v-icon>
-            </v-btn>
-          </v-badge>
+           <v-expand-x-transition>
+             <span v-if="power_busy ">
+               <i  class="fas fa-circle-notch fa-spin ms-2"></i>
+             </span>
+           </v-expand-x-transition>
 
-          <div
+          </v-chip>
+
+          <v-chip
             v-if="hasLike"
-            class="float-left pointer-pointer d-flex flex-column"
+            class="ma-2"
+            :class="{ bounceIn: isLiked }"
+            :color="!USER() ? '#c2185b' : isLiked ? '#c2185b' : '#fff'"
+            :variant="!isLiked ? 'elevated' : 'flat'"
+
+            :prepend-icon="!USER() ? 'favorite' : isLiked ? 'favorite' : 'favorite_border'"
+
             @click="likeArticle"
           >
-            <v-icon
-              :class="{ bounceIn: isLiked }"
-              :color="!USER() ? '#c2185b' : isLiked ? '#c2185b' : 'gray'"
-              :size="!!USER() ? 'large' : undefined"
-            >
-              {{
-                !USER() ? "favorite" : isLiked ? "favorite" : "favorite_border"
-              }}
-            </v-icon>
-            <small>
               {{ numeralFormat(article.like, "0.[0] a") }}
               {{ $t("global.article.likes") }}
-            </small>
-          </div>
+          </v-chip>
 
-          <div
-            v-if="hasFavorite && USER()"
+          <v-chip
+            v-if="hasFavorite"
             :class="{ bounceIn: isStared }"
-            class="ms-4 float-left pointer-pointer"
+            class="ma-2"
             @click="starArticle"
+
+            :variant="!isStared ? 'elevated' : 'flat'"
+            :color="isStared ? '#fbc02d' : '#fff'"
+            :prepend-icon="isStared ? 'star' : 'star_border' "
           >
-            <v-icon :color="isStared ? '#fbc02d' : 'gray'" size="large">
-              {{ isStared ? "star" : "star_border" }}
-            </v-icon>
-          </div>
+            {{$t('global.commons.favorite')}}
+          </v-chip>
         </div>
       </div>
 
@@ -1042,10 +1040,11 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "ArticleViewer",
-  mixins: [DateMixin ],
+  mixins: [DateMixin,AuthMixin ],
   components: {
     SArticleAuthorBox,
 
@@ -1802,7 +1801,9 @@ export default {
 
     //――――――――――――――――――――――― Like ―――――――――――――――――――――――
     likeArticle() {
-      if (!this.USER()) return;
+      if(!this.USER()){
+        return this.NeedLogin();
+      }
 
       this.isLiked = !this.isLiked;
       this.isLiked ? this.article.like++ : this.article.like--;
@@ -1826,7 +1827,9 @@ export default {
 
     //――――――――――――――――――――――― Star ―――――――――――――――――――――――
     starArticle() {
-      if (!this.USER()) return;
+      if(!this.USER()){
+        return this.NeedLogin();
+      }
 
       this.isStared = !this.isStared;
 
@@ -1847,6 +1850,10 @@ export default {
 
     //――――――――――――――――――――――― getPower ―――――――――――――――――――――――
     getPower() {
+      if(!this.USER()){
+        return this.NeedLogin();
+      }
+
       this.power_busy = true;
 
       axios

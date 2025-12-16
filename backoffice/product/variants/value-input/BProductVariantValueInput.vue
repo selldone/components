@@ -62,6 +62,9 @@
         @click="show_all_colors = true"
         >{{ $t("global.actions.show_all") }}...
       </v-btn>
+
+      <u-color-plate-name  @select="(v) => $emit('update:modelValue', v)" ></u-color-plate-name>
+
     </div>
   </div>
   <!-- ━━━━━━━━━━━━━━ Other > With suggested items in property set ━━━━━━━━━━━━━━ -->
@@ -137,10 +140,12 @@ import VariantColorsSet from "@selldone/core-js/helper/color/VariantColorsSet.ts
 import { GetNameOfColor } from "@selldone/core-js/helper/color/ColorHelper.ts";
 import BProductGraphicalAssetsSelector from "@selldone/components-vue/backoffice/product/graphical-assets/selector/BProductGraphicalAssetsSelector.vue";
 import UVariantAssetImage from "@selldone/components-vue/ui/variant/asset/image/UVariantAssetImage.vue";
+import UColorPlateName from "@selldone/components-vue/ui/color/plate-name/UColorPlateName.vue";
 
 export default defineComponent({
   name: "BProductVariantValueInput",
   components: {
+    UColorPlateName,
     UVariantAssetImage,
     BProductGraphicalAssetsSelector,
     UColorCircle,

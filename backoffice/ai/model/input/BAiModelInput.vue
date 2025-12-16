@@ -72,7 +72,7 @@ export default {
     ai_models: [
       {
         code: "chatgpt",
-        title: "GPT 4",
+        title: "GPT 5.2",
         image: require("./asset/chatgpt.svg"),
       },
     ],

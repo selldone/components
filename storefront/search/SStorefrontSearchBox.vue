@@ -27,102 +27,114 @@
       <v-icon> search</v-icon>
     </v-btn>
 
-    <v-text-field
+    <!-- ✅ Standard dropdown under the textfield (same width) -->
+    <v-menu
       v-if="!block || !isMobile || force_show"
-      v-model="search"
-      :append-icon="isMobile && noClose ? $t('icons.navigate_next') : undefined"
-      :bg-color="backgroundColor"
-      :class="{ 'is-mobile': isMobile, force_show: force_show, shadow: shadow }"
-      :color="color"
-      :density="dense ? 'compact' : 'default'"
-      :flat="flat"
-      :hint="hint"
-      :label="current_label"
-      :loading="isLoading"
-      :messages="messages ? messages : undefined"
-      :persistentPlaceholder="persistentPlaceholder"
-      :placeholder="placeholder ? placeholder : $t('global.commons.search')"
-      :readonly="readonly"
-      :rounded="rounded"
-      :single-line="singleLine"
-      :theme="dark ? 'dark' : 'light'"
-      :variant="
-        variant
-          ? variant
-          : solo && filled
-            ? 'solo-filled'
-            : solo
-              ? 'solo'
-              : filled
-                ? 'filled'
-                : outlined
-                  ? 'outlined'
-                  : 'underlined'
-      "
-      class="search-box"
-      clearable
-      hide-details
-      hide-selected
-      no-filter
-      prepend-inner-icon="search"
-      v-on:keyup.enter="
-        () => {
-          search ? goToResult({ title: search }) : undefined;
-        }
-      "
-      @click:append="force_show = false"
-      v-model:focused="focused"
-      @keydown.enter="goToResult(model)"
-      @click:clear="goToResult()"
-      :autofocus="isMobile"
+      v-model="menu"
+      :close-on-content-click="true"
+      :open-on-click="true"
+      :scrim="false"
+      location="bottom"
+      origin="top left"
+      offset="6"
+      transition="slide-y-transition"
+      scroll-strategy="close"
+      content-class="s--storefront-search-menu"
+      width="98vw"
+:max-width="620"
     >
-      <template v-slot:prepend-inner>
-        <v-btn
-          v-if="!noQr"
-          :class="negativeQrMargin ? 'mt-n2' : ''"
-          class="hoverable-icon zoomIn delay_500 flex-grow-0"
-          icon
-          size="small"
-          variant="text"
-          @click="showQRScanner"
-          aria-label="QR Code Scanner"
+      <template v-slot:activator="{ props: menuActivatorProps }">
+        <v-text-field
+          v-bind="menuActivatorProps"
+          v-model="search"
+          :append-icon="isMobile && noClose ? $t('icons.navigate_next') : undefined"
+          :bg-color="backgroundColor"
+          :class="{ 'is-mobile': isMobile, force_show: force_show, shadow: shadow }"
+          :color="color"
+          :density="dense ? 'compact' : 'default'"
+          :flat="flat"
+          :hint="hint"
+          :label="current_label"
+          :messages="messages ? messages : undefined"
+          :persistentPlaceholder="persistentPlaceholder"
+          :placeholder="placeholder ? placeholder : $t('global.commons.search')"
+          :readonly="readonly"
+          :rounded="rounded"
+          :single-line="singleLine"
+          :theme="dark ? 'dark' : 'light'"
+          :variant="
+            variant
+              ? variant
+              : solo && filled
+                ? 'solo-filled'
+                : solo
+                  ? 'solo'
+                  : filled
+                    ? 'filled'
+                    : outlined
+                      ? 'outlined'
+                      : 'underlined'
+          "
+
+          class="search-box"
+          clearable
+          hide-details
+          hide-selected
+          no-filter
+          prepend-inner-icon="search"
+          v-on:keyup.enter="
+            () => {
+              search ? goToResult({ title: search }) : undefined;
+            }
+          "
+          @click:append="force_show = false"
+          v-model:focused="focused"
+          @keydown.enter="goToResult(model)"
+          @click:clear="
+            goToResult();
+            menu = false;
+          "
+          :autofocus="isMobile"
         >
-          <v-icon size="20">qr_code_scanner</v-icon>
-        </v-btn>
+          <template v-slot:prepend-inner>
+            <v-btn
+              v-if="!noQr"
+              :class="negativeQrMargin ? 'mt-n2' : ''"
+              class="hoverable-icon zoomIn delay_500 flex-grow-0"
+              icon
+              size="small"
+              variant="text"
+              @click="showQRScanner"
+              aria-label="QR Code Scanner"
+            >
+              <v-icon size="20">qr_code_scanner</v-icon>
+            </v-btn>
+          </template>
+
+          <template v-slot:append-inner>
+            <u-avatar-folder
+              v-if="model?.icon"
+              :src="getShopImagePath(model.icon, IMAGE_SIZE_SMALL)"
+              placeholder-icon="grain"
+              :is-amber="!!model.cat"
+              :is-gray="model.query && !model.cat"
+              :side-icon="model.query ? 'search' : model.cat ? 'folder' : 'shelves'"
+              :size="42"
+              :border-size="5"
+            >
+            </u-avatar-folder>
+          </template>
+        </v-text-field>
       </template>
 
-      <template v-slot:append-inner>
-        <u-avatar-folder
-          v-if="model?.icon"
-          :src="getShopImagePath(model.icon, IMAGE_SIZE_SMALL)"
-          placeholder-icon="grain"
-          :is-amber="!!model.cat"
-          :is-gray="model.query && !model.cat"
-          :side-icon="model.query ? 'search' : model.cat ? 'folder' : 'shelves'"
-          :size="42"
-          :border-size="5"
-        >
-        </u-avatar-folder>
-      </template>
-    </v-text-field>
-
-    <teleport to="body">
+      <!-- ✅ Dropdown content -->
       <v-card
         v-if="focused_dealyed && search?.length"
-        max-width="98vw"
-        width="840"
-        rounded="t-xl"
-        max-height="80vh"
-        min-height="40vh"
-        style="
-          position: fixed;
-          bottom: 0;
-          left: 50%;
-          transform: translate(-50%, 0);
-          z-index: 99;
-        "
-        class="d-flex flex-column align-stretch text-start pt-3 border"
+        class="d-flex flex-column align-stretch text-start border s--search-dropdown"
+        rounded="lg"
+        @mousedown.prevent
       >
+        <u-loading-progress v-if="isLoading"></u-loading-progress>
         <template v-if="!items?.length">
           <v-list-subheader class="px-3 d-flex align-center">
             <v-icon class="me-1">manage_search</v-icon>
@@ -130,7 +142,10 @@
           </v-list-subheader>
 
           <v-btn
-            @click="focused_dealyed = false"
+            @click="
+              focused_dealyed = false;
+              menu = false;
+            "
             icon
             variant="text"
             class="absolute-top-end ms-2"
@@ -139,7 +154,7 @@
             <v-icon size="24">expand_more</v-icon>
           </v-btn>
 
-          <v-list density="compact" class="flex-grow-1">
+          <v-list density="compact" class="flex-grow-1 s--dropdown-list">
             <v-list-item
               v-for="old_item in old_items"
               :key="old_item"
@@ -149,26 +164,23 @@
                 goToResult({
                   title: old_item.replace('%c-', ''),
                   cat: old_item.startsWith('%c-'),
-                })
+                });
+                menu = false;
               "
             >
               <template v-slot:prepend>
-                <v-icon v-if="old_item.startsWith('%c-')" color="amber"
-                  >folder
-                </v-icon>
+                <v-icon v-if="old_item.startsWith('%c-')" color="amber">folder</v-icon>
                 <v-icon v-else>search</v-icon>
               </template>
 
-              <v-list-item-title
-                >{{ old_item.replace("%c-", "") }}
-              </v-list-item-title>
+              <v-list-item-title>{{ old_item.replace('%c-', '') }}</v-list-item-title>
             </v-list-item>
           </v-list>
 
-          <hr class="my-5" />
-          <small class="d-block mb-5 text-center px-3">{{
-            $t("global.search_box.tips")
-          }}</small>
+          <hr class="my-3" />
+          <small class="d-block pb-4 text-center px-3">{{
+              $t("global.search_box.tips")
+            }}</small>
         </template>
 
         <template v-else>
@@ -176,8 +188,12 @@
             <v-icon class="me-1">arrow_drop_down</v-icon>
             {{ $t("global.search_box.result") }}
           </v-list-subheader>
+
           <v-btn
-            @click="focused_dealyed = false"
+            @click="
+              focused_dealyed = false;
+              menu = false;
+            "
             icon
             variant="text"
             class="absolute-top-end ms-2"
@@ -186,19 +202,21 @@
             <v-icon size="24">expand_more</v-icon>
           </v-btn>
 
-          <v-list>
+          <v-list class="s--dropdown-list">
             <v-list-item
               v-for="item in items"
+              :key="item.title"
               :title="item.title"
               @click="
                 search = item.title;
                 goToResult(item);
+                menu = false;
               "
             >
               <template v-slot:title>
                 <div v-if="!item.query" v-html="highlightMatches(item.title, search)"></div>
                 <div v-else>
-                  {{item.title}}
+                  {{ item.title }}
                 </div>
               </template>
 
@@ -209,15 +227,14 @@
                   placeholder-icon="grain"
                   :is-amber="!!item.cat"
                   :is-gray="item.query && !item.cat"
-                  :side-icon="
-                    item.query ? 'search' : item.cat ? 'folder' : 'shelves'
-                  "
+                  :side-icon="item.query ? 'search' : item.cat ? 'folder' : 'shelves'"
                   :size="42"
                   :border-size="5"
                 >
                 </u-avatar-folder>
                 <v-icon v-else>search</v-icon>
               </template>
+
               <v-list-item-subtitle>
                 {{ item.title_en }}
               </v-list-item-subtitle>
@@ -231,7 +248,7 @@
           </v-list>
         </template>
       </v-card>
-    </teleport>
+    </v-menu>
 
     <!-- ---------------------------------------------------------- -->
     <v-dialog
@@ -254,7 +271,7 @@
               size="x-large"
               variant="text"
               @click="show_scanner = false"
-              >{{ $t("global.actions.close") }}
+            >{{ $t("global.actions.close") }}
             </v-btn>
           </div>
         </v-card-actions>
@@ -268,10 +285,12 @@ import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import { defineAsyncComponent } from "vue";
+import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 
 export default {
   name: "SStorefrontSearchBox",
   components: {
+    ULoadingProgress,
     UAvatarFolder,
     UScanner: defineAsyncComponent(
       () => import("@selldone/components-vue/ui/scanner/UScanner.vue"),
@@ -281,85 +300,35 @@ export default {
   emits: ["onSearch", "onClear", "update:expandInput"],
   inject: ["$shop"],
   props: {
-    title: {
-      type: String,
-      required: false,
-    },
+    title: { type: String, required: false },
 
-    label: {
-      type: String,
-      required: false,
-      default: null,
-    },
+    label: { type: String, required: false, default: null },
 
     isAdmin: Boolean,
 
-    filled: {
-      type: Boolean,
-      default: false,
-    },
-    block: {
-      type: Boolean,
-      default: false,
-    },
-    shadow: {
-      type: Boolean,
-      default: false,
-    },
-    solo: {
-      type: Boolean,
-      default: false,
-    },
-    negativeQrMargin: {
-      // In selldone dashboard it needed!
-      type: Boolean,
-      default: true,
-    },
-    flat: {
-      type: Boolean,
-      default: false,
-    },
-    noQr: {
-      type: Boolean,
-      default: false,
-    },
-    noClose: {
-      type: Boolean,
-      default: false,
-    },
-    dark: {
-      type: Boolean,
-      default: false,
-    },
-    dense: {
-      type: Boolean,
-      default: false,
-    },
-    expandInput: {
-      type: Boolean,
-      default: false,
-    },
-    rounded: {
-      type: Boolean,
-      default: false,
-    },
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
+    filled: { type: Boolean, default: false },
+    block: { type: Boolean, default: false },
+    shadow: { type: Boolean, default: false },
+    solo: { type: Boolean, default: false },
+    negativeQrMargin: { type: Boolean, default: true }, // In selldone dashboard it needed!
+    flat: { type: Boolean, default: false },
+    noQr: { type: Boolean, default: false },
+    noClose: { type: Boolean, default: false },
+    dark: { type: Boolean, default: false },
+    dense: { type: Boolean, default: false },
+    expandInput: { type: Boolean, default: false },
+    rounded: { type: Boolean, default: false },
+    readonly: { type: Boolean, default: false },
+
     color: {},
     backgroundColor: {},
-
     placeholder: {},
     messages: {},
     hint: {},
     persistentPlaceholder: Boolean,
-    singleLine: { default: true ,type:Boolean},
+    singleLine: { default: true, type: Boolean },
 
-    outlined: {
-      type: Boolean,
-      default: false,
-    },
+    outlined: { type: Boolean, default: false },
     variant: {},
   },
   data: () => ({
@@ -379,6 +348,9 @@ export default {
 
     focused: false,
     focused_dealyed: false,
+
+    // ✅ NEW
+    menu: false,
   }),
   computed: {
     max_title() {
@@ -394,13 +366,17 @@ export default {
     focused(val) {
       if (val) {
         this.focused_dealyed = true;
+        this.syncMenu();
       } else {
         setTimeout(() => {
           this.focused_dealyed = false;
-        }, 300);
+          this.syncMenu();
+        }, 250);
       }
     },
     search(val) {
+      this.syncMenu();
+
       // Items have already been loaded
       //  if (this.items.length > 0) return;
       if (!val || val.length < 3) return;
@@ -468,11 +444,13 @@ export default {
     if (!this.old_items || !Array.isArray(this.old_items)) this.old_items = [];
   },
   methods: {
+    syncMenu() {
+      // ✅ standard dropdown: only when focused + has input
+      this.menu = !!(this.focused_dealyed && this.search?.length);
+    },
+
     goToResult(item) {
-      // console.log("goToResult --> ", item);
-
       if (item && this.$route.query.search === item.title) return; // Prevent duplicated search!
-
       this.last_event = item;
 
       if (item) {
@@ -493,8 +471,7 @@ export default {
 
         let count = 0;
         this.old_items = this.old_items.filter(
-          (item, index) =>
-            this.old_items.indexOf(item) === index && count++ < 4,
+          (item, index) => this.old_items.indexOf(item) === index && count++ < 4,
         );
 
         localStorage.setItem(
@@ -511,40 +488,34 @@ export default {
       this.show_scanner = true;
     },
     onScan(result) {
-      console.log("onScan", result);
-
       const item = { title: result };
       this.items = [item];
 
       this.show_scanner = false;
       this.model = item;
       this.goToResult(item);
+
+      this.menu = false;
     },
 
     highlightMatches(text: string, search: string): string {
       if (!search || !text) return text;
 
-      const words = search.trim().split(/\s+/).filter(w => w.length > 1);
+      const words = search.trim().split(/\s+/).filter((w) => w.length > 1);
 
-      const escapedWords = words.map(word =>
-          word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const escapedWords = words.map((word) =>
+        word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
       );
 
-      const regex = new RegExp(`(${escapedWords.join('|')})`, 'gi');
+      const regex = new RegExp(`(${escapedWords.join("|")})`, "gi");
 
-      return text.replace(regex, '<mark><b>$1</b></mark>');
-    }
-
-
+      return text.replace(regex, "<mark><b>$1</b></mark>");
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-/*
-━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
- */
-
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
@@ -553,18 +524,14 @@ export default {
     transition: all 0.3s ease-out;
 
     &.is-mobile {
-      //visibility: hidden;
       transform: scale(0.1);
       top: -80px;
       max-width: 48px;
-      //display: none !important;
     }
 
     &.force_show {
       top: 0px;
-      //display: block !important;
       max-width: 100vw;
-      //visibility: visible;
       transform: scale(1);
     }
 
@@ -578,7 +545,6 @@ export default {
     display: none !important;
 
     position: absolute;
-    // top: 8px;
     left: 50%;
     transform: translateX(-50%);
 
@@ -589,7 +555,6 @@ export default {
 
     @media only screen and (max-width: 500px) {
       right: 0;
-      //transform: translateX(-50%);
     }
   }
 
@@ -606,6 +571,22 @@ export default {
       background-color: var(--theme-light) !important;
       color: #fff !important;
     }
+  }
+
+  /* ✅ Make the menu EXACTLY same width as the text field */
+  :deep(.s--storefront-search-menu) {
+    width: var(--v-overlay-anchor-width) !important;
+    max-width: var(--v-overlay-anchor-width) !important;
+  }
+
+  :deep(.s--storefront-search-menu .s--search-dropdown) {
+    width: 100% !important;
+    overflow: hidden;
+  }
+
+  :deep(.s--storefront-search-menu .s--dropdown-list) {
+    max-height: 340px;
+    overflow-y: auto;
   }
 }
 </style>

@@ -22,23 +22,21 @@
       variant="flat"
       @click="force_show = true"
       @click.stop
+      aria-label="Search"
     >
       <v-icon> search</v-icon>
     </v-btn>
 
-    <v-autocomplete
+    <v-text-field
       v-if="!block || !isMobile || force_show"
-      v-model="model"
-      v-model:search="search"
+      v-model="search"
       :append-icon="isMobile && noClose ? $t('icons.navigate_next') : undefined"
       :bg-color="backgroundColor"
       :class="{ 'is-mobile': isMobile, force_show: force_show, shadow: shadow }"
       :color="color"
-      :customFilter="() => true"
       :density="dense ? 'compact' : 'default'"
       :flat="flat"
       :hint="hint"
-      :items="items"
       :label="current_label"
       :loading="isLoading"
       :messages="messages ? messages : undefined"
@@ -61,15 +59,12 @@
                   ? 'outlined'
                   : 'underlined'
       "
-      autocomplete
       class="search-box"
       clearable
       hide-details
       hide-selected
       no-filter
       prepend-inner-icon="search"
-      return-object
-      @update:model-value="goToResult"
       v-on:keyup.enter="
         () => {
           search ? goToResult({ title: search }) : undefined;
@@ -77,111 +72,166 @@
       "
       @click:append="force_show = false"
       v-model:focused="focused"
+      @keydown.enter="goToResult(model)"
+      @click:clear="goToResult()"
+      :autofocus="isMobile"
     >
       <template v-slot:prepend-inner>
         <v-btn
           v-if="!noQr"
-          :class="negativeQrMargin ? 'mt-n3' : ''"
+          :class="negativeQrMargin ? 'mt-n2' : ''"
           class="hoverable-icon zoomIn delay_500 flex-grow-0"
           icon
           size="small"
           variant="text"
           @click="showQRScanner"
+          aria-label="QR Code Scanner"
         >
           <v-icon size="20">qr_code_scanner</v-icon>
         </v-btn>
       </template>
-      <template v-slot:prepend-item>
-        <p v-if="items.length" class="text-muted text-start small mx-2 mb-0">
-          {{ $t("global.search_box.result") }}
-          :
-        </p>
-      </template>
 
-      <template v-slot:no-data>
-        <v-list-item>
-          <v-list-item-title class="text-start small">
-            <strong>{{ title }}</strong>
-          </v-list-item-title>
-        </v-list-item>
-
-        <v-list density="compact">
-          <v-list-item
-            v-for="old_item in old_items"
-            :key="old_item"
-            :disabled="$route.query.search === old_item.replace('%c-', '')"
-            density="compact"
-            @click="
-              goToResult({
-                title: old_item.replace('%c-', ''),
-                cat: old_item.startsWith('%c-'),
-              })
-            "
-          >
-            <template v-slot:prepend>
-              <v-icon v-if="old_item.startsWith('%c-')" color="amber"
-                >folder
-              </v-icon>
-              <v-icon v-else>search</v-icon>
-            </template>
-
-            <v-list-item-title
-              >{{ old_item.replace("%c-", "") }}
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-
-        <hr />
-        <small>{{ $t("global.search_box.tips") }}</small>
-      </template>
-
-      <template v-slot:selection="{ item, selected }">
-        <v-chip
-          :model-value="selected"
-          class="text-subtitle-2"
-          variant="outlined"
+      <template v-slot:append-inner>
+        <u-avatar-folder
+          v-if="model?.icon"
+          :src="getShopImagePath(model.icon, IMAGE_SIZE_SMALL)"
+          placeholder-icon="grain"
+          :is-amber="!!model.cat"
+          :is-gray="model.query && !model.cat"
+          :side-icon="model.query ? 'search' : model.cat ? 'folder' : 'shelves'"
+          :size="42"
+          :border-size="5"
         >
-          <v-avatar v-if="item.raw.icon" start>
-            <v-img :src="getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)" />
-          </v-avatar>
-
-          <span
-            class="limited-text-150px"
-            v-text="item.raw.title.substring(0, max_title)"
-          />
-        </v-chip>
+        </u-avatar-folder>
       </template>
+    </v-text-field>
 
-      <template v-slot:item="{ item, props }">
-        <v-list-item :title="item.raw.title" class="text-start" v-bind="props">
-          <template v-slot:prepend>
-            <v-avatar v-if="item.raw.icon" class="position-relative">
-              <v-img :src="getShopImagePath(item.raw.icon, IMAGE_SIZE_SMALL)">
-                <template v-slot:placeholder>
-                  <v-progress-circular
-                    class="center-absolute"
-                    color="grey-lighten-5"
-                    indeterminate
-                  />
-                </template>
-              </v-img>
-            </v-avatar>
-            <v-icon v-if="item.raw.query">search</v-icon>
-          </template>
+    <teleport to="body">
+      <v-card
+        v-if="focused_dealyed && search?.length"
+        max-width="98vw"
+        width="840"
+        rounded="t-xl"
+        max-height="80vh"
+        min-height="40vh"
+        style="
+          position: fixed;
+          bottom: 0;
+          left: 50%;
+          transform: translate(-50%, 0);
+          z-index: 99;
+        "
+        class="d-flex flex-column align-stretch text-start pt-3 border"
+      >
+        <template v-if="!items?.length">
+          <v-list-subheader class="px-3 d-flex align-center">
+            <v-icon class="me-1">manage_search</v-icon>
+            {{ title }}
+          </v-list-subheader>
 
-          <template v-slot:append>
-            <v-list-item-action>
-              <div v-if="item.raw.cat" class="small">
-                {{ $t("global.search_box.category") }}
-              </div>
-              <v-icon v-if="item.raw.cat" class="mx-auto" color="amber"
-                >folder
-              </v-icon>
-            </v-list-item-action>
-          </template>
-        </v-list-item>
-      </template>
-    </v-autocomplete>
+          <v-btn
+            @click="focused_dealyed = false"
+            icon
+            variant="text"
+            class="absolute-top-end ms-2"
+            size="32"
+          >
+            <v-icon size="24">expand_more</v-icon>
+          </v-btn>
+
+          <v-list density="compact" class="flex-grow-1">
+            <v-list-item
+              v-for="old_item in old_items"
+              :key="old_item"
+              :disabled="$route.query.search === old_item.replace('%c-', '')"
+              density="compact"
+              @click="
+                goToResult({
+                  title: old_item.replace('%c-', ''),
+                  cat: old_item.startsWith('%c-'),
+                })
+              "
+            >
+              <template v-slot:prepend>
+                <v-icon v-if="old_item.startsWith('%c-')" color="amber"
+                  >folder
+                </v-icon>
+                <v-icon v-else>search</v-icon>
+              </template>
+
+              <v-list-item-title
+                >{{ old_item.replace("%c-", "") }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+
+          <hr class="my-5" />
+          <small class="d-block mb-5 text-center px-3">{{
+            $t("global.search_box.tips")
+          }}</small>
+        </template>
+
+        <template v-else>
+          <v-list-subheader class="px-3 d-flex align-center">
+            <v-icon class="me-1">arrow_drop_down</v-icon>
+            {{ $t("global.search_box.result") }}
+          </v-list-subheader>
+          <v-btn
+            @click="focused_dealyed = false"
+            icon
+            variant="text"
+            class="absolute-top-end ms-2"
+            size="32"
+          >
+            <v-icon size="24">expand_more</v-icon>
+          </v-btn>
+
+          <v-list>
+            <v-list-item
+              v-for="item in items"
+              :title="item.title"
+              @click="
+                search = item.title;
+                goToResult(item);
+              "
+            >
+              <template v-slot:title>
+                <div v-if="!item.query" v-html="highlightMatches(item.title, search)"></div>
+                <div v-else>
+                  {{item.title}}
+                </div>
+              </template>
+
+              <template v-slot:prepend>
+                <u-avatar-folder
+                  v-if="item.icon"
+                  :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)"
+                  placeholder-icon="grain"
+                  :is-amber="!!item.cat"
+                  :is-gray="item.query && !item.cat"
+                  :side-icon="
+                    item.query ? 'search' : item.cat ? 'folder' : 'shelves'
+                  "
+                  :size="42"
+                  :border-size="5"
+                >
+                </u-avatar-folder>
+                <v-icon v-else>search</v-icon>
+              </template>
+              <v-list-item-subtitle>
+                {{ item.title_en }}
+              </v-list-item-subtitle>
+
+              <template v-slot:append>
+                <v-list-item-action v-if="item.cat" class="small">
+                  {{ $t("global.search_box.category") }}
+                </v-list-item-action>
+              </template>
+            </v-list-item>
+          </v-list>
+        </template>
+      </v-card>
+    </teleport>
 
     <!-- ---------------------------------------------------------- -->
     <v-dialog
@@ -215,18 +265,21 @@
 
 <script lang="ts">
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
+import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import { defineAsyncComponent } from "vue";
 
 export default {
-  name: "SStorefrontSearchBoxOld",
+  name: "SStorefrontSearchBox",
   components: {
+    UAvatarFolder,
     UScanner: defineAsyncComponent(
       () => import("@selldone/components-vue/ui/scanner/UScanner.vue"),
     ),
   },
   mixins: [TemplateMixin],
   emits: ["onSearch", "onClear", "update:expandInput"],
+  inject: ["$shop"],
   props: {
     title: {
       type: String,
@@ -239,13 +292,7 @@ export default {
       default: null,
     },
 
-    shopId: {
-      required: false,
-    },
-    shopName: {
-      type: String,
-      required: false,
-    },
+    isAdmin: Boolean,
 
     filled: {
       type: Boolean,
@@ -306,8 +353,8 @@ export default {
     placeholder: {},
     messages: {},
     hint: {},
-    persistentPlaceholder: {},
-    singleLine: { default: true },
+    persistentPlaceholder: Boolean,
+    singleLine: { default: true ,type:Boolean},
 
     outlined: {
       type: Boolean,
@@ -331,6 +378,7 @@ export default {
     show_scanner: false,
 
     focused: false,
+    focused_dealyed: false,
   }),
   computed: {
     max_title() {
@@ -343,6 +391,15 @@ export default {
   },
 
   watch: {
+    focused(val) {
+      if (val) {
+        this.focused_dealyed = true;
+      } else {
+        setTimeout(() => {
+          this.focused_dealyed = false;
+        }, 300);
+      }
+    },
     search(val) {
       // Items have already been loaded
       //  if (this.items.length > 0) return;
@@ -355,20 +412,20 @@ export default {
 
       axios
         .get(
-          this.shopName
-            ? window.XAPI.GET_SEARCH_QUERY(this.shopName, val)
-            : window.API.GET_SEARCH_QUERY_ADMIN(this.shopId, val),
+          !this.isAdmin
+            ? window.XAPI.GET_SEARCH_QUERY(this.$shop.name, val)
+            : window.API.GET_SEARCH_QUERY_ADMIN(this.$shop.id, val),
         )
         .then(({ data }) => {
-          this.items = data.items;
+          // Remove just query items:
+          this.items = this.items.filter((item) => !item.query);
 
-          if (
-            !this.items.some((element) => {
-              return element.title === val;
-            })
-          ) {
-            this.items.unshift({ title: val, query: true });
-          }
+          this.items.unshift(...data.items);
+
+          // Show current search on top:
+          this.items.unshift({ title: val, query: true });
+
+          this.items = this.items.uniqueByKey("title").limit(12);
         })
         .catch((err) => {
           console.log(err);
@@ -397,6 +454,7 @@ export default {
             : null,
       };
       this.items = [this.model];
+      this.search = this.$route.query.search;
     }
 
     this.force_show = this.expandInput;
@@ -411,10 +469,11 @@ export default {
   },
   methods: {
     goToResult(item) {
+      // console.log("goToResult --> ", item);
+
       if (item && this.$route.query.search === item.title) return; // Prevent duplicated search!
 
       this.last_event = item;
-      // console.log("goToResult --> ", item);
 
       if (item) {
         let search_type = item.cat ? "category" : item.id ? "exact" : null;
@@ -461,6 +520,22 @@ export default {
       this.model = item;
       this.goToResult(item);
     },
+
+    highlightMatches(text: string, search: string): string {
+      if (!search || !text) return text;
+
+      const words = search.trim().split(/\s+/).filter(w => w.length > 1);
+
+      const escapedWords = words.map(word =>
+          word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      );
+
+      const regex = new RegExp(`(${escapedWords.join('|')})`, 'gi');
+
+      return text.replace(regex, '<mark><b>$1</b></mark>');
+    }
+
+
   },
 };
 </script>
