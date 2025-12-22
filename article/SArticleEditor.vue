@@ -204,20 +204,20 @@ const OPTIONS_BODY = {
         action: "append-h2",
         aria: "header 2",
         tagNames: ["h2"],
-        contentDefault: "<b>H1</b>",
+        contentDefault: "<b>H2</b>",
         classList: [],
         attrs: {},
-        contentFA: '<i class="fas fa-heading"><sup> 2</sup></i>',
+        contentFA: '<i class="fas fa-heading"></i><sup> 2</sup>',
       },
       {
         name: "h3",
         action: "append-h3",
         aria: "header 3",
         tagNames: ["h3"],
-        contentDefault: "<b>H2</b>",
+        contentDefault: "<b>H3</b>",
         classList: [],
         attrs: {},
-        contentFA: '<i class="fas fa-heading"><sup> 3</sup></i>',
+        contentFA: '<i class="fas fa-heading"></i><sup> 3</sup>',
       },
 
       "quote",
@@ -358,7 +358,7 @@ export default defineComponent({
     },
     hideTitle: {
       // Has title but not show! important!
-     // type: Boolean,
+      // type: Boolean,
       default: false,
     },
     enableBody: {
@@ -580,7 +580,10 @@ export default defineComponent({
 
         // 2. Check file size:
         if (file.size > 8 * 1024 * 1024) {
-          NotificationService.showErrorAlert(null, "Maximum file size limited to 8MB!");
+          NotificationService.showErrorAlert(
+            null,
+            "Maximum file size limited to 8MB!",
+          );
           return;
         }
 
@@ -897,7 +900,7 @@ export default defineComponent({
     },
 
     // Define the debounced version of onEdited
-    onEdited: debounce(function() {
+    onEdited: debounce(function () {
       console.log("🍒 Article Editor | Edited (debounced)");
 
       if (this.edit) this.state = "changed";
@@ -907,8 +910,6 @@ export default defineComponent({
         body: this.body,
       });
     }, 1000), // Wait for 1000ms before the last call
-
-
 
     setDirection() {
       this.$nextTick(() => {
@@ -1114,8 +1115,6 @@ export default defineComponent({
                     "global.article.editor.notifications.image_uploaded_failed",
                   ),
                 );
-
-
               },
 
               deleteMethod: "POST",
@@ -1291,7 +1290,7 @@ export default defineComponent({
       div
         .find("*")
         .not(
-          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,iframe,strike,blockquote,script,span,table,tbody,thead,tr,td,th,br,style"+
+          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,iframe,strike,blockquote,script,span,table,tbody,thead,tr,td,th,br,style" +
             ",math,semantics,mrow,msub,mi,mo" /*Math Formula*/ +
             ",mfrac,msup,msubsup,mmultiscripts,mprescripts,msqrt,mroot,mstyle,mpadded,mphantom,menclose" /*Math Layout*/ +
             ",mo,mn,mtext,mspace,maligngroup,malignmark" /*Math Tokens*/ +
@@ -1299,7 +1298,7 @@ export default defineComponent({
             ",munder,mover,munderover" /*Math Under/Over Notation*/ +
             ",none,mprescripts" /*Other Math Elements*/ +
             ",mfenced,mrow,mstyle,ms,maction" /*More Grouping Elements*/ +
-            ",annotation,annotation-xml" /*Annotations*/
+            ",annotation,annotation-xml" /*Annotations*/,
         ) // script: for embed link!
         .each(function () {
           if (!$(this).closest(".medium-insert-embed").length)
@@ -1374,8 +1373,8 @@ export default defineComponent({
               "data-tweet-id",
               "width",
               "height",
-                "xmlns",
-                "display"
+              "xmlns",
+              "display",
             ].indexOf(item) === -1
           )
             if (!$(this).closest(".medium-insert-embed").length)
@@ -1465,8 +1464,6 @@ export default defineComponent({
         if ($(this).length) console.log("Unwrap span", $(this)[0].innerText);
         $(this).replaceWith($(this)[0].innerText);
       });
-
-
 
       //――――――――――――――――――――――― Final process ―――――――――――――――――――――――
 
@@ -1607,7 +1604,7 @@ export default defineComponent({
       background: var(--background);
       width: 3rem;
       height: 2rem;
-      font-family: "Font Awesome 6 Free";
+      font-family: "Font Awesome 7 Free";
       font-weight: 900;
       font-size: 6em/1.08em;
       color: #666;
@@ -1891,11 +1888,6 @@ export default defineComponent({
   --ol-li-dot-bg: linear-gradient(to right bottom, #333, #222);
 
   ol {
-
-
-
-
-
     li:before {
       content: counter(li);
       counter-increment: li;
@@ -1924,7 +1916,6 @@ export default defineComponent({
 
   --ul-li-dot-bg: linear-gradient(to right bottom, #333, #222);
 
-
   ul {
     display: flow-root;
     margin: 1em 1em;
@@ -1938,8 +1929,6 @@ export default defineComponent({
     @media only screen and (max-width: 900px) {
       margin: 1.5em 0;
     }
-
-
 
     li {
       position: relative;
@@ -1994,14 +1983,14 @@ export default defineComponent({
   /**
 -------------------- 🐜🐜🐜 Nested Lists 🐜🐜🐜 --------------------
 */
-  ol,ul{
-
+  ol,
+  ul {
     ul {
       margin: 0;
       margin-inline-start: 1em;
       li {
         padding: 0;
-        &:before{
+        &:before {
           content: " ";
           height: 100%;
           width: 1px;
@@ -2012,18 +2001,16 @@ export default defineComponent({
           bottom: 0;
           display: block;
           margin: 0;
-
-
         }
       }
     }
-    ol{
+    ol {
       margin: 0;
       margin-inline-start: 1em;
       li {
         padding: 0;
-        &:before{
-          content: counter(li) ' .';
+        &:before {
+          content: counter(li) " .";
           counter-increment: li;
           height: 100%;
           background: none;
@@ -2036,14 +2023,9 @@ export default defineComponent({
           position: relative;
           margin: 0;
           color: currentColor;
-
-
         }
       }
     }
-
-
-
   }
   /**
 --------------------------------------------------------
@@ -2284,7 +2266,8 @@ p iframe {
   .medium-insert-embed {
     max-width: 1200px;
 
-    .link-preview {   // OLD! DEPRECATED AND REPLACE WITH .s--link-preview-...
+    .link-preview {
+      // OLD! DEPRECATED AND REPLACE WITH .s--link-preview-...
       border-radius: 16px !important;
 
       .v-row,
@@ -2303,16 +2286,17 @@ p iframe {
     }
   }
 
-  &.medium-insert-embeds-left ,&.medium-insert-embeds-right{
+  &.medium-insert-embeds-left,
+  &.medium-insert-embeds-right {
     // NEW
-    .s--link-preview-card{
-      .s--link-preview-row{
+    .s--link-preview-card {
+      .s--link-preview-row {
         flex-direction: column;
-        .s--link-preview-main-image{
+        .s--link-preview-main-image {
           display: block;
           padding: 0 !important;
           margin: 0 !important;
-          .s--link-preview-image-container{
+          .s--link-preview-image-container {
             min-height: 160px;
           }
         }
@@ -2321,8 +2305,6 @@ p iframe {
   }
 
   &.medium-insert-embeds-left {
-
-
     // OLD !DEPRECATED!
     .link-preview {
       .v-row,
@@ -2528,7 +2510,7 @@ p iframe {
       color: #fff;
       font-size: 16px;
       z-index: 2;
-      font-family: "Font Awesome 6 Free";
+      font-family: "Font Awesome 7 Free";
       font-weight: 900;
       content: "\f065";
       padding: 6px;
