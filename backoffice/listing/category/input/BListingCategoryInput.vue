@@ -31,25 +31,23 @@
     <!-- Selected item view -->
     <template v-slot:selection="{ item }">
       <v-avatar class="m-2" size="32" color="grey-lighten-4">
-        <template v-if="getCategoryIcon(item.raw).type === 'img'">
-          <img :src="getCategoryIcon(item.raw).src" style="object-fit: cover" />
+        <template v-if="item.raw.icon">
+          <img :src="getShopImagePath(item.raw.icon)" style="object-fit: cover" />
         </template>
         <template v-else>
-          <v-icon size="18" class="text-muted">{{ getCategoryIcon(item.raw).icon }}</v-icon>
+          <v-icon size="18" color="#333">folder</v-icon>
         </template>
       </v-avatar>
 
       <div class="d-inline-flex align-center flex-wrap">
         <span class="font-weight-bold">{{ item.raw.title }}</span>
 
-        <small v-if="item.raw.slug" class="mx-2 text-muted">/{{ item.raw.slug }}</small>
-
         <v-chip
           v-if="item.raw.parent && item.raw.parent.title"
           size="x-small"
           class="mx-1"
-          label
-          variant="tonal"
+          variant="flat" color="amber"
+          :prepend-avatar="getShopImagePath(item.raw.parent.icon)"
         >
           {{ item.raw.parent.title }}
         </v-chip>
@@ -71,28 +69,32 @@
       <v-list-item v-bind="props" class="text-start">
         <template v-slot:prepend>
           <v-avatar class="m-2" size="32" color="grey-lighten-4">
-            <template v-if="getCategoryIcon(item.raw).type === 'img'">
-              <img :src="getCategoryIcon(item.raw).src" style="object-fit: cover" />
+            <template v-if="item.raw.icon">
+              <img :src="getShopImagePath(item.raw.icon)" style="object-fit: cover" />
             </template>
             <template v-else>
-              <v-icon size="18" class="text-muted">{{ getCategoryIcon(item.raw).icon }}</v-icon>
+              <v-icon size="18" color="#333">folder</v-icon>
             </template>
           </v-avatar>
         </template>
 
-        <v-list-item-title class="font-weight-bold">
-          {{ item.raw.title }}
-          <small v-if="item.raw.slug" class="ms-2 text-muted">/{{ item.raw.slug }}</small>
-        </v-list-item-title>
+        <template v-slot:title>
+          <b>
+            {{ item.raw.title }}
+          </b>
+        </template>
+
 
         <v-list-item-subtitle class="d-flex align-center flex-wrap">
+
           <v-chip
             v-if="item.raw.parent && item.raw.parent.title"
             size="x-small"
             class="me-1 my-1"
-            label
-            variant="tonal"
+            variant="flat" color="amber"
+            :prepend-avatar="getShopImagePath(item.raw.parent.icon)"
           >
+            {{$t('global.commons.folder')}}:
             {{ item.raw.parent.title }}
           </v-chip>
 
@@ -268,37 +270,9 @@ export default {
       return false;
     },
 
-    getShopImageUrl(path: string): string {
-      if (!path) return "";
 
-      if (path.startsWith("http://") || path.startsWith("https://")) return path;
 
-      // Prefer Selldone global helper if available.
-      // @ts-ignore
-      if (typeof this.getShopImagePath === "function") return this.getShopImagePath(path);
 
-      return path;
-    },
-
-    getCategoryIcon(category: any): any {
-      const icon = category?.icon || "";
-      const image = category?.image || "";
-
-      // Prefer icon first (if it looks like a stored path), otherwise fall back to cover image.
-      if (icon && this.looksLikeStoragePath(icon)) {
-        return { type: "img", src: this.getShopImageUrl(icon) };
-      }
-      if (image && this.looksLikeStoragePath(image)) {
-        return { type: "img", src: this.getShopImageUrl(image) };
-      }
-
-      // If icon is not a stored path, treat it as a material icon name (optional).
-      if (icon && !this.looksLikeStoragePath(icon)) {
-        return { type: "icon", icon };
-      }
-
-      return { type: "icon", icon: "folder" };
-    },
 
     getCategories() {
       const shopId = this.shop?.id;
