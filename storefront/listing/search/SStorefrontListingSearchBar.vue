@@ -78,7 +78,6 @@ type SearchFilterDef = {
 export default {
   name: "SStorefrontListingSearchBar",
 
-
   components: {
     SListingSearchText,
     SListingSearchLocation,
@@ -146,7 +145,7 @@ export default {
     },
 
     inlineFiltersMax(): number {
-      // Smart heuristic you requested:
+      // Smart heuristic:
       // - If location is enabled => only 1 inline filter
       // - If location is disabled => up to 2 inline filters
       return this.locationEnabled ? 1 : 2;
@@ -161,25 +160,38 @@ export default {
     },
 
     inlineFilters(): SearchFilterDef[] {
-      // Only used when showInlineFilters=true
       return this.filtersSafe;
     },
 
-    radiusOptions(): any[] {
+    /**
+     * ✅ IMPORTANT FIX:
+     * - DO NOT inject defaults here.
+     * - If options_km is [] => return [] (hide radius selector).
+     * - If options_km missing/invalid => return [].
+     */
+    radiusOptions(): Array<{ title: string; value: number }> {
       const loc = this.searchSettings?.location || {};
-      const opts = Array.isArray(loc?.options_km) ? loc.options_km : [5, 10, 20, 50];
 
-      const max = loc?.max_radius_km ? Number(loc.max_radius_km) : 50;
+      const optsRaw = loc?.options_km;
 
-      const safe = opts
+      // Only accept explicit array.
+      if (!Array.isArray(optsRaw)) return [];
+
+      // If user cleared options => keep empty.
+      if (optsRaw.length === 0) return [];
+
+      const max = loc?.max_radius_km !== null && loc?.max_radius_km !== undefined
+        ? Number(loc.max_radius_km)
+        : 50;
+
+      const clean = optsRaw
         .map((x: any) => parseInt(String(x), 10))
-        .filter((n: number) => Number.isFinite(n) && n > 0 && n <= max);
+        .filter((n: number) => Number.isFinite(n) && !Number.isNaN(n) && n > 0 && n <= max);
 
-      const unique = Array.from(new Set(safe.length ? safe : [5, 10, 20, 50]));
-      unique.sort((a, b) => a - b);
+      const unique = Array.from(new Set(clean)).sort((a, b) => a - b);
 
-      const def = loc?.default_radius_km ? parseInt(String(loc.default_radius_km), 10) : 10;
-      if (Number.isFinite(def) && def > 0 && !unique.includes(def)) unique.unshift(def);
+      // If after sanitize it became empty => treat as empty (no fallback)
+      if (!unique.length) return [];
 
       return unique.map((n) => ({ title: `${n} km`, value: n }));
     },
@@ -189,26 +201,25 @@ export default {
     },
 
     topGridStyle(): any {
-      // Top row: Search | Location (optional) | Inline Filters (optional) | CTA
       const cols: string[] = [];
       if (this.textEnabled) cols.push("2fr");
       if (this.locationEnabled) cols.push("1.6fr");
       if (this.showInlineFilters) cols.push("1.6fr");
       cols.push("170px");
 
-      return {
-        gridTemplateColumns: cols.join(" "),
-      };
+      return { gridTemplateColumns: cols.join(" ") };
     },
   },
 
   mounted() {
-    // Default radius from settings
+    // ✅ Keep radius_km usable for search, but don't force dropdown options.
     if (this.locationEnabled) {
       const def = this.searchSettings?.location?.default_radius_km;
-      const n = def !== null && def !== undefined ? parseInt(String(def), 10) : 10;
-      if (Number.isFinite(n) && n > 0) {
-        this.q_location.radius_km = n;
+      const n = def !== null && def !== undefined ? parseInt(String(def), 10) : null;
+
+      // Only set if user hasn't set a radius yet.
+      if ((this.q_location.radius_km === null || this.q_location.radius_km === undefined) && Number.isFinite(n as any) && (n as any) > 0) {
+        this.q_location.radius_km = n as any;
       }
     }
   },
@@ -323,7 +334,6 @@ export default {
   font-weight: 900;
 }
 
-/* Full-width filters row */
 .sld-row-filters {
   border-top: 1px solid rgba(20, 20, 20, 0.08);
   padding: 16px 16px 14px;

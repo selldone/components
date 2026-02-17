@@ -62,11 +62,12 @@
       </template>
     </s-listing-search-address-input>
 
-    <div v-if="radiusOptions?.length" class="sld-loc-row">
+    <!-- ✅ Radius row ONLY if options exist (NO DEFAULTS HERE) -->
+    <div v-if="hasRadiusOptions" class="sld-loc-row">
       <div class="sld-loc-label">
         <span>Radius</span>
 
-        <v-tooltip location="bottom" :text="radiusHint">
+        <v-tooltip v-if="radiusHint" location="bottom" :text="radiusHint">
           <template #activator="{ props }">
             <v-icon v-bind="props" size="16" class="sld-info">info_outline</v-icon>
           </template>
@@ -76,7 +77,7 @@
       <v-select
         :model-value="internal.radius_km"
         @update:modelValue="onRadiusChange"
-        :items="radiusOptions"
+        :items="radiusOptionsSafe"
         item-title="title"
         item-value="value"
         variant="solo"
@@ -113,7 +114,15 @@ export default {
       type: Object,
       default: () => ({ text: "", lat: null, lng: null, radius_km: null }),
     },
+
+    /**
+     * IMPORTANT:
+     * - Pass [] to hide radius dropdown in storefront.
+     * - Pass list to show it.
+     * Component MUST NOT inject defaults.
+     */
     radiusOptions: { type: Array, default: () => [] },
+
     radiusHint: { type: String, default: "" },
   },
 
@@ -129,11 +138,9 @@ export default {
 
     is_my_location: false,
 
-    // Guard flags
     _syncing_from_parent: false,
     _selecting: false,
 
-    // optional restore
     prev_address: null as LocationModel | null,
   }),
 
@@ -148,7 +155,12 @@ export default {
 
     centerSafe(): any {
       const loc = this.shop?.info?.location;
-      if (loc && typeof loc === "object" && loc.lat !== undefined && loc.lng !== undefined) {
+      if (
+        loc &&
+        typeof loc === "object" &&
+        loc.lat !== undefined &&
+        loc.lng !== undefined
+      ) {
         return { lat: loc.lat, lng: loc.lng };
       }
       return null;
@@ -157,6 +169,24 @@ export default {
     countriesSafe(): string[] | null {
       const c = this.shop?.countries;
       return Array.isArray(c) && c.length ? c : null;
+    },
+
+    radiusOptionsSafe(): any[] {
+      // ✅ NO DEFAULTS, just sanitize whatever is passed in
+      const list = Array.isArray((this as any).radiusOptions) ? (this as any).radiusOptions : [];
+      return list
+        .map((x: any) => {
+          // allow both {title,value} and raw numbers
+          if (x && typeof x === "object" && x.value !== undefined) return x;
+          const n = parseInt(String(x), 10);
+          if (!Number.isFinite(n) || Number.isNaN(n)) return null;
+          return { title: `${n} km`, value: n };
+        })
+        .filter(Boolean);
+    },
+
+    hasRadiusOptions(): boolean {
+      return Array.isArray(this.radiusOptionsSafe) && this.radiusOptionsSafe.length > 0;
     },
   },
 
@@ -172,7 +202,6 @@ export default {
           radius_km: this.numOrNull(v?.radius_km),
         };
 
-        // if identical, do nothing (prevents loops)
         if (this.sameLocation(next, this.internal)) return;
 
         this._syncing_from_parent = true;
@@ -182,7 +211,6 @@ export default {
         this.internal.lng = next.lng;
         this.internal.radius_km = next.radius_km;
 
-        // if coords exist but text is empty => likely "my location" mode
         this.is_my_location = !next.text && next.lat !== null && next.lng !== null;
 
         this._syncing_from_parent = false;
@@ -211,7 +239,7 @@ export default {
       this.$emit("update:modelValue", { ...this.internal });
     },
 
-    // ✅ supports GeoJSON response: geometry.coordinates = [lng, lat]
+    // ✅ supports GeoJSON: geometry.coordinates = [lng, lat]
     extractLatLng(obj: any): { lat: number | null; lng: number | null } {
       const coords = obj?.geometry?.coordinates;
       if (Array.isArray(coords) && coords.length >= 2) {
@@ -251,14 +279,12 @@ export default {
       this.internal.lat = p.lat;
       this.internal.lng = p.lng;
 
-      // Keep user-friendly text
       const title = String(addr?.title || "").trim();
       const address = String(addr?.address || "").trim();
       this.internal.text = title || address || this.internal.text;
 
       this.prev_address = { ...this.internal };
 
-      // Emit once with final payload
       this.$nextTick(() => {
         this.emitUpdate();
         this._selecting = false;
@@ -271,14 +297,12 @@ export default {
       const nextText = String(val || "");
       this.internal.text = nextText;
 
-      // If user starts typing (not selecting), clear coords (they no longer match)
+      // If user types manually, coordinates are no longer trustworthy
       if (!this._selecting && !this.is_my_location) {
         if (nextText.trim().length) {
-          // user edited => coords become invalid
           this.internal.lat = null;
           this.internal.lng = null;
         } else {
-          // text cleared => clear coords too
           this.internal.lat = null;
           this.internal.lng = null;
         }
@@ -311,7 +335,6 @@ export default {
     useMyLocation() {
       if (!navigator.geolocation) return;
 
-      // store previous manual address (optional restore)
       if (!this.is_my_location) {
         this.prev_address = { ...this.internal };
       }
@@ -325,7 +348,7 @@ export default {
             this.internal.lat = lat;
             this.internal.lng = lng;
 
-            // IMPORTANT: do not fill text (prevents immediate search/autocomplete)
+            // IMPORTANT: keep text empty to avoid triggering autocomplete/search
             this.internal.text = "";
 
             this.is_my_location = true;
@@ -341,7 +364,6 @@ export default {
     enableAddressInput() {
       this.is_my_location = false;
 
-      // If you want to restore previous address when leaving "my location":
       if (this.prev_address && this.prev_address.text) {
         this.internal.text = this.prev_address.text;
         this.internal.lat = this.prev_address.lat;
