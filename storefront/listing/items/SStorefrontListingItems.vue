@@ -11,7 +11,7 @@
 <template>
   <div class="text-start sld-items-wrap">
     <!-- ✅ New search bar (reads shop.listing.search_settings) -->
-    <s-storefront-listing-search-bar class="mb-3" @apply="onApplySearch" />
+    <s-storefront-listing-search-bar  class="mb-3" @apply="onApplySearch" />
 
     <u-loading-progress v-if="busy" />
 

@@ -1,6 +1,6 @@
 <template>
   <v-card class="text-start h-100" flat>
-    <u-loading-progress v-if="busy_fetch || busy_save || busy_generate" />
+    <u-loading-progress v-if="busy_save || busy_generate || busy_fields" />
 
     <v-card-text class="text-start position-relative pt-6">
       <!-- Overview -->
@@ -11,13 +11,22 @@
         </v-list-subheader>
       </div>
 
-      <v-alert v-if="error_text" type="error" variant="tonal" border="start" class="mb-4">
+      <v-alert
+        v-if="error_text"
+        type="error"
+        variant="tonal"
+        border="start"
+        class="mb-4"
+      >
         {{ error_text }}
       </v-alert>
 
       <!-- Location -->
       <div class="widget-box mb-5">
-        <u-widget-header :title="$t('shop_listing.search.location_title')" icon="my_location" />
+        <u-widget-header
+          :title="$t('shop_listing.search.location_title')"
+          icon="my_location"
+        />
         <v-list-subheader>
           {{ $t("shop_listing.search.location_subtitle") }}
         </v-list-subheader>
@@ -39,7 +48,7 @@
           <v-slider
             v-model="form.location.default_radius_km"
             :min="1"
-            :max="form.location.max_radius_km"
+            :max="maxRadiusSafe"
             :step="1"
             thumb-label="always"
             color="black"
@@ -73,7 +82,13 @@
             :label="$t('shop_listing.search.radius_options')"
             :hint="$t('shop_listing.search.radius_options_hint')"
             persistent-hint
+            closableChips
           />
+
+          <v-alert type="info" variant="tonal" class="mt-2 mb-0">
+            Remove a chip to hide that radius option on the storefront search UI.
+            If you remove all options, the radius dropdown will be hidden.
+          </v-alert>
         </div>
       </div>
 
@@ -106,24 +121,31 @@
           {{ $t("shop_listing.search.no_filters") }}
         </div>
 
-        <div v-for="(f, idx) in form.filters" :key="`f_${idx}`" class="search-filter">
+        <div
+          v-for="(f, idx) in form.filters"
+          :key="`f_${idx}`"
+          class="search-filter"
+        >
           <div class="d-flex align-center justify-space-between gap-2 flex-wrap">
-
-          <v-select
+            <v-select
               v-model="f.key"
               :items="availableFieldKeys"
               variant="underlined"
               :label="$t('shop_listing.search.filter_field')"
               @update:modelValue="syncFilterFromField(idx)"
             />
-            <v-btn icon variant="text" @click="removeFilter(idx)" title="Delete item from filters">
+
+            <v-btn
+              icon
+              variant="text"
+              @click="removeFilter(idx)"
+              title="Remove this filter"
+            >
               <v-icon>close</v-icon>
             </v-btn>
           </div>
 
-
           <div class="d-flex align-center justify-space-between gap-2 flex-wrap">
-
             <v-text-field
               v-model="f.label"
               variant="underlined"
@@ -148,8 +170,6 @@
               false-gray
               class="ms-auto"
             />
-
-
           </div>
 
           <div v-if="f.type === 'key_value'" class="mt-2">
@@ -174,6 +194,7 @@
               :label="$t('shop_listing.search.filter_options')"
               :hint="$t('shop_listing.search.filter_options_hint')"
               persistent-hint
+              closableChips
             />
           </div>
 
@@ -210,28 +231,41 @@ import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetBu
 import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
+type SearchFilterRow = {
+  key: string;
+  label: string | null;
+  source: "meta";
+  type: "select" | "switch" | "text" | "key_value";
+  multiple: boolean;
+  kv_mode: "key" | "value";
+  options: string[];
+};
+
 export default {
   name: "BShopListingSearchSettings",
   inject: ["$shop"],
   components: { SWidgetButtons, USmartToggle, UWidgetHeader },
 
   data: () => ({
-    busy_fetch: false,
     busy_save: false,
     busy_generate: false,
+    busy_fields: false,
+
     error_text: "",
 
     available_fields: [] as any[],
 
-    form: {
+    // IMPORTANT: this is the DB column key name.
+    search_settings: {
       text: { enabled: true, placeholder: "" },
       location: {
         enabled: false,
         default_radius_km: 10,
         max_radius_km: 50,
+        // IMPORTANT: may be [] (means hide dropdown)
         options_km: [5, 10, 20, 50] as any[],
       },
-      filters: [] as any[],
+      filters: [] as SearchFilterRow[],
     },
   }),
 
@@ -247,6 +281,11 @@ export default {
 
     IS_LISTING_ACTIVE(): boolean {
       return !!(this.shop?.listing?.is_active);
+    },
+
+    // Alias for template readability
+    form(): any {
+      return (this as any).search_settings;
     },
 
     availableFieldKeys(): any[] {
@@ -271,55 +310,194 @@ export default {
         { title: "use value", value: "value" },
       ];
     },
+
+    maxRadiusSafe(): number {
+      const raw = this.form?.location?.max_radius_km ?? 50;
+      const n = parseInt(String(raw), 10);
+      if (!Number.isFinite(n) || Number.isNaN(n)) return 50;
+      return Math.min(500, Math.max(1, n));
+    },
   },
 
   watch: {
-    "shop.id": {
+    // No re-fetch of settings. Just re-read from shop when it changes.
+    "shop.listing.search_settings": {
       immediate: true,
+      deep: true,
       handler() {
-        this.fetch();
+        this.initFromShop();
+      },
+    },
+
+    // keep default radius within max
+    "form.location.max_radius_km": {
+      handler() {
+        const max = this.maxRadiusSafe;
+        const def = parseInt(String(this.form.location.default_radius_km ?? 10), 10) || 10;
+        if (def > max) this.form.location.default_radius_km = max;
       },
     },
   },
 
+  created() {
+    // Settings are loaded from shop.listing.search_settings (no fetch).
+    this.initFromShop();
+
+    // We still need available_fields for filter picker.
+    this.fetchAvailableFieldsOnce();
+  },
+
   methods: {
-    fetch() {
+    initFromShop() {
+      const s = this.shop?.listing?.search_settings;
+
+      // If no settings, keep current (do not force defaults repeatedly).
+      if (!s || typeof s !== "object") return;
+
+      const text = s.text && typeof s.text === "object" ? s.text : {};
+      const loc = s.location && typeof s.location === "object" ? s.location : {};
+      const filters = Array.isArray(s.filters) ? s.filters : [];
+
+      // IMPORTANT: keep [] as []
+      const opts = Array.isArray(loc.options_km) ? loc.options_km : [5, 10, 20, 50];
+
+      this.search_settings = {
+        text: {
+          enabled: !!(text.enabled ?? true),
+          placeholder: String(text.placeholder ?? ""),
+        },
+        location: {
+          enabled: !!(loc.enabled ?? false),
+          default_radius_km: Number(loc.default_radius_km ?? 10),
+          max_radius_km: Number(loc.max_radius_km ?? 50),
+          options_km: opts,
+        },
+        filters: Array.isArray(filters) ? filters : [],
+      };
+    },
+
+    fetchAvailableFieldsOnce() {
       if (!this.shopId) return;
+      if (this.busy_fields) return;
+      if (Array.isArray(this.available_fields) && this.available_fields.length) return;
 
-      this.busy_fetch = true;
-      this.error_text = "";
+      this.busy_fields = true;
 
+      // NOTE: This call should return available_fields. We ignore any "settings" in response.
       axios
         .get(window.API.GET_SHOP_LISTING_SEARCH(this.shopId))
         .then(({ data }) => {
-          if (data?.error) {
-            this.error_text = data.error_msg || "Failed to load search settings.";
-            return;
-          }
-
+          if (data?.error) return;
           this.available_fields = Array.isArray(data.available_fields) ? data.available_fields : [];
-
-          const s = data.settings || null;
-          if (s && typeof s === "object") {
-            this.form = {
-              text: {
-                enabled: !!(s.text?.enabled ?? true),
-                placeholder: String(s.text?.placeholder ?? ""),
-              },
-              location: {
-                enabled: !!(s.location?.enabled ?? false),
-                default_radius_km: Number(s.location?.default_radius_km ?? 10),
-                max_radius_km: Number(s.location?.max_radius_km ?? 50),
-                options_km: Array.isArray(s.location?.options_km) ? s.location.options_km : [5, 10, 20, 50],
-              },
-              filters: Array.isArray(s.filters) ? s.filters : [],
-            };
-          }
         })
-        .catch((e) => NotificationService.showLaravelError(e))
-        .finally(() => (this.busy_fetch = false));
+        .catch((e) => {
+          // silent; UI still works with manual keys
+          NotificationService.showLaravelError(e);
+        })
+        .finally(() => (this.busy_fields = false));
     },
 
+    normalizeRadiusOptions(): number[] {
+      // Must always return array (may be empty)
+      let arr: any[] = Array.isArray(this.form.location.options_km) ? this.form.location.options_km : [];
+
+      arr = arr
+        .map((x: any) => parseInt(String(x), 10))
+        .filter((n: number) => Number.isFinite(n) && !Number.isNaN(n) && n > 0);
+
+      arr = Array.from(new Set(arr)).sort((a, b) => a - b);
+
+      const max = this.maxRadiusSafe;
+      arr = arr.filter((n: number) => n <= max);
+
+      // Keep empty if user cleared
+      this.form.location.options_km = arr;
+
+      return arr;
+    },
+
+    normalizeFiltersForSave(): SearchFilterRow[] {
+      const out: SearchFilterRow[] = [];
+      const list = Array.isArray(this.form.filters) ? this.form.filters : [];
+
+      list.forEach((f: any) => {
+        if (!f || typeof f !== "object") return;
+
+        const key = String(f.key || "").trim();
+        if (!key) return;
+
+        const typeRaw = String(f.type || "select").trim();
+        const type = (["select", "switch", "text", "key_value"].includes(typeRaw) ? typeRaw : "select") as any;
+
+        const kvRaw = String(f.kv_mode || "key").trim();
+        const kv_mode = (["key", "value"].includes(kvRaw) ? kvRaw : "key") as any;
+
+        const label = String(f.label || "").trim();
+        const multiple = !!f.multiple;
+
+        const options = Array.isArray(f.options)
+          ? Array.from(
+            new Set(
+              f.options
+                .map((x: any) => String(x ?? "").trim())
+                .filter((x: string) => x.length),
+            ),
+          )
+          : [];
+
+        out.push({
+          key,
+          label: label || null,
+          source: "meta",
+          type,
+          multiple,
+          kv_mode,
+          options,
+        });
+      });
+
+      return out;
+    },
+
+    buildSavePayload() {
+      const max = this.maxRadiusSafe;
+
+      const defaultRadius = Math.min(
+        max,
+        Math.max(1, parseInt(String(this.form.location.default_radius_km ?? 10), 10) || 10),
+      );
+
+      const options_km = this.normalizeRadiusOptions(); // may be []
+
+      return {
+        // ✅ DB column key name
+        search_settings: {
+          text: {
+            enabled: !!this.form.text.enabled,
+            placeholder: String(this.form.text.placeholder || "").trim() || null,
+          },
+
+          location: {
+            enabled: !!this.form.location.enabled,
+            default_radius_km: defaultRadius,
+            max_radius_km: max,
+            // IMPORTANT: keep empty array if user cleared it
+            options_km,
+          },
+
+          filters: this.normalizeFiltersForSave(),
+        },
+
+        // Let backend auto-generate after save:
+        auto_generate: true,
+        generate: {
+          scan_status: "published",
+          max_options: 200,
+        },
+      };
+    },
+
+    // Keep current UX:
     addFilter() {
       this.form.filters.push({
         key: "",
@@ -347,13 +525,11 @@ export default {
         this.form.filters[index].label = String(field.title || key);
       }
 
-      // If schema says select, set type to select (best UX)
       const t = String(field.type || "").toLowerCase();
       if (t === "select") this.form.filters[index].type = "select";
       if (t === "switch") this.form.filters[index].type = "switch";
       if (t === "key_value") this.form.filters[index].type = "key_value";
 
-      // preserve multiple if already set; otherwise infer
       if (this.form.filters[index].multiple === null || this.form.filters[index].multiple === undefined) {
         this.form.filters[index].multiple = !!field.multiple;
       }
@@ -365,17 +541,37 @@ export default {
       this.busy_save = true;
       this.error_text = "";
 
+      let payload: any;
+      try {
+        payload = this.buildSavePayload();
+      } catch (e: any) {
+        this.error_text = e?.message || "Invalid form.";
+        this.busy_save = false;
+        return;
+      }
+
       axios
-        .post(window.API.POST_SHOP_LISTING_SEARCH_SAVE(this.shopId), {
-          settings: this.form,
-        })
+        .post(window.API.POST_SHOP_LISTING_SEARCH_SAVE(this.shopId), payload)
         .then(({ data }) => {
           if (data?.error) {
             this.error_text = data.error_msg || "Failed to save search settings.";
             return;
           }
+
+          // ✅ Update shop.listing in-place from returned listing (NO fetch)
+          const listing = data?.listing || null;
+          if (listing && this.shop) {
+            if (this.shop.listing && typeof this.shop.listing === "object") {
+              Object.assign(this.shop.listing, listing);
+            } else {
+              this.shop.listing = listing;
+            }
+          } else if (data?.search_settings && this.shop?.listing) {
+            // Fallback (if backend returns only search_settings)
+            this.shop.listing.search_settings = data.search_settings;
+          }
+
           NotificationService.showSuccessAlert(null, "Search settings saved.");
-          this.fetch();
         })
         .catch((e) => NotificationService.showLaravelError(e))
         .finally(() => (this.busy_save = false));
@@ -397,10 +593,23 @@ export default {
             this.error_text = data.error_msg || "Failed to generate options.";
             return;
           }
-          NotificationService.showSuccessAlert(null, "Options generated.");
-          if (data.settings) {
-            this.form.filters = Array.isArray(data.settings.filters) ? data.settings.filters : this.form.filters;
+
+          // update shop.listing in-place if returned
+          const listing = data?.listing || null;
+          if (listing && this.shop) {
+            if (this.shop.listing && typeof this.shop.listing === "object") {
+              Object.assign(this.shop.listing, listing);
+            } else {
+              this.shop.listing = listing;
+            }
+          } else if (data?.search_settings && this.shop?.listing) {
+            this.shop.listing.search_settings = data.search_settings;
+          } else if (data?.settings && this.shop?.listing) {
+            // last fallback
+            this.shop.listing.search_settings = data.settings;
           }
+
+          NotificationService.showSuccessAlert(null, "Options generated.");
         })
         .catch((e) => NotificationService.showLaravelError(e))
         .finally(() => (this.busy_generate = false));
@@ -410,14 +619,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.max-w-320 {
-  max-width: 320px;
-}
-.max-w-220 {
-  max-width: 220px;
-}
-
-.search-filter {
-  padding-top: 6px;
-}
+.max-w-320 { max-width: 320px; }
+.max-w-220 { max-width: 220px; }
+.search-filter { padding-top: 6px; }
 </style>

@@ -77,6 +77,8 @@ type SearchFilterDef = {
 
 export default {
   name: "SStorefrontListingSearchBar",
+
+
   components: {
     SListingSearchText,
     SListingSearchLocation,

@@ -2,28 +2,44 @@
   <div class="sld-block">
     <div class="sld-label">Location</div>
 
-    <!-- If user chose "My location", show a compact pill -->
-    <div
-      v-if="is_my_location"
-      class="sld-my-location"
-      @click="enableAddressInput"
-    >
-      <v-icon size="18" class="me-2">my_location</v-icon>
-      <div class="sld-my-location-text">My location</div>
+    <!-- My location pill -->
+    <div v-if="is_my_location" class="sld-my-location">
+      <div class="d-flex align-center min-w-0" @click="enableAddressInput">
+        <v-icon size="18" class="me-2">my_location</v-icon>
+        <div class="sld-my-location-text text-truncate">My location</div>
+      </div>
 
       <v-spacer />
 
-      <v-btn icon variant="text" size="small" @click.stop="enableAddressInput">
+      <v-btn
+        icon
+        variant="text"
+        size="small"
+        title="Edit location"
+        @click.stop="enableAddressInput"
+      >
         <v-icon size="18">edit</v-icon>
       </v-btn>
+
+      <v-btn
+        icon
+        variant="text"
+        size="small"
+        title="Clear location"
+        @click.stop="clearLocation"
+      >
+        <v-icon size="18">close</v-icon>
+      </v-btn>
     </div>
-    <!-- Otherwise show address input -->
+
+    <!-- Address input -->
     <s-listing-search-address-input
       v-else
-      v-model="internal.text"
+      :model-value="internal.text"
       :center="centerSafe"
       :countries="countriesSafe"
       placeholder="Enter city, area, or address..."
+      @update:modelValue="onTextInput"
       @select:address="onSelectAddress"
       @click:clear="clearLocation"
       @enter="$emit('enter')"
@@ -46,21 +62,20 @@
       </template>
     </s-listing-search-address-input>
 
-    <div class="sld-loc-row">
+    <div v-if="radiusOptions?.length" class="sld-loc-row">
       <div class="sld-loc-label">
         <span>Radius</span>
 
         <v-tooltip location="bottom" :text="radiusHint">
           <template #activator="{ props }">
-            <v-icon v-bind="props" size="16" class="sld-info"
-            >info_outline</v-icon
-            >
+            <v-icon v-bind="props" size="16" class="sld-info">info_outline</v-icon>
           </template>
         </v-tooltip>
       </div>
 
       <v-select
-        v-model="internal.radius_km"
+        :model-value="internal.radius_km"
+        @update:modelValue="onRadiusChange"
         :items="radiusOptions"
         item-title="title"
         item-value="value"
@@ -79,6 +94,13 @@
 
 <script lang="ts">
 import SListingSearchAddressInput from "./SListingSearchAddressInput.vue";
+
+type LocationModel = {
+  text: string;
+  lat: number | null;
+  lng: number | null;
+  radius_km: number | null;
+};
 
 export default {
   name: "SListingSearchLocation",
@@ -100,19 +122,19 @@ export default {
   data: () => ({
     internal: {
       text: "",
-      lat: null as number | null,
-      lng: null as number | null,
-      radius_km: null as number | null,
-    },
+      lat: null,
+      lng: null,
+      radius_km: null,
+    } as LocationModel,
 
-    // Prevent intermediate emits while selecting an address suggestion.
-    selecting: false,
-
-    // ✅ UI-only state (not sent to parent)
     is_my_location: false,
 
-    // previous manual address state to restore after My location mode
-    prev_address: null as any,
+    // Guard flags
+    _syncing_from_parent: false,
+    _selecting: false,
+
+    // optional restore
+    prev_address: null as LocationModel | null,
   }),
 
   computed: {
@@ -126,12 +148,7 @@ export default {
 
     centerSafe(): any {
       const loc = this.shop?.info?.location;
-      if (
-        loc &&
-        typeof loc === "object" &&
-        loc.lat !== undefined &&
-        loc.lng !== undefined
-      ) {
+      if (loc && typeof loc === "object" && loc.lat !== undefined && loc.lng !== undefined) {
         return { lat: loc.lat, lng: loc.lng };
       }
       return null;
@@ -148,55 +165,75 @@ export default {
       immediate: true,
       deep: true,
       handler(v: any) {
-        this.internal = {
+        const next: LocationModel = {
           text: String(v?.text || ""),
-          lat: v?.lat ?? null,
-          lng: v?.lng ?? null,
-          radius_km: v?.radius_km ?? null,
+          lat: this.numOrNull(v?.lat),
+          lng: this.numOrNull(v?.lng),
+          radius_km: this.numOrNull(v?.radius_km),
         };
-      },
-    },
 
-    internal: {
-      deep: true,
-      handler() {
-        // While selecting a suggestion, avoid emitting intermediate values.
-        if (this.selecting) return;
+        // if identical, do nothing (prevents loops)
+        if (this.sameLocation(next, this.internal)) return;
 
-        // Only emit core payload
-        this.$emit("update:modelValue", { ...this.internal });
+        this._syncing_from_parent = true;
+
+        this.internal.text = next.text;
+        this.internal.lat = next.lat;
+        this.internal.lng = next.lng;
+        this.internal.radius_km = next.radius_km;
+
+        // if coords exist but text is empty => likely "my location" mode
+        this.is_my_location = !next.text && next.lat !== null && next.lng !== null;
+
+        this._syncing_from_parent = false;
       },
     },
   },
 
   methods: {
+    numOrNull(v: any): number | null {
+      if (v === null || v === undefined || v === "") return null;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    },
+
+    sameLocation(a: LocationModel, b: LocationModel): boolean {
+      return (
+        String(a.text || "") === String(b.text || "") &&
+        (a.lat ?? null) === (b.lat ?? null) &&
+        (a.lng ?? null) === (b.lng ?? null) &&
+        (a.radius_km ?? null) === (b.radius_km ?? null)
+      );
+    },
+
+    emitUpdate() {
+      if (this._syncing_from_parent) return;
+      this.$emit("update:modelValue", { ...this.internal });
+    },
+
+    // ✅ supports GeoJSON response: geometry.coordinates = [lng, lat]
     extractLatLng(obj: any): { lat: number | null; lng: number | null } {
+      const coords = obj?.geometry?.coordinates;
+      if (Array.isArray(coords) && coords.length >= 2) {
+        const lng = Number(coords[0]);
+        const lat = Number(coords[1]);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) return { lat, lng };
+      }
+
       const candidates = [
         { lat: obj?.lat, lng: obj?.lng },
         { lat: obj?.lat, lng: obj?.lon },
-        { lat: obj?.lat, lng: obj?.long },
         { lat: obj?.latitude, lng: obj?.longitude },
         { lat: obj?.location?.lat, lng: obj?.location?.lng },
         { lat: obj?.location?.lat, lng: obj?.location?.lon },
-        { lat: obj?.location?.latitude, lng: obj?.location?.longitude },
         { lat: obj?.center?.lat, lng: obj?.center?.lng },
-        { lat: obj?.center?.lat, lng: obj?.center?.lon },
         { lat: obj?.point?.lat, lng: obj?.point?.lng },
-        { lat: obj?.point?.lat, lng: obj?.point?.lon },
-        { lat: obj?.position?.lat, lng: obj?.position?.lng },
-        { lat: obj?.position?.lat, lng: obj?.position?.lon },
       ];
 
       for (const c of candidates) {
         const lat = c.lat !== undefined && c.lat !== null ? Number(c.lat) : null;
         const lng = c.lng !== undefined && c.lng !== null ? Number(c.lng) : null;
-
-        if (
-          lat !== null &&
-          lng !== null &&
-          Number.isFinite(lat) &&
-          Number.isFinite(lng)
-        ) {
+        if (lat !== null && lng !== null && Number.isFinite(lat) && Number.isFinite(lng)) {
           return { lat, lng };
         }
       }
@@ -205,54 +242,79 @@ export default {
     },
 
     onSelectAddress(addr: any) {
-      // Selecting from suggestions updates multiple fields (text + lat/lng).
-      // Block intermediate emits so parent state doesn't overwrite coordinates.
-      this.selecting = true;
+      if (this._syncing_from_parent) return;
 
-      // Once user selects an address => we are NOT in my-location mode
+      this._selecting = true;
       this.is_my_location = false;
 
       const p = this.extractLatLng(addr);
       this.internal.lat = p.lat;
       this.internal.lng = p.lng;
 
+      // Keep user-friendly text
       const title = String(addr?.title || "").trim();
       const address = String(addr?.address || "").trim();
-
-      // Always sync display text to the selected suggestion.
       this.internal.text = title || address || this.internal.text;
 
-      // Save it as the last real address
-      this.prev_address = {
-        text: this.internal.text,
-        lat: this.internal.lat,
-        lng: this.internal.lng,
-      };
+      this.prev_address = { ...this.internal };
 
-      // Emit once with the final payload.
+      // Emit once with final payload
       this.$nextTick(() => {
-        this.$emit("update:modelValue", { ...this.internal });
-        this.selecting = false;
+        this.emitUpdate();
+        this._selecting = false;
       });
     },
 
+    onTextInput(val: any) {
+      if (this._syncing_from_parent) return;
+
+      const nextText = String(val || "");
+      this.internal.text = nextText;
+
+      // If user starts typing (not selecting), clear coords (they no longer match)
+      if (!this._selecting && !this.is_my_location) {
+        if (nextText.trim().length) {
+          // user edited => coords become invalid
+          this.internal.lat = null;
+          this.internal.lng = null;
+        } else {
+          // text cleared => clear coords too
+          this.internal.lat = null;
+          this.internal.lng = null;
+        }
+      }
+
+      this.emitUpdate();
+    },
+
+    onRadiusChange(val: any) {
+      if (this._syncing_from_parent) return;
+
+      const n = val !== null && val !== undefined ? parseInt(String(val), 10) : null;
+      this.internal.radius_km = Number.isFinite(n as any) ? (n as any) : null;
+      this.emitUpdate();
+    },
+
     clearLocation() {
+      if (this._syncing_from_parent) return;
+
       this.is_my_location = false;
       this.prev_address = null;
+
       this.internal.text = "";
       this.internal.lat = null;
       this.internal.lng = null;
+
+      this.emitUpdate();
     },
 
     useMyLocation() {
       if (!navigator.geolocation) return;
 
-      // Save current address so user can go back
-      this.prev_address = {
-        text: this.internal.text,
-        lat: this.internal.lat,
-        lng: this.internal.lng,
-      };
+      // store previous manual address (optional restore)
+      if (!this.is_my_location) {
+        this.prev_address = { ...this.internal };
+      }
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -263,10 +325,12 @@ export default {
             this.internal.lat = lat;
             this.internal.lng = lng;
 
-            // IMPORTANT: do NOT fill the address input text (it triggers autocomplete/search)
+            // IMPORTANT: do not fill text (prevents immediate search/autocomplete)
             this.internal.text = "";
 
             this.is_my_location = true;
+
+            this.emitUpdate();
           }
         },
         () => {},
@@ -277,11 +341,12 @@ export default {
     enableAddressInput() {
       this.is_my_location = false;
 
-      // Restore previous address if exists, otherwise keep empty
-      if (this.prev_address) {
-        this.internal.text = String(this.prev_address.text || "");
-        this.internal.lat = this.prev_address.lat ?? null;
-        this.internal.lng = this.prev_address.lng ?? null;
+      // If you want to restore previous address when leaving "my location":
+      if (this.prev_address && this.prev_address.text) {
+        this.internal.text = this.prev_address.text;
+        this.internal.lat = this.prev_address.lat;
+        this.internal.lng = this.prev_address.lng;
+        this.emitUpdate();
       }
     },
   },
@@ -339,6 +404,7 @@ export default {
   align-items: center;
   padding: 0 12px;
   cursor: pointer;
+  gap: 8px;
 }
 
 .sld-my-location-text {
