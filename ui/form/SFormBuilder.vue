@@ -98,6 +98,10 @@ export default {
       default: false,
       type: Boolean,
     },
+    hasKeyValue: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   data: () => ({
@@ -133,6 +137,15 @@ export default {
               },
             ]
           : []),
+          ...(this.hasKeyValue
+            ? [
+                {
+                  title: this.$t("global.form_builder.types.key_value"),
+                  value: "key_value",
+                  icon: "fa:fas fa-key",
+                },
+              ]
+            : []),
 
         {
           title: this.$t("global.commons.note"),

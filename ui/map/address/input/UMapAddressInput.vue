@@ -50,9 +50,10 @@
       @update:focused="setFocused"
       @keydown.enter.stop="auto_complete_address = false"
       :messages="messages ? messages : undefined"
+      :flat="flat"
     >
       <template v-slot:prepend-inner>
-        <v-icon :color="prependIconColor"> {{ prependIcon }}</v-icon>
+        <v-icon v-if="prependIcon" :color="prependIconColor"> {{ prependIcon }}</v-icon>
       </template>
 
       <template v-slot:append-inner>
@@ -248,6 +249,7 @@ export default {
 
     messages: {},
     country: {},
+    flat: Boolean,
   },
 
   data() {

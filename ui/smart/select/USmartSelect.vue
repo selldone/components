@@ -14,7 +14,9 @@
 
 <template>
   <div :class="{ dark: dark, pen: readonly }" class="s--smart-select">
-    <h3 v-if="label" class="my-2">{{ label }}</h3>
+    <h3 v-if="label" class="my-2">
+      <img :src="labelImage" v-if="labelImage" class="me-2" style="width: 24px; height: 24px" />
+      {{ label }}</h3>
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <v-slide-y-transition
@@ -143,6 +145,7 @@ export default {
     decorative: { default: false, type: Boolean },
     backgroundColor: {},
     loading: { default: false, type: Boolean },
+    labelImage : {},
   },
   setup(props, { emit }) {
     // Local reactive state that mirrors `modelValue`

@@ -24,6 +24,7 @@
     :hint="hint"
     :items="items"
     :label="label"
+    :labelImage="labelImage"
     :loading="loading"
     :model-value="localModelValue"
     :readonly="readonly"
@@ -31,6 +32,7 @@
     item-icon="icon"
     item-text="title"
     item-value="id"
+    item-image="image"
     @change="handleChange"
     @update:model-value="updateModelValue"
   >
@@ -48,6 +50,7 @@ export default {
   props: {
     modelValue: {},
     label: {},
+    labelImage : {},
     hint: {},
     trueTitle: {},
     falseTitle: {},
@@ -66,6 +69,9 @@ export default {
     dark: { default: false, type: Boolean },
     clearable: { default: false, type: Boolean },
     loading: { default: false, type: Boolean },
+    trueImage: {}, // Optional: You can use the same icon for image if needed
+    falseImage: {}, // Optional: You can use the same icon for image if needed
+
   },
   setup(props, { emit }) {
     const localModelValue = ref(props.modelValue);
@@ -95,6 +101,7 @@ export default {
         icon: props.trueIcon,
         description: props.trueDescription,
         disabled: props.trueDisabled,
+        image: props.trueImage, // You can use the same icon for image if needed
       },
       {
         id: false,
@@ -102,6 +109,7 @@ export default {
         icon: props.falseIcon,
         description: props.falseDescription,
         disabled: props.falseDisabled,
+        image: props.falseImage, // You can use the same icon for image if needed
       },
     ]);
 

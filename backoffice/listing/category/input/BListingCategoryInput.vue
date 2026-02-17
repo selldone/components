@@ -1,14 +1,4 @@
-<!--
-  - Copyright (c) 2023-2024. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved.
-  -->
-
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-combobox
     v-bind="$attrs"
     v-model:search="search"
@@ -46,7 +36,8 @@
           v-if="item.raw.parent && item.raw.parent.title"
           size="x-small"
           class="mx-1"
-          variant="flat" color="amber"
+          variant="flat"
+          color="amber"
           :prepend-avatar="getShopImagePath(item.raw.parent.icon)"
         >
           {{ item.raw.parent.title }}
@@ -79,22 +70,19 @@
         </template>
 
         <template v-slot:title>
-          <b>
-            {{ item.raw.title }}
-          </b>
+          <b>{{ item.raw.title }}</b>
         </template>
 
-
         <v-list-item-subtitle class="d-flex align-center flex-wrap">
-
           <v-chip
             v-if="item.raw.parent && item.raw.parent.title"
             size="x-small"
             class="me-1 my-1"
-            variant="flat" color="amber"
+            variant="flat"
+            color="amber"
             :prepend-avatar="getShopImagePath(item.raw.parent.icon)"
           >
-            {{$t('global.commons.folder')}}:
+            {{ $t("global.commons.folder") }}:
             {{ item.raw.parent.title }}
           </v-chip>
 
@@ -132,8 +120,9 @@ export default {
   props: {
     modelValue: {},
 
-    rules:{},
-    prependInnerIcon:{},
+    rules: {},
+    prependInnerIcon: {},
+
     /**
      * If true, v-model contains the full category object.
      * If false, v-model contains the category id.
@@ -170,7 +159,7 @@ export default {
      * Input label.
      */
     label: {
-      default: "Category"
+      default: "Category",
     },
 
     /**
@@ -204,13 +193,33 @@ export default {
       return (this as any).$shop;
     },
 
+    /*🟢 Vendor Panel 🟢*/
+    IS_VENDOR_PANEL(): boolean {
+      // @ts-ignore
+      return (
+        (this as any).$route?.params?.vendor_id &&
+        // @ts-ignore
+        (this as any).$route?.matched?.some((record: any) => record?.meta?.vendor)
+      );
+    },
+
+    shopId(): number | null {
+      const id = (this as any).shop?.id;
+      const n = id !== null && id !== undefined ? parseInt(String(id), 10) : 0;
+      return n > 0 ? n : null;
+    },
+
+    shopName(): string {
+      return String((this as any).shop?.name || "").trim();
+    },
+
     selectedId(): number | null {
       const v: any = this.modelValue;
 
       if (this.isObject(v) && v.id) return parseInt(String(v.id), 10) || null;
 
       const id = parseInt(String(v || ""), 10);
-      return isNaN(id) ? null : id;
+      return Number.isNaN(id) ? null : id;
     },
 
     selectedCategory(): any | null {
@@ -223,7 +232,6 @@ export default {
     search: throttle(function () {
       this.getCategories();
     }, (window as any).SERACH_THROTTLE || 600),
-
 
     modelValue: {
       handler() {
@@ -270,18 +278,29 @@ export default {
       return false;
     },
 
-
-
-
-
     getCategories() {
-      const shopId = this.shop?.id;
-      if (!shopId) return;
+      // Vendor panel must use XAPI (shop_name), backoffice uses API (shop_id).
+      const shopId = this.shopId;
+      const shopName = this.shopName;
+
+      if (this.IS_VENDOR_PANEL) {
+        if (!shopName) return;
+      } else {
+        if (!shopId) return;
+      }
 
       this.busy = true;
 
+      // Pick endpoint
+      // @ts-ignore
+      const url = this.IS_VENDOR_PANEL
+        // @ts-ignore
+        ? window.XAPI.GET_SHOP_LISTING_CATEGORIES(shopName)
+        // @ts-ignore
+        : window.API.GET_SHOP_LISTING_CATEGORIES(shopId);
+
       axios
-        .get(window.API.GET_SHOP_LISTING_CATEGORIES(shopId), {
+        .get(url, {
           params: {
             contain: this.selectedId || null,
             search: this.search,

@@ -21,7 +21,7 @@
 
       <v-icon>{{ type?.icon }}</v-icon>
 
-      <b class="mx-1 small">{{ item.title }}</b>
+      <b class="mx-1 small">{{ item.title?.limitWords(8) }}</b>
       <span class="mx-1 small text-nowrap">/ {{ getName(type?.title) }}</span>
 
       <v-spacer></v-spacer>
