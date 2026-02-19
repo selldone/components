@@ -18,6 +18,12 @@
     rounded="xl"
     variant="flat"
   >
+    <!-- ✅ Featured ribbon badge (minimal black flag) -->
+    <div v-if="item?.is_featured" class="sld-featured-ribbon" aria-label="Featured">
+      <v-icon start>auto_awesome</v-icon>
+      {{$t('global.commons.featured')}}
+    </div>
+
     <div
       class="sld-top-wrap"
       @mouseenter="hoverTop = true"
@@ -95,6 +101,7 @@
                 {{ priceText }}
               </v-chip>
 
+              <!-- keep existing chip (design unchanged) -->
               <v-chip
                 v-if="item?.is_featured"
                 size="x-small"
@@ -179,7 +186,7 @@
         @click.stop="onWebsite"
       >
         <v-icon size="18" class="me-2">language</v-icon>
-        <span class="sld-action-text">{{ websiteActionText }}</span>
+        <span class="sld-action-text">{{ $t("global.commons.website") }}</span>
       </button>
 
       <div class="sld-action-sep"></div>
@@ -397,6 +404,8 @@ export default {
 
 <style lang="scss" scoped>
 .sld-item-card {
+  position: relative; /* ✅ needed for ribbon positioning */
+
   background: #fff;
   border: 1px solid rgba(20, 20, 20, 0.08);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
@@ -407,6 +416,39 @@ export default {
     box-shadow: 0 16px 38px rgba(0, 0, 0, 0.10);
     transform: translateY(-1px);
   }
+}
+
+/* ✅ Minimal "hanging flag" Featured badge */
+.sld-featured-ribbon {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 3;
+  border-radius: 4px;
+
+  background: #009688;
+  color: #fff;
+
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  padding: 12px 14px 14px;
+  line-height: 1;
+
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.16);
+
+  /* small "flag notch" */
+  clip-path: polygon(
+      0% 0%,
+      100% 0%,
+      100% 100%,
+      52% 82%,
+      0% 100%
+  );
+
+  pointer-events: none;
 }
 
 .sld-top-wrap {
@@ -495,6 +537,7 @@ export default {
 
 .sld-chip {
   background: rgba(0, 0, 0, 0.04) !important;
+  margin-inline-end: 2px;
 }
 
 .sld-rating {

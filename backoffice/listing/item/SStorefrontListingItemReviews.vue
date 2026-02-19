@@ -340,10 +340,12 @@
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
+import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 
 export default {
   name: "SStorefrontListingItemReviews",
   components: { SWidgetButtons },
+  mixins:[AuthMixin],
 
   inject: ["$shop"],
 
@@ -546,6 +548,10 @@ export default {
     },
 
     openCreateForm() {
+      if (!this.USER()) {
+        return this.NeedLogin();
+      }
+
       this.form = { rating: 5, title: "", content: "" };
       this.form_dialog = true;
     },

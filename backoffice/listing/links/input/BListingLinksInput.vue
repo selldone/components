@@ -22,6 +22,7 @@
       prepend-inner-icon="link"
       hide-selected
       @update:model-value="onUpdate"
+      messages="Add one or more URLs. Press Enter after each link."
     >
       <template #chip="{ item, props }">
         <v-chip
@@ -35,9 +36,7 @@
       </template>
     </v-combobox>
 
-    <small class="text-muted d-block mt-1">
-      Add one or more URLs. Press Enter after each link.
-    </small>
+
   </div>
 </template>
 
@@ -67,7 +66,7 @@ export default {
     resolvedLabel(): string {
       if (this.label) return this.label;
       // @ts-ignore
-      return typeof this.$t === "function" ? this.$t("shop_listing.items.links") : "Links";
+      return typeof this.$t === "function" ? this.$t("global.commons.links") : "Links";
     },
 
     proxy(): string[] {

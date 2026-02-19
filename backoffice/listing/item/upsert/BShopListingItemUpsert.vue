@@ -1,13 +1,19 @@
+<!--
+  - Copyright (c) 2026. Selldone® Business OS™
+  -
+  - Author: M.Pajuhaan
+  - Web: https://selldone.com
+  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  -
+  - All rights reserved.
+  -->
+
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card class="text-start h-100" flat>
     <v-card-title class="d-flex align-center">
       <v-icon class="me-2">edit_attributes</v-icon>
       <div class="font-weight-black">
-        {{
-          isEdit
-            ? $t("shop_listing.items.edit_title")
-            : $t("shop_listing.items.add_title")
-        }}
+        {{ isEdit ? $t("shop_listing.items.edit_title") : $t("shop_listing.items.add_title") }}
       </div>
       <v-spacer />
       <v-chip size="x-small" label variant="tonal">
@@ -104,9 +110,7 @@
 
           <!-- Hours -->
           <v-window-item value="hours">
-            <b-shop-listing-item-tab-hours
-              v-model:opening-hours="form.opening_hours"
-            />
+            <b-shop-listing-item-tab-hours v-model:opening-hours="form.opening_hours" />
           </v-window-item>
 
           <!-- Listing Form (shared) -->
@@ -133,9 +137,35 @@
             />
           </v-window-item>
 
-          <!-- Media (edit mode only) -->
-          <v-window-item v-if="isEdit" value="media">
-            <b-shop-listing-item-tab-media :item-id="item.id" />
+          <!-- ✅ Media tab ALWAYS exists (last tab) -->
+          <v-window-item value="media">
+            <!-- When item exists -->
+            <div v-if="effectiveItemId" class="mt-1">
+              <b-shop-listing-item-tab-media :item-id="effectiveItemId" />
+            </div>
+
+            <!-- When creating (no item yet) -->
+            <div v-else class="widget-box -large mt-2">
+              <u-widget-header :title="$t('global.commons.media')" icon="photo_library" />
+
+              <v-list-subheader>
+                Media uploads require an item ID. First, save the item (create it), then you can upload images here —
+                without closing this editor.
+              </v-list-subheader>
+
+              <s-widget-buttons>
+                <v-btn
+                  color="primary"
+                  size="x-large"
+                  variant="elevated"
+                  :loading="busy_save"
+                  @click="save({ goMediaAfterCreate: true, silentEmit: true, quiet: false })"
+                >
+                  <v-icon start>save</v-icon>
+                  Save item to enable media
+                </v-btn>
+              </s-widget-buttons>
+            </div>
           </v-window-item>
         </v-window>
       </v-form>
@@ -166,6 +196,7 @@
           {{ $t("global.actions.back") }}
         </v-btn>
 
+        <!-- ✅ Next autosaves (Create first, then Edit) -->
         <v-btn
           class="mx-1"
           size="x-large"
@@ -177,13 +208,14 @@
           <v-icon end>chevron_right</v-icon>
         </v-btn>
 
+        <!-- Manual save (emits add/edit => parent may close; kept as-is) -->
         <v-btn
           :loading="busy_save"
           class="mx-1"
           color="primary"
           size="x-large"
           variant="elevated"
-          @click="save"
+          @click="save({ goMediaAfterCreate: false, silentEmit: false, quiet: false })"
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -207,6 +239,18 @@ import BShopListingItemTabHours from "@selldone/components-vue/backoffice/listin
 import BShopListingItemTabMedia from "@selldone/components-vue/backoffice/listing/item/upsert/tabs/BShopListingItemTabMedia.vue";
 import BShopListingItemTabForm from "@selldone/components-vue/backoffice/listing/item/upsert/tabs/BShopListingItemTabForm.vue";
 
+type SaveOptions = {
+  goMediaAfterCreate?: boolean;
+  /**
+   * When true, do NOT emit add/edit events (prevents parent dialog from closing).
+   */
+  silentEmit?: boolean;
+  /**
+   * When true, do not show success toasts (used for Next autosave).
+   */
+  quiet?: boolean;
+};
+
 export default {
   name: "BShopListingItemUpsert",
   mixins: [CurrencyMixin],
@@ -215,7 +259,6 @@ export default {
 
   components: {
     SWidgetButtons,
-
     BShopListingItemTabGeneral,
     BShopListingItemTabDescription,
     BShopListingItemTabPricing,
@@ -238,6 +281,9 @@ export default {
 
     busy_save: false,
     form_error: "",
+
+    // Stored locally to enable media after first create (without closing editor)
+    created_item: null as any | null,
 
     form: {
       category: null as any,
@@ -281,8 +327,8 @@ export default {
   computed: {
     /*🟢 Vendor Panel 🟢*/
     IS_VENDOR_PANEL(): boolean {
+      // @ts-ignore
       return (
-        // @ts-ignore
         this.$route?.params?.vendor_id &&
         // @ts-ignore
         this.$route?.matched?.some((record: any) => record?.meta?.vendor)
@@ -300,11 +346,23 @@ export default {
       return (this as any).$shop;
     },
 
+    effectiveItem(): any | null {
+      // When editing use prop `item`, when creating use `created_item`
+      // @ts-ignore
+      return (this as any).item?.id ? (this as any).item : (this as any).created_item;
+    },
+
+    effectiveItemId(): number | null {
+      const id = this.effectiveItem?.id ? parseInt(String(this.effectiveItem.id), 10) : 0;
+      return id > 0 ? id : null;
+    },
+
     isEdit(): boolean {
-      return !!this.item?.id;
+      return !!this.effectiveItemId;
     },
 
     currencyObject(): any {
+      // @ts-ignore
       return this.form.currency ? this.GetCurrency(this.form.currency) : null;
     },
 
@@ -332,7 +390,6 @@ export default {
       (this.categorySchemaRaw || []).forEach((f: any) => {
         const t = this.getFieldType(f);
         if (t === "note") return;
-
         const name = f?.name ? String(f.name) : "";
         if (name) set.add(name);
       });
@@ -345,7 +402,6 @@ export default {
 
       return (this.listingSchemaRaw || []).filter((f: any) => {
         const t = this.getFieldType(f);
-
         if (t === "note") return true;
 
         const name = f?.name ? String(f.name) : "";
@@ -391,16 +447,27 @@ export default {
       ];
 
       if (this.hasListingFormTab) {
-        t.push({ value: "form_listing", title: this.$t("shop_listing.items.form_fields"), icon: "data_object" });
+        t.push({
+          value: "form_listing",
+          title: this.$t("shop_listing.items.form_fields"),
+          icon: "data_object",
+        });
       }
 
       if (this.hasCategoryFormTab) {
-        t.push({ value: "form_category", title: this.categoryFormTitle, icon: "data_object" });
+        t.push({
+          value: "form_category",
+          title: this.categoryFormTitle,
+          icon: "data_object",
+        });
       }
 
-      if (this.isEdit) {
-        t.push({ value: "media", title: this.$t("global.commons.media"), icon: "photo_library" });
-      }
+      // Always last
+      t.push({
+        value: "media",
+        title: this.$t("global.commons.media"),
+        icon: "photo_library",
+      });
 
       return t;
     },
@@ -447,6 +514,8 @@ export default {
     item: {
       immediate: true,
       handler(newVal: any) {
+        // if editing a real item, forget created_item
+        if (newVal?.id) this.created_item = null;
         this.initForm(newVal);
       },
     },
@@ -461,6 +530,7 @@ export default {
   },
 
   methods: {
+    // ✅ Type normalization only for decision making (schema stays untouched)
     getFieldType(field: any): string {
       const raw = field?.type;
       if (raw === null || raw === undefined || raw === "") return "text";
@@ -478,8 +548,21 @@ export default {
       if (!exists) this.tab = "general";
     },
 
-    nextTab() {
+    async nextTab() {
+      if (this.busy_save) return;
       if (!this.validateCurrentStep()) return;
+
+      // ✅ Auto-save on Next:
+      // - Create on first time (no id yet)
+      // - Edit on subsequent steps
+      // - No emits => parent won't close dialog
+      // - Quiet => no toast spam
+      const ok = await this.save({
+        goMediaAfterCreate: false,
+        silentEmit: true,
+        quiet: true,
+      });
+      if (!ok) return;
 
       const i = this.tabs.findIndex((x: any) => x.value === this.tab);
       if (i >= 0 && i < this.tabs.length - 1) this.tab = this.tabs[i + 1].value;
@@ -530,8 +613,7 @@ export default {
     },
 
     initForm(item: any | null) {
-      const defaultCurrency =
-        this.shop?.listing?.default_currency || this.shop?.currency || "";
+      const defaultCurrency = this.shop?.listing?.default_currency || this.shop?.currency || "";
 
       this.form_error = "";
       this.tab = "general";
@@ -586,9 +668,7 @@ export default {
         category: item.category || item.category_id || null,
 
         company_id: item.company_id ?? item.company?.id ?? null,
-        badge_ids: Array.isArray(item.badge_ids)
-          ? this.normalizeBadgeIds(item.badge_ids)
-          : this.normalizeBadgeIds(item),
+        badge_ids: Array.isArray(item.badge_ids) ? this.normalizeBadgeIds(item.badge_ids) : this.normalizeBadgeIds(item),
 
         title: item.title || "",
         slug: item.slug || "",
@@ -670,7 +750,6 @@ export default {
       const type = this.getFieldType(field);
 
       if (type === "note") return undefined;
-
       if (type === "switch") return !!value;
 
       if (type === "select") {
@@ -704,10 +783,7 @@ export default {
       }
 
       if (value === null || value === undefined) return null;
-
-      if (Array.isArray(value) || (value && typeof value === "object")) {
-        return value;
-      }
+      if (Array.isArray(value) || (value && typeof value === "object")) return value;
 
       const v = String(value).trim();
       return v ? v : null;
@@ -734,14 +810,8 @@ export default {
     },
 
     buildFinalMetaPayload() {
-      const listingMeta = this.buildMetaFromSchema(
-        this.listingSchemaEffective,
-        this.form.listing_fields,
-      );
-      const categoryMeta = this.buildMetaFromSchema(
-        this.categorySchema,
-        this.form.category_fields,
-      );
+      const listingMeta = this.buildMetaFromSchema(this.listingSchemaEffective, this.form.listing_fields);
+      const categoryMeta = this.buildMetaFromSchema(this.categorySchema, this.form.category_fields);
 
       return {
         ...(this.form.meta_extra || {}),
@@ -756,9 +826,21 @@ export default {
       if (!this.categoryId) throw new Error("Category is required.");
     },
 
-    save() {
+    /**
+     * Save item:
+     * - Create on first call (no item id yet)
+     * - Edit on subsequent calls
+     * - Can optionally jump to media after create
+     * - Can be silent (no emits) to keep dialog open
+     * - Can be quiet (no toast spam)
+     */
+    async save(opts: SaveOptions = {}): Promise<boolean> {
       const shopId = this.shop?.id;
-      if (!shopId) return;
+      if (!shopId) return false;
+
+      const goMediaAfterCreate = !!opts.goMediaAfterCreate;
+      const silentEmit = !!opts.silentEmit;
+      const quiet = !!opts.quiet;
 
       this.form_error = "";
 
@@ -767,21 +849,15 @@ export default {
         this.validateForm();
       } catch (e: any) {
         this.form_error = e?.message || "Invalid form.";
-        return;
+        return false;
       }
 
       const payload: any = {
         title: (this.form.title || "").trim(),
         slug: (this.form.slug || "").trim() || null,
 
-        company_id: this.form.company_id
-          ? parseInt(String(this.form.company_id), 10)
-          : null,
-
-        badge_ids:
-          Array.isArray(this.form.badge_ids) && this.form.badge_ids.length
-            ? this.form.badge_ids
-            : null,
+        company_id: this.form.company_id ? parseInt(String(this.form.company_id), 10) : null,
+        badge_ids: Array.isArray(this.form.badge_ids) && this.form.badge_ids.length ? this.form.badge_ids : null,
 
         subtitle: (this.form.subtitle || "").trim() || null,
         description: (this.form.description || "").trim() || null,
@@ -806,67 +882,76 @@ export default {
 
         is_featured: this.form.is_featured ? "1" : "0",
 
-        links:
-          Array.isArray(this.form.links) && this.form.links.length
-            ? this.form.links
-            : null,
-
-        opening_hours:
-          Array.isArray(this.form.opening_hours) &&
-          this.form.opening_hours.length
-            ? this.form.opening_hours
-            : null,
+        links: Array.isArray(this.form.links) && this.form.links.length ? this.form.links : null,
+        opening_hours: Array.isArray(this.form.opening_hours) && this.form.opening_hours.length ? this.form.opening_hours : null,
 
         meta: this.buildFinalMetaPayload(),
       };
 
+      if (this.busy_save) return false;
       this.busy_save = true;
 
-      // ✅ Only API selection changes (Vendor panel vs Backoffice)
+      const currentId = this.effectiveItemId;
+
       const request =
         this.IS_VENDOR_PANEL && this.vendorId
-          ? (this.isEdit
-            ? axios.post(
-              window.VAPI.POST_MY_VENDOR_LISTING_ITEM_EDIT(
-                this.vendorId,
-                this.item.id,
-              ),
-              payload,
-            )
-            : axios.post(
-              window.VAPI.POST_MY_VENDOR_LISTING_ITEM_ADD(this.vendorId),
-              payload,
-            ))
-          : (this.isEdit
-            ? axios.post(
-              window.API.POST_SHOP_LISTING_ITEM_EDIT(shopId, this.item.id),
-              payload,
-            )
+          ? (currentId
+            ? axios.post(window.VAPI.POST_MY_VENDOR_LISTING_ITEM_EDIT(this.vendorId, currentId), payload)
+            : axios.post(window.VAPI.POST_MY_VENDOR_LISTING_ITEM_ADD(this.vendorId), payload))
+          : (currentId
+            ? axios.post(window.API.POST_SHOP_LISTING_ITEM_EDIT(shopId, currentId), payload)
             : axios.post(window.API.POST_SHOP_LISTING_ITEM_ADD(shopId), payload));
 
-      request
-        .then(({ data }) => {
-          if (data?.error) {
-            NotificationService.showErrorAlert(null, data.error_msg);
-            return;
-          }
+      try {
+        const { data } = await request;
 
-          const saved = data.item || data.result || data;
-          if (!saved?.id) {
-            NotificationService.showErrorAlert(null, "Invalid server response.");
-            return;
-          }
+        if (data?.error) {
+          const msg = data.error_msg || "Failed to save item.";
+          if (quiet) this.form_error = msg;
+          else NotificationService.showErrorAlert(null, msg);
+          return false;
+        }
 
-          if (this.isEdit) {
-            this.$emit("edit", saved);
-            NotificationService.showSuccessAlert(null, "Item updated successfully.");
-          } else {
-            this.$emit("add", saved);
-            NotificationService.showSuccessAlert(null, "Item created successfully.");
-          }
-        })
-        .catch((error) => NotificationService.showLaravelError(error))
-        .finally(() => (this.busy_save = false));
+        const saved = data.item;
+        if (!saved?.id) {
+          const msg = "Invalid server response.";
+          if (quiet) this.form_error = msg;
+          else NotificationService.showErrorAlert(null, msg);
+          return false;
+        }
+
+        const wasCreate = !currentId;
+
+        if (wasCreate) {
+          // ✅ Keep item inside editor so Media becomes available without closing
+          this.created_item = saved;
+
+          // Optional: keep UI consistent with backend generated values
+          if (!this.form.slug && saved.slug) this.form.slug = saved.slug;
+          if (!this.form.status && saved.status) this.form.status = saved.status;
+
+          if (!silentEmit) this.$emit("add", saved);
+          if (!quiet) NotificationService.showSuccessAlert(null, "Item created successfully.");
+        } else {
+          if (!silentEmit) this.$emit("edit", saved);
+          if (!quiet) NotificationService.showSuccessAlert(null, "Item updated successfully.");
+        }
+
+        if (goMediaAfterCreate) {
+          this.tab = "media";
+        }
+
+        return true;
+      } catch (error: any) {
+        if (quiet) {
+          this.form_error = "Failed to save item.";
+        } else {
+          NotificationService.showLaravelError(error);
+        }
+        return false;
+      } finally {
+        this.busy_save = false;
+      }
     },
   },
 };

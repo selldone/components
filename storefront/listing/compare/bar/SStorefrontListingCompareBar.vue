@@ -91,8 +91,8 @@
         <v-btn
           color="black"
           variant="flat"
-          size="small"
-          class="sld-btn"
+          size="large"
+          class="sld-btn sld-btn--compare"
           :disabled="items.length < 2"
           @click="goCompare"
         >
@@ -100,10 +100,19 @@
           Compare
         </v-btn>
 
-        <v-btn variant="text" size="small" class="sld-btn" @click="clear">
+        <v-btn
+          variant="text"
+          size="large"
+          class="sld-btn sld-btn--clear"
+          @click="clear"
+        >
           Clear
         </v-btn>
       </div>
+
+
+
+
     </div>
   </div>
 </template>
@@ -425,13 +434,28 @@ export default {
 .sld-right {
   flex: 0 0 auto;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;   // ✅ stack vertically
+  align-items: stretch;
   gap: 8px;
+
+  // ✅ make the right column have a stable height
+  height: 96px;             // tweak if you want bigger/smaller
+  min-width: 160px;
 }
 
 .sld-btn {
   border-radius: 10px;
+  width: 100%;
+
+  // ✅ each button takes 50% height
+  flex: 1 1 0;
+  min-height: 0;
+  height: 0;                // lets flex control height exactly
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 
 @media (max-width: 520px) {
   .sld-title {

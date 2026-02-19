@@ -3,7 +3,8 @@
     <u-loading-progress v-if="busy" />
 
     <v-select
-      v-model="internal"
+      :model-value="internal"
+      @update:modelValue="onInternalChange"
       :items="filteredCompanies"
       item-title="name"
       item-value="id"
@@ -15,7 +16,6 @@
       :hide-details="hideDetails"
       :menu-props="{ maxHeight: 420 }"
       prepend-inner-icon="business"
-      @update:modelValue="onChange"
     >
       <!-- Search inside dropdown -->
       <template v-slot:prepend-item>
@@ -141,7 +141,11 @@ export default {
     busy: false,
     companies: [] as any[],
     search: "",
+
     internal: null as number | null,
+
+    _syncing: false,
+    _loaded_for_key: "" as string,
   }),
 
   computed: {
@@ -151,19 +155,18 @@ export default {
 
     /*🟢 Vendor Panel 🟢*/
     IS_VENDOR_PANEL(): boolean {
-      // Standard detection requested
       // @ts-ignore
       return (
-        this.$route?.params?.vendor_id &&
+        (this as any).$route?.params?.vendor_id &&
         // @ts-ignore
-        this.$route?.matched?.some((record: any) => record?.meta?.vendor)
+        (this as any).$route?.matched?.some((record: any) => record?.meta?.vendor)
       );
     },
 
     vendorIdSafe(): number | null {
       if (!this.IS_VENDOR_PANEL) return null;
       // @ts-ignore
-      const raw = this.$route?.params?.vendor_id;
+      const raw = (this as any).$route?.params?.vendor_id;
       const id = raw !== null && raw !== undefined ? parseInt(String(raw), 10) : 0;
       return id > 0 ? id : null;
     },
@@ -174,7 +177,6 @@ export default {
     },
 
     contextKey(): string {
-      // Used to auto-refetch when switching contexts
       if (this.IS_VENDOR_PANEL) return `vendor:${this.vendorIdSafe || 0}`;
       return `shop:${this.shopIdSafe || 0}`;
     },
@@ -182,27 +184,40 @@ export default {
     resolvedLabel(): string {
       if (this.label) return this.label;
       // @ts-ignore
-      return typeof this.$t === "function"
-        ? this.$t("shop_listing.items.company")
+      return typeof (this as any).$t === "function"
+        ? (this as any).$t("shop_listing.items.company")
         : "Company";
     },
 
     searchLabel(): string {
       // @ts-ignore
-      return typeof this.$t === "function" ? this.$t("global.commons.search") : "Search";
+      return typeof (this as any).$t === "function"
+        ? (this as any).$t("global.commons.search")
+        : "Search";
+    },
+
+    selectedId(): number | null {
+      const v: any = this.modelValue;
+
+      if (v && typeof v === "object" && !Array.isArray(v)) {
+        const id = v?.id ? parseInt(String(v.id), 10) : 0;
+        return id > 0 ? id : null;
+      }
+
+      const id = v !== null && v !== undefined ? parseInt(String(v), 10) : 0;
+      return id > 0 ? id : null;
     },
 
     filteredCompanies(): any[] {
       let list = Array.isArray(this.companies) ? this.companies : [];
 
-      // Filter
       if (this.activeOnly) {
         list = list.filter((c: any) => !!c?.is_active && !c?.deleted_at);
       } else if (!this.withTrashed) {
         list = list.filter((c: any) => !c?.deleted_at);
       }
 
-      // Ensure currently selected company is still visible even if inactive
+      // Keep selected visible (even if inactive/deleted)
       if (this.internal) {
         const selected = this.findCompanyById(this.internal);
         if (selected && !list.some((x: any) => x?.id === selected.id)) {
@@ -210,7 +225,6 @@ export default {
         }
       }
 
-      // Local search (dropdown-only)
       const s = (this.search || "").trim().toLowerCase();
       if (!s) return list;
 
@@ -222,123 +236,97 @@ export default {
         return n.includes(s) || w.includes(s) || e.includes(s) || t.includes(s);
       });
     },
-
-    selectedId(): number | null {
-      const v: any = this.modelValue;
-
-      if (this.isObject(v) && v.id) {
-        const id = parseInt(String(v.id), 10);
-        return Number.isFinite(id) && id > 0 ? id : null;
-      }
-
-      const id = v !== null && v !== undefined ? parseInt(String(v), 10) : 0;
-      return Number.isFinite(id) && id > 0 ? id : null;
-    },
-
-    selectedCompany(): any | null {
-      if (!this.selectedId) return null;
-      return this.companies.find((c: any) => c && c.id === this.selectedId) || null;
-    },
   },
 
   watch: {
-    // Auto-fetch when context switches (shop vs vendor, or different vendor)
     contextKey: {
       immediate: true,
       handler() {
-        this.fetchCompanies();
+        // context changed => refetch
+        this.fetchCompanies(true);
       },
     },
 
-    // Refetch when toggling trashed (vendor endpoint supports it too)
     withTrashed() {
-      this.fetchCompanies();
+      this.fetchCompanies(true);
     },
 
     modelValue: {
+      immediate: true,
       handler() {
-        // Ensure selected row exists for stable UI (contain)
-        if (this.selectedId && !this.selectedCompany) {
-          this.fetchCompanies();
+        // sync internal from modelValue (NO loops)
+        this._syncing = true;
+        this.internal = this.selectedId;
+        this.$nextTick(() => (this._syncing = false));
+
+        // if selected not found in fetched list, refetch once (contain helps if backend supports)
+        if (this.selectedId && !this.findCompanyById(this.selectedId)) {
+          this.fetchCompanies(false);
         }
       },
     },
   },
 
   methods: {
-    isObject(val: any): boolean {
-      return val !== null && typeof val === "object" && !Array.isArray(val);
-    },
-
     findCompanyById(id: number) {
       return (this.companies || []).find((c: any) => c?.id === id) || null;
     },
 
-    onChange(val: any) {
-      const id = val !== null && val !== undefined ? parseInt(String(val), 10) : null;
-      const normalized = id && Number.isFinite(id) ? id : null;
+    normalizeCompanies(raw: any[]): any[] {
+      const list = Array.isArray(raw) ? raw : [];
+
+      return list
+        .map((c: any) => {
+          const id = c?.id !== null && c?.id !== undefined ? parseInt(String(c.id), 10) : 0;
+          if (!id) return null;
+
+          return {
+            ...c,
+            id, // ✅ force numeric id (fixes "selected not showing")
+          };
+        })
+        .filter(Boolean);
+    },
+
+    onInternalChange(val: any) {
+      const id = val !== null && val !== undefined ? parseInt(String(val), 10) : 0;
+      const next = id > 0 ? id : null;
+
+      // update local
+      this.internal = next;
+
+      // avoid emitting while syncing from parent
+      if (this._syncing) return;
 
       if (this.returnObject) {
-        this.$emit("update:modelValue", normalized ? this.findCompanyById(normalized) : null);
+        this.$emit("update:modelValue", next ? this.findCompanyById(next) : null);
       } else {
-        this.$emit("update:modelValue", normalized);
+        this.$emit("update:modelValue", next);
       }
     },
 
-    fetchCompanies() {
-      // Vendor panel → VAPI
-      if (this.IS_VENDOR_PANEL) {
-        const vendorId = this.vendorIdSafe;
-        if (!vendorId) return;
+    fetchCompanies(force: boolean) {
+      const ctx = this.contextKey;
+      if (!force && this._loaded_for_key === ctx && this.companies.length) return;
 
-        this.busy = true;
-
-        axios
-          .get(window.VAPI.GET_MY_VENDOR_LISTING_COMPANIES(vendorId), {
-            params: {
-              offset: 0,
-              limit: Math.min(Math.max(1, parseInt(String(this.limit || 100), 10) || 100), 100),
-
-              // Keep selected row available in list
-              contain: this.selectedId || null,
-
-              with_trashed: this.withTrashed ? "true" : "false",
-              sortBy: "sort_order",
-              sortDesc: "false",
-            },
-          })
-          .then(({ data }) => {
-            if (data?.error) {
-              NotificationService.showErrorAlert(null, data.error_msg);
-              return;
-            }
-
-            this.companies = Array.isArray(data.companies) ? data.companies : [];
-
-            // Keep v-model synced to object form if required
-            if (this.returnObject && this.selectedId) {
-              const obj = this.findCompanyById(this.selectedId);
-              this.$emit("update:modelValue", obj || null);
-            }
-          })
-          .catch((error) => NotificationService.showLaravelError(error))
-          .finally(() => (this.busy = false));
-
-        return;
-      }
-
-      // Shop backoffice → API
+      const vendorId = this.vendorIdSafe;
       const shopId = this.shopIdSafe;
-      if (!shopId) return;
+
+      const url = this.IS_VENDOR_PANEL
+        ? (vendorId ? window.VAPI.GET_MY_VENDOR_LISTING_COMPANIES(vendorId) : null)
+        : (shopId ? window.API.GET_SHOP_LISTING_COMPANIES(shopId) : null);
+
+      if (!url) return;
 
       this.busy = true;
 
       axios
-        .get(window.API.GET_SHOP_LISTING_COMPANIES(shopId), {
+        .get(url, {
           params: {
             offset: 0,
             limit: Math.min(Math.max(1, parseInt(String(this.limit || 100), 10) || 100), 100),
 
+            // optional: if backend supports, it should include selected row even if filtered/paged
             contain: this.selectedId || null,
 
             with_trashed: this.withTrashed ? "true" : "false",
@@ -352,12 +340,35 @@ export default {
             return;
           }
 
-          this.companies = Array.isArray(data.companies) ? data.companies : [];
+          const list = this.normalizeCompanies(data.companies);
 
+          // ✅ use your universal helper if exists (keeps array stable, no reactivity glitches)
+          // @ts-ignore
+          if (typeof (this as any).AddOrUpdateItemByID === "function") {
+            // Keep old list but update/add incoming ones
+            // (Do not delete old ones; safe for selection stability)
+            list.forEach((c: any) => {
+              // @ts-ignore
+              (this as any).AddOrUpdateItemByID(this.companies, c, "id", false);
+            });
+          } else {
+            this.companies = list;
+          }
+
+          // Ensure internal matches selectedId after load
+          if (this.selectedId) {
+            this._syncing = true;
+            this.internal = this.selectedId;
+            this.$nextTick(() => (this._syncing = false));
+          }
+
+          // If returnObject, keep v-model object synced
           if (this.returnObject && this.selectedId) {
             const obj = this.findCompanyById(this.selectedId);
             this.$emit("update:modelValue", obj || null);
           }
+
+          this._loaded_for_key = ctx;
         })
         .catch((error) => NotificationService.showLaravelError(error))
         .finally(() => (this.busy = false));
