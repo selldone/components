@@ -50,7 +50,7 @@
       scrollable
       transition="dialog-bottom-transition"
     >
-      <v-card rounded="0" class="h-100">
+      <v-card rounded="0" class="text-start">
         <v-toolbar flat>
           <v-btn icon variant="text" @click="preview_dialog = false">
             <v-icon>close</v-icon>

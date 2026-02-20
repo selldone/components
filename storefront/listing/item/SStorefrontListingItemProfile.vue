@@ -53,7 +53,11 @@
             :map-url="mapUrl"
             @open:url="openUrl"
           />
-
+          <s-storefront-listing-item-profile-hours
+            v-if="item?.opening_hours"
+            class="mt-4"
+            :opening-hours="item.opening_hours"
+          />
           <s-storefront-listing-message-form
             v-if="item"
             class="mt-4"
@@ -61,7 +65,13 @@
             :item-title="item.title"
             @sent="() => {}"
           />
+
+
+
         </div>
+
+
+
       </div>
 
       <s-storefront-listing-item-reviews
@@ -89,6 +99,8 @@ import SStorefrontListingItemProfileBadges from "./parts/SStorefrontListingItemP
 import SStorefrontListingItemProfileBio from "./parts/SStorefrontListingItemProfileBio.vue";
 import SStorefrontListingItemProfileMeta from "./parts/SStorefrontListingItemProfileMeta.vue";
 import SStorefrontListingItemProfileSidebar from "./parts/SStorefrontListingItemProfileSidebar.vue";
+import SStorefrontListingItemProfileHours
+  from "@selldone/components-vue/storefront/listing/item/parts/SStorefrontListingItemProfileHours.vue";
 
 export default {
   name: "SStorefrontListingItemProfile",
@@ -102,6 +114,7 @@ export default {
     SStorefrontListingItemProfileBio,
     SStorefrontListingItemProfileMeta,
     SStorefrontListingItemProfileSidebar,
+    SStorefrontListingItemProfileHours
   },
 
   inject: ["$shop"],
