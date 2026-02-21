@@ -293,7 +293,7 @@ export default {
 
       // Pick endpoint
       // @ts-ignore
-      const url = this.IS_VENDOR_PANEL
+      const url = this.IS_VENDOR_PANEL && window.XAPI
         // @ts-ignore
         ? window.XAPI.GET_SHOP_LISTING_CATEGORIES(shopName)
         // @ts-ignore
