@@ -1,3 +1,13 @@
+<!--
+  - Copyright (c) 2023-2026. Selldone® Business OS™
+  -
+  - Author: M.Pajuhaan
+  - Web: https://selldone.com
+  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  -
+  - All rights reserved.
+  -->
+
 <template>
   <div class="text-start sld-prof">
     <u-loading-progress v-if="busy" />
@@ -19,7 +29,7 @@
         :images="images"
         :hero-height="heroHeight"
         :price-text="priceText"
-        :company="companyResolved"
+        :company="item.company"
         :media="mediaAttachments"
         @open:url="openUrl"
       />
@@ -41,9 +51,7 @@
             :text="bioText"
           />
 
-          <s-storefront-listing-item-profile-meta
-            :sections="metaSections"
-          />
+          <s-storefront-listing-item-profile-meta :sections="metaSections" />
         </div>
 
         <!-- RIGHT -->
@@ -53,11 +61,13 @@
             :map-url="mapUrl"
             @open:url="openUrl"
           />
+
           <s-storefront-listing-item-profile-hours
-            v-if="item?.opening_hours"
+            v-if="hasOpeningHours"
             class="mt-4"
             :opening-hours="item.opening_hours"
           />
+
           <s-storefront-listing-message-form
             v-if="item"
             class="mt-4"
@@ -65,13 +75,7 @@
             :item-title="item.title"
             @sent="() => {}"
           />
-
-
-
         </div>
-
-
-
       </div>
 
       <s-storefront-listing-item-reviews
@@ -81,9 +85,7 @@
       />
     </div>
 
-    <div v-else-if="!busy" class="text-muted py-5 text-center">
-      No data.
-    </div>
+    <div v-else-if="!busy" class="text-muted py-5 text-center">No data.</div>
   </div>
 </template>
 
@@ -93,14 +95,13 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import SStorefrontListingMessageForm from "@selldone/components-vue/storefront/listing/messages/SStorefrontListingMessageForm.vue";
 import SStorefrontListingItemReviews from "@selldone/components-vue/backoffice/listing/item/SStorefrontListingItemReviews.vue";
 
-// Child components (new)
+// Child components
 import SStorefrontListingItemProfileHero from "./parts/SStorefrontListingItemProfileHero.vue";
 import SStorefrontListingItemProfileBadges from "./parts/SStorefrontListingItemProfileBadges.vue";
 import SStorefrontListingItemProfileBio from "./parts/SStorefrontListingItemProfileBio.vue";
 import SStorefrontListingItemProfileMeta from "./parts/SStorefrontListingItemProfileMeta.vue";
 import SStorefrontListingItemProfileSidebar from "./parts/SStorefrontListingItemProfileSidebar.vue";
-import SStorefrontListingItemProfileHours
-  from "@selldone/components-vue/storefront/listing/item/parts/SStorefrontListingItemProfileHours.vue";
+import SStorefrontListingItemProfileHours from "@selldone/components-vue/storefront/listing/item/parts/SStorefrontListingItemProfileHours.vue";
 
 export default {
   name: "SStorefrontListingItemProfile",
@@ -114,13 +115,17 @@ export default {
     SStorefrontListingItemProfileBio,
     SStorefrontListingItemProfileMeta,
     SStorefrontListingItemProfileSidebar,
-    SStorefrontListingItemProfileHours
+    SStorefrontListingItemProfileHours,
   },
 
   inject: ["$shop"],
 
   props: {
-    itemId: { type: Number, required: true },
+    /**
+     * Legacy support: numeric item id.
+     * If not provided, we resolve from route param ":item" using "slug-id" format.
+     */
+    itemId: { type: Number, default: null },
   },
 
   data: () => ({
@@ -128,13 +133,37 @@ export default {
     error_text: "",
     item: null as any | null,
 
-    // Keep only what you might need later; do not fetch extra here.
-    companies_db: [] as any[],
+    _fetch_seq: 0,
   }),
 
   computed: {
     shop(): any {
       return (this as any).$shop;
+    },
+
+    shopName(): string {
+      return String(this.shop?.name || "").trim();
+    },
+
+    routeItemSegment(): string {
+      // router: /listing/:category/:item
+      // @ts-ignore
+      const raw = this.$route?.params?.item;
+      return raw !== undefined && raw !== null ? String(raw).trim() : "";
+    },
+
+    effectiveItemId(): number | null {
+      // 1) prop
+      const p = this.itemId !== null && this.itemId !== undefined ? parseInt(String(this.itemId), 10) : 0;
+      if (Number.isFinite(p) && p > 0) return p;
+
+      // 2) route param "slug-id" (or "id")
+      return this.extractIdFromSlugId(this.routeItemSegment);
+    },
+
+    fetchKey(): string {
+      // single watcher -> prevents double initial fetch
+      return `${this.shopName || ""}|${this.effectiveItemId || 0}`;
     },
 
     heroHeight(): number {
@@ -160,6 +189,14 @@ export default {
       return media
         .filter((m: any) => String(m?.type || "") !== "image")
         .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    },
+
+    hasOpeningHours(): boolean {
+      const oh: any = this.item?.opening_hours;
+      if (!oh) return false;
+      if (Array.isArray(oh)) return oh.length > 0;
+      if (typeof oh === "object") return Object.keys(oh).length > 0;
+      return false;
     },
 
     priceText(): string {
@@ -193,20 +230,6 @@ export default {
         String(meta.biography || "").trim().length > 0;
 
       return hasBio ? "Biography" : "Description";
-    },
-
-    companyResolved(): any | null {
-      // If API provides company object:
-      if (this.item?.company && typeof this.item.company === "object") return this.item.company;
-
-      const id = this.item?.company_id ? parseInt(String(this.item.company_id), 10) : 0;
-      if (!id) return null;
-
-      const found = (this.companies_db || []).find(
-        (c: any) => parseInt(String(c?.id || ""), 10) === id,
-      );
-
-      return found || { id, name: `Company #${id}`, logo: null };
     },
 
     mapUrl(): string {
@@ -264,7 +287,8 @@ export default {
   },
 
   watch: {
-    itemId: {
+    // Single source of truth for fetching (prevents double fetch on first load)
+    fetchKey: {
       immediate: true,
       handler() {
         this.fetchItem();
@@ -273,6 +297,24 @@ export default {
   },
 
   methods: {
+    extractIdFromSlugId(raw: any): number | null {
+      const s = String(raw ?? "").trim();
+      if (!s) return null;
+
+      // "123"
+      if (/^\d+$/.test(s)) {
+        const n = parseInt(s, 10);
+        return n > 0 ? n : null;
+      }
+
+      // "...-123" (ONLY last dash-number is id)
+      const m = s.match(/-(\d+)$/);
+      if (!m) return null;
+
+      const id = parseInt(m[1], 10);
+      return id > 0 ? id : null;
+    },
+
     openUrl(url: string) {
       const u = String(url || "").trim();
       if (!u) return;
@@ -290,9 +332,12 @@ export default {
     },
 
     fetchItem() {
-      const shopName = this.shop?.name;
-      const id = parseInt(String(this.itemId || 0), 10);
+      const shopName = this.shopName;
+      const id = this.effectiveItemId;
+
       if (!shopName || !id) return;
+
+      const seq = ++this._fetch_seq;
 
       this.busy = true;
       this.error_text = "";
@@ -301,14 +346,20 @@ export default {
       axios
         .get(window.XAPI.GET_SHOP_LISTING_ITEM(shopName, id))
         .then(({ data }) => {
+          if (seq !== this._fetch_seq) return;
+
           if (data?.error) {
             this.error_text = data.error_msg || "Item not found.";
             return;
           }
+
           this.item = data.item || null;
         })
         .catch((error) => NotificationService.showLaravelError(error))
-        .finally(() => (this.busy = false));
+        .finally(() => {
+          if (seq !== this._fetch_seq) return;
+          this.busy = false;
+        });
     },
   },
 };

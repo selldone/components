@@ -10,10 +10,19 @@
 
 <template>
   <div class="text-start sld-items-wrap">
-    <!-- ✅ New search bar (reads shop.listing.search_settings) -->
-    <s-storefront-listing-search-bar  class="mb-3" @apply="onApplySearch" />
+    <!-- ✅ Search bar -->
+    <s-storefront-listing-search-bar class="mb-3" @apply="onApplySearch" />
 
     <u-loading-progress v-if="busy" />
+
+    <!-- ✅ Subcategories grid (only when API returns it) -->
+    <s-storefront-listing-subcategories-grid
+      v-if="subcategories.length"
+      class="mb-3"
+      :categories="subcategories"
+      :selected-id="categoryIdSafe"
+      @select="onSelectSubcategory"
+    />
 
     <div v-if="items.length" class="sld-items-list">
       <s-storefront-listing-item-card
@@ -60,7 +69,11 @@
 
           <v-spacer />
 
-          <v-btn v-if="preview_item" variant="text" @click="goToProfileFromPreview">
+          <v-btn
+            v-if="preview_item"
+            variant="text"
+            @click="goToProfileFromPreview"
+          >
             <v-icon start>person</v-icon>
             View profile
           </v-btn>
@@ -85,6 +98,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import SStorefrontListingItemCard from "@selldone/components-vue/storefront/listing/items/card/SStorefrontListingItemCard.vue";
 import SStorefrontListingItemProfile from "@selldone/components-vue/storefront/listing/item/SStorefrontListingItemProfile.vue";
 import SStorefrontListingSearchBar from "@selldone/components-vue/storefront/listing/search/SStorefrontListingSearchBar.vue";
+import SStorefrontListingSubcategoriesGrid from "./card/SStorefrontListingSubcategoriesGrid.vue";
 
 export default {
   name: "SStorefrontListingItems",
@@ -95,22 +109,27 @@ export default {
     SStorefrontListingItemCard,
     SStorefrontListingItemProfile,
     SStorefrontListingSearchBar,
+    SStorefrontListingSubcategoriesGrid,
   },
 
   props: {
+    /**
+     * Optional legacy support (numeric category id).
+     * If not provided, this component resolves category from route param ":category" (slug).
+     */
     categoryId: { default: null },
 
     /**
-     * How many image media records to return per item in list endpoint.
      * Backend supports 1..3.
      */
     mediaLimit: { type: Number, default: 1 },
   },
 
-  emits: ["select-item", "preview-item"],
+  emits: ["select-item", "preview-item", "select-category"],
 
   data: () => ({
     items: [] as any[],
+    subcategories: [] as any[],
     total: 0,
 
     busy: false,
@@ -119,10 +138,8 @@ export default {
     page: 1,
     perPage: 24,
 
-    // search state (set by search bar)
+    // search state
     search_text: null as string | null,
-
-    // Sort is NOT part of search bar anymore (keep internal default; you can control it elsewhere)
     sortBy: "created_at_desc" as string,
 
     // location
@@ -130,18 +147,62 @@ export default {
     near_lng: null as number | null,
     radius_km: null as number | null,
 
-    // filters (meta filters)
+    // filters
     filters: {} as Record<string, any>,
 
     // Preview
     preview_dialog: false,
     preview_busy: false,
     preview_item: null as any | null,
+
+    // category resolving
+    categories_db: [] as any[],
+    route_category_id: null as number | null,
+
+    // request guards
+    _fetch_seq: 0,
+    _route_sync_seq: 0,
   }),
 
   computed: {
     shop(): any {
       return (this as any).$shop;
+    },
+
+    shopName(): string {
+      return String(this.shop?.name || "").trim();
+    },
+
+    routeCategorySlug(): string | null {
+      // router: /listing/:category?
+      // @ts-ignore
+      const raw = this.$route?.params?.category;
+      const s = raw !== undefined && raw !== null ? String(raw).trim() : "";
+      return s.length ? s : null;
+    },
+
+    categoryIdFromProp(): number | null {
+      const raw = (this as any).categoryId;
+      const n = raw !== null && raw !== undefined ? parseInt(String(raw), 10) : 0;
+      return Number.isFinite(n) && n > 0 ? n : null;
+    },
+
+    /**
+     * ✅ Single watcher key to avoid double initial calls.
+     * This replaces multiple immediate watchers that used to fire together on mount.
+     */
+    routeSyncKey(): string {
+      const shop = this.shopName ? this.shopName.toLowerCase() : "";
+      const slug = this.routeCategorySlug ? this.routeCategorySlug.toLowerCase() : "";
+      const propId = this.categoryIdFromProp ? String(this.categoryIdFromProp) : "";
+      return `${shop}|${propId}|${slug}`;
+    },
+
+    categoryIdSafe(): number | null {
+      // priority:
+      // 1) explicit prop categoryId (legacy)
+      // 2) resolved from route slug
+      return this.categoryIdFromProp || this.route_category_id || null;
     },
 
     offset(): number {
@@ -164,8 +225,15 @@ export default {
   },
 
   watch: {
-    categoryId() {
-      this.resetAndFetch();
+    /**
+     * ✅ ONE watcher, one fetch.
+     * Fixes the "first load = 2 requests" issue.
+     */
+    routeSyncKey: {
+      immediate: true,
+      handler() {
+        this.syncCategoryFromRouteAndFetch();
+      },
     },
 
     mediaLimit() {
@@ -173,26 +241,16 @@ export default {
     },
   },
 
-  created() {
-    this.resetAndFetch();
-  },
-
   methods: {
     parseSort() {
-      // Example: "created_at_desc" -> sortBy="created_at", sortDesc=true
       const raw = String(this.sortBy || "created_at_desc");
       const idx = raw.lastIndexOf("_");
       const field = idx > 0 ? raw.substring(0, idx) : raw;
       const dir = idx > 0 ? raw.substring(idx + 1) : "desc";
-
-      return {
-        sortBy: field || "created_at",
-        sortDesc: dir === "desc",
-      };
+      return { sortBy: field || "created_at", sortDesc: dir === "desc" };
     },
 
     onApplySearch(payload: any) {
-      // Search bar emits: { search, location, filters }
       this.search_text = payload?.search ? String(payload.search).trim() : null;
 
       const loc = payload?.location || null;
@@ -211,9 +269,26 @@ export default {
       this.resetAndFetch();
     },
 
+    /**
+     * ✅ Subcategory click must NAVIGATE (route change).
+     * Route: /listing/:category?  -> use subcategory.slug (no id).
+     */
+    onSelectSubcategory(cat: any) {
+      if (!cat || typeof cat !== "object") return;
+
+      const slug = String(cat?.slug || "").trim();
+      if (!slug) return;
+
+      this.$emit("select-category", cat);
+
+      // @ts-ignore
+      this.$router?.push(`/listing/${encodeURIComponent(slug)}`);
+    },
+
     resetAndFetch() {
       this.page = 1;
       this.items = [];
+      this.subcategories = [];
       this.total = 0;
       this.fetchItems(false);
     },
@@ -223,22 +298,15 @@ export default {
         offset: this.offset,
         limit: this.perPage,
         media_limit: this.mediaLimitSafe,
-
         sortBy,
-        sortDesc: sortDesc ? "true" : "false",
+        sortDesc: sortDesc ? "true" : "false", // GET -> string (Laravel friendly)
       };
 
-      const catId =
-        this.categoryId !== null && this.categoryId !== undefined
-          ? parseInt(String(this.categoryId), 10)
-          : 0;
-
-      if (catId > 0) params.category_id = catId;
+      if (this.categoryIdSafe) params.category_id = this.categoryIdSafe;
 
       const s = String(this.search_text || "").trim();
       if (s.length) params.search = s;
 
-      // Location (send only if valid numbers)
       if (Number.isFinite(this.near_lat as any) && Number.isFinite(this.near_lng as any)) {
         params.lat = this.near_lat;
         params.lng = this.near_lng;
@@ -248,7 +316,6 @@ export default {
         }
       }
 
-      // Filters (send only if non-empty)
       if (this.filters && typeof this.filters === "object" && Object.keys(this.filters).length) {
         params.filters = this.filters;
       }
@@ -257,10 +324,11 @@ export default {
     },
 
     fetchItems(append: boolean) {
-      const shopName = this.shop?.name;
+      const shopName = this.shopName;
       if (!shopName) return;
 
       const { sortBy, sortDesc } = this.parseSort();
+      const seq = ++this._fetch_seq;
 
       if (!append) this.busy = true;
       else this.busy_more = true;
@@ -270,6 +338,8 @@ export default {
           params: this.buildParams(sortBy, sortDesc),
         })
         .then(({ data }) => {
+          if (seq !== this._fetch_seq) return;
+
           if (data?.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
             return;
@@ -278,12 +348,13 @@ export default {
           const list = Array.isArray(data.items) ? data.items : [];
           this.total = parseInt(String(data.total ?? list.length), 10) || 0;
 
+          this.subcategories = Array.isArray(data.subcategories) ? data.subcategories : [];
+
           if (!append) {
             this.items = list;
             return;
           }
 
-          // Append without duplicates (safe)
           const map = new Map<number, any>();
           (this.items || []).forEach((r: any) => {
             const id = parseInt(String(r?.id || 0), 10);
@@ -298,6 +369,7 @@ export default {
         })
         .catch((error) => NotificationService.showLaravelError(error))
         .finally(() => {
+          if (seq !== this._fetch_seq) return;
           this.busy = false;
           this.busy_more = false;
         });
@@ -324,6 +396,91 @@ export default {
       if (!this.preview_item) return;
       this.preview_dialog = false;
       this.$emit("select-item", this.preview_item);
+    },
+
+    //──────────────────────────────────────────────────────────────
+    // Slug -> ID resolving (cached per shop)
+    //──────────────────────────────────────────────────────────────
+
+    async syncCategoryFromRouteAndFetch() {
+      const seq = ++this._route_sync_seq;
+
+      const shopName = this.shopName;
+      if (!shopName) return;
+
+      // If using prop categoryId, skip slug resolving.
+      if (this.categoryIdFromProp) {
+        this.route_category_id = null;
+        this.resetAndFetch();
+        return;
+      }
+
+      await this.ensureCategoriesLoaded();
+      if (seq !== this._route_sync_seq) return;
+
+      const slug = this.routeCategorySlug;
+
+      if (!slug) {
+        this.route_category_id = null;
+        this.resetAndFetch();
+        return;
+      }
+
+      // Allow numeric fallback (e.g. /listing/12)
+      const numeric = parseInt(slug, 10);
+      if (Number.isFinite(numeric) && numeric > 0 && String(numeric) === slug) {
+        this.route_category_id = numeric;
+        this.resetAndFetch();
+        return;
+      }
+
+      const found = (this.categories_db || []).find((c: any) => {
+        const s = String(c?.slug || "").trim();
+        return s && s.toLowerCase() === slug.toLowerCase();
+      });
+
+      this.route_category_id = found?.id ? parseInt(String(found.id), 10) || null : null;
+
+      this.resetAndFetch();
+    },
+
+    async ensureCategoriesLoaded(): Promise<void> {
+      const shopName = this.shopName;
+      if (!shopName) return;
+
+      const w: any = window as any;
+      if (!w.__SLD_LISTING_CATS_CACHE__) w.__SLD_LISTING_CATS_CACHE__ = {};
+
+      const key = `shop:${shopName.toLowerCase()}`;
+      const cached = w.__SLD_LISTING_CATS_CACHE__[key];
+
+      // Cache TTL (10 minutes)
+      const ttlMs = 10 * 60 * 1000;
+
+      if (cached && Array.isArray(cached.categories) && Date.now() - (cached.ts || 0) < ttlMs) {
+        this.categories_db = cached.categories;
+        return;
+      }
+
+      try {
+        const { data } = await axios.get(window.XAPI.GET_SHOP_LISTING_CATEGORIES(shopName), {
+          params: { offset: 0, limit: 100 },
+        });
+
+        if (data?.error) {
+          NotificationService.showErrorAlert(null, data.error_msg);
+          this.categories_db = [];
+          return;
+        }
+
+        const list = Array.isArray(data.categories) ? data.categories : [];
+        this.categories_db = list;
+
+        w.__SLD_LISTING_CATS_CACHE__[key] = { ts: Date.now(), categories: list };
+      } catch (e: any) {
+        NotificationService.showLaravelError(e);
+        this.categories_db = [];
+      }
     },
   },
 };

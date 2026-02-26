@@ -21,7 +21,7 @@
     <!-- ✅ Featured ribbon badge (minimal black flag) -->
     <div v-if="item?.is_featured" class="sld-featured-ribbon" aria-label="Featured">
       <v-icon start>auto_awesome</v-icon>
-      {{$t('global.commons.featured')}}
+      {{ $t("global.commons.featured") }}
     </div>
 
     <div
@@ -300,12 +300,6 @@ export default {
       return this.extractDomain(url) || url;
     },
 
-    websiteActionText(): string {
-      const d = this.websiteDomain;
-      if (!d) return "Website";
-      return d.length > 22 ? `${d.slice(0, 22)}…` : d;
-    },
-
     badgeThumbs(): any[] {
       const it: any = this.item;
       const badges = Array.isArray(it?.badges) ? it.badges : [];
@@ -342,6 +336,59 @@ export default {
   },
 
   methods: {
+    hasListener(name: string): boolean {
+      // Vue 3 puts listeners into $attrs (e.g. onOpen, onPreview)
+      // @ts-ignore
+      const a = (this as any).$attrs || {};
+      return !!a[name];
+    },
+
+    getCategorySlug(): string {
+      const it: any = this.item;
+
+      const slug =
+        String(it?.category?.slug || it?.category_slug || "").trim();
+
+      if (slug) return slug;
+
+      // fallback to current route param ":category" if available
+      // @ts-ignore
+      const routeSlug = this.$route?.params?.category;
+      return routeSlug ? String(routeSlug).trim() : "";
+    },
+
+    getItemSegment(): string {
+      const id = this.itemId;
+      if (!id) return "";
+
+      const rawSlug = String((this as any).item?.slug || "").trim();
+      const suffix = `-${id}`;
+
+      // If slug already ends with "-{id}", keep it.
+      if (rawSlug && rawSlug.endsWith(suffix)) return rawSlug;
+
+      // If slug empty, just use id.
+      if (!rawSlug) return String(id);
+
+      // Otherwise append "-id"
+      return `${rawSlug}${suffix}`;
+    },
+
+    goToProfile() {
+      const categorySlug = this.getCategorySlug();
+      const itemSeg = this.getItemSegment();
+      if (!categorySlug || !itemSeg) return;
+
+      // Uses your router:
+      // name: StorefrontListingItemProfile
+      // path: /listing/:category/:item
+      // @ts-ignore
+      this.$router.push({
+        name: "StorefrontListingItemProfile",
+        params: { category: categorySlug, item: itemSeg },
+      });
+    },
+
     syncCompareState() {
       const s = this.shopName;
       const id = this.itemId;
@@ -363,10 +410,18 @@ export default {
     },
 
     onOpen() {
-      this.$emit("open", this.item);
+      // If parent explicitly listens, keep old behavior.
+      // Otherwise be self-functional and route to profile.
+      // @ts-ignore
+      if (this.hasListener("onOpen")) {
+        this.$emit("open", this.item);
+        return;
+      }
+      this.goToProfile();
     },
 
     onPreview() {
+      // Preview is usually handled by parent (dialog). Keep it as-is.
       this.$emit("preview", this.item);
     },
 
@@ -404,7 +459,7 @@ export default {
 
 <style lang="scss" scoped>
 .sld-item-card {
-  position: relative; /* ✅ needed for ribbon positioning */
+  position: relative; /* needed for ribbon positioning */
 
   background: #fff;
   border: 1px solid rgba(20, 20, 20, 0.08);
@@ -418,7 +473,7 @@ export default {
   }
 }
 
-/* ✅ Minimal "hanging flag" Featured badge */
+/* Minimal "hanging flag" Featured badge (kept as-is from your code) */
 .sld-featured-ribbon {
   position: absolute;
   top: 10px;
@@ -439,15 +494,7 @@ export default {
 
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.16);
 
-  /* small "flag notch" */
-  clip-path: polygon(
-      0% 0%,
-      100% 0%,
-      100% 100%,
-      52% 82%,
-      0% 100%
-  );
-
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 52% 82%, 0% 100%);
   pointer-events: none;
 }
 
@@ -575,7 +622,7 @@ export default {
   color: rgba(0, 0, 0, 0.55);
 }
 
-/* Action bar (same look; added one more button) */
+/* Action bar */
 .sld-actions {
   display: flex;
   align-items: stretch;
