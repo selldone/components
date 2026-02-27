@@ -1,26 +1,60 @@
+<!--
+  - Selldone® Business OS™
+  - Backoffice Listing Form Builder
+  - Select option editor (used inside expandable list)
+-->
+
 <template>
-  <v-card class="sld-bfb-opt" rounded="xl" variant="outlined">
-    <v-card-text class="pa-3">
-      <div class="d-flex align-center mb-2">
-        <div class="font-weight-black">Option</div>
-        <v-spacer />
-        <v-btn icon variant="text" @click="$emit('remove')">
-          <v-icon>close</v-icon>
-        </v-btn>
+  <div class="sld-bfb-opt-edit">
+    <div class="sld-bfb-opt-edit__grid">
+      <!-- Media -->
+      <div class="sld-bfb-opt-edit__media">
+        <b-listing-form-builder-image-uploader
+          :model-value="String(optProxy.icon || '')"
+          label="Icon (optional)"
+          hint="Shown in grid/list/chips. Upload a small square image."
+          @update:modelValue="(v) => patch({ icon: String(v || '') })"
+        />
+
+        <div class="mt-2">
+          <b-listing-form-builder-image-uploader
+            :model-value="String(optProxy.image || '')"
+            label="Image (optional)"
+            hint="Used when the storefront design supports larger thumbnails."
+            @update:modelValue="(v) => patch({ image: String(v || '') })"
+          />
+        </div>
       </div>
 
-      <v-text-field v-model="titleProxy" label="Title" variant="outlined" density="comfortable" />
-      <v-text-field v-model="valueProxy" label="Value (stored)" variant="outlined" density="comfortable" class="mt-2" />
-      <v-text-field v-model="subtitleProxy" label="Subtitle (optional)" variant="outlined" density="comfortable" class="mt-2" />
+      <!-- Text -->
+      <div class="sld-bfb-opt-edit__fields">
+        <v-text-field
+          :model-value="String(optProxy.title || '')"
+          label="Title"
+          variant="underlined"
+          @update:modelValue="(v) => patch({ title: String(v || '') })"
+        />
 
-      <div class="mt-3">
-        <b-listing-form-builder-image-uploader
-          v-model="imageProxy"
-          label="Option image (optional)"
+        <v-textarea
+          :model-value="String(optProxy.subtitle || '')"
+          label="Subtitle (optional)"
+          variant="underlined"
+          rows="2"
+          auto-grow
+          @update:modelValue="(v) => patch({ subtitle: String(v || '') })"
+        />
+
+        <v-text-field
+          :model-value="String(optProxy.value || '')"
+          label="Value"
+          variant="underlined"
+          hint="Stored value. If empty, title can be used as value by the storefront."
+          persistent-hint
+          @update:modelValue="(v) => patch({ value: String(v || '') })"
         />
       </div>
-    </v-card-text>
-  </v-card>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -31,55 +65,67 @@ export default {
 
   components: { BListingFormBuilderImageUploader },
 
-  props: { modelValue: { type: Object, required: true } },
+  props: {
+    modelValue: { type: Object, default: () => ({}) },
+  },
+
   emits: ["update:modelValue", "remove"],
 
   computed: {
-    titleProxy: {
-      get(): string {
-        return String((this as any).modelValue?.title ?? "");
-      },
-      set(v: any) {
-        (this as any).patch({ title: String(v ?? "") });
-      },
-    },
-    valueProxy: {
-      get(): string {
-        return String((this as any).modelValue?.value ?? "");
-      },
-      set(v: any) {
-        (this as any).patch({ value: String(v ?? "") });
-      },
-    },
-    subtitleProxy: {
-      get(): string {
-        return String((this as any).modelValue?.subtitle ?? "");
-      },
-      set(v: any) {
-        (this as any).patch({ subtitle: String(v ?? "") });
-      },
-    },
-    imageProxy: {
-      get(): any {
-        return (this as any).modelValue?.image ?? null;
-      },
-      set(v: any) {
-        (this as any).patch({ image: v || null });
-      },
+    optProxy(): any {
+      const v: any =
+        this.modelValue && typeof this.modelValue === "object" ? this.modelValue : {};
+      return {
+        id: v.id || null,
+        title: v.title ?? "",
+        subtitle: v.subtitle ?? "",
+        value: v.value ?? "",
+        icon: v.icon ?? "",
+        image: v.image ?? "",
+      };
     },
   },
 
   methods: {
+    clone(obj: any) {
+      try {
+        return JSON.parse(JSON.stringify(obj || {}));
+      } catch {
+        return obj || {};
+      }
+    },
+
     patch(p: any) {
-      const cur = (this as any).modelValue || {};
-      (this as any).$emit("update:modelValue", { ...cur, ...p });
+      const next = { ...this.clone(this.optProxy), ...(p || {}) };
+
+      // Keep id stable if exists
+      if (this.optProxy.id) next.id = this.optProxy.id;
+
+      this.$emit("update:modelValue", next);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.sld-bfb-opt {
-  border-color: rgba(0, 0, 0, 0.12);
+.sld-bfb-opt-edit {
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 14px;
+    align-items: start;
+
+    @media (max-width: 980px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__media {
+    min-width: 0;
+  }
+
+  &__fields {
+    min-width: 0;
+  }
 }
 </style>

@@ -10,7 +10,13 @@
 -->
 
 <template>
-  <div class="sld-onb-slide" :class="`-layout-${layout}`">
+  <div
+    class="sld-onb-slide"
+    :class="[
+      `-layout-${layout}`,
+      { '-has-items': hasInfoItems },
+    ]"
+  >
     <div class="sld-onb-slide__inner">
       <div class="sld-onb-slide__content">
         <div v-if="step" class="sld-onb-step">Step {{ step }}</div>
@@ -29,7 +35,47 @@
         </div>
       </div>
 
-      <div v-if="imageUrl" class="sld-onb-slide__media">
+      <!-- ✅ Right side: either items list OR single illustration -->
+      <div v-if="hasInfoItems" class="sld-onb-slide__media">
+        <div class="sld-onb-items">
+          <div
+            v-for="(it, i) in infoItems"
+            :key="it._key"
+            class="sld-onb-items__row"
+          >
+            <div class="sld-onb-items__left">
+              <div class="sld-onb-items__num">
+                {{ it.step ?? (i + 1) }}
+              </div>
+
+              <div class="sld-onb-items__texts">
+                <div class="sld-onb-items__title">
+                  {{ it.title }}
+                </div>
+                <div v-if="it.subtitle" class="sld-onb-items__subtitle">
+                  {{ it.subtitle }}
+                </div>
+              </div>
+            </div>
+
+            <div class="sld-onb-items__right">
+              <img
+                v-if="it.imageUrl"
+                class="sld-onb-items__img"
+                :src="it.imageUrl"
+                alt=""
+              />
+              <div v-else class="sld-onb-items__img-fallback" aria-hidden="true">
+                <span>•</span>
+              </div>
+            </div>
+
+            <div v-if="i !== infoItems.length - 1" class="sld-onb-items__sep" />
+          </div>
+        </div>
+      </div>
+
+      <div v-else-if="imageUrl" class="sld-onb-slide__media">
         <img class="sld-onb-illustration" :src="imageUrl" alt="" />
       </div>
     </div>
@@ -38,6 +84,14 @@
 
 <script lang="ts">
 import SStorefrontListingOnboardingFieldRenderer from "./SStorefrontListingOnboardingFieldRenderer.vue";
+
+type InfoItem = {
+  _key: string;
+  step: number | null;
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+};
 
 export default {
   name: "SStorefrontListingOnboardingSlide",
@@ -48,14 +102,8 @@ export default {
 
   props: {
     slide: { type: Object, required: true },
-
-    // If true, the slide becomes self-contained and will not emit user inputs to parent.
     preview: { type: Boolean, default: false },
-
-    // Value for this slide's input (only used when preview=false)
     modelValue: { default: null },
-
-    // Optional step indicator
     step: { type: Number, default: null },
   },
 
@@ -77,13 +125,20 @@ export default {
         tips: s.tips || "",
         image: s.image || "",
         field: s.field || null,
+
+        // ✅ new: info-items (supports multiple schema shapes)
+        items:
+          Array.isArray(s.items)
+            ? s.items
+            : Array.isArray(s.info_items)
+              ? s.info_items
+              : Array.isArray(s.info?.items)
+                ? s.info.items
+                : [],
       };
     },
 
     layout(): string {
-      // Backward/forward compatible layout normalization.
-      // Form builder currently uses: split_right | split_left | stacked | centered
-      // This renderer supports: split_right | split_left | media_top | media_bottom | center
       const l = String(this.safeSlide.layout || "split_right");
       if (l === "centered") return "center";
       if (l === "stacked") return "media_top";
@@ -106,16 +161,42 @@ export default {
       return this.safeSlide.type !== "info" && !!this.safeSlide.field;
     },
 
+    hasInfoItems(): boolean {
+      const arr = this.safeSlide.items;
+      return Array.isArray(arr) && arr.length > 0;
+    },
+
+    infoItems(): InfoItem[] {
+      const arr = Array.isArray(this.safeSlide.items) ? this.safeSlide.items : [];
+      return arr
+        .map((raw: any, idx: number) => {
+          const o: any = raw && typeof raw === "object" ? raw : {};
+
+          const title = String(o.title || "").trim();
+          const subtitle = String(o.subtitle || o.description || "").trim();
+
+          const img = String(o.image || o.icon || "").trim();
+          const imageUrl = this.resolveImage(img);
+
+          const step =
+            o.step !== undefined && o.step !== null
+              ? this.toIntOrNull(o.step)
+              : null;
+
+          return {
+            _key: String(o.id || `${this.safeSlide.id || "slide"}_${idx}`),
+            step,
+            title: title || `Item ${idx + 1}`,
+            subtitle,
+            imageUrl,
+          };
+        })
+        .filter((x: InfoItem) => !!x.title);
+    },
+
     imageUrl(): string {
       const img = String(this.safeSlide.image || "").trim();
-      if (!img) return "";
-      if (img.startsWith("http://") || img.startsWith("https://")) return img;
-
-      // Selldone global helper (available in storefront & dashboard)
-      // @ts-ignore
-      const fn = (this as any).getShopImagePath;
-      if (typeof fn === "function") return fn(img);
-      return img;
+      return this.resolveImage(img);
     },
 
     valueProxy(): any {
@@ -124,7 +205,6 @@ export default {
   },
 
   watch: {
-    // Keep preview value in sync with provided value when opening editor.
     modelValue: {
       immediate: true,
       handler(v: any) {
@@ -136,13 +216,29 @@ export default {
     slide: {
       immediate: true,
       handler() {
-        // reset preview value on slide change (preview mode)
         if (this.preview) this.previewValue = null;
       },
     },
   },
 
   methods: {
+    toIntOrNull(v: any): number | null {
+      const n = parseInt(String(v ?? ""), 10);
+      return Number.isFinite(n) && !Number.isNaN(n) ? n : null;
+    },
+
+    resolveImage(img: string): string {
+      const s = String(img || "").trim();
+      if (!s) return "";
+      if (s.startsWith("http://") || s.startsWith("https://")) return s;
+
+      // Selldone global helper
+      // @ts-ignore
+      const fn = (this as any).getShopImagePath;
+      if (typeof fn === "function") return fn(s);
+      return s;
+    },
+
     onUpdateValue(v: any) {
       if (this.preview) {
         this.previewValue = v;
@@ -155,6 +251,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/**
+ * ✅ Key fix: for horizontal split templates, make it 50/50.
+ * This applies to BOTH single-image and list-items media blocks.
+ */
 .sld-onb-slide {
   background: #fff;
   padding: 34px 28px;
@@ -162,19 +262,20 @@ export default {
 
   &__inner {
     display: grid;
-    grid-template-columns: 1fr 420px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* ✅ 50/50 */
     gap: 28px;
     align-items: center;
   }
 
   &__content {
-    max-width: 640px;
+    max-width: 100%; /* ✅ let the left half actually use its half */
   }
 
   &__media {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-width: 0;
   }
 }
 
@@ -209,16 +310,98 @@ export default {
 
 .sld-onb-illustration {
   width: 100%;
-  max-width: 420px;
-  max-height: 320px;
+  max-width: 100%; /* ✅ fill the right half */
+  max-height: 360px;
   object-fit: contain;
+}
+
+/* ✅ Info items list (Airbnb intro style) */
+.sld-onb-items {
+  width: 100%;
+  max-width: 100%; /* ✅ fill the right half */
+  display: grid;
+  gap: 0;
+}
+
+.sld-onb-items__row {
+  position: relative;
+  padding: 18px 6px;
+}
+
+.sld-onb-items__left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+
+  /* ✅ reserve space so text never goes under the right image */
+  padding-right: 110px;
+}
+
+.sld-onb-items__num {
+  width: 18px;
+  flex: 0 0 auto;
+  font-weight: 900;
+  font-size: 14px;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.sld-onb-items__texts {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.sld-onb-items__title {
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.sld-onb-items__subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: 0.78;
+  line-height: 1.45;
+}
+
+.sld-onb-items__right {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 96px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sld-onb-items__img {
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  display: block;
+}
+
+.sld-onb-items__img-fallback {
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  opacity: 0.2;
+  font-weight: 900;
+}
+
+.sld-onb-items__sep {
+  position: absolute;
+  left: 18px;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
 }
 
 /* Layout variations */
 .sld-onb-slide.-layout-split_left {
-  .sld-onb-slide__inner {
-    grid-template-columns: 420px 1fr;
-  }
   .sld-onb-slide__content {
     order: 2;
   }
@@ -282,19 +465,41 @@ export default {
 @media (max-width: 900px) {
   .sld-onb-slide {
     padding: 22px 14px;
+
     &__inner {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr !important;
     }
-    &__content {
-      max-width: 100%;
-    }
+
     &__media {
       margin-top: 12px;
+      justify-content: flex-start;
     }
   }
 
   .sld-onb-title {
     font-size: 26px;
+  }
+
+  .sld-onb-items__left {
+    padding-right: 0; /* ✅ no overlay risk on mobile layout */
+  }
+
+  .sld-onb-items__right {
+    position: static;
+    transform: none;
+    width: auto;
+    justify-content: flex-start;
+    margin-top: 10px;
+  }
+
+  .sld-onb-items__img,
+  .sld-onb-items__img-fallback {
+    width: 64px;
+    height: 64px;
+  }
+
+  .sld-onb-items__sep {
+    left: 0;
   }
 }
 </style>

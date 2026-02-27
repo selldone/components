@@ -103,10 +103,19 @@ export default {
   },
 
   props: {
+    /**
+     * ✅ Standard v-model API (new)
+     */
     modelValue: { type: Object, default: null },
+
+    /**
+     * ✅ Backward-compatible API (old)
+     * Some older code used :field / @update:field
+     */
+    field: { type: Object, default: undefined },
   },
 
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "update:field"],
 
   data: () => ({
     local: null as any,
@@ -114,6 +123,16 @@ export default {
   }),
 
   computed: {
+    /**
+     * Prefer modelValue when provided, otherwise fallback to field
+     * (keeps older callers working).
+     */
+    sourceValue(): any {
+      const mv = (this as any).modelValue;
+      if (mv !== undefined) return mv;
+      return (this as any).field;
+    },
+
     isOfficial(): boolean {
       return this.isOfficialType(this.local?.type);
     },
@@ -181,8 +200,9 @@ export default {
   },
 
   watch: {
-    modelValue: {
+    sourceValue: {
       immediate: true,
+      deep: false,
       handler(v: any) {
         this._syncing = true;
         this.local = this.ensureFieldDefaults(this.clone(v || {}));
@@ -192,6 +212,13 @@ export default {
   },
 
   methods: {
+    emitValue(next: any) {
+      if (this._syncing) return;
+      const out = this.clone(next);
+      this.$emit("update:modelValue", out);
+      this.$emit("update:field", out);
+    },
+
     clone(obj: any) {
       try {
         return JSON.parse(JSON.stringify(obj || {}));
@@ -274,20 +301,23 @@ export default {
         if ((picked.variant || "").toLowerCase() === "chips") {
           base.multiple = true;
         } else {
-          base.multiple = prev.multiple !== undefined ? !!prev.multiple : false;
+          base.multiple =
+            prev.multiple !== undefined && prev.multiple !== null
+              ? !!prev.multiple
+              : false;
         }
       }
 
       const next = this.ensureFieldDefaults(base);
       this.local = next;
 
-      if (!this._syncing) this.$emit("update:modelValue", this.clone(next));
+      this.emitValue(next);
     },
 
     onChildUpdate(v: any) {
       const next = this.ensureFieldDefaults(this.clone(v || {}));
       this.local = next;
-      if (!this._syncing) this.$emit("update:modelValue", this.clone(next));
+      this.emitValue(next);
     },
 
     ensureOptionDefaults(opt: any) {
@@ -304,7 +334,7 @@ export default {
     },
 
     ensureFieldDefaults(field: any) {
-      const f = field || {};
+      const f: any = field || {};
 
       if (!f.uid) f.uid = this.makeUid("fld");
 
@@ -341,8 +371,8 @@ export default {
       }
 
       if (f.type === "number") {
-        if (f.min === undefined || f.min === null) f.min = null;
-        if (f.max === undefined || f.max === null) f.max = null;
+        if (f.min === undefined) f.min = null;
+        if (f.max === undefined) f.max = null;
         if (f.step === undefined || f.step === null) f.step = 1;
       }
 
@@ -361,6 +391,7 @@ export default {
         if (!Array.isArray(f.options)) f.options = [];
         f.options = (f.options || []).map((o: any) => this.ensureOptionDefaults(o));
 
+        // keep at least 1 option for UX
         if (!f.options.length) {
           f.options = [this.ensureOptionDefaults({})];
         }
