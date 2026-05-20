@@ -399,7 +399,7 @@ import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import BTransportationServiceRate from "../../../transportation/service/rate/BTransportationServiceRate.vue";
 import { debounce } from "lodash-es";
-import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import { BEventBusMixin } from "../../../../utils/events/BEventBusMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";

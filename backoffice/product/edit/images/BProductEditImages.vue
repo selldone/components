@@ -422,7 +422,7 @@ import UButtonAiLarge from "../../../../ui/button/ai/large/UButtonAiLarge.vue";
 import { getYoutubeId } from "../../../../ui/youtube/helper/YoutubeHelper";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import { ImageHelper } from "@selldone/core-js/utils/image/ImageHelper.ts";
-import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import { BEventBusMixin } from "../../../../utils/events/BEventBusMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import SVideoUploader from "@selldone/components-vue/ui/uploader/SVideoUploader.vue";

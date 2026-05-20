@@ -309,7 +309,7 @@ import ProductVariantsView from "../../storefront/product/variant/ProductVariant
 import UVariantSelector from "../../ui/variant/selector/UVariantSelector.vue";
 import SShopBuyButton from "../../storefront/product/button/SShopBuyButton.vue";
 import { throttle } from "lodash-es";
-import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import { BEventBusMixin } from "../../utils/events/BEventBusMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import { ShopURLs } from "@selldone/core-js/helper";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";

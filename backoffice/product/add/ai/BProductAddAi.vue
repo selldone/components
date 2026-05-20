@@ -417,7 +417,7 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import VueCompareImage from "../../../../ui/image-compare/VueCompareImage.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
-import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import { BEventBusMixin } from "../../../../utils/events/BEventBusMixin.ts";
 import { Product } from "@selldone/core-js/models";
 import {ShopURLs} from "@selldone/core-js/helper";
 

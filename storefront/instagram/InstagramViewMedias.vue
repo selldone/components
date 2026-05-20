@@ -512,7 +512,7 @@ import { ProductCondition } from "@selldone/core-js/enums/product/ProductConditi
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { delay, throttle } from "lodash-es";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
-import { BEventBusMixin } from "@app-backoffice/mixins/event-bus/BEventBusMixin.ts";
+import { BEventBusMixin } from "../../utils/events/BEventBusMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import { ShopURLs } from "@selldone/core-js/helper";
