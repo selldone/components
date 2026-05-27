@@ -23,9 +23,7 @@
         icon="settings"
       >
         <template v-slot:actions>
-          <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ In App Help (Help Center) ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
-          <inline-help :code="'SHOP:GATEWAYS:' + gateway.code"></inline-help>
-          <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
+
         </template>
       </u-widget-header>
       <v-list-subheader></v-list-subheader>
@@ -361,7 +359,6 @@
 import BGatewayBlockchain from "../../gateway/blockchain/BGatewayBlockchain.vue";
 import UTextValueBox from "../../../ui/text/value-box/UTextValueBox.vue";
 import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
-import InlineHelp from "../../help/InlineHelp.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import {
   FORM_BUILDER_TAGS,
@@ -385,7 +382,6 @@ export default {
     UPodNode,
     UPodsPanel,
     USmartSwitch,
-    InlineHelp,
     UCurrencyInput,
     UTextValueBox,
     BGatewayBlockchain,

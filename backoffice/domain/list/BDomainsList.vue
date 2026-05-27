@@ -23,12 +23,7 @@
       :disabled-access="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
     >
       <template v-slot:append-title>
-        <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ In App Help (Help Center) ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
-        <inline-help
-          :code="HelpCenterCode.SHOP_DOMAINS_ADD"
-          class="mx-2"
-        ></inline-help>
-        <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
+
       </template>
     </u-widget-header>
     <v-list-subheader
@@ -503,27 +498,61 @@
                     Expired
                   </v-chip>
                 </v-chip>
+
+
+                <v-chip
+                  v-if="item.domain?.ssl_proxy "
+                  class=""
+                  pill
+                  size="x-small"
+                  title="SSL certificate issued by Selldone with CDN protection."
+                  variant="flat"
+                  color="#E64A19"
+                  style="margin: 2px"
+                  prepend-icon="verified_user"
+                >
+                  🔒 Secure SSL (Selldone)
+                </v-chip>
+                <v-chip
+                  v-else-if="item.domain"
+                  class=""
+                  pill
+                  size="x-small"
+                  title="SSL certificate issued by external CDN provider."
+                  variant="flat"
+                  color="#673AB7"
+                  style="margin: 2px"
+                  prepend-icon="verified_user"
+                >
+                  🔒️ External CDN / SSL
+                </v-chip>
               </div>
+
+
 
               <v-spacer></v-spacer>
 
-              <u-menu-expandable
-                v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-                class="ms-1"
-                :loading="
-                  (busy_add_client &&
+
+
+            </div>
+
+            <div    v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)">
+              <u-loading-progress v-if="     (busy_add_client &&
                     add_client_code ===
                       (item.domain ? item.domain?.id : item.official)) ||
-                  busy_delete === item.domain?.id
-                "
+                  busy_delete === item.domain?.id"
+             class="py-2"
               >
+
+              </u-loading-progress>
+
                 <v-btn
                   v-if="item.domain"
                   @click="deleteShopDomain(item.domain)"
                   prepend-icon="close"
                   :loading="busy_delete === item.domain.id"
                   class="ma-1 tnt border"
-                  variant="flat"
+                  variant="elevated"
                   size="small"
                 >
                   {{ $t("global.actions.delete") }}
@@ -542,7 +571,7 @@
                       item.domain ? item.domain.id : item.official,
                     )
                   "
-                  variant="flat"
+                  variant="elevated"
                   prepend-icon="build"
                 >
                   {{ $t("admin_shop.dashboard.info.table.auto_repair") }}
@@ -553,7 +582,7 @@
                     @click="showEditDomainDialog(item.domain)"
                     prepend-icon="edit"
                     class="ma-1 tnt border"
-                    variant="flat"
+                    variant="elevated"
                     size="small"
                   >
                     Edit Domain
@@ -569,8 +598,9 @@
                     {{ $t("global.commons.setting") }}
                   </v-btn>
                 </template>
-              </u-menu-expandable>
+
             </div>
+
           </td>
         </tr>
         <tr v-if="item.error">
@@ -726,30 +756,29 @@ import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import BShopLicenseBlockIcon from "../../shop/license/block/icon/BShopLicenseBlockIcon.vue";
 import BShopHomeSelect from "../../shop/home/select/BShopHomeSelect.vue";
 import BDomainAdd from "../add/BDomainAdd.vue";
-import InlineHelp from "../../help/InlineHelp.vue";
 import BDomainSetting from "../../domain/setting/BDomainSetting.vue";
 import { throttle } from "lodash-es";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
-import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import DomainMixin from "@selldone/components-vue/mixin/domain/DomainMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import UMenuExpandable from "@selldone/components-vue/ui/menu/expandable/UMenuExpandable.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 
 export default {
   name: "BDomainsList",
   mixins: [DateMixin, DomainMixin, CurrencyMixin],
 
   components: {
+    ULoadingProgress,
     UMenuExpandable,
     SWidgetHelp,
     UTextCopyBox,
     BDomainSetting,
-    InlineHelp,
     BDomainAdd,
     BShopHomeSelect,
     BShopLicenseBlockIcon,
@@ -768,7 +797,6 @@ export default {
   },
 
   data: () => ({
-    HelpCenterCode: HelpCenterCode,
 
     expanded: [],
     domains: [],

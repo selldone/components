@@ -13,6 +13,15 @@
   -->
 <template>
   <!-- ⛔ UPriceInvalid -->
+  <v-tooltip
+    v-if="!is_valid_amount"
+    activator="parent"
+    content-class="text-start bg-black"
+    location="bottom"
+    max-width="320"
+  >
+
+<template v-slot:activator>
   <b class="text-red d-inline-flex align-center" :class="{ 'x-small': small }">
     <u-currency-icon
       v-if="currency"
@@ -32,6 +41,21 @@
 
     {{ $t("global.commons.invalid") }}
   </b>
+</template>
+
+
+    <b>Invalid amount!</b> <br />
+    {{
+      `⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.`
+    }}
+    <hr />
+    <div>
+      From Currency: <b>{{ currency }}</b>
+      <br>
+      To Currency: <b>{{ current_currency }}</b>
+    </div>
+  </v-tooltip>
+
 </template>
 
 <script lang="ts">

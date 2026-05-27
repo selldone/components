@@ -31,7 +31,7 @@
       }}</span>
 
       <span :class="{ 'line-through': lineThrough }">
-        {{ compact ? numeralFormat(absolute_part, "0.[0]a") : absolute_part
+        {{ compact ? formatCompactAmount(absolute_part) : absolute_part
         }}<span v-if="!compact" class="small">{{
           is_valid_amount ? getAmountAfterPoint(formatted_number) : ""
         }}</span>
@@ -179,13 +179,22 @@ export default {
   },
 
   methods:{
+    formatCompactAmount(value){
+      return this.numeralFormat(value, "0.[0]a");
+    },
     autoFix(){
       // if number contains ',' for string part then remove it
       if (this.amount && typeof this.amount === 'string') {
         let corrected = this.amount.replace(/,/g, '');
         // Remove other strings:
-        corrected = corrected.replace(/[^0-9.]/g, '');
-        this.$emit('update:amount', parseFloat(corrected));
+        corrected = corrected.replace(/[^0-9.-]/g, '');
+
+        if (!corrected || !/[0-9]/.test(corrected)) return;
+
+        const parsed = parseFloat(corrected);
+        if (!Number.isFinite(parsed)) return;
+
+        this.$emit('update:amount', parsed);
 
        // console.log('Invalid number as price | Auto corrected:',this.amount  ,'-.',corrected);
       }

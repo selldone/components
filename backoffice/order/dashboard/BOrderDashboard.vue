@@ -59,9 +59,7 @@
         >
       </v-toolbar-title>
 
-      <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ In App Help (Help Center) ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
-      <inline-help :code="'SHOP:ORDER:' + type" class="mx-1"></inline-help>
-      <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
+
 
       <v-spacer />
 
@@ -387,7 +385,6 @@ import BOrderDashboardCart from "./cart/BOrderDashboardCart.vue";
 import BOrderDashboardPayment from "./payment/BOrderDashboardPayment.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BOrderDashboardDropshippingFulfillment from "../../order/dashboard/dropshipping/fulfillment/BOrderDashboardDropshippingFulfillment.vue";
-import InlineHelp from "../../help/InlineHelp.vue";
 import BOrderDashboardVendor from "../../order/dashboard/vendor/BOrderDashboardVendor.vue";
 import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
 import BOrderConnectsList from "../../order/connect/list/BOrderConnectsList.vue";
@@ -418,7 +415,6 @@ export default {
     BOrderConnectsList,
     USmartSelect,
     BOrderDashboardVendor,
-    InlineHelp,
     BOrderDashboardDropshippingFulfillment,
     UCountDown,
     BOrderDashboardCart,

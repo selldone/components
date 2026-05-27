@@ -80,13 +80,7 @@ const ProductMixin = {
           current_extra_pricing,
         );
       } catch (e) {
-        console.error(
-          "⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",
-          product.currency,
-          "->",
-          to_currency,
-        );
-        return "🚨";
+        return null;
       }
     },
 
@@ -122,13 +116,7 @@ const ProductMixin = {
           to_currency,
         );
       } catch (e) {
-        console.error(
-          "⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.",
-          product.currency,
-          "->",
-          to_currency,
-        );
-        return "🚨";
+        return 0;
       }
     },
 

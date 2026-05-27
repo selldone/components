@@ -34,11 +34,7 @@
                 <v-icon class="ms-1" color="success">check_circle</v-icon>
               </template>
               <template v-slot:actions>
-                <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ In App Help (Help Center) ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
-                <inline-help
-                  :code="HelpCenterCode.SHOP_DOMAINS_ADD"
-                ></inline-help>
-                <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
+
               </template>
             </u-widget-header>
 
@@ -215,15 +211,15 @@
 
               <u-smart-switch
                 v-if="has_ssl_proxy"
-                v-model="show_ssl_ips"
+                :model-value="!show_ssl_ips"
+                @update:model-value="show_ssl_ips = !$event"
                 class="my-3"
-                false-description="You can directly link your domain to Selldone, which necessitates a CDN for SSL issuance. This is an advantageous option when using CDN providers such as Cloudflare for domain hosting."
-                false-gray
-                false-icon="cloud_off"
-                false-title="Direct connect"
-                true-description="This option allows you to link your domain to Selldone via our secure CDN layer, removing the necessity for any external CDN. Employing external CDNs such as Cloudflare in conjunction with this setup may lead to conflicts and errors in SSL issuance."
-                true-icon="cloud"
-                true-title="Secure CDN + Issue SSL"
+                true-description="You can directly link your domain to Selldone, which necessitates a CDN for SSL issuance. This is an advantageous option when using CDN providers such as Cloudflare for domain hosting."
+                true-icon="cloud_done"
+                true-title="Direct Connect [Recommended]"
+                false-description="This option allows you to link your domain to Selldone via our secure CDN layer, removing the necessity for any external CDN. Employing external CDNs such as Cloudflare in conjunction with this setup may lead to conflicts and errors in SSL issuance."
+                false-icon="cloud"
+                false-title="Secure CDN + Issue SSL"
               />
 
               <u-pods-panel>
@@ -727,13 +723,11 @@ import BShopLicenseBlockOverlay from "../../shop/license/block/overlay/BShopLice
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
-import InlineHelp from "../../help/InlineHelp.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
-import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -747,7 +741,6 @@ export default {
     UPodNode,
     UPodsPanel,
     USmartSwitch,
-    InlineHelp,
     UTextCopyBox,
     BShopLicenseBlockOverlay,
   },
@@ -767,7 +760,6 @@ export default {
   },
 
   data: () => ({
-    HelpCenterCode: HelpCenterCode,
 
     show_ssl_message: false,
 
@@ -1069,7 +1061,8 @@ export default {
     },
   },
   created() {
-    this.show_ssl_ips = this.has_ssl_proxy;
+    // Default add mode to Direct connect, keep current mode in edit.
+    this.show_ssl_ips = this.inDomainEditMode ? !!this.domain?.ssl_proxy : false;
 
     this.domain_enable = this.domain.enable;
 

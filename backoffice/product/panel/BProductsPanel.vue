@@ -142,12 +142,7 @@
             class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
           >
             <div>
-              <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ In App Help (Help Center) ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
-              <inline-help
-                :code="HelpCenterCode.SHOP_PRODUCTS_IMPORT"
-                class="absolute-top-end"
-              ></inline-help>
-              <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
+
 
               <img
                 alt="Excel"
@@ -401,7 +396,6 @@ import BCategoryAdd from "../../category/add/BCategoryAdd.vue";
 import { UploadHelper } from "@selldone/components-vue/utils/upload/UploadHelper.ts";
 import { FileFormatConverterOnline } from "@selldone/components-vue/utils/converters/FileFormatConverterOnline.ts";
 import BProductImporterSampleDialog from "../../product/importer/sample-dialog/BProductImporterSampleDialog.vue";
-import InlineHelp from "../../help/InlineHelp.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
@@ -412,7 +406,6 @@ import BShopProductsImportProcessing from "../../product/importer/processing/BSh
 import BProductsPanelHeader from "../../product/panel/header/BProductsPanelHeader.vue";
 import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
 import BProductsPanelAddProduct from "@selldone/components-vue/backoffice/product/panel/add-product/BProductsPanelAddProduct.vue";
-import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 import { ShopURLs } from "@selldone/core-js/helper";
 
@@ -430,7 +423,6 @@ export default {
     BProductAddAi,
     UTextCopyBox,
 
-    InlineHelp,
     BProductImporterSampleDialog,
     BCategoryAdd,
     BProductAddStudio,
@@ -447,7 +439,6 @@ export default {
   },
   delimiters: ["${", "}"], // Avoid Twig conflicts
   data: () => ({
-    HelpCenterCode: HelpCenterCode,
     VendorMemberRegionCode: VendorMemberTypes.VendorMemberRegionCode,
 
     dialog_add_category: false,

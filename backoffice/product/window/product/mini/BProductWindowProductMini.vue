@@ -208,7 +208,7 @@
   <div>
     <!-- Price > ⛔ Invalid exchange rate -->
     <u-price-invalid
-        v-if="isNaN(price_converted)"
+        v-if="isNaN(price_converted) || price_converted===null"
         :currency="product.currency"
         small
     >

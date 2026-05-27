@@ -106,25 +106,8 @@
         </v-expand-transition>
 
         <template v-slot:append>
-          <v-list-item-action end>
-            <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ In App Help (Help Center) ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
-            <inline-help :code="'SHOP:PRODUCTS:ADD:' + item.code"></inline-help>
-            <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
-          </v-list-item-action>
 
-          <v-list-item-action>
-            <v-btn
-              class="ms-2"
-              icon
-              title="Show more information about this product type."
-              variant="plain"
-              @click.stop="
-                expanded_type = expanded_type === item ? undefined : item
-              "
-            >
-              <v-icon size="small">info</v-icon>
-            </v-btn>
-          </v-list-item-action>
+          
         </template>
       </v-list-item>
 
@@ -539,7 +522,6 @@
 </template>
 
 <script lang="ts">
-import InlineHelp from "../../../help/InlineHelp.vue";
 import OrderTypeMinimalFlow from "../../../product/widgets/OrderTypeMinimalFlow.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
@@ -564,7 +546,6 @@ export default {
     UPriceInput,
     BProductAddDropshipping,
     OrderTypeMinimalFlow,
-    InlineHelp,
   },
 
   props: {

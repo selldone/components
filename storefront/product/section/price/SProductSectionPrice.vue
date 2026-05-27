@@ -70,7 +70,7 @@
       <!-- ............................................................... -->
       <!-- Price > ⛔ Invalid exchange rate -->
       <u-price-invalid
-        v-if="isNaN(calculated_price)"
+        v-if="isNaN(calculated_price)   || calculated_price===null"
         :currency="$product.currency"
       >
       </u-price-invalid>

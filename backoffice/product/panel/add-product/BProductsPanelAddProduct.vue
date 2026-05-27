@@ -58,6 +58,10 @@
             $emit('add', p);
           }
         "
+        @delete="()=>{
+           //close dialog
+           $emit('update:modelValue', false)
+        }"
       >
       </b-product-add-full>
 

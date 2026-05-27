@@ -213,12 +213,7 @@
       <v-icon class="mx-1 d-none d-sm-inline" size="small">open_in_new</v-icon>
     </v-chip>
 
-    <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ In App Help (Help Center) ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
-    <inline-help
-      :code="HelpCenterCode.SHOP_PRODUCTS"
-      class="mx-2"
-    ></inline-help>
-    <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
+
     <v-spacer />
     <slot name="center"></slot>
     <v-spacer />
@@ -337,13 +332,11 @@
 </template>
 
 <script lang="ts">
-import InlineHelp from "../../../help/InlineHelp.vue";
 import USmartToggle from "../../../../ui/smart/toggle/USmartToggle.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 
 import BProductsAdvancedOptions from "../../../product/advanced-options/BProductsAdvancedOptions.vue";
 import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
-import { HelpCenterCode } from "../../../help/HelpCenterCode";
 import { ShopPublicFeedApi } from "@selldone/core-js/enums/shop/feeds/api/ShopPublicFeedApi";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
@@ -357,7 +350,6 @@ export default {
     BProductsAdvancedOptions,
 
     USmartToggle,
-    InlineHelp,
   },
 
   emits: [
@@ -383,7 +375,6 @@ export default {
   },
 
   data: () => ({
-    HelpCenterCode: HelpCenterCode,
 
     dialog_advanced: false,
 

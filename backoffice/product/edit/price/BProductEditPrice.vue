@@ -156,7 +156,7 @@
 
       <u-currency-input
         v-model="currency"
-        :activeCurrencies="shop.currencies"
+        :active-currencies="shop.currencies"
         :dark="!light"
         :label="$t('add_product.pricing.currency_input')"
         :messages="$t('add_product.pricing.currency_input_messages')"

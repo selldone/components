@@ -14,12 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="position-relative">
-    <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ In App Help (Help Center) ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
-    <inline-help
-      :code="HelpCenterCode.SHOP_EDIT_INFO"
-      class="absolute-top-center"
-    ></inline-help>
-    <!-- ✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜✜ -->
+
 
     <u-progress-stepper
       v-if="showStepper"
@@ -583,7 +578,6 @@ import UTabsRounded from "../../../ui/tab/rounded/UTabsRounded.vue";
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import UMapViewPin from "../../../ui/map/view/market/UMapViewPin.vue";
-import InlineHelp from "../../help/InlineHelp.vue";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
@@ -593,7 +587,6 @@ import BTranslationButtonShop from "../../translation/button/shop/BTranslationBu
 import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
-import { HelpCenterCode } from "@selldone/components-vue/backoffice/help/HelpCenterCode.ts";
 import { UMixinConfetti } from "@selldone/components-vue/mixin/confetti/UMixinConfetti.ts";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
@@ -613,7 +606,6 @@ export default {
     USmartToggle,
 
     UTextCopyBox,
-    InlineHelp,
     UMapViewPin,
     SCountrySelect,
     UTabsRounded,
@@ -638,7 +630,6 @@ export default {
   },
 
   data: () => ({
-    HelpCenterCode: HelpCenterCode,
 
     busy: false,
 

@@ -282,7 +282,7 @@
                   <!-- Main price -->
                   <!-- Price > ⛔ Invalid exchange rate -->
                   <u-price-invalid
-                    v-if="isNaN(price_in_selected_currency)"
+                    v-if="isNaN(price_in_selected_currency)  || price_in_selected_currency===null"
                     :currency="product.currency"
                     small
                   >
@@ -621,6 +621,8 @@ export default {
   },
 
   computed: {
+
+
     isInsta() {
       return !this.freeMode && this.mode?.code === ModeView.INSTA.code;
     },
@@ -675,22 +677,23 @@ export default {
     },
 
     price_in_selected_currency() {
+
       if (!this.product) return 0;
 
       try {
         return this.CalcPriceProductCurrentCurrency(
-          this.getShop(),
+          this.$shop,
           this.product,
           null,
         );
       } catch (e) {
-        return "🚨";
+        return null;
       }
     },
 
     discount_percent() {
       try {
-        return this.discountProductPercent(this.getShop(), this.product, null);
+        return this.discountProductPercent(this.$shop, this.product, null);
       } catch (e) {
         return "🚨";
       }
@@ -699,7 +702,7 @@ export default {
     discount() {
       try {
         return this.getProductDiscountAmount(
-          this.getShop(),
+          this.$shop,
           this.product,
           null,
         );
