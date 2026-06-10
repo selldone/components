@@ -187,6 +187,23 @@
             </div>
           </v-expand-transition>
 
+          <v-expand-transition>
+            <v-alert
+              v-if="hasConnectSetupChanges"
+              border="start"
+              class="my-4 text-start"
+              icon="sync_problem"
+              color="#00796B"
+              variant="tonal"
+            >
+              <div class="font-weight-bold mb-1">Reconnect required</div>
+              <div>
+                Connect setup settings have changed. Click Auto connect again to
+                apply them; Save changes only stores shop connection options.
+              </div>
+            </v-alert>
+          </v-expand-transition>
+
           <div v-if="connect" class="widget-buttons">
             <v-btn
               v-if="connect.direct_setup"
@@ -198,13 +215,13 @@
                 )
               "
               :loading="loading"
-              :variant="!!shopConnect ? 'text' : 'elevated'"
+              :variant="connectActionVariant"
               color="primary"
               size="x-large"
               @click="setupDirect()"
             >
               <v-icon start>add</v-icon>
-              {{ $t("shop_connect.edit.add_action") }}
+              {{ connectActionLabel }}
 
               <v-avatar
                 :image="getShopImagePath(connect.icon)"
@@ -225,13 +242,13 @@
               "
               :href="connect_link"
               :loading="loading"
-              :variant="!!shopConnect ? 'text' : 'elevated'"
+              :variant="connectActionVariant"
               color="primary"
               size="x-large"
               @click="loading = true"
             >
               <v-icon start>add</v-icon>
-              {{ $t("shop_connect.edit.add_action") }}
+              {{ connectActionLabel }}
 
               <v-avatar
                 :image="getShopImagePath(connect.icon)"
@@ -488,6 +505,7 @@ export default {
     loading: false,
 
     params: { test: true, keep_image_urls: false },
+    saved_request_params: null,
 
     //--------------------
     busy_set: false,
@@ -513,6 +531,28 @@ export default {
         this.connect &&
         `/connect/${this.connect.code}/login/${this.shop.id}?${query}`
       );
+    },
+
+    hasConnectSetupChanges() {
+      if (!this.shopConnect || !this.saved_request_params) return false;
+
+      return (
+        JSON.stringify(
+          this.normalizedConnectRequestParams(this.request_params),
+        ) !== JSON.stringify(this.saved_request_params)
+      );
+    },
+
+    connectActionVariant() {
+      return !this.shopConnect || this.hasConnectSetupChanges
+        ? "elevated"
+        : "text";
+    },
+
+    connectActionLabel() {
+      return this.hasConnectSetupChanges
+        ? "Reconnect & apply settings"
+        : this.$t("shop_connect.edit.add_action");
     },
 
     delete_label() {
@@ -561,9 +601,26 @@ export default {
       this.connect_id = this.initialSelectedConnectId;
       this.params.endpoint = this.initialEndpoint ? this.initialEndpoint : "";
     }
+
+    this.rememberSavedConnectRequestParams();
   },
 
   methods: {
+    normalizedConnectRequestParams(params) {
+      return Object.keys(params || {})
+        .sort()
+        .reduce((normalized, key) => {
+          if (params[key] !== undefined) normalized[key] = params[key];
+          return normalized;
+        }, {});
+    },
+
+    rememberSavedConnectRequestParams() {
+      this.saved_request_params = this.normalizedConnectRequestParams(
+        this.request_params,
+      );
+    },
+
     setupDirect() {
       this.loading = true;
 
@@ -578,8 +635,12 @@ export default {
         .then(({ data }) => {
           if (!data.error) {
             this.$emit("add", data.shop_connect);
+            this.rememberSavedConnectRequestParams();
 
-            NotificationService.showSuccessAlert(null, "Connect has been added successfully.");
+            NotificationService.showSuccessAlert(
+              null,
+              "Connect has been added successfully.",
+            );
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
           }
