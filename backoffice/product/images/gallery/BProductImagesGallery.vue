@@ -21,6 +21,7 @@
       :has-alt="true"
       :images="images"
       :uploadPath="upload_path"
+      allow-url-input
       has-ai-background-remove
       max-file-size="3MB"
       @add:image="

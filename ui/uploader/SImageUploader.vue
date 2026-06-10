@@ -99,7 +99,7 @@
           ]"
           :style="{
             minHeight: minHeight,
-            border: border ? 'dashed thin #ddd' : undefined,
+            border: border ? 'dashed 2px #000' : undefined,
           }"
           class="uploader-container mx-auto overflow-hidden"
         >

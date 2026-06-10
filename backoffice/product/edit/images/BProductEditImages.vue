@@ -30,26 +30,52 @@
           <div>
             <s-image-uploader
               :image="getShopImagePath(product.icon)"
-              :server="
-                IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                  ? window.VAPI.POST_MY_VENDOR_UPLOAD_PRODUCT_MAIN_IMAGE(
-                      $route.params.vendor_id,
-                      product.id,
-                    )
-                  : window.API.POST_UPLOAD_PRODUCT_MAIN_IMAGE(
-                      product.shop_id,
-                      product.id,
-                    )
-              "
+              :server="upload_main_image_url"
               class="mt-2"
               max-file-size="3MB"
               @new-path="handleProcessFile"
               auto-compact
+              border
+              rounded="lg"
             >
             </s-image-uploader>
+
+            <v-btn
+              block
+              class="mt-3 text-none text-white justify-start"
+              color="#111"
+              height="72"
+              prepend-icon="link"
+              rounded="lg"
+              size="x-large"
+              variant="flat"
+              @click="showMainImageUrlDialog()"
+            >
+              <span
+                class="d-flex flex-column text-start flex-grow-1 flex-shrink-1 overflow-hidden"
+              >
+                <span class="d-flex align-center overflow-hidden">
+                  <v-avatar
+                    v-if="isValidHttpUrl(product.icon)"
+                    class="me-2 bg-white flex-shrink-0"
+                    rounded="lg"
+                    size="28"
+                  >
+                    <v-img :src="product.icon" cover />
+                  </v-avatar>
+                  <b class="text-body-1 font-weight-bold text-truncate"
+                    >Set main image by URL</b
+                  >
+                </span>
+                <small
+                  class="text-caption font-weight-regular opacity-60 mt-1 text-truncate"
+                  >Optional external link. Not stored.</small
+                >
+              </span>
+            </v-btn>
             <v-alert
               v-if="!product.icon"
-              class="small"
+              class="small mt-3"
               color="info"
               density="compact"
               icon="info"
@@ -83,7 +109,14 @@
                 "
               ></u-smart-toggle>
 
-              <template v-if="product.icon && !forStudio && !IS_VENDOR_PANEL /*Not yet implemented to vendors!*/">
+              <template
+                v-if="
+                  product.icon &&
+                  !isValidHttpUrl(product.icon) &&
+                  !forStudio &&
+                  !IS_VENDOR_PANEL /*Not yet implemented to vendors!*/
+                "
+              >
                 <!-- ━━━━━━━━━━━━━━━━━━━━━ Upscale ━━━━━━━━━━━━━━━━━━━━━ -->
                 <u-button-ai-large
                   v-if="need_upscale"
@@ -409,6 +442,62 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- ███████████████████████ Dialog > Main Image URL ███████████████████████ -->
+
+    <v-dialog v-model="dialog_main_image_url" max-width="560" scrollable>
+      <v-card class="text-start">
+        <v-card-title class="d-flex align-center">
+          <v-icon class="me-1" color="#111">link</v-icon>
+          Set main image by URL
+        </v-card-title>
+
+        <v-card-text>
+          <v-text-field
+            v-model="main_image_url_input"
+            :disabled="busy_main_image_url"
+            autofocus
+            clearable
+            label="Image URL"
+            placeholder="https://example.com/product.jpg"
+            prepend-inner-icon="link"
+            variant="outlined"
+            @keyup.enter="setMainImageUrl()"
+          />
+
+          <v-img
+            v-if="isValidHttpUrl(main_image_url_input)"
+            :src="main_image_url_input"
+            class="bg-tiny-checkers rounded-lg mt-3"
+            max-height="260"
+          />
+        </v-card-text>
+
+        <v-card-actions>
+          <div class="widget-buttons">
+            <v-btn
+              size="x-large"
+              variant="text"
+              @click="dialog_main_image_url = false"
+            >
+              <v-icon start>close</v-icon>
+              {{ $t("global.actions.close") }}
+            </v-btn>
+
+            <v-btn
+              :loading="busy_main_image_url"
+              color="primary"
+              size="x-large"
+              variant="elevated"
+              @click="setMainImageUrl()"
+            >
+              <v-icon start>check</v-icon>
+              {{ $t("global.actions.save") }}
+            </v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -474,6 +563,9 @@ export default {
     dialog_replace_bg: false,
     prompt: null,
     busy: false,
+    dialog_main_image_url: false,
+    main_image_url_input: null,
+    busy_main_image_url: false,
 
     items: [
       {
@@ -591,6 +683,18 @@ export default {
       return this.product.icon || this.force_preview;
     },
 
+    upload_main_image_url() {
+      return this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+        ? window.VAPI.POST_MY_VENDOR_UPLOAD_PRODUCT_MAIN_IMAGE(
+            this.$route.params.vendor_id,
+            this.product.id,
+          )
+        : window.API.POST_UPLOAD_PRODUCT_MAIN_IMAGE(
+            this.product.shop_id,
+            this.product.id,
+          );
+    },
+
     upload_video_url() {
       if (this.IS_VENDOR_PANEL) {
         return window.VAPI.POST_MY_VENDOR_PRODUCT_VIDEO_UPLOAD(
@@ -630,9 +734,13 @@ export default {
       if (!this.product?.icon) return;
 
       const helper = new ImageHelper(this.getShopImagePath(this.product.icon));
-      const { width, height } = await helper.getImageInfo();
-      //console.log("need_upscale", width, height);
-      this.need_upscale = width < 1000 || height < 1000;
+      try {
+        const { width, height } = await helper.getImageInfo();
+        //console.log("need_upscale", width, height);
+        this.need_upscale = width < 1000 || height < 1000;
+      } catch (e) {
+        this.need_upscale = false;
+      }
     },
 
     fixStyle() {
@@ -781,6 +889,57 @@ export default {
       this.$emit("update:icon", path);
     },
 
+    showMainImageUrlDialog() {
+      this.main_image_url_input = this.product.icon?.startsWith("http")
+        ? this.product.icon
+        : null;
+      this.dialog_main_image_url = true;
+    },
+
+    isValidHttpUrl(url) {
+      if (!url) return false;
+      try {
+        const parsed = new URL(url);
+        return ["http:", "https:"].includes(parsed.protocol);
+      } catch (e) {
+        return false;
+      }
+    },
+
+    setMainImageUrl() {
+      const url = this.main_image_url_input?.trim();
+      if (!this.isValidHttpUrl(url)) {
+        return NotificationService.showErrorAlert(
+          null,
+          "Enter a valid image URL.",
+        );
+      }
+
+      this.busy_main_image_url = true;
+      axios
+        .post(this.upload_main_image_url, { url })
+        .then(({ data }) => {
+          if (!data.error) {
+            const path = data.files?.path ?? url;
+            this.handleProcessFile(path);
+            this.dialog_main_image_url = false;
+
+            NotificationService.showSuccessAlert(
+              null,
+              "Main image URL saved successfully.",
+            );
+          } else {
+            NotificationService.showErrorAlert(null, data.error_msg);
+          }
+        })
+        .catch((error) => {
+          NotificationService.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_main_image_url = false;
+        });
+    },
+
     getVideoUrl(file_name: string) {
       return window.CDN.GET_VIDEO_URL(file_name);
     },
@@ -843,4 +1002,5 @@ export default {
     padding: 8px;
   }
 }
+
 </style>

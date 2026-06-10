@@ -72,8 +72,22 @@
         </div>
 
         <div class="absolute-bottom-end d-flex flex-column no-drag">
+          <v-chip
+            v-if="hasAiBackgroundRemove && isValidHttpUrl(image.path)"
+            class="mb-1"
+            color="rgba(10,20,60)"
+            size="small"
+            variant="flat"
+            label
+            title="External URL"
+            prepend-icon="link"
+            style="min-height: 28px"
+          >
+            URL
+          </v-chip>
+
           <v-btn
-            v-if="hasAiBackgroundRemove"
+            v-else-if="hasAiBackgroundRemove"
             class="mb-1"
             color="rgba(10,20,60)"
             size="small"
@@ -99,6 +113,8 @@
             title="Set Alt Text"
             variant="flat"
             @click.stop="$emit('click:alt', image)"
+            prepend-icon="edit"
+
           >
             <v-icon v-if="image.alt" class="me-1" size="x-small"
               >check_circle
@@ -122,7 +138,7 @@
       </v-btn>
     </div>
 
-    <div :style="style_value" class="p-2 item-grid">
+    <div :style="style_value" class="pa-2 item-grid">
       <s-image-uploader
         :max-file-size="maxFileSize"
         :max-files="20"
@@ -131,12 +147,89 @@
         class="marginal-center"
         dense
         disable-past
-        :label="$t('gallery_upload_grid.upload_images')"
         @response="handleUploadAppImages"
+        minHeight="190px"
+        rounded="lg"
+border
       >
       </s-image-uploader>
+
+      <v-btn
+        v-if="allowUrlInput"
+        block
+        class="mt-3 no-drag text-none text-white justify-start"
+        color="#111"
+        height="72"
+        prepend-icon="link"
+        rounded="lg"
+        size="x-large"
+        variant="flat"
+        @click.stop="showUrlDialog()"
+      >
+        <span
+          class="d-flex flex-column text-start flex-grow-1 flex-shrink-1 overflow-hidden"
+        >
+          <b class="text-body-1 font-weight-bold text-truncate"
+            >Add image URL</b
+          >
+          <small
+            class="text-caption font-weight-regular opacity-60 mt-1 text-truncate"
+            >Optional external link. No upload.</small
+          >
+        </span>
+      </v-btn>
     </div>
   </s-grid-draggable-view>
+
+  <v-dialog v-model="dialog_url" max-width="560" scrollable>
+    <v-card class="text-start">
+      <v-card-title class="d-flex align-center">
+        <v-icon class="me-1" color="#111">link</v-icon>
+        Add image URL
+      </v-card-title>
+
+      <v-card-text>
+        <v-text-field
+          v-model="url_input"
+          :disabled="busy_url"
+          autofocus
+          clearable
+          label="Image URL"
+          placeholder="https://example.com/product.jpg"
+          prepend-inner-icon="link"
+          variant="outlined"
+          @keyup.enter="addImageUrl()"
+        />
+
+        <v-img
+          v-if="isValidHttpUrl(url_input)"
+          :src="url_input"
+          class="bg-tiny-checkers rounded-lg mt-3"
+          max-height="260"
+        />
+      </v-card-text>
+
+      <v-card-actions>
+        <div class="widget-buttons">
+          <v-btn size="x-large" variant="text" @click="dialog_url = false">
+            <v-icon start>close</v-icon>
+            {{ $t("global.actions.close") }}
+          </v-btn>
+
+          <v-btn
+            :loading="busy_url"
+            color="primary"
+            size="x-large"
+            variant="elevated"
+            @click="addImageUrl()"
+          >
+            <v-icon start>add</v-icon>
+            {{ $t("global.actions.add") }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang="ts">
@@ -184,6 +277,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    allowUrlInput: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
@@ -196,6 +293,9 @@ export default {
     orders_changed: false,
 
     busy_delete: false,
+    dialog_url: false,
+    url_input: null,
+    busy_url: false,
 
     last_orders: null,
   }),
@@ -277,6 +377,60 @@ export default {
       });
     },
 
+    showUrlDialog() {
+      this.url_input = null;
+      this.dialog_url = true;
+    },
+
+    isValidHttpUrl(url) {
+      if (!url) return false;
+      try {
+        const parsed = new URL(url);
+        return ["http:", "https:"].includes(parsed.protocol);
+      } catch (e) {
+        return false;
+      }
+    },
+
+    addImageUrl() {
+      const url = this.url_input?.trim();
+      if (!this.isValidHttpUrl(url)) {
+        return NotificationService.showErrorAlert(
+          null,
+          "Enter a valid image URL.",
+        );
+      }
+
+      this.busy_url = true;
+      axios
+        .post(this.uploadPath, { url })
+        .then(({ data }) => {
+          if (data.error) {
+            NotificationService.showErrorAlert(null, data.error_msg);
+            return;
+          }
+
+          if (!data.files?.item) {
+            NotificationService.showErrorAlert(null, "Image was not created.");
+            return;
+          }
+
+          this.handleUploadAppImages(data);
+          this.dialog_url = false;
+
+          NotificationService.showSuccessAlert(
+            null,
+            "Image URL added successfully.",
+          );
+        })
+        .catch((error) => {
+          NotificationService.showLaravelError(error);
+        })
+        .finally(() => {
+          this.busy_url = false;
+        });
+    },
+
     deleteAppImage(image_item, index) {
       //console.log('image_item',image_item,'index',index);
 
@@ -344,4 +498,5 @@ export default {
     }
   }
 }
+
 </style>
