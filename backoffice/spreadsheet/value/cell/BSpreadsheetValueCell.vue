@@ -87,8 +87,8 @@
         :key="i_im"
         class="m-1 hover-scale pp"
         size="24"
+        :image="img"
       >
-        <img v-if="img" :src="img" />
       </v-avatar>
     </div>
     <!-- --------------- Date --------------- -->
