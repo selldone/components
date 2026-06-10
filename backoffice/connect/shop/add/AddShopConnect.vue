@@ -142,6 +142,22 @@
             v-html="$t('shop_connect.edit.migration_tips')"
           ></div>
 
+          <u-smart-switch
+            v-if="mode === 'Migration'"
+            v-model="params.keep_image_urls"
+            border
+            class="my-5"
+            color="primary"
+            false-description="Selldone downloads the images, stores them on Selldone storage, and serves them from Selldone CDN."
+            false-icon="cloud_upload"
+            false-title="Import images to Selldone CDN"
+            hint="Choose how Selldone should process product image URLs in this import file."
+            label="Image URL handling"
+            true-description="Selldone stores the exact external image URLs in products and galleries without downloading them."
+            true-icon="link"
+            true-title="Keep original image URLs"
+          ></u-smart-switch>
+
           <v-expand-transition>
             <div v-if="!params.test">
               <u-fade-scroll>
@@ -471,7 +487,7 @@ export default {
 
     loading: false,
 
-    params: { test: true },
+    params: { test: true, keep_image_urls: false },
 
     //--------------------
     busy_set: false,
@@ -480,9 +496,17 @@ export default {
     busy_delete: false,
   }),
   computed: {
+    request_params() {
+      const params = Object.assign({}, this.params);
+      if (this.connect?.mode !== Connect.Modes.Migration.code) {
+        delete params.keep_image_urls;
+      }
+      return params;
+    },
+
     connect_link() {
-      const query = /*  this.connect.form !test param!&&*/ this.params
-        ? ToQueryString(this.params)
+      const query = /*  this.connect.form !test param!&&*/ this.request_params
+        ? ToQueryString(this.request_params)
         : "";
 
       return (
@@ -531,6 +555,8 @@ export default {
       // Autofill test value:
       this.params.test =
         this.shopConnect.test || (this.connect && !this.connect.enable);
+      this.params.keep_image_urls =
+        this.shopConnect.settings?.keep_image_urls === true;
     } else if (this.initialSelectedConnectId) {
       this.connect_id = this.initialSelectedConnectId;
       this.params.endpoint = this.initialEndpoint ? this.initialEndpoint : "";
@@ -547,7 +573,7 @@ export default {
             this.shop.id,
             this.connect.code,
           ),
-          this.params,
+          this.request_params,
         )
         .then(({ data }) => {
           if (!data.error) {
@@ -581,6 +607,7 @@ export default {
 
             endpoint: this.params.endpoint,
             test: this.params.test,
+            keep_image_urls: this.request_params.keep_image_urls,
           },
         )
         .then(({ data }) => {
