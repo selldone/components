@@ -14,6 +14,106 @@
 
 <template>
   <div>
+    <!-- ▂▂▂▂▂▂▂▂▂▂▂▂ Details / Settings (Shown only in edit) ▂▂▂▂▂▂▂▂▂▂▂▂ -->
+    <template v-if="shopConnect">
+      <div class="widget-box mb-5">
+        <u-widget-header
+          :title="$t('shop_connect.edit.order.title')"
+          icon="shopping_bag"
+        ></u-widget-header>
+        <v-list-subheader>
+          {{ $t("shop_connect.edit.order.subtitle") }}
+        </v-list-subheader>
+        <u-smart-switch
+          v-model="enable"
+          :false-title="$t('global.commons.disable')"
+          :label="$t('shop_connect.edit.enable.label')"
+          :true-description="$t('shop_connect.edit.enable.true_desc')"
+          :true-title="$t('global.commons.enable')"
+          class="my-3"
+          false-gray
+          false-icon="stop"
+          true-icon="cloud_sync"
+          border
+        ></u-smart-switch>
+
+        <u-smart-switch
+          v-model="overwrite"
+          :false-description="$t('shop_connect.edit.overwrite.false_desc')"
+          :false-title="$t('shop_connect.edit.overwrite.false_title')"
+          :true-description="$t('shop_connect.edit.overwrite.true_desc')"
+          :true-title="$t('shop_connect.edit.overwrite.true_title')"
+          class="my-3"
+          false-gray
+          false-icon="edit_off"
+          true-icon="mode_edit"
+          border
+        ></u-smart-switch>
+
+        <u-smart-switch
+          v-if="connect.confirm"
+          v-model="auto_confirm"
+          :false-description="$t('shop_connect.edit.confirm.false_desc')"
+          :false-title="$t('global.commons.disable')"
+          :label="$t('shop_connect.edit.confirm.label')"
+          :true-description="$t('shop_connect.edit.confirm.true_desc')"
+          :true-title="$t('global.commons.enable')"
+          class="my-3"
+          false-gray
+          false-icon="close"
+          true-icon="flash_auto"
+          border
+        ></u-smart-switch>
+
+        <v-expand-transition>
+          <div v-if="auto_confirm">
+            <v-list-subheader>
+              <div>
+                <v-icon class="me-1" size="small">tips_and_updates</v-icon>
+                {{ $t("shop_connect.edit.confirm.tips") }}
+              </div>
+            </v-list-subheader>
+          </div>
+        </v-expand-transition>
+
+        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Shipping  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+        <template v-if="connect.shipping">
+          <v-list-subheader>
+            {{ $t("shop_connect.edit.shipping.tips") }}
+          </v-list-subheader>
+
+          <u-smart-switch
+            v-model="shipping"
+            :false-description="$t('shop_connect.edit.shipping.false_desc')"
+            :false-title="$t('shop_connect.edit.shipping.false_title')"
+            :label="$t('shop_connect.edit.shipping.label')"
+            :true-description="$t('shop_connect.edit.shipping.true_desc')"
+            :true-title="$t('shop_connect.edit.shipping.true_title')"
+            class="my-3"
+            false-gray
+            true-icon="local_shipping"
+            border
+          ></u-smart-switch>
+        </template>
+      </div>
+
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Save Action  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+      <s-widget-buttons>
+        <v-btn
+          :loading="busy_set"
+          color="primary"
+          size="x-large"
+          variant="elevated"
+          @click="updateConnect"
+        >
+          <v-icon start>save</v-icon>
+          {{ $t("global.actions.save_changes") }}
+        </v-btn>
+      </s-widget-buttons>
+    </template>
+
     <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Select Service ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
     <div class="widget-box mb-5">
@@ -118,21 +218,9 @@
             class="my-3"
             false-icon="all_inclusive"
             label="Sync mode"
+            border
             true-icon="science"
             @change="$forceUpdate()"
-          ></u-smart-switch>
-
-          <u-smart-switch
-            v-if="shopConnect"
-            v-model="overwrite"
-            :false-description="$t('shop_connect.edit.overwrite.false_desc')"
-            :false-title="$t('shop_connect.edit.overwrite.false_title')"
-            :true-description="$t('shop_connect.edit.overwrite.true_desc')"
-            :true-title="$t('shop_connect.edit.overwrite.true_title')"
-            class="my-3"
-            false-gray
-            false-icon="edit_off"
-            true-icon="mode_edit"
           ></u-smart-switch>
 
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Cation : Migration ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -282,87 +370,6 @@
 
     <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Details (Shown only in edit) ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
     <template v-if="shopConnect">
-      <div class="widget-box mb-5">
-        <u-widget-header
-          :title="$t('shop_connect.edit.order.title')"
-          icon="shopping_bag"
-        ></u-widget-header>
-        <v-list-subheader>
-          {{ $t("shop_connect.edit.order.subtitle") }}
-        </v-list-subheader>
-        <u-smart-switch
-          v-model="enable"
-          :false-title="$t('global.commons.disable')"
-          :label="$t('shop_connect.edit.enable.label')"
-          :true-description="$t('shop_connect.edit.enable.true_desc')"
-          :true-title="$t('global.commons.enable')"
-          class="my-3"
-          false-gray
-          false-icon="stop"
-          true-icon="cloud_sync"
-        ></u-smart-switch>
-
-        <u-smart-switch
-          v-if="connect.confirm"
-          v-model="auto_confirm"
-          :false-description="$t('shop_connect.edit.confirm.false_desc')"
-          :false-title="$t('global.commons.disable')"
-          :label="$t('shop_connect.edit.confirm.label')"
-          :true-description="$t('shop_connect.edit.confirm.true_desc')"
-          :true-title="$t('global.commons.enable')"
-          class="my-3"
-          false-gray
-          false-icon="close"
-          true-icon="flash_auto"
-        ></u-smart-switch>
-
-        <v-expand-transition>
-          <div v-if="auto_confirm">
-            <v-list-subheader>
-              <div>
-                <v-icon class="me-1" size="small">tips_and_updates</v-icon>
-                {{ $t("shop_connect.edit.confirm.tips") }}
-              </div>
-            </v-list-subheader>
-          </div>
-        </v-expand-transition>
-
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Shipping  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-        <template v-if="connect.shipping">
-          <v-list-subheader>
-            {{ $t("shop_connect.edit.shipping.tips") }}
-          </v-list-subheader>
-
-          <u-smart-switch
-            v-model="shipping"
-            :false-description="$t('shop_connect.edit.shipping.false_desc')"
-            :false-title="$t('shop_connect.edit.shipping.false_title')"
-            :label="$t('shop_connect.edit.shipping.label')"
-            :true-description="$t('shop_connect.edit.shipping.true_desc')"
-            :true-title="$t('shop_connect.edit.shipping.true_title')"
-            class="my-3"
-            false-gray
-            true-icon="local_shipping"
-          ></u-smart-switch>
-        </template>
-      </div>
-
-      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Save Action  ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-      <s-widget-buttons auto-fixed-position>
-        <v-btn
-          :loading="busy_set"
-          color="primary"
-          size="x-large"
-          variant="elevated"
-          @click="updateConnect"
-        >
-          <v-icon start>save</v-icon>
-          {{ $t("global.actions.save_changes") }}
-        </v-btn>
-      </s-widget-buttons>
-
       <div class="widget-box mb-5 mt-10">
         <u-widget-header
           :title="$t('global.commons.critical_zone')"
