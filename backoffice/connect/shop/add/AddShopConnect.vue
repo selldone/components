@@ -158,6 +158,22 @@
             true-title="Keep original image URLs"
           ></u-smart-switch>
 
+          <u-smart-switch
+            v-if="connect.read_products"
+            v-model="params.import_out_of_stock_products"
+            border
+            class="my-5"
+            color="primary"
+            false-description="Products with zero inventory will be skipped. Existing synced products with zero inventory will be removed when overwrite is enabled."
+            false-icon="inventory_2"
+            false-title="Skip out-of-stock products"
+            hint="Choose whether zero-inventory products should be imported into this shop."
+            label="Out-of-stock products"
+            true-description="Products with zero inventory will be imported and kept in your shop as unavailable."
+            true-icon="production_quantity_limits"
+            true-title="Import out-of-stock products"
+          ></u-smart-switch>
+
           <v-expand-transition>
             <div v-if="!params.test">
               <u-fade-scroll>
@@ -504,7 +520,11 @@ export default {
 
     loading: false,
 
-    params: { test: true, keep_image_urls: false },
+    params: {
+      test: true,
+      keep_image_urls: false,
+      import_out_of_stock_products: false,
+    },
     saved_request_params: null,
 
     //--------------------
@@ -518,6 +538,9 @@ export default {
       const params = Object.assign({}, this.params);
       if (this.connect?.mode !== Connect.Modes.Migration.code) {
         delete params.keep_image_urls;
+      }
+      if (!this.connect?.read_products) {
+        delete params.import_out_of_stock_products;
       }
       return params;
     },
@@ -597,6 +620,8 @@ export default {
         this.shopConnect.test || (this.connect && !this.connect.enable);
       this.params.keep_image_urls =
         this.shopConnect.settings?.keep_image_urls === true;
+      this.params.import_out_of_stock_products =
+        this.shopConnect.settings?.import_out_of_stock_products === true;
     } else if (this.initialSelectedConnectId) {
       this.connect_id = this.initialSelectedConnectId;
       this.params.endpoint = this.initialEndpoint ? this.initialEndpoint : "";
@@ -669,6 +694,8 @@ export default {
             endpoint: this.params.endpoint,
             test: this.params.test,
             keep_image_urls: this.request_params.keep_image_urls,
+            import_out_of_stock_products:
+              this.request_params.import_out_of_stock_products,
           },
         )
         .then(({ data }) => {
