@@ -15,33 +15,29 @@
 <template>
   <div>
     <div class="widget-box  mb-5">
-      <u-smart-switch
-        v-model="custom_mode"
-        @update:model-value="
-          (v) => {
-            if (!v) $emit('update:customCode', null);
-          }
-        "
-        true-title="Custom Code Mode"
-        true-description="You can enter your HTMl/Vue code to replace header."
-        true-icon="code"
-        false-title="Default Smart Mode"
-        false-description="Use default dynamic and well crafted header for high conversion."
-        false-icon="auto_fix_high"
+      <u-smart-select
+        :model-value="header_mode"
+        :items="header_modes"
+        item-value="id"
+        item-text="title"
+        item-description="description"
+        item-icon="icon"
+        force-show-all
         :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-      ></u-smart-switch>
+        @update:model-value="setHeaderMode"
+      ></u-smart-select>
     </div>
 
-    <template v-if="custom_mode">
+    <template v-if="header_mode === 'custom'">
       <div class="widget-box -large py-5">
         <u-widget-header
           icon="code"
           title="Custom Header Code"
         ></u-widget-header>
         <v-list-subheader>
-          You can past custom HTML or even Vue + Vuetify components code here to
-          replace default website header. You must implement all functionality
-          by yourself.
+          Paste custom HTML, Vue, or Vuetify component code here to replace the
+          default website header. You must implement all header functionality
+          yourself.
         </v-list-subheader>
 
         <BShopHtmlEditor
@@ -52,7 +48,7 @@
       </div>
     </template>
 
-    <template v-else>
+    <template v-else-if="header_mode === 'default'">
       <div class="max-widget-width py-5">
         <v-list-subheader class="op-0-5"
           >{{ $t("global.commons.preview") }}
@@ -184,14 +180,12 @@ import UDimensionInput from "@selldone/components-vue/ui/dimension/input/UDimens
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions.ts";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import BShopHtmlEditor from "@selldone/components-vue/backoffice/shop/html/editor/BShopHtmlEditor.vue";
-import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
-import USmartSwitch from "@selldone/components-vue/ui/smart/switch/USmartSwitch.vue";
+import USmartSelect from "@selldone/components-vue/ui/smart/select/USmartSelect.vue";
 
 export default defineComponent({
   name: "BShopThemeHeader",
   components: {
-    USmartSwitch,
-    USmartToggle,
+    USmartSelect,
     BShopHtmlEditor,
     UWidgetHeader,
     UDimensionInput,
@@ -215,8 +209,47 @@ export default defineComponent({
 
   data: () => ({
     ShopPermissionRegions: ShopPermissionRegions,
-    custom_mode: false,
+    header_mode: "default" as "default" | "custom" | "none",
+    last_custom_code: "",
+    header_modes: [
+      {
+        id: "default",
+        title: "Default Smart Mode",
+        description: "Use the default dynamic, well-crafted header optimized for conversion.",
+        icon: "auto_fix_high",
+      },
+      {
+        id: "custom",
+        title: "Custom Code Mode",
+        description: "Enter HTML/Vue code to replace the default header.",
+        icon: "code",
+      },
+      {
+        id: "none",
+        title: "No Header",
+        description: "Hide the storefront header. A minimal empty placeholder will be saved automatically.",
+        icon: "visibility_off",
+      },
+    ],
   }),
+  watch: {
+    customCode(code) {
+      if (this.isNoHeaderCode(code)) {
+        this.header_mode = "none";
+        return;
+      }
+
+      if (typeof code === "string" && code.length > 0) {
+        this.last_custom_code = code;
+        this.header_mode = "custom";
+        return;
+      }
+
+      if (this.header_mode !== "custom") {
+        this.header_mode = "default";
+      }
+    },
+  },
   computed: {
     theme() {
       return this.$shop.theme;
@@ -236,7 +269,48 @@ export default defineComponent({
   },
 
   created() {
-    this.custom_mode = !!(this.customCode && this.customCode.length > 0);
+    this.header_mode = this.resolveHeaderMode(this.customCode);
+
+    if (this.header_mode === "custom") {
+      this.last_custom_code = this.customCode;
+    }
+  },
+
+  methods: {
+    isNoHeaderCode(code: unknown) {
+      return (
+        typeof code === "string" &&
+        code.trim().toLowerCase() === "<div></div>"
+      );
+    },
+
+    resolveHeaderMode(code: unknown) {
+      if (this.isNoHeaderCode(code)) return "none";
+
+      return typeof code === "string" && code.length > 0
+        ? "custom"
+        : "default";
+    },
+
+    setHeaderMode(mode: "default" | "custom" | "none" | null) {
+      if (!mode) return;
+
+      this.header_mode = mode;
+
+      if (mode === "default") {
+        this.$emit("update:customCode", null);
+        return;
+      }
+
+      if (mode === "none") {
+        this.$emit("update:customCode", "<div></div>");
+        return;
+      }
+
+      if (this.isNoHeaderCode(this.customCode)) {
+        this.$emit("update:customCode", this.last_custom_code || "");
+      }
+    },
   },
 });
 </script>
