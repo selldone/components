@@ -22,7 +22,7 @@
             :class="{ disabled: !can_send_comment }"
             class="comment-placeholder"
           >
-            <div class="pa-5" @click="expand = true">
+            <div class="pa-5" @click="openNewComment">
               <v-icon class="me-1">add_comment</v-icon>
               {{ $t("global.comments.new_action") }}
 
@@ -380,6 +380,13 @@ export default {
     //――――――――――――――――――――――― Comment ▶ Save ―――――――――――――――――――――――
 
     saveComment() {
+      if (!this.can_send_comment) {
+        this.error = true;
+        this.error_message =
+          "Each user can send only one comment for an article or product. Please edit your previous comment.";
+        return;
+      }
+
       // Check body not empty!
       if (this.data.body === "") {
         this.error = true;
@@ -481,6 +488,11 @@ export default {
 
     closeNewComment() {
       this.expand = false;
+    },
+
+    openNewComment() {
+      if (!this.can_send_comment) return;
+      this.expand = true;
     },
 
     //――――――――――――――――――――――― Scroll ―――――――――――――――――――――――

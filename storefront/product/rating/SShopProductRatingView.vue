@@ -37,12 +37,12 @@
           v-model="user_rating[rating.id]"
           :title="rating.name"
           class="my-1"
-          :min="bought ? 1 : 3"
+          :min="1"
         />
 
         <div class="text-end">
           <v-btn
-            :disabled="!Object.values(user_rating).some((v) => !!v)"
+            :disabled="!bought || !has_selected_rating"
             :loading="busy"
             color="primary"
             rounded="lg"
@@ -93,7 +93,7 @@
       </div>
     </v-expand-transition>
 
-    <div v-if="!viewOnly && can_rate_without_bought" class="text-start pt-2">
+    <div v-if="!viewOnly && can_show_rate_button" class="text-start pt-2">
       <v-btn
         color="primary"
         rounded="lg"
@@ -158,8 +158,15 @@ export default {
       return this.USER();
     },
 
-    can_rate_without_bought() {
-      return this.user && !this.bought && !this.edit_mode;
+    has_selected_rating() {
+      return Object.values(this.user_rating).some((v) => {
+        const value = Number(v);
+        return value >= 1 && value <= 5;
+      });
+    },
+
+    can_show_rate_button() {
+      return this.user && this.bought && !this.input_rating_mode && !this.edit_mode;
     },
 
     bought() {
@@ -169,6 +176,7 @@ export default {
     input_rating_mode() {
       return (
         !this.viewOnly &&
+        this.bought &&
         this.product.my_ratings &&
         ((this.product.my_ratings.length === 0 &&
           this.bought) /*Just default show input for buyers*/ ||
@@ -176,7 +184,7 @@ export default {
       );
     },
     show_edit_btn() {
-      return !this.viewOnly && this.product.my_ratings;
+      return !this.viewOnly && this.bought && this.product.my_ratings;
     },
     rating_total_star() {
       let total = 0;
@@ -206,6 +214,8 @@ export default {
 
   methods: {
     setMyRating() {
+      if (!this.bought || !this.has_selected_rating) return;
+
       this.busy = true;
 
       window.$storefront.products.rate
