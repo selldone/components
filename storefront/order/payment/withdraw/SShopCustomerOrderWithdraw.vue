@@ -39,7 +39,7 @@
         <v-alert
           v-else-if="expired"
           class="text-start"
-          color="warning"
+          color="#000"
           icon="timer_off"
           variant="tonal"
         >
