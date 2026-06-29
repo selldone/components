@@ -22,18 +22,13 @@
         />
       </div>
 
-      <div>
-        <div class="d-flex align-center mb-3">
-          <v-avatar class="me-3" color="#111" rounded size="42" variant="tonal">
-            <v-icon icon="event_repeat" />
-          </v-avatar>
-          <div>
-            <div class="font-weight-bold">Withdrawal period</div>
-            <div class="small text-subtitle-2">
-              Default legal withdrawal period is 14 days.
-            </div>
-          </div>
-        </div>
+        <hr>
+        <u-widget-header icon="event_repeat" title="Withdrawal period" />
+<v-list-subheader>
+  Default legal withdrawal period is 14 days.
+</v-list-subheader>
+
+
 
         <v-text-field
           v-model.number="days"
@@ -46,45 +41,43 @@
           variant="outlined"
           @update:model-value="markChanged"
         />
-      </div>
 
-      <div>
-        <div class="d-flex align-start">
-          <v-avatar class="me-3 mt-1" color="#111" rounded size="42" variant="tonal">
-            <v-icon icon="article" />
-          </v-avatar>
+      <hr>
 
-          <div class="flex-grow-1">
-            <div>
-              <div class="font-weight-bold">Policy details</div>
-              <div class="small text-subtitle-2">
-                Shown to customers in the order withdrawal section.
-              </div>
 
-              <v-btn
-                class="mt-3"
-                :disabled="!canWrite"
-                color="#111"
-                prepend-icon="edit_note"
-                variant="flat"
-                @click="openPolicyDialog"
-              >
-                {{ text ? "Edit details" : "Add details" }}
-              </v-btn>
-            </div>
+      <u-widget-header icon="article" title="Policy details" />
+      <v-list-subheader>
+        Shown to customers in the order withdrawal section.
+      </v-list-subheader>
 
-            <div class="policy-preview mt-3">
-              <template v-if="policyPreview">
-                {{ policyPreview }}
-              </template>
-              <span v-else class="text-disabled">
+      <div class="policy-preview mt-3">
+        <template v-if="policyPreview">
+          {{ policyPreview }}
+        </template>
+        <span v-else class="text-disabled">
                 No policy details have been added yet.
               </span>
-            </div>
-          </div>
-        </div>
+
+        <v-btn
+            class="ms-3"
+            :disabled="!canWrite"
+            color="#111"
+            prepend-icon="edit_note"
+            variant="flat"
+            size="small"
+            @click="openPolicyDialog"
+        >
+          {{ text ? "Edit details" : "Add details" }}
+        </v-btn>
       </div>
-    </div>
+
+
+
+
+
+      </div>
+
+
 
     <div class="d-flex align-start mt-4 text-medium-emphasis text-subtitle-2">
       <v-icon class="me-2 mt-1" color="#111" icon="info" size="18" />
