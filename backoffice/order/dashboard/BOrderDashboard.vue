@@ -106,6 +106,11 @@
     </template>
 
     <v-container :class="{ disabled: rejected }" class="px-0">
+      <b-order-dashboard-withdraw-notice
+        v-if="basket?.withdraw"
+        :basket="basket"
+      />
+
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Delivery > State ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
       <s-order-delivery-state
         v-if="!isHyper && basket"
@@ -402,10 +407,12 @@ import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 
+import BOrderDashboardWithdrawNotice from "./withdraw/BOrderDashboardWithdrawNotice.vue";
 export default {
   name: "BOrderDashboard",
   mixins: [BEventBusMixin, MapMixin, OrderMixin, ProductMixin],
   components: {
+    BOrderDashboardWithdrawNotice,
     USmartSwitch,
     BShopCustomerBox,
     UWidgetHeader,

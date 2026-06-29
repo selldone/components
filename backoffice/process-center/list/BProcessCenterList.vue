@@ -264,6 +264,32 @@
             <v-spacer class="flex-grow-0 flex-md-grow-1"></v-spacer>
 
             <v-chip
+              v-if="item.withdraw"
+              class="font-weight-bold mx-1"
+              color="red"
+              label
+              size="x-small"
+              variant="flat"
+            >
+              <v-icon start size="12">assignment_return</v-icon>
+              Withdrawn by customer
+              <v-tooltip activator="parent" content-class="bg-black text-start" location="top">
+                <div class="font-weight-bold mb-1">Withdrawn by customer</div>
+                <div v-if="item.withdraw_at" class="small mb-1">
+                  Requested at:
+                  <b>{{getFromNowString(item.withdraw_at)}}</b> |
+                  {{ getLocalTimeString(item.withdraw_at) }}
+                </div>
+                <div class="small max-w-300">
+                  The customer has withdrawn this order. If you already shipped
+                  it, arrange the return. Always verify that the customer refund
+                  was completed correctly. You are responsible for handling it.
+                </div>
+              </v-tooltip>
+            </v-chip>
+
+
+            <v-chip
               v-if="item.reject"
               class="font-weight-bold mx-1"
               color="red"
@@ -273,6 +299,7 @@
 
               <v-icon end>fa:fas fa-exclamation</v-icon>
             </v-chip>
+
 
             <img
               v-if="item.link_id"

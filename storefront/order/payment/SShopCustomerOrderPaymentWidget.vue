@@ -612,9 +612,7 @@
                   class="fadeIn"
                   sub
                 >
-                </s-shop-row-customer-payment-record>
-              </template>
-            </template>
+                </s-shop-row-customer-payment-record></template></template>
 
             <!------------ Pending Payments ------------>
             <s-shop-row-customer-pending-payment
@@ -639,8 +637,7 @@
             <!------------ Cashback ------------>
             <s-order-payment-row-cashback :order="order">
             </s-order-payment-row-cashback>
-          </tbody>
-        </template>
+          </tbody></template>
       </v-table>
 
       <v-row
@@ -696,7 +693,12 @@
       </v-row>
     </div>
   </div>
-</template>
+  <s-shop-customer-order-withdraw
+    v-if="order"
+    :order="order"
+    :payment="payment"
+    @request:refresh="$emit('request:refresh')"
+  /></template>
 
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
@@ -721,11 +723,13 @@ import CoreMixin from "@selldone/components-vue/mixin/CoreMixin.ts";
 import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 
+import SShopCustomerOrderWithdraw from "./withdraw/SShopCustomerOrderWithdraw.vue";
 export default {
   name: "SShopCustomerOrderPaymentWidget",
   mixins: [DateMixin, CoreMixin, ClubMixin, CurrencyMixin],
 
   components: {
+    SShopCustomerOrderWithdraw,
     SOrderPaymentRowCashback,
     SOrderPaymentRowWallet,
     UPaymentCard,
