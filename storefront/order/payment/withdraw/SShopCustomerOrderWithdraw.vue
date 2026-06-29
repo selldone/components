@@ -1,19 +1,19 @@
 <template>
-  <div v-if="visible"
+  <v-alert
+    v-if="alreadyWithdrawn"
+    class="text-start"
+    color="red"
+    icon="assignment_return"
+    variant="tonal"
+  >
+    This order has been withdrawn by the customer.
+  </v-alert>
+  <div v-else-if="visible"
        class="widget shadow my-3 mx-0 mx-md-3 border-top overflow-hidden"
 
   >
-    <v-alert
-      v-if="alreadyWithdrawn"
-      class="text-start"
-      color="info"
-      icon="assignment_return"
-      variant="tonal"
-    >
-      This order has been withdrawn by the customer.
-    </v-alert>
 
-    <div v-else>
+    <div>
       <u-widget-header icon="assignment_return" title="Order withdrawal" />
 
       <div class="mt-3 text-start">
