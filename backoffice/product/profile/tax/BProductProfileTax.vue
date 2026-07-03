@@ -35,7 +35,38 @@
         >
       </b>
     </v-list-item-title>
-    <v-list-item-subtitle v-html="tax_profile_desc"></v-list-item-subtitle>
+
+    <v-list-item-subtitle class="d-flex flex-wrap align-center ga-1 mt-1">
+      <span class="tax-profile-desc-text" v-html="tax_profile_desc"></span>
+
+      <span class="tax-profile-badges ms-auto d-flex align-center ga-1">
+        <v-chip
+          :color="taxRuleScopeColor(applied_tax_rule)"
+          label
+          size="x-small"
+          variant="flat"
+        >
+          <v-icon start size="14">{{ taxRuleScopeIcon(applied_tax_rule) }}</v-icon>
+          {{ taxRuleScopeTitle(applied_tax_rule) }}
+          <v-tooltip activator="parent">
+            {{ taxRuleScopeTooltip(applied_tax_rule) }}
+          </v-tooltip>
+        </v-chip>
+
+        <v-chip
+          v-if="applied_tax_rule && applied_tax_rule.enable"
+          :color="taxRuleBehaviorColor(applied_tax_rule)"
+          label
+          size="x-small"
+          variant="flat"
+        >
+          {{ applied_tax_rule.included ? "Included" : "Excluded" }}
+          <v-tooltip activator="parent">
+            {{ taxRuleBehaviorTooltip(applied_tax_rule) }}
+          </v-tooltip>
+        </v-chip>
+      </span>
+    </v-list-item-subtitle>
 
     <template v-slot:append>
       <v-list-item-action end>
@@ -75,6 +106,7 @@
             :title="$t('product_tax_profile.dialog.title')"
             :to="{ name: 'BPageShopFinanceTax' }"
             add-text
+            target="_blank"
             icon="gavel"
           >
           </u-widget-header>
@@ -86,6 +118,73 @@
             v-model="tax_input"
             :shop="shop"
           ></b-tax-profile-input>
+
+          <div
+            class="tax-rule-preview mt-3"
+            :class="taxRulePreviewClass(dialog_tax_rule)"
+          >
+            <div class="d-flex align-center min-width-0">
+              <v-icon class="me-2" color="#111">
+                {{ tax_input_profile?.icon || "gavel" }}
+              </v-icon>
+
+              <div class="flex-grow-1">
+                <b class="d-block">
+                  {{
+                    tax_input_profile
+                      ? tax_input_profile.name
+                      : "Default shop tax applies"
+                  }}
+                </b>
+                <small class="text-muted">
+                  {{
+                    tax_input_profile
+                      ? "This product uses a dedicated tax profile."
+                      : "This product inherits the default shop tax rule."
+                  }}
+                </small>
+              </div>
+            </div>
+
+            <v-expand-transition>
+              <div
+                v-if="dialog_tax_rule"
+                class="tax-rule-include-preview py-3"
+              >
+                <b-tax-profile-include-pod
+                  :disabled="dialog_tax_disabled"
+                  :included="dialog_tax_included"
+                ></b-tax-profile-include-pod>
+              </div>
+            </v-expand-transition>
+
+            <div class="tax-rule-detail-text mt-2">
+              <div>
+                <b>Rule source:</b>
+                {{ taxRuleSourceText(dialog_tax_rule) }}
+              </div>
+
+              <div v-if="dialog_tax_rule && dialog_tax_rule.enable">
+                <b>Price behavior:</b>
+                {{ taxRuleBehaviorText(dialog_tax_rule) }}
+              </div>
+
+              <div v-if="dialog_tax_rule && !dialog_tax_rule.enable">
+                <b>Status:</b>
+                Tax calculation is disabled for this rule.
+              </div>
+
+              <div v-else-if="dialog_tax_rule">
+                <b>Calculation:</b>
+                {{ taxRuleCalculationText(dialog_tax_rule) }}
+              </div>
+
+              <div v-if="dialog_tax_rule && dialog_tax_rule.enable">
+                <b>Shipping:</b>
+                {{ taxRuleShippingText(dialog_tax_rule) }}
+              </div>
+            </div>
+          </div>
 
           <p
             v-if="isSubscription"
@@ -119,11 +218,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import BTaxProfileInput from "../../../tax/profile/input/BTaxProfileInput.vue";
+import BTaxProfileIncludePod from "../../../tax/profile/include-pod/BTaxProfileIncludePod.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 
 export default defineComponent({
   name: "BProductProfileTax",
-  components: { BTaxProfileInput },
+  components: { BTaxProfileInput, BTaxProfileIncludePod },
 
   props: {
     product: {
@@ -151,6 +251,23 @@ export default defineComponent({
     tax_profiles() {
       return this.shop.tax_profiles;
     },
+    tax_input_profile() {
+      return (
+        this.tax_input && this.tax_profiles.find((t) => t.id === this.tax_input)
+      );
+    },
+    dialog_tax_rule() {
+      return this.tax_input_profile || this.shop.tax;
+    },
+    dialog_tax_included() {
+      return Boolean(this.dialog_tax_rule?.included);
+    },
+    dialog_tax_disabled() {
+      return !this.dialog_tax_rule?.enable;
+    },
+    applied_tax_rule() {
+      return this.current_tax_profile || this.shop.tax;
+    },
     isSubscription() {
       return this.type?.code === ProductType.SUBSCRIPTION.code;
     },
@@ -172,7 +289,9 @@ export default defineComponent({
         if (!tax.enable) {
           out += ` | ${this.$t("product_tax_profile.description.is_disabled")}`;
         } else {
-          if (tax.fix) {
+          if (this.isExternalTaxRule(tax)) {
+            out += ` | Calculated by ${this.externalTaxProviderTitle(tax)}`;
+          } else if (tax.fix) {
             out += ` | ${this.$t("product_tax_profile.description.fixed_rate")}: ${tax.fix_vat}%`;
 
             if (tax.shipping) {
@@ -218,8 +337,195 @@ export default defineComponent({
         this.product.tax_id &&
         this.tax_profiles.find((t) => t.id === this.product.tax_id);
     },
+    externalTaxMeta(tax) {
+      return tax?.meta?.external_tax || null;
+    },
+    isExternalTaxRule(tax) {
+      const meta = this.externalTaxMeta(tax);
+      return Boolean(meta?.enabled && meta?.provider);
+    },
+    externalTaxProviderTitle(tax) {
+      const provider = this.externalTaxMeta(tax)?.provider;
+
+      if (provider === "stripe_tax") return "Stripe";
+
+      return "External";
+    },
+    externalTaxProviderColor(tax) {
+      const provider = this.externalTaxMeta(tax)?.provider;
+
+      if (provider === "stripe_tax") return "#635bff";
+
+      return "#0b6e69";
+    },
+    taxRuleBehaviorColor(tax) {
+      return tax?.included ? "#FFC107" : "#8BC34A";
+    },
+    taxRuleBehaviorTooltip(tax) {
+      if (tax?.included) {
+        return "Tax is included in the product price shown to the buyer.";
+      }
+
+      return "Tax is calculated and added on top of the product price at checkout.";
+    },
+    taxRuleScopeTitle(tax) {
+      if (!this.product.tax_id) return "Default";
+
+      return this.isExternalTaxRule(tax) ? "External" : "Internal";
+    },
+    taxRuleScopeTooltip(tax) {
+      if (!this.product.tax_id) {
+        return "This product inherits the default shop tax settings.";
+      }
+
+      if (this.isExternalTaxRule(tax)) {
+        return "This product uses an external service to calculate tax at checkout.";
+      }
+
+      return "This product uses a dedicated internal Selldone tax profile.";
+    },
+    taxRuleScopeIcon(tax) {
+      if (!this.product.tax_id) return "tune";
+
+      return this.isExternalTaxRule(tax) ? "hub" : "account_tree";
+    },
+    taxRuleScopeColor(tax) {
+      if (!this.product.tax_id) return "#0b6e69";
+
+      return this.isExternalTaxRule(tax)
+        ? this.externalTaxProviderColor(tax)
+        : "#111";
+    },
+    taxRulePreviewClass(tax) {
+      if (!this.tax_input_profile) return "tax-rule-preview-default";
+
+      return this.isExternalTaxRule(tax)
+        ? "tax-rule-preview-external"
+        : "tax-rule-preview-internal";
+    },
+    taxRuleSourceText(tax) {
+      if (!this.tax_input_profile) {
+        return "This product inherits the default shop tax settings.";
+      }
+
+      if (this.isExternalTaxRule(tax)) {
+        return `${this.externalTaxProviderTitle(tax)} calculates tax externally during checkout.`;
+      }
+
+      return "This product uses a dedicated internal Selldone tax profile.";
+    },
+    taxRuleBehaviorText(tax) {
+      if (tax?.included) {
+        return "Tax is already included in the product price shown to the buyer.";
+      }
+
+      return "Tax is calculated and added on top of the product price at checkout.";
+    },
+    taxRuleCalculationTitle(tax) {
+      if (this.isExternalTaxRule(tax)) {
+        return `Calculated by ${this.externalTaxProviderTitle(tax)}`;
+      }
+
+      if (tax?.fix) {
+        return `Goods ${tax.fix_vat || 0}%`;
+      }
+
+      return "Location-based rate";
+    },
+    taxRuleCalculationText(tax) {
+      if (this.isExternalTaxRule(tax)) {
+        return `The final tax is calculated by ${this.externalTaxProviderTitle(tax)} using buyer location and product tax data.`;
+      }
+
+      if (tax?.fix) {
+        return `Selldone applies a fixed goods tax rate of ${tax.fix_vat || 0}%.`;
+      }
+
+      return "Selldone calculates tax from the buyer location using the internal tax profile rules.";
+    },
+    taxRuleCalculationTooltip(tax) {
+      if (this.isExternalTaxRule(tax)) {
+        return "The external provider calculates the final tax using the buyer address and product tax code.";
+      }
+
+      if (tax?.fix) {
+        return "Selldone applies this fixed goods tax rate.";
+      }
+
+      return "Selldone calculates tax from the buyer location using the internal tax profile rules.";
+    },
+    taxRuleShippingTitle(tax) {
+      if (this.isExternalTaxRule(tax)) {
+        return tax?.shipping ? "Shipping taxable" : "Shipping not taxable";
+      }
+
+      if (!tax?.shipping) return "Shipping not taxable";
+
+      return tax.fix ? `Shipping ${tax.fix_shipping || 0}%` : "Shipping by location";
+    },
+    taxRuleShippingText(tax) {
+      if (!tax?.shipping) {
+        return "Shipping is not included in the taxable amount.";
+      }
+
+      if (this.isExternalTaxRule(tax)) {
+        return "Shipping can be sent to the external provider as a taxable amount.";
+      }
+
+      if (tax.fix) {
+        return `Shipping is taxed with a fixed rate of ${tax.fix_shipping || 0}%.`;
+      }
+
+      return "Shipping tax is calculated by buyer location.";
+    },
+    taxRuleShippingTooltip(tax) {
+      if (tax?.shipping) {
+        return "Shipping can be included in the taxable amount for this tax rule.";
+      }
+
+      return "Shipping is not included in the taxable amount for this tax rule.";
+    },
   },
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.tax-rule-preview {
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.tax-rule-preview-default {
+  background: linear-gradient(135deg, rgba(117, 117, 117, 0.1), rgba(189, 189, 189, 0.08));
+  border: 1px solid rgba(117, 117, 117, 0.16);
+}
+
+.tax-rule-preview-internal {
+  background: linear-gradient(135deg, rgba(11, 110, 105, 0.12), rgba(76, 175, 80, 0.08));
+  border: 1px solid rgba(11, 110, 105, 0.18);
+}
+
+.tax-rule-preview-external {
+  background: linear-gradient(135deg, rgba(99, 91, 255, 0.11), rgba(0, 188, 212, 0.07));
+  border: 1px solid rgba(99, 91, 255, 0.18);
+}
+
+.tax-rule-detail-text {
+  color: rgba(0, 0, 0, 0.72);
+  font-size: 0.78rem;
+  line-height: 1.75;
+}
+
+.tax-rule-include-preview {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.tax-profile-desc-text {
+  min-width: 0;
+}
+
+.tax-profile-badges {
+  flex-shrink: 0;
+}
+</style>

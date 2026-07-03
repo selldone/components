@@ -23,7 +23,7 @@
     <v-icon :color="profile.icon" :small="small" start
       >{{ profile.icon }}
     </v-icon>
-    {{ profile.name }}
+    {{ profile.name?.limitWords(3) }}
   </v-chip>
 </template>
 

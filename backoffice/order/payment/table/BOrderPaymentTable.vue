@@ -482,7 +482,7 @@
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 🛕 ROW ▶ Tax ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <tr
-          v-if="order.tax"
+          v-if="tax || has_tax_detail"
           class="text-start"
           @click="show_tax_detail = !show_tax_detail"
         >
@@ -497,7 +497,7 @@
             {{ $t("global.commons.tax") }}
           </td>
           <td class="text-left">
-            <u-price :amount="order.tax" :currency="order.currency"></u-price>
+            <u-price :amount="tax" :currency="order.currency"></u-price>
           </td>
           <td>
             <span v-if="order.tax_included">{{
@@ -1763,7 +1763,7 @@ export default {
     },
 
     tax() {
-      return this.order.tax;
+      return this.has_tax_detail ? this.items_tax_amount : this.order.tax;
     },
     tax_shipping() {
       return this.order.tax_shipping ? this.order.tax_shipping : 0;
@@ -1846,7 +1846,22 @@ export default {
 
     //------------------- Tax -------------------
     has_tax_detail() {
-      return this.items.some((i) => i.tax?.amount);
+      return this.items.some(
+        (i) =>
+          i.tax &&
+          (i.tax.amount !== undefined ||
+            i.tax.shipping !== undefined ||
+            i.tax.error),
+      );
+    },
+
+    items_tax_amount() {
+      const out = this.items.reduce((sum, item) => {
+        const amount = Number(item.tax?.amount);
+        return sum + (Number.isFinite(amount) ? amount : 0);
+      }, 0);
+
+      return PriceHelper.FixPrecisionForCurrency(out, this.order.currency);
     },
 
     total_cross_sells_discount() {

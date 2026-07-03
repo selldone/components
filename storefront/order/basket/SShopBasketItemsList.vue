@@ -113,6 +113,13 @@
             v-if="item.variant"
             :product-variant="item.variant"
           />
+
+          <s-shop-basket-item-tax-info
+            :currency="item.currency"
+            :tax="item.tax"
+            class="mt-1"
+            dense
+          />
         </div>
 
         <div
@@ -433,11 +440,13 @@ import SProductSectionValuation from "../../../storefront/product/section/valuat
 import { Basket, BasketItemReturn } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import UTextDecimal from "@selldone/components-vue/ui/text/decimal/UTextDecimal.vue";
+import SShopBasketItemTaxInfo from "../../../storefront/order/basket/SShopBasketItemTaxInfo.vue";
 
 export default {
   name: "SShopBasketItemsList",
   mixins: [DateMixin],
   components: {
+    SShopBasketItemTaxInfo,
     UTextDecimal,
     SProductSectionValuation,
     BasketItemUserMessageForm,

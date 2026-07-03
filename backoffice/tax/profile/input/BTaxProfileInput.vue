@@ -1,22 +1,63 @@
-<!--
-  - Copyright (c) 2023-2024. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
-  -->
+<script setup lang="ts">
+import { computed } from "vue";
+
+const props = withDefaults(
+  defineProps<{
+    shop: any;
+    modelValue?: any;
+    returnObject?: boolean;
+    solo?: boolean;
+    flat?: boolean;
+    backgroundColor?: string;
+    variant?: string;
+  }>(),
+  {
+    returnObject: false,
+    solo: false,
+    flat: false,
+    backgroundColor: undefined,
+    variant: "underlined",
+  },
+);
+
+const emit = defineEmits<{
+  "update:modelValue": [value: any];
+}>();
+
+const taxProfiles = computed(() => props.shop?.tax_profiles || []);
+
+function externalTaxMeta(profile: any) {
+  return profile?.meta?.external_tax || null;
+}
+
+function isExternalTaxProfile(profile: any) {
+  const meta = externalTaxMeta(profile);
+  return Boolean(meta?.enabled && meta?.provider);
+}
+
+function externalTaxProviderTitle(profile: any) {
+  const provider = externalTaxMeta(profile)?.provider;
+
+  if (provider === "stripe_tax") return "Stripe";
+
+  return "External";
+}
+
+function externalTaxProviderColor(profile: any) {
+  const provider = externalTaxMeta(profile)?.provider;
+
+  if (provider === "stripe_tax") return "#635bff";
+
+  return "#0b6e69";
+}
+</script>
 
 <template>
   <v-select
     :bg-color="backgroundColor"
+    :class="{ 'tax-profile-default-mode': !modelValue }"
     :flat="flat"
-    :items="tax_profiles"
+    :items="taxProfiles"
     :messages="
       !modelValue
         ? 'The default tax rules will be applied to all products without a dedicated tax profile.'
@@ -31,98 +72,159 @@
     item-value="id"
     label="Tax profile"
     persistent-placeholder
-    placeholder="Default"
-    @update:model-value="(val) => $emit('update:modelValue', val)"
+    placeholder=""
+    @update:model-value="(value) => emit('update:modelValue', value)"
   >
-    <template v-slot:selection="{ item }">
-      <v-icon v-if="item.raw.icon" class="me-2" color="#333"
-        >{{ item.raw.icon }}
-      </v-icon>
-      <b>{{ item.raw.name }}</b>
-      <span v-if="item.raw.fix" class="ms-2">
-        | <small>Goods:</small> <b>{{ item.raw.fix_vat }}%</b>
-        <template v-if="item.raw.fix_shipping">
-          | <small>Shipping:</small>
-          <b>{{ item.raw.fix_shipping }}%</b></template
-        >
-      </span>
-      <span v-else class="ms-2">
-        | <v-icon class="me-1" size="small">share_location</v-icon>
-        <small>Location-Based Tax</small></span
-      >
+    <template v-slot:prepend-inner>
       <v-chip
-        :color="item.raw.included ? '#FFC107' : '#8BC34A'"
-        class="mx-2"
+        v-if="!modelValue"
+        class="tax-profile-default-chip"
+        color="#0b6e69"
         label
-        size="x-small"
+        size="small"
         variant="flat"
-        >{{ item.raw.included ? "inclusive" : "exclusive" }}
+      >
+        <v-icon start size="16">tune</v-icon>
+        Default
       </v-chip>
     </template>
-    <template v-slot:item="{ item, props }">
-      <v-list-item v-bind="props">
-        <template v-slot:prepend>
-          <v-icon v-if="item.raw.icon" class="me-2" color="#333"
-            >{{ item.raw.icon }}
-          </v-icon>
-        </template>
-        <template v-slot:title>
-          <v-list-item-title class="text-start">
-            <b>{{ item.raw.name }}</b>
-            <span v-if="item.raw.fix" class="ms-2">
-              | <small>Goods:</small> <b>{{ item.raw.fix_vat }}%</b>
-              <template v-if="item.raw.fix_shipping">
-                | <small>Shipping:</small>
-                <b>{{ item.raw.fix_shipping }}%</b></template
-              >
-            </span>
-            <span v-else class="ms-2">
-              | <v-icon class="me-1" size="small">share_location</v-icon>
-              <small>Location-Based Tax</small></span
-            >
-          </v-list-item-title>
-        </template>
-        <template v-slot:append>
+
+    <template v-slot:selection="{ item }">
+      <div class="tax-profile-selection d-flex align-center min-width-0 w-100">
+        <v-icon v-if="item.raw.icon" class="me-2" color="#333">
+          {{ item.raw.icon }}
+        </v-icon>
+
+        <b class="tax-profile-selection-name text-truncate">{{ item.raw.name }}</b>
+
+        <span
+          v-if="!isExternalTaxProfile(item.raw) && item.raw.fix"
+          class="ms-2 tax-profile-detail text-truncate"
+        >
+          | <small>Goods:</small> <b>{{ item.raw.fix_vat }}%</b>
+          <template v-if="item.raw.fix_shipping">
+            | <small>Shipping:</small>
+            <b>{{ item.raw.fix_shipping }}%</b>
+          </template>
+        </span>
+
+        <span
+          v-else-if="!isExternalTaxProfile(item.raw)"
+          class="ms-2 tax-profile-detail text-truncate"
+        >
+          | <v-icon class="me-1" size="small">share_location</v-icon>
+          <small>Location-Based Tax</small>
+        </span>
+
+        <span class="tax-profile-selection-badges ms-auto d-flex align-center">
           <v-chip
-            :color="item.raw.included ? '#FFC107' : '#8BC34A'"
-            class="mx-2"
+            v-if="isExternalTaxProfile(item.raw)"
+            :color="externalTaxProviderColor(item.raw)"
+            class="ms-1"
             label
             size="x-small"
             variant="flat"
-            >{{ item.raw.included ? "inclusive" : "exclusive" }}
+          >
+            {{ externalTaxProviderTitle(item.raw) }}
           </v-chip>
+
+          <v-chip
+            :color="item.raw.included ? '#FFC107' : '#8BC34A'"
+            class="ms-1"
+            label
+            size="x-small"
+            variant="flat"
+          >
+            {{ item.raw.included ? "inclusive" : "exclusive" }}
+          </v-chip>
+        </span>
+      </div>
+    </template>
+
+    <template v-slot:item="{ item, props: itemProps }">
+      <v-list-item v-bind="itemProps">
+        <template v-slot:prepend>
+          <v-icon v-if="item.raw.icon" class="me-2" color="#333">
+            {{ item.raw.icon }}
+          </v-icon>
+        </template>
+
+        <template v-slot:title>
+          <v-list-item-title class="text-start tax-profile-item-title">
+            <b>{{ item.raw.name }}</b>
+
+            <span v-if="!isExternalTaxProfile(item.raw) && item.raw.fix" class="ms-2">
+              | <small>Goods:</small> <b>{{ item.raw.fix_vat }}%</b>
+              <template v-if="item.raw.fix_shipping">
+                | <small>Shipping:</small>
+                <b>{{ item.raw.fix_shipping }}%</b>
+              </template>
+            </span>
+
+            <span v-else-if="!isExternalTaxProfile(item.raw)" class="ms-2">
+              | <v-icon class="me-1" size="small">share_location</v-icon>
+              <small>Location-Based Tax</small>
+            </span>
+          </v-list-item-title>
+        </template>
+
+        <template v-slot:append>
+          <div class="d-flex align-center">
+            <v-chip
+              v-if="isExternalTaxProfile(item.raw)"
+              :color="externalTaxProviderColor(item.raw)"
+              class="me-2"
+              label
+              size="x-small"
+              variant="flat"
+            >
+              {{ externalTaxProviderTitle(item.raw) }}
+            </v-chip>
+
+            <v-chip
+              :color="item.raw.included ? '#FFC107' : '#8BC34A'"
+              label
+              size="x-small"
+              variant="flat"
+            >
+              {{ item.raw.included ? "inclusive" : "exclusive" }}
+            </v-chip>
+          </div>
         </template>
       </v-list-item>
     </template>
   </v-select>
 </template>
 
-<script lang="ts">
-export default {
-  name: "BTaxProfileInput",
-  emits: ["update:modelValue"],
-  props: {
-    shop: {
-      required: true,
-      type: Object,
-    },
+<style scoped>
+.tax-profile-default-chip {
+  margin-top: 2px;
+}
 
-    modelValue: {},
-    returnObject: { type: Boolean },
-    solo: { type: Boolean },
-    flat: { type: Boolean },
-    backgroundColor: {},
-    variant: {
-      default: "underlined",
-    },
-  },
+.tax-profile-default-mode :deep(.v-field__input) {
+  padding-inline-start: 8px;
+}
 
-  computed: {
-    tax_profiles() {
-      return this.shop.tax_profiles;
-    },
-  },
-};
-</script>
+.tax-profile-selection {
+  overflow: hidden;
+}
 
-<style scoped></style>
+.tax-profile-selection-name {
+  min-width: 32px;
+  overflow: hidden;
+}
+
+.tax-profile-selection-badges {
+  flex-shrink: 0;
+}
+
+.tax-profile-item-title {
+  max-width: min(720px, 78vw);
+}
+
+.tax-profile-detail {
+  min-width: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+</style>

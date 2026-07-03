@@ -72,7 +72,7 @@
             >new_releases
           </v-icon>
         </router-link>
-        <small> {{ product.title_en?.limitWords(18) }}</small>
+        <small class="d-block single-line"> {{ product.title_en?.limitWords(18) }}</small>
         <p class="mini-info">
           <!-- ▂▂▂▂▂▂▂▂▂▂▂ volume ▂▂▂▂▂▂▂▂▂▂▂ -->
           <span v-if="product.price_input === 'volume'"
@@ -228,12 +228,20 @@
           @click:delete="buyRemoveAction()"
         ></s-shop-basket-item-count-select>
 
+        <s-shop-basket-item-tax-info
+          v-if="basketItem.tax"
+          :currency="basketItem.currency"
+          :tax="basketItem.tax"
+          class="s--shop-basket-item-tax-under-count"
+        />
+
         <p
           v-if="basketItem.count > available_quantity"
           class="m-1 text-danger small"
         ></p>
       </v-col>
     </v-row>
+
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Service Form ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <s-product-service-form
@@ -262,11 +270,13 @@ import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import UNumberInput from "@selldone/components-vue/ui/number/input/UNumberInput.vue";
+import SShopBasketItemTaxInfo from "./SShopBasketItemTaxInfo.vue";
 
 export default {
   name: "SShopBasketItem",
   mixins: [CurrencyMixin, ProductMixin],
   components: {
+    SShopBasketItemTaxInfo,
     UNumberInput,
     SProductServiceForm,
     SShopBasketItemCountSelect,
@@ -505,5 +515,11 @@ export default {
       vertical-align: baseline;
     }
   }
+}
+
+.s--shop-basket-item-tax-under-count {
+  max-width: 160px;
+  margin: 4px auto 0;
+  text-align: start;
 }
 </style>
