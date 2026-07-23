@@ -20,7 +20,7 @@
 
     <v-list-subheader>
       <div>
-        {{$t('b_shop_theme_typography.main_font.subtitle')}}
+        {{ $t("b_shop_theme_typography.main_font.subtitle") }}
 
         <a
           class="mx-1 font-weight-bold"
@@ -33,22 +33,64 @@
       </div>
     </v-list-subheader>
 
+    <v-autocomplete
+      v-if="customFonts.length"
+      :clearable="true"
+      :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+      :items="customFonts"
+      item-title="name"
+      item-value="id"
+      :label="$t('b_shop_theme_typography.main_font.custom_font')"
+      :messages="$t('b_shop_theme_typography.main_font.custom_font_message')"
+      :model-value="selectedCustomFontId"
+      persistent-placeholder
+      prepend-inner-icon="font_download"
+      variant="underlined"
+      @update:model-value="selectCustomFont"
+    >
+      <template #selection="{ item }">
+        <span :style="customFontPreviewStyle(item.raw)">
+          {{ item.raw.name }}
+        </span>
+      </template>
+      <template #item="{ item, props }">
+        <v-list-item v-bind="props" class="text-start">
+          <template #prepend>
+            <v-avatar
+              class="me-2 rounded-lg"
+              color="grey-lighten-4"
+              :style="customFontPreviewStyle(item.raw)"
+            >
+              Aa
+            </v-avatar>
+          </template>
+          <template #title>
+            <b :style="customFontPreviewStyle(item.raw)">{{ item.raw.name }}</b>
+          </template>
+          <template #subtitle>
+            <code dir="ltr">{{ customFontFamilyValue(item.raw) }}</code>
+          </template>
+        </v-list-item>
+      </template>
+    </v-autocomplete>
+
     <v-text-field
       :model-value="fontFamily"
       @update:model-value="(v) => $emit('update:fontFamily', v)"
-      :label="$t('b_shop_theme_typography.inputs.font_family.label') "
-      :messages="$t('b_shop_theme_typography.inputs.font_family.message') "
+      :label="$t('b_shop_theme_typography.inputs.font_family.label')"
+      :messages="$t('b_shop_theme_typography.inputs.font_family.message')"
       persistent-placeholder
       placeholder="'Maven Pro', sans-serif"
       @blur="fixFontFamily"
       variant="underlined"
       :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+      :readonly="!!selectedCustomFont"
       dir="ltr"
     >
       <template v-slot:append-inner>
         <v-slide-y-transition>
           <v-btn
-            v-if="font_family_name"
+            v-if="font_family_name && !selectedCustomFont"
             :href="`https://fonts.google.com/?query=${font_family_name}`"
             class="me-2"
             icon
@@ -95,20 +137,24 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <hr>
-
+    <hr />
 
     <v-textarea
       :model-value="fontRes"
       @update:model-value="(v) => $emit('update:fontRes', v)"
       :rows="3"
       auto-grow
-      :label="$t('b_shop_theme_typography.inputs.font_res.label') "
-      :messages="$t('b_shop_theme_typography.inputs.font_res.message')"
+      :label="$t('b_shop_theme_typography.inputs.font_res.label')"
+      :messages="
+        selectedCustomFont
+          ? $t('b_shop_theme_typography.main_font.custom_resource_message')
+          : $t('b_shop_theme_typography.inputs.font_res.message')
+      "
       persistent-placeholder
       placeholder="<link href='https://fonts.googleap..."
       variant="underlined"
       :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+      :readonly="!!selectedCustomFont"
       dir="ltr"
     >
       <template v-slot:append-inner>
@@ -150,6 +196,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions.ts";
+import { FontLoader } from "@selldone/core-js/helper/font/FontLoader.ts";
 
 export default defineComponent({
   name: "BShopThemeTypography",
@@ -158,6 +205,10 @@ export default defineComponent({
   props: {
     fontFamily: {},
     fontRes: {},
+    customFonts: {
+      type: Array,
+      default: () => [],
+    },
   },
   data: () => ({
     ShopPermissionRegions: ShopPermissionRegions,
@@ -165,8 +216,81 @@ export default defineComponent({
 
   computed: {
     font_family_name() {
-      const match = this.fontFamily && this.fontFamily.match(/['|"](.+)['|"]/g);
-      return match && match.length && match[0].replace(/['|"]/g, "");
+      if (!this.fontFamily) return null;
+      return String(this.fontFamily)
+        .split(",")[0]
+        .trim()
+        .replace(/^['"]|['"]$/g, "");
+    },
+    selectedCustomFont() {
+      const family = this.primaryFontFamily(this.fontFamily);
+      if (!family) return null;
+
+      return (
+        this.customFonts.find(
+          (font) =>
+            this.primaryFontFamily(font?.family) === family ||
+            this.primaryFontFamily(
+              FontLoader.GetCustomFontFamilyValue(font),
+            ) === family,
+        ) || null
+      );
+    },
+    selectedCustomFontId() {
+      return this.selectedCustomFont?.id ?? null;
+    },
+  },
+  watch: {
+    customFonts: {
+      deep: true,
+      handler() {
+        if (this.selectedCustomFont)
+          this.applyCustomFont(this.selectedCustomFont);
+      },
+    },
+  },
+  methods: {
+    fixFontFamily() {
+      const value = String(this.fontFamily || "")
+        .replace(/^\s*font-family\s*:/i, "")
+        .replace(/;\s*$/, "")
+        .trim();
+      this.$emit("update:fontFamily", value || null);
+    },
+    selectCustomFont(id) {
+      const normalizedId = id == null ? null : Number(id);
+      if (normalizedId == null) {
+        if (this.selectedCustomFont) {
+          this.$emit("update:fontFamily", null);
+          this.$emit("update:fontRes", null);
+        }
+        return;
+      }
+
+      const font = this.customFonts.find(
+        (item) => Number(item?.id) === normalizedId,
+      );
+      if (!font) return;
+
+      this.applyCustomFont(font);
+    },
+    applyCustomFont(font) {
+      this.$emit("update:fontFamily", this.customFontFamilyValue(font));
+      this.$emit("update:fontRes", FontLoader.BuildCustomFontResource(font));
+    },
+    customFontFamilyValue(font) {
+      return FontLoader.GetCustomFontFamilyValue(font);
+    },
+    customFontPreviewStyle(font) {
+      return { fontFamily: this.customFontFamilyValue(font) };
+    },
+    primaryFontFamily(value) {
+      return String(value || "")
+        .replace(/^\s*font-family\s*:/i, "")
+        .split(",")[0]
+        .trim()
+        .replace(/^['"]|['"]$/g, "")
+        .toLocaleLowerCase();
     },
   },
 });
