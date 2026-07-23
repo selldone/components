@@ -65,8 +65,7 @@
               :size="10"
               :value="it"
             ></u-variant-asset-image>
-            {{ it.removeVariantAsset()
-            }}<span v-if="index !== items.length - 1">,</span>
+            {{ it.removeVariantAsset() }}<span v-if="index !== items.length - 1">,</span>
           </span>
           <v-icon v-if="items.length > max" size="10">more_horiz</v-icon>
         </template>

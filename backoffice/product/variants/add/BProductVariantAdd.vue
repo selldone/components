@@ -727,7 +727,7 @@ export default {
 
       if (this.hasStyle) item.style = this.style;
 
-      if (this.hasPack) item.pack = parseInt(this.pack, 10);
+      if (this.hasPack) item.pack = this.pack;
 
       if (this.hasType) item.type = this.type;
 
