@@ -16,7 +16,7 @@
   <v-list-item
     :class="{
       'bg-red-lighten-5 border-opacity-50': shop.deleted_at,
-      'bg-surface': !shop.deleted_at,
+      'bg-surface row-hover': !shop.deleted_at,
     }"
     :to="shop.deleted_at ? undefined : to"
     border
