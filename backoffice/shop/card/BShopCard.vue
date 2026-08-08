@@ -627,6 +627,13 @@ export default {
     },
 
     total_views() {
+      if (
+        this.shop.total_views !== undefined &&
+        this.shop.total_views !== null
+      ) {
+        return Number(this.shop.total_views);
+      }
+
       return (
         this.views +
         this.view_products_virtual +
