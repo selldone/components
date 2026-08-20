@@ -33,33 +33,33 @@
               <template v-if="is_valid_domain" v-slot:append-title>
                 <v-icon class="ms-1" color="success">check_circle</v-icon>
               </template>
-              <template v-slot:actions>
-
-              </template>
+              <template v-slot:actions> </template>
             </u-widget-header>
 
             <v-locale-provider :rtl="false">
               <v-text-field
-                  v-model="input_domain"
-                  :disabled="inDomainEditMode"
-                  :hint="
-                $t('admin_shop.dashboard.info.add_dialog.input_domain_message')
-              "
-                  :label="$t('admin_shop.dashboard.info.add_dialog.input_domain')"
-                  :rules="[GlobalRules.required()]"
-                  class="english-field strong-field"
-                  color="green"
-                  placeholder="your-shop-domain.com"
-                  single-line
-                  variant="underlined"
-                  @keydown.enter="setShopDomain()"
-                  messages=" "
+                v-model="input_domain"
+                :disabled="inDomainEditMode"
+                :hint="
+                  $t(
+                    'admin_shop.dashboard.info.add_dialog.input_domain_message',
+                  )
+                "
+                :label="$t('admin_shop.dashboard.info.add_dialog.input_domain')"
+                :rules="[GlobalRules.required()]"
+                class="english-field strong-field"
+                color="green"
+                placeholder="your-shop-domain.com"
+                single-line
+                variant="underlined"
+                @keydown.enter="setShopDomain()"
+                messages=" "
               >
                 <template v-slot:prepend-inner>
                   <b
-                      class="me-2 pt-2 text-success small text-no-wrap"
-                      dir="ltr"
-                      @click="show_ssl_message = !show_ssl_message"
+                    class="me-2 pt-2 text-success small text-no-wrap"
+                    dir="ltr"
+                    @click="show_ssl_message = !show_ssl_message"
                   >
                     <v-icon class="me-1 mb-1" color="success" size="small">
                       lock
@@ -71,57 +71,57 @@
                 <template v-slot:message>
                   <v-slide-x-reverse-transition group leave-absolute>
                     <v-chip
-                        v-if="is_wild_card"
-                        key="1"
-                        class="skew-n20 mx-1"
-                        color="#C2185B"
-                        label
-                        size="x-small"
-                        variant="flat"
-                    >Wildcard
+                      v-if="is_wild_card"
+                      key="1"
+                      class="skew-n20 mx-1"
+                      color="#C2185B"
+                      label
+                      size="x-small"
+                      variant="flat"
+                      >Wildcard
                     </v-chip>
 
                     <v-chip
-                        v-if="!is_valid_domain"
-                        key="2"
-                        class="skew-n20 mx-1"
-                        color="#eee"
-                        label
-                        size="x-small"
-                        variant="flat"
+                      v-if="!is_valid_domain"
+                      key="2"
+                      class="skew-n20 mx-1"
+                      color="#eee"
+                      label
+                      size="x-small"
+                      variant="flat"
                     >
                       <v-icon class="me-1" color="red" size="small"
-                      >warning
+                        >warning
                       </v-icon>
                       Invalid domain
                     </v-chip>
                     <v-chip
-                        v-else-if="is_subdomain"
-                        key="3"
-                        class="skew-n20 mx-1"
-                        color="#673AB7"
-                        label
-                        size="x-small"
-                        variant="flat"
-                    >Sub domain
+                      v-else-if="is_subdomain"
+                      key="3"
+                      class="skew-n20 mx-1"
+                      color="#673AB7"
+                      label
+                      size="x-small"
+                      variant="flat"
+                      >Sub domain
                     </v-chip>
                     <v-chip
-                        v-else
-                        key="4"
-                        class="skew-n20 mx-1"
-                        color="#009688"
-                        label
-                        size="x-small"
-                        variant="flat"
-                    >Root domain
+                      v-else
+                      key="4"
+                      class="skew-n20 mx-1"
+                      color="#009688"
+                      label
+                      size="x-small"
+                      variant="flat"
+                      >Root domain
                     </v-chip>
                   </v-slide-x-reverse-transition>
                 </template>
               </v-text-field>
             </v-locale-provider>
 
-
             <v-alert
+              v-if="!externally_hosted"
               :model-value="show_ssl_message"
               class="small font-weight-bold"
               density="compact"
@@ -199,154 +199,230 @@
         </v-expand-transition>
 
         <v-expand-transition>
-          <div v-if="is_valid_domain && (!inDomainEditMode || error_dns)">
+          <div v-if="is_valid_domain">
             <div class="widget-box -large mb-5">
               <h2 class=" ">
                 <v-icon class="me-1">looks_two</v-icon>
-                Connect
+                {{ $t("admin_shop.dashboard.info.add_dialog.hosting.title") }}
               </h2>
               <v-list-subheader>
-                {{ $t("admin_shop.dashboard.info.add_dialog.step1") }}
+                {{
+                  $t("admin_shop.dashboard.info.add_dialog.hosting.subtitle")
+                }}
               </v-list-subheader>
 
-              <u-smart-switch
-                v-if="has_ssl_proxy"
-                :model-value="!show_ssl_ips"
-                @update:model-value="show_ssl_ips = !$event"
-                class="my-3"
-                true-description="You can directly link your domain to Selldone, which necessitates a CDN for SSL issuance. This is an advantageous option when using CDN providers such as Cloudflare for domain hosting."
-                true-icon="cloud_done"
-                true-title="Direct Connect [Recommended]"
-                false-description="This option allows you to link your domain to Selldone via our secure CDN layer, removing the necessity for any external CDN. Employing external CDNs such as Cloudflare in conjunction with this setup may lead to conflicts and errors in SSL issuance."
-                false-icon="cloud"
-                false-title="Secure CDN + Issue SSL"
-              />
+              <u-smart-select
+                v-model="hosting_mode"
+                :items="hosting_options"
+                :readonly="inDomainEditMode"
+                border
+                class="my-4"
+                force-show-all
+                item-description="description"
+                item-icon="icon"
+                item-text="title"
+                item-value="code"
+              ></u-smart-select>
 
-              <u-pods-panel>
-                <u-pod-node
-                  :image="getShopImagePath(shop.icon, 64)"
-                  title="Your Domain"
-                ></u-pod-node>
-                <u-pod-wire backward forward></u-pod-wire>
-
-                <template v-if="show_ssl_ips">
-                  <u-pod-node
-                    color="#eee"
-                    dashed
-                    icon="dns"
-                    icon-color="#eee"
-                    title="Optional CDN"
-                  ></u-pod-node>
-                  <u-pod-wire backward forward></u-pod-wire>
-                  <u-pod-node
-                    icon="cloud"
-                    icon-color="primary"
-                    title="SSL + CDN"
-                  ></u-pod-node>
-                  <u-pod-wire backward forward></u-pod-wire>
+              <v-alert
+                v-if="externally_hosted"
+                class="external-domain-alert external-domain-alert--info mb-4"
+                density="comfortable"
+                :icon="false"
+                role="status"
+                variant="flat"
+              >
+                <template #prepend>
+                  <span class="external-domain-alert__icon" aria-hidden="true">
+                    <v-icon size="18">verified_user</v-icon>
+                  </span>
                 </template>
 
-                <template v-else>
+                <span class="external-domain-alert__text">
+                  {{
+                    $t(
+                      "admin_shop.dashboard.info.add_dialog.hosting.external_note",
+                    )
+                  }}
+                </span>
+              </v-alert>
+
+              <template
+                v-if="!externally_hosted && (!inDomainEditMode || error_dns)"
+              >
+                <v-list-subheader>
+                  {{ $t("admin_shop.dashboard.info.add_dialog.step1") }}
+                </v-list-subheader>
+
+                <u-smart-switch
+                  v-if="has_ssl_proxy"
+                  :model-value="!show_ssl_ips"
+                  @update:model-value="show_ssl_ips = !$event"
+                  class="my-3"
+                  true-description="You can directly link your domain to Selldone, which necessitates a CDN for SSL issuance. This is an advantageous option when using CDN providers such as Cloudflare for domain hosting."
+                  true-icon="cloud_done"
+                  true-title="Direct Connect [Recommended]"
+                  false-description="This option allows you to link your domain to Selldone via our secure CDN layer, removing the necessity for any external CDN. Employing external CDNs such as Cloudflare in conjunction with this setup may lead to conflicts and errors in SSL issuance."
+                  false-icon="cloud"
+                  false-title="Secure CDN + Issue SSL"
+                />
+
+                <u-pods-panel>
                   <u-pod-node
-                    color="#009688"
-                    icon="dns"
-                    icon-color="#009688"
-                    title="CDN (Required)"
+                    :image="getShopImagePath(shop.icon, 64)"
+                    title="Your Domain"
                   ></u-pod-node>
                   <u-pod-wire backward forward></u-pod-wire>
-                </template>
 
-                <u-pod-node is-selldone-icon title="Selldone"></u-pod-node>
-              </u-pods-panel>
+                  <template v-if="show_ssl_ips">
+                    <u-pod-node
+                      color="#eee"
+                      dashed
+                      icon="dns"
+                      icon-color="#eee"
+                      title="Optional CDN"
+                    ></u-pod-node>
+                    <u-pod-wire backward forward></u-pod-wire>
+                    <u-pod-node
+                      icon="cloud"
+                      icon-color="primary"
+                      title="SSL + CDN"
+                    ></u-pod-node>
+                    <u-pod-wire backward forward></u-pod-wire>
+                  </template>
+
+                  <template v-else>
+                    <u-pod-node
+                      color="#009688"
+                      icon="dns"
+                      icon-color="#009688"
+                      title="CDN (Required)"
+                    ></u-pod-node>
+                    <u-pod-wire backward forward></u-pod-wire>
+                  </template>
+
+                  <u-pod-node is-selldone-icon title="Selldone"></u-pod-node>
+                </u-pods-panel>
+
+                <div
+                  v-for="item in SelldoneShopsHostIPs.filter((x) =>
+                    show_ssl_ips
+                      ? custom_ips_ssl_proxy?.includes(x)
+                      : !custom_ips_ssl_proxy?.includes(x),
+                  )"
+                  :key="item"
+                  class="border-seft-thick-blue"
+                  dir="ltr"
+                >
+                  <p class="font-weight-black mb-1">
+                    DNS Record type: <b>A</b>
+                  </p>
+
+                  <u-text-copy-box
+                    :value="domain_verification_title"
+                    full-width
+                    message="DNS A key"
+                    class="my-2"
+                  >
+                  </u-text-copy-box>
+
+                  <u-text-copy-box
+                    :value="item"
+                    full-width
+                    message="DNS A record value"
+                    class="my-2"
+                  >
+                  </u-text-copy-box>
+                </div>
+
+                <v-expand-transition>
+                  <div
+                    v-if="
+                      is_subdomain &&
+                      !show_ssl_ips /*CNAME point directly to the main load balancer*/
+                    "
+                  >
+                    <div class="text-center">
+                      OR <small>(Only for sub domains)</small>
+                    </div>
+
+                    <div
+                      v-for="item in SelldoneShopsHostCNAMEs"
+                      :key="item"
+                      class="border-seft-thick-blue"
+                      dir="ltr"
+                    >
+                      <p class="font-weight-black mb-1">
+                        DNS Record type: <b>CNAME</b>
+                      </p>
+
+                      <u-text-copy-box
+                        :value="domain_verification_title"
+                        full-width
+                        message="DNS CNAME key"
+                        class="my-2"
+                      >
+                      </u-text-copy-box>
+
+                      <u-text-copy-box
+                        :value="item"
+                        full-width
+                        message="DNS CNAME record value"
+                        class="my-2"
+                      >
+                      </u-text-copy-box>
+                    </div>
+                  </div>
+                </v-expand-transition>
+              </template>
+            </div>
+
+            <div
+              v-if="!inDomainEditMode || error_dns"
+              class="widget-box -large mb-5"
+            >
+              <h2 class=" ">
+                <v-icon class="me-1">looks_3</v-icon>
+                {{
+                  externally_hosted
+                    ? $t("admin_shop.dashboard.info.add_dialog.ownership.title")
+                    : "Verification"
+                }}
+              </h2>
+              <v-list-subheader>
+                {{
+                  externally_hosted
+                    ? $t(
+                        "admin_shop.dashboard.info.add_dialog.ownership.subtitle",
+                      )
+                    : $t("admin_shop.dashboard.info.add_dialog.step2")
+                }}
+              </v-list-subheader>
+
+              <u-smart-select
+                v-if="externally_hosted"
+                v-model="verification_method"
+                :items="verification_options"
+                border
+                class="my-4"
+                force-show-all
+                item-description="description"
+                item-icon="icon"
+                item-text="title"
+                item-value="code"
+              ></u-smart-select>
 
               <div
-                v-for="item in SelldoneShopsHostIPs.filter((x) =>
-                  show_ssl_ips
-                    ? custom_ips_ssl_proxy?.includes(x)
-                    : !custom_ips_ssl_proxy?.includes(x),
-                )"
-                :key="item"
+                v-if="!externally_hosted || verification_method === 'txt'"
                 class="border-seft-thick-blue"
                 dir="ltr"
               >
-                <p class="font-weight-black mb-1">DNS Record type: <b>A</b></p>
-
-                <u-text-copy-box
-                  :value="domain_verification_title"
-                  full-width
-                  message="DNS A key"
-                  class="my-2"
-                >
-                </u-text-copy-box>
-
-                <u-text-copy-box
-                  :value="item"
-                  full-width
-                  message="DNS A record value"
-                  class="my-2"
-                >
-                </u-text-copy-box>
-              </div>
-
-              <v-expand-transition>
-                <div
-                  v-if="
-                    is_subdomain &&
-                    !show_ssl_ips /*CNAME point directly to the main load balancer*/
-                  "
-                >
-                  <div class="text-center">
-                    OR <small>(Only for sub domains)</small>
-                  </div>
-
-                  <div
-                    v-for="item in SelldoneShopsHostCNAMEs"
-                    :key="item"
-                    class="border-seft-thick-blue"
-                    dir="ltr"
-                  >
-                    <p class="font-weight-black mb-1">
-                      DNS Record type: <b>CNAME</b>
-                    </p>
-
-                    <u-text-copy-box
-                      :value="domain_verification_title"
-                      full-width
-                      message="DNS CNAME key"
-                      class="my-2"
-                    >
-                    </u-text-copy-box>
-
-                    <u-text-copy-box
-                      :value="item"
-                      full-width
-                      message="DNS CNAME record value"
-                      class="my-2"
-                    >
-                    </u-text-copy-box>
-                  </div>
-                </div>
-              </v-expand-transition>
-            </div>
-
-            <div class="widget-box -large mb-5">
-              <h2 class=" ">
-                <v-icon class="me-1">looks_3</v-icon>
-                Verification
-              </h2>
-              <v-list-subheader>
-                {{ $t("admin_shop.dashboard.info.add_dialog.step2") }}
-              </v-list-subheader>
-              <div class="border-seft-thick-blue" dir="ltr">
                 <p class="font-weight-black mb-1">
                   DNS Record type: <b>TXT</b>
                 </p>
 
                 <u-text-copy-box
-                  :value="
-                    domain_verification_title +
-                    (is_subdomain ? '-challenge' : '')
-                  "
+                  :value="domain_verification_txt_title"
                   full-width
                   message="DNS TXT key"
                   class="my-2"
@@ -362,7 +438,62 @@
                 </u-text-copy-box>
               </div>
 
-              <template v-if="!show_ssl_ips">
+              <div
+                v-if="externally_hosted && verification_method === 'meta'"
+                class="border-seft-thick-blue"
+                dir="ltr"
+              >
+                <p class="font-weight-black mb-1">
+                  {{
+                    $t(
+                      "admin_shop.dashboard.info.add_dialog.ownership.meta_title",
+                    )
+                  }}
+                </p>
+
+                <u-text-copy-box
+                  :message="
+                    $t(
+                      'admin_shop.dashboard.info.add_dialog.ownership.meta_code',
+                    )
+                  "
+                  :value="domain_verification_meta_tag"
+                  class="my-2"
+                  full-width
+                ></u-text-copy-box>
+
+                <u-text-copy-box
+                  :message="
+                    $t(
+                      'admin_shop.dashboard.info.add_dialog.ownership.meta_url',
+                    )
+                  "
+                  :value="domain_verification_url"
+                  class="my-2"
+                  full-width
+                ></u-text-copy-box>
+              </div>
+
+              <v-alert
+                v-if="externally_hosted && domain_error_msg"
+                class="external-domain-alert external-domain-alert--warning mt-4"
+                density="comfortable"
+                :icon="false"
+                role="alert"
+                variant="flat"
+              >
+                <template #prepend>
+                  <span class="external-domain-alert__icon" aria-hidden="true">
+                    <v-icon size="18">priority_high</v-icon>
+                  </span>
+                </template>
+
+                <div class="external-domain-alert__text">
+                  {{ domain_error_msg }}
+                </div>
+              </v-alert>
+
+              <template v-if="!externally_hosted && !show_ssl_ips">
                 <v-row no-gutters>
                   <v-spacer></v-spacer>
                   <v-select
@@ -506,7 +637,7 @@
 
         <v-expand-transition>
           <div
-            v-if="inDomainEditMode"
+            v-if="inDomainEditMode && !externally_hosted"
             class="widget-box -large mb-5 min-height-20vh"
           >
             <u-widget-header icon="dns" title="DNS records"></u-widget-header>
@@ -723,6 +854,7 @@ import BShopLicenseBlockOverlay from "../../shop/license/block/overlay/BShopLice
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
+import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
@@ -734,12 +866,13 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 export default {
   name: "BDomainAdd",
   mixins: [],
-  emits: ["close", "update", "update-shop-domain"],
+  emits: ["add", "update", "click:close"],
   components: {
     ULoadingEllipsis,
     UPodWire,
     UPodNode,
     UPodsPanel,
+    USmartSelect,
     USmartSwitch,
     UTextCopyBox,
     BShopLicenseBlockOverlay,
@@ -760,7 +893,6 @@ export default {
   },
 
   data: () => ({
-
     show_ssl_message: false,
 
     busy_fetch_domain_data: false,
@@ -778,6 +910,42 @@ export default {
     domain_enable: false,
 
     input_domain: null,
+
+    externally_hosted: false,
+    verification_method: "meta",
+
+    hosting_options: [
+      {
+        code: "selldone",
+        title: "admin_shop.dashboard.info.add_dialog.hosting.selldone_title",
+        description:
+          "admin_shop.dashboard.info.add_dialog.hosting.selldone_description",
+        icon: "storefront",
+      },
+      {
+        code: "external",
+        title: "admin_shop.dashboard.info.add_dialog.hosting.external_title",
+        description:
+          "admin_shop.dashboard.info.add_dialog.hosting.external_description",
+        icon: "open_in_new",
+      },
+    ],
+    verification_options: [
+      {
+        code: "meta",
+        title: "admin_shop.dashboard.info.add_dialog.ownership.meta_title",
+        description:
+          "admin_shop.dashboard.info.add_dialog.ownership.meta_description",
+        icon: "html",
+      },
+      {
+        code: "txt",
+        title: "admin_shop.dashboard.info.add_dialog.ownership.txt_title",
+        description:
+          "admin_shop.dashboard.info.add_dialog.ownership.txt_description",
+        icon: "dns",
+      },
+    ],
 
     //---------------------------------
     last_dns: null,
@@ -808,6 +976,20 @@ export default {
   }),
 
   computed: {
+    hosting_mode: {
+      get() {
+        return this.externally_hosted ? "external" : "selldone";
+      },
+      set(value) {
+        this.externally_hosted = value === "external";
+        if (this.externally_hosted) this.show_ssl_ips = false;
+
+        this.domain_error_msg = null;
+        this.last_dns = null;
+        this.show_dns = false;
+      },
+    },
+
     is_subdomain() {
       return (
         this.domain_verification_title &&
@@ -867,6 +1049,37 @@ export default {
     domain_verification_code() {
       return "selldone-domain-verification=" + this.shop.hash_id;
     },
+    domain_verification_txt_title() {
+      if (this.externally_hosted) {
+        const verificationHost = this.domain_verification_title;
+        const relativeHost =
+          verificationHost === "@" || verificationHost === "*"
+            ? null
+            : verificationHost.replace(/^\*\./, "");
+
+        return relativeHost
+          ? "_selldone-verification." + relativeHost
+          : "_selldone-verification";
+      }
+
+      return (
+        this.domain_verification_title + (this.is_subdomain ? "-challenge" : "")
+      );
+    },
+    domain_verification_meta_tag() {
+      return (
+        '<meta name="selldone-domain-verification" content="' +
+        this.shop.hash_id +
+        '">'
+      );
+    },
+    domain_verification_url() {
+      const domain = this.is_wild_card
+        ? this.input_domain?.substring(2)
+        : this.input_domain;
+
+      return domain ? "https://" + domain + "/" : null;
+    },
     domain_verification_title() {
       let domain = this.input_domain;
       if (this.is_wild_card) {
@@ -902,6 +1115,14 @@ export default {
     },
   },
 
+  watch: {
+    verification_method() {
+      this.domain_error_msg = null;
+      this.last_dns = null;
+      this.show_dns = false;
+    },
+  },
+
   methods: {
     anyMatch(record) {
       return (
@@ -929,6 +1150,11 @@ export default {
             this.cdn = data.cdn;
             this.domain_client = data.client;
 
+            this.externally_hosted = !!(
+              data.domain?.externally_hosted ?? data.externally_hosted
+            );
+            if (this.externally_hosted) this.show_ssl_ips = false;
+
             this.AddOrUpdateItemByID(this.shop.domains, data.domain);
           } else {
             NotificationService.showErrorAlert(
@@ -955,7 +1181,11 @@ export default {
       axios
         .post(window.API.POST_ADD_DOMAIN(this.shop.id), {
           domain: this.input_domain,
-          ssl_proxy: this.show_ssl_ips, // Indicate that this domain added via SSL proxy IPs
+          ssl_proxy: !this.externally_hosted && this.show_ssl_ips,
+          externally_hosted: this.externally_hosted,
+          verification_method: this.externally_hosted
+            ? this.verification_method
+            : "txt",
         })
         .then(({ data }) => {
           if (!data.error) {
@@ -969,8 +1199,8 @@ export default {
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
 
-            this.last_dns = data.dns;
-            this.show_dns = !!data.dns;
+            this.last_dns = this.externally_hosted ? null : data.dns;
+            this.show_dns = !this.externally_hosted && !!data.dns;
             this.domain_error_msg = data.error_msg;
           }
         })
@@ -1061,8 +1291,15 @@ export default {
     },
   },
   created() {
+    this.externally_hosted = this.inDomainEditMode
+      ? !!this.domain?.externally_hosted
+      : false;
+
     // Default add mode to Direct connect, keep current mode in edit.
-    this.show_ssl_ips = this.inDomainEditMode ? !!this.domain?.ssl_proxy : false;
+    this.show_ssl_ips =
+      this.inDomainEditMode && !this.externally_hosted
+        ? !!this.domain?.ssl_proxy
+        : false;
 
     this.domain_enable = this.domain.enable;
 
@@ -1083,4 +1320,49 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.external-domain-alert {
+  background: rgba(var(--v-theme-surface), 0.82) !important;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+  border-radius: 14px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(var(--v-theme-on-surface), 0.035);
+  color: rgb(var(--v-theme-on-surface)) !important;
+  backdrop-filter: blur(14px) saturate(130%);
+}
+
+.external-domain-alert :deep(.v-alert__prepend) {
+  align-self: flex-start;
+  margin-top: 1px;
+}
+
+.external-domain-alert :deep(.v-alert__content) {
+  color: inherit;
+  letter-spacing: 0.002em;
+  line-height: 1.5;
+}
+
+.external-domain-alert__icon {
+  align-items: center;
+  border-radius: 50%;
+  display: inline-flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+}
+
+.external-domain-alert__text {
+  color: inherit;
+}
+
+.external-domain-alert--info .external-domain-alert__icon {
+  background: rgba(var(--v-theme-primary), 0.12);
+  color: rgb(var(--v-theme-primary));
+}
+
+.external-domain-alert--warning .external-domain-alert__icon {
+  background: rgba(var(--v-theme-warning), 0.16);
+  color: rgb(var(--v-theme-on-surface));
+}
+</style>

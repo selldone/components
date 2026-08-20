@@ -66,7 +66,7 @@
           @click="show_pass = true"
           >CLICK TO SHOW</span
         >
-        <div v-else :class="contentClass" class="">
+        <div v-else :class="[contentClass, { 'single-line': singleLine }]" class="">
           <slot name="prepend-value"></slot>
           <span v-if="!hideValue" :style="{ 'letter-spacing': letterSpacing }"> {{ value }}</span>
         </div>
@@ -103,6 +103,7 @@ export default {
     border: { default: true, type: Boolean },
 
     contentClass: {},
+    singleLine: Boolean,
     small: Boolean,
     textStart: Boolean,
     disabled: Boolean,

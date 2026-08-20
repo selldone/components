@@ -4547,12 +4547,12 @@ canvas.heatmap-canvas {
 
   &.-large {
     //  max-width: 960px;
-    max-width: min(1040px, 98%);
+    max-width: min(1040px, 98vw);
   }
 
   &.-x-large {
     //  max-width: 960px;
-    max-width: min(1600px, 98%);
+    max-width: min(1600px, 98vw);
   }
 
   &.-red {

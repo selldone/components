@@ -32,8 +32,18 @@
     </v-card-title>
 
     <v-card-text>
+      <v-alert
+        v-if="domain.externally_hosted"
+        class="mb-5"
+        color="deep-purple"
+        icon="open_in_new"
+        variant="tonal"
+      >
+        {{ $t("admin_shop.dashboard.info.add_dialog.hosting.external_note") }}
+      </v-alert>
+
       <!-- ████████████████████████ SSL ████████████████████████ -->
-      <div class="widget-box mb-5">
+      <div v-if="!domain.externally_hosted" class="widget-box mb-5">
         <u-widget-header
           :add-loading="busy_check_ssl"
           :add-text="!!domain.ssl"
@@ -100,7 +110,10 @@
       </div>
 
       <!-- ████████████████████████ Certificate ████████████████████████ -->
-      <div v-if="certificate" class="widget-box mb-5">
+      <div
+        v-if="!domain.externally_hosted && certificate"
+        class="widget-box mb-5"
+      >
         <u-widget-header
           icon="workspace_premium"
           title="Certificate"

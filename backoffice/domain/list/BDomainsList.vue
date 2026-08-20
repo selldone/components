@@ -22,9 +22,7 @@
       @click:add="showAddDomainDialog"
       :disabled-access="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
     >
-      <template v-slot:append-title>
-
-      </template>
+      <template v-slot:append-title> </template>
     </u-widget-header>
     <v-list-subheader
       >{{ $t("domains.message") }}
@@ -92,7 +90,7 @@
       show-expand
       :row-props="
         (_data) => {
-        //  return { class: 'row-hover' };
+          //  return { class: 'row-hover' };
         }
       "
     >
@@ -158,7 +156,9 @@
       <template v-slot:item.home="{ item }">
         <div class="py-1">
           <v-btn
-            v-if="!item.official && item.domain"
+            v-if="
+              !item.official && item.domain && !item.domain.externally_hosted
+            "
             :title="`Set custom home page for ${item.domain.domain}`"
             block
             size="large"
@@ -214,10 +214,27 @@
 
       <template v-slot:item.url="{ item }">
         <div class="py-2" dir="ltr">
-          <u-text-copy-box :value="item.url" small small-width-mode text-start color="#000">
+          <u-text-copy-box
+            :value="item.url"
+            small
+            small-width-mode
+            text-start
+            color="#000"
+            single-line
+
+          >
             <template v-slot:prepend-value>
               <v-icon
-                v-if="item.ssl"
+                v-if="item.domain?.externally_hosted"
+                :title="$t('admin_shop.dashboard.info.table.externally_hosted')"
+                class="me-2"
+                color="#673AB7"
+                size="small"
+              >
+                open_in_new
+              </v-icon>
+              <v-icon
+                v-else-if="item.ssl"
                 class="me-2"
                 color="success"
                 size="small"
@@ -237,6 +254,18 @@
 
             <template v-slot:append-value>
               <div class="mx-2 d-flex align-center justify-center">
+                <v-chip
+                  v-if="item.domain?.externally_hosted"
+                  class="me-1 tnt"
+                  color="#673AB7"
+                  label
+                  prepend-icon="public"
+                  size="x-small"
+                  variant="flat"
+                >
+                  {{ $t("admin_shop.dashboard.info.table.externally_hosted") }}
+                </v-chip>
+
                 <BShopLicenseBlockIcon
                   v-if="item.domain && !can_edit_domain(item.domain)"
                 ></BShopLicenseBlockIcon>
@@ -305,6 +334,7 @@
 
       <template v-slot:item.site_map="{ item }">
         <v-btn
+          v-if="!item.domain?.externally_hosted"
           class="tnt"
           color="primary"
           title="View site map url"
@@ -467,7 +497,7 @@
                 </v-chip>
 
                 <v-chip
-                  v-if="item.certificate"
+                  v-if="!item.domain?.externally_hosted && item.certificate"
                   class=""
                   pill
                   size="x-small"
@@ -499,9 +529,20 @@
                   </v-chip>
                 </v-chip>
 
-
                 <v-chip
-                  v-if="item.domain?.ssl_proxy "
+                  v-if="item.domain?.externally_hosted"
+                  class=""
+                  color="#673AB7"
+                  pill
+                  prepend-icon="public"
+                  size="x-small"
+                  style="margin: 2px"
+                  variant="flat"
+                >
+                  {{ $t("admin_shop.dashboard.info.table.externally_hosted") }}
+                </v-chip>
+                <v-chip
+                  v-else-if="item.domain?.ssl_proxy"
                   class=""
                   pill
                   size="x-small"
@@ -528,79 +569,75 @@
                 </v-chip>
               </div>
 
-
-
               <v-spacer></v-spacer>
-
-
-
             </div>
 
-            <div    v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)">
-              <u-loading-progress v-if="     (busy_add_client &&
+            <div v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)">
+              <u-loading-progress
+                v-if="
+                  (busy_add_client &&
                     add_client_code ===
                       (item.domain ? item.domain?.id : item.official)) ||
-                  busy_delete === item.domain?.id"
-             class="py-2"
+                  busy_delete === item.domain?.id
+                "
+                class="py-2"
               >
-
               </u-loading-progress>
 
+              <v-btn
+                v-if="item.domain"
+                @click="deleteShopDomain(item.domain)"
+                prepend-icon="close"
+                :loading="busy_delete === item.domain.id"
+                class="ma-1 tnt border"
+                variant="elevated"
+                size="small"
+              >
+                {{ $t("global.actions.delete") }}
+              </v-btn>
+
+              <v-btn
+                v-if="!item.domain?.externally_hosted"
+                :loading="
+                  busy_add_client &&
+                  add_client_code ===
+                    (item.domain ? item.domain.id : item.official)
+                "
+                class="ma-1 tnt border"
+                size="small"
+                @click="
+                  createClientSecret(
+                    item.domain ? item.domain.id : item.official,
+                  )
+                "
+                variant="elevated"
+                prepend-icon="build"
+              >
+                {{ $t("admin_shop.dashboard.info.table.auto_repair") }}
+              </v-btn>
+
+              <template v-if="item.domain">
                 <v-btn
-                  v-if="item.domain"
-                  @click="deleteShopDomain(item.domain)"
-                  prepend-icon="close"
-                  :loading="busy_delete === item.domain.id"
+                  @click="showEditDomainDialog(item.domain)"
+                  prepend-icon="edit"
                   class="ma-1 tnt border"
                   variant="elevated"
                   size="small"
                 >
-                  {{ $t("global.actions.delete") }}
+                  Edit Domain
                 </v-btn>
 
                 <v-btn
-                  :loading="
-                    busy_add_client &&
-                    add_client_code ===
-                      (item.domain ? item.domain.id : item.official)
-                  "
-                  class="ma-1 tnt border"
+                  class="ma-1 tnt"
                   size="small"
-                  @click="
-                    createClientSecret(
-                      item.domain ? item.domain.id : item.official,
-                    )
-                  "
                   variant="elevated"
-                  prepend-icon="build"
+                  @click="showSetting(item.domain)"
+                  prepend-icon="settings"
                 >
-                  {{ $t("admin_shop.dashboard.info.table.auto_repair") }}
+                  {{ $t("global.commons.setting") }}
                 </v-btn>
-
-                <template v-if="item.domain">
-                  <v-btn
-                    @click="showEditDomainDialog(item.domain)"
-                    prepend-icon="edit"
-                    class="ma-1 tnt border"
-                    variant="elevated"
-                    size="small"
-                  >
-                    Edit Domain
-                  </v-btn>
-
-                  <v-btn
-                    class="ma-1 tnt"
-                    size="small"
-                    variant="elevated"
-                    @click="showSetting(item.domain)"
-                    prepend-icon="settings"
-                  >
-                    {{ $t("global.commons.setting") }}
-                  </v-btn>
-                </template>
-
+              </template>
             </div>
-
           </td>
         </tr>
         <tr v-if="item.error">
@@ -618,8 +655,6 @@
       </template>
     </v-data-table-server>
 
-
-
     <div v-if="!showHeader" class="widget-buttons">
       <v-btn block color="primary" size="x-large" @click="showAddDomainDialog">
         <v-icon start>add</v-icon>
@@ -632,7 +667,7 @@
 
     <v-list-subheader>
       <v-icon>domain</v-icon>
-      {{$t('commons.main_domain')}}: {{ shop.domain }}
+      {{ $t("commons.main_domain") }}: {{ shop.domain }}
     </v-list-subheader>
   </div>
 
@@ -797,7 +832,6 @@ export default {
   },
 
   data: () => ({
-
     expanded: [],
     domains: [],
     page: 1,
