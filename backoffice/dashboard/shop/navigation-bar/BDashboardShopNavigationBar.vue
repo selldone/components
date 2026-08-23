@@ -39,6 +39,22 @@
           {{ $t("admin_shop.dashboard.title") }}
         </router-link>
 
+        <span class="mx-1">/</span>
+        <router-link
+          :aria-current="
+            dashboard_query === 'setup-packages' ? 'page' : undefined
+          "
+          :class="{
+            'text-black font-weight-black':
+              dashboard_query === 'setup-packages',
+          }"
+          :to="{ query: { dashboard: 'setup-packages' } }"
+          class="small link setup-packages-nav-link"
+        >
+          <v-icon class="mx-1" size="small">handyman</v-icon>
+          {{ $t("admin_shop.dashboard.setup_packages.nav") }}
+        </router-link>
+
         <!-- Live View 
         <span class="mx-1">/</span>
         <router-link
@@ -251,4 +267,12 @@ export default defineComponent({
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
  */
+.setup-packages-nav-link {
+  white-space: nowrap;
+
+  &:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+}
 </style>
