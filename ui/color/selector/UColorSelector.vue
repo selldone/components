@@ -68,7 +68,7 @@
 
         <v-card-text>
           <v-color-picker
-            :mode="mode"
+            :mode="noAlpha ? 'hex' : mode"
             :model-value="modelValue ? modelValue : '#FFFFFFFF'"
             class="mx-auto bg-transparent"
             elevation="0"
@@ -124,10 +124,25 @@ export default {
     //console.log('UColorSelector',this.modelValue)
 
     if (!this.modelValue && !this.nullable) {
+      const defaultValue = this.default
+        ? this.default
+        : this.noAlpha
+          ? "#333333"
+          : "#333333FF";
+
       this.$emit(
         "update:modelValue",
-        this.default ? this.default : "#333333FF",
+        this.noAlpha ? toOpaqueHex(defaultValue) : defaultValue,
       );
+      return;
+    }
+
+    if (this.noAlpha) {
+      const opaqueValue = toOpaqueHex(this.modelValue);
+      if (opaqueValue !== this.modelValue) {
+        this.old_val = opaqueValue;
+        this.$emit("update:modelValue", opaqueValue);
+      }
       return;
     }
 
@@ -167,7 +182,10 @@ export default {
     updateValue(val) {
       //console.log('UColorSelector updateValue',val)
 
-      const value = val && val.hexa ? val.hexa : val;
+      const selectedValue = val && val.hexa ? val.hexa : val;
+      const value = this.noAlpha
+        ? toOpaqueHex(selectedValue)
+        : selectedValue;
       if (this.old_val === value) return;
 
       this.$emit("update:modelValue", value);
@@ -176,6 +194,30 @@ export default {
     },
   },
 };
+
+/**
+ * Normalize only the noAlpha component mode. Consumers that allow alpha keep
+ * their original HEXA value unchanged.
+ */
+function toOpaqueHex(value) {
+  if (typeof value !== "string") return value;
+
+  if (value.startsWith("rgb")) {
+    return rgb2hex(value) || value;
+  }
+
+  if (!value.startsWith("#")) return value;
+
+  if (value.length === 4) {
+    return "#" + value[1] + value[1] + value[2] + value[2] + value[3] + value[3];
+  }
+
+  if (value.length === 9) {
+    return value.slice(0, 7);
+  }
+
+  return value;
+}
 
 function rgb2hex(rgb) {
   rgb = rgb.match(

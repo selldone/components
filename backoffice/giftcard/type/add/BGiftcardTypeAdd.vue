@@ -120,6 +120,7 @@
               <u-color-selector
                 v-model="color"
                 class="margin-n7px"
+                no-alpha
               ></u-color-selector>
             </template>
           </v-text-field>
