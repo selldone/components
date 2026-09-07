@@ -391,9 +391,13 @@ export default {
       fd.append("slug", (this.form.slug || "").trim()); // can be empty => backend will generate
       fd.append("description", (this.form.description || "").trim());
 
+      // 🧩 Edit omission now preserves state; explicit empty fields retain the
+      // existing form behavior of clearing a selected parent/design relation.
       // hierarchy
       if (this.form.parent_id) fd.append("parent_id", String(this.form.parent_id));
+      else if (this.isEdit) fd.append("parent_id", "");
       if (this.form.design_id) fd.append("design_id", String(this.form.design_id));
+      else if (this.isEdit) fd.append("design_id", "");
 
       // settings
       fd.append("price_format", (this.form.price_format || "").trim());

@@ -432,19 +432,30 @@ export default {
       let formData = new FormData();
       if (this.include_image) formData.append("photo", this.include_image);
       if (this.include_title) formData.append("title", this.include_title);
-      if (this.include_description)
-        formData.append("description", this.include_description);
       if (this.include_code) formData.append("code", this.include_code);
 
-      if (this.mode === "external") {
-        if (this.url) formData.append("url", this.url);
-      }
+      // 🧩 Sparse edits preserve omitted fields. Send the current dialog state
+      // explicitly where this legacy form intentionally clears nullable values.
+      formData.append("description", this.include_description ?? "");
 
-      if (this.mode === "internal") {
-        if (this.path) formData.append("path", this.path);
-        if (this.page) formData.append("page_id", this.page.id);
-        if (this.augment)
-          formData.append("augment", JSON.stringify(this.augment));
+      if (this.mode === "external") {
+        // 🔗 External mode clears stale internal page bindings and augment data.
+        formData.append("url", this.url ?? "");
+        formData.append("path", "");
+        formData.append("page_id", "");
+        formData.append("augment", "");
+      } else if (this.mode === "internal") {
+        // 🔗 Internal mode clears a stale external link and replaces its own augment.
+        formData.append("url", "");
+        formData.append("path", this.path ?? "");
+        formData.append("page_id", this.page?.id ?? "");
+        formData.append("augment", JSON.stringify(this.augment ?? []));
+      } else {
+        // 🔗 No-link mode intentionally clears both external and internal targets.
+        formData.append("url", "");
+        formData.append("path", "");
+        formData.append("page_id", "");
+        formData.append("augment", "");
       }
 
       axios
