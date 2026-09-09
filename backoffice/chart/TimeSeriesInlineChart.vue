@@ -360,7 +360,7 @@ export default {
           // Multi chart mode:
           seriesSpark.push({
             data: _data,
-            name: this.valueTitles[i],
+            name: String(this.valueTitles?.[i] ?? ""),
           });
         }
 
@@ -370,7 +370,7 @@ export default {
           if (!seriesSpark[0]) {
             seriesSpark.push({
               data: _data,
-              name: this.valueTitles[i],
+              name: String(this.valueTitles?.[i] ?? ""),
             });
           } else {
             let __data = seriesSpark[0].data;

@@ -128,8 +128,21 @@ export default {
     },
   },
   watch: {
+    available_currencies: {
+      immediate: true,
+      handler(currencies) {
+        if (currencies.includes(this.selected_currency)) return;
+
+        this.selected_currency = currencies.includes(this.user_selected_currency)
+          ? this.user_selected_currency
+          : (currencies[0] ?? this.user_selected_currency);
+      },
+    },
     user_selected_currency(code) {
-      if (this.available_currencies.includes(code)) {
+      if (
+        !this.available_currencies.length ||
+        this.available_currencies.includes(code)
+      ) {
         this.selected_currency = code;
       }
     },
@@ -158,13 +171,6 @@ export default {
         (yesterday_pay ? yesterday_pay.pay : 0)
       );
     },
-  },
-
-  created() {
-    if (this.available_currencies.includes(this.user_selected_currency)) {
-      this.selected_currency = this.user_selected_currency;
-    } else if (this.available_currencies.length)
-      this.selected_currency = this.available_currencies[0];
   },
 };
 </script>
