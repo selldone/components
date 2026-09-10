@@ -1110,7 +1110,7 @@ export default {
   data() {
     return {
       map_id: "map_id_" + Math.round(Math.random() * 1000),
-      country_code: null,
+      country_code: null as string | null,
 
       tooltip_x: 0,
       tooltip_y: 0,
@@ -1118,36 +1118,37 @@ export default {
     };
   },
   watch: {},
-  methods: {},
+  methods: {
+    showTooltip(event: MouseEvent) {
+      const path = event.currentTarget as SVGPathElement | null;
+      if (!path) return;
+
+      const bounds = path.getBoundingClientRect();
+      this.country_code = path.id;
+      this.tooltip_y = bounds.bottom;
+      this.tooltip_x = (bounds.left + bounds.right) / 2 - 125;
+      this.tooltip_show = true;
+    },
+    hideTooltip() {
+      this.tooltip_show = false;
+      this.country_code = null;
+    },
+  },
   mounted() {
     if (!this.hasTooltip) return;
 
-    // const  parent = document.getElementById('container_'+this.map_id);
-    //  console.log('parent',parent)
+    this.$el.querySelectorAll<SVGPathElement>("path").forEach((path) => {
+      path.addEventListener("mouseenter", this.showTooltip);
+      path.addEventListener("mouseleave", this.hideTooltip);
+    });
+  },
+  beforeUnmount() {
+    if (!this.hasTooltip) return;
 
-    let t = this;
-
-    $(`#${this.map_id}  path`).hover(
-      function (e) {
-        //   console.log('getBoundingClientRect',this.getBoundingClientRect())
-
-        t.country_code = $(this).attr("id");
-
-        //  const  parentPos= parent  .getBoundingClientRect()
-
-        t.tooltip_y = this.getBoundingClientRect().bottom; //0*parentPos.top; // bade update fixed kar nemikone!!!!
-        t.tooltip_x =
-          (this.getBoundingClientRect().left +
-            this.getBoundingClientRect().right) /
-            2 -
-          125; //0*parentPos.left;
-        t.tooltip_show = true;
-      },
-      function () {
-        t.tooltip_show = false;
-        t.country_code = null;
-      },
-    );
+    this.$el.querySelectorAll<SVGPathElement>("path").forEach((path) => {
+      path.removeEventListener("mouseenter", this.showTooltip);
+      path.removeEventListener("mouseleave", this.hideTooltip);
+    });
   },
 };
 </script>

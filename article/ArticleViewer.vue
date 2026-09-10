@@ -761,7 +761,10 @@
                 <img :src="author_avatar" />
               </v-avatar>
 
-              <span v-if="user" class="mx-2 text-link-normal fadeIn delay_100">
+              <span
+                v-if="user?.id && user?.name"
+                class="mx-2 text-link-normal fadeIn delay_100"
+              >
                 {{ $t("global.article.author_title") }}
 
                 <router-link

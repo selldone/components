@@ -392,9 +392,9 @@
               class="flex-grow-1 mx-1"
             ></div>
             <b
-              >{{ delivery_info.distance }}
+              >{{ delivery_info?.distance }}
               {{
-                delivery_info.distance_unit
+                delivery_info?.distance_unit
                   ? delivery_info.distance_unit
                   : distance_unit
               }}</b

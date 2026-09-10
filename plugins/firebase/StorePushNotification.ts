@@ -40,9 +40,13 @@ export class StorePushNotification {
 
   constructor() {
     // Messaging:
-    isSupported().then(() => {
-      this.initializeMessaging();
-    });
+    isSupported()
+      .then((supported) => {
+        if (supported) this.initializeMessaging();
+      })
+      .catch(() => {
+        // Push notifications are optional on unsupported browser environments.
+      });
   }
 
   initializeMessaging() {
@@ -63,52 +67,44 @@ export class StorePushNotification {
     });
 
     // Get Token:
-    StorePushNotification.GetToken();
+    void StorePushNotification.GetToken();
   }
 
-  static AskForPermission() {
+  static async AskForPermission() {
     try {
-      if (!isSupported()) return;
-      Notification?.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          console.log("Notification permission granted.");
+      if (!(await isSupported()) || typeof Notification === "undefined") return;
 
-          StorePushNotification.GetToken();
-        } else {
-          console.log("Unable to get permission to notify.");
-        }
-      });
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        console.log("Notification permission granted.");
+        void StorePushNotification.GetToken();
+      } else {
+        console.log("Unable to get permission to notify.");
+      }
     } catch (error) {
       console.error(error);
     }
   }
 
-  static GetToken() {
-    // Retrieve Firebase Messaging object:
-    const messaging = getMessaging();
+  static async GetToken() {
+    try {
+      if (!(await isSupported())) return;
 
-    console.log("⚙ Service worker Get token (static).");
-
-    // Get registration token. Initially this makes a network call, once retrieved
-    // subsequent calls to getToken will return from cache.
-
-    getToken(messaging, {
-      vapidKey: "{!!enter here e.g BOAPKP--XYZ...!!}",
-    })
-      .then((currentToken) => {
-        if (currentToken) {
-          // Send the token to your server and update the UI if necessary
-          EventBus.$emit(EventName.FIREBASE_GET_TOKEN, currentToken);
-        } else {
-          // Show permission request UI
-          console.log(
-            "No Instance ID token available. Request permission to generate one.",
-          );
-        }
-      })
-      .catch((err) => {
-        console.log("An error occurred while retrieving token. ", err);
-        // ...
+      const messaging = getMessaging(firebaseApp);
+      console.log("⚙ Service worker Get token (static).");
+      const currentToken = await getToken(messaging, {
+        vapidKey: "{!!enter here e.g BOAPKP--XYZ...!!}",
       });
+
+      if (currentToken) {
+        EventBus.$emit(EventName.FIREBASE_GET_TOKEN, currentToken);
+      } else {
+        console.log(
+          "No Instance ID token available. Request permission to generate one.",
+        );
+      }
+    } catch (err) {
+      console.log("An error occurred while retrieving token. ", err);
+    }
   }
 }

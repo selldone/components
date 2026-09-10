@@ -1037,6 +1037,7 @@ export default {
       remember: false,
 
       recaptcha_response: null,
+      recaptcha_load_handler: null as (() => void) | null,
 
       mode: null,
 
@@ -1190,29 +1191,45 @@ export default {
   },
 
   mounted() {
-    let recaptchaScript = document.createElement("script");
-    recaptchaScript.setAttribute(
-      "src",
-      "https://www.google.com/recaptcha/api.js?render=" +
-        SetupService.GetCaptchaKey(),
-    );
-    recaptchaScript.async = true;
-    recaptchaScript.defer = true;
+    const captchaKey = SetupService.GetCaptchaKey();
+    if (!captchaKey) return;
 
-    let t = this;
+    const scriptId = "selldone-recaptcha-v3";
+    let recaptchaScript = document.getElementById(
+      scriptId,
+    ) as HTMLScriptElement | null;
 
-    recaptchaScript.onload = () => {
-      grecaptcha.ready(function () {
-        t.reCAPTCHA_execute();
-      });
+    this.recaptcha_load_handler = () => {
+      if (typeof grecaptcha === "undefined") return;
+      grecaptcha.ready(() => this.reCAPTCHA_execute());
     };
 
-    document.head.appendChild(recaptchaScript);
+    if (!recaptchaScript) {
+      recaptchaScript = document.createElement("script");
+      recaptchaScript.id = scriptId;
+      recaptchaScript.src =
+        "https://www.google.com/recaptcha/api.js?render=" + captchaKey;
+      recaptchaScript.async = true;
+      recaptchaScript.defer = true;
+      recaptchaScript.addEventListener("load", this.recaptcha_load_handler, {
+        once: true,
+      });
+      document.head.appendChild(recaptchaScript);
+    } else if (typeof grecaptcha !== "undefined") {
+      this.recaptcha_load_handler();
+    } else {
+      recaptchaScript.addEventListener("load", this.recaptcha_load_handler, {
+        once: true,
+      });
+    }
   },
 
   beforeUnmount() {
-    let recaptchaScript = document.querySelector("script");
-    recaptchaScript.remove();
+    const recaptchaScript = document.getElementById("selldone-recaptcha-v3");
+    if (recaptchaScript && this.recaptcha_load_handler) {
+      recaptchaScript.removeEventListener("load", this.recaptcha_load_handler);
+    }
+    this.recaptcha_load_handler = null;
   },
 
   methods: {
@@ -1398,13 +1415,19 @@ export default {
 
     reCAPTCHA_execute() {
       this.recaptcha_response = null;
+      const captchaKey = SetupService.GetCaptchaKey();
+      if (!captchaKey || typeof grecaptcha === "undefined") return;
+
       grecaptcha
-        .execute(SetupService.GetCaptchaKey(), {
+        .execute(captchaKey, {
           action: "login",
         })
         .then((token) => {
           //  console.log(token);
           this.recaptcha_response = token;
+        })
+        .catch(() => {
+          this.recaptcha_response = null;
         });
     },
 
