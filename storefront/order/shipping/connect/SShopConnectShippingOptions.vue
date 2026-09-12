@@ -52,16 +52,13 @@
 
       <template v-if="connect_shipping_option.error">
         <div class="font-weight-bold d-flex align-center mb-1 mt-3">
-          <img
-            :src="getConnectIcon(connect_shipping_option.connect_id)"
-            class="me-2"
-            height="24"
-            width="24"
-          />
-          {{ connect_shipping_option.connect_name }}
+          <v-icon class="me-2" size="24" aria-hidden="true">
+            local_shipping
+          </v-icon>
+          {{ $t("global.commons.shipping") }}
         </div>
-        <v-sheet class="pa-2 text-subtitle-2" color="amber" rounded="sm">
-          <v-icon class="me-1" size="small">warning_amber</v-icon>
+        <v-sheet class="pa-2 text-subtitle-2 text-start" rounded="sm" role="alert">
+          <v-icon class="me-1" size="small" color="warning">warning_amber</v-icon>
           {{ connect_shipping_option.error }}
         </v-sheet>
       </template>
@@ -141,10 +138,6 @@ export default {
   },
 
   methods: {
-    getConnectIcon(connect_id: string | number) {
-      return window.CDN.GET_CONNECT_ICON(connect_id);
-    },
-
     init() {
       // Create clone:
       this.connect_shippings = Object.assign(
