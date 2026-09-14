@@ -237,6 +237,10 @@ export default {
       const handleSuccessResponse = ({ community, categories, data }) => {
         this.community = community;
 
+        if (this.search) {
+          this.searchPosts(1);
+        }
+
         this.categories = categories;
         this.data = data;
         // Statistics:
@@ -275,6 +279,7 @@ export default {
     searchPosts(page) {
       if (
         this.busy_search ||
+        !this.community?.id ||
         !this.search ||
         (this.last_search && this.last_search === this.search)
       )

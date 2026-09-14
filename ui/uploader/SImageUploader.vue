@@ -441,7 +441,6 @@ export default {
         return NotificationService.showErrorAlert(null, error.main);
 
       NotificationService.showLaravelError(error);
-      console.error("File upload error", error);
     },
 
     handleProcessFile: function (error, file) {

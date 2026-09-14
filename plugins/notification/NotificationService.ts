@@ -241,14 +241,14 @@ class NotificationService {
       return;
     }
 
+    const status = Number(error.response.status);
     const data = error.response.data;
-    console.error(
-        "2- data",
-        error.response.status,
-        data,
-        "response",
-        error.response,
-    );
+
+    if (status >= 500) {
+      console.error("HTTP request failed", { status });
+    } else {
+      console.warn("HTTP request rejected", { status });
+    }
 
     if (data?.error_msg) {
       // Normal laravel app level errors
