@@ -15,10 +15,10 @@
 <template>
   <div :class="{ '-large': large }">
     <p class="font-weight-bold mb-2">
-      {{ $t("global.basket_order_info_summery.address") }}
+      {{ title || $t("global.basket_order_info_summery.address") }}
     </p>
 
-    <div class="text-center">
+    <div v-if="!hideAvatar" class="text-center">
       <v-avatar
         class="m-1 hover-scale force-top avatar-gradient -thin"
         size="56"
@@ -104,6 +104,11 @@ export default {
   name: "SOrderReceiverInfoCard",
   components: { UMapGeoButton },
   props: {
+    title: {
+      type: String,
+      default: null,
+    },
+    hideAvatar: Boolean,
     userId: {
       require: true,
     },

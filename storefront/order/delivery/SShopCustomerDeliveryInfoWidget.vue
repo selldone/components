@@ -19,19 +19,18 @@
     <h2 class="d-flex align-center">
       <v-icon class="me-1" color="#111"
         >{{
-          has_goods_delivery ? "share_location" : "switch_access_shortcut_add"
+          is_pickup
+            ? "person_pin"
+            : has_goods_delivery
+              ? "share_location"
+              : "switch_access_shortcut_add"
         }}
       </v-icon>
-      {{ $t("global.commons.receiver") }}
-
-      <v-chip
-        v-if="is_pickup && !has_vendor_orders /*Separate fulfillment*/"
-        class="skew-n20 ms-2"
-        color="success"
-        label
-        variant="flat"
-        >{{ $t("global.commons.pickup") }}
-      </v-chip>
+      {{
+        is_pickup
+          ? $t("global.commons.pickup")
+          : $t("global.commons.receiver")
+      }}
 
       <v-spacer></v-spacer>
     </h2>
@@ -47,10 +46,16 @@
           @click="confirmReceivedOrder"
         >
           <v-icon class="me-1 blink-me" size="small">lens</v-icon>
-          {{ $t("order_page.delivery.confirm_received_action") }}
+          {{
+            is_pickup
+              ? `${$t("global.commons.pickup")} · ${$t(
+                  "global.actions.confirm",
+                )}`
+              : $t("order_page.delivery.confirm_received_action")
+          }}
         </v-btn>
       </div>
-      <p v-if="has_goods_delivery" class="text-start">
+      <p v-if="has_goods_delivery && !is_pickup" class="text-start">
         <i class="fas fa-info-circle text-primary" />
         {{ $t("order_page.delivery.confirm_received_info") }}
       </p>
@@ -69,7 +74,7 @@
           <div v-if="!edit_billing">
             <s-order-bill-card
               :basket="basket"
-              :billing="billing"
+              :billing="display_billing"
             ></s-order-bill-card>
             <div class="d-flex justify-end my-2">
               <v-btn
@@ -149,13 +154,8 @@
       <v-col class=" " cols="12" md="4" sm="6">
         <p class="font-weight-bold">
           <template v-if="is_pickup">
-            {{ $t("global.commons.billing_address") }}
-
-            <span
-              v-if="!has_vendor_orders /*Separate fulfillment*/"
-              class="mx-2"
-              >({{ $t("global.commons.pickup") }})</span
-            >
+            {{ $t("global.commons.pickup") }} ·
+            {{ $t("global.commons.address") }}
           </template>
           <template v-else>
             {{ $t("global.commons.shipping_address") }}
@@ -242,14 +242,18 @@
           {{ $t("global.basket_order_info_summery.receiver") }}
         </p>
 
-        <p v-if="receiver_info.name" class="mb-1">
+        <p class="mb-1">
           <small>{{ $t("global.commons.name") }} : </small>
-          {{ receiver_info.name }}
+          {{
+            receiver_contact.full_name ||
+            receiver_contact.name ||
+            $t("global.commons.guest")
+          }}
         </p>
 
-        <p class="mb-1">
+        <p v-if="receiver_contact.phone" class="mb-1">
           <small>{{ $t("global.basket_order_info_summery.phone") }} : </small>
-          {{ receiver_info.phone }}
+          {{ receiver_contact.phone }}
         </p>
 
         <p class="mb-1">
@@ -311,6 +315,7 @@
 
         <div
           v-if="
+            !is_pickup &&
             delivery_info &&
             (delivery_info.tracking_code || delivery_info.tracking_url)
           "
@@ -338,7 +343,7 @@
 
         <div>
           <delivery-timeline-transportation-order
-            v-if="transportation_order"
+            v-if="transportation_order && !is_pickup"
             :delivery-info="delivery_info"
             :transportation-order="transportation_order"
           >
@@ -355,10 +360,20 @@
       rounded="xl"
       variant="flat"
     >
-      {{ $t("order_page.delivery.order_delivered") }}
+      <template v-if="is_pickup">
+        {{ $t("global.commons.pickup") }} ·
+        {{ $t("global.commons.completed") }}
+      </template>
+      <template v-else>
+        {{ $t("order_page.delivery.order_delivered") }}
+      </template>
       <p
         v-if="basket.delivery_at"
-        :title="$t('order_page.delivery.delivery_time')"
+        :title="
+          is_pickup
+            ? $t('global.commons.complete_date')
+            : $t('order_page.delivery.delivery_time')
+        "
         class="small m-0"
       >
         <v-icon class="me-1" size="small">access_time</v-icon>
@@ -530,6 +545,19 @@ export default {
         : {} /*Fix bug when seller disable ask for shipping address*/;
     },
 
+    receiver_contact() {
+      if (!this.is_pickup) return this.receiver_info;
+      const customer = this.basket.customer || {};
+      const user = this.basket.user || {};
+      const buyer = this.basket.buyer || {};
+      return {
+        full_name:
+          customer.full_name || user.full_name || buyer.full_name || null,
+        name: customer.name || user.name || buyer.name || null,
+        phone: customer.phone || user.phone || buyer.phone || null,
+      };
+    },
+
     is_pickup() {
       return (
         this.delivery_info &&
@@ -553,6 +581,11 @@ export default {
       return this.basket.billing
         ? this.basket.billing
         : {} /*Fix bug when seller disable ask for shipping address*/;
+    },
+
+    display_billing() {
+      if (this.is_pickup && !this.billing.custom) return null;
+      return this.billing;
     },
 
     can_edit_address() {
