@@ -13,7 +13,85 @@
   -->
 
 <template>
-  <span class="d-flex align-start flex-grow-1 w-100 text-start flex-wrap">
+  <v-menu
+    v-if="compact"
+    :close-on-content-click="false"
+    location="bottom start"
+    offset="4"
+    open-on-click
+    open-on-focus
+    open-on-hover
+  >
+    <template v-slot:activator="{ props: activatorProps }">
+      <v-btn
+        :aria-label="account.account_name || formatCard(account.account_number)"
+        v-bind="activatorProps"
+        class="ma-1"
+        color="primary"
+        height="40"
+        size="small"
+        variant="text"
+      >
+        <v-icon start>wallet</v-icon>
+        {{
+          account.account_name?.limitWords(2) ||
+          formatCard(account.account_number)
+        }}
+        <v-icon end>expand_more</v-icon>
+      </v-btn>
+    </template>
+
+    <v-card class="pa-3 text-start" min-width="280" rounded="xl">
+      <div class="d-flex align-center flex-wrap">
+        <v-btn
+          v-if="!readonly && USER().id === account.user_id"
+          :to="{
+            name: 'BPageAccountTransactions',
+            params: { account_number: account.account_number },
+          }"
+          class="px-0 me-2"
+          color="primary"
+          height="40"
+          rel="noopener noreferrer"
+          size="small"
+          target="_blank"
+          variant="text"
+        >
+          <v-icon start>wallet</v-icon>
+          {{ account.account_name || formatCard(account.account_number) }}
+          <v-icon end>open_in_new</v-icon>
+        </v-btn>
+        <div v-else class="d-flex align-center font-weight-bold me-2">
+          <v-icon class="me-1">wallet</v-icon>
+          {{ account.account_name || formatCard(account.account_number) }}
+        </div>
+        <v-spacer></v-spacer>
+        <u-currency-icon
+          :currency="account.currency"
+          class="ms-2"
+          flag
+        ></u-currency-icon>
+        <b class="ms-1">{{ account.currency }}</b>
+      </div>
+
+      <div class="font-weight-bold my-2">
+        {{ formatCard(account.account_number) }}
+      </div>
+
+      <div>
+        <small class="d-block">{{ $t("account_list.free_balance") }}</small>
+        <u-price
+          :amount="account.balance - account.locked"
+          :currency="account.currency"
+        ></u-price>
+      </div>
+    </v-card>
+  </v-menu>
+
+  <span
+    v-else
+    class="d-flex align-start flex-grow-1 w-100 text-start flex-wrap"
+  >
     <div>
       <div class="d-flex align-center">
         <u-currency-icon
@@ -40,8 +118,9 @@
 
     <span class="mx-2 flex-grow-1">
       <small class="d-block"> {{ $t("account_list.account_name") }}</small>
-      <div v-if="USER().id === account.user_id">
+      <div v-if="readonly || USER().id === account.user_id">
         <v-btn
+          v-if="!readonly"
           :to="{
             name: 'BPageAccountTransactions',
             params: { account_number: account.account_number },
@@ -54,6 +133,10 @@
           >{{ account.account_name }}
           <v-icon class="ms-1" size="small">open_in_new</v-icon></v-btn
         >
+        <div v-else class="text-subtitle-2 d-flex align-center">
+          <v-icon class="me-1" size="small">wallet</v-icon>
+          {{ account.account_name }}
+        </div>
       </div>
       <div v-else>
         <div class="text-subtitle-2 d-flex align-center">
@@ -79,6 +162,8 @@ export default {
   components: { UCurrencyIcon },
   props: {
     account: { required: true },
+    compact: Boolean,
+    readonly: Boolean,
   },
 
   data: () => ({}),

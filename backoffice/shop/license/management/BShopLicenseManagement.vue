@@ -138,6 +138,10 @@
             </u-smart-toggle>
           </v-col>
         </v-row>
+
+        <!-- ╺╺╺╺╺╺╺╺╺ 💸 Selldone Fee Cashback · Active License Extension ╺╺╺╺╺╺╺╺╺ -->
+        <slot name="active-license-extra" />
+        <!-- ╺╺╺╺╺╺╺╺╺ 💸 End Selldone Fee Cashback · Active License Extension ╺╺╺╺╺╺╺╺╺ -->
       </div>
 
       <!-- Fix sho license issue -->
@@ -300,6 +304,10 @@
             <h2>%{{ license_object.wage_percent }}</h2>
           </v-col>
         </v-row>
+
+        <!-- ╺╺╺╺╺╺╺╺╺ 💸 Selldone Fee Cashback · Active License Extension ╺╺╺╺╺╺╺╺╺ -->
+        <slot name="active-license-extra" />
+        <!-- ╺╺╺╺╺╺╺╺╺ 💸 End Selldone Fee Cashback · Active License Extension ╺╺╺╺╺╺╺╺╺ -->
       </div>
 
       <shop-subscription-list

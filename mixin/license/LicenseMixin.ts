@@ -15,6 +15,33 @@
 
 import {ShopLicense} from "@selldone/core-js/enums/shop/ShopLicense.ts";
 
+function useCurrentOriginForCompiledAsset(icon: string) {
+  try {
+    const url = new URL(icon);
+    const pathSegments = url.pathname.split("/");
+    const appSegment = pathSegments.indexOf("app");
+    const versionSegment = pathSegments[appSegment + 1];
+    const isCompiledAsset =
+      appSegment >= 0 &&
+      typeof versionSegment === "string" &&
+      versionSegment.length > 0 &&
+      !versionSegment.startsWith("@") &&
+      pathSegments[appSegment + 2] === "assets" &&
+      Boolean(pathSegments[appSegment + 3]);
+
+    if (
+      (url.protocol === "http:" || url.protocol === "https:") &&
+      isCompiledAsset
+    ) {
+      return `${url.pathname}${url.search}${url.hash}`;
+    }
+  } catch {
+    // Relative paths and malformed URLs must stay exactly as provided.
+  }
+
+  return icon;
+}
+
 const LicenseMixin = {
 
   methods: {
@@ -28,7 +55,7 @@ const LicenseMixin = {
 
     getShopLicenseIcon(license: keyof typeof ShopLicense) {
       const _license = ShopLicense[license];
-      return _license ? _license.icon : null;
+      return _license ? useCurrentOriginForCompiledAsset(_license.icon) : null;
     },
 
   },

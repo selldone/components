@@ -1002,68 +1002,12 @@
               $t("process_center.payment_widget.samin.description")
             }}</small>
 
-            <v-btn
+            <b-account-box
               v-if="linked_account"
-              :to="
-                isRolePanel
-                  ? {}
-                  : {
-                      name: 'BPageAccountTransactions',
-                      params: {
-                        account_number: linked_account.account_number,
-                      },
-                    }
-              "
-              class="ma-1"
-              color="primary"
-              size="small"
-              target="_blank"
-              variant="text"
-            >
-              <v-icon start>wallet</v-icon>
-              {{ linked_account.account_name?.limitWords(2) }}
-              <v-icon end>open_in_new</v-icon>
-
-              <v-tooltip
-                v-if="linked_account"
-                activator="parent"
-                content-class="rounded-xl bg-black text-start"
-                location="bottom"
-                min-width="280"
-              >
-                <div class="d-flex align-center">
-                  <v-icon class="me-1">wallet</v-icon>
-
-                  {{ linked_account.account_name }}
-                  <v-spacer></v-spacer>
-                  <u-currency-icon
-                    :currency="linked_account.currency"
-                    class="ms-2"
-                    flag
-                  ></u-currency-icon>
-                </div>
-                <div class="font-weight-bold my-2">
-                  {{ formatCard(linked_account.account_number) }}
-                </div>
-
-                <u-text-value-box label="Balance" vb50>
-                  <template v-slot:value>
-                    <u-price
-                      :amount="linked_account.balance"
-                      :currency="linked_account.currency"
-                    ></u-price>
-                  </template>
-                </u-text-value-box>
-                <u-text-value-box label="Locked" vb50>
-                  <template v-slot:value>
-                    <u-price
-                      :amount="linked_account.locked"
-                      :currency="linked_account.currency"
-                    ></u-price>
-                  </template>
-                </u-text-value-box>
-              </v-tooltip>
-            </v-btn>
+              :account="linked_account"
+              :readonly="isRolePanel"
+              compact
+            />
           </td>
 
           <td class="text-center">
@@ -1087,6 +1031,15 @@
             </v-chip>
           </td>
         </tr>
+
+        <!-- ╺╺╺╺╺╺╺╺╺ 💸 Selldone Fee Cashback · Payment Ledger Row ╺╺╺╺╺╺╺╺╺ -->
+        <b-order-payment-row-fee-cashback
+          v-if="order.selldone_fee_cashbacks?.length"
+          :accounts="shop.accounts || []"
+          :cashbacks="order.selldone_fee_cashbacks"
+          :is-role-panel="isRolePanel"
+        />
+        <!-- ╺╺╺╺╺╺╺╺╺ 💸 End Selldone Fee Cashback · Payment Ledger Row ╺╺╺╺╺╺╺╺╺ -->
       </tbody>
     </template>
   </v-table>
@@ -1413,32 +1366,31 @@ import BOrderPaymentRowGiftcard from "../../../order/payment/row/giftcard/BOrder
 import BOrderPaymentRowPayment from "../../../order/payment/row/payment/BOrderPaymentRowPayment.vue";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import BOrderPaymentRowTax from "../../../order/payment/row/tax/BOrderPaymentRowTax.vue";
-import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
-import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import USmartVerify from "../../../../ui/smart/verify/USmartVerify.vue";
 import { Basket, Bill, PriceHelper } from "@selldone/core-js";
 import BOrderPaymentRowWallet from "@selldone/components-vue/backoffice/order/payment/row/wallet/BOrderPaymentRowWallet.vue";
 import BOrderPaymentRowCashback from "@selldone/components-vue/backoffice/order/payment/row/cashback/BOrderPaymentRowCashback.vue";
+import BOrderPaymentRowFeeCashback from "@selldone/components-vue/backoffice/order/payment/row/fee-cashback/BOrderPaymentRowFeeCashback.vue";
+import BAccountBox from "@selldone/components-vue/backoffice/account/box/BAccountBox.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
 import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
 
 export default {
   name: "BOrderPaymentTable",
-  mixins: [DateMixin,AccountMixin,ClubMixin,ImageMixin ],
+  mixins: [DateMixin, ClubMixin, ImageMixin],
 
   components: {
+    BAccountBox,
+    BOrderPaymentRowFeeCashback,
     BOrderPaymentRowCashback,
     BOrderPaymentRowWallet,
     USmartVerify,
     UPriceInput,
-    UTextValueBox,
-    UCurrencyIcon,
     BOrderPaymentRowTax,
 
     BOrderPaymentRowPayment,
