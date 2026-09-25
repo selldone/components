@@ -990,18 +990,25 @@
               class="mx-2"
               height="24"
               src="../../../../assets/icons/samin-token.svg"
-              alt="Selldone Fee"
+              alt=""
             />
-            {{ $t("process_center.payment_widget.samin.title") }}
+            <span class="d-inline-flex" tabindex="0">
+              {{ $t("process_center.payment_widget.samin.title") }}
+              <v-tooltip
+                :text="$t('process_center.payment_widget.samin.description')"
+                activator="parent"
+                content-class="text-start"
+                location="bottom"
+                max-width="320"
+                open-on-focus
+                open-on-hover
+              />
+            </span>
           </td>
           <td class="text-left">
             <u-price :amount="wage" :currency="order.currency"></u-price>
           </td>
           <td>
-            <small class="max-w-250 d-inline-block">{{
-              $t("process_center.payment_widget.samin.description")
-            }}</small>
-
             <b-account-box
               v-if="linked_account"
               :account="linked_account"

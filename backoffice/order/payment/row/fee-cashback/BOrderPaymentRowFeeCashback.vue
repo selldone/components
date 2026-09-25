@@ -22,7 +22,7 @@
           height="24"
           src="../../../../../assets/icons/samin-token.svg"
         />
-        <div class="d-flex flex-column align-start ga-1">
+        <div class="d-flex flex-column align-start ga-1" tabindex="0">
           <span>
             {{ $t("process_center.payment_widget.samin.title") }}
             {{ $t("global.commons.cashback") }}
@@ -30,6 +30,15 @@
           <b-fee-cashback-deal-badge
             compact
             :label="$t('process_center.payment_widget.samin.special_cashback')"
+          />
+          <v-tooltip
+            :text="$t('process_center.payment_widget.samin.cashback_tooltip')"
+            activator="parent"
+            content-class="text-start"
+            location="bottom"
+            max-width="320"
+            open-on-focus
+            open-on-hover
           />
         </div>
       </div>
