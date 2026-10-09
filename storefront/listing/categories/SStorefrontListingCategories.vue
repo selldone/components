@@ -130,6 +130,7 @@ export default {
   name: "SStorefrontListingCategories",
 
   inject: ["$shop"],
+  emits: ["update:category"],
 
   data: () => ({
     categories: [] as any[],
@@ -285,6 +286,9 @@ export default {
         this.syncRootHighlightFromRoute();
       },
     },
+    routeSubSlug() {
+      this.syncRootHighlightFromRoute();
+    },
   },
 
   methods: {
@@ -419,6 +423,9 @@ export default {
 
     syncRootHighlightFromRoute() {
       this.internal_root = this.currentRootIdFromRoute;
+      const slug = this.routeSubSlug || this.routeCategorySlug;
+      const category = this.bySlug[slug] || this.byId[this.toId(slug)] || null;
+      this.$emit("update:category", category);
     },
 
     goListing(categorySlug?: string, subSlug?: string) {

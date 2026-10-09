@@ -1236,6 +1236,7 @@ export default {
           products: this.products,
           folders: this.folders,
           total: total,
+          parent: this.parent_folders,
         });
 
         GtagEcommerce.MeasuringProductImpressions(

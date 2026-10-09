@@ -119,6 +119,7 @@ export default {
   },
 
   inject: ["$shop"],
+  emits: ["loaded"],
 
   props: {
     /**
@@ -354,6 +355,7 @@ export default {
           }
 
           this.item = data.item || null;
+          this.$emit("loaded", this.item);
         })
         .catch((error) => NotificationService.showLaravelError(error))
         .finally(() => {
