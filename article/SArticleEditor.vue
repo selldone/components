@@ -1334,9 +1334,6 @@ export default defineComponent({
       div.find("img[src^='blob']").each(function () {
         let element = $(this);
 
-        console.log(element);
-
-        console.error("closest", element.closest("div"));
         element.closest("div").remove();
       });
 

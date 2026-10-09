@@ -150,6 +150,7 @@
 </template>
 
 <script lang="ts">
+import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import threads from "@selldone/core-js/utils/thread/threads";
 
 export default {
@@ -324,6 +325,9 @@ export default {
               name: "New user",
               add: true,
             });
+        })
+        .catch((error) => {
+          NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.loading = false;
