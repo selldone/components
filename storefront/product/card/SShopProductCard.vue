@@ -122,7 +122,6 @@
           class="quick-buy"
         >
           <v-btn
-            v-if="canCompareProducts"
             :size="
               $vuetify.display.mdAndUp && !isInsta
                 ? 'large'
@@ -142,6 +141,7 @@
             >
           </v-btn>
           <v-btn
+            v-if="canCompareProducts"
             :size="
               $vuetify.display.mdAndUp && !isInsta
                 ? 'large'
@@ -537,10 +537,11 @@ import UCurrencyIcon from "@selldone/components-vue/ui/currency/icon/UCurrencyIc
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import { ModeView } from "@selldone/core-js/enums/shop/ModeView.ts";
+import StorefrontMixin from "@app-storefront/mixin/StorefrontMixin.ts";
 
 export default {
   name: "SShopProductCard",
-  mixins: [ProductMixin],
+  mixins: [ProductMixin,StorefrontMixin],
 
   components: {
     UPriceInvalid,
