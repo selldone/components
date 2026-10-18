@@ -1373,9 +1373,7 @@ export default {
         return window.ARTICLE_API.POST_SHOP_CONVERTER_WORD_HTML(this.shop_id);
       }
       // Official selldone blogs:
-      return window.API
-        ? window.ADMIN_API.POST_OFFICIAL_CONVERTER_WORD_HTML()
-        : undefined;
+      return window.ADMIN_API?.POST_OFFICIAL_CONVERTER_WORD_HTML?.();
     },
     showContent() {
       return !this.inLoading && !this.NOT_FOUND_ARTICLE && !this.NEED_LOGIN;

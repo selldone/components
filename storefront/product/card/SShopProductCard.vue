@@ -122,6 +122,7 @@
           class="quick-buy"
         >
           <v-btn
+            v-if="canCompareProducts"
             :size="
               $vuetify.display.mdAndUp && !isInsta
                 ? 'large'
@@ -715,6 +716,13 @@ export default {
       let list = this.$store.getters.getProductsComparison;
       if (!list) return false;
       return list.some((item) => item.id === this.product.id);
+    },
+
+    canCompareProducts() {
+      return (
+        typeof this.addToProductComparison === "function" &&
+        typeof this.removeFromProductComparison === "function"
+      );
     },
 
     product_image() {
