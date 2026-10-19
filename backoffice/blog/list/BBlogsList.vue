@@ -154,7 +154,14 @@
     </template>
 
     <template v-slot:item.user_id="{ item }">
-      <b-user-box :user="item.user" small></b-user-box>
+      <div class="d-flex align-center text-start w-100">
+        <b-user-box :user="item.user" class="me-2" small></b-user-box>
+        <b-blog-author-edit
+          :shop="shop"
+          :article="item"
+          class="ms-auto flex-shrink-0"
+        />
+      </div>
     </template>
 
     <template v-slot:item.parent_id="{ item }">
@@ -336,11 +343,12 @@ import { throttle } from "lodash-es";
 import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
 import BUserBox from "../../user/box/BUserBox.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import BBlogAuthorEdit from "../author/BBlogAuthorEdit.vue";
 
 export default {
   name: "BBlogsList",
   mixins: [DateMixin],
-  components: { BUserBox, UAvatarFolder, BClusterInput },
+  components: { BBlogAuthorEdit, BUserBox, UAvatarFolder, BClusterInput },
   props: {
     shop: {
       required: true,

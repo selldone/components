@@ -231,6 +231,7 @@ export default {
     messages: {},
 
     staffOfShopId: {},
+    suggestionSource: Function,
     variant: {},
     persistentPlaceholder: Boolean,
   },
@@ -241,6 +242,7 @@ export default {
       items: [],
       search: null,
       select: null,
+      query_id: 0,
     };
   },
   computed: {
@@ -264,8 +266,10 @@ export default {
     },
   },
   watch: {
-    search: threads.debounceSearch(function (val) {
-      val && val !== this.select && this.querySelections(val);
+    search: threads.debounceSearch(function (val, previous) {
+      if (!val && !previous) return;
+      if (val !== this.select && (val || this.suggestionSource))
+        this.querySelections(val || "");
     }),
 
     select(select) {
@@ -295,25 +299,33 @@ export default {
   },
   created() {
     this.select = this.modelValue;
+    if (this.suggestionSource) this.querySelections("");
   },
   methods: {
     querySelections(v) {
-      if (!window.API) return; // Only in shop community add moderators!
+      if (!this.suggestionSource && !window.API) return; // Only in shop community add moderators!
+      const query_id = ++this.query_id;
       this.loading = true;
 
-      axios
-        .get(window.API.GET_SUGGESTION_USERS(v), {
-          params: {
-            customers_shop: this.customerForShopId,
-            profile: this.withProfile,
-            exclude_me: this.excludeMe,
-            shop_id: this.staffOfShopId,
+      const request = this.suggestionSource
+        ? this.suggestionSource(v)
+        : axios
+            .get(window.API.GET_SUGGESTION_USERS(v), {
+              params: {
+                customers_shop: this.customerForShopId,
+                profile: this.withProfile,
+                exclude_me: this.excludeMe,
+                shop_id: this.staffOfShopId,
 
-            selldone_staff_only: this.selldoneStaffOnly ? true : undefined,
-          },
-        })
-        .then(({ data }) => {
-          this.items = data;
+                selldone_staff_only: this.selldoneStaffOnly ? true : undefined,
+              },
+            })
+            .then(({ data }) => data);
+
+      request
+        .then((users) => {
+          if (query_id !== this.query_id) return;
+          this.items = users;
           if (
             this.canInvite &&
             !this.items.length &&
@@ -327,10 +339,11 @@ export default {
             });
         })
         .catch((error) => {
+          if (query_id !== this.query_id) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
-          this.loading = false;
+          if (query_id === this.query_id) this.loading = false;
         });
     },
   },

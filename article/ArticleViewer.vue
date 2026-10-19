@@ -777,6 +777,8 @@
                 </router-link>
               </span>
 
+              <slot name="author-actions" :article="article"></slot>
+
               <span v-if="category_obj" class="mx-2 text-link-normal fadeIn">
                 /
                 <router-link
