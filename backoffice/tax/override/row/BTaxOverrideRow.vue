@@ -323,7 +323,9 @@ export default {
       this.busy_delete = true;
 
       axios
-        .delete(window.API.DELETE_SHOP_TAX(this.shop.id, this.vat.id))
+        .delete(window.API.DELETE_SHOP_TAX(this.shop.id, this.vat.id), {
+          data: { profile_id: this.profile ? this.profile.id : null },
+        })
         .then(({ data }) => {
           if (!data.error) {
             this.DeleteItemByID(this.overrides, data.id);
