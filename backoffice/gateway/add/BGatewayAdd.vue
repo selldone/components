@@ -213,7 +213,9 @@
                 v-else
                 v-model="public_val[item.name]"
                 :label="item.title"
-                :placeholder="item.hint"
+                :hint="item.hint"
+                persistent-hint
+                hide-details="auto"
                 autocomplete="off"
                 class="max-width-field-large mx-auto unicode-bidi-plaintext"
                 color="blue"
@@ -221,7 +223,8 @@
                 variant="underlined"
               >
                 <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment ▂▂▂▂▂▂▂▂▂▂ -->
-                <template v-if="gateway.dir" v-slot:message>
+                <template v-if="gateway.dir" v-slot:message="{ message }">
+                  <div>{{ message }}</div>
                   <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment > QR Code ▂▂▂▂▂▂▂▂▂▂ -->
 
                   <div v-if="item.name === 'qr'">
@@ -285,7 +288,9 @@
                 visibility.includes(item.name) ? 'visibility_off' : 'visibility'
               "
               :label="item.title"
-              :placeholder="item.hint"
+              :hint="item.hint"
+              persistent-hint
+              hide-details="auto"
               :type="visibility.includes(item.name) ? 'text' : 'password'"
               autocomplete="off"
               class="unicode-bidi-plaintext"
