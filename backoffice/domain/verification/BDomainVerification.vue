@@ -13,47 +13,55 @@
   -->
 
 <template>
-  <v-container>
-    <v-select
-      v-model="selected_domain"
-      :items="domains"
-      :placeholder="`${shop.name}.myselldone.com`"
-      clearable
-      hint="Leave empty for your.myselldone.com domain."
-      item-title="domain"
-      item-value="domain"
-      label="Domain"
-      persistent-hint
-      persistent-placeholder
-      variant="outlined"
-    ></v-select>
+  <div class="b-domain-verification text-start">
+    <fieldset class="b-domain-verification__domains">
+      <legend class="sd-modern-eyebrow">
+        {{ $t("b_domain_verification.domain") }}
+      </legend>
+      <v-radio-group
+        v-model="selected_domain"
+        hide-details
+        :aria-label="$t('b_domain_verification.domain')"
+        class="mt-2"
+      >
+        <v-radio
+          v-for="item in domains"
+          :key="item.domain"
+          :label="item.domain"
+          :value="item.domain"
+        />
+        <v-radio :label="`${shop.name}.myselldone.com`" :value="null" />
+      </v-radio-group>
+      <p class="sd-modern-subtitle mt-2">
+        {{ $t("b_domain_verification.domain_message") }}
+      </p>
+    </fieldset>
 
     <v-file-input
       v-model="verification_file"
-      hint="Max file size: 16KB"
-      label="Verification file"
-      placeholder="Get domain verification from Stripe"
+      :messages="$t('b_domain_verification.file_message')"
+      :label="$t('b_domain_verification.file')"
       prepend-icon=""
       prepend-inner-icon="verified_user"
-      variant="outlined"
-      class="mt-3"
-    >
-      <template v-slot:append-inner>
-        <v-btn
-          :disabled="!verification_file"
-          :loading="busy_upload"
-          class="mt-n2"
-          color="primary"
-          @click="uploadVerificationFile()"
-          >Upload
-        </v-btn>
-      </template>
-    </v-file-input>
-  </v-container>
+      variant="underlined"
+      class="mt-5"
+    />
+    <div class="sd-modern-actions mt-3">
+      <v-btn
+        :disabled="!verification_file || busy_upload"
+        :loading="busy_upload"
+        class="sd-modern-button"
+        color="primary"
+        variant="flat"
+        prepend-icon="upload_file"
+        @click="uploadVerificationFile()"
+        >{{ $t("b_domain_verification.upload") }}
+      </v-btn>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
@@ -87,7 +95,7 @@ export default {
 
   methods: {
     uploadVerificationFile() {
-      if (this.busy_upload) return;
+      if (this.busy_upload || !this.verification_file) return;
       this.busy_upload = true;
 
       let formData = new FormData();
@@ -130,4 +138,26 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-domain-verification {
+  min-width: 0;
+
+  &__domains {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    :deep(.v-selection-control-group) {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    :deep(.v-label) {
+      opacity: 1;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+  }
+}
+</style>

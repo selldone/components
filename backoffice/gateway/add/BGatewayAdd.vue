@@ -13,42 +13,36 @@
   -->
 
 <template>
-  <div>
-    <div
-      :class="{ '-green': enable, '-red': !enable }"
-      class="widget-box mb-5 border-top-medium"
-    >
+  <div class="b-gateway-add sd-modern-form text-start">
+    <section class="sd-modern-widget mb-5">
       <u-widget-header
-        :title="$t('edit_gateway.gateway_status')"
-        icon="settings"
-      >
-        <template v-slot:actions>
+        :title="$t('edit_gateway.status_title')"
+        icon="tune"
+        class="sd-modern-form-header"
+      ></u-widget-header>
 
-        </template>
-      </u-widget-header>
-      <v-list-subheader></v-list-subheader>
+      <dl class="sd-modern-form-meta">
+        <div>
+          <dt class="sd-modern-eyebrow">{{ $t("global.commons.currency") }}</dt>
+          <dd>
+            <u-currency-icon :currency="gateway.currency" flag-only small />{{
+              gateway.currency
+            }}
+          </dd>
+        </div>
+        <div>
+          <dt class="sd-modern-eyebrow">
+            {{ $t("edit_gateway.gateway_code") }}
+          </dt>
+          <dd>
+            <code>{{ gateway.code }}</code>
+          </dd>
+        </div>
+      </dl>
 
-      <u-currency-input
-        v-model="gateway.currency"
-        disabled
-        :label="$t('global.commons.currency')"
-        :messages="$t('edit_gateway.currency_input.message')"
-        variant="underlined"
-      ></u-currency-input>
-
-      <v-text-field
-        v-model="gateway.code"
-        append-inner-icon="fa:fas fa-copyright"
-        disabled
-        :label="$t('edit_gateway.gateway_code')"
-        variant="underlined"
-      />
-      <u-widget-header :title="$t('edit_gateway.status_title')" icon="flaky">
-      </u-widget-header>
-
-      <v-list-subheader>
+      <p class="sd-modern-subtitle mb-4">
         {{ $t("edit_gateway.status_message") }}
-      </v-list-subheader>
+      </p>
 
       <u-smart-switch
         v-model="enable"
@@ -61,21 +55,23 @@
         true-icon="check_circle"
       />
 
-      <template v-if="gateway.manual">
+      <section v-if="gateway.manual" class="sd-modern-form-group">
         <u-widget-header
           :title="$t('edit_gateway.manual_title')"
           icon="done_all"
+          class="sd-modern-form-header"
         >
         </u-widget-header>
 
-        <v-list-subheader>
+        <p class="sd-modern-subtitle">
           {{ $t("edit_gateway.manual_message") }}
-        </v-list-subheader>
+        </p>
 
-        <u-pods-panel :disabled="!enable">
+        <u-pods-panel :disabled="!enable" dense class="b-gateway-add__flow">
           <u-pod-node
             icon="shopping_bag"
-            title="Payment"
+            icon-color="rgb(var(--v-theme-on-surface))"
+            :title="$t('edit_gateway.modern.flow_payment')"
             title-icon="person"
           ></u-pod-node>
           <u-pod-wire forward></u-pod-wire>
@@ -83,7 +79,7 @@
           <template v-if="manual">
             <u-pod-node
               :image="getUserAvatar(USER_ID())"
-              title="You"
+              :title="$t('edit_gateway.modern.flow_you')"
               title-icon="hourglass_empty"
             ></u-pod-node>
             <u-pod-wire forward></u-pod-wire>
@@ -91,14 +87,21 @@
 
           <u-pod-node
             :icon="manual ? 'price_check' : 'bolt'"
-            :title="manual ? 'Confirm payment' : 'Auto confirm'"
+            icon-color="rgb(var(--v-theme-on-surface))"
+            :title="
+              $t(
+                manual
+                  ? 'edit_gateway.modern.flow_confirm'
+                  : 'edit_gateway.modern.flow_auto',
+              )
+            "
           ></u-pod-node>
         </u-pods-panel>
 
-        <v-list-subheader>
+        <div class="sd-modern-subtitle b-gateway-add__hold-types">
           {{ $t("edit_gateway.hold_only_for") }}:
 
-          <v-chip class="ma-1" color="#FFF" variant="flat" label size="small"
+          <v-chip class="ma-1" variant="tonal" label size="small"
             ><img
               :src="ProductType.PHYSICAL.image"
               class="me-1 ms-n1"
@@ -106,7 +109,7 @@
               width="16"
             />{{ $t(ProductType.PHYSICAL.name) }}
           </v-chip>
-          <v-chip class="ma-1" color="#FFF" variant="flat" label size="small"
+          <v-chip class="ma-1" variant="tonal" label size="small"
             ><img
               :src="ProductType.SERVICE.image"
               class="me-1 ms-n1"
@@ -114,7 +117,7 @@
               width="16"
             />{{ $t(ProductType.SERVICE.name) }}
           </v-chip>
-        </v-list-subheader>
+        </div>
 
         <u-smart-switch
           v-model="manual"
@@ -127,17 +130,49 @@
           true-icon="hourglass_empty"
           :true-title="$t('edit_gateway.manual_input.true_title')"
         />
-      </template>
-    </div>
+      </section>
+    </section>
 
-    <div
+    <!-- █████████████████████ Environment █████████████████████ -->
+
+    <section v-if="gateway.debug" class="sd-modern-widget mb-5">
+      <u-widget-header
+        :title="$t('edit_gateway.modern.environment_title')"
+        icon="science"
+        class="sd-modern-form-header"
+      ></u-widget-header>
+      <p class="sd-modern-subtitle mb-4">
+        {{ $t("edit_gateway.debug.subtitle") }}
+      </p>
+      <u-smart-switch
+        v-model="debug"
+        :color="debug ? 'amber' : 'success'"
+        :false-description="$t('edit_gateway.live_mode_message')"
+        :false-title="$t('global.commons.livemode')"
+        :true-description="$t('edit_gateway.developer_message')"
+        :true-title="$t('global.status.debug')"
+        false-icon="monetization_on"
+        inset
+        true-icon="science"
+      />
+    </section>
+
+    <section
       v-if="
         gateway.blockchain ||
         (gateway.public && gateway.public.length) ||
         (gateway.private && gateway.private.length)
       "
-      class="widget-box mb-5"
+      class="sd-modern-widget b-gateway-add__credentials mb-5"
     >
+      <u-widget-header
+        :title="$t('b_gateway_overview.modern.keys_title')"
+        icon="key"
+        class="sd-modern-form-header"
+      />
+      <p class="sd-modern-subtitle mb-6">
+        {{ $t("edit_gateway.modern.credentials_description") }}
+      </p>
       <!-- █████████████████████ Blockchain mode █████████████████████ -->
 
       <!--<template v-if="gateway.blockchain && shopGateway">
@@ -181,140 +216,140 @@
       <!-- █████████████████████ Normal mode █████████████████████ -->
 
       <!--  <template v-else-if="!gateway.blockchain">-->
-        <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Public Variables ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-        <div v-if="has_public" class="mb-5">
-          <u-widget-header
-            :title="$t('edit_gateway.public_keys')"
-            icon="public"
-          ></u-widget-header>
+      <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Public Variables ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
+      <div v-if="has_public" class="mb-5">
+        <h3 class="sd-modern-eyebrow d-flex align-center ga-2">
+          <v-icon size="16" aria-hidden="true">public</v-icon
+          >{{ $t("edit_gateway.public_keys") }}
+        </h3>
 
-          <v-list-subheader>
-            <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment ▂▂▂▂▂▂▂▂▂▂ -->
+        <div v-if="gateway.dir" class="sd-modern-subtitle mb-4">
+          <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment ▂▂▂▂▂▂▂▂▂▂ -->
 
-            <div v-if="gateway.dir">
-              You can customize the payment form by separating the label and
-              value by two colons.<br />
-              <i>custom field label</i
-              ><b class="typo-body mx-1 font-weight-black text-black">::</b
-              ><i>the field value</i>
-            </div>
-          </v-list-subheader>
-
-          <v-form autocomplete="off">
-            <div v-for="item in gateway.public" :key="item.name">
-              <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Note ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-              <div
-                v-if="item.type === 'note'"
-                v-html="convertToHtml(item.title)"
-              ></div>
-              <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Inputs ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-              <v-text-field
-                v-else
-                v-model="public_val[item.name]"
-                :label="item.title"
-                :messages="item.hint || ' '"
-                hide-details="auto"
-                autocomplete="off"
-                class="max-width-field-large mx-auto unicode-bidi-plaintext"
-                color="blue"
-                variant="underlined"
-              >
-                <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment ▂▂▂▂▂▂▂▂▂▂ -->
-                <template v-if="gateway.dir" v-slot:message="{ message }">
-                  <div>{{ message }}</div>
-                  <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment > QR Code ▂▂▂▂▂▂▂▂▂▂ -->
-
-                  <div v-if="item.name === 'qr'">
-                    <v-icon class="me-1" size="small">qr_code</v-icon>
-                    The entered value will be shown as a QR code automatically.
-
-                    <v-expand-transition>
-                      <div v-if="public_val[item.name]">
-                        <br />
-                        <div v-if="public_val[item.name].includes('::')">
-                          {{ extractLabel(public_val[item.name], item.title) }}:
-                        </div>
-
-                        <div class="text-center">
-                          <u-qrcode
-                            :options="{
-                              width: 160,
-                              color: { dark: '#333', light: '#FFFFFF00' },
-                            }"
-                            :value="extractValue(public_val[item.name])"
-                          />
-                        </div>
-                      </div>
-                    </v-expand-transition>
-                  </div>
-                  <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment > Custom Label ▂▂▂▂▂▂▂▂▂▂ -->
-
-                  <div
-                    v-else-if="
-                      public_val[item.name] &&
-                      public_val[item.name].includes('::')
-                    "
-                  >
-                    Label: <b>{{ extractLabel(public_val[item.name]) }}</b
-                    ><br />
-                    Value: <b>{{ extractValue(public_val[item.name]) }}</b
-                    ><br />
-                  </div>
-                </template>
-              </v-text-field>
-            </div>
-          </v-form>
+          <div>
+            You can customize the payment form by separating the label and value
+            by two colons.<br />
+            <i>custom field label</i
+            ><b class="typo-body mx-1 font-weight-black text-black">::</b
+            ><i>the field value</i>
+          </div>
         </div>
 
-        <hr v-if="has_public && has_private" class="hr-dashed mb-5 op-0-3" />
+        <v-form autocomplete="off">
+          <div v-for="item in gateway.public" :key="item.name">
+            <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Note ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+            <div
+              v-if="item.type === 'note'"
+              v-html="convertToHtml(item.title)"
+            ></div>
+            <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Inputs ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Private Variables ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-        <div v-if="has_private" class="mb-5">
-          <u-widget-header
-            :title="$t('edit_gateway.private_keys')"
-            icon="admin_panel_settings"
-          ></u-widget-header>
-
-          <v-list-subheader></v-list-subheader>
-          <v-form autocomplete="off">
             <v-text-field
-              v-for="item in gateway.private"
-              :key="item.name"
-              v-model="private_val[item.name]"
-              :append-inner-icon="
-                visibility.includes(item.name) ? 'visibility_off' : 'visibility'
-              "
+              v-else
+              v-model="public_val[item.name]"
               :label="item.title"
-              :messages="item.hint || []"
+              :messages="item.hint || ' '"
               hide-details="auto"
-              :type="visibility.includes(item.name) ? 'text' : 'password'"
               autocomplete="off"
-              class="unicode-bidi-plaintext"
-              color="green"
+              class="b-gateway-add__field unicode-bidi-plaintext"
+              color="blue"
               variant="underlined"
-              @click:append-inner="
-                visibility.includes(item.name)
-                  ? remove(visibility, item.name)
-                  : visibility.push(item.name)
-              "
-            />
-          </v-form>
-        </div>
+            >
+              <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment ▂▂▂▂▂▂▂▂▂▂ -->
+              <template v-if="gateway.dir" v-slot:message="{ message }">
+                <div>{{ message }}</div>
+                <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment > QR Code ▂▂▂▂▂▂▂▂▂▂ -->
+
+                <div v-if="item.name === 'qr'">
+                  <v-icon class="me-1" size="small">qr_code</v-icon>
+                  The entered value will be shown as a QR code automatically.
+
+                  <v-expand-transition>
+                    <div v-if="public_val[item.name]">
+                      <br />
+                      <div v-if="public_val[item.name].includes('::')">
+                        {{ extractLabel(public_val[item.name], item.title) }}:
+                      </div>
+
+                      <div class="text-center">
+                        <u-qrcode
+                          :options="{
+                            width: 160,
+                            color: { dark: '#333', light: '#FFFFFF00' },
+                          }"
+                          :value="extractValue(public_val[item.name])"
+                        />
+                      </div>
+                    </div>
+                  </v-expand-transition>
+                </div>
+                <!-- ▂▂▂▂▂▂▂▂▂▂ DIR Payment > Custom Label ▂▂▂▂▂▂▂▂▂▂ -->
+
+                <div
+                  v-else-if="
+                    public_val[item.name] &&
+                    public_val[item.name].includes('::')
+                  "
+                >
+                  Label: <b>{{ extractLabel(public_val[item.name]) }}</b
+                  ><br />
+                  Value: <b>{{ extractValue(public_val[item.name]) }}</b
+                  ><br />
+                </div>
+              </template>
+            </v-text-field>
+          </div>
+        </v-form>
+      </div>
+
+      <hr v-if="has_public && has_private" class="b-gateway-add__divider" />
+
+      <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Private Variables ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
+      <div v-if="has_private" class="mb-5">
+        <h3 class="sd-modern-eyebrow d-flex align-center ga-2">
+          <v-icon size="16" aria-hidden="true">lock_outline</v-icon
+          >{{ $t("edit_gateway.private_keys") }}
+        </h3>
+
+        <v-form autocomplete="off">
+          <v-text-field
+            v-for="item in gateway.private"
+            :key="item.name"
+            v-model="private_val[item.name]"
+            :append-inner-icon="
+              visibility.includes(item.name) ? 'visibility_off' : 'visibility'
+            "
+            :label="item.title"
+            :messages="item.hint || []"
+            hide-details="auto"
+            :type="visibility.includes(item.name) ? 'text' : 'password'"
+            autocomplete="off"
+            class="b-gateway-add__field unicode-bidi-plaintext"
+            color="green"
+            variant="underlined"
+            @click:append-inner="
+              visibility.includes(item.name)
+                ? remove(visibility, item.name)
+                : visibility.push(item.name)
+            "
+          />
+        </v-form>
+      </div>
       <!-- </template>-->
-    </div>
+    </section>
 
     <!-- █████████████████████ Limit █████████████████████ -->
 
-    <div class="widget-box mb-5">
+    <section class="sd-modern-widget mb-5">
       <u-widget-header
         :title="$t('edit_gateway.limit.title')"
         icon="production_quantity_limits"
+        class="sd-modern-form-header"
       ></u-widget-header>
 
-      <v-list-subheader
-        >{{ $t("edit_gateway.limit.subtitle") }}
-      </v-list-subheader>
+      <p class="sd-modern-subtitle mb-4">
+        {{ $t("edit_gateway.limit.subtitle") }}
+      </p>
       <u-price-input
         v-model="limit"
         :currency="gateway.currency"
@@ -324,43 +359,16 @@
         prepend-inner-icon="shopping_bag"
       >
       </u-price-input>
-    </div>
+    </section>
 
     <slot></slot>
-    <!-- █████████████████████ Debug █████████████████████ -->
-
-    <div
-      v-if="gateway.debug"
-      :class="{ '-amber': debug, '-green': !debug }"
-      class="widget-box mb-5 border-top-medium"
-    >
-      <u-widget-header
-        :title="$t('edit_gateway.debug.title')"
-        icon="code"
-      ></u-widget-header>
-
-      <v-list-subheader>
-        {{ $t("edit_gateway.debug.subtitle") }}
-      </v-list-subheader>
-      <u-smart-switch
-        v-model="debug"
-        :color="debug ? 'amber' : 'success'"
-        :false-description="$t('edit_gateway.live_mode_message')"
-        :false-title="$t('global.commons.livemode')"
-        :true-description="$t('edit_gateway.developer_message')"
-        :true-title="$t('global.status.debug')"
-        false-icon="monetization_on"
-        inset
-        true-icon="science"
-      />
-    </div>
   </div>
 </template>
 
 <script lang="ts">
 import BGatewayBlockchain from "../../gateway/blockchain/BGatewayBlockchain.vue";
 import UTextValueBox from "../../../ui/text/value-box/UTextValueBox.vue";
-import UCurrencyInput from "../../../ui/currency/input/UCurrencyInput.vue";
+import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import {
   FORM_BUILDER_TAGS,
@@ -384,7 +392,7 @@ export default {
     UPodNode,
     UPodsPanel,
     USmartSwitch,
-    UCurrencyInput,
+    UCurrencyIcon,
     UTextValueBox,
     BGatewayBlockchain,
   },
@@ -576,4 +584,68 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-gateway-add {
+  &__field {
+    margin-block-start: 16px;
+  }
+
+  &__divider {
+    margin-block: 28px;
+    border: 0;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+
+  &__flow {
+    min-width: 0;
+    margin-inline: 0 !important;
+    padding: 28px 8px !important;
+    overflow-x: auto;
+
+    :deep(.pod) {
+      flex-shrink: 0;
+      background: rgb(var(--v-theme-surface));
+      --pod-shadow: 0 4px 16px rgba(var(--v-theme-on-surface), 0.08);
+    }
+
+    :deep(.pod small) {
+      white-space: normal;
+      max-width: 100%;
+      flex-shrink: 0;
+      overflow: visible;
+      text-overflow: clip;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    :deep(.pod-icon),
+    :deep(.pod-img) {
+      flex-shrink: 0;
+    }
+  }
+
+  &__hold-types {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-block-end: 16px;
+  }
+
+  @media (max-width: 599px) {
+    &__flow {
+      padding-inline: 4px !important;
+
+      :deep(.pod) {
+        --pod-size: 68px;
+        --pod-icon-size: 20px;
+        padding: 4px;
+      }
+
+      :deep(.min-width-50) {
+        min-width: 16px !important;
+      }
+    }
+  }
+}
+</style>

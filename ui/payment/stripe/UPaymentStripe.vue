@@ -162,7 +162,6 @@ export default {
 
     let appearance = {
       theme: this.theme?.theme ? this.theme.theme : "none",
-      layout: this.theme?.layout ? this.theme.layout : "tabs", // Can be tabs , accordion
       labels: this.theme?.labels ? this.theme.labels : "above", // Enables switching between labels above form fields and floating labels within the form fields; it can be either above or floating
       variables:
         is_custom_theme || this.theme?.variables
@@ -240,6 +239,7 @@ export default {
     }
 
     const paymentElement = this.elements.create("payment", {
+      ...(this.theme?.layout ? { layout: this.theme.layout } : {}),
       defaultValues: _defaultValues,
     });
     paymentElement.mount("#payment-element");
