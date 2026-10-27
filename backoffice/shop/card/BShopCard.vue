@@ -13,7 +13,17 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+  <b-shop-card-modern
+    v-if="modern"
+    :shop="shop"
+    :to="to"
+    :compact="compact"
+    :show-engagement="showEngagement"
+    :initial-expanded="initialExpanded"
+    :is-sample="isSample"
+  />
   <router-link
+    v-else
     :class="{ 'a-white': dark, '-rtl': $vuetify.locale.isRtl }"
     :to="to"
     class="s--shop-card"
@@ -532,12 +542,14 @@ import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import LicenseMixin from "@selldone/components-vue/mixin/license/LicenseMixin.ts";
+import BShopCardModern from "./BShopCardModern.vue";
 
 export default {
   name: "BShopCard",
-  mixins: [TemplateMixin, DateMixin,LicenseMixin],
+  mixins: [TemplateMixin, DateMixin, LicenseMixin],
 
   components: {
+    BShopCardModern,
     BShopCardVisitors,
     UCurrencyIcon,
     UFadeScroll,
@@ -545,6 +557,10 @@ export default {
     URibbon,
   },
   props: {
+    modern: Boolean,
+    compact: Boolean,
+    showEngagement: { type: Boolean, default: true },
+    initialExpanded: Boolean,
     shop: {
       required: true,
       type: Object,

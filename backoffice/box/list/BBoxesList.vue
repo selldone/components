@@ -14,31 +14,41 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ━━━━━━━━━━━━━━━━━━ BPageShopLogisticBoxes ━━━━━━━━━━━━━━━━━━ -->
-  <div class="py-10">
-
-
-
-
-    <div class="widget-box -large mb-5 min-height-50vh">
+  <div :class="modern ? 'b-boxes-list--modern text-start' : 'py-10'">
+    <header v-if="modern" class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"><v-icon>inventory_2</v-icon></span>
+        <div>
+          <h1 class="sd-modern-title-text b-boxes-list__title">{{ $t('transportation_boxes.title') }}</h1>
+          <p class="sd-modern-subtitle">{{ $t('transportation_boxes.subtitle') }}</p>
+        </div>
+      </div>
+      <v-btn class="sd-modern-button sd-modern-button--small" color="primary" variant="flat" prepend-icon="add" @click="openCreateDialog()">
+        {{ $t('transportation_boxes.add_action') }}
+      </v-btn>
+    </header>
+    <div :class="modern ? 'sd-modern-widget b-boxes-list__widget' : 'widget-box -large mb-5 min-height-50vh'">
       <u-widget-header
+        v-if="!modern"
         :title="$t('transportation_boxes.title')"
         icon="inventory_2"
         :add-caption="$t('transportation_boxes.add_action')"
         @click:add="openCreateDialog()"
       />
 
-      <v-list-subheader>
+      <v-list-subheader v-if="!modern">
         {{ $t("transportation_boxes.subtitle") }}
       </v-list-subheader>
 
       <u-loading-progress v-if="busy_fetch" />
 
       <!-- Top tools (search) -->
-      <v-row align="center" no-gutters>
+      <v-row :class="{ 'b-boxes-list__toolbar': modern }" align="center" no-gutters>
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
           :placeholder="$t('global.commons.search')"
+          :aria-label="$t('global.commons.search')"
           class="max-width-field"
           clearable
           hide-details
@@ -50,7 +60,7 @@
 
       <!-- Server-side data table -->
       <v-data-table-server
-        :mobile="$vuetify.display.xs"
+        :mobile="modern ? $vuetify.display.smAndDown : $vuetify.display.xs"
         v-model:options="options"
         :page="page"
         v-model:sort-by="sortBy"
@@ -61,7 +71,8 @@
         :items-per-page="itemsPerPage"
         :loading-text="$t('global.commons.waiting_load_data')"
         :row-props="() => ({ class: 'row-hover' })"
-        class="bg-transparent min-height-60vh"
+        class="bg-transparent"
+        :class="modern ? 'sd-modern-data-table sd-modern-data-table--compact' : 'min-height-60vh'"
         density="compact"
         hide-default-footer
         item-key="id"
@@ -78,7 +89,7 @@
                      :z="item?.height" class="me-1 d-inline"
                      noAnimation
             ></u-cube>
-            <b>{{ item.name }}</b>
+            <span :class="modern ? 'font-weight-medium' : 'font-weight-bold'">{{ item.name }}</span>
           </div>
         </template>
 
@@ -97,7 +108,12 @@
         </template>
 
         <template #item.actions="{ item }">
+          <v-btn v-if="modern" class="sd-modern-button sd-modern-button--compact" variant="text" @click.stop="openEditDialog(item)">
+            {{ $t('global.actions.edit') }}
+          </v-btn>
           <u-smart-menu
+            :class="{ 'b-boxes-list__menu': modern }"
+            :title="$t('global.commons.actions')"
             :items="[
               {
                 title: $t('global.actions.delete'),
@@ -110,14 +126,17 @@
         </template>
 
         <template #no-data>
-          <div class="pa-6 text-medium-emphasis">
+          <div :class="modern ? 'sd-modern-empty-state' : 'pa-6 text-medium-emphasis'">
             {{ $t("transportation_boxes.empty") }}
           </div>
         </template>
 
         <!-- Footer pagination -->
         <template #bottom>
-          <v-pagination v-model="page" :length="pageCount" rounded />
+          <div :class="{ 'sd-modern-table-footer b-boxes-list__footer': modern }">
+            <span v-if="modern" class="sd-modern-page-summary">{{ $t("global.commons.page") }} <bdi>{{ $n(pageCount ? page : 0) }} / {{ $n(pageCount) }}</bdi></span>
+            <v-pagination v-model="page" :length="pageCount" :class="{ 'sd-modern-pagination': modern }" :rounded="modern ? undefined : true" />
+          </div>
         </template>
       </v-data-table-server>
 
@@ -131,8 +150,8 @@
         scrollable
         attach
       >
-        <v-card rounded="t-xl">
-          <v-card-title class="d-flex align-center">
+        <v-card rounded="t-xl" :class="{ 'b-boxes-list-form--modern text-start': modern }">
+          <v-card-title class="d-flex align-center" :class="{ 'b-boxes-list-form__title': modern }">
             <v-icon class="me-2">inventory_2</v-icon>
             <span>
               {{
@@ -142,12 +161,12 @@
               }}
             </span>
             <v-spacer></v-spacer>
-            <v-btn icon variant="text" @click="dialog = false">
+            <v-btn icon variant="text" :aria-label="$t('global.actions.close')" :class="{ 'sd-modern-icon-button': modern }" @click="dialog = false">
               <v-icon>close</v-icon>
             </v-btn>
           </v-card-title>
 
-          <v-card-text>
+          <v-card-text :class="{ 'b-boxes-list-form__body': modern }">
 
 
             <u-cube  v-if="form?.width && form?.length && form?.height"     :size="100"
@@ -231,10 +250,11 @@
             </v-row>
           </v-card-text>
 
-          <v-card-actions class="justify-end">
+          <v-card-actions class="justify-end" :class="{ 'sd-modern-form-actions': modern }">
             <div class="widget-buttons">
               <v-btn
                 @click="dialog = false"
+                :class="{ 'sd-modern-button': modern }"
                 size="x-large"
                 prepend-icon="close"
                 variant="text"
@@ -243,6 +263,7 @@
               </v-btn>
               <v-btn
                 :loading="busy"
+                :class="{ 'sd-modern-button': modern }"
                 color="primary"
                 @click="submit"
                 variant="elevated"
@@ -281,6 +302,10 @@ export default {
 
   // shared for Shop & Vendor hosts
   inject: ["$shop", "$vendor"],
+
+  props: {
+    modern: Boolean,
+  },
 
   data: () => ({
     // list
@@ -582,4 +607,30 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-boxes-list--modern {
+  .b-boxes-list__title { font-size: 21px; font-weight: 600; line-height: 1.35; letter-spacing: -0.25px; }
+  .sd-modern-subtitle { margin: 4px 0 0; font-size: 13px; line-height: 1.45; }
+  .b-boxes-list__widget { padding: 0; overflow: hidden; }
+  .b-boxes-list__toolbar { margin: 0; padding: 12px 18px; border-block-end: 1px solid var(--sd-modern-border); }
+  .b-boxes-list__footer { justify-content: flex-end; padding: 14px 18px; }
+  :deep(.b-boxes-list__toolbar .v-field__input) { font-size: 12px; }
+  :deep(.b-boxes-list__menu > .v-btn) { width: 36px; height: 36px; border-radius: 9px; }
+}
+.b-boxes-list-form--modern {
+  .b-boxes-list-form__title { padding: 22px 24px; font-size: 19px; font-weight: 600; line-height: 1.4; white-space: normal; }
+  .b-boxes-list-form__body { padding: 0 24px 20px; font-size: 14px; }
+}
+@media (max-width: 599px) {
+  .b-boxes-list--modern {
+    .b-boxes-list__title { font-size: 19px; }
+    .b-boxes-list__toolbar { padding-inline: 14px; }
+    :deep(.b-boxes-list__toolbar .v-field__input) { font-size: 16px; }
+    :deep(.b-boxes-list__menu > .v-btn) { width: 44px; height: 44px; }
+  }
+  .b-boxes-list-form--modern {
+    .b-boxes-list-form__title { padding-inline: 16px; }
+    .b-boxes-list-form__body { padding-inline: 16px; }
+  }
+}
+</style>

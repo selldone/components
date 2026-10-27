@@ -66,10 +66,6 @@
       <v-list-subheader
         >{{ $t("product_admin.inventory.variants.sub_title") }}
 
-        <s-widget-help
-          code="Product.Variants.AddBulkVariants"
-          inline
-        ></s-widget-help>
       </v-list-subheader>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Variants ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -321,7 +317,6 @@ import {
   ProductVariants,
 } from "@selldone/core-js/enums/product/ProductVariants";
 import BProductVariantsBulkAdd from "../../../../product/variants/bulk-add/BProductVariantsBulkAdd.vue";
-import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import BProductVariantsOptionButton from "@selldone/components-vue/backoffice/product/variants/option-button/BProductVariantsOptionButton.vue";
@@ -333,7 +328,6 @@ export default {
   components: {
     BPropertySetProductDialog,
     BProductVariantsOptionButton,
-    SWidgetHelp,
     BProductVariantsBulkAdd,
 
     USmartMenu,

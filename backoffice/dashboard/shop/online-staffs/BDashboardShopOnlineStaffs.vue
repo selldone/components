@@ -205,7 +205,7 @@
     </div>
     <div class="b-dashboard-online-staffs__labels">
       <span class="b-dashboard-online-staffs__label">
-        {{ $t("admin_shop.dashboard.online_staff") }}
+        {{ $t("admin_shop.dashboard.ai_agents.staff") }}
         <span class="b-dashboard-online-staffs__count">{{
           staffs.length
         }}</span>

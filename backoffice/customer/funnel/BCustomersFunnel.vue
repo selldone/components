@@ -13,7 +13,88 @@
   -->
 
 <template>
+  <div v-if="modern" class="b-customers-funnel-modern text-start">
+    <b-customers-filter-design
+      :model-value="modelValue"
+      :permanent-filters="permanentFilters"
+      :segments="shop_segments"
+      :shop="shop"
+      :types="filter_types"
+      modern
+      @update:model-value="(val) => $emit('update:modelValue', val)"
+    />
+
+    <section
+      class="b-customers-funnel-modern__report"
+      :aria-busy="busy_refresh"
+    >
+      <div class="sd-modern-header">
+        <h2 class="sd-modern-eyebrow">{{ $t("global.commons.users") }}</h2>
+        <div class="sd-modern-actions">
+          <v-btn
+            class="sd-modern-button"
+            :color="changed ? 'primary' : undefined"
+            :loading="busy_refresh"
+            prepend-icon="refresh"
+            variant="text"
+            @click="refreshFunnel()"
+            >{{ $t("global.actions.refresh") }}</v-btn
+          >
+          <v-btn
+            class="sd-modern-button"
+            :loading="busy_download"
+            prepend-icon="download"
+            variant="text"
+            @click="downloadExcel()"
+            >{{ $t("global.actions.download") }}</v-btn
+          >
+        </div>
+      </div>
+      <v-progress-linear v-if="busy_refresh" indeterminate class="mb-4" />
+      <div v-else-if="funnel_error" class="sd-modern-notice" role="alert">
+        <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+        <span>{{ $t("global.commons.error") }}</span>
+        <v-btn
+          class="sd-modern-button sd-modern-button--inline"
+          variant="text"
+          @click="refreshFunnel()"
+          >{{ $t("global.actions.refresh") }}</v-btn
+        >
+      </div>
+      <ol
+        v-else-if="funnel_date?.length"
+        class="b-customers-funnel-modern__steps"
+      >
+        <li
+          v-for="(step, index) in funnel_date"
+          :key="index"
+          class="b-customers-funnel-modern__step"
+        >
+          <span class="b-customers-funnel-modern__label">{{ step.label }}</span>
+          <div class="b-customers-funnel-modern__track" aria-hidden="true">
+            <span
+              :style="{
+                width: `${(100 * step.count) / Math.max(funnel_date[0]?.count || 0, 1)}%`,
+              }"
+            />
+          </div>
+          <span class="b-customers-funnel-modern__count">{{
+            $n(step.count)
+          }}</span>
+          <span class="b-customers-funnel-modern__drop">
+            <template v-if="index && funnel_date[index - 1].count > step.count"
+              >−{{ $n(funnel_date[index - 1].count - step.count) }}</template
+            >
+          </span>
+        </li>
+      </ol>
+      <div v-else-if="funnel_date" class="sd-modern-empty-state" role="status">
+        {{ $t("global.commons.no_data") }}
+      </div>
+    </section>
+  </div>
   <v-row
+    v-else
     class="overflow-auto scrollable-element-dark-gray"
     justify="center"
     no-gutters
@@ -88,6 +169,10 @@ export default {
   },
 
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     modelValue: {},
     shop: {
       require: true,
@@ -137,6 +222,7 @@ export default {
       busy_refresh: false,
       busy_download: false,
       funnel_date: null,
+      funnel_error: false,
 
       //-------------
 
@@ -218,6 +304,7 @@ export default {
     refreshFunnel() {
       if (this.busy_refresh) return;
       this.busy_refresh = true;
+      this.funnel_error = false;
 
       axios
         .post(window.API.POST_FUNNEL_USERS_COUNT(this.shop.id), {
@@ -249,10 +336,12 @@ export default {
               
                           }*/
           } else {
+            this.funnel_error = true;
             NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
+          this.funnel_error = true;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
@@ -276,8 +365,6 @@ export default {
           },
         })
         .then(({ data, headers }) => {
-          console.log("headers", headers);
-
           FileHelper.DownloadBlobFile(data, headers);
         })
         .catch((error) => {
@@ -291,4 +378,69 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-customers-funnel-modern {
+  min-width: 0;
+
+  &__report {
+    margin-block-start: 28px;
+    padding-block-start: 24px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+
+  &__steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__step {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) minmax(80px, 2fr) 64px 64px;
+    gap: 16px;
+    align-items: center;
+    min-height: 44px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  &__label {
+    overflow-wrap: anywhere;
+  }
+  &__count,
+  &__drop {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+  &__drop {
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+  }
+  &__track {
+    height: 7px;
+    border-radius: 3px;
+    background: rgba(var(--v-theme-on-surface), 0.06);
+    overflow: hidden;
+
+    > span {
+      display: block;
+      height: 100%;
+      max-width: 100%;
+      border-radius: inherit;
+      background: rgb(var(--v-theme-primary));
+    }
+  }
+
+  @media (max-width: 599px) {
+    &__step {
+      grid-template-columns: minmax(80px, 1fr) minmax(40px, 1fr) 48px;
+      gap: 10px;
+    }
+    &__drop {
+      grid-column: 3;
+      margin-block-start: -14px;
+      padding-block-end: 4px;
+    }
+  }
+}
+</style>

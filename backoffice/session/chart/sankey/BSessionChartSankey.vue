@@ -34,6 +34,7 @@ export default {
 
   props: {
     modern: Boolean,
+    color: String,
     Social: {},
     direct: {},
     search: {},
@@ -55,10 +56,11 @@ export default {
         links: [],
       },
 
-      chartConfig(config) {
+      chartConfig: (config) => {
         config.sankey().sankey().nodePadding(16);
 
         config.sankey().nodeDraggableY(true);
+        if (this.color) config.sankey().nodeColor(this.color);
         // .nodeDraggableX(true)
       },
     };
@@ -66,6 +68,9 @@ export default {
   computed: {},
 
   watch: {
+    color() {
+      this.refreshChart();
+    },
     Social() {
       this.refreshChart();
     },

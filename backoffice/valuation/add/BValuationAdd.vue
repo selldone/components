@@ -290,6 +290,7 @@
             </v-list-subheader>
 
             <b-valuation-form-structure
+              :key="sample_revision"
               v-model="structure"
               :collapse="collapse"
               :sample-product="product"
@@ -443,6 +444,7 @@
             </v-list-subheader>
 
             <b-valuation-form-condition
+              :key="sample_revision"
               v-model="conditions"
               :shop="shop"
               :structure="structure"
@@ -661,7 +663,7 @@
         </v-card-text>
 
         <v-card-actions class="b-valuation-add__sample-footer">
-          <v-btn variant="text" @click="samples_dialog = false">
+          <v-btn size="large" variant="text" @click="samples_dialog = false">
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
             <v-tooltip
@@ -773,6 +775,7 @@ export default {
     collapse: false,
 
     samples_dialog: false,
+    sample_revision: 0,
 
     types: ValuationStructureItemType,
 
@@ -831,6 +834,8 @@ export default {
       this.structure = JSON.parse(JSON.stringify(item.structure));
       this.conditions = JSON.parse(JSON.stringify(item.conditions));
       this.preview_valuation = { valuation: {} };
+      // Recreate editors that keep local references to the previous fields.
+      this.sample_revision++;
       this.collapse = true;
       this.samples_dialog = false;
     },

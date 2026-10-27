@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--spreadsheet">
+  <div class="s--spreadsheet" :class="{ 'b-spreadsheet--modern text-start': modern }">
     <v-row align="start" class="my-3" no-gutters style="min-height: 80px">
       <v-col cols="12" md="8" sm="6">
         <b-spreadsheet-value-input
@@ -42,7 +42,7 @@
       </v-col>
     </v-row>
 
-    <v-table v-if="headers?.length" class="bordered-table">
+    <v-table v-if="headers?.length" class="bordered-table" :class="{ 'sd-modern-table sd-modern-table--dense': modern }">
       <template v-slot:default>
         <thead>
           <tr>
@@ -87,8 +87,18 @@
       </template>
     </v-table>
 
+    <div v-if="modern && pages_count > 1" class="sd-modern-table-footer my-5">
+      <span class="sd-modern-page-summary">{{ $t("global.commons.page") }} <bdi>{{ $n(page) }} / {{ $n(pages_count) }}</bdi></span>
+      <v-pagination
+        v-model="page"
+        :length="pages_count"
+        class="sd-modern-pagination"
+        rounded="circle"
+        variant="text"
+      />
+    </div>
     <v-pagination
-      v-if="pages_count > 1"
+      v-else-if="!modern && pages_count > 1"
       v-model="page"
       :length="pages_count"
       class="my-5"
@@ -206,6 +216,7 @@ export default {
     SArticleEditor,
   },
   props: {
+    modern: { type: Boolean, default: false },
     styler: { require: true },
     cols: { require: true },
 
@@ -422,6 +433,18 @@ export default {
 
   img {
     object-fit: cover;
+  }
+}
+
+.b-spreadsheet--modern {
+  min-width: 0;
+
+  td:hover { background-color: var(--sd-modern-inset); }
+
+  .not-valid::after {
+    color: rgb(var(--v-theme-on-surface));
+    background: rgba(var(--v-theme-surface), 0.96);
+    border: 1px solid rgba(var(--v-theme-error), 0.4);
   }
 }
 </style>

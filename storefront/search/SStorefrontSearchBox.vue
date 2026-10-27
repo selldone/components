@@ -97,18 +97,20 @@
           :autofocus="isMobile"
         >
           <template v-slot:prepend-inner>
-            <v-btn
-              v-if="!noQr"
-              :class="negativeQrMargin ? 'mt-n2' : ''"
-              class="hoverable-icon zoomIn delay_500 flex-grow-0"
-              icon
-              size="small"
-              variant="text"
-              @click="showQRScanner"
-              aria-label="QR Code Scanner"
-            >
-              <v-icon size="20">qr_code_scanner</v-icon>
-            </v-btn>
+            <slot name="prepend-inner">
+              <v-btn
+                v-if="!noQr"
+                :class="negativeQrMargin ? 'mt-n2' : ''"
+                class="hoverable-icon zoomIn delay_500 flex-grow-0"
+                icon
+                size="small"
+                variant="text"
+                @click="showQRScanner"
+                aria-label="QR Code Scanner"
+              >
+                <v-icon size="20">qr_code_scanner</v-icon>
+              </v-btn>
+            </slot>
           </template>
 
           <template v-slot:append-inner>
@@ -123,6 +125,7 @@
               :border-size="5"
             >
             </u-avatar-folder>
+            <slot name="append-inner" />
           </template>
         </v-text-field>
       </template>

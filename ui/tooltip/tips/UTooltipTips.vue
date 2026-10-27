@@ -14,11 +14,12 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-btn
-    class="hover-alpha"
-    color="primary"
+    class="hover-alpha sd-modern-input-action"
+    :aria-label="icon === 'help_outline' || icon === 'help_center' ? $t('global.commons.help') : undefined"
     icon
     max-width="420"
     size="24"
+    type="button"
     variant="plain"
   >
     <v-icon color="#000" size="16"> {{ icon }}</v-icon>
@@ -26,8 +27,10 @@
     <v-tooltip
       :max-width="360"
       activator="parent"
-      content-class="bg-black text-start"
-      location="bottom"
+      content-class="sd-modern-tooltip text-start"
+      location="top"
+      open-on-click
+      interactive
     >
       <div class="text-start" v-html="message"></div>
       <slot></slot>
@@ -43,7 +46,7 @@ export default {
   name: "UTooltipTips",
   props: {
     message: {},
-    icon: { default: "help_center" },
+    icon: { default: "help_outline" },
   },
 };
 </script>

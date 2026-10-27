@@ -13,7 +13,176 @@
   -->
 
 <template>
-  <div>
+  <div v-if="modern" class="c-category-edit c-category-edit--modern">
+    <!-- Category details -->
+    <section :aria-labelledby="`${formId}-details`">
+      <div class="c-category-edit__details">
+        <div class="c-category-edit__fields">
+          <h3 :id="`${formId}-details`">
+            {{ $t("community_categories.editor.details") }}
+          </h3>
+          <div class="c-category-edit__guidance">
+            <p>{{ $t("community_categories.editor.details_description") }}</p>
+            <v-tooltip
+              v-model="details_help"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              :open-on-click="false"
+            >
+              <template #activator="{ props }">
+                <v-btn
+                  v-bind="props"
+                  class="sd-modern-icon-button sd-modern-info-button"
+                  variant="text"
+                  icon
+                  :aria-label="$t('community_categories.editor.details_help')"
+                  @click.stop="details_help = true"
+                >
+                  <v-icon size="16">info_outline</v-icon>
+                </v-btn>
+              </template>
+              {{ $t("community_categories.editor.details_help") }}
+            </v-tooltip>
+          </div>
+
+          <div class="c-category-edit__label">
+            <label :for="`${formId}-title`"
+              >{{ $t("community_categories.editor.title") }}
+              <span aria-hidden="true">*</span></label
+            >
+            <span aria-hidden="true">{{ title.length }}/128</span>
+          </div>
+          <v-text-field
+            :id="`${formId}-title`"
+            ref="title_input"
+            v-model="title"
+            class="sd-modern-underlined-field c-category-edit__field"
+            variant="underlined"
+            :placeholder="$t('community_categories.editor.title_placeholder')"
+            maxlength="128"
+            required
+            :error-messages="
+              validation_requested && !title
+                ? $t('community_categories.editor.required_title')
+                : []
+            "
+            :readonly="busy"
+          />
+
+          <div class="c-category-edit__label">
+            <label :for="`${formId}-desc`"
+              >{{ $t("community_categories.editor.description") }}
+              <span aria-hidden="true">*</span></label
+            >
+            <span aria-hidden="true">{{ desc.length }}/256</span>
+          </div>
+          <v-textarea
+            :id="`${formId}-desc`"
+            ref="desc_input"
+            v-model="desc"
+            class="sd-modern-underlined-field c-category-edit__field c-category-edit__description"
+            variant="underlined"
+            rows="2"
+            no-resize
+            maxlength="256"
+            required
+            :placeholder="
+              $t('community_categories.editor.description_placeholder')
+            "
+            :error-messages="
+              validation_requested && !desc
+                ? $t('community_categories.editor.required_description')
+                : []
+            "
+            :readonly="busy"
+          />
+        </div>
+
+        <!-- Keep the existing picker, File preview and size validation. -->
+        <div class="c-category-edit__image-group">
+          <div class="c-category-edit__image-heading">
+            <span>{{ $t("global.commons.image") }}</span>
+            <span>{{ $t("community_categories.editor.optional") }}</span>
+          </div>
+          <c-image-input
+            ref="image_input"
+            v-model="image_file"
+            :src="image && getShopImagePath(image)"
+            :inert="busy"
+            class="c-category-edit__image"
+          />
+          <div class="c-category-edit__image-copy">
+            <p
+              v-if="image_file || image"
+              class="c-category-edit__filename"
+              :title="image_file?.name"
+            >
+              {{
+                image_file?.name ||
+                $t("community_categories.editor.current_image")
+              }}
+            </p>
+            <p v-else>{{ $t("community_categories.editor.image_hint") }}</p>
+            <p>{{ $t("community_categories.editor.image_help") }}</p>
+            <v-btn
+              v-if="image_file || image"
+              class="sd-modern-button sd-modern-button--small c-category-edit__change-image"
+              variant="text"
+              :disabled="busy"
+              @click="$refs.image_input.showSelectImage()"
+            >
+              {{ $t("community_categories.editor.change_image") }}
+            </v-btn>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEO, cross-community and access settings -->
+    <section
+      class="c-category-edit__settings"
+      :aria-labelledby="`${formId}-settings`"
+    >
+      <h3 :id="`${formId}-settings`">
+        {{ $t("community_categories.editor.settings") }}
+      </h3>
+      <p>{{ $t("community_categories.editor.settings_description") }}</p>
+      <u-smart-toggle
+        v-for="setting in ['nofollow', 'cross', 'restrict']"
+        :key="setting"
+        v-model="$data[setting]"
+        class="c-category-edit__toggle"
+        false-gray
+        :readonly="busy"
+        :true-title="$t(`community_categories.editor.${setting}_title`)"
+        :false-title="$t(`community_categories.editor.${setting}_title`)"
+        :true-description="$t(`community_categories.editor.${setting}_on`)"
+        :false-description="$t(`community_categories.editor.${setting}_off`)"
+        role="switch"
+        :aria-checked="!!$data[setting]"
+        :aria-disabled="busy"
+        tabindex="0"
+        :aria-label="$t(`community_categories.editor.${setting}_title`)"
+        :aria-description="
+          $t(
+            `community_categories.editor.${setting}_${$data[setting] ? 'on' : 'off'}`,
+          )
+        "
+        @keydown.space.prevent="!busy && ($data[setting] = !$data[setting])"
+        @keydown.enter.prevent="!busy && ($data[setting] = !$data[setting])"
+      >
+        <template #title>
+          <span class="c-category-edit__state" aria-hidden="true">{{
+            $t(
+              `community_categories.editor.state_${$data[setting] ? "on" : "off"}`,
+            )
+          }}</span>
+        </template>
+      </u-smart-toggle>
+    </section>
+  </div>
+  <!-- Public community callers retain their existing form. -->
+  <div v-else>
     <!-- General -->
     <div class="widget-box mb-5">
       <u-widget-header
@@ -124,12 +293,15 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import CImageInput from "../../../community/image/input/CImageInput.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
-
+import { useId } from "vue";
 
 export default {
   name: "CCategoryEdit",
   mixins: [],
   components: { USmartToggle, CImageInput },
+  setup() {
+    return { formId: useId() };
+  },
 
   props: {
     community: {
@@ -137,11 +309,14 @@ export default {
       type: Object,
     },
     category: {},
+    modern: { type: Boolean, default: false },
   },
 
   data() {
     return {
       busy: false,
+      validation_requested: false,
+      details_help: false,
 
       title: "",
       desc: "",
@@ -172,14 +347,36 @@ export default {
   mounted() {},
 
   methods: {
+    closeDetailsHelp(event) {
+      if (!this.details_help) return;
+      event.stopPropagation();
+      this.details_help = false;
+    },
+
     //――――――――――――――――――――――― New category ―――――――――――――――――――――――
 
     save(callback_busy) {
+      if (this.modern) {
+        if (this.busy) return;
+        this.validation_requested = true;
+        if (!this.title || !this.desc) {
+          this.$nextTick(() =>
+            this.$refs[!this.title ? "title_input" : "desc_input"]?.focus(),
+          );
+          return;
+        }
+      }
       if (!this.title) {
-        return NotificationService.showErrorAlert(null, "Enter title for the category!");
+        return NotificationService.showErrorAlert(
+          null,
+          "Enter title for the category!",
+        );
       }
       if (!this.desc) {
-        return NotificationService.showErrorAlert(null, "Enter description for the category!");
+        return NotificationService.showErrorAlert(
+          null,
+          "Enter description for the category!",
+        );
       }
 
       this.busy = true;
@@ -254,4 +451,254 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.c-category-edit--modern {
+  h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  p {
+    margin: 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+
+  .c-category-edit__guidance {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-block: 4px 20px;
+  }
+
+  .c-category-edit__details {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 140px;
+    align-items: start;
+    gap: 26px;
+  }
+
+  .c-category-edit__label,
+  .c-category-edit__image-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+
+    > span:last-child {
+      color: var(--sd-modern-muted);
+      font-size: 11px;
+      font-weight: 400;
+    }
+  }
+
+  .c-category-edit__field {
+    --sd-modern-field-height: 38px;
+
+    :deep(.v-field__input) {
+      min-height: 38px;
+      height: auto;
+      padding: 9px 0;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    :deep(.v-input__details) {
+      min-height: 26px;
+    }
+
+    :deep(.v-field__input::placeholder) {
+      color: var(--sd-modern-muted);
+      opacity: 1;
+    }
+  }
+
+  .c-category-edit__description :deep(.v-field__input) {
+    min-height: 76px;
+    // The default textarea fade assumes larger top padding and masks the first line.
+    mask-image: none;
+  }
+
+  .c-category-edit__image {
+    :deep(> .dashed),
+    :deep(.v-img) {
+      width: 128px !important;
+      height: 128px !important;
+      max-width: 100%;
+    }
+
+    :deep(> .dashed) {
+      border-color: var(--sd-modern-border);
+      border-radius: 12px;
+    }
+
+    :deep(.v-img) {
+      box-shadow: var(--sd-modern-selected-shadow);
+    }
+  }
+
+  .c-category-edit__image-heading {
+    font-size: 13px;
+    line-height: 20px;
+    margin-block-end: 10px;
+  }
+
+  .c-category-edit__image-copy {
+    text-align: center;
+
+    p {
+      font-size: 11px;
+      line-height: 16px;
+    }
+  }
+
+  .c-category-edit__filename {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .c-category-edit__change-image {
+    margin-block-start: 4px;
+    padding-inline: 8px;
+  }
+
+  .c-category-edit__settings {
+    margin-block-start: 4px;
+    padding-block-start: 20px;
+    border-block-start: 1px solid var(--sd-modern-border);
+
+    > p {
+      margin-block: 4px 6px;
+    }
+  }
+
+  .c-category-edit__toggle {
+    border-block-end: 1px solid var(--sd-modern-border);
+    border-radius: 4px;
+
+    &:last-child {
+      border-block-end: 0;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 3px;
+    }
+
+    :deep(> .rounded-card) {
+      position: relative;
+      padding: 14px 0 !important;
+      border-radius: 0;
+    }
+
+    :deep(.flex-grow-1) {
+      min-width: 0;
+      padding-inline-end: 32px;
+    }
+
+    :deep(b) {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 20px;
+    }
+
+    :deep(.small) {
+      color: var(--sd-modern-muted);
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 18px;
+      opacity: 1 !important;
+    }
+  }
+
+  .c-category-edit__state {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: 16px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .c-category-edit--modern {
+    .c-category-edit__details {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .c-category-edit__image-group {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      align-items: center;
+      gap: 6px 16px;
+      margin-block-end: 24px;
+    }
+
+    .c-category-edit__image-heading {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: end;
+      margin: 0;
+    }
+
+    .c-category-edit__image {
+      grid-column: 1;
+      grid-row: 1 / 3;
+      :deep(> .dashed),
+      :deep(.v-img) {
+        width: 104px !important;
+        height: 104px !important;
+      }
+    }
+
+    .c-category-edit__image-copy {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: start;
+      text-align: start;
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .c-category-edit--modern {
+    .c-category-edit__image-group {
+      grid-template-columns: 88px minmax(0, 1fr);
+      column-gap: 13px;
+    }
+
+    .c-category-edit__image {
+      :deep(> .dashed),
+      :deep(.v-img) {
+        width: 88px !important;
+        height: 88px !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .c-category-edit--modern .c-category-edit__field :deep(.v-field__input) {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .c-category-edit--modern
+    .c-category-edit__image
+    :deep(.absolute-top-end.v-btn) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+</style>

@@ -13,7 +13,13 @@
   -->
 
 <template>
-  <div>
+  <div :class="{ 'b-spreadsheet-inventory--modern text-start': modern, 'b-spreadsheet-inventory--empty': modern && !items?.length }">
+    <div class="b-spreadsheet-inventory__file-area">
+      <template v-if="modern && !items?.length">
+        <v-icon class="b-spreadsheet-inventory__upload-icon" size="28" aria-hidden="true">upload_file</v-icon>
+        <h3>{{ $t('importer.inventory.drop_title') }}</h3>
+        <p>{{ $t('importer.inventory.drop_message') }}</p>
+      </template>
     <v-file-input
       v-if="!converted_file"
       v-model="input_files"
@@ -21,7 +27,10 @@
       accept=".csv,.xls,.xlsx"
       append-icon="attach"
       hide-details
-      label="Select inventory .csv / .xlsx file..."
+      :label="modern ? $t(items?.length ? 'importer.inventory.file_input_label' : 'importer.inventory.choose_file') : 'Select inventory .csv / .xlsx file...'"
+      :aria-label="modern ? $t(items?.length ? 'importer.inventory.file_input_label' : 'importer.inventory.choose_file') : undefined"
+      :prepend-icon="modern ? '' : undefined"
+      :single-line="modern"
       show-size
       variant="outlined"
       @update:model-value="selectFile"
@@ -29,18 +38,23 @@
       <template v-slot:prepend-inner>
         <img
           class="me-3"
-          height="24"
+          :height="modern && !items?.length ? 16 : 24"
           src="../../../assets/file/excel.svg"
-          width="24"
+          :width="modern && !items?.length ? 16 : 24"
+          alt=""
         />
+        <span v-if="modern && !items?.length" class="b-spreadsheet-inventory__choose-label">{{ $t('importer.inventory.choose_file') }}</span>
       </template>
     </v-file-input>
+    </div>
 
     <b-spreadsheet
+      v-show="!modern || !!headers?.length"
       ref="sheet"
       :cols="cols"
       :headers="headers"
       :items="items"
+      :modern="modern"
       :styler="styler"
     ></b-spreadsheet>
 
@@ -73,6 +87,7 @@ export default {
     BSpreadsheet,
   },
   props: {
+    modern: { type: Boolean, default: false },
     canSelectFile: {
       type: Boolean,
       default: true,
@@ -277,3 +292,51 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.b-spreadsheet-inventory--modern {
+  min-width: 0;
+  --sd-modern-font-body: 12px;
+
+  .b-spreadsheet-inventory__file-area { min-width: 0; }
+  :deep(.s--spreadsheet) { min-width: 0; }
+  :deep(.v-file-input .v-field) { font-family: inherit; font-size: 13px; }
+}
+
+.b-spreadsheet-inventory--empty {
+  .b-spreadsheet-inventory__file-area {
+    border: 1px dashed var(--sd-modern-border);
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+  }
+
+  .b-spreadsheet-inventory__upload-icon { display: block; margin: 0 auto 10px; color: var(--sd-modern-muted); }
+  h3 { margin: 0; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 1.5; }
+  p { margin: 4px 0 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 1.5; }
+
+  :deep(.v-file-input) { display: inline-flex; max-width: 100%; margin-block-start: 15px; }
+  :deep(.v-file-input .v-field) {
+    min-height: 36px;
+    background: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-on-primary));
+    border-radius: 9px;
+    --v-field-padding-start: 13px;
+    --v-field-padding-end: 13px;
+  }
+  :deep(.v-file-input .v-field__input) { width: 0; min-width: 0; min-height: 36px; padding: 0; }
+  :deep(.v-file-input .v-field-label) { display: none; }
+  :deep(.v-file-input .v-field__prepend-inner) { align-items: center; padding: 0; }
+  :deep(.v-file-input .v-field__prepend-inner img) { margin-inline-end: 7px !important; }
+  .b-spreadsheet-inventory__choose-label { font-family: inherit; font-size: 12px; font-weight: 500; line-height: 20px; white-space: nowrap; }
+  :deep(.v-file-input .v-field__outline) { display: none; }
+  :deep(.v-file-input .v-field--focused) { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+}
+
+@media (max-width: 599px), (pointer: coarse) {
+  .b-spreadsheet-inventory--empty {
+    .b-spreadsheet-inventory__file-area { padding-inline: 14px; }
+    :deep(.v-file-input .v-field), :deep(.v-file-input .v-field__input) { min-height: 44px; }
+  }
+}
+</style>

@@ -118,7 +118,7 @@
                 name: 'BPageCustomerDashboard',
                 params: { shop_id: shopId, customer_id: customer.id },
               }"
-              class="b-dashboard-customer-activity__row"
+              class="b-dashboard-customer-activity__row sd-modern-clickable-item"
               v-tooltip="
                 tooltip(
                   $t('admin_shop.dashboard.customer_activity.open_profile', {
@@ -407,9 +407,6 @@ export default {
     border-radius: 8px;
     color: rgb(var(--v-theme-on-surface));
     text-decoration: none;
-  }
-  &__row:hover {
-    background: var(--sd-modern-inset);
   }
   &__row:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));

@@ -45,7 +45,6 @@
     <!-- █████████████████████ Vendor Wallet Transactions █████████████████████ -->
     <v-list-subheader
       >{{ $t("order_vendor_payment.message") }}
-      <s-widget-help code="Marketplace.Payout.Overview" inline></s-widget-help>
     </v-list-subheader>
 
     <div class="max-widget-width mx-auto my-3">
@@ -289,7 +288,6 @@ import UPodsPanel from "../../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../../ui/pod/wire/UPodWire.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import UArrow from "@selldone/components-vue/ui/arrow/UArrow.vue";
 
@@ -298,7 +296,6 @@ export default {
   mixins: [DateMixin],
   components: {
     UArrow,
-    SWidgetHelp,
     UPodWire,
     UPodNode,
     UPodsPanel,

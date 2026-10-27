@@ -30,9 +30,16 @@
           tile
           variant="flat"
           width="90%"
+          :aria-label="$t('global.actions.upload')"
           @click="showSelectImage()"
         >
           <v-icon>add_a_photo</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("global.actions.upload") }}</v-tooltip
+          >
         </v-btn>
       </div>
 
@@ -48,9 +55,16 @@
             icon
             size="small"
             variant="flat"
+            :aria-label="$t('global.actions.remove_image')"
             @click="clear()"
           >
             <v-icon>close</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              >{{ $t("global.actions.remove_image") }}</v-tooltip
+            >
           </v-btn>
         </v-img>
       </div>
@@ -69,11 +83,9 @@
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
-
-
 export default {
   name: "CImageInput",
-  mixins:[],
+  mixins: [],
   components: {},
   emits: ["update:modelValue"],
   props: {
@@ -119,7 +131,10 @@ export default {
       //   console.log(files);
 
       if (file.size > 2 * 1024 * 1024) {
-        NotificationService.showErrorAlert(null, "Max image size limit is 2Mb.");
+        NotificationService.showErrorAlert(
+          null,
+          "Max image size limit is 2Mb.",
+        );
         return;
       }
 

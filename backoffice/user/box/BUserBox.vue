@@ -24,7 +24,7 @@
 
     <div class="flex-grow-1">
       <b class="single-line"
-        >{{ user.name }}
+        ><span class="b-user-box__name">{{ user.name }}</span>
         <v-icon v-if="user.verified" class="ms-1" color="blue" size="small"
           >verified
         </v-icon>

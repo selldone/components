@@ -1902,11 +1902,6 @@ export default {
     border-collapse: collapse;
     font-size: 13px;
   }
-  &__countries th {
-    color: var(--sd-modern-muted);
-    font-size: 12px;
-    font-weight: 400;
-  }
   &__countries th,
   &__countries td {
     padding: 3px 0;
@@ -1916,9 +1911,11 @@ export default {
   &__countries th:nth-child(n + 2),
   &__countries td:nth-child(n + 2) {
     text-align: end;
-    font-weight: 400;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+  }
+  &__countries td:nth-child(n + 2) {
+    font-weight: 400;
   }
   &__countries td button {
     display: flex;

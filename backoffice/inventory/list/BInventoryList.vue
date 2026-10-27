@@ -13,35 +13,49 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs" @dragover="dragover">
+  <div
+    v-bind="$attrs"
+    class="b-inventory-list text-start"
+    :class="{ 'b-inventory-list--modern': modern }"
+    @dragover="dragover"
+  >
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <!---------------------------- Filter ----------------------->
 
-    <v-row no-gutters>
-      <v-btn icon variant="text" @click="showBulkPrice">
-        <v-icon size="small">auto_fix_high</v-icon>
+    <v-row no-gutters :class="{ 'b-inventory-list__toolbar': modern }">
+      <v-btn :icon="!modern" :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--quiet': modern }" variant="text" @click="showBulkPrice">
+        <b-inventory-list-icon v-if="modern" name="wand-sparkles" />
+        <v-icon v-else size="small">auto_fix_high</v-icon>
+        <template v-if="modern">{{ $t('inventory_list.bulk_price_short') }}</template>
 
         <v-tooltip
+          v-if="!modern"
           :text="$t('inventory_list.bulk_price')"
           activator="parent"
-          location="bottom"
+          :location="modern ? 'top' : 'bottom'"
+          :content-class="modern ? 'sd-modern-tooltip' : undefined"
         ></v-tooltip>
       </v-btn>
 
-      <v-btn icon variant="text" @click="showBulkDiscount">
-        <v-icon size="small">local_offer</v-icon>
+      <v-btn :icon="!modern" :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--quiet': modern }" variant="text" @click="showBulkDiscount">
+        <b-inventory-list-icon v-if="modern" name="tag" />
+        <v-icon v-else size="small">local_offer</v-icon>
+        <template v-if="modern">{{ $t('inventory_list.bulk_discount_short') }}</template>
         <v-tooltip
+          v-if="!modern"
           :text="$t('inventory_list.bulk_discount')"
           activator="parent"
-          location="bottom"
+          :location="modern ? 'top' : 'bottom'"
+          :content-class="modern ? 'sd-modern-tooltip' : undefined"
         ></v-tooltip>
       </v-btn>
 
       <v-divider class="my-0 mx-2" vertical></v-divider>
 
-      <v-btn icon variant="text" @click="toggleGroup()">
-        <v-icon
+      <v-btn :icon="!modern" :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--quiet': modern }" variant="text" @click="toggleGroup()">
+        <b-inventory-list-icon v-if="modern" name="layers-2" />
+        <v-icon v-else
           >{{
             group_mode === "auto"
               ? "flash_auto"
@@ -50,8 +64,10 @@
                 : "view_day"
           }}
         </v-icon>
+        <template v-if="modern">{{ $t(group_mode === 'auto' ? 'inventory_list.group_auto' : group_mode ? 'inventory_list.grouped' : 'inventory_list.expanded') }}</template>
 
         <v-tooltip
+          v-if="!modern"
           :text="
             group_mode === 'auto'
               ? 'Auto group items'
@@ -69,30 +85,51 @@
       <b-inventory-filter
         v-model="filters"
         :shop="shop"
-        class="min-width-200"
+        :class="modern ? 'b-inventory-list__filter' : 'min-width-200'"
+        :modern="modern"
+        :dense="modern"
         variant="plain"
         @change="onFilterChange"
       >
       </b-inventory-filter>
       <s-storefront-search-box
-        :dark="false"
+        ref="inventory_search"
+        :dense="modern"
+        :dark="modern && $vuetify.theme.current.dark"
         :label="$t('inventory_list.search_input')"
+        :placeholder="modern ? $t('inventory_list.search_inventory') : undefined"
         is-admin
         persistent-placeholder
         background-color="transparent"
         block
-        class="search-inline mx-2 max-width-field min-width-250 flex-grow-1"
+        :class="modern ? 'b-inventory-list__search' : 'search-inline mx-2 max-width-field min-width-250 flex-grow-1'"
         expand-input
         variant="plain"
         @onClear="onClear()"
         @onSearch="(event) => onSearch(event)"
         single-line
-      />
+      >
+        <template v-if="modern" v-slot:prepend-inner>
+          <b-inventory-list-icon name="search" />
+        </template>
+        <template v-if="modern" v-slot:append-inner>
+          <v-btn
+            class="b-inventory-list__scan"
+            icon
+            variant="text"
+            :aria-label="$t('inventory_list.scan_product')"
+            @click.stop="$refs.inventory_search.showQRScanner()"
+          >
+            <b-inventory-list-icon name="scan-line" />
+            <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('inventory_list.scan_product') }}</v-tooltip>
+          </v-btn>
+        </template>
+      </s-storefront-search-box>
     </v-row>
 
     <!---------------------------- List ----------------------->
     <v-data-table-server
-      :mobile="$vuetify.display.xs"
+      :mobile="isMobile"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -103,6 +140,7 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('global.commons.waiting_load_data')"
+      :row-props="modern && is_grouped ? { class: 'b-inventory-list__child' } : undefined"
       :row-propsCC="
         (_data) => {
           return {
@@ -116,14 +154,43 @@
           };
         }
       "
-      class="bg-transparent min-height-80vh"
+      class="bg-transparent"
+      :class="modern ? 'sd-modern-data-table sd-modern-data-table--compact b-inventory-list__table' : 'min-height-80vh'"
       density="compact"
       hide-default-footer
       item-value="key"
     >
+      <template v-if="modern" v-slot:header.sku="{ toggleSort, isSorted }">
+        <span class="b-inventory-list__sort-pair">
+          <button v-for="key in ['sku', 'mpn']" :key="key" type="button" class="b-inventory-list__sort"
+            :aria-label="`${$t('global.commons.sort_by')} ${$t(`inventory_list.table.${key}`)}`"
+            :aria-pressed="isSorted({ key })" @click.stop="toggleSort({ key })" @keydown.stop>
+            {{ $t(`inventory_list.table.${key}`) }}
+            <b-inventory-list-icon v-if="isSorted({ key })" :name="sortBy.find(sort => sort.key === key)?.order === 'asc' ? 'arrow-up' : 'arrow-down'" class="b-inventory-list__sort-icon" />
+          </button>
+        </span>
+      </template>
+      <template v-if="modern" v-slot:header.status="{ toggleSort, isSorted }">
+        <span class="b-inventory-list__sort-pair">
+          <button v-for="key in ['status', 'original']" :key="key" type="button" class="b-inventory-list__sort"
+            :aria-label="`${$t('global.commons.sort_by')} ${$t(`inventory_list.table.${key}`)}`"
+            :aria-pressed="isSorted({ key })" @click.stop="toggleSort({ key })" @keydown.stop>
+            {{ $t(`inventory_list.table.${key}`) }}
+            <b-inventory-list-icon v-if="isSorted({ key })" :name="sortBy.find(sort => sort.key === key)?.order === 'asc' ? 'arrow-up' : 'arrow-down'" class="b-inventory-list__sort-icon" />
+          </button>
+        </span>
+      </template>
+      <template v-if="modern" v-slot:item.data-table-group>
+        <span class="b-inventory-list__branch" aria-hidden="true"></span>
+      </template>
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="!busy_fetch && !search" class="py-5 usn text-center fadeIn">
+        <div v-if="modern && !busy_fetch" class="sd-modern-empty-state">
+          <v-icon size="28">{{ search || filters.length ? 'search_off' : 'shelves' }}</v-icon>
+          <h3>{{ $t('global.commons.no_data') }}</h3>
+          <p>{{ $t('inventory_list.subtitle') }}</p>
+        </div>
+        <div v-else-if="!busy_fetch && !search" class="py-5 usn text-center fadeIn">
           <img
             :src="require('../../../assets/guides/inventory-empty.png')"
             class="m-3 op-0-3"
@@ -149,7 +216,8 @@
         <b-inventory-list-group-header
           :columns="columns"
           :isGroupOpen="isGroupOpen"
-          :isMobile="$vuetify.display.xs"
+          :isMobile="isMobile"
+          :modern="modern"
           :item="item"
           :toggleGroup="toggleGroup"
         ></b-inventory-list-group-header>
@@ -158,7 +226,7 @@
       <!-- ===================================== End Group ================================== -->
 
       <template v-slot:item.icon="{ item }">
-        <div class="py-2">
+        <div :class="modern ? 'b-inventory-list__image' : 'py-2'">
           <router-link
             :to="{
               name: 'BPageProductDashboard',
@@ -166,14 +234,15 @@
             }"
           >
             <u-avatar-folder
+              :size="modern ? 38 : undefined"
               is-gray
               :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL)"
               :side-image="getProductTypeImage(item.type)"
-              elevated
+              :elevated="!modern"
             >
             </u-avatar-folder>
 
-            <v-tooltip activator="parent" location="bottom"
+            <v-tooltip activator="parent" :location="modern ? 'top' : 'bottom'" :content-class="modern ? 'sd-modern-tooltip' : undefined"
               >Open product admin page.
             </v-tooltip>
           </router-link>
@@ -181,7 +250,22 @@
       </template>
 
       <template v-slot:item.title="{ item }">
-        <template v-if="$vuetify.display.xs">
+        <div v-if="modern" class="b-inventory-list__product">
+          <router-link :to="{ name: 'BPageProductDashboard', params: { product_id: item.id } }" :aria-label="item.title" class="b-inventory-list__product-link">
+            <v-avatar :size="isMobile ? 40 : 44" rounded="lg" class="b-inventory-list__avatar hover-scale-small">
+              <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL) || getProductTypeImage(item.type)" :alt="item.title" cover>
+                <template v-slot:error><v-img :src="getProductTypeImage(item.type)" :alt="item.title" /></template>
+              </v-img>
+            </v-avatar>
+            <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('inventory_list.open_product') }}</v-tooltip>
+          </router-link>
+          <div class="b-inventory-list__product-copy">
+            <div class="b-inventory-list__product-name">{{ item.title }}</div>
+            <div v-if="item.title_en" class="b-inventory-list__secondary">{{ item.title_en }}</div>
+            <variant-item-view-micro v-if="item.variant" :product-variant="item.variant" />
+          </div>
+        </div>
+        <template v-else-if="$vuetify.display.xs">
           <div
             class="d-flex align-center pt-2 justify-space-between"
             style="min-width: 60vw"
@@ -219,14 +303,19 @@
       </template>
 
       <template v-slot:item.id="{ item }">
-        <div v-copy class="min-width-100 text-subtitle-2 py-2">
+        <div v-copy :class="modern ? 'b-inventory-list__identifier' : 'min-width-100 text-subtitle-2 py-2'" dir="ltr">
           {{ item.code }}
         </div>
       </template>
 
       <template v-slot:item.sku="{ item }">
-        <div>
-          <span v-copy class="min-width-50 text-subtitle-2 py-2">{{
+        <div v-if="modern" class="b-inventory-list__identifiers" dir="ltr">
+          <span v-if="item.sku" v-copy class="b-inventory-list__identifier">{{ item.sku }}</span>
+          <span v-else class="b-inventory-list__secondary">—</span>
+          <span v-if="item.mpn" v-copy class="b-inventory-list__identifier b-inventory-list__secondary">{{ item.mpn }}</span>
+        </div>
+        <div v-else>
+          <span v-copy :class="modern ? 'b-inventory-list__identifier' : 'min-width-50 text-subtitle-2 py-2'" dir="ltr">{{
             item.sku
           }}</span>
         </div>
@@ -234,19 +323,29 @@
 
       <template v-slot:item.mpn="{ item }">
         <div>
-          <span v-copy class="min-width-50 text-subtitle-2 py-2">
+          <span v-copy :class="modern ? 'b-inventory-list__identifier' : 'min-width-50 text-subtitle-2 py-2'" dir="ltr">
             {{ item.mpn }}</span
           >
         </div>
       </template>
 
       <template v-slot:item.original="{ item }">
-        <v-icon v-if="item.original" color="success"> check</v-icon>
+        <v-icon v-if="item.original" color="success" :size="modern ? 15 : undefined" :aria-label="$t('inventory_list.table.original')"> check</v-icon>
       </template>
 
       <template v-slot:item.status="{ item }">
+        <div v-if="modern" class="b-inventory-list__status-stack">
+        <span class="b-inventory-list__status">
+          <span v-if="!item.disabled" class="sd-modern-status__dot" :style="{ backgroundColor: item.status === 'Open' ? 'rgb(var(--v-theme-success))' : 'rgb(var(--v-theme-on-surface))' }"></span>
+          {{ $t(item.disabled ? 'inventory_list.table.close_state' : ProductStatus[item.status].name) }}
+        </span>
+        <span v-if="item.original" class="b-inventory-list__original">
+          <v-icon size="13" color="success" aria-hidden="true">check</v-icon>
+          {{ $t('inventory_list.table.original') }}
+        </span>
+        </div>
         <product-status-view
-          v-if="!item.disabled"
+          v-else-if="!item.disabled"
           :product="item"
         ></product-status-view>
         <v-icon v-else title="Variant is disabled!">close</v-icon>
@@ -258,7 +357,7 @@
             item.type === ProductType.PHYSICAL.code ||
             item.type === ProductType.VIRTUAL.code
           "
-          class="min-width-150 font-weight-black"
+          :class="modern ? 'b-inventory-list__stock' : 'min-width-150 font-weight-black'"
           dir="ltr"
         >
           {{ item.quantity }}
@@ -272,15 +371,17 @@
           </span>
         </div>
         <div v-else>
-          <small>Infinite</small>
+          <small>{{ modern ? $t('global.commons.infinite') : 'Infinite' }}</small>
         </div>
       </template>
 
       <template v-slot:item.price="{ item }">
-        <div
-          :class="{ '-focus': show_price_dialog && selected_item === item }"
-          class="editable center-flex rounded-lg ma-1 price-btn px-5"
-          :style="{ height: $vuetify.display.xs ? '42px' : '65px' }"
+        <component
+          :is="modern ? 'button' : 'div'"
+          :type="modern ? 'button' : undefined"
+          :aria-label="modern ? `${$t('global.actions.edit')} ${$t('global.commons.price')} · ${item.title}` : undefined"
+          :class="modern ? ['b-inventory-list__price', { '-focus': show_price_dialog && selected_item === item }] : ['editable center-flex rounded-lg ma-1 price-btn px-5', { '-focus': show_price_dialog && selected_item === item }]"
+          :style="modern ? undefined : { height: $vuetify.display.xs ? '42px' : '65px' }"
           @click="showEditPrice(item)"
         >
           <v-icon
@@ -299,9 +400,10 @@
           <u-price
             v-else
             :amount="CalcPriceProductCurrentCurrency(shop, item, item.variant)"
-            medium
+            :medium="!modern"
           ></u-price>
-        </div>
+          <v-icon v-if="modern" size="12" class="ms-1">edit</v-icon>
+        </component>
       </template>
 
       <template v-slot:item.change="{ item }">
@@ -324,34 +426,38 @@
         </div>
         <!-- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
-        <div v-else-if="item.type === ProductType.PHYSICAL.code" class="p-2">
+        <div v-else-if="item.type === ProductType.PHYSICAL.code" :class="modern ? 'b-inventory-list__quantity-editor' : 'p-2'">
           <u-number-input
             v-model="item.number"
             :min="item.add ? -1000 : 0"
-            background-color="#fafafa"
-            class="max-width-field inline-block vertical-align-middle center-input strong-field min-width-300"
+            :background-color="modern ? 'transparent' : '#fafafa'"
+            :class="modern ? 'b-inventory-list__quantity-field' : 'max-width-field inline-block vertical-align-middle center-input strong-field min-width-300'"
+            :aria-label="modern ? `${$t('global.commons.quantity')} · ${item.title}` : undefined"
+            :dark="modern && $vuetify.theme.current.dark"
             flat
             hide-details
             no-padding
             rounded="lg"
-            variant="solo-filled"
-            :dense="$vuetify.display.xs"
+            :variant="modern ? 'plain' : 'solo-filled'"
+            :dense="modern || $vuetify.display.xs"
           >
             <template v-slot:prepend-inner>
               <v-btn-toggle
                 v-model="item.add"
-                class="vertical-align-middle pa-1 bg-white"
+                :class="modern ? 'b-inventory-list__quantity-mode' : 'vertical-align-middle pa-1 bg-white'"
                 density="compact"
                 mandatory
                 rounded="lg"
-                base-color="#efefef"
-                :style="{ height: $vuetify.display.xs ? '42px' : '52px' }"
-                :selected-class="isChanged(item) ? 'elevation-1' : undefined"
+                :base-color="modern ? undefined : '#efefef'"
+                :style="modern ? undefined : { height: $vuetify.display.xs ? '42px' : '52px' }"
+                :selected-class="modern ? 'b-inventory-list__quantity-mode-selected' : isChanged(item) ? 'elevation-1' : undefined"
+                :role="modern ? 'group' : undefined"
+                :aria-label="modern ? `${$t('inventory_list.table.edit')} · ${item.title}` : undefined"
               >
-                <v-btn :value="true" selected-class="green-flat " size="small">
+                <v-btn :value="true" :aria-pressed="modern ? item.add === true : undefined" :variant="modern ? 'text' : undefined" :selected-class="modern ? undefined : 'green-flat'" size="small">
                   {{ $t("global.actions.add") }}
                 </v-btn>
-                <v-btn :value="false" selected-class="blue-flat " size="small">
+                <v-btn :value="false" :aria-pressed="modern ? item.add === false : undefined" :variant="modern ? 'text' : undefined" :selected-class="modern ? undefined : 'blue-flat'" size="small">
                   {{ $t("global.actions.set") }}
                 </v-btn>
               </v-btn-toggle>
@@ -359,17 +465,17 @@
 
             <template v-slot:append-inner>
               <v-btn
-                :class="{
+                :class="[modern ? 'b-inventory-list__save sd-modern-button sd-modern-button--compact' : 'ms-2 me-n1 vertical-align-middle tnt', {
                   disabled: item.add
                     ? item.number === 0
                     : item.number === item.quantity,
-                }"
-                :color="isChanged(item) ? '#000' : '#999'"
+                }]"
+                :disabled="modern ? !isChanged(item) : undefined"
+                :color="modern ? (isChanged(item) ? 'primary' : undefined) : isChanged(item) ? '#000' : '#999'"
                 :loading="busy_count === item.key"
-                :variant="isChanged(item) ? 'elevated' : 'plain'"
-                class="ms-2 me-n1 vertical-align-middle tnt"
+                :variant="modern ? (isChanged(item) ? 'elevated' : 'text') : isChanged(item) ? 'elevated' : 'plain'"
                 rounded="lg"
-                :min-height="$vuetify.display.xs ? 36 : 52"
+                :min-height="modern ? (isMobile ? 44 : 32) : $vuetify.display.xs ? 36 : 52"
                 @click.stop="updateProductQuantity(item)"
               >
                 {{ $t("global.actions.save") }}
@@ -383,7 +489,10 @@
       </template>
 
       <template v-slot:bottom>
-        <v-pagination v-model="page" :length="pageCount" rounded />
+        <div :class="{ 'sd-modern-table-footer b-inventory-list__footer': modern }">
+          <span v-if="modern" class="b-inventory-list__secondary">{{ $t('global.commons.total') }}: {{ totalItems }}</span>
+          <v-pagination v-model="page" :length="pageCount" :class="{ 'sd-modern-pagination': modern }" :total-visible="modern ? 5 : undefined" rounded />
+        </div>
       </template>
     </v-data-table-server>
 
@@ -412,7 +521,7 @@
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card v-if="item_clone && show_price_dialog_pre" class="text-start">
+    <v-card v-if="item_clone && show_price_dialog_pre" class="text-start" :class="{ 'sd-modern-canvas b-inventory-list__price-dialog': modern }">
       <v-card-title class="d-flex align-center">
         <u-avatar-folder
           class="me-2"
@@ -436,6 +545,8 @@
 
         <v-btn
           class="ms-2"
+          :class="{ 'sd-modern-icon-button': modern }"
+          :aria-label="$t('global.actions.close')"
           icon
           @click="show_price_dialog = false"
           variant="text"
@@ -456,6 +567,7 @@
           :is-marketplace="is_marketplace"
           :shop="shop"
           class="mt-4"
+          :class="{ 'sd-modern-form': modern }"
           external-action-buttons
           instance-mode
           light
@@ -464,10 +576,11 @@
         >
         </b-product-edit-price>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions :class="{ 'sd-modern-form-actions': modern }">
         <div class="widget-buttons">
           <v-btn
-            size="x-large"
+            :size="modern ? undefined : 'x-large'"
+            :class="{ 'sd-modern-button': modern }"
             variant="text"
             @click="show_price_dialog = false"
           >
@@ -479,7 +592,8 @@
           <v-btn
             :loading="busy_save_price"
             color="primary"
-            size="x-large"
+            :size="modern ? undefined : 'x-large'"
+            :class="{ 'sd-modern-button': modern }"
             variant="elevated"
             @click="
               $refs.price_edit.setProductPrice();
@@ -519,6 +633,7 @@ import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BInventoryFilter from "../../inventory/filter/BInventoryFilter.vue";
+import BInventoryListIcon from "./icon/BInventoryListIcon.vue";
 import SStorefrontSearchBox from "../../../storefront/search/SStorefrontSearchBox.vue";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";
 import BInventoryBulkPrice from "../../inventory/bulk/price/BInventoryBulkPrice.vue";
@@ -534,6 +649,7 @@ export default {
   name: "BInventoryList",
   mixins: [ProductMixin ],
   components: {
+    BInventoryListIcon,
     UPriceInvalid,
     UAvatarFolder,
     BInventoryListGroupHeader,
@@ -555,6 +671,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    modern: Boolean,
   },
   data: function () {
     return {
@@ -613,6 +730,11 @@ export default {
   },
 
   computed: {
+    isMobile() {
+      return this.modern
+        ? this.$vuetify.display.width < 1200
+        : this.$vuetify.display.xs;
+    },
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
     },
@@ -644,7 +766,25 @@ export default {
     },
 
     headers() {
-      if (this.$vuetify.display.xs) {
+      if (this.modern) {
+        const columns = [
+          { title: this.$t('inventory_list.table.product'), value: 'title', align: 'start', sortable: true },
+          { title: this.$t('inventory_list.table.code'), value: 'id', align: 'start', sortable: true },
+          { title: `${this.$t('inventory_list.table.sku')} / ${this.$t('inventory_list.table.mpn')}`, value: 'sku', align: 'start', sortable: true },
+          { title: `${this.$t('inventory_list.table.status')} / ${this.$t('inventory_list.table.original')}`, value: 'status', align: 'start', sortable: true },
+          { title: this.$t('inventory_list.table.in_stock'), value: 'quantity', align: 'end', sortable: true },
+          { title: this.$t('global.commons.price'), value: 'price', align: 'end', sortable: true },
+          { title: this.$t('inventory_list.table.edit'), value: 'change', align: 'end', sortable: false },
+        ];
+        // Keep native mobile sorting for the secondary values without repeating their body cells.
+        if (this.isMobile) columns.splice(columns.length - 1, 0,
+          { title: this.$t('inventory_list.table.mpn'), value: 'mpn', sortable: true, cellProps: { class: 'b-inventory-list__merged-cell' } },
+          { title: this.$t('inventory_list.table.original'), value: 'original', sortable: true, cellProps: { class: 'b-inventory-list__merged-cell' } },
+        );
+        if (this.is_grouped) columns.unshift({ title: '', key: 'data-table-group', value: 'data-table-group', width: 44, sortable: false, cellProps: { class: 'b-inventory-list__branch-cell' } });
+        return columns;
+      }
+      if (this.isMobile) {
         return [
           {
             title: "",
@@ -672,13 +812,13 @@ export default {
 
           {
             title: this.$t("inventory_list.table.in_stock"),
-            align: "center",
+            align: this.modern ? "end" : "center",
             value: "quantity",
             sortable: true,
           },
           {
             title: this.$t("global.commons.price"),
-            align: "center",
+            align: this.modern ? "end" : "center",
             sortable: true,
             value: "price",
           },
@@ -738,19 +878,19 @@ export default {
         },
         {
           title: this.$t("inventory_list.table.in_stock"),
-          align: "center",
+          align: this.modern ? "end" : "center",
           value: "quantity",
           sortable: true,
         },
         {
           title: this.$t("global.commons.price"),
-          align: "center",
+          align: this.modern ? "end" : "center",
           sortable: true,
           value: "price",
         },
         {
           title: this.$t("inventory_list.table.edit"),
-          align: "center",
+          align: this.modern ? "end" : "center",
           value: "change",
           sortable: false,
         },
@@ -1095,6 +1235,207 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-inventory-list__price-dialog {
+  > .v-card-title { padding: 18px 24px; font-size: 18px; font-weight: 600; line-height: 1.4; background: rgb(var(--v-theme-surface)); border-block-end: 1px solid var(--sd-modern-border); }
+  > .v-card-text { padding: 24px; }
+  > .v-card-actions { padding: 12px 24px; background: rgb(var(--v-theme-surface)); border-block-start: 1px solid var(--sd-modern-border); }
+}
+
+.b-inventory-list--modern {
+  min-width: 0;
+  font-size: 12px;
+
+  .b-inventory-list__toolbar {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 14px 18px;
+    border-block-end: 1px solid var(--sd-modern-border);
+
+    > .v-divider { height: 20px; align-self: center; }
+    > .v-spacer { min-width: 6px; }
+
+    > .sd-modern-button {
+      color: var(--sd-modern-muted);
+      padding-inline: 9px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 18px;
+
+      :deep(> .v-btn__content) { gap: 7px; font: inherit; letter-spacing: 0; }
+    }
+  }
+
+  .b-inventory-list__filter { flex: 0 1 190px; min-width: 150px; }
+  .b-inventory-list__search { flex: 0 1 225px; min-width: 180px; }
+
+  .b-inventory-list__filter,
+  .b-inventory-list__search {
+    :deep(.v-field__input) { min-height: 34px; padding-block: 0; font-size: 12px; line-height: 1.45; }
+    :deep(.v-field__prepend-inner),
+    :deep(.v-field__append-inner) { padding-block-start: 5px; }
+    :deep(.v-label) { font-size: 12px; line-height: 1.45; }
+    :deep(.v-chip) { font-size: 11px; }
+    :deep(.v-field__prepend-inner) { align-items: center; padding-block: 0; margin-inline-end: 8px; color: var(--sd-modern-muted); }
+    :deep(.v-field__append-inner) { align-items: center; padding-block: 0; }
+  }
+
+  .b-inventory-list__scan { min-width: 32px; width: 32px; height: 32px; color: var(--sd-modern-muted); }
+  .b-inventory-list__filter :deep(.v-field__input > input) { height: 34px; min-height: 34px; }
+  .b-inventory-list__sort-pair { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .b-inventory-list__sort-pair > button + button::before { content: '/'; margin-inline-end: 5px; color: var(--sd-modern-muted); }
+  .b-inventory-list__sort { display: inline-flex; align-items: center; gap: 3px; padding: 0; color: inherit; font: inherit; background: transparent; border: 0; }
+  .b-inventory-list__sort[aria-pressed='true'] { color: rgb(var(--v-theme-primary)); }
+  .b-inventory-list__sort-icon { width: 12px; height: 12px; }
+  .b-inventory-list__sort:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 4px; border-radius: 2px; }
+
+  .b-inventory-list__table {
+    min-height: 300px;
+
+    :deep(.v-table__wrapper > table > tbody > tr > td) { font-size: 12px; }
+    :deep(.v-table__wrapper > table > thead > tr > th) { padding-inline: 10px; }
+    :deep(.v-table__wrapper > table > tbody > tr > td:first-child),
+    :deep(.v-table__wrapper > table > thead > tr > th:first-child) { padding-inline-start: 18px; }
+    :deep(.v-table__wrapper > table > tbody > tr > td:last-child),
+    :deep(.v-table__wrapper > table > thead > tr > th:last-child) { padding-inline-end: 18px; }
+    :deep(.v-data-table__td-value) { min-width: 0; }
+  }
+
+  .b-inventory-list__image { padding-block: 0; }
+  .b-inventory-list__product { display: flex; align-items: center; gap: 10px; min-width: 180px; max-width: 250px; }
+  .b-inventory-list__product-link { flex: 0 0 auto; }
+  .b-inventory-list__avatar { background: rgba(var(--v-theme-on-surface), 0.035); border-radius: 10px !important; }
+  .b-inventory-list__product-copy { flex: 1; min-width: 0; }
+  .b-inventory-list__product-name { font-size: 12px; font-weight: 500; line-height: 1.45; white-space: normal; overflow-wrap: anywhere; }
+  .b-inventory-list__secondary { font-size: 11px; font-weight: 400; line-height: 1.45; color: var(--sd-modern-muted); }
+  .b-inventory-list__identifier { font-size: 11px; font-weight: 400; line-height: 1.45; overflow-wrap: anywhere; }
+  .b-inventory-list__identifiers { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+  .b-inventory-list__identifiers > .b-inventory-list__identifier:first-child { font-size: 12px; }
+  .b-inventory-list__status-stack { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+  .b-inventory-list__original { display: inline-flex; align-items: center; gap: 5px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 1.45; }
+  .b-inventory-list__status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 400; white-space: nowrap; }
+  .b-inventory-list__status .sd-modern-status__dot { width: 5px; height: 5px; margin: 0; }
+  .b-inventory-list__stock { min-width: 62px; font-size: 12px; font-weight: 400; text-align: end; font-variant-numeric: tabular-nums; }
+  .b-inventory-list__stock .highlight-value { font-weight: 400; background: transparent; color: rgb(var(--v-theme-primary)); }
+
+  .b-inventory-list__price {
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    min-height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 12px;
+    text-align: end;
+    white-space: nowrap;
+
+    &:hover,
+    &.-focus { color: rgb(var(--v-theme-primary)); }
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+    > .v-icon { color: var(--sd-modern-muted); }
+    :deep(.u--price) { font-size: 12px; font-weight: 400; }
+    :deep(.u--price .small) { font-size: 12px !important; font-weight: 400; }
+  }
+
+  .b-inventory-list__quantity-editor { min-width: 206px; }
+  .b-inventory-list__quantity-field {
+    width: 206px;
+    max-width: 100%;
+    margin: 0;
+
+    :deep(.v-field) { --v-field-padding-start: 0; --v-field-padding-end: 0; padding: 0; align-items: center; }
+    :deep(.v-field__field) { min-width: 34px; }
+    :deep(.v-field__input) { min-height: 34px; height: 34px; padding: 0 3px; text-align: center; font-size: 12px; font-weight: 400; line-height: 1.45; }
+    :deep(.v-field__prepend-inner),
+    :deep(.v-field__append-inner) { padding: 0; align-self: center; }
+    :deep(.v-field__append-inner) { padding-inline-start: 4px; }
+  }
+
+  .b-inventory-list__quantity-mode {
+    height: 32px;
+    padding: 3px;
+    gap: 3px;
+    background: rgba(var(--v-theme-on-surface), 0.035);
+    border-radius: 8px !important;
+
+    > .v-btn { min-width: 34px; height: 26px; padding: 0 6px; border-radius: 5px !important; font-family: inherit; font-size: 10px; font-weight: 500; letter-spacing: 0; text-indent: 0; text-transform: none; background: transparent; box-shadow: none; color: var(--sd-modern-muted); }
+    > .b-inventory-list__quantity-mode-selected { background: rgb(var(--v-theme-surface)) !important; color: rgb(var(--v-theme-on-surface)); box-shadow: 0 1px 3px rgba(var(--v-theme-on-surface), 0.13); }
+    > .b-inventory-list__quantity-mode-selected :deep(.v-btn__overlay) { opacity: 0; }
+  }
+
+  .b-inventory-list__save { min-width: 42px; padding-inline: 5px; font-size: 11px; }
+  .b-inventory-list__save.v-btn--disabled { background: transparent !important; box-shadow: none; border-color: transparent; }
+  .b-inventory-list__save.v-btn--disabled :deep(.v-btn__overlay) { opacity: 0; }
+
+  .b-inventory-list__table :deep(td.b-inventory-list__merged-cell) { display: none; }
+  .b-inventory-list__table :deep(.b-inventory-list-group--modern > td) { padding: 0 !important; padding-block: 0 !important; }
+  .b-inventory-list__table :deep(td.b-inventory-list__branch-cell) { position: relative; padding: 0 !important; width: 44px; }
+  .b-inventory-list__table :deep(.b-inventory-list__child > td.b-inventory-list__branch-cell::before),
+  .b-inventory-list__table :deep(.b-inventory-list__child > td.b-inventory-list__branch-cell::after) {
+    content: '';
+    position: absolute;
+    inset-inline-start: 26px;
+    pointer-events: none;
+  }
+  .b-inventory-list__table :deep(.b-inventory-list__child > td.b-inventory-list__branch-cell::before) { inset-block: 0; border-inline-start: 1px solid rgba(var(--v-theme-on-surface), 0.2); }
+  .b-inventory-list__table :deep(.b-inventory-list__child > td.b-inventory-list__branch-cell::after) { inset-block-start: 50%; width: 18px; border-block-start: 1px solid rgba(var(--v-theme-on-surface), 0.2); }
+  .b-inventory-list__table :deep(.b-inventory-list__child:last-child > td.b-inventory-list__branch-cell::before),
+  .b-inventory-list__table :deep(.b-inventory-list__child:has(+ .b-inventory-list-group--modern) > td.b-inventory-list__branch-cell::before) { inset-block-end: 50%; }
+  .b-inventory-list__table :deep(.b-inventory-list-group--modern:has(+ .b-inventory-list__child) > td) { position: relative; }
+  .b-inventory-list__table :deep(.b-inventory-list-group--modern:has(+ .b-inventory-list__child) > td::after) { content: ''; position: absolute; inset-inline-start: 26px; inset-block-start: calc(50% + 12px); inset-block-end: 0; border-inline-start: 1px solid rgba(var(--v-theme-on-surface), 0.2); pointer-events: none; }
+  .b-inventory-list__footer { padding: 14px 18px; }
+  .sd-modern-empty-state h3 { margin: 0; font-size: 14px; font-weight: 500; }
+  .sd-modern-empty-state p { margin: 0; font-size: 13px; color: var(--sd-modern-muted); }
+
+  @media (max-width: 1199px) {
+    .b-inventory-list__toolbar { gap: 8px; padding: 12px 14px; }
+    .b-inventory-list__toolbar > .v-spacer { flex-basis: 100%; height: 0; }
+    .b-inventory-list__filter,
+    .b-inventory-list__search { flex: 1 1 180px; min-width: 0; }
+    .b-inventory-list__product { max-width: none; width: 100%; min-width: 0; }
+    .b-inventory-list__product-name { font-size: 14px; }
+    .b-inventory-list__quantity-editor { width: 100%; min-width: 0; }
+    .b-inventory-list__quantity-field { width: 100%; min-width: 0; }
+    .b-inventory-list__quantity-mode { height: 50px; }
+    .b-inventory-list__quantity-mode > .v-btn { min-width: 44px; height: 44px; font-size: 11px; }
+    .b-inventory-list__quantity-field :deep(.v-field__input) { min-height: 44px; height: 44px; font-size: 16px; }
+    .b-inventory-list__save { min-height: 44px; min-width: 44px; font-size: 12px; }
+    .b-inventory-list__scan { width: 44px; height: 44px; }
+    .b-inventory-list__price { min-height: 44px; }
+    .b-inventory-list__table :deep(.v-table__wrapper > table > tbody > .v-data-table__tr--mobile > td) { padding-inline: 14px; grid-template-columns: minmax(60px, .45fr) minmax(0, 1.55fr); gap: 12px; }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile > td:last-child) { display: block; }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile > td:last-child > .v-data-table__td-title) { display: block; margin-block-end: 8px; }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile > td:last-child > .v-data-table__td-value) { display: block; width: 100%; }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile > td:last-child > .v-data-table__td-title:empty) { display: none; }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile > td.b-inventory-list__branch-cell) { display: none; }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile.b-inventory-list__child > td) { position: relative; padding-inline-start: 36px !important; padding-inline-end: 14px !important; }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile.b-inventory-list__child > td::before),
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile.b-inventory-list__child > td:nth-child(2)::after) { content: ''; position: absolute; inset-inline-start: 22px; pointer-events: none; }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile.b-inventory-list__child > td::before) { inset-block: 0; border-inline-start: 1px solid rgba(var(--v-theme-on-surface), 0.2); }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile.b-inventory-list__child > td:nth-child(2)::after) { inset-block-start: 50%; width: 10px; border-block-start: 1px solid rgba(var(--v-theme-on-surface), 0.2); }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile.b-inventory-list__child:last-child > td::before),
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile.b-inventory-list__child:has(+ .b-inventory-list-group--modern) > td::before) { display: none; }
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile.b-inventory-list__child:last-child > td:nth-child(2)::before),
+    .b-inventory-list__table :deep(.v-data-table__tr--mobile.b-inventory-list__child:has(+ .b-inventory-list-group--modern) > td:nth-child(2)::before) { display: block; inset-block-end: 50%; }
+    .b-inventory-list__table :deep(.b-inventory-list-group--modern:has(+ .b-inventory-list__child) > td::after) { inset-inline-start: 22px; }
+  }
+
+  @media (pointer: coarse) {
+    .b-inventory-list__quantity-mode { height: 50px; }
+    .b-inventory-list__quantity-mode > .v-btn { height: 44px; min-width: 44px; }
+    .b-inventory-list__save,
+    .b-inventory-list__price { min-height: 44px; }
+  }
+}
+
 .search-inline {
   display: inline-block;
   margin-right: 16px;

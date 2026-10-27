@@ -13,7 +13,13 @@
   -->
 
 <template>
-  <div :class="{ dark: dark, pen: readonly }" class="s--smart-select">
+  <div
+    ref="selectRoot"
+    :class="{ dark: dark, pen: readonly, 's--smart-select--accessible': accessible }"
+    :role="accessible && forceShowAll ? 'radiogroup' : undefined"
+    :aria-disabled="accessible ? disabled || readonly || loading : undefined"
+    class="s--smart-select"
+  >
     <h3 v-if="label" class="my-2">
       <img :src="labelImage" v-if="labelImage" class="me-2" style="width: 24px; height: 24px" />
       {{ label }}</h3>
@@ -40,11 +46,16 @@
           'bg-dark': dark && !backgroundColor,
           'bg-white': !dark && !backgroundColor,
           'disabled pen': task.disabled,
-          pen: !clearable && forceShowAll && localModelValue === val(task),
+          pen: !accessible && !clearable && forceShowAll && localModelValue === val(task),
         }"
+        :role="accessible ? forceShowAll ? 'radio' : 'button' : undefined"
+        :aria-checked="accessible && forceShowAll ? localModelValue === val(task) : undefined"
+        :aria-disabled="accessible ? disabled || readonly || loading || !!task.disabled : undefined"
+        :tabindex="accessible ? disabled || readonly || loading || task.disabled ? -1 : !forceShowAll || task === tabStopItem ? 0 : -1 : undefined"
         :style="{ backgroundColor: backgroundColor }"
         class="p-2 pp row-hover usn"
         @click="onClickItem(task)"
+        @keydown="onKeydown($event, task)"
       >
         <div class="d-flex align-center mnh">
           <div
@@ -135,6 +146,7 @@ export default {
     hint: {},
     forceShowAll: { default: false, type: Boolean },
     disabled: { default: false, type: Boolean },
+    accessible: { default: false, type: Boolean },
     dark: { default: false, type: Boolean },
     color: { default: "primary" },
     grayUnselected: { default: false, type: Boolean },
@@ -148,6 +160,7 @@ export default {
     labelImage : {},
   },
   setup(props, { emit }) {
+    const selectRoot = ref(null);
     // Local reactive state that mirrors `modelValue`
     const localModelValue = ref(props.modelValue);
 
@@ -197,6 +210,7 @@ export default {
     };
 
     const onClickItem = (task) => {
+      if (props.accessible && (props.disabled || props.readonly || props.loading || task.disabled)) return;
       const _new_value = props.forceShowAll
         ? props.clearable && localModelValue.value === val(task)
           ? undefined
@@ -208,13 +222,41 @@ export default {
       updateModelValue(_new_value);
     };
 
+    const enabledItems = computed(() => items_show.value.filter((task) => !task.disabled));
+    const tabStopItem = computed(() =>
+      enabledItems.value.find((task) => val(task) === localModelValue.value) ?? enabledItems.value[0],
+    );
+    const onKeydown = (event, task) => {
+      if (!props.accessible || props.disabled || props.readonly || props.loading || task.disabled) return;
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onClickItem(task);
+        return;
+      }
+      if (!props.forceShowAll || !["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+
+      event.preventDefault();
+      const items = enabledItems.value;
+      const rtl = selectRoot.value && getComputedStyle(selectRoot.value).direction === "rtl";
+      const direction = event.key === "ArrowUp" || event.key === (rtl ? "ArrowRight" : "ArrowLeft") ? -1 : 1;
+      const index = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1 :
+        (items.indexOf(task) + direction + items.length) % items.length;
+      const nextTask = items[index];
+      if (!nextTask) return;
+      if (val(nextTask) !== localModelValue.value) updateModelValue(val(nextTask));
+      nextTick(() => selectRoot.value?.querySelectorAll('[role="radio"]')[items_show.value.indexOf(nextTask)]?.focus());
+    };
+
     return {
+      selectRoot,
       localModelValue,
       items_show,
       val,
       title,
       isUnset,
       onClickItem,
+      tabStopItem,
+      onKeydown,
     };
   },
 };
@@ -223,6 +265,15 @@ export default {
 <style lang="scss" scoped>
 .s--smart-select {
   text-align: start;
+
+  &--accessible {
+    [role="radio"]:focus-visible,
+    [role="button"]:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: -3px;
+      border-radius: 8px;
+    }
+  }
 
   .mnh {
     min-height: 40px;

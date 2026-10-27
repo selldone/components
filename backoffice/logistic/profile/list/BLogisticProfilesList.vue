@@ -13,12 +13,13 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
-    <v-row no-gutters>
+  <div :class="{ 'b-logistic-profiles-list--modern text-start': modern }">
+    <v-row :class="{ 'b-logistic-profiles-list__toolbar': modern }" no-gutters>
       <v-spacer></v-spacer>
       <v-text-field
         v-model="search"
         :placeholder="$t('global.commons.search')"
+        :aria-label="$t('global.commons.search')"
         class="max-width-field"
         clearable
         hide-details
@@ -38,27 +39,29 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('global.commons.waiting_load_data')"
-      :mobile="$vuetify.display.xs"
+      :mobile="modern ? $vuetify.display.smAndDown : $vuetify.display.xs"
       :row-props="
         (_data) => {
           return { class: 'row-hover' };
         }
       "
-      class="bg-transparent min-height-60vh"
+      class="bg-transparent"
+      :class="modern ? 'sd-modern-data-table sd-modern-data-table--compact' : 'min-height-60vh'"
+      :density="modern ? 'compact' : undefined"
       hide-default-footer
       item-key="id"
       @click:row="(_, r) => select(r.item)"
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="!busy_fetch" class="py-5 usn text-center fadeIn">
+        <div v-if="!busy_fetch" :class="modern ? 'sd-modern-empty-state' : 'py-5 usn text-center fadeIn'">
           <img
             :src="require('../../../../assets/guides/logistic-profiles.png')"
             class="m-3 op-0-3"
-            style="max-height: 400px; object-fit: contain"
-            width="85%"
+            :style="modern ? 'width: 96px; max-height: 96px; object-fit: contain' : 'max-height: 400px; object-fit: contain; width: 85%'"
+            alt=""
           />
-          <h2 class="text-h4 font-weight-thin">List of logistic profiles...</h2>
+          <h2 :class="modern ? 'b-logistic-profiles-list__empty-title' : 'text-h4 font-weight-thin'">{{ modern ? $t('shop_logistic_profiles.subtitle') : 'List of logistic profiles...' }}</h2>
         </div>
         <div v-else class="text-center px-3 py-5 text-muted">
           <v-icon class="me-1">sentiment_dissatisfied</v-icon>
@@ -69,19 +72,25 @@
 
       <template v-slot:item.type="{ item }">
         <v-icon class="me-1"> {{ LogisticProfileType[item.type].icon }}</v-icon>
-        <b>{{ $t(LogisticProfileType[item.type].title) }}</b>
+        <span :class="{ 'font-weight-bold': !modern }">{{ $t(LogisticProfileType[item.type].title) }}</span>
       </template>
 
       <template v-slot:item.info.languages="{ item }">
         <template v-if="item.info && Array.isArray(item.info.languages)">
-          <b v-for="lng in item.info.languages" :key="lng" class="pa-1">{{
+          <span v-for="lng in item.info.languages" :key="lng" class="pa-1" :class="{ 'font-weight-bold': !modern }">{{
             getLanguageName(lng)
-          }}</b>
+          }}</span>
         </template>
       </template>
 
       <template v-slot:item.name="{ item }">
-        {{ item.name }}
+        <router-link
+          v-if="modern"
+          class="b-logistic-profiles-list__name"
+          :to="{ name: 'LogisticProfilePage_Dashboard', params: { profile_id: item.id } }"
+          @click.stop
+        >{{ item.name }}</router-link>
+        <template v-else>{{ item.name }}</template>
       </template>
 
       <template v-slot:item.user_id="{ item }">
@@ -94,7 +103,7 @@
       </template>
 
       <template v-slot:item.updated_at="{ item }">
-        <div class="min-width-200">
+        <div :class="modern ? 'b-logistic-profiles-list__updated' : 'min-width-200'">
           {{ getFromNowString(item.updated_at) }}<br />
           <small>
             {{ getLocalTimeString(item.updated_at) }}
@@ -103,7 +112,10 @@
       </template>
 
       <template v-slot:bottom>
-        <v-pagination v-model="page" :length="pageCount" rounded />
+        <div :class="{ 'sd-modern-table-footer b-logistic-profiles-list__footer': modern }">
+          <span v-if="modern" class="sd-modern-page-summary">{{ $t("global.commons.page") }} <bdi>{{ $n(pageCount ? page : 0) }} / {{ $n(pageCount) }}</bdi></span>
+          <v-pagination v-model="page" :length="pageCount" :class="{ 'sd-modern-pagination': modern }" :rounded="modern ? undefined : true" />
+        </div>
       </template>
     </v-data-table-server>
   </div>
@@ -121,6 +133,7 @@ export default {
   mixins: [DateMixin ],
   components: {},
   props: {
+    modern: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -252,4 +265,21 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-logistic-profiles-list--modern {
+  .b-logistic-profiles-list__toolbar { margin: 0; padding: 12px 18px; border-block-end: 1px solid var(--sd-modern-border); }
+  .b-logistic-profiles-list__footer { justify-content: flex-end; padding: 14px 18px; }
+  .b-logistic-profiles-list__updated { min-width: 150px; }
+  .b-logistic-profiles-list__name { color: inherit; font-weight: 500; text-decoration: none; }
+  .b-logistic-profiles-list__name:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 4px; }
+  .b-logistic-profiles-list__empty-title { max-width: 540px; margin: 0; font-size: 14px; font-weight: 400; line-height: 1.6; }
+  :deep(.b-logistic-profiles-list__toolbar .v-field__input) { font-size: 12px; }
+  :deep(.v-data-table__td-value > .v-icon) { font-size: 18px; }
+}
+@media (max-width: 599px) {
+  .b-logistic-profiles-list--modern {
+    .b-logistic-profiles-list__toolbar { padding-inline: 14px; }
+    :deep(.b-logistic-profiles-list__toolbar .v-field__input) { font-size: 16px; }
+  }
+}
+</style>

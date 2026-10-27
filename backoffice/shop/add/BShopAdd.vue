@@ -13,7 +13,10 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="position-relative">
+  <div
+    class="b-shop-add position-relative"
+    :class="{ 'b-shop-add--modern sd-modern-form text-start': modern }"
+  >
 
 
     <u-progress-stepper
@@ -32,7 +35,28 @@
       @next="goNext"
       @previous="goPrevious"
     />
-    <transition name="fadeUp">
+    <v-tabs
+      v-if="modern"
+      v-model="step"
+      :aria-label="$t('admin_shop.edit.menu.info')"
+      class="b-shop-add__tabs"
+      height="42"
+      hide-slider
+    >
+      <v-avatar v-if="icon_pic" class="b-shop-add__tab-avatar" size="28">
+        <img :src="getShopImagePath(icon_pic)" alt="" />
+      </v-avatar>
+      <v-tab
+        v-for="tab in tabs"
+        :key="tab.value"
+        :value="tab.value"
+        :disabled="!shop"
+      >
+        <v-icon :icon="tab.icon" aria-hidden="true" />
+        <span class="b-shop-add__tab-label">{{ tab.title }}</span>
+      </v-tab>
+    </v-tabs>
+    <transition v-else name="fadeUp">
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Tabs ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
       <u-tabs-rounded
@@ -49,23 +73,44 @@
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Title & State ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <div v-if="step === 0" key="slide-0" class="widget-box mb-5">
-      <u-widget-header
-        :title="$t('admin_shop.edit.info.title_tab.title')"
-        icon="store_mall_directory"
-      >
-      </u-widget-header>
-      <v-list-subheader>
-        {{ $t("admin_shop.edit.info.title_tab.subtitle") }}
-      </v-list-subheader>
+    <div
+      v-if="step === 0"
+      key="slide-0"
+      :class="modern ? 'sd-modern-widget b-shop-add__panel' : 'widget-box mb-5'"
+    >
+      <div :class="{ 'sd-modern-title b-shop-add__heading': modern }">
+        <span v-if="modern" class="sd-modern-icon sd-modern-icon--plain">
+          <v-icon aria-hidden="true">store_mall_directory</v-icon>
+        </span>
+        <div>
+          <u-widget-header
+            :class="{ 'sd-modern-form-header': modern }"
+            :title="$t('admin_shop.edit.info.title_tab.title')"
+            :icon="modern ? undefined : 'store_mall_directory'"
+          />
+          <v-list-subheader :class="{ 'b-shop-add__subtitle': modern }">
+            <span>{{ $t("admin_shop.edit.info.title_tab.subtitle") }}</span>
+            <u-tooltip-tips
+              v-if="modern"
+              class="sd-modern-icon-button sd-modern-info-button"
+              icon="info_outline"
+              :aria-label="`${$t('add_shop.title_input')} — ${$t('global.commons.help')}`"
+              :message="$t('add_shop.title_input_tips')"
+            />
+          </v-list-subheader>
+        </div>
+      </div>
+      <div class="b-shop-add__identity-fields" :class="{ 'sd-modern-form-grid': modern }">
       <v-text-field
         v-model="title"
         :counter="30"
         :label="`${$t('add_shop.title_input')}*`"
-        hint="Enter your business name."
+        :hint="$t('admin_shop.edit.info.title_input_message')"
         placeholder="e.g. Serenity Spa & Wellness"
         required
         variant="underlined"
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field': modern }"
         :disabled="readOnly"
       >
         <template v-slot:append-inner>
@@ -73,11 +118,11 @@
             v-if="shop?.id"
             :label="$t('add_shop.title_input')"
             :shop="shop"
-            class="me-2"
+            :class="modern ? undefined : 'me-2'"
             translation-key="title"
           ></b-translation-button-shop>
 
-          <u-tooltip-tips :message="$t('add_shop.title_input_tips')" />
+          <u-tooltip-tips v-if="!modern" :message="$t('add_shop.title_input_tips')" />
         </template>
       </v-text-field>
 
@@ -85,9 +130,14 @@
         v-model="language"
         :messages="$t('add_shop.language_input_message')"
         max-width="unset"
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field': modern }"
         :disabled="readOnly"
       >
       </u-language-input>
+      </div>
+
+      <div v-if="modern" class="b-shop-add__divider" />
 
       <u-smart-switch
         v-model="active"
@@ -95,7 +145,7 @@
         :force-show-all="false"
         :true-description="$t('add_shop.active_message')"
         :true-title="$t('global.commons.active')"
-        class="my-5"
+        :class="modern ? 'b-shop-add__active' : 'my-5'"
         color="green"
         false-gray
         false-icon="public_off"
@@ -104,36 +154,43 @@
       />
       <v-expand-transition>
         <div v-if="!active && shop">
-          <div class="my-5">
-            <div class="widget-buttons">
+          <div :class="modern ? 'b-shop-add__temporary-access' : 'my-5'">
+            <header v-if="modern" class="b-shop-add__temporary-heading">
+              <h3>{{ $t('admin_shop.edit.info.temporary_access.title') }}</h3>
+              <p>{{ $t('admin_shop.edit.info.temporary_access.description') }}</p>
+            </header>
+
+            <u-smart-toggle
+              v-model="force"
+              :class="modern ? 'b-shop-add__temporary-force' : 'my-5'"
+              true-icon="autorenew"
+              :true-title="$t('admin_shop.edit.info.temporary_access.force_title')"
+              :true-description="modern ? $t('admin_shop.edit.info.temporary_access.force_description') : undefined"
+              :disabled="readOnly || busy_temp_access"
+            />
+
+            <div :class="modern ? 'b-shop-add__temporary-action' : 'widget-buttons'">
               <v-btn
                 :loading="busy_temp_access"
+                :disabled="readOnly"
                 size="x-large"
-                variant="elevated"
+                :variant="modern ? 'tonal' : 'elevated'"
+                :class="{ 'sd-modern-button sd-modern-button--form': modern }"
                 @click="getTempAccess"
               >
-                <v-icon start>lock_reset</v-icon>
-                Create temporary access link
+                <v-icon start>{{ modern ? 'link' : 'lock_reset' }}</v-icon>
+                {{ $t('admin_shop.edit.info.temporary_access.create_action') }}
 
-                <v-avatar class="ms-2 avatar-gradient -thin" size="24">
+                <v-avatar v-if="!modern" class="ms-2 avatar-gradient -thin" size="24">
                   <img :src="getUserAvatar(USER_ID())" />
                 </v-avatar>
               </v-btn>
             </div>
 
-            <u-smart-toggle
-              v-model="force"
-              class="my-5"
-              true-icon="autorenew"
-              true-title="Force create new"
-            ></u-smart-toggle>
-
             <v-expand-transition>
               <u-text-copy-box
                 v-if="temp_access"
-                :message="`Valid until ${getLocalTimeString(
-                  temp_access.expire_at,
-                )}`"
+                :message="$t('admin_shop.edit.info.temporary_access.expires', { date: getLocalTimeString(temp_access.expire_at) })"
                 :value="
                   ShopURLs.MainShopUrl(shop) + '/?temp_access_key=' + temp_access.code
                 "
@@ -149,14 +206,38 @@
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Name ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <div v-if="step === 1" key="slide-1" class="widget-box mb-5">
-      <h2>
-        <v-icon class="me-1">alternate_email</v-icon>
-        {{ $t("admin_shop.edit.info.name_tab.title") }}
-      </h2>
-      <v-list-subheader>
-        {{ $t("admin_shop.edit.info.name_tab.subtitle") }}
-      </v-list-subheader>
+    <div
+      v-if="step === 1"
+      key="slide-1"
+      :class="modern ? 'sd-modern-widget b-shop-add__panel' : 'widget-box mb-5'"
+    >
+      <div :class="{ 'sd-modern-title b-shop-add__heading': modern }">
+        <span v-if="modern" class="sd-modern-icon sd-modern-icon--plain">
+          <v-icon aria-hidden="true">alternate_email</v-icon>
+        </span>
+        <div>
+          <u-widget-header
+            v-if="modern"
+            :class="{ 'sd-modern-form-header': modern }"
+            :title="$t('admin_shop.edit.info.name_tab.title')"
+            :icon="modern ? undefined : 'alternate_email'"
+          />
+          <h2 v-else>
+            <v-icon class="me-1">alternate_email</v-icon>
+            {{ $t("admin_shop.edit.info.name_tab.title") }}
+          </h2>
+          <v-list-subheader :class="{ 'b-shop-add__subtitle': modern }">
+            <span>{{ $t("admin_shop.edit.info.name_tab.subtitle") }}</span>
+            <u-tooltip-tips
+              v-if="modern"
+              class="sd-modern-icon-button sd-modern-info-button"
+              icon="info_outline"
+              :aria-label="`${$t('add_shop.name_input')} — ${$t('global.commons.help')}`"
+              :message="$t('add_shop.name_input_tips')"
+            />
+          </v-list-subheader>
+        </div>
+      </div>
 
       <v-text-field
         v-model="name"
@@ -170,24 +251,24 @@
             : $t('add_shop.name_input_message')
         "
         :readonly="lock_name"
-        class="mt-2 max-width-field-large mx-auto fadeIn english-field"
+        :class="modern ? 'sd-modern-underlined-field english-field' : 'mt-2 max-width-field-large mx-auto fadeIn english-field'"
         dir="ltr"
         persistent-placeholder
-        placeholder="Write a name... e.g. my-shop"
+        placeholder="my-store"
         required
         variant="underlined"
         :disabled="readOnly"
       >
         <template v-slot:append-inner>
           <v-progress-circular
-            v-if="checking_shop_name"
+            v-if="!modern && checking_shop_name"
             class="mx-1"
             color="green"
             indeterminate
             size="24"
           />
           <v-icon
-            v-else-if="shop_name_available_success && name.length > 3"
+            v-else-if="!modern && shop_name_available_success && name.length > 3"
             class="mx-1"
             color="green"
             size="20"
@@ -197,18 +278,26 @@
 
           <u-tooltip-tips
             :icon="lock_name ? 'lock_outline' : 'lock_open'"
-            class="mx-1"
-            message="If you modify this name, it's necessary to click on 'auto fix' or reconnect to your payment services to update the webhook urls."
+            :aria-label="lock_name ? $t('global.actions.unlock') : $t('global.actions.lock')"
+            :class="modern ? undefined : 'mx-1'"
+            :message="$t('admin_shop.edit.info.name_locked_help')"
             @click="lock_name = !lock_name"
           />
 
           <u-tooltip-tips
+            v-if="!modern"
             :message="$t('add_shop.name_input_tips')"
-            class="mx-1"
+            :class="modern ? undefined : 'mx-1'"
           />
         </template>
         <template v-slot:prepend-inner>
+          <span v-if="modern" class="sd-modern-field-status" aria-hidden="true">
+            <v-progress-circular v-if="checking_shop_name" indeterminate size="16" width="2" color="primary" />
+            <v-icon v-else-if="shop_name_available_success && name.length > 3" color="success" size="16">check_circle</v-icon>
+            <v-icon v-else-if="shop_name_available_error_msg && name.length > 3" color="error" size="16">cancel</v-icon>
+          </span>
           <v-chip
+            v-else
             color="#000"
             prepend-icon="shield"
             size="small"
@@ -219,33 +308,55 @@
         </template>
       </v-text-field>
 
-      <div class="text-left mt-5 text-body-2 font-weight-black">
+      <div :class="modern ? 'b-shop-add__store-url' : 'text-left mt-5 text-body-2 font-weight-black'" dir="ltr">
         <v-icon class="me-1" size="small">link</v-icon>
         {{ main_service_url }}/<span>@{{ name }}</span>
 
         <v-btn
           v-copy="`${main_service_url}/@${name}`"
-          class="ms-2"
+          :aria-label="$t('global.actions.copy')"
+          :class="modern ? 'sd-modern-icon-button' : 'ms-2'"
           icon
           size="small"
           type="button"
           variant="plain"
         >
           <v-icon> fa:fas fa-copy</v-icon>
+          <v-tooltip v-if="modern" activator="parent" content-class="sd-modern-tooltip text-start" location="top">
+            {{ $t('global.actions.copy') }}
+          </v-tooltip>
         </v-btn>
       </div>
     </div>
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Description ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <div v-if="step === 2" key="slide-2" class="widget-box mb-5">
-      <u-widget-header
-        :title="$t('admin_shop.edit.info.description_tab.title')"
-        icon="subject"
-      ></u-widget-header>
-
-      <v-list-subheader>
-        {{ $t("admin_shop.edit.info.description_tab.subtitle") }}
-      </v-list-subheader>
+    <div
+      v-if="step === 2"
+      key="slide-2"
+      :class="modern ? 'sd-modern-widget b-shop-add__panel' : 'widget-box mb-5'"
+    >
+      <div :class="{ 'sd-modern-title b-shop-add__heading': modern }">
+        <span v-if="modern" class="sd-modern-icon sd-modern-icon--plain">
+          <v-icon aria-hidden="true">subject</v-icon>
+        </span>
+        <div>
+          <u-widget-header
+            :class="{ 'sd-modern-form-header': modern }"
+            :title="$t('admin_shop.edit.info.description_tab.title')"
+            :icon="modern ? undefined : 'subject'"
+          />
+          <v-list-subheader :class="{ 'b-shop-add__subtitle': modern }">
+            <span>{{ $t("admin_shop.edit.info.description_tab.subtitle") }}</span>
+            <u-tooltip-tips
+              v-if="modern"
+              class="sd-modern-icon-button sd-modern-info-button"
+              icon="info_outline"
+              :aria-label="`${$t('add_shop.description_input')} — ${$t('global.commons.help')}`"
+              :message="$t('add_shop.description_input_tips')"
+            />
+          </v-list-subheader>
+        </div>
+      </div>
 
       <v-textarea
         v-model="description"
@@ -255,6 +366,8 @@
         auto-grow
         style="max-width: 1250px"
         variant="underlined"
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field': modern }"
         :disabled="readOnly"
       >
         <template v-slot:append-inner>
@@ -265,22 +378,40 @@
             translation-key="description"
           ></b-translation-button-shop>
 
-          <u-tooltip-tips :message="$t('add_shop.description_input_tips')" />
+          <u-tooltip-tips v-if="!modern" :message="$t('add_shop.description_input_tips')" />
         </template>
       </v-textarea>
     </div>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <div v-if="step === 3" key="slide-3" class="widget-box mb-5">
-      <u-widget-header
-        :title="$t('admin_shop.edit.info.contact_tab.title')"
-        icon="assistant_direction"
-      ></u-widget-header>
-
-      <v-list-subheader>
-        {{ $t("admin_shop.edit.info.contact_tab.subtitle") }}
-      </v-list-subheader>
+    <div
+      v-if="step === 3"
+      key="slide-3"
+      :class="modern ? 'sd-modern-widget b-shop-add__panel' : 'widget-box mb-5'"
+    >
+      <div :class="{ 'sd-modern-title b-shop-add__heading': modern }">
+        <span v-if="modern" class="sd-modern-icon sd-modern-icon--plain">
+          <v-icon aria-hidden="true">assistant_direction</v-icon>
+        </span>
+        <div>
+          <u-widget-header
+            :class="{ 'sd-modern-form-header': modern }"
+            :title="$t('admin_shop.edit.info.contact_tab.title')"
+            :icon="modern ? undefined : 'assistant_direction'"
+          />
+          <v-list-subheader :class="{ 'b-shop-add__subtitle': modern }">
+            <span>{{ $t("admin_shop.edit.info.contact_tab.subtitle") }}</span>
+            <u-tooltip-tips
+              v-if="modern"
+              class="sd-modern-icon-button sd-modern-info-button"
+              icon="info_outline"
+              :aria-label="`${$t('add_shop.phone_input')} — ${$t('global.commons.help')}`"
+              :message="`${$t('add_shop.phone_input')}: ${$t('add_shop.phone_input_tips')}`"
+            />
+          </v-list-subheader>
+        </div>
+      </div>
 
       <div
         class="position-relative map-circle -hover ma-auto pointer-pointer zoomIn mb-2 mt-4"
@@ -315,12 +446,15 @@
         </v-btn>
       </div>
 
+      <div class="b-shop-add__contact-fields" :class="{ 'sd-modern-form-grid': modern }">
       <s-country-select
         :hint="$t('add_shop.country_input_message')"
         :label="$t('add_shop.country_input')"
         :model-value="selected_country_obj"
         item-value="name"
         return-object
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field': modern }"
         @update:model-value="
           (val) => {
             selected_country_obj = val;
@@ -337,6 +471,8 @@
         :label="$t('add_shop.region_input')"
         append-inner-icon="place"
         variant="underlined"
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field': modern }"
         :disabled="readOnly"
       />
 
@@ -346,6 +482,8 @@
         :label="$t('add_shop.locality_input')"
         append-inner-icon="near_me"
         variant="underlined"
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field': modern }"
         :disabled="readOnly"
       />
 
@@ -358,6 +496,8 @@
         append-inner-icon="fa:fas fa-map-marked-alt"
         auto-grow
         variant="underlined"
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field b-shop-add__full': modern }"
         :disabled="readOnly"
       />
 
@@ -367,6 +507,8 @@
         :label="$t('add_shop.postal_code_input')"
         append-inner-icon="local_convenience_store"
         variant="underlined"
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field': modern }"
         :disabled="readOnly"
       />
 
@@ -377,10 +519,12 @@
         append-inner-icon="fa:fas fa-phone"
         placeholder="+###-###-######## or use any preferred format..."
         variant="underlined"
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field': modern }"
         :disabled="readOnly"
       >
         <template v-slot:append-inner>
-          <u-tooltip-tips :message="$t('add_shop.phone_input_tips')" />
+          <u-tooltip-tips v-if="!modern" :message="$t('add_shop.phone_input_tips')" />
         </template>
       </v-text-field>
 
@@ -390,28 +534,42 @@
         :label="$t('add_shop.email_input')"
         append-inner-icon="fa:fas fa-envelope"
         variant="underlined"
+        :persistent-placeholder="modern"
+        :class="{ 'sd-modern-underlined-field': modern }"
         :disabled="readOnly"
       />
+      </div>
     </div>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Logo ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <template v-if="shop && shop.id && step === 4">
-      <div key="slide-4" class="widget-box mb-5">
-        <u-widget-header
-          :title="$t('admin_shop.edit.info.image_tab.title')"
-          icon="grain"
-        ></u-widget-header>
-        <v-list-subheader>
-          {{ $t("admin_shop.edit.info.image_tab.subtitle") }}
-        </v-list-subheader>
+    <div
+      v-if="shop && shop.id && step === 4"
+      :class="{ 'sd-modern-form-grid b-shop-add__images': modern }"
+    >
+      <div key="slide-4" :class="modern ? 'sd-modern-widget' : 'widget-box mb-5'">
+        <div :class="{ 'sd-modern-title b-shop-add__heading': modern }">
+          <span v-if="modern" class="sd-modern-icon sd-modern-icon--plain">
+            <v-icon aria-hidden="true">grain</v-icon>
+          </span>
+          <div>
+            <u-widget-header
+              :class="{ 'sd-modern-form-header': modern }"
+              :title="$t('admin_shop.edit.info.image_tab.title')"
+              :icon="modern ? undefined : 'grain'"
+            />
+            <v-list-subheader :class="{ 'b-shop-add__subtitle': modern }">
+              {{ $t("admin_shop.edit.info.image_tab.subtitle") }}
+            </v-list-subheader>
+          </div>
+        </div>
 
         <s-image-uploader
           :image="getShopImagePath(icon_pic)"
           :server="window.API.UPLOAD_SHOP_IMAGE(shop.id)"
           auto-compact
           class="mt-5 mx-auto fadeIn"
-          label="Your Business Logo"
+          :label="$t('admin_shop.edit.info.image_tab.title')"
           max-file-size="512KB"
           @new-path="handleProcessIcon"
           :disabled="readOnly"
@@ -419,32 +577,44 @@
         </s-image-uploader>
       </div>
 
-      <div key="slide-5" class="widget-box mb-5">
-        <u-widget-header icon="photo" :title="$t('admin_shop.edit.info.favicon.title') "></u-widget-header>
-        <v-list-subheader>
-          {{$t('admin_shop.edit.info.favicon.subtitle')}}
-        </v-list-subheader>
+      <div key="slide-5" :class="modern ? 'sd-modern-widget' : 'widget-box mb-5'">
+        <div :class="{ 'sd-modern-title b-shop-add__heading': modern }">
+          <span v-if="modern" class="sd-modern-icon sd-modern-icon--plain">
+            <v-icon aria-hidden="true">photo</v-icon>
+          </span>
+          <div>
+            <u-widget-header
+              :class="{ 'sd-modern-form-header': modern }"
+              :icon="modern ? undefined : 'photo'"
+              :title="$t('admin_shop.edit.info.favicon.title')"
+            />
+            <v-list-subheader :class="{ 'b-shop-add__subtitle': modern }">
+              {{ $t('admin_shop.edit.info.favicon.subtitle') }}
+            </v-list-subheader>
+          </div>
+        </div>
 
         <s-image-uploader
           :image="getShopImagePath(fav_pic)"
           :server="window.API.UPLOAD_SHOP_FAV_ICON(shop.id)"
           auto-compact
           class="mt-5 mx-auto fadeIn"
-          label="Website Favorite Icon"
+          :label="$t('admin_shop.edit.info.favicon.title')"
           max-file-size="512KB"
           @new-path="handleProcessFav"
           :disabled="readOnly"
         >
         </s-image-uploader>
       </div>
-    </template>
+    </div>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Buttons ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <div v-if="!readOnly" class="widget-buttons">
+    <div v-if="!readOnly" :class="{ 'sd-modern-form-actions b-shop-add__form-actions': modern }">
+    <div class="widget-buttons">
       <v-btn
         v-if="step !== 0 || hasFirstBack"
-        class="m-2"
+        :class="modern ? 'sd-modern-button sd-modern-button--form' : 'm-2'"
         color="default"
         size="x-large"
         variant="text"
@@ -456,9 +626,8 @@
 
       <v-btn
         v-if="shop"
-        :class="{ disabled: !name || !title || !language }"
+        :class="{ disabled: !name || !title || !language, 'sd-modern-button sd-modern-button--form b-shop-add__save': modern, 'm-2': !modern }"
         :loading="busy_edit_shop"
-        class="m-2"
         color="primary"
         size="x-large"
         variant="elevated"
@@ -474,9 +643,8 @@
       </v-btn>
       <v-btn
         v-if="!shop && step > 0"
-        :class="{ disabled: !name || !title || !language }"
+        :class="{ disabled: !name || !title || !language, 'sd-modern-button sd-modern-button--form b-shop-add__save': modern, 'm-2': !modern }"
         :loading="busy_add_shop"
-        class="m-2"
         color="primary"
         size="x-large"
         variant="elevated"
@@ -487,8 +655,7 @@
       </v-btn>
       <v-btn
         v-if="!shop && step === 0"
-        :class="{ disabled: !title || !language }"
-        class="m-2"
+        :class="{ disabled: !title || !language, 'sd-modern-button sd-modern-button--form b-shop-add__save': modern, 'm-2': !modern }"
         color="primary"
         size="x-large"
         variant="elevated"
@@ -501,11 +668,38 @@
         </v-icon>
       </v-btn>
     </div>
+    </div>
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Google search preview ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <div class="widget-box my-16 text-start" style="--background: #fff">
+    <div
+      :class="modern ? 'b-shop-add__seo text-start' : 'widget-box my-16 text-start'"
+      :style="modern ? undefined : '--background: #fff'"
+    >
+      <div v-if="modern" class="sd-modern-header b-shop-add__seo-heading">
+        <div class="sd-modern-title">
+          <span class="sd-modern-icon sd-modern-icon--plain">
+            <v-icon aria-hidden="true">search</v-icon>
+          </span>
+          <div>
+            <h2 class="sd-modern-title-text">{{ $t('global.commons.seo_preview') }}</h2>
+            <p class="b-shop-add__subtitle">{{ $t('admin_shop.edit.info.seo_preview_subtitle') }}</p>
+          </div>
+        </div>
+        <v-btn
+          v-if="shop?.id"
+          :loading="busy_render_google"
+          class="sd-modern-button sd-modern-button--compact"
+          color="primary"
+          variant="text"
+          @click="getRenderedOnGoogle"
+        >
+          <v-icon start aria-hidden="true">refresh</v-icon>
+          {{ $t('global.actions.update') }}
+        </v-btn>
+      </div>
       <u-widget-header
+        v-else
         :add-caption="shop?.id ? $t('global.actions.update') : undefined"
         :add-loading="busy_render_google"
         add-icon="refresh"
@@ -517,8 +711,8 @@
 
       <div
         v-if="canShowGooglePreview"
-        :class="{ blurred: busy_render_google }"
-        class="my-5 seo-preview"
+        :class="{ blurred: busy_render_google, 'my-5': !modern }"
+        class="seo-preview"
         v-html="rendered_on_google"
       ></div>
 
@@ -527,7 +721,7 @@
         :description="description"
         :title="title"
         :url="`${main_service_url}/@${name}`"
-        class="mx-auto my-5"
+        :class="modern ? undefined : 'mx-auto my-5'"
       />
     </div>
   </div>
@@ -627,6 +821,7 @@ export default {
     showStepper: Boolean,
 
     readOnly: Boolean,
+    modern: Boolean,
   },
 
   data: () => ({
@@ -1068,6 +1263,365 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// Grouping must retain the legacy direct-child input spacing outside modern views.
+.b-shop-add:not(.b-shop-add--modern) {
+  .b-shop-add__identity-fields > :deep(.v-input),
+  .b-shop-add__contact-fields > :deep(.v-input) {
+    margin: 0.5rem;
+  }
+}
+
+.b-shop-add--modern {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  .b-shop-add__tabs {
+    height: auto;
+    max-width: 100%;
+    margin-block-end: 20px;
+    padding: 0 5px;
+    background: rgba(var(--v-theme-on-surface), 0.065);
+    border-radius: 13px;
+
+    :deep(.v-slide-group__content) {
+      gap: 5px;
+      padding-block: 14px;
+    }
+
+    :deep(.v-tab) {
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 42px;
+      padding: 10px 7px;
+      border-radius: 9px;
+      color: var(--sd-modern-muted);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+      letter-spacing: 0;
+      text-transform: none;
+      opacity: 1;
+    }
+
+    :deep(.v-tab--selected) {
+      color: rgb(var(--v-theme-on-surface));
+      background: rgb(var(--v-theme-surface));
+      box-shadow: var(--sd-modern-selected-shadow);
+      --v-activated-opacity: 0;
+    }
+
+    :deep(.v-btn__content) {
+      gap: 7px;
+      font: inherit;
+      letter-spacing: 0;
+      min-width: 0;
+    }
+
+    :deep(.v-icon) {
+      font-size: 16px;
+    }
+  }
+
+  .b-shop-add__tab-avatar {
+    align-self: center;
+    flex-shrink: 0;
+    margin-inline: 4px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .b-shop-add__tab-label {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .b-shop-add__panel {
+    min-height: 300px;
+  }
+
+  .b-shop-add__heading {
+    gap: 10px;
+    margin-block-end: 24px;
+
+    > .sd-modern-icon {
+      margin-block-start: 2px;
+    }
+
+    :deep(.sd-modern-form-header.s--widget-header) {
+      margin-block: 0 5px;
+    }
+  }
+
+  .b-shop-add__subtitle {
+    min-height: 0;
+    padding: 0;
+    color: var(--sd-modern-muted);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0;
+
+    :deep(.v-list-subheader__text) {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: visible;
+      white-space: normal;
+      text-overflow: clip;
+    }
+  }
+
+  .b-shop-add__identity-fields {
+    grid-template-columns: 1.3fr 1fr;
+  }
+
+  .b-shop-add__divider {
+    margin-block: 24px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+
+  .b-shop-add__active {
+    margin: 0;
+
+    :deep(.row-hover) {
+      color: rgb(var(--v-theme-on-surface));
+      background: var(--sd-modern-inset) !important;
+    }
+
+    :deep(.flex-grow-1 > b) {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    :deep(.flex-grow-1 > .small) {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+  }
+
+  .b-shop-add__temporary-access {
+    margin-block-start: 24px;
+    padding-block-start: 24px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+
+  .b-shop-add__temporary-heading {
+    h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    p {
+      margin: 0;
+      color: var(--sd-modern-muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+  }
+
+  .b-shop-add__temporary-force {
+    margin-block: 16px;
+
+    :deep(.flex-grow-1 > b) {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    :deep(.small) {
+      font-size: 12px;
+      line-height: 1.6;
+    }
+  }
+
+  .b-shop-add__temporary-action {
+    display: flex;
+    justify-content: flex-start;
+    margin-block-end: 16px;
+  }
+
+  .b-shop-add__full {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+
+  .b-shop-add__images {
+    align-items: stretch;
+    row-gap: 0;
+
+    > .sd-modern-widget {
+      display: grid;
+      grid-template-rows: subgrid;
+      grid-row: span 2;
+    }
+
+    .b-shop-add__heading {
+      margin-block-end: 24px;
+    }
+  }
+
+  .b-shop-add__store-url {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-block-start: 20px;
+    padding: 12px 16px;
+    background: var(--sd-modern-inset);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 400;
+    overflow-wrap: anywhere;
+
+    .sd-modern-icon-button {
+      margin-inline-start: auto;
+    }
+  }
+
+  .b-shop-add__form-actions {
+    margin-block: 16px 28px;
+
+    .widget-buttons {
+      justify-content: flex-end;
+      flex-direction: row;
+      gap: 12px;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    :deep(.sd-modern-button) {
+      flex-grow: 0;
+    }
+
+    :deep(.v-icon) {
+      font-size: 17px;
+    }
+
+    .b-shop-add__save {
+      min-width: 132px;
+    }
+  }
+
+  .b-shop-add__seo-heading {
+    margin-block-end: 16px;
+  }
+
+  .b-shop-add__seo {
+    margin-block-start: 28px;
+
+    :deep(.g-small-title) {
+      display: none;
+    }
+
+    :deep(.g_snippet) {
+      max-width: none;
+      margin: 0;
+      padding: 20px;
+      color: rgb(var(--v-theme-on-surface));
+      background: rgb(var(--v-theme-surface));
+      border: 1px solid var(--sd-modern-border);
+      border-radius: 12px;
+      font-family: inherit !important;
+    }
+
+    :deep(.g_title) {
+      color: rgb(var(--v-theme-primary));
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    :deep(.g_url),
+    :deep(.g_description) {
+      color: var(--sd-modern-muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.65;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .b-shop-add__tab-label {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .b-shop-add__tabs {
+      :deep(.v-slide-group__content) {
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      :deep(.v-tab) {
+        flex: 1 1 90px;
+        height: auto;
+        padding: 5px 3px;
+        white-space: normal;
+      }
+
+      :deep(.v-btn__content) {
+        gap: 4px;
+      }
+    }
+
+    .b-shop-add__identity-fields,
+    .b-shop-add__contact-fields,
+    .b-shop-add__images {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .b-shop-add__images > .sd-modern-widget {
+      grid-template-rows: auto auto;
+      grid-row: auto;
+      row-gap: 0;
+    }
+
+    .b-shop-add__panel,
+    .b-shop-add__images > .sd-modern-widget {
+      padding: 22px 20px;
+      border-radius: 18px;
+    }
+
+    .b-shop-add__panel {
+      min-height: 340px;
+    }
+
+    .b-shop-add__full {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    .b-shop-add__seo :deep(.g_snippet) {
+      padding: 16px;
+    }
+  }
+
+  @media (max-width: 680px), (pointer: coarse) {
+    .b-shop-add__tabs :deep(.v-tab) {
+      --v-btn-height: 44px;
+      min-height: 44px;
+    }
+  }
+}
+
 .seo-preview {
   //animation: blur 1s ease;
   transition: all 1s;

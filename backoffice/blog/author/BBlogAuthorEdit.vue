@@ -15,11 +15,20 @@
           v-bind="props"
           :aria-label="$t('admin_shop.blogs.author.change_action')"
           icon
-          :size="$vuetify.display.smAndDown ? 40 : 32"
+          :size="modern ? undefined : $vuetify.display.smAndDown ? 40 : 32"
+          :class="{
+            'sd-modern-icon-button b-blog-author-edit__modern-action': modern,
+          }"
           variant="text"
         >
-          <v-icon size="16">edit</v-icon>
-          <v-tooltip activator="parent" location="top" :disabled="open">
+          <v-icon :size="modern ? 15 : 16">edit</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :disabled="open"
+            :content-class="modern ? 'sd-modern-tooltip text-start' : undefined"
+            :open-on-focus="true"
+          >
             {{ $t("admin_shop.blogs.author.change_action") }}
           </v-tooltip>
         </v-btn>
@@ -81,6 +90,7 @@ export default {
   props: {
     shop: { type: Object, required: true },
     article: { type: Object, required: true },
+    modern: { type: Boolean, default: false },
   },
   data: () => ({
     ShopPermissionRegions,
@@ -122,9 +132,12 @@ export default {
 
       this.busy = true;
       axios
-        .put(window.API.PUT_SHOP_ARTICLE_AUTHOR(this.shop.id, this.article.id), {
-          user_id: this.selected_user.id,
-        })
+        .put(
+          window.API.PUT_SHOP_ARTICLE_AUTHOR(this.shop.id, this.article.id),
+          {
+            user_id: this.selected_user.id,
+          },
+        )
         .then(({ data }) => {
           if (data.error)
             return NotificationService.showErrorAlert(null, data.error_msg);
@@ -148,3 +161,16 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.b-blog-author-edit .b-blog-author-edit__modern-action {
+  --sd-modern-icon-button-size: 32px;
+  border-radius: 8px;
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  .b-blog-author-edit .b-blog-author-edit__modern-action {
+    --sd-modern-icon-button-size: 44px;
+  }
+}
+</style>

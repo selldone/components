@@ -13,7 +13,79 @@
   -->
 
 <template>
-  <v-container class="text-start">
+  <section v-if="modern" class="b-shop-quota-importer text-start">
+    <header class="b-shop-quota-importer__header">
+      <h3>{{ $t("quota_importer.quota") }}</h3>
+      <div class="b-shop-quota-importer__shop">
+        <v-avatar size="24">
+          <v-img :src="getShopImagePath(shop.icon, 128)" />
+        </v-avatar>
+        <span>{{ shop.title }}</span>
+      </div>
+    </header>
+
+    <dl class="sd-modern-stat-grid b-shop-quota-importer__stats">
+      <div>
+        <dt>{{ $t("importer.total_items") }}</dt>
+        <dd>
+          {{ newCount }}
+          <p>{{ $t("quota_importer.file_statistic_msg") }}</p>
+        </dd>
+      </div>
+      <div>
+        <dt>{{ $t("importer.max_items_limit") }}</dt>
+        <dd>
+          {{ numeralFormat(quota_max + quota_extra, "0,0") }}
+          <p>{{ $t("quota_importer.max_daily_limit_msg") }}</p>
+        </dd>
+      </div>
+    </dl>
+
+    <dl class="b-shop-quota-importer__limits">
+      <div>
+        <dt>
+          {{ $t("quota_importer.max_batch_msg") }}
+          <shop-license-view :shop="shop" small class="b-shop-quota-importer__license" />
+        </dt>
+        <dd>{{ numeralFormat(max_items_limit, "0a") }}</dd>
+      </div>
+      <div>
+        <dt>{{ $t("quota_importer.max_daily_limit_msg") }}</dt>
+        <dd>{{ numeralFormat(quota_max, "0a") }}</dd>
+      </div>
+      <div>
+        <dt>{{ $t("quota_importer.extra_daily_limit_msg") }}</dt>
+        <dd>{{ numeralFormat(quota_extra, "0a") }}</dd>
+      </div>
+      <div>
+        <dt>{{ $t("quota_importer.add_items_today_msg") }}</dt>
+        <dd>{{ numeralFormat(quota_usage, "0a") }}</dd>
+      </div>
+    </dl>
+
+    <div class="sd-modern-notice b-shop-quota-importer__usage" :role="valid_count ? 'status' : 'alert'">
+      <div class="b-shop-quota-importer__status">
+        <v-icon :color="valid_count ? 'success' : 'error'" size="18" aria-hidden="true">
+          {{ valid_count ? "check" : "error_outline" }}
+        </v-icon>
+        <span>{{ $t(valid_count ? "global.commons.eligible" : "global.commons.invalid") }}</span>
+        <span class="b-shop-quota-importer__fraction">
+          {{ $t("quota_importer.used_quota") }}:
+          {{ numeralFormat(quota_usage, "0,0.[0]a") }} /
+          {{ numeralFormat(quota_max + quota_extra, "0,0.[0]a") }}
+        </span>
+      </div>
+      <v-progress-linear
+        :model-value="(100 * quota_usage) / (quota_max + quota_extra)"
+        :aria-label="$t('quota_importer.used_quota')"
+        color="var(--sd-modern-muted)"
+        height="4"
+        rounded
+      />
+      <p v-if="!valid_count">{{ $t("quota_importer.max_batch_msg") }}</p>
+    </div>
+  </section>
+  <v-container v-else class="text-start">
     <v-row align="stretch" justify="space-around">
       <v-col cols="12" sm="4">
         <v-card class="min-h-100" elevation="24" rounded="xl">
@@ -172,6 +244,10 @@ export default defineComponent({
   components: { ShopLicenseView },
 
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     shop: {
       type: Object,
       required: true,
@@ -214,4 +290,77 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-shop-quota-importer {
+  color: rgb(var(--v-theme-on-surface));
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+
+  &__header,
+  &__shop,
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__header {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  h3 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.4; }
+  p { margin: 4px 0 0; color: var(--sd-modern-muted); font-size: 12px; }
+  dd { margin: 0; font-variant-numeric: tabular-nums; }
+  &__shop { min-width: 0; color: var(--sd-modern-muted); }
+  &__shop > span { overflow-wrap: anywhere; }
+
+  &__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    padding-block: 20px;
+    border-block-end: 1px solid var(--sd-modern-border);
+
+    dt { color: var(--sd-modern-muted); font-size: 12px; }
+    dd { margin-block-start: 4px; font-size: 21px; line-height: 1.35; }
+  }
+
+  &__limits {
+    margin: 0;
+
+    > div {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      padding-block: 12px;
+      border-block-end: 1px solid var(--sd-modern-border);
+    }
+    > div:last-child { border: 0; }
+    dd { text-align: end; }
+  }
+
+  &__license {
+    display: block;
+    width: fit-content;
+    margin-block-start: 6px;
+    font-size: 12px;
+    font-weight: 500 !important;
+  }
+
+  &__usage {
+    display: block;
+    padding: 14px 16px;
+    margin-block-start: 8px;
+    > p { color: inherit; }
+  }
+  &__status { flex-wrap: wrap; margin-block-end: 10px; font-size: 12px; }
+  &__fraction { margin-inline-start: auto; color: var(--sd-modern-muted); }
+
+  @media (max-width: 599px) {
+    &__fraction { flex-basis: 100%; margin-inline-start: 0; }
+  }
+}
+</style>

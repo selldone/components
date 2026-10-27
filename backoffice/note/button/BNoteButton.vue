@@ -16,19 +16,23 @@
   <span>
     <v-btn
       v-if="note && note.length"
-      :color="activeColor"
+      :color="modern ? undefined : activeColor"
+      :class="{ 'sd-modern-icon-button': modern }"
       icon
       size="36"
       variant="text"
+      :aria-label="modern ? $t('notes.add_action') : undefined"
       @click.stop="$emit('click')"
-      ><v-icon size="24">sticky_note_2</v-icon>
+      ><v-icon :size="modern ? 20 : 24">sticky_note_2</v-icon>
 
       <v-tooltip
         activator="parent"
-        content-class="bg-black text-start"
+        :content-class="modern ? 'sd-modern-tooltip text-start' : 'bg-black text-start'"
+        :location="modern ? 'top' : undefined"
         max-width="460"
         min-width="240"
       >
+        <p v-if="modern" class="ma-0">{{ $t('notes.add_action') }}</p>
         <div class="d-flex align-center pt-2">
           <v-avatar :size="32" class="avatar-gradient -thin -staff me-2">
             <v-img :src="getUserAvatar(note[note.length - 1].user_id)" />
@@ -50,13 +54,22 @@
 
     <v-btn
       v-else
-      :title="$t('notes.add_action')"
+      :title="modern ? undefined : $t('notes.add_action')"
+      :class="{ 'sd-modern-icon-button': modern }"
       icon
       size="small"
       variant="text"
+      :aria-label="modern ? $t('notes.add_action') : undefined"
       @click.stop="$emit('click')"
-      ><v-icon size="24">edit_note</v-icon></v-btn
-    >
+      ><v-icon :size="modern ? 20 : 24">edit_note</v-icon>
+      <v-tooltip
+        v-if="modern"
+        activator="parent"
+        content-class="sd-modern-tooltip text-start"
+        location="top"
+        max-width="320"
+      >{{ $t('notes.add_action') }}</v-tooltip>
+    </v-btn>
   </span>
 </template>
 
@@ -71,6 +84,7 @@ export default {
   props: {
     note: {},
     activeColor: { default: "orange" },
+    modern: Boolean,
   },
 };
 </script>

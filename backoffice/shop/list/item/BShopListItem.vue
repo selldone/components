@@ -15,8 +15,10 @@
 <template>
   <v-list-item
     :class="{
-      'bg-red-lighten-5 border-opacity-50': shop.deleted_at,
+      'bg-red-lighten-5 border-opacity-50': !modern && shop.deleted_at,
       'bg-surface row-hover': !shop.deleted_at,
+      'b-shop-list-item--modern text-start': modern,
+      'sd-modern-clickable-item': modern && !shop.deleted_at,
     }"
     :to="shop.deleted_at ? undefined : to"
     border
@@ -28,7 +30,13 @@
         <div class="d-flex align-center">
           <v-avatar
             :class="{ 'opacity-70': shop.deleted_at }"
-            :color="shop.deleted_at ? 'red-lighten-4' : 'grey-lighten-4'"
+            :color="
+              modern
+                ? undefined
+                : shop.deleted_at
+                  ? 'red-lighten-4'
+                  : 'grey-lighten-4'
+            "
             class="flex-shrink-0"
             rounded="lg"
             size="52"
@@ -52,11 +60,11 @@
 
               <v-chip
                 v-if="shop.deleted_at"
-                color="error"
+                :color="modern ? undefined : 'error'"
                 label
                 prepend-icon="delete_outline"
                 size="x-small"
-                variant="tonal"
+                :variant="modern ? 'text' : 'tonal'"
               >
                 {{ $t("global.commons.deleted") }}
               </v-chip>
@@ -77,11 +85,11 @@
 
               <v-chip
                 v-if="shop.user_id === USER_ID()"
-                color="amber-darken-3"
+                :color="modern ? undefined : 'amber-darken-3'"
                 label
                 prepend-icon="fa:fas fa-crown"
                 size="x-small"
-                variant="tonal"
+                :variant="modern ? 'text' : 'tonal'"
               >
                 {{ $t("global.commons.owner") }}
               </v-chip>
@@ -109,7 +117,8 @@
 
               <span
                 v-if="shop.deleted_at"
-                class="d-inline-flex align-center text-error text-no-wrap"
+                class="d-inline-flex align-center text-no-wrap"
+                :class="{ 'text-error': !modern }"
               >
                 <v-icon class="me-1" size="14">history</v-icon>
                 {{
@@ -156,15 +165,28 @@
                 :block="$vuetify.display.smAndDown"
                 :disabled="recoveryDisabled || recoveryLoading"
                 :loading="recoveryLoading"
-                class="font-weight-bold px-5 text-none"
-                color="primary"
+                :class="
+                  modern
+                    ? 'sd-modern-button text-none'
+                    : 'font-weight-bold px-5 text-none'
+                "
+                :color="modern ? 'on-surface' : 'primary'"
                 elevation="0"
                 prepend-icon="settings_backup_restore"
                 rounded="lg"
                 size="default"
-                variant="flat"
+                :variant="modern ? 'outlined' : 'flat'"
               >
                 {{ $t("shops_list.deleted.recover") }}
+                <v-tooltip
+                  v-if="modern"
+                  activator="parent"
+                  location="top"
+                  content-class="sd-modern-tooltip text-start"
+                  :open-on-focus="true"
+                  :persistent="false"
+                  >{{ $t("shops_list.deleted.recover") }}</v-tooltip
+                >
               </v-btn>
             </template>
           </b-shop-recovery-dialog>
@@ -279,6 +301,7 @@ export default {
   mixins: [DateMixin, LicenseMixin],
   emits: ["recover"],
   props: {
+    modern: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -327,3 +350,18 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.b-shop-list-item--modern {
+  background: rgb(var(--v-theme-surface));
+  border-color: rgba(var(--v-theme-on-surface), 0.1);
+  color: rgb(var(--v-theme-on-surface));
+  :deep(.v-avatar) {
+    background: rgba(var(--v-theme-on-surface), 0.05);
+  }
+  :deep(strong) {
+    font-size: 14px !important;
+    font-weight: 500;
+  }
+}
+</style>

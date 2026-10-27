@@ -13,21 +13,37 @@
   -->
 
 <template>
-  <div>
-    <div v-if="languages?.length > 1" class="widget-box -large mb-5">
+  <div :class="{ 'b-logistic-profile-editor--modern text-start': modern }">
+    <div v-if="languages?.length > 1" :class="modern ? 'sd-modern-widget mb-5' : 'widget-box -large mb-5'">
       <u-widget-header
         :title="$t('logistic_profile_editor.languages.title')"
         icon="language"
+        :class="{ 'sd-modern-form-header': modern }"
         add-icon="translate"
         @click:add="addNew"
-        :add-caption="editable?$t('logistic_profile_editor.languages.add_caption'):undefined"
+        :add-caption="!modern && editable ? $t('logistic_profile_editor.languages.add_caption') : undefined"
         :disabled="!free_languages || !free_languages.length || !editable"
         :disabled-reason="
           $t('logistic_profile_editor.languages.no_more_language')
         "
       >
+        <template v-if="modern && editable" #append-actions>
+          <div class="b-logistic-profile-editor__language-action">
+            <v-btn
+              class="sd-modern-button sd-modern-button--small"
+              color="primary"
+              variant="flat"
+              prepend-icon="translate"
+              :disabled="!free_languages || !free_languages.length"
+              @click="addNew"
+            >{{ $t('logistic_profile_editor.languages.add_caption') }}</v-btn>
+            <p v-if="!free_languages || !free_languages.length" class="b-logistic-profile-editor__language-limit">
+              {{ $t('logistic_profile_editor.languages.no_more_language') }}
+            </p>
+          </div>
+        </template>
       </u-widget-header>
-      <v-list-subheader>
+      <v-list-subheader :class="{ 'b-logistic-profile-editor__description': modern }">
         {{ $t("logistic_profile_editor.languages.subtitle") }}
       </v-list-subheader>
       <v-row align="center" class="px-3" no-gutters>
@@ -35,11 +51,14 @@
           v-for="item in articles"
           :key="item.id"
           :class="{
-            'bg-blue-soft text-white': article && item.id === article.id,
+            'bg-blue-soft text-white': !modern && article && item.id === article.id,
+            'b-logistic-profile-editor__language--selected': modern && article && item.id === article.id,
+            'b-logistic-profile-editor__language': modern,
           }"
           class="ma-1"
           variant="outlined"
           @click="selectArticle(item)"
+          :aria-pressed="article && item.id === article.id"
           stacked
         >
           <b class="mb-1">{{ item.lang }}</b>
@@ -53,13 +72,14 @@
 
     <v-expand-transition>
       <div v-if="article">
-        <div class="widget-box -large mb-5">
+        <div :class="modern ? 'sd-modern-widget sd-modern-form-actions mb-5' : 'widget-box -large mb-5'">
           <u-loading-progress v-if="busy_delete" color="red">
           </u-loading-progress>
 
           <u-widget-header
             :title="$t('logistic_profile_editor.content.title')"
             icon="article"
+            :class="{ 'sd-modern-form-header': modern }"
           >
             <template v-slot:actions v-if="editable">
               <u-language-input
@@ -84,13 +104,13 @@
                   },
                 ]"
               >
-                <v-tooltip activator="parent">
+                <v-tooltip activator="parent" :location="modern ? 'top' : undefined" :content-class="modern ? 'sd-modern-tooltip text-start' : undefined" :open-on-focus="true">
                   {{ $t("logistic_profile_editor.content.menu_tooltip") }}
                 </v-tooltip>
               </u-smart-menu>
             </template>
           </u-widget-header>
-          <v-list-subheader>
+          <v-list-subheader :class="{ 'b-logistic-profile-editor__description': modern }">
             {{ $t("logistic_profile_editor.content.subtitle") }}
           </v-list-subheader>
 
@@ -111,7 +131,8 @@
           <s-widget-buttons v-if="editable && changed" auto-fixed-position>
             <v-btn
               :loading="busy_save"
-              color="#000"
+              :class="{ 'sd-modern-button': modern }"
+              :color="modern ? 'primary' : '#000'"
               size="x-large"
               variant="elevated"
               @click="saveArticle"
@@ -166,6 +187,7 @@ export default defineComponent({
     profile: { type: Object, required: true },
     articles: { type: Array, required: true },
     editable: Boolean,
+    modern: Boolean,
   },
 
   data: () => ({
@@ -387,4 +409,16 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-logistic-profile-editor--modern {
+  .b-logistic-profile-editor__language-action { align-self: flex-start; flex: 0 1 auto; margin-inline-start: auto; }
+  .b-logistic-profile-editor__language-limit { max-width: 260px; margin: 8px 0 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 1.5; }
+  :deep(.b-logistic-profile-editor__description) { min-height: 0; padding: 0; margin-block-end: 20px; font-size: 13px; line-height: 1.6; overflow: visible; }
+  :deep(.b-logistic-profile-editor__description > .v-list-subheader__text) { white-space: normal; overflow: visible; text-overflow: clip; }
+  .b-logistic-profile-editor__language { min-width: 72px; min-height: 52px; padding: 7px 12px; border-color: var(--sd-modern-border); border-radius: 9px; font-size: 12px; }
+  .b-logistic-profile-editor__language--selected { color: rgb(var(--v-theme-primary)); background: var(--sd-modern-inset); border-color: rgb(var(--v-theme-primary)); }
+}
+@media (max-width: 599px) {
+  .b-logistic-profile-editor--modern .b-logistic-profile-editor__language-action { margin-inline-start: 0; margin-block-start: 8px; }
+}
+</style>

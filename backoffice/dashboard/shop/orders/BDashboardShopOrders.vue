@@ -1549,11 +1549,6 @@ export default {
   &__table {
     width: 100%;
   }
-  &__table th {
-    font-size: 12px;
-    font-weight: 400;
-    color: var(--sd-modern-muted);
-  }
   &__table th,
   &__table td {
     text-align: start;

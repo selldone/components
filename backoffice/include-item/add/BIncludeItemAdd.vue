@@ -13,8 +13,8 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-card class="text-start">
-    <v-card-title>
+  <v-card class="text-start" :class="{ 'b-include-item-add--modern sd-modern-canvas': modern }">
+    <v-card-title :class="{ 'b-include-item-add__title': modern }">
       <v-icon class="me-2">bento</v-icon>
       {{
         include?.id
@@ -22,13 +22,14 @@
           : $t("include_item_add.dialog_title_add")
       }}
     </v-card-title>
-    <v-card-text>
-      <div class="widget-box mb-5">
+    <v-card-text :class="{ 'b-include-item-add__body': modern }">
+      <div :class="modern ? 'sd-modern-widget sd-modern-form mb-5' : 'widget-box mb-5'">
         <u-widget-header
           icon="tune"
+          :class="{ 'sd-modern-form-header': modern }"
           :title="$t('include_item_add.title')"
         ></u-widget-header>
-        <v-list-subheader>
+        <v-list-subheader :class="{ 'b-include-item-add__description': modern }">
           {{ $t("include_item_add.subtitle") }}
         </v-list-subheader>
 
@@ -136,13 +137,14 @@
 
       <v-expand-transition>
         <div v-if="mode === 'external'">
-          <div class="widget-box mb-5">
+          <div :class="modern ? 'sd-modern-widget sd-modern-form mb-5' : 'widget-box mb-5'">
             <u-widget-header
               :title="$t('include_item_add.mode.external_link.title')"
               icon="link"
+              :class="{ 'sd-modern-form-header': modern }"
             >
             </u-widget-header>
-            <v-list-subheader>
+            <v-list-subheader :class="{ 'b-include-item-add__description': modern }">
               {{ $t("include_item_add.mode.external_link.tips") }}
             </v-list-subheader>
             <v-locale-provider :rtl="false">
@@ -158,13 +160,14 @@
           </div>
         </div>
         <div v-else-if="mode === 'internal'">
-          <div class="widget-box mb-5">
+          <div :class="modern ? 'sd-modern-widget sd-modern-form mb-5' : 'widget-box mb-5'">
             <u-widget-header
               :title="$t('include_item_add.mode.internal_link.title')"
               icon="architecture"
+              :class="{ 'sd-modern-form-header': modern }"
             >
             </u-widget-header>
-            <v-list-subheader>
+            <v-list-subheader :class="{ 'b-include-item-add__description': modern }">
               {{ $t("include_item_add.mode.internal_link.tips") }}
             </v-list-subheader>
             <v-locale-provider :rtl="false">
@@ -206,9 +209,9 @@
         </div>
       </v-expand-transition>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions :class="{ 'sd-modern-form-actions': modern }">
       <s-widget-buttons :auto-fixed-position="!dialogMode">
-        <v-btn size="x-large" variant="text" @click="$emit('close')">
+        <v-btn :class="{ 'sd-modern-button': modern }" size="x-large" variant="text" @click="$emit('close')">
           <v-icon start>close</v-icon>
           {{ $t("global.actions.close") }}
         </v-btn>
@@ -216,6 +219,7 @@
         <!-- Edit mode -->
         <v-btn
           v-if="include?.id"
+          :class="{ 'sd-modern-button': modern }"
           :disabled="!include_title"
           :loading="busy_edit"
           color="primary"
@@ -230,6 +234,7 @@
         <!-- Add mode -->
         <v-btn
           v-else
+          :class="{ 'sd-modern-button': modern }"
           :disabled="!include_title || !include_image"
           :loading="busy_add"
           color="primary"
@@ -270,6 +275,7 @@ export default {
     USmartSelect,
   },
   props: {
+    modern: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -515,6 +521,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-include-item-add--modern {
+  .b-include-item-add__title { padding: 24px 28px; font-size: 21px; font-weight: 600; line-height: 1.35; white-space: normal; }
+  .b-include-item-add__body { padding: 0 28px 20px; }
+  :deep(.b-include-item-add__description) { min-height: 0; padding: 0; margin-block-end: 20px; font-size: 13px; line-height: 1.6; overflow: visible; }
+  :deep(.b-include-item-add__description > .v-list-subheader__text) { white-space: normal; overflow: visible; text-overflow: clip; }
+}
+@media (max-width: 599px) {
+  .b-include-item-add--modern {
+    .b-include-item-add__title { padding: 20px 16px; font-size: 19px; }
+    .b-include-item-add__body { padding-inline: 12px; }
+  }
+}
 .label-s-number-input {
   color: #2f3133;
   font-weight: 400;

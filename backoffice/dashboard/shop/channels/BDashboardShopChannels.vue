@@ -321,6 +321,9 @@ export default {
   .b-dashboard-channels__day-table :deep(td) {
     height: 44px;
     padding-inline: 8px;
+  }
+
+  .b-dashboard-channels__day-table :deep(td) {
     font-size: 12px;
     font-weight: 400;
     font-variant-numeric: tabular-nums;

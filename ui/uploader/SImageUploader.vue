@@ -66,19 +66,29 @@
           <v-icon>close</v-icon>
         </v-btn>
 
-        <v-btn
+        <slot
           v-if="!disabled"
-          class="ms-1"
-          icon
-          title="Edit image"
-          variant="text"
-          @click="
-            force_edit = !force_edit;
-            last_image = null;
+          name="compact-action"
+          :edit="
+            () => {
+              force_edit = !force_edit;
+              last_image = null;
+            }
           "
         >
-          <v-icon>edit</v-icon>
-        </v-btn>
+          <v-btn
+            class="ms-1"
+            icon
+            title="Edit image"
+            variant="text"
+            @click="
+              force_edit = !force_edit;
+              last_image = null;
+            "
+          >
+            <v-icon>edit</v-icon>
+          </v-btn>
+        </slot>
       </template>
     </v-list-item>
     <!-- --------- Normal mode --------- -->
@@ -128,6 +138,9 @@
             v-intersect="onIntersect"
             :accepted-file-types="acceptedFileTypes"
             :allow-multiple="allowMultiple"
+            :instant-upload="!deferUpload"
+            :allow-process="!deferUpload"
+            :disabled="disabled"
             :allowImageResize="allowImageResize"
             :allowImageTransform="allowImageTransform"
             :allowPaste="focused && !disablePast"
@@ -156,14 +169,16 @@
             class="pointer-pointer fadeIn filepond-style"
             credits="false"
             style="min-height: 84px"
+            @addfilestart="(file) => $emit('onAddFileStart', file)"
             @addfile="(error, file) => $emit('onAddFile', { error, file })"
+            @removefile="(error, file) => $emit('onRemoveFile', { error, file })"
             @error="handleFilePondError"
             @processfile="handleProcessFile"
             @processfileabort="(e) => $emit('onProcessFileAbort', e)"
             @processfilestart="(e) => $emit('onProcessFileStart', e)"
           />
 
-          <p class="small file-size-limit">
+          <p class="small file-size-limit text-dark">
             {{ $t("global.image_uploader.max_size", { size: maxFileSize }) }}
           </p>
 
@@ -210,7 +225,9 @@ export default {
     "new-url",
     "onClear",
     "onError",
+    "onAddFileStart",
     "onAddFile",
+    "onRemoveFile",
     "onProcessFileStart",
     "onProcessFileAbort",
   ],
@@ -222,6 +239,10 @@ export default {
     server: {
       required: false,
       type: String,
+    },
+    deferUpload: {
+      type: Boolean,
+      default: false,
     },
     extraParams: {
       type: Object,
@@ -359,6 +380,7 @@ export default {
       return this.image; //// + this.version;
     },
     server_credential() {
+      if (this.deferUpload && !this.server) return null;
       const token = document.head.querySelector('meta[name="csrf-token"]');
 
       const headers = {
@@ -429,6 +451,32 @@ export default {
   },
 
   methods: {
+    async processPendingFile() {
+      const pond = this.$refs.pond;
+      if (!this.deferUpload || !this.server || !pond)
+        throw new Error("Deferred image upload is not configured.");
+      const files = pond.getFiles();
+      // FilePond can leave processing promises pending for loading or invalid files.
+      if (files.length !== 1 || ![2, 5, 6].includes(files[0].status))
+        throw new Error("Choose one ready image before uploading.");
+      const file = await pond.processFile(files[0].id);
+      const response = JSON.parse(file?.serverId);
+      if (
+        !response ||
+        response.error ||
+        response.success === false ||
+        !response.files ||
+        typeof response.files !== "object" ||
+        Array.isArray(response.files) ||
+        typeof response.files.path !== "string" ||
+        !response.files.path.trim()
+      )
+        throw new Error("Image upload returned an invalid response.");
+      return response.files;
+    },
+    discardPendingFile() {
+      return this.$refs.pond?.removeFiles({ revert: false });
+    },
     onIntersect(isIntersecting) {
       this.focused = isIntersecting;
     },
@@ -444,6 +492,8 @@ export default {
     },
 
     handleProcessFile: function (error, file) {
+      // Deferred callers consume the validated result before delayed FilePond events arrive.
+      if (this.deferUpload) return;
       if (!error) {
         this.force_edit = false; // Reset to compact mode!
 
@@ -456,7 +506,7 @@ export default {
             this.$emit("new-path", file.path);
             this.$emit("new-url", file.url);
           });
-        } else if(response.files) {
+        } else if (response.files) {
           //console.log("done", response.files.path);
           this.$emit("new-path", response.files.path);
           this.$emit("new-url", response.files.url);

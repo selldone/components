@@ -13,10 +13,37 @@
   -->
 
 <template>
+  <tr v-if="modern" class="b-inventory-list-group--modern">
+    <td :colspan="columns.length">
+      <button type="button" class="b-inventory-list-group__toggle" :aria-expanded="is_open" @click="toggleGroup(item)">
+        <v-icon size="17">{{ is_open ? 'expand_more' : 'chevron_right' }}</v-icon>
+        <v-avatar :size="isMobile ? 40 : 44" class="b-inventory-list-group__avatar hover-scale-small">
+          <v-img :src="product.icon ? getShopImagePath(product.icon, IMAGE_SIZE_SMALL) : product_type.image" alt="">
+            <template v-slot:error>
+              <v-img :src="product_type.image" alt="" />
+            </template>
+          </v-img>
+        </v-avatar>
+        <span class="b-inventory-list-group__identity">
+          <span class="b-inventory-list-group__name">{{ product.title }}</span>
+          <span v-if="product.title_en" class="b-inventory-list-group__secondary">{{ product.title_en }}</span>
+        </span>
+        <product-variants-view v-if="product?.variants" :variants="product.variants" :dark="false" dense small />
+        <span class="b-inventory-list-group__summary">
+          <v-icon size="15" :aria-label="$t('inventory_list.table.status')">{{ icon }}</v-icon>
+          <span>{{ $t('global.commons.total') }}: {{ quantity }}</span>
+          <span>
+            <u-price :amount="min_price" :currency="product.currency" />
+            <template v-if="max_price !== min_price"> ~ <u-price :amount="max_price" :currency="product.currency" /></template>
+          </span>
+        </span>
+      </button>
+    </td>
+  </tr>
   <!-- ------------------------ Group > Mobile ------------------------ -->
 
   <div
-    v-if="isMobile"
+    v-else-if="isMobile"
     class="pp text-start p-2 my-2 usn d-flex flex-column"
     style="width: calc(100vw - 72px)"
     @click="toggleGroup(item)"
@@ -151,6 +178,7 @@ export default defineComponent({
     toggleGroup: {},
     isMobile: {},
     columns: {},
+    modern: Boolean,
   },
 
   computed: {
@@ -190,4 +218,47 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.b-inventory-list-group--modern {
+  background: rgba(var(--v-theme-on-surface), 0.025);
+  color: rgb(var(--v-theme-on-surface));
+
+  > td { padding: 0 !important; }
+
+  .b-inventory-list-group__toggle {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    min-height: 54px;
+    padding: 10px 18px;
+    text-align: start;
+    font: inherit;
+    font-size: 12px;
+    background: transparent;
+    border: 0;
+    color: inherit;
+
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: -3px; }
+  }
+
+  .b-inventory-list-group__identity { min-width: 0; }
+  .b-inventory-list-group__avatar { flex: 0 0 44px; border-radius: 10px; background: rgba(var(--v-theme-on-surface), 0.035); }
+  .b-inventory-list-group__name { display: block; font-weight: 500; }
+  .b-inventory-list-group__secondary { display: block; font-size: 11px; color: var(--sd-modern-muted); }
+  .b-inventory-list-group__summary { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-inline-start: auto; font-size: 11px; font-variant-numeric: tabular-nums; }
+  :deep(.u--price) { font-size: 12px; font-weight: 400; }
+
+  @media (max-width: 1199px) {
+    .b-inventory-list-group__toggle { gap: 8px; padding: 14px; }
+    .b-inventory-list-group__avatar { flex-basis: 40px; }
+    .b-inventory-list-group__identity { flex: 1; }
+    .b-inventory-list-group__summary { flex-basis: 100%; justify-content: space-between; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .b-inventory-list-group__avatar { transition: none; transform: none; }
+  }
+}
+</style>

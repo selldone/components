@@ -13,15 +13,15 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="text-start">
+  <div class="b-inventory-warehouse text-start" :class="{ 'b-inventory-warehouse--modern': modern }">
     <v-expansion-panels>
       <v-expansion-panel
         v-if="warehouse"
-        class="border"
+        :class="modern ? 'b-inventory-warehouse__panel' : 'border'"
         elevation="0"
         style="border-radius: 16px"
       >
-        <v-expansion-panel-title>
+        <v-expansion-panel-title class="b-inventory-warehouse__summary">
           <img
             class="me-2"
             height="36px"
@@ -30,7 +30,7 @@
           />
 
           <div v-if="!!warehouse.name || !!full_address">
-            <p class="font-weight-bold mb-1">
+            <p class="mb-1" :class="{ 'font-weight-bold': !modern }">
               {{ warehouse.title }}
               {{ warehouse.name ? ` > ${warehouse.name}` : "" }}
             </p>
@@ -47,12 +47,13 @@
             <small>{{ full_address }}</small>
           </div>
           <div v-else>
-            <p class="font-weight-bold m-0">
-              <v-icon class="me-2" color="success">add</v-icon>
+            <p class="m-0" :class="{ 'font-weight-bold': !modern }">
+              <v-icon class="me-2" :color="modern ? undefined : 'success'">add</v-icon>
 
               {{ $t("shop_warehouse_edit.title") }}
 
               <v-chip
+                v-if="!modern"
                 class="mx-1"
                 color="red"
                 pill
@@ -63,6 +64,10 @@
 
                 {{ $t("global.commons.important") }}
               </v-chip>
+              <span v-else class="sd-modern-status sd-modern-status--plain ms-2">
+                <v-icon color="warning" size="14" class="me-1">error_outline</v-icon>
+                {{ $t("global.commons.important") }}
+              </span>
             </p>
             <p class="small m-0">
               {{ $t("shop_warehouse_edit.message") }}
@@ -78,30 +83,39 @@
               :messages="$t('shop_warehouse_edit.name_input_message')"
               :placeholder="$t('shop_warehouse_edit.name_input')"
               color="primary"
-              variant="underlined"
+              :variant="modern ? 'outlined' : 'underlined'"
               @update:model-value="changed = true"
             />
 
-            <div class="mt-5">
+            <div class="mt-5" :class="{ 'b-inventory-warehouse__records': modern }">
               <p>
                 <span class="text-muted">
                   <i class="fas fa-directions me-1" />
                   {{ $t("shop_warehouse_edit.address") }}:
                 </span>
 
-                <flag
-                  v-if="map_location.country"
-                  :iso="map_location.country"
-                  :squared="false"
-                  class="me-1"
-                />
                 <b>
+                  <flag
+                    v-if="map_location.country"
+                    :iso="map_location.country"
+                    :squared="false"
+                    class="me-1"
+                  />
                   <span class="mx-1">{{ warehouse.state }} ●</span>
 
                   {{ full_address }}</b
                 >
 
+                <v-btn
+                  v-if="modern"
+                  class="sd-modern-icon-button"
+                  :aria-label="$t('shop_warehouse_edit.address')"
+                  icon="place"
+                  variant="text"
+                  @click="startup_mode_map_dialog = 'default'; map_dialog = true"
+                />
                 <u-button-circle
+                  v-else
                   color="primary"
                   icon="place"
                   @click="
@@ -119,7 +133,16 @@
                 </span>
                 <b>{{ warehouse.name }}</b>
 
+                <v-btn
+                  v-if="modern"
+                  class="sd-modern-icon-button"
+                  :aria-label="$t('shop_warehouse_edit.person_name')"
+                  icon="edit"
+                  variant="text"
+                  @click="startup_mode_map_dialog = 'detail'; map_dialog = true"
+                />
                 <u-button-circle
+                  v-else
                   color="primary"
                   icon="edit"
                   @click="
@@ -139,11 +162,12 @@
               </p>
             </div>
             <v-expand-transition>
-              <div v-if="changed" class="widget-buttons mt-3">
+              <div v-if="changed" :class="modern ? 'sd-modern-actions mt-3' : 'widget-buttons mt-3'">
                 <v-btn
                   :loading="busy"
                   color="primary"
-                  size="x-large"
+                  :size="modern ? undefined : 'x-large'"
+                  :class="{ 'sd-modern-button sd-modern-button--small': modern }"
                   variant="elevated"
                   @click="updateWarehouse"
                 >
@@ -168,6 +192,7 @@
     >
       <u-map-view
         v-if="map_dialog"
+        :class="{ 'text-start': modern }"
         v-model="map_location"
         v-model:center="center"
         :address-type="$t('shop_warehouse_edit.address_name')"
@@ -203,6 +228,7 @@ export default {
   components: { UMapView },
   emits: ["update:warehouse"],
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -325,4 +351,89 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-inventory-warehouse--modern {
+  .b-inventory-warehouse__panel {
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 12px !important;
+    background: rgb(var(--v-theme-surface));
+  }
+
+  .b-inventory-warehouse__summary {
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+
+    > div {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    img {
+      height: 28px;
+      width: 28px;
+    }
+
+    small,
+    .small {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.45;
+    }
+  }
+
+  :deep(.v-expansion-panel-text__wrapper) {
+    padding: 4px 16px 20px;
+  }
+
+  :deep(.v-field__input) {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .b-inventory-warehouse__records {
+    p {
+      display: grid;
+      grid-template-columns: minmax(120px, 0.7fr) minmax(0, 1.3fr) 36px;
+      align-items: start;
+      gap: 10px;
+      padding-block: 12px;
+      margin: 0;
+      border-block-end: 1px solid var(--sd-modern-border);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    b {
+      min-width: 0;
+      font-weight: 400;
+      overflow-wrap: anywhere;
+    }
+
+    .sd-modern-icon-button {
+      align-self: center;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .b-inventory-warehouse--modern .b-inventory-warehouse__records p {
+    grid-template-columns: minmax(0, 1fr) 44px;
+    gap: 5px 12px;
+
+    > .text-muted {
+      grid-column: 1;
+    }
+
+    > b {
+      grid-column: 1;
+    }
+
+    > .sd-modern-icon-button {
+      grid-column: 2;
+      grid-row: 1 / 3;
+    }
+  }
+}
+</style>

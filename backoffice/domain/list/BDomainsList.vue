@@ -29,7 +29,6 @@
       :class="{ 'b-domains-list__description sd-modern-subtitle': modern }"
       >{{ $t("domains.message") }}
 
-      <s-widget-help code="Domain.RedirectWWW" inline></s-widget-help>
     </component>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
@@ -761,7 +760,16 @@
       <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Pagination ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
       <template v-slot:bottom>
-        <v-pagination v-model="page" :length="pageCount" rounded />
+        <div v-if="modern" class="sd-modern-table-footer">
+          <span class="sd-modern-page-summary">{{ $t("global.commons.page") }} <bdi>{{ $n(pageCount ? page : 0) }} / {{ $n(pageCount) }}</bdi></span>
+          <v-pagination v-model="page" :length="pageCount" class="sd-modern-pagination" rounded />
+        </div>
+        <v-pagination
+          v-else
+          v-model="page"
+          :length="pageCount"
+          rounded
+        />
       </template>
     </v-data-table-server>
 
@@ -909,7 +917,6 @@ import BDomainSetting from "../../domain/setting/BDomainSetting.vue";
 import { throttle } from "lodash-es";
 import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
-import SWidgetHelp from "@selldone/components-vue/ui/widget/help/SWidgetHelp.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import DomainMixin from "@selldone/components-vue/mixin/domain/DomainMixin.ts";
 
@@ -925,7 +932,6 @@ export default {
   components: {
     ULoadingProgress,
     UMenuExpandable,
-    SWidgetHelp,
     UTextCopyBox,
     BDomainSetting,
     BDomainAdd,
@@ -1325,6 +1331,9 @@ export default {
   .b-domains-list__table :deep(th),
   .b-domains-list__table :deep(td) {
     padding-inline: 10px;
+  }
+
+  .b-domains-list__table :deep(td) {
     font-size: 12px;
     font-weight: 400;
     line-height: 1.55;
@@ -1332,7 +1341,6 @@ export default {
 
   .b-domains-list__table :deep(th) {
     height: 44px;
-    color: var(--sd-modern-muted);
   }
 
   .b-domains-list__domain-status {

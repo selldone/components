@@ -13,10 +13,17 @@
   -->
 
 <template>
-  <div v-bind="$attrs">
+  <div
+    v-bind="$attrs"
+    :class="{ 'b-customers-filter-design-modern text-start': modern }"
+  >
     <draggable
       :model-value="modelValue"
-      class="list-group list-group-flush"
+      :class="
+        modern
+          ? 'b-customers-filter-design-modern__list'
+          : 'list-group list-group-flush'
+      "
       style="list-style-type: none"
       tag="div"
       v-bind="dragOptions"
@@ -26,16 +33,96 @@
     >
       <template v-slot:item="{ element, index }">
         <li
-          class="list-group-item"
-          @click="editDialog(element)"
+          :class="
+            modern ? 'b-customers-filter-design-modern__row' : 'list-group-item'
+          "
+          @click="!modern && editDialog(element)"
           :key="element.type"
         >
+          <template v-if="modern">
+            <span class="b-customers-filter-design-modern__number">{{
+              index + 1
+            }}</span>
+            <v-icon
+              class="b-customers-filter-design-modern__handle"
+              size="18"
+              aria-hidden="true"
+              >drag_indicator</v-icon
+            >
+            <button
+              type="button"
+              class="b-customers-filter-design-modern__edit"
+              @click="editDialog(element)"
+            >
+              <b-customers-filter-item
+                :filter="element"
+                :types="types"
+                read-only
+              />
+            </button>
+            <div class="b-customers-filter-design-modern__actions">
+              <v-btn
+                class="sd-modern-icon-button"
+                icon
+                variant="text"
+                :disabled="index === 0"
+                :aria-label="`${$t('global.actions.previous')}: ${getName(element)}`"
+                @click.stop="moveItem(index, -1)"
+                ><v-icon size="18">arrow_upward</v-icon></v-btn
+              >
+              <v-btn
+                class="sd-modern-icon-button"
+                icon
+                variant="text"
+                :disabled="index === modelValue.length - 1"
+                :aria-label="`${$t('global.actions.next')}: ${getName(element)}`"
+                @click.stop="moveItem(index, 1)"
+                ><v-icon size="18">arrow_downward</v-icon></v-btn
+              >
+              <v-btn
+                class="sd-modern-icon-button"
+                icon
+                variant="text"
+                :aria-label="`${$t('global.actions.edit')}: ${getName(element)}`"
+                @click.stop="editDialog(element)"
+                ><v-icon size="18">edit</v-icon></v-btn
+              >
+              <v-btn
+                v-if="!isPermanent(element)"
+                class="sd-modern-icon-button"
+                icon
+                variant="text"
+                :aria-label="`${$t('global.actions.delete')}: ${getName(element)}`"
+                @click.stop="deleteItem(index)"
+                ><v-icon size="18">close</v-icon></v-btn
+              >
+            </div>
+          </template>
           <v-tooltip
-            location="bottom"
-            content-class="bg-black text-start pa-2 "
+            :location="modern ? 'top' : 'bottom'"
+            :content-class="
+              modern
+                ? 'sd-modern-tooltip text-start'
+                : 'bg-black text-start pa-2'
+            "
+            :open-on-focus="true"
+            :open-on-click="modern"
+            :persistent="false"
+            max-width="360"
           >
             <template v-slot:activator="{ props }">
+              <v-btn
+                v-if="modern"
+                class="sd-modern-icon-button sd-modern-info-button"
+                icon
+                variant="text"
+                :aria-label="getName(element)"
+                v-bind="props"
+                @click.stop
+                ><v-icon size="16">info_outline</v-icon></v-btn
+              >
               <v-icon
+                v-else
                 class="float-end ms-1 mt-1"
                 color="amber"
                 size="small"
@@ -50,6 +137,7 @@
           </v-tooltip>
 
           <b-customers-filter-item
+            v-if="!modern"
             :filter="element"
             :types="types"
             dark
@@ -57,7 +145,7 @@
           </b-customers-filter-item>
 
           <v-btn
-            v-if="!isPermanent(element)"
+            v-if="!modern && !isPermanent(element)"
             class="delete-button"
             icon
             size="small"
@@ -72,8 +160,30 @@
       </template>
     </draggable>
 
+    <v-menu v-if="modern && hasAdd" max-width="420" content-class="text-start">
+      <template #activator="{ props }">
+        <v-btn
+          v-bind="props"
+          class="sd-modern-button sd-modern-button--primary"
+          variant="flat"
+          prepend-icon="add"
+        >
+          {{ $t("global.actions.add") }} {{ $t("global.commons.filter") }}
+        </v-btn>
+      </template>
+      <v-list class="text-start" density="compact" lines="two">
+        <v-list-item
+          v-for="item in available_types"
+          :key="item.type"
+          :prepend-icon="item.icon"
+          :subtitle="$t(item.description)"
+          :title="$t(item.title)"
+          @click="addDialog(item.type)"
+        />
+      </v-list>
+    </v-menu>
     <v-list
-      v-if="hasAdd"
+      v-else-if="hasAdd"
       class="py-0 text-start border-between-vertical border"
       density="compact"
       rounded
@@ -101,7 +211,14 @@
     max-width="540"
     scrollable
   >
-    <v-card v-if="add_type" class="rounded-28px text-start" light>
+    <v-card
+      v-if="add_type"
+      class="rounded-28px text-start"
+      :class="{
+        'b-customers-filter-design-modern__dialog sd-modern-widget': modern,
+      }"
+      :light="!modern"
+    >
       <v-card-title
         ><img
           class="me-2"
@@ -233,13 +350,18 @@
       </v-card-text>
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="show_add = false">
+          <v-btn
+            :class="{ 'sd-modern-button': modern }"
+            size="x-large"
+            variant="text"
+            @click="show_add = false"
+          >
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
 
           <v-btn
-            class="min-width-200"
+            :class="modern ? 'sd-modern-button' : 'min-width-200'"
             color="primary"
             size="x-large"
             variant="elevated"
@@ -275,6 +397,10 @@ export default {
   },
   emits: ["update:modelValue"],
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     types: {
       require: true,
       type: Object,
@@ -310,7 +436,12 @@ export default {
         animation: 200,
         group: "description",
         disabled: false,
-        ghostClass: "ghost",
+        ghostClass: this.modern
+          ? "b-customers-filter-design-modern__ghost"
+          : "ghost",
+        ...(this.modern
+          ? { handle: ".b-customers-filter-design-modern__handle" }
+          : {}),
       };
     },
 
@@ -327,6 +458,14 @@ export default {
     if (!this.modelValue) this.$emit("update:modelValue", []);
   },
   methods: {
+    moveItem(index, delta) {
+      const target = index + delta;
+      if (target < 0 || target >= this.modelValue.length) return;
+      const items = [...this.modelValue];
+      const [item] = items.splice(index, 1);
+      items.splice(target, 0, item);
+      this.$emit("update:modelValue", items);
+    },
     isPermanent(filter) {
       return (
         this.permanentFilters &&
@@ -375,6 +514,94 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-customers-filter-design-modern {
+  &__ghost {
+    opacity: 0.5;
+    background: rgba(var(--v-theme-on-surface), 0.04);
+  }
+
+  &__dialog {
+    :deep(.v-card-title) {
+      padding: 0;
+      margin-block-end: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    :deep(.v-card-text) {
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    :deep(.v-card-actions) {
+      padding: 0;
+      margin-block-start: 20px;
+    }
+  }
+
+  &__list {
+    margin: 0 0 22px;
+    padding: 0;
+  }
+  &__row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-block: 20px;
+    list-style: none;
+    border-block-end: 1px solid var(--sd-modern-border);
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  &__number {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    min-width: 14px;
+  }
+  &__handle {
+    color: var(--sd-modern-muted);
+    cursor: grab;
+  }
+  &__edit {
+    flex: 1;
+    min-width: 140px;
+    padding: 8px 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+  }
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
+    gap: 5px;
+  }
+  @media (max-width: 599px) {
+    &__row {
+      gap: 8px;
+    }
+    &__actions {
+      margin-inline-start: 34px;
+    }
+    &__edit {
+      min-width: calc(100% - 80px);
+    }
+  }
+}
+
 .flip-list-move {
   transition: transform 0.5s;
 }

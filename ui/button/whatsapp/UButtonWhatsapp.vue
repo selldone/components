@@ -13,7 +13,54 @@
   -->
 
 <template>
+  <v-tooltip
+    v-if="modern && user.phone"
+    location="top"
+    content-class="sd-modern-tooltip text-start"
+    :max-width="320"
+    :open-on-hover="true"
+    :open-on-focus="true"
+    :persistent="false"
+  >
+    <template #activator="{ props }">
+      <v-btn
+        :href="link"
+        class="sd-modern-icon-button"
+        size="default"
+        icon
+        target="_blank"
+        v-bind="props"
+        variant="text"
+        :aria-label="
+          $t('global.instance_message_title') +
+          ' · ' +
+          $t('global.social_network.whatsapp')
+        "
+        @click.stop
+      >
+        <img
+          height="18"
+          width="18"
+          src="../../../assets/trademark/whatsapp.svg"
+          alt=""
+        />
+      </v-btn>
+    </template>
+    <div class="sd-modern-tooltip__title">
+      {{ $t("global.instance_message_title") }} ·
+      {{ $t("global.social_network.whatsapp") }}
+    </div>
+    <div class="mb-2">
+      <v-icon class="me-1" size="small">phone</v-icon>
+      {{ user.phone }}
+    </div>
+    <div>
+      <v-icon class="me-1" size="small">message</v-icon>
+      {{ message }}
+    </div>
+  </v-tooltip>
   <v-menu
+    v-else-if="!modern"
     content-class="bg-black pa-4 rounded-xl text-start"
     max-width="240"
     open-on-hover
@@ -64,6 +111,10 @@ export default {
       type: Object,
     },
     shop: {},
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     small: {
       type: Boolean,
       default: false,

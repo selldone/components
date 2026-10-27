@@ -14,22 +14,31 @@
 
 <template>
   <span>
-    <v-menu content-class="rounded-lg" min-width="240">
+    <v-menu :content-class="modern ? 'rounded-lg sd-modern-menu text-start' : 'rounded-lg'" min-width="240">
       <template v-slot:activator="{ props }">
         <v-btn
           @click.stop
           :loading="loading"
-          :title="title"
+          :title="modern ? undefined : title"
+          :aria-label="modern ? title || $t('global.commons.setting') : undefined"
           class="z1"
+          :class="{ 'sd-modern-icon-button': modern }"
           icon
           v-bind="props"
           variant="text"
           density="comfortable"
         >
-          <v-icon>{{ icon }}</v-icon>
+          <v-icon :size="modern ? 20 : undefined">{{ icon }}</v-icon>
+          <v-tooltip
+            v-if="modern"
+            activator="parent"
+            content-class="sd-modern-tooltip text-start"
+            location="top"
+            max-width="320"
+          >{{ title || $t('global.commons.setting') }}</v-tooltip>
         </v-btn>
       </template>
-      <v-list class="font-weight-medium text-start">
+      <v-list :class="modern ? 'sd-modern-menu__list text-start' : 'font-weight-medium text-start'">
         <v-list-item
           v-for="item in items"
           :key="item.title"
@@ -90,6 +99,7 @@ export default {
     withTrashed: { type: Boolean, default: false },
 
     title: {},
+    modern: Boolean,
   },
 
   data: function () {

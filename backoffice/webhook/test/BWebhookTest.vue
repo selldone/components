@@ -13,55 +13,61 @@
   -->
 
 <template>
-  <div class="widget-box mb-5">
-    <u-widget-header
-      :add-loading="busy"
-      add-caption="Send test data"
-      icon="science"
-      title="Test lab"
-      @click:add="sendTest()"
-    >
-    </u-widget-header>
-
-    <div
-      :class="{ 'stop-animations': !busy }"
-      class="d-flex align-center my-5 mx-3"
-    >
-      <div class="pod">
-        <v-icon :color="busy ? 'amber' : '#111'" class="mb-1" size="24"
-          >{{ busy ? "bolt" : webhook_obj.icon }}
-        </v-icon>
-        <small>{{ webhook_obj.title }}</small>
+  <section class="sd-modern-widget b-webhook-test text-start" :aria-busy="busy">
+    <header class="sd-modern-header b-webhook-test__header">
+      <div class="sd-modern-title b-webhook-test__heading">
+        <v-icon size="21" aria-hidden="true">science</v-icon>
+        <div>
+          <h2 class="sd-modern-title-text">{{ t("test.title") }}</h2>
+          <p class="sd-modern-subtitle">{{ t("test.subtitle") }}</p>
+        </div>
       </div>
+    </header>
 
-      <div class="flex-grow-1 sph">
-        <span class="dot -reverse"></span>
-      </div>
-
-      <div class="pod">
-        <v-icon class="mb-1" color="#111" size="24">dns</v-icon>
-
-        <small :title="webhook.url"
-          >...{{ webhook.url.substring(webhook.url.length - 8) }}</small
-        >
-      </div>
-    </div>
+    <b-webhook-flow
+      :event-code="webhook.type"
+      :url="webhook.url"
+      :active="active"
+      class="b-webhook-test__flow"
+    />
 
     <v-select
       v-if="webhook_obj.actions"
       v-model="action"
       :items="actions"
-      label="Action"
-      messages="Action is the cause of firing the event. The request structures are the same for all actions in an event."
-      variant="underlined"
-    ></v-select>
+      :label="t('test.action')"
+      :messages="t('test.action_hint')"
+      :disabled="busy"
+      :menu-props="{ contentClass: 'sd-modern-select-menu text-start' }"
+      class="b-webhook-test__action"
+      variant="outlined"
+      density="compact"
+      color="primary"
+    >
+      <template #item="{ props }">
+        <v-list-item v-bind="props" class="b-webhook-test-option" />
+      </template>
+    </v-select>
+
+    <div class="b-webhook-test__actions">
+      <v-btn
+        :loading="busy"
+        :disabled="busy"
+        class="sd-modern-button b-webhook-test__send"
+        color="primary"
+        variant="flat"
+        @click="sendTest()"
+        ><v-icon size="16" start aria-hidden="true">play_arrow</v-icon
+        >{{ t("test.send") }}</v-btn
+      >
+    </div>
 
     <v-expand-transition>
-      <div v-if="response">
+      <div v-if="response" class="b-webhook-test__response">
         <s-json-table :value="response" dense json-enable></s-json-table>
       </div>
     </v-expand-transition>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -69,15 +75,16 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 import WebhookTypes from "@selldone/core-js/enums/webhook/WebhookTypes";
 import SJsonTable from "../../../ui/json/table/SJsonTable.vue";
-
+import BWebhookFlow from "../flow/BWebhookFlow.vue";
 
 export default {
   name: "BWebhookTest",
   mixins: [],
 
-  components: { SJsonTable },
+  components: { SJsonTable, BWebhookFlow },
   props: {
     webhook: { required: true },
+    active: { type: Boolean, default: true },
   },
   data: () => ({
     busy: false,
@@ -105,6 +112,9 @@ export default {
   },
 
   methods: {
+    t(key, values?) {
+      return this.$t(`admin_shop.automation.webhooks.${key}`, values || {});
+    },
     sendTest() {
       this.busy = true;
       this.response = null;
@@ -136,4 +146,120 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-webhook-test-option :deep(.v-list-item-title) {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.b-webhook-test.sd-modern-widget {
+  padding: 24px 26px;
+  border-radius: 18px;
+
+  .b-webhook-test__header {
+    margin-block-end: 20px;
+  }
+  .b-webhook-test__heading {
+    gap: 11px;
+
+    > .v-icon {
+      flex: 0 0 21px;
+      margin-block-start: 3px;
+      color: var(--sd-modern-muted);
+    }
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.4;
+      letter-spacing: -0.25px;
+    }
+    p {
+      margin: 5px 0 0;
+      color: var(--sd-modern-muted);
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+  }
+  .b-webhook-test__flow {
+    margin-block-end: 22px;
+  }
+  .b-webhook-test__action {
+    :deep(.v-field) {
+      border-radius: 9px;
+    }
+    :deep(.v-field__input),
+    :deep(.v-select__selection-text) {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+    :deep(.v-field__input) {
+      min-height: 44px;
+    }
+    :deep(.v-messages) {
+      color: var(--sd-modern-muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+  }
+  .b-webhook-test__actions {
+    display: flex;
+    justify-content: end;
+    margin-block-start: 22px;
+  }
+  .b-webhook-test__send {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .b-webhook-test__response {
+    margin-block-start: 22px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    :deep(.v-table th),
+    :deep(.v-table td) {
+      font-size: 12px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+    :deep(.vjs-tree),
+    :deep(.vjs-tree-node) {
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    :deep(.vjs-value) {
+      color: inherit;
+    }
+    :deep(.vjs-tree-node:hover) {
+      background: var(--sd-modern-inset);
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .b-webhook-test.sd-modern-widget {
+    padding: 21px 20px;
+  }
+}
+@media (max-width: 420px) {
+  .b-webhook-test.sd-modern-widget {
+    padding: 20px 16px;
+  }
+}
+@media (max-width: 799px), (pointer: coarse) {
+  .b-webhook-test.sd-modern-widget {
+    .b-webhook-test__send {
+      min-height: 44px;
+    }
+    .b-webhook-test__action :deep(.v-field__input),
+    .b-webhook-test__action :deep(.v-select__selection-text) {
+      font-size: 16px;
+    }
+  }
+}
+</style>

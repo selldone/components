@@ -13,16 +13,20 @@
   -->
 
 <template>
-  <div v-if="languages?.length">
+  <div v-if="languages?.length" class="sd-modern-input-action-host">
     <v-btn
-      :title="`Set other languages for ${getName(translationKey)}`"
-      class="position-relative"
+      :aria-label="`${$t('translation_button.header')} | ${label || getName(translationKey)}`"
+      class="position-relative sd-modern-input-action"
       icon
       size="var(--append-inner-button-size)"
       variant="text"
+      type="button"
       @click="showTranslations()"
     >
       <v-icon>translate</v-icon>
+      <v-tooltip activator="parent" content-class="sd-modern-tooltip text-start" location="top">
+        {{ $t('translation_button.header') }} | {{ label || getName(translationKey) }}
+      </v-tooltip>
       <div
         v-if="number_translated > 0"
         :style="{
@@ -41,7 +45,7 @@
       scrollable
       width="90%"
     >
-      <v-card class="rounded-t-xl rounded-b-0">
+      <v-card class="rounded-t-xl rounded-b-0 text-start">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1" color="#333">translate</v-icon>
           {{ $t("translation_button.header") }} | {{ label }}

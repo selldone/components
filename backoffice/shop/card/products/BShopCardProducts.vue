@@ -15,18 +15,51 @@
 <template>
   <v-menu :close-on-content-click="false" :open-on-hover="true" z-index="100">
     <template v-slot:activator="{ props }">
-      <div v-bind="props">
+      <component
+        :is="modern ? 'button' : 'div'"
+        v-bind="props"
+        :type="modern ? 'button' : undefined"
+        :class="{ 'b-shop-card-products--modern': modern }"
+        :aria-label="
+          modern
+            ? $t('user_dashboard.shops.modern.product_details') +
+              ': ' +
+              (total_products === null ? '—' : total_products)
+            : undefined
+        "
+      >
+        <v-tooltip
+          v-if="modern"
+          activator="parent"
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          :open-on-focus="true"
+          :persistent="false"
+          >{{ $t("user_dashboard.shops.modern.product_details") }}</v-tooltip
+        >
+        <span v-if="modern" class="b-shop-card-products__caption">{{
+          $t("user_dashboard.shops.shop_card.products")
+        }}</span>
         <h6>
           <i class="fas fa-boxes" />
-          {{ numeralFormat(total_products, "0.[0]a") }}
+          {{
+            total_products === null
+              ? "—"
+              : numeralFormat(total_products, "0.[0]a")
+          }}
         </h6>
 
-        <p class="text-muted mb-0">
+        <p v-if="!modern" class="text-muted mb-0">
           <small>{{ $t("user_dashboard.shops.shop_card.products") }}</small>
         </p>
-      </div>
+      </component>
     </template>
-    <v-card class="p-2" min-width="300" rounded="xl">
+    <v-card
+      class="p-2"
+      :class="{ 'sd-modern-widget text-start': modern }"
+      :min-width="modern ? 280 : 300"
+      rounded="xl"
+    >
       <apexchart
         v-if="has_products"
         :height="250"
@@ -47,6 +80,7 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 export default {
   name: "BShopCardProducts",
   props: {
+    modern: Boolean,
     lastData: {
       required: true,
       type: Object,
@@ -113,33 +147,49 @@ export default {
     },
 
     total_products_physical() {
+      if (this.modern) return this.observed("total_products_physical");
       return this.lastData.total_products_physical
         ? this.lastData.total_products_physical
         : 0;
     },
 
     total_products_virtual() {
+      if (this.modern) return this.observed("total_products_virtual");
       return this.lastData.total_products_virtual
         ? this.lastData.total_products_virtual
         : 0;
     },
 
     total_products_file() {
+      if (this.modern) return this.observed("total_products_file");
       return this.lastData.total_products_file
         ? this.lastData.total_products_file
         : 0;
     },
     total_products_service() {
+      if (this.modern) return this.observed("total_products_service");
       return this.lastData.total_products_service
         ? this.lastData.total_products_service
         : 0;
     },
     total_products_subscription() {
+      if (this.modern) return this.observed("total_products_subscription");
       return this.lastData.total_products_subscription
         ? this.lastData.total_products_subscription
         : 0;
     },
     total_products() {
+      if (
+        this.modern &&
+        [
+          this.total_products_virtual,
+          this.total_products_physical,
+          this.total_products_file,
+          this.total_products_service,
+          this.total_products_subscription,
+        ].some((value) => value === null)
+      )
+        return null;
       return (
         this.total_products_virtual +
         this.total_products_physical +
@@ -172,7 +222,55 @@ export default {
       ];
     },
   },
+  methods: {
+    observed(key) {
+      const value = this.lastData[key];
+      return (typeof value === "number" ||
+        (typeof value === "string" && value.trim() !== "")) &&
+        Number.isFinite(Number(value))
+        ? Number(value)
+        : null;
+    },
+  },
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.b-shop-card-products--modern {
+  font-family: inherit;
+  font-weight: 400;
+  line-height: inherit;
+  text-align: start;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: rgb(var(--v-theme-on-surface));
+  .b-shop-card-products__caption {
+    display: block;
+    color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), 0.66));
+    font-size: 11px;
+    font-weight: 400;
+    margin-bottom: 3px;
+  }
+  h6 {
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    i {
+      display: none;
+    }
+  }
+  &:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  @media (max-width: 799px), (pointer: coarse) {
+    min-height: 44px;
+  }
+}
+</style>

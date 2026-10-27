@@ -13,7 +13,12 @@
   -->
 
 <template>
-  <div :class="{ dark: dark }" class="u--smart-multi-select">
+  <div
+    :class="{ dark: dark, 'u--smart-multi-select--accessible': accessible }"
+    :role="accessible ? 'group' : undefined"
+    :aria-disabled="accessible ? disabled || loading : undefined"
+    class="u--smart-multi-select"
+  >
     <h3 v-if="label" class="my-2">{{ label }}</h3>
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
@@ -28,8 +33,13 @@
         v-for="task in items_show"
         :key="task[itemValue]"
         :class="{ 'bg-dark': dark, 'bg-white': !dark, disabled: task.disabled }"
+        :role="accessible ? 'checkbox' : undefined"
+        :aria-checked="accessible ? modelValue.includes(task[itemValue]) : undefined"
+        :aria-disabled="accessible ? disabled || loading || !!task.disabled : undefined"
+        :tabindex="accessible ? disabled || loading || task.disabled ? -1 : 0 : undefined"
         class="pa-2 pp row-hover usn"
         @click="toggle(task[itemValue])"
+        @keydown="onKeydown($event, task)"
       >
         <div class="d-flex align-center mnh">
           <div
@@ -99,6 +109,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    accessible: { default: false, type: Boolean },
     dark: {
       default: false,
       type: Boolean,
@@ -121,11 +132,18 @@ export default {
 
   methods: {
     toggle(val) {
+      if (this.accessible && (this.disabled || this.loading || this.items.find((task) => task[this.itemValue] === val)?.disabled)) return;
       this.modelValue.toggle(val);
 
       this.$emit("update:modelValue", this.modelValue);
       this.$emit("change", this.modelValue);
       this.signalUpdate();
+    },
+
+    onKeydown(event, task) {
+      if (!this.accessible || !["Enter", " "].includes(event.key)) return;
+      event.preventDefault();
+      this.toggle(task[this.itemValue]);
     },
 
     signalUpdate() {
@@ -140,6 +158,12 @@ export default {
 <style lang="scss" scoped>
 .u--smart-multi-select {
   text-align: start;
+
+  &--accessible [role="checkbox"]:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: -3px;
+    border-radius: 8px;
+  }
 
   .mnh {
     min-height: 40px;

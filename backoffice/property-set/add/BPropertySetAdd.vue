@@ -15,19 +15,20 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ███████████████████████ Add\Edit Property Set ███████████████████████ -->
 
-  <v-card>
-    <v-card-title class="d-flex align-center">
+  <v-card :class="{ 'b-property-set-add--modern sd-modern-canvas text-start': modern }">
+    <v-card-title class="d-flex align-center" :class="{ 'b-property-set-add__title': modern }">
       <v-icon class="me-2">hive</v-icon>
 
       {{ propertySet ? $t('property_set_add.edit_title') : $t('property_set_add.add_title') }}
     </v-card-title>
-    <v-card-text>
-      <div class="widget-box mb-5">
+    <v-card-text :class="{ 'b-property-set-add__body': modern }">
+      <div :class="modern ? 'sd-modern-widget sd-modern-form mb-5' : 'widget-box mb-5'">
         <u-widget-header
           icon="tune"
+          :class="{ 'sd-modern-form-header': modern }"
           :title="$t('global.commons.general_config')"
         ></u-widget-header>
-        <v-list-subheader>
+        <v-list-subheader :class="{ 'b-property-set-add__description': modern }">
           {{$t('property_set_add.config.subtitle')}}
 
         </v-list-subheader>
@@ -65,12 +66,13 @@
         </v-text-field>
       </div>
 
-      <div class="widget-box mb-5">
+      <div :class="modern ? 'sd-modern-widget sd-modern-form mb-5' : 'widget-box mb-5'">
         <u-widget-header
           icon="fa:fas fa-cubes-stacked"
+          :class="{ 'sd-modern-form-header': modern }"
           :title="$t('property_set_add.variants.title') "
         ></u-widget-header>
-        <v-list-subheader>
+        <v-list-subheader :class="{ 'b-property-set-add__description': modern }">
           {{$t('property_set_add.variants.subtitle')}}
         </v-list-subheader>
 
@@ -142,9 +144,10 @@
         </v-expand-transition>
       </div>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions :class="{ 'sd-modern-form-actions': modern }">
       <div class="widget-buttons">
         <v-btn
+          :class="{ 'sd-modern-button': modern }"
           size="x-large"
           variant="text"
           @click="close"
@@ -155,6 +158,7 @@
 
         <v-btn
           v-if="propertySet?.id"
+          :class="{ 'sd-modern-button': modern }"
           :loading="busy"
           color="primary"
           size="x-large"
@@ -166,6 +170,7 @@
         </v-btn>
         <v-btn
           v-else
+          :class="{ 'sd-modern-button': modern }"
           :loading="busy"
           color="primary"
           size="x-large"
@@ -202,6 +207,7 @@ export default {
   },
   emits: ["add", "edit", "close"],
   props: {
+    modern: Boolean,
     propertySet: {
       type: Object,
     },
@@ -332,4 +338,17 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-property-set-add--modern {
+  .b-property-set-add__title { padding: 24px 28px; font-size: 21px; font-weight: 600; line-height: 1.35; white-space: normal; }
+  .b-property-set-add__body { padding: 0 28px 20px; }
+  :deep(.b-property-set-add__description) { min-height: 0; padding: 0; margin-block-end: 20px; font-size: 13px; line-height: 1.6; overflow: visible; }
+  :deep(.b-property-set-add__description > .v-list-subheader__text) { white-space: normal; overflow: visible; text-overflow: clip; }
+}
+@media (max-width: 599px) {
+  .b-property-set-add--modern {
+    .b-property-set-add__title { padding: 20px 16px; font-size: 19px; }
+    .b-property-set-add__body { padding-inline: 12px; }
+  }
+}
+</style>

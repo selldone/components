@@ -57,8 +57,31 @@
             '-hover': $vuetify.display.xs,
           }"
           :style="`width:${100 / length}%`"
-          :title="$t(item.name)"
+          :title="modernTooltips && _key !== 'ToCustomer' ? undefined : $t(item.name)"
         >
+          <button
+            v-if="modernTooltips && _key !== 'ToCustomer'"
+            type="button"
+            class="s-order-delivery-status-stepper__help"
+            :aria-label="$t(item.name)"
+            @click.stop
+          >
+            <v-tooltip
+              activator="parent"
+              location="top"
+              :open-on-focus="true"
+              :open-on-click="true"
+              :persistent="false"
+              :max-width="300"
+              content-class="sd-modern-tooltip text-start"
+            >
+              <div class="sd-modern-tooltip__title">{{ $t(item.name) }}</div>
+              <div class="sd-modern-tooltip__body">
+                <span class="d-block mb-1">{{ $t(`admin_shop.orders.physical.modern.stages.${activeIndex > index ? 'completed' : activeIndex === index ? 'current' : 'upcoming'}`) }}</span>
+                {{ $t(`admin_shop.orders.physical.modern.stages.${_key}`) }}
+              </div>
+            </v-tooltip>
+          </button>
           <v-icon
             v-if="activeIndex > index"
             class="hide-on-hover"
@@ -128,6 +151,10 @@ export default {
 
   emits: ["mouseEnterToCustomer"],
   props: {
+    modernTooltips: {
+      type: Boolean,
+      default: false,
+    },
     dark: {
       type: Boolean,
       default: false,
@@ -181,6 +208,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.s-order-delivery-status-stepper__help {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+
+  &:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 3px;
+  }
+
+  @media (pointer: coarse) {
+    inset-block-start: 50%;
+    inset-block-end: auto;
+    min-height: 44px;
+    transform: translateY(-50%);
+  }
+}
+
 $color_1: var(--step-color);
 $color_2: white;
 $border_color_1: var(--step-color-dark);

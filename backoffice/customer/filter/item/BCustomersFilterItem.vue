@@ -18,7 +18,7 @@
     :title="filter.type"
     class="it"
   >
-    <v-icon v-if="icon" class="me-2" size="small" >{{ icon }}</v-icon>
+    <v-icon v-if="icon" class="me-2" size="small">{{ icon }}</v-icon>
     <span v-if="!noLabel" class="me-1" style="vertical-align: sub">
       {{ name }}
     </span>
@@ -57,7 +57,17 @@
 
     <!-- Subscribe -->
     <span v-else-if="filter.type === 'SUBSCRIBED'">
-      <u-check :model-value="filter.subscribed"></u-check>
+      <v-icon
+        v-if="readOnly"
+        :color="filter.subscribed ? 'success' : undefined"
+        size="18"
+        role="img"
+        :aria-label="
+          $t(filter.subscribed ? 'global.active' : 'global.inactive')
+        "
+        >{{ filter.subscribed ? "check" : "close" }}</v-icon
+      >
+      <u-check v-else :model-value="filter.subscribed"></u-check>
     </span>
 
     <!-- Limit -->
@@ -93,6 +103,7 @@ export default {
   mixins: [DateMixin, ClubMixin],
   props: {
     filter: { required: true },
+    readOnly: { default: false, type: Boolean },
     dark: { default: false, type: Boolean },
     noLabel: { default: false, type: Boolean },
     forceName: {},

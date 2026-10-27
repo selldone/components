@@ -13,16 +13,27 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="widget-box -x-large mb-5 min-height-50vh">
-    <v-row align="center" class="px-2 py-2" justify="start" no-gutters>
+  <div
+    class="b-process-center-list"
+    :class="modern ? 'b-process-center-list--modern text-start' : 'widget-box -x-large mb-5 min-height-50vh'"
+    :style="modern ? { '--sd-order-status-filter': $vuetify.theme?.current?.dark ? 'invert(1) hue-rotate(180deg)' : 'none' } : undefined"
+    :aria-busy="busy_fetch"
+  >
+    <header v-if="modern" class="sd-modern-header b-process-center-list__header">
+      <slot name="heading"></slot>
+      <slot name="top-menu"></slot>
+    </header>
+    <div :class="{ 'sd-modern-widget b-process-center-list__body': modern }">
+    <v-row align="center" class="px-2 py-2 b-process-center-list__toolbar" justify="start" no-gutters>
       <div class="flex-grow-1">
         <s-order-statuses-select
           v-model="status"
           :has-cod="has_cod"
           :has-open="!isDropShipping"
-          class=""
+          class="b-process-center-list__statuses"
           has-reserved
           @change="
+            modern && (page = 1);
             fetchOrders(1, sortBy?.[0]?.key, sortBy?.[0]?.order === 'desc')
           "
         ></s-order-statuses-select>
@@ -57,31 +68,65 @@
 
       <v-text-field
         v-model="search"
-        :placeholder="$t('global.commons.search')"
+        :placeholder="modern ? $t('admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
         bg-color="transparent"
-        class="min-width-200 max-width-field"
+        class="min-width-200 max-width-field b-process-center-list__search"
+        :aria-label="modern ? $t('admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
         clearable
         flat
         hide-details
         prepend-inner-icon="search"
         single-line
-        variant="solo"
+        :variant="modern ? 'plain' : 'solo'"
       ></v-text-field>
 
-      <slot name="top-menu"></slot>
+      <v-btn
+        v-if="modern"
+        class="sd-modern-button sd-modern-button--compact b-process-center-list__filter-button"
+        variant="text"
+        prepend-icon="tune"
+        @click="dialogExtraFilters = true"
+      >
+        {{ $t('admin_shop.orders.physical.modern.filters.title') }}
+        <span v-if="extraFilterSummaries.length" class="ms-1">· {{ extraFilterSummaries.length }}</span>
+      </v-btn>
+
+      <div v-if="modern && extraFilterSummaries.length" class="b-process-center-list__filter-summaries" :aria-label="$t('admin_shop.orders.physical.modern.filters.applied_summary', { count: extraFilterSummaries.length })">
+        <v-chip
+          v-for="filter in extraFilterSummaries"
+          :key="filter.key"
+          class="b-process-center-list__filter-summary"
+          variant="outlined"
+          size="small"
+          closable
+          close-icon="close"
+          :close-label="$t('admin_shop.orders.physical.modern.filters.remove', { filter: filter.label })"
+          @click="dialogExtraFilters = true"
+          @click:close.stop="removeExtraFilter(filter.key)"
+        >
+          <v-avatar v-if="filter.key === 'productId'" class="me-1 hover-scale" size="20" rounded="sm">
+            <img :src="getProductImage(extraFilters.productId, IMAGE_SIZE_SMALL)" alt="" />
+          </v-avatar>
+          <v-icon v-else :icon="filter.icon" size="13" class="me-1" aria-hidden="true" />
+          <span class="b-process-center-list__filter-label">{{ filter.label }}</span>
+          <v-tooltip v-if="filter.description" activator="parent" location="top" :open-on-focus="true" :persistent="false" content-class="sd-modern-tooltip text-start">{{ filter.description }}</v-tooltip>
+        </v-chip>
+      </div>
+
+      <slot v-if="!modern" name="top-menu"></slot>
     </v-row>
 
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
       v-model:page="page"
       v-model:sort-by="sortBy"
-      :class="{ 'blurred disabled': busy_fetch && !HIGHLIGHT_ID }"
+      :class="{ 'blurred disabled': busy_fetch && !HIGHLIGHT_ID, 'sd-modern-data-table b-process-center-list__table': modern }"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="orders"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
-      :mobile="$vuetify.display.xs"
+      :mobile="modern ? $vuetify.display.width < 1000 : $vuetify.display.xs"
       :row-props="
         (_data) => {
           return {
@@ -99,7 +144,7 @@
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="!busy_fetch && !search" class="py-5 usn text-center fadeIn">
+        <div v-if="!busy_fetch && !search && (!modern || !extraFilterSummaries.length)" class="py-5 usn text-center fadeIn" :class="{ 'sd-modern-empty-state': modern }">
           <img
             :src="require('../../../assets/guides/orders-empty.png')"
             class="m-3 op-0-3"
@@ -161,7 +206,17 @@
 
       <template v-slot:item.id="{ item }">
         <div class="py-1 py-sm-0">
-          <div class="min-width-250 d-flex align-center">
+          <div class="min-width-250 d-flex align-center b-process-center-list__order">
+            <router-link
+              v-if="modern"
+              :to="createRouteTo(item)"
+              target="_blank"
+              class="b-process-center-list__basket"
+              :aria-label="getBasketOrderCode(item)"
+              @click.stop
+            >
+              <v-img :src="basket_image" :width="21" :height="27" />
+            </router-link>
             <!-- Avocado -->
             <div v-if="isAvocado" class="flex-grow-1">
               <div class="mt-1 d-flex align-center">
@@ -216,14 +271,15 @@
                 }}
               </b>
               <!-- Normal mode -->
-              <b v-else class="flex-grow-1 flex-md-grow-0 text-start">
+              <b v-else class="flex-grow-1 flex-md-grow-0 text-start b-process-center-list__code">
                 {{ getBasketOrderCode(item) }}
               </b>
               <products-dense-images-circles
                 :ids="getProductsIDs(item)"
+                :size="modern ? 27 : 32"
                 big-scale
                 border
-                class="py-1"
+                class="py-1 b-process-center-list__products"
                 style="vertical-align: super; display: inline"
               ></products-dense-images-circles>
 
@@ -265,25 +321,36 @@
 
             <v-chip
               v-if="item.withdraw"
-              class="font-weight-bold mx-1"
+              :class="modern ? 'b-process-center-list__withdrawal' : 'font-weight-bold mx-1'"
+              :aria-label="modern ? $t('admin_shop.orders.physical.modern.withdrawal.title') : undefined"
+              :tabindex="modern ? 0 : undefined"
               color="red"
               label
               size="x-small"
               variant="flat"
+              v-on="modern ? { click: event => event.stopPropagation() } : {}"
             >
               <v-icon start size="12">assignment_return</v-icon>
-              Withdrawn by customer
-              <v-tooltip activator="parent" content-class="bg-black text-start" location="top">
-                <div class="font-weight-bold mb-1">Withdrawn by customer</div>
-                <div v-if="item.withdraw_at" class="small mb-1">
-                  Requested at:
+              {{ modern ? $t('admin_shop.orders.physical.modern.withdrawal.badge') : 'Withdrawn by customer' }}
+              <v-tooltip
+                activator="parent"
+                :content-class="modern ? 'sd-modern-tooltip text-start' : 'bg-black text-start'"
+                location="top"
+                :open-on-focus="true"
+                :open-on-click="modern"
+                :persistent="false"
+                :max-width="modern ? 330 : undefined"
+              >
+                <div :class="modern ? 'sd-modern-tooltip__title' : 'font-weight-bold mb-1'">
+                  {{ modern ? $t('admin_shop.orders.physical.modern.withdrawal.title') : 'Withdrawn by customer' }}
+                </div>
+                <div v-if="item.withdraw_at" :class="modern ? 'sd-modern-tooltip__body mb-1' : 'small mb-1'">
+                  {{ modern ? $t('admin_shop.orders.physical.modern.withdrawal.requested_at') : 'Requested at' }}:
                   <b>{{getFromNowString(item.withdraw_at)}}</b> |
                   {{ getLocalTimeString(item.withdraw_at) }}
                 </div>
-                <div class="small max-w-300">
-                  The customer has withdrawn this order. If you already shipped
-                  it, arrange the return. Always verify that the customer refund
-                  was completed correctly. You are responsible for handling it.
+                <div :class="modern ? 'sd-modern-tooltip__body' : 'small max-w-300'">
+                  {{ modern ? $t('admin_shop.orders.physical.modern.withdrawal.body') : 'The customer has withdrawn this order. If you already shipped it, arrange the return. Always verify that the customer refund was completed correctly. You are responsible for handling it.' }}
                 </div>
               </v-tooltip>
             </v-chip>
@@ -328,88 +395,25 @@
             />
           </div>
 
-          <!-- ▀▀▀▀▀▀▀▀▀ 🥵 User / 🧜 Customer ▀▀▀▀▀▀▀▀▀ -->
-          <div
-            v-if="item.customer || item.buyer"
-            class="d-flex align-center small mt-n1"
-          >
-            <component
-              :is="item.customer_id && !isAffiliatePos ? 'router-link' : 'span'"
-              :to="{
-                name: 'BPageCustomerDashboard',
-                params: { customer_id: item.customer_id },
-              }"
-              title="Go to customer page"
-              @click.stop
-            >
-              <v-avatar
-                v-if="item.buyer"
-                :size="24"
-                class="avatar-gradient -thin -no-gap -customer me-1 hover-scale"
-                color="#fafafa"
-              >
-                <v-img :src="getUserAvatar(item.buyer.id)"></v-img>
-              </v-avatar>
-              <u-avatar-text
-                v-else
-                :name="item.customer.name"
-                :size="24"
-                class="avatar-gradient -thin -customer me-1 hover-scale"
-                color="#fafafa"
-              >
-              </u-avatar-text>
-            </component>
-            <b>
-              {{ item.customer ? item.customer.name : item.buyer.name }}
-            </b>
-            <span class="dashed-flex-space"></span>
-
-            <template
-              v-if="item.customer ? item.customer.phone : item.buyer.phone"
-            >
-              {{ item.customer ? item.customer.phone : item.buyer.phone }}
-              <u-button-whatsapp
-                :shop="shop"
-                :user="item.customer ? item.customer : item.buyer"
-                class="mx-1"
-                small
-              ></u-button-whatsapp>
-            </template>
-
-            <template
-              v-if="item.customer ? item.customer.email : item.buyer.email"
-            >
-              <v-btn
-                :title="
-                  $t('global.commons.email') +
-                  ' : ' +
-                  (item.customer ? item.customer.email : item.buyer.email)
-                "
-                class="ms-1"
-                color="#333"
-                icon
-                size="28"
-                variant="text"
-                @click.stop="
-                  copyToClipboard(
-                    item.customer ? item.customer.email : item.buyer.email,
-                  )
-                "
-              >
-                <v-icon size="18">email</v-icon>
-              </v-btn>
-            </template>
-          </div>
-          <!-- ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀ -->
-          <div v-else class="d-flex align-center small mt-n1">
-            <v-icon class="me-1" size="small">account_circle</v-icon>
-            <b>{{ $t("global.commons.guest") }} </b>
-          </div>
+          <b-process-center-customer
+            v-if="!modern"
+            :item="item"
+            :shop="shop"
+            :is-affiliate-pos="isAffiliatePos"
+          />
         </div>
       </template>
 
+      <template v-if="modern" v-slot:item.customer="{ item }">
+        <b-process-center-customer
+          :item="item"
+          :shop="shop"
+          :is-affiliate-pos="isAffiliatePos"
+        />
+      </template>
+
       <template v-slot:item.price="{ item }">
-        <div class="py-1">
+        <div class="py-1 b-process-center-list__amount">
           <!-- Need pricing -->
           <span
             v-if="isService && item.status === 'Reserved'"
@@ -424,7 +428,7 @@
 
           <p
             v-else
-            class="m-0 font-weight-bold d-flex align-center min-width-250"
+            class="m-0 font-weight-bold d-flex align-center min-width-250 b-process-center-list__amount-value"
             title="Payment"
           >
             <return-request-button-badge
@@ -571,7 +575,7 @@
             }}</small>
           </div>
 
-          <v-row class="text-muted small mt-1" no-gutters>
+          <v-row class="text-muted small mt-1 b-process-center-list__amount-details" no-gutters>
             <div v-if="has_delivery">
               <v-icon size="x-small">local_shipping</v-icon>
               <span class="mx-1"
@@ -620,6 +624,12 @@
 
       <!-- Status > Payment -->
       <template v-slot:item.status="{ item }">
+        <div
+          class="b-process-center-list__payment"
+          :tabindex="modern && getPaymentDetailRows(item.payment).length ? 0 : undefined"
+          :aria-label="modern && getPaymentDetailRows(item.payment).length ? $t('admin_shop.orders.physical.modern.payment.title') : undefined"
+          @click="modern && getPaymentDetailRows(item.payment).length && $event.stopPropagation()"
+        >
         <s-order-status-view
           :gateway-processing="item.gateway_processing"
           :payment-require-capture="
@@ -629,12 +639,34 @@
           :payment="item.payment"
           class="mt-3 inline-block"
         ></s-order-status-view>
+          <v-tooltip
+            v-if="modern && getPaymentDetailRows(item.payment).length"
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            :open-on-click="true"
+            :persistent="false"
+            :max-width="330"
+            content-class="sd-modern-tooltip text-start"
+          >
+            <div class="sd-modern-tooltip__title">{{ $t('admin_shop.orders.physical.modern.payment.title') }}</div>
+            <dl class="sd-modern-tooltip__details">
+              <div v-for="detail in getPaymentDetailRows(item.payment)" :key="detail.key">
+                <dt>{{ $t(detail.labelKey) }}</dt>
+                <dd>{{ detail.value }}</dd>
+              </div>
+            </dl>
+            <p v-if="getPaymentDetailRows(item.payment).some(detail => detail.key === 'risk')" class="sd-modern-tooltip__body mt-2 mb-0">
+              {{ $t('admin_shop.orders.physical.modern.payment.risk_help') }}
+            </p>
+          </v-tooltip>
+        </div>
       </template>
 
       <!-- Status > Delivery -->
       <template v-if="has_delivery_col" v-slot:item.delivery_state="{ item }">
         <div
-          v-if="$vuetify.display.xs && item.channel"
+          v-if="($vuetify.display.xs || modern) && item.channel"
           style="font-size: 12px; font-weight: 500"
           class="d-flex align-center"
         >
@@ -654,14 +686,17 @@
           :isSubscribed="item.status === 'Payed'"
           :state="item.delivery_state"
           :states="deliveryStates"
-          class="my-1"
+          :modern-tooltips="modern"
+          class="my-1 b-process-center-list__stepper"
+          :color="modern ? 'rgba(var(--v-theme-on-surface), 0.25)' : undefined"
+          :dark-color="modern ? 'rgb(var(--v-theme-on-surface))' : undefined"
           @mouseEnterToCustomer="(n) => setActivator(n, item)"
         />
 
         <div
-          class="py-1 small min-width-200 d-flex align-center justify-center"
+          class="py-1 small min-width-200 d-flex align-center justify-center b-process-center-list__delivery-caption"
         >
-          <span class="text-muted">
+          <span v-if="!modern" class="text-muted">
             {{ getDeliveryStateString(item.delivery_state) }}
           </span>
           <template v-if="item.receiver_info">
@@ -675,11 +710,14 @@
               <span>{{ getShortAddress(item.receiver_info) }}</span>
             </div>
           </template>
+          <span v-if="modern" class="text-muted">
+            {{ getDeliveryStateString(item.delivery_state) }}
+          </span>
         </div>
       </template>
 
       <template v-slot:item.reserved_at="{ item }">
-        <div class="min-width-200 py-1">
+        <div class="min-width-200 py-1 b-process-center-list__checkout">
           {{
             getFromNowString(
               item.reserved_at ? item.reserved_at : item.created_at,
@@ -691,7 +729,8 @@
 
             <v-btn
               v-if="item.chat && item.chat.length"
-              class="mx-1"
+              class="mx-1 b-process-center-list__chat"
+              :aria-label="$t('global.commons.chat')"
               color="#111"
               icon
               variant="text"
@@ -725,14 +764,45 @@
 
             <!-- ▂▂▂▂▂▂▂▂ Emoji ▂▂▂▂▂▂▂ -->
 
+            <template v-if="getDiffLastUpdateEmoji(item)">
+              <v-btn
+                v-if="modern"
+                class="b-process-center-list__attention ms-1"
+                icon
+                variant="text"
+                :aria-label="$t(orderAttention(item)?.titleKey || 'global.commons.order')"
+                @click.stop
+              >
+                <img
+                  :class="getDiffLastUpdateOver3Days(item) ? 'jump-target' : ''"
+                  :src="getDiffLastUpdateEmoji(item)"
+                  alt=""
+                  height="20"
+                  width="20"
+                />
+                <v-tooltip
+                  v-if="orderAttention(item)"
+                  activator="parent"
+                  location="top"
+                  :open-on-focus="true"
+                  :open-on-click="true"
+                  :persistent="false"
+                  :max-width="300"
+                  content-class="sd-modern-tooltip text-start"
+                >
+                  <div class="sd-modern-tooltip__title">{{ $t(orderAttention(item).titleKey) }}</div>
+                  <div class="sd-modern-tooltip__body">{{ $t(orderAttention(item).bodyKey) }}</div>
+                </v-tooltip>
+              </v-btn>
             <img
-              v-if="getDiffLastUpdateEmoji(item)"
+              v-else
               :class="getDiffLastUpdateOver3Days(item) ? 'jump-target' : ''"
               :src="getDiffLastUpdateEmoji(item)"
               class="ms-1"
               height="20"
               width="20"
             />
+            </template>
             <span
               v-else
               class="d-inline-block"
@@ -752,11 +822,25 @@
       </template>
 
       <template v-slot:bottom>
-        <v-pagination v-model="page" :length="pageCount" rounded />
+        <div :class="{ 'sd-modern-table-footer b-process-center-list__footer': modern }">
+          <span v-if="modern">{{ $t('global.commons.orders') }} · {{ totalItems }}</span>
+          <v-pagination v-model="page" :length="pageCount" :class="{ 'sd-modern-pagination': modern }" :total-visible="modern ? 7 : undefined" rounded />
+        </div>
       </template>
     </v-data-table-server>
 
     <slot></slot>
+    </div>
+
+    <b-process-center-filters
+      v-if="modern && dialogExtraFilters"
+      v-model="dialogExtraFilters"
+      :filters="extraFilters"
+      :shop="shop"
+      :fixed-product-id="filterProductId"
+      :fixed-customer-id="filterCustomerId"
+      @apply="applyExtraFilters"
+    />
 
     <!-- ----------------------------------- Receiver Info Details Menu ----------------------------------- -->
     <v-menu
@@ -767,7 +851,7 @@
       max-width="360"
       open-on-hover
     >
-      <v-sheet class="p-3" color="#fefefe" rounded="xl">
+      <v-sheet class="p-3 text-start" :color="modern ? 'surface' : '#fefefe'" rounded="xl">
         <s-order-receiver-info-card
           v-if="activator_item && activator_item.receiver_info"
           :receiver-info="activator_item.receiver_info"
@@ -824,10 +908,9 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import ProductsDenseImagesCircles from "../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import SOrderStatusView from "../../../storefront/order/order-status/SOrderStatusView.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
-import UButtonWhatsapp from "../../../ui/button/whatsapp/UButtonWhatsapp.vue";
+import BProcessCenterCustomer from "./BProcessCenterCustomer.vue";
 import SOrderReceiverInfoCard from "../../../storefront/order/receiver-info/card/SOrderReceiverInfoCard.vue";
 import ConnectOrderChip from "../../connect/order/chip/ConnectOrderChip.vue";
-import UAvatarText from "../../../ui/avatar/text/UAvatarText.vue";
 import SOrderChatMessage from "../../../storefront/order/chat/message/SOrderChatMessage.vue";
 import BillingPeriod from "@selldone/core-js/enums/subscription/BillingPeriod";
 import BProductSubscriptionPricingInput from "../../product/subscription/pricing/input/BProductSubscriptionPricingInput.vue";
@@ -844,21 +927,31 @@ import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import {TransactionStatus} from "@selldone/core-js/enums/payment/TransactionStatus.ts";
+import { getOrderAttention, getPaymentDetailRows } from "./ProcessCenterPresentation";
+import BProcessCenterFilters from "./BProcessCenterFilters.vue";
+
+const modernPhysicalIcons = {
+  CheckQueue: 'shopping_basket',
+  OrderConfirm: 'check_circle',
+  PreparingOrder: 'inventory_2',
+  SentOrder: 'local_shipping',
+  ToCustomer: 'done_all',
+};
 
 export default {
   name: "BProcessCenterList",
   mixins: [RouteMixin, DateMixin, OrderMixin ],
 
   components: {
+    BProcessCenterFilters,
     BCampaignSourceIcon,
     UCurrencyIcon,
     BProductSubscriptionPricingInput,
     SOrderChatMessage,
     BOrderChatBox,
-    UAvatarText,
     ConnectOrderChip,
     SOrderReceiverInfoCard,
-    UButtonWhatsapp,
+    BProcessCenterCustomer,
     SOrderStatusView,
     ProductsDenseImagesCircles,
     ReturnRequestButtonBadge,
@@ -866,6 +959,10 @@ export default {
     SOrderDeliveryStatusStepper,
   },
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     shop: {
       required: true,
     },
@@ -945,6 +1042,7 @@ export default {
       status: [Basket.Status.Payed.code, Basket.Status.COD.code],
 
       busy_fetch: false,
+      ordersRequestId: 0,
 
       orders: [],
 
@@ -955,6 +1053,8 @@ export default {
       totalItems: 0,
 
       search: null,
+      dialogExtraFilters: false,
+      extraFilters: { productId: null, customerId: null, updatedAfter: null, customerName: '' },
       selected_subscription_price: null,
 
       dialog_chat: false,
@@ -962,6 +1062,15 @@ export default {
     };
   },
   computed: {
+
+    extraFilterSummaries() {
+      const filters = [];
+      const labels = 'admin_shop.orders.physical.modern.filters';
+      if (this.extraFilters.productId && !this.filterProductId) filters.push({ key: 'productId', label: `${this.$t(`${labels}.product`)} #${this.extraFilters.productId}`, icon: 'inventory_2' });
+      if (this.extraFilters.customerId && !this.filterCustomerId) filters.push({ key: 'customerId', label: `${this.$t(`${labels}.customer`)}: ${this.extraFilters.customerName || `#${this.extraFilters.customerId}`}`, icon: 'person' });
+      if (this.extraFilters.updatedAfter) filters.push({ key: 'updatedAfter', label: `${this.$t(`${labels}.updated_after`)}: ${this.getLocalDateString(this.extraFilters.updatedAfter)}`, description: this.getLocalTimeString(this.extraFilters.updatedAfter), icon: 'update' });
+      return filters;
+    },
 
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
@@ -997,6 +1106,16 @@ export default {
     },
 
     headers() {
+      if (this.modern) {
+        return [
+          { title: this.$t('admin_shop.orders.physical.table.order_number'), value: 'id', align: 'start', sortable: true, width: '21%' },
+          { title: this.$t('global.commons.customer'), value: 'customer', align: 'start', sortable: false, width: '18%' },
+          { title: this.$t('admin_shop.orders.physical.table.price'), value: 'price', align: 'end', sortable: true, width: '13%' },
+          { title: this.$t('admin_shop.orders.physical.table.payment_status'), value: 'status', align: 'start', sortable: true, width: '13%' },
+          { title: this.$t('admin_shop.orders.physical.table.status'), value: 'delivery_state', align: 'start', sortable: true, width: '23%' },
+          { title: this.$t('admin_shop.orders.physical.table.order_date'), value: 'reserved_at', align: 'start', sortable: true, width: '12%' },
+        ];
+      }
       if (this.isDropShipping) {
         return [
           ...(this.$vuetify.display.mdAndUp
@@ -1236,8 +1355,12 @@ export default {
       if (this.isDropShipping) return Basket.PhysicalOrderStates;
       if (this.isAvocado) return Avocado.DeliveryStates;
 
-      if (this.type?.code === ProductType.PHYSICAL.code)
+      if (this.type?.code === ProductType.PHYSICAL.code) {
+        if (this.modern) {
+          return Object.fromEntries(Object.entries(Basket.PhysicalOrderStates).map(([key, state]) => [key, { ...state, icon: modernPhysicalIcons[key] }]));
+        }
         return Basket.PhysicalOrderStates;
+      }
       else if (this.type?.code === ProductType.VIRTUAL.code)
         return Basket.VirtualOrderStates;
       else if (this.type?.code === ProductType.FILE.code)
@@ -1300,6 +1423,7 @@ export default {
 
     search: throttle(function (newVal, oldVal) {
       if (!newVal && !oldVal) return;
+      if (this.modern) this.page = 1;
       this.fetchOrders(
         1,
         this.sortBy[0]?.key,
@@ -1321,8 +1445,27 @@ export default {
       this.sortBy[0]?.order === "desc",
     );
   },
+  beforeUnmount() {
+    this.ordersRequestId++;
+  },
 
   methods: {
+    applyExtraFilters(filters) {
+      this.extraFilters = filters;
+      this.refreshOrders();
+    },
+    removeExtraFilter(key) {
+      this.extraFilters = { ...this.extraFilters, [key]: null, ...(key === 'customerId' ? { customerName: '' } : {}) };
+      this.refreshOrders();
+    },
+    getPaymentDetailRows,
+    orderAttention(item) {
+      return getOrderAttention({
+        rejected: !!item.reject,
+        queued: this.inQueProcess(item),
+        daysSinceUpdate: DateConverter.getFromNowNumber(item.updated_at, 'd'),
+      });
+    },
     setActivator(node, item) {
       if (!this.hasReceiverInfo) return;
       //  console.log('setActivator',node)
@@ -1392,6 +1535,9 @@ export default {
       this.page = page;
 
       this.busy_fetch = true;
+      // A late response must not replace the currently applied modern filters.
+      const requestId = ++this.ordersRequestId;
+      const modernRequest = this.modern;
 
       axios
         .get(
@@ -1428,8 +1574,9 @@ export default {
             params: {
               offset: (page - 1) * this.itemsPerPage,
               limit: this.itemsPerPage,
-              product_id: this.filterProductId,
-              customer_id: this.filterCustomerId, // Show just for this customer
+              product_id: this.filterProductId ?? (this.modern ? this.extraFilters.productId ?? undefined : undefined),
+              customer_id: this.filterCustomerId ?? (this.modern ? this.extraFilters.customerId ?? undefined : undefined), // Show just for this customer
+              updated_at: this.modern && this.extraFilters.updatedAfter ? new Date(this.extraFilters.updatedAfter).toISOString().slice(0, 19).replace('T', ' ') : undefined,
               subscription_price_id: this.isSubscription
                 ? this.filterSubscriptionPriceId
                   ? this.filterSubscriptionPriceId
@@ -1458,15 +1605,18 @@ export default {
           },
         )
         .then(({ data }) => {
+          if (modernRequest && requestId !== this.ordersRequestId) return;
           if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
 
           this.totalItems = data.total;
           this.orders = data.orders;
         })
         .catch((e) => {
+          if (modernRequest && requestId !== this.ordersRequestId) return;
           NotificationService.showLaravelError(e);
         })
         .finally(() => {
+          if (modernRequest && requestId !== this.ordersRequestId) return;
           this.busy_fetch = false;
         });
     },
@@ -1642,6 +1792,247 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-process-center-list--modern {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+
+  .b-process-center-list__header { margin-block-end: 19px; }
+  .b-process-center-list__filter-button { color: var(--sd-modern-muted); }
+  .b-process-center-list__filter-summaries { display: flex; flex-wrap: wrap; flex-basis: 100%; gap: 8px; }
+  .b-process-center-list__filter-summary { max-width: 100%; overflow: visible; border-color: var(--sd-modern-border); color: var(--sd-modern-muted); font-family: inherit; font-size: 11px; font-weight: 400; }
+  .b-process-center-list__filter-label { max-width: 210px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .b-process-center-list__body {
+    padding: 0;
+    border-radius: 16px;
+    box-shadow: none;
+  }
+
+  .b-process-center-list__toolbar {
+    gap: 16px;
+    padding: 17px 18px !important;
+    border-block-end: 1px solid var(--sd-modern-border);
+  }
+
+  .b-process-center-list__search {
+    flex: 0 1 220px;
+    min-width: 160px !important;
+    max-width: 240px;
+
+    --v-input-control-height: 30px;
+    :deep(.v-field) { align-items: center; padding: 0; }
+    :deep(.v-field__input) { min-height: 30px; padding-block: 6px !important; padding-inline: 0 !important; font-size: 12px !important; line-height: 18px; }
+    :deep(.v-field__prepend-inner) { height: 30px; padding-block: 0 !important; align-items: center; margin-inline-end: 8px; }
+    :deep(.v-icon) { font-size: 16px !important; color: var(--sd-modern-muted); opacity: 1; }
+    :deep(input::placeholder) { color: var(--sd-modern-muted); opacity: 1; }
+  }
+
+  .b-process-center-list__statuses {
+    padding: 4px !important;
+    border-radius: 11px !important;
+    background: rgba(var(--v-theme-on-surface), 0.025) !important;
+    box-shadow: none !important;
+
+    :deep(.v-btn-toggle) {
+      gap: 4px;
+      height: auto;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+    :deep(.v-btn) {
+      height: 30px !important;
+      min-height: 30px;
+      min-width: 0;
+      padding: 4px 9px;
+      border-radius: 7px !important;
+      background: transparent !important;
+      color: var(--sd-modern-muted);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 17px;
+      letter-spacing: 0 !important;
+      text-indent: 0;
+      text-transform: none;
+    }
+
+    :deep(.v-btn.blue-flat) {
+      color: rgb(var(--v-theme-on-surface)) !important;
+      background: rgb(var(--v-theme-surface)) !important;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 2px 7px rgba(var(--v-theme-on-surface), 0.14), 0 1px 2px rgba(var(--v-theme-on-surface), 0.08);
+    }
+
+    :deep(.v-btn--active > .v-btn__overlay) { opacity: 0; }
+    :deep(.v-btn.blue-flat .v-icon) { color: rgb(var(--v-theme-on-surface)) !important; }
+    :deep(.v-btn .v-icon) { font-size: 13px; }
+    :deep(.v-btn__content) { font: inherit; letter-spacing: 0 !important; }
+    :deep(.v-btn.blue-flat .v-btn__content::after) { content: ""; width: 4px; height: 4px; margin-inline-start: 5px; border-radius: 50%; background: rgb(var(--v-theme-primary)); }
+    :deep(.hide-on-small-600) { display: inline !important; }
+  }
+
+  .b-process-center-list__table {
+    min-height: 200px !important;
+
+    :deep(.v-table__wrapper) { overflow: visible; }
+    :deep(table) { table-layout: fixed; }
+
+    :deep(.v-table__wrapper > table > thead > tr > th) {
+      height: 40px;
+      padding: 10px 14px !important;
+    }
+
+    :deep(.v-table__wrapper > table > tbody > tr > td) {
+      height: 82px;
+      padding: 15px 14px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.45;
+    }
+  }
+
+  .b-process-center-list__order {
+    min-width: 0 !important;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+
+    > .v-spacer { display: none; }
+    > .fa-circle-notch { margin-inline: 0 !important; font-size: 11px; }
+  }
+
+  .b-process-center-list__basket { flex: 0 0 21px; }
+  .b-process-center-list__code { flex: 0 1 auto !important; font-size: 13px; font-weight: 500; }
+  .b-process-center-list__products { flex-basis: 100%; order: 2; padding: 0 !important; padding-inline-start: 25px !important; }
+  .b-process-center-list__withdrawal {
+    height: 18px;
+    max-width: 100%;
+    padding-inline: 5px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 14px;
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  }
+
+  :deep(.b-process-center-customer) {
+    display: block !important;
+    margin: 0 !important;
+    font-size: 12px;
+    line-height: 17px;
+  }
+  :deep(.b-process-center-customer > .dashed-flex-space) { display: none; }
+  :deep(.b-process-center-customer__identity) { gap: 3px; }
+  :deep(.b-process-center-customer__name) { font-size: 12px; font-weight: 400; overflow-wrap: anywhere; }
+  :deep(.b-process-center-customer__contact) { flex-wrap: wrap; gap: 3px; margin-block-start: 7px; font-size: 11px; color: var(--sd-modern-muted); }
+  :deep(.b-process-center-customer__email) { width: 24px; height: 24px; color: var(--sd-modern-muted) !important; }
+  :deep(.b-process-center-customer__email .v-icon) { font-size: 15px !important; }
+
+  .b-process-center-list__amount { text-align: end; }
+  .b-process-center-list__amount-value {
+    min-width: 0 !important;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 400 !important;
+    :deep(.u--price) { font-size: 14px; font-weight: 400; white-space: nowrap; }
+  }
+  .b-process-center-list__amount-details {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 11px;
+    line-height: 16px;
+    > .v-spacer { display: none; }
+    :deep(.u--price) { font-size: inherit; font-weight: 400; }
+  }
+
+  .b-process-center-list__payment {
+    font-size: 11px;
+    // Keep the original black status artwork readable on dark theme surfaces.
+    :deep(.s--order-status-view > .inline-block > img) { filter: var(--sd-order-status-filter, none); }
+    :deep(.s--order-status-view) { display: flex; align-items: center; gap: 7px; margin: 0 !important; text-align: start; }
+    :deep(.s--order-status-view small) { font-size: 11px; line-height: 16px; white-space: normal; }
+    :deep(.s--order-status-view + .d-flex) { justify-content: flex-start !important; margin-block-start: 7px; font-size: 10px; }
+    :deep(.v-chip) { background: rgb(var(--v-theme-surface)) !important; color: rgb(var(--v-theme-on-surface)); }
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 4px; border-radius: 4px; }
+  }
+
+  .b-process-center-list__stepper {
+    display: flow-root;
+    :deep(.container-stepper > div) { top: 12px !important; height: 1px !important; }
+    :deep(.container-stepper > div:nth-child(2)) { background: rgb(var(--v-theme-on-surface)) !important; }
+    :deep(.progressbar li::before) { width: 25px; height: 25px; line-height: 23px; border-width: 1px; background: rgb(var(--v-theme-surface)); }
+    :deep(.progressbar li.active::before) { background: rgb(var(--v-theme-on-surface)); }
+    :deep(.progressbar li.active .v-icon) { color: rgb(var(--v-theme-surface)) !important; }
+  }
+  .b-process-center-list__delivery-caption {
+    min-width: 0 !important;
+    flex-wrap: wrap;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 4px 8px;
+    padding-block-end: 0 !important;
+    font-size: 11px;
+    line-height: 16px;
+    > .dashed-flex-space { display: none; }
+    > span { margin-inline-start: auto; white-space: nowrap; }
+    > div { max-width: 100%; padding-inline-start: 0 !important; font-size: 10px; overflow-wrap: anywhere; }
+  }
+  .b-process-center-list__checkout {
+    min-width: 0 !important;
+    font-size: 11px;
+    line-height: 16px;
+    > small { display: inline-block; margin-block-start: 5px; font-size: 10px; color: var(--sd-modern-muted); }
+  }
+  .b-process-center-list__chat { width: 25px; height: 25px; color: var(--sd-modern-muted) !important; :deep(.v-icon) { font-size: 15px; } }
+  .b-process-center-list__attention { width: 28px; height: 28px; padding: 0; vertical-align: middle; }
+  .b-process-center-list__footer { padding: 17px 18px; gap: 12px; color: var(--sd-modern-muted); font-size: 11px; line-height: 16px; }
+
+  @media (min-width: 1000px) {
+    .b-process-center-list__amount,
+    .b-process-center-list__checkout { padding-block: 0 !important; }
+  }
+
+  @media (max-width: 999px) {
+    .b-process-center-list__table {
+      // Keep native mobile labels/sorting while releasing the desktop table tracks.
+      :deep(table), :deep(thead), :deep(tbody), :deep(thead > tr) { display: block; width: 100%; }
+      :deep(thead > tr > th) { display: block; width: 100% !important; height: auto !important; }
+      :deep(.v-data-table__tr--mobile) { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 12px; padding: 16px 13px; border-block-end: 1px solid var(--sd-modern-border); }
+      :deep(.v-table__wrapper > table > tbody > .v-data-table__tr--mobile > td) { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 7px; width: auto !important; height: auto; min-height: 0; padding: 0; border: 0; }
+      :deep(.v-data-table__tr--mobile > td:nth-child(5)), :deep(.v-data-table__tr--mobile > td:nth-child(6)) { grid-column: 1 / -1; }
+      :deep(.v-data-table__td-value) { text-align: start !important; min-width: 0; }
+    }
+    .b-process-center-list__order { align-content: flex-start; }
+    .b-process-center-list__products { padding-inline: 0 !important; }
+    .b-process-center-list__amount { text-align: start; }
+    .b-process-center-list__amount-value { justify-content: flex-start; > .v-spacer { display: none; } }
+    .b-process-center-list__amount-details { align-items: flex-start; }
+    .b-process-center-list__delivery-caption > div, .b-process-center-list__checkout > small { font-size: 11px; }
+    .b-process-center-list__checkout { border-block-start: 1px solid var(--sd-modern-border); padding-block-start: 10px !important; }
+    .b-process-center-list__toolbar { gap: 10px; padding: 12px !important; }
+    .b-process-center-list__toolbar > .flex-grow-1 { min-width: 0; width: 100%; }
+    .b-process-center-list__search { flex: 1 1 120px; min-width: 110px !important; max-width: none; :deep(.v-field__input) { font-size: 16px !important; } }
+    .b-process-center-list__statuses {
+      width: 100% !important;
+      max-width: 100%;
+      :deep(.v-btn-toggle) { display: flex; flex-wrap: wrap; width: 100%; min-width: 0 !important; max-width: 100%; }
+      :deep(.v-btn) { height: 44px !important; min-height: 44px; }
+    }
+  }
+  @media (pointer: coarse) {
+    .b-process-center-list__stepper :deep(.progressbar li:hover) { transform: none; }
+    .b-process-center-list__statuses :deep(.v-btn), :deep(.b-process-center-customer__contact .v-btn), .b-process-center-list__chat, .b-process-center-list__attention { min-width: 44px; min-height: 44px; }
+  }
+}
+
 .data-table {
   cursor: pointer;
   font-size: 1.071rem;

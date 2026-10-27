@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
+  <div class="b-return-requests-list" :class="{ 'b-return-requests-list--modern text-start': modern }">
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
       v-model:options="options"
@@ -25,13 +25,14 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading-text="$t('global.commons.waiting_load_data')"
-      :mobile="$vuetify.display.xs"
+      :mobile="modern ? $vuetify.display.width < 1100 : $vuetify.display.xs"
       :row-props="
         (_data) => {
           return { class: 'row-hover' };
         }
       "
-      class="bg-transparent min-height-60vh"
+      class="bg-transparent"
+      :class="modern ? 'sd-modern-data-table sd-modern-data-table--compact' : 'min-height-60vh'"
       density="compact"
       hide-default-footer
       item-key="id"
@@ -39,14 +40,17 @@
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="!busy_fetch" class="py-5 usn text-center fadeIn">
+        <div v-if="!busy_fetch" :class="modern ? 'sd-modern-empty-state' : 'py-5 usn text-center fadeIn'">
+          <v-icon v-if="modern" size="28">assignment_return</v-icon>
           <img
+            v-if="!modern"
             :src="require('../../../assets/guides/returned-orders-empty.png')"
             class="m-3 op-0-3"
             style="max-height: 400px; object-fit: contain"
             width="85%"
           />
-          <h2 class="text-h4 font-weight-thin">List of returned orders...</h2>
+          <h2 v-if="modern" class="b-return-requests-list__empty-title">{{ $t('global.commons.no_data') }}</h2>
+          <h2 v-else class="text-h4 font-weight-thin">List of returned orders...</h2>
         </div>
         <div v-else class="text-center px-3 py-5 text-muted">
           <v-icon class="me-1">sentiment_dissatisfied</v-icon>
@@ -70,8 +74,8 @@
       </template>
 
       <template v-slot:item.product_name="{ item }">
-        <div class="min-width-200">
-          <p class="m-0 font-weight-bold">
+        <div :class="modern ? 'b-return-requests-list__cell' : 'min-width-200'">
+          <p class="m-0" :class="modern ? 'b-return-requests-list__product-title' : 'font-weight-bold'">
             {{ item.basket_item?.product?.title }}
             <i
               v-if="item.basket_item?.product?.original"
@@ -87,7 +91,7 @@
       </template>
 
       <template v-slot:item.delivery_at="{ item }">
-        <div class="min-width-200">
+        <div :class="modern ? 'b-return-requests-list__cell' : 'min-width-200'">
           {{ getFromNowString(item.basket_item?.basket?.delivery_at) }}<br />
           <small>
             {{ getLocalTimeString(item.basket_item?.basket?.delivery_at) }}
@@ -108,7 +112,7 @@
       </template>
 
       <template v-slot:item.reason="{ item }">
-        <div class="min-width-200">
+        <div :class="modern ? 'b-return-requests-list__cell' : 'min-width-200'">
           <p class="m-0">
             {{ $t(getReturnBasketItemReasonObject(item.reason)?.title) }}
           </p>
@@ -120,7 +124,7 @@
       </template>
 
       <template v-slot:item.return_warranty="{ item }">
-        <div class="text-center min-width-150">
+        <div :class="modern ? 'b-return-requests-list__cell text-start' : 'text-center min-width-150'">
           <p class="m-0">
             <small>
               {{ $t("global.return_request_list.return_warranty") }}
@@ -135,7 +139,10 @@
       </template>
 
       <template v-slot:bottom>
-        <v-pagination v-model="page" :length="pageCount" rounded />
+        <div :class="{ 'sd-modern-table-footer': modern }">
+          <span v-if="modern" class="sd-modern-page-summary">{{ $t("global.commons.page") }} <bdi>{{ $n(pageCount ? page : 0) }} / {{ $n(pageCount) }}</bdi></span>
+          <v-pagination v-model="page" :length="pageCount" :class="{ 'sd-modern-pagination': modern }" rounded />
+        </div>
       </template>
     </v-data-table-server>
   </div>
@@ -158,6 +165,7 @@ export default {
   mixins: [DateMixin, ProductMixin,OrderMixin],
   components: { UAvatarFolder, BOrderButton, VariantItemViewMicro },
   props: {
+    modern: { type: Boolean, default: false },
     url: {
       require: true,
       type: String,
@@ -291,4 +299,31 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-return-requests-list--modern {
+  min-width: 0;
+
+  .b-return-requests-list__cell {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .b-return-requests-list__product-title {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .b-return-requests-list__empty-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .sd-modern-table-footer {
+    justify-content: flex-end;
+  }
+}
+</style>
