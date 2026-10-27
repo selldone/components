@@ -89,7 +89,7 @@
           :colors="[item.color]"
           :dataset="getArray(item.key)"
           :end-date="timeSeries.endDate"
-          :start-date="timeSeries.startDate"
+          :start-date="daily_start_date"
           :height="45"
           :show-title="false"
           hide-dates
@@ -360,6 +360,10 @@
 import SWidgetBox from "../../../ui/widget/box/SWidgetBox.vue";
 import UChartBar from "../../../ui/chart/bar/UChartBar.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
+import {
+  getReportDailyValues,
+  getReportStartDate,
+} from "../shop/performance/periodComparison";
 import UpDownIcon from "../../../ui/icon/UpDownIcon.vue";
 
 export default {
@@ -426,6 +430,9 @@ export default {
   }),
 
   computed: {
+    daily_start_date() {
+      return getReportStartDate(this.timeSeries);
+    },
     engagement_series() {
       return this.types.map((item) => ({
         name: this.$t(item.name),
@@ -531,6 +538,7 @@ export default {
     },
 
     getArray(key) {
+      if (this.modern) return getReportDailyValues(this.timeSeries, [key]);
       return this.timeSeries
         .arrayOfForceInterpolateZero(key)
         .map((val) => [val >= 0 ? val : 0]);

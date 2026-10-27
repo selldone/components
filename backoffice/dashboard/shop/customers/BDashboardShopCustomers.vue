@@ -74,7 +74,7 @@
       <dl class="sd-modern-stat-grid b-dashboard-customers-detail__stats">
         <div>
           <dt>{{ $t("admin_shop.dashboard.modern.customer_total") }}</dt>
-          <dd>{{ numeralFormat(lastDayData.users, "0,0a") }}</dd>
+          <dd>{{ modern_customer_total }}</dd>
         </div>
         <div>
           <dt>{{ $t("admin_shop.dashboard.modern.customer_new_today") }}</dt>
@@ -480,7 +480,7 @@
             {{ $t("admin_shop.dashboard.modern.customer_total") }}
           </dt>
           <dd class="s--shop-dashboard-customers-modern__stat-value">
-            {{ numeralFormat(lastDayData.users, "0,0a") }}
+            {{ modern_customer_total }}
           </dd>
         </div>
         <div>
@@ -603,6 +603,11 @@ export default {
   }),
 
   computed: {
+    modern_customer_total() {
+      return Number.isFinite(this.lastDayData.users)
+        ? this.numeralFormat(this.lastDayData.users, "0,0a")
+        : "—";
+    },
     has_todayData() {
       return !isEmpty(this.todayData);
     },
@@ -898,9 +903,37 @@ export default {
     },
   },
 
-  watch: {},
+  watch: {
+    timeSeries: {
+      immediate: true,
+      handler() {
+        this.update_series();
+      },
+    },
+  },
 
   methods: {
+    update_series() {
+      this.calculate_funnel();
+      this.options.xaxis.categories =
+        this.timeSeries.arrayOfTimeAbsolute("created_at");
+      for (const [index, key] of ["users", "users_add"].entries()) {
+        this.series[index].data = this.modern
+          ? (this.timeSeries.raw_data || []).map((row) => [
+              DateConverter.convertToLocalTime(row.created_at, true)?.getTime(),
+              typeof row[key] === "number" && Number.isFinite(row[key])
+                ? row[key]
+                : null,
+            ])
+          : this.timeSeries.arrayOf(key, true, "created_at");
+      }
+      this.series[0].name = this.$t(
+        "admin_shop.dashboard.customers.chart.customers",
+      );
+      this.series[1].name = this.$t(
+        "admin_shop.dashboard.customers.chart.new_customers",
+      );
+    },
     sumInTimeSpan(key) {
       return this.timeSeries.totalOf(key, this.start_date, this.end_date);
     },
@@ -936,31 +969,6 @@ export default {
     },
   },
 
-  created() {
-    this.calculate_funnel();
-    this.options.xaxis.categories =
-      this.timeSeries.arrayOfTimeAbsolute("created_at");
-
-    this.series[0].data = this.timeSeries.arrayOf("users", true, "created_at");
-    this.series[0].name = this.$t(
-      "admin_shop.dashboard.customers.chart.customers",
-    );
-
-    this.series[1].data = this.timeSeries.arrayOf(
-      "users_add",
-      true,
-      "created_at",
-    );
-    /*
-        this.timeSeries.arrayOfDiffByPrevious(
-      "users",
-      true,
-      "created_at"
-    );*/
-    this.series[1].name = this.$t(
-      "admin_shop.dashboard.customers.chart.new_customers",
-    );
-  },
   mounted() {},
 };
 </script>

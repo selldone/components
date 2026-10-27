@@ -13,33 +13,86 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="b--valuation-form-structure-row">
+  <div
+    class="b--valuation-form-structure-row"
+    :class="{ 'b--valuation-form-structure-row--modern': modern }"
+  >
     <v-row align="center" class="py-1" no-gutters>
       <v-icon class="handle cursor-move" title="Drag and move">
         unfold_more
       </v-icon>
 
-      <v-icon class="mx-1">{{ getType(element.type).icon }}</v-icon>
-
-      <b class="mx-1 small">{{ element.title }}</b>
-      <span class="mx-1 small">/ {{ $t(getType(element.type).title) }}</span>
-
-      <v-spacer></v-spacer>
+      <div v-if="modern" class="b--valuation-row-identity">
+        <v-icon>{{ getType(element.type).icon }}</v-icon>
+        <div class="b--valuation-row-identity__copy">
+          <b>{{ element.title }}</b>
+          <span>/ {{ $t(getType(element.type).title) }}</span>
+        </div>
+      </div>
+      <template v-else>
+        <v-icon class="mx-1">{{ getType(element.type).icon }}</v-icon>
+        <b class="mx-1 small">{{ element.title }}</b>
+        <span class="mx-1 small">/ {{ $t(getType(element.type).title) }}</span>
+        <v-spacer></v-spacer>
+      </template>
 
       <v-btn
-        :class="{ 'rotate-180': !local_collapse }"
-        :title="$t('global.actions.delete')"
-        class="mx-2"
-        color="#fff"
+        :class="[
+          { 'rotate-180': !local_collapse },
+          modern ? 'sd-modern-icon-button ms-2' : 'mx-2',
+        ]"
+        :title="modern ? undefined : $t('global.actions.delete')"
+        :aria-label="
+          $t(
+            local_collapse
+              ? 'valuation_add.structure.expand_action'
+              : 'valuation_add.structure.collapse_action',
+          )
+        "
+        :color="modern ? undefined : '#fff'"
         icon
         size="small"
         variant="text"
         @click="local_collapse = !local_collapse"
       >
         <v-icon size="20">arrow_drop_down</v-icon>
+        <v-tooltip
+          v-if="modern"
+          activator="parent"
+          location="top"
+          :open-on-focus="true"
+          content-class="sd-modern-tooltip text-start"
+          :persistent="false"
+          >{{
+            $t(
+              local_collapse
+                ? "valuation_add.structure.expand_action"
+                : "valuation_add.structure.collapse_action",
+            )
+          }}</v-tooltip
+        >
       </v-btn>
 
+      <v-btn
+        v-if="modern"
+        class="sd-modern-icon-button"
+        icon
+        variant="text"
+        :aria-label="$t('global.actions.delete')"
+        @click="$emit('remove')"
+      >
+        <v-icon size="18">close</v-icon>
+        <v-tooltip
+          activator="parent"
+          location="top"
+          :open-on-focus="true"
+          content-class="sd-modern-tooltip text-start"
+          :persistent="false"
+          >{{ $t("global.actions.delete") }}</v-tooltip
+        >
+      </v-btn>
       <u-button-circle
+        v-else
         :title="$t('global.actions.delete')"
         icon="close"
         @click="$emit('remove')"
@@ -71,7 +124,9 @@
                 @select="
                   (v) => {
                     element.title = v;
-                    element.name = Slugify.apply(element.title.substring(0, 32));
+                    element.name = Slugify.apply(
+                      element.title.substring(0, 32),
+                    );
                   }
                 "
               >
@@ -366,7 +421,7 @@ import UNumberInput from "../../../../../ui/number/input/UNumberInput.vue";
 import UPriceInput from "../../../../../ui/price/input/UPriceInput.vue";
 import USmartSuggestion from "../../../../../ui/smart/suggestion/USmartSuggestion.vue";
 import { ValuationStructureItemType } from "../../../ValuationStructureItemType.ts";
-import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
+import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "BValuationFormStructureRow",
@@ -384,6 +439,7 @@ export default {
     },
 
     collapse: Boolean.prototype,
+    modern: { type: Boolean, default: false },
 
     sampleProduct: {
       required: true,
@@ -394,15 +450,12 @@ export default {
   data: () => ({
     Slugify: Slugify,
 
-
     types: ValuationStructureItemType,
     lock_name: true,
     local_collapse: false,
   }),
 
-  computed: {
-
-  },
+  computed: {},
 
   watch: {
     collapse() {
@@ -450,6 +503,78 @@ export default {
     border-radius: 12px;
     padding: 12px;
     position: relative;
+  }
+}
+
+.b--valuation-form-structure-row--modern {
+  padding: 6px 12px;
+  border: 1px solid
+    var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+  border-radius: 12px;
+  color: rgb(var(--v-theme-on-surface));
+  background: rgb(var(--v-theme-surface));
+
+  > .v-row {
+    gap: 4px;
+    min-height: 44px;
+    flex-wrap: nowrap;
+  }
+
+  > .v-row > .v-btn,
+  > .v-row > .v-icon {
+    flex: 0 0 auto;
+  }
+
+  > .v-row > .v-icon {
+    color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), 0.66));
+  }
+
+  .b--valuation-row-identity {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 8px;
+
+    > .v-icon {
+      flex: 0 0 auto;
+      color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), 0.66));
+    }
+  }
+
+  .b--valuation-row-identity__copy {
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 0;
+    gap: 0 6px;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+
+    > b {
+      font-weight: 500;
+    }
+
+    > span {
+      color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), 0.66));
+    }
+  }
+
+  .b--valuation-item {
+    padding: 16px 0 8px;
+    border-block-start: 1px solid
+      var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+    border-radius: 0;
+    color: rgb(var(--v-theme-on-surface));
+    background: rgb(var(--v-theme-surface));
+  }
+
+  :deep(.v-table) {
+    max-width: 100%;
+    background: transparent;
+  }
+
+  @media (max-width: 600px) {
+    padding-inline: 8px;
   }
 }
 </style>

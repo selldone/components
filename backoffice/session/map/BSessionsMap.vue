@@ -89,6 +89,25 @@
             }}</span>
             <strong>{{ numeralFormat(countries_count, "0,0") }}</strong>
           </div>
+          <div v-if="!externalFeed" class="b-sessions-map__report-controls">
+            <u-time-span-selector
+              :date-range="report_selector_range"
+              :max-days="90"
+              variant="text"
+              button-class="sd-modern-button sd-modern-button--secondary"
+              @select="selectReportPeriod"
+            />
+            <span class="b-sessions-map__report-dates">
+              {{ getLocalDateString(report_start) }} –
+              {{ getLocalDateString(report_end) }}
+            </span>
+            <v-progress-linear
+              v-if="busy"
+              indeterminate
+              color="on-surface"
+              height="2"
+            />
+          </div>
         </div>
         <div class="b-sessions-map__geography" :class="{ disabled: busy }">
           <section class="b-sessions-map__map-panel">
@@ -236,16 +255,15 @@
             >
               <div class="b-sessions-map__identity">
                 <flag v-if="item[0]" :iso="item[0]" :squared="false" />
-                <div>
-                  <span>{{ getCountryName(item[0]) }}</span
-                  ><small dir="ltr">{{ item[0] }}</small>
-                </div>
+                <span class="b-sessions-map__country-name">{{
+                  getCountryName(item[0])
+                }}</span>
               </div>
               <time-series-inline-chart
                 v-if="fullDetails"
                 :colors="['#1976D2']"
                 :days="days"
-                :height="30"
+                :height="24"
                 :keys="[item[0]]"
                 :offset_day="offset"
                 :time-series="timeSeries"
@@ -319,7 +337,7 @@
                   :chart-id="`sessions_device_${type.code}`"
                   :colors="[type.color]"
                   :days="days"
-                  :height="40"
+                  :height="28"
                   :keys="[type.code]"
                   :offset_day="offset"
                   :time-series="timeSeries"
@@ -577,7 +595,7 @@
       </v-row>
     </template>
     <u-time-span
-      v-if="!externalFeed"
+      v-if="!externalFeed && (!modern || summary)"
       v-model:days="days"
       v-model:offset="offset"
       :loading="busy"
@@ -587,6 +605,69 @@
       trigger-on-end
       @onChange="fetchShopSessions(offset, days)"
     ></u-time-span>
+    <v-dialog
+      v-if="modern && !summary && !externalFeed"
+      v-model="custom_report_dialog"
+      max-width="600"
+    >
+      <v-card class="sd-modern-widget text-start">
+        <v-card-title class="sd-modern-title-text">{{
+          $t("time_spans.custom")
+        }}</v-card-title>
+        <v-card-text>
+          <u-date-range-picker
+            v-model:start="custom_report_start"
+            v-model:end="custom_report_end"
+            :start-label="$t('global.commons.start_date')"
+            :end-label="$t('global.commons.end_date')"
+            :min="report_min_date"
+            :max="report_max_date"
+          />
+          <p
+            v-if="
+              custom_report_start && custom_report_end && !custom_report_window
+            "
+            class="sd-modern-notice mt-3"
+            role="alert"
+          >
+            {{ $t("admin_shop.dashboard.modern.session_range_invalid") }}
+          </p>
+        </v-card-text>
+        <v-card-actions class="sd-modern-actions">
+          <v-spacer />
+          <v-btn
+            class="sd-modern-button sd-modern-button--secondary"
+            variant="text"
+            @click="custom_report_dialog = false"
+          >
+            {{ $t("global.actions.cancel") }}
+            <v-tooltip
+              activator="parent"
+              location="top"
+              open-on-focus
+              content-class="sd-modern-tooltip text-start"
+              >{{ $t("global.actions.cancel") }}</v-tooltip
+            >
+          </v-btn>
+          <v-btn
+            class="sd-modern-button sd-modern-button--primary"
+            variant="flat"
+            :disabled="!custom_report_window"
+            @click="applyCustomReport"
+          >
+            {{ $t("global.actions.apply") }}
+            <v-tooltip
+              activator="parent"
+              location="top"
+              open-on-focus
+              :disabled="!custom_report_window"
+              content-class="sd-modern-tooltip text-start"
+              >{{ $t("global.actions.apply") }}</v-tooltip
+            >
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -596,6 +677,9 @@ import ULoadingEllipsis from "../../../ui/loading/ellipsis/ULoadingEllipsis.vue"
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 import TimeSeriesInlineChart from "../../chart/TimeSeriesInlineChart.vue";
 import UTimeSpan from "../../../ui/time/span/UTimeSpan.vue";
+import UTimeSpanSelector from "../../../ui/time/span/selector/UTimeSpanSelector.vue";
+import UDateRangePicker from "../../../ui/date/range-picker/UDateRangePicker.vue";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import BSessionDevicesPie from "../../session/devices/pie/BSessionDevicesPie.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import { Analytics } from "@selldone/core-js";
@@ -611,6 +695,8 @@ export default {
     USmartToggle,
     BSessionDevicesPie,
     UTimeSpan,
+    UTimeSpanSelector,
+    UDateRangePicker,
     TimeSeriesInlineChart,
     ULoadingEllipsis,
     UMapCountriesHeatmap,
@@ -650,6 +736,10 @@ export default {
 
     offset: 0,
     days: 30,
+    session_request: 0,
+    custom_report_dialog: false,
+    custom_report_start: null,
+    custom_report_end: null,
 
     service_countries: false,
 
@@ -659,6 +749,35 @@ export default {
   }),
 
   computed: {
+    report_start() {
+      return DateConverter.GetStartOfDateBefore(this.offset + this.days);
+    },
+    report_end() {
+      return DateConverter.GetEndOfDateBefore(this.offset);
+    },
+    report_min_date() {
+      return DateConverter.GetStartOfDateBefore(89);
+    },
+    report_max_date() {
+      return DateConverter.GetEndOfDateBefore(0);
+    },
+    report_selector_range() {
+      return [this.offset, this.offset + (this.days === 0 ? 0 : this.days + 1)];
+    },
+    custom_report_window() {
+      const start = this.calendarDayNumber(this.custom_report_start);
+      const end = this.calendarDayNumber(this.custom_report_end);
+      const today = this.calendarDayNumber(new Date());
+      if (
+        start == null ||
+        end == null ||
+        start > end ||
+        start < today - 89 ||
+        end > today
+      )
+        return null;
+      return { offset: today - end, days: end - start };
+    },
     countries_count() {
       return Object.keys(this.map_data).filter(
         (key) => key !== "base" && key !== "id" && this.map_data[key] > 0,
@@ -789,11 +908,35 @@ export default {
     CountriesResourceHelper.FetchCountries(this);
 
     if (this.externalFeed) this.timeSeries = this.externalTimeSeries;
+    else if (this.modern && !this.summary) this.fetchShopSessions(0, 29);
   },
   beforeUnmount() {
     this.stopAnimate();
   },
   methods: {
+    calendarDayNumber(value) {
+      if (value == null) return null;
+      const date = DateConverter.convertToLocalTime(value);
+      if (!date || !Number.isFinite(date.getTime())) return null;
+      return (
+        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000
+      );
+    },
+    selectReportPeriod(item) {
+      if (item.title === "time_spans.custom") {
+        this.custom_report_start = this.report_start;
+        this.custom_report_end = this.report_end;
+        this.custom_report_dialog = true;
+        return;
+      }
+      this.fetchShopSessions(item.to, Math.max(0, item.from - item.to - 1));
+    },
+    applyCustomReport() {
+      if (!this.custom_report_window) return;
+      const { offset, days } = this.custom_report_window;
+      this.custom_report_dialog = false;
+      this.fetchShopSessions(offset, days);
+    },
     startAnimate() {
       this.stopAnimate();
 
@@ -814,26 +957,41 @@ export default {
     },
 
     fetchShopSessions(offset, days) {
+      const exactRange = this.modern && !this.summary;
+      const request = ++this.session_request;
       this.busy = true;
       this.offset = offset;
       this.days = days;
+      if (exactRange) {
+        this.play = false;
+        this.custom_selected_day = -1;
+      }
 
-      axios
+      return axios
         .get(this.url, {
           params: {
             offset: offset,
-            days: days,
-            details: this.fullDetails,
+            // The API's lower boundary is strict; fetch one extra day then retain exact calendar dates.
+            days: exactRange ? days + 1 : days,
+            details: this.fullDetails || exactRange,
           },
         })
         .then(({ data }) => {
-          if (this.fullDetails)
-            this.timeSeries = new TimeSeries(
-              data[this.datKey],
-              "Sessions",
-              offset,
-              days,
-            );
+          if (exactRange && request !== this.session_request) return;
+          let rows = data[this.datKey];
+          if (exactRange) {
+            const today = this.calendarDayNumber(new Date());
+            rows = rows.filter((row) => {
+              const day = this.calendarDayNumber(row.created_at);
+              return (
+                day != null &&
+                day >= today - offset - days &&
+                day <= today - offset
+              );
+            });
+          }
+          if (this.fullDetails || exactRange)
+            this.timeSeries = new TimeSeries(rows, "Sessions", offset, days);
           else
             this.timeSeries = new TimeSeries(
               [data[this.datKey]],
@@ -843,7 +1001,8 @@ export default {
             );
         })
         .finally(() => {
-          this.busy = false;
+          if (!exactRange || request === this.session_request)
+            this.busy = false;
         });
     },
   },
@@ -857,24 +1016,39 @@ export default {
   .b-sessions-map__overview {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px 40px;
-    margin-block-end: 28px;
+    gap: 12px 32px;
+    margin-block-end: 16px;
   }
 
   .b-sessions-map__overview strong {
     display: block;
-    margin-block-start: 5px;
-    font-size: 26px;
+    margin-block-start: 4px;
+    font-size: 24px;
     font-weight: 500;
     line-height: 1.35;
     font-variant-numeric: tabular-nums;
+  }
+
+  .b-sessions-map__report-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    margin-inline-start: auto;
+    min-width: 0;
+  }
+
+  .b-sessions-map__report-dates {
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
   }
 
   .b-sessions-map__geography {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr);
     align-items: start;
-    gap: 32px;
+    gap: 24px;
   }
 
   .b-sessions-map__map-panel,
@@ -888,8 +1062,8 @@ export default {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 8px 16px;
-    margin-block-end: 14px;
+    gap: 6px 12px;
+    margin-block-end: 8px;
   }
 
   .b-sessions-map__section-header .sd-modern-label {
@@ -911,7 +1085,7 @@ export default {
   }
 
   .b-sessions-map__world {
-    height: 332px;
+    height: 280px;
     margin: 0;
   }
 
@@ -936,7 +1110,7 @@ export default {
   }
 
   .b-sessions-map__playback {
-    margin-block-start: 12px;
+    margin-block-start: 4px;
   }
 
   .b-sessions-map__playback :deep(.v-input__details) {
@@ -949,13 +1123,13 @@ export default {
   .b-sessions-map__country,
   .b-sessions-map__device-row {
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(100px, 1fr) 56px 68px;
+    grid-template-columns: minmax(0, 1.25fr) minmax(80px, 1fr) 52px 64px;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
 
   .b-sessions-map__country-head {
-    padding-block-end: 8px;
+    padding-block-end: 6px;
     border-block-end: 1px solid var(--sd-modern-border);
     color: var(--sd-modern-muted);
     font-size: 11px;
@@ -966,7 +1140,8 @@ export default {
   }
 
   .b-sessions-map__country {
-    min-height: 44px;
+    min-height: 38px;
+    padding-block: 3px;
     border-block-end: 1px solid var(--sd-modern-border);
     font-size: 13px;
   }
@@ -979,25 +1154,19 @@ export default {
   .b-sessions-map__identity {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: 8px;
     min-width: 0;
     line-height: 1.45;
   }
 
-  .b-sessions-map__identity > div {
+  .b-sessions-map__country-name {
     min-width: 0;
+    overflow-wrap: break-word;
   }
 
   .b-sessions-map__identity :deep(.fi),
   .b-sessions-map__identity > .v-icon {
     flex: 0 0 20px;
-  }
-
-  .b-sessions-map__identity small {
-    display: block;
-    margin-block-start: 2px;
-    color: var(--sd-modern-muted);
-    font-size: 11px;
   }
 
   .b-sessions-map__country-trend,
@@ -1029,8 +1198,8 @@ export default {
   }
 
   .b-sessions-map__device-section {
-    margin-block-start: 28px;
-    padding-block-start: 28px;
+    margin-block-start: 16px;
+    padding-block-start: 16px;
     border-block-start: 1px solid var(--sd-modern-border);
   }
 
@@ -1038,11 +1207,12 @@ export default {
     display: grid;
     grid-template-columns: minmax(0, 1.8fr) minmax(230px, 1fr);
     align-items: center;
-    gap: 32px;
+    gap: 24px;
   }
 
   .b-sessions-map__device-row {
-    min-height: 44px;
+    min-height: 38px;
+    padding-block: 3px;
     border-block-end: 1px solid var(--sd-modern-border);
     font-size: 13px;
   }
@@ -1054,8 +1224,8 @@ export default {
   }
 
   .b-sessions-map__period {
-    margin-block-start: 28px;
-    padding-block-start: 16px;
+    margin-block-start: 16px;
+    padding-block-start: 10px;
     border-block-start: 1px solid var(--sd-modern-border);
   }
 
@@ -1064,7 +1234,7 @@ export default {
       grid-template-columns: minmax(0, 1fr);
     }
     .b-sessions-map__world {
-      height: 300px;
+      height: 260px;
     }
   }
 
@@ -1085,7 +1255,7 @@ export default {
       grid-template-columns: minmax(0, 1fr) 48px 54px;
     }
     .b-sessions-map__world {
-      height: 230px;
+      height: 220px;
     }
     .b-sessions-map__device-composition {
       width: 100%;
@@ -1108,8 +1278,8 @@ export default {
 
     .b-sessions-map__country:not(.b-sessions-map__country--compact),
     .b-sessions-map__device-row:not(.b-sessions-map__device-row--compact) {
-      row-gap: 4px;
-      padding-block: 10px;
+      row-gap: 2px;
+      padding-block: 6px;
     }
 
     .b-sessions-map__country:not(.b-sessions-map__country--compact)
@@ -1117,17 +1287,6 @@ export default {
     .b-sessions-map__device-row:not(.b-sessions-map__device-row--compact)
       > .b-sessions-map__identity {
       grid-column: 1 / -1;
-    }
-
-    .b-sessions-map__identity > div {
-      display: flex;
-      align-items: baseline;
-      flex-wrap: wrap;
-      gap: 4px 6px;
-    }
-
-    .b-sessions-map__identity small {
-      margin-block-start: 0;
     }
   }
 

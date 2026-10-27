@@ -14,16 +14,6 @@
 
 <template>
   <section v-if="modern" class="b-dashboard-orders-basket-detail text-start">
-    <u-time-span
-      v-model:end-date="end_date"
-      v-model:start-date="start_date"
-      :max-days="timeSeries.days || 30"
-      :days="timeSeries.days || 30"
-      :offset="0"
-      :origin-date="timeSeries.endDate"
-      color="rgb(var(--v-theme-on-surface))"
-      class="b-dashboard-orders-basket-detail__range"
-    />
     <dl class="sd-modern-stat-grid b-dashboard-orders-basket-detail__stats">
       <div v-for="stage in modern_stages" :key="stage.key">
         <dt>{{ $t(stage.label) }}</dt>
@@ -172,6 +162,12 @@ export default {
   }),
 
   computed: {
+    range_start_date() {
+      return this.modern ? this.timeSeries.startDate : this.start_date;
+    },
+    range_end_date() {
+      return this.modern ? this.timeSeries.endDate : this.end_date;
+    },
     modern_stages() {
       return [
         {
@@ -198,8 +194,8 @@ export default {
         ...stage,
         value: this.timeSeries.totalOf(
           stage.key,
-          this.start_date,
-          this.end_date,
+          this.range_start_date,
+          this.range_end_date,
         ),
       }));
     },
@@ -235,30 +231,30 @@ export default {
     all_added_pie() {
       return this.timeSeries.totalOf(
         `order_${this.column_name}_added`,
-        this.start_date,
-        this.end_date,
+        this.range_start_date,
+        this.range_end_date,
       );
     },
     all_checkout_pie() {
       return this.timeSeries.totalOf(
         `order_${this.column_name}_checkout`,
-        this.start_date,
-        this.end_date,
+        this.range_start_date,
+        this.range_end_date,
       );
     },
     all_payed_pie() {
       return this.timeSeries.totalOf(
         `sell_products_${this.column_name}`,
-        this.start_date,
-        this.end_date,
+        this.range_start_date,
+        this.range_end_date,
       );
     },
 
     all_delivered_pie() {
       return this.timeSeries.totalOf(
         `send_products_${this.column_name}`,
-        this.start_date,
-        this.end_date,
+        this.range_start_date,
+        this.range_end_date,
       );
     },
 
@@ -379,11 +375,11 @@ export default {
           type: "datetime",
           ...(this.modern
             ? {
-                min: this.start_date
-                  ? new Date(this.start_date).getTime()
+                min: this.range_start_date
+                  ? new Date(this.range_start_date).getTime()
                   : undefined,
-                max: this.end_date
-                  ? new Date(this.end_date).getTime()
+                max: this.range_end_date
+                  ? new Date(this.range_end_date).getTime()
                   : undefined,
               }
             : {}),
@@ -546,10 +542,6 @@ export default {
 .b-dashboard-orders-basket-detail {
   min-width: 0;
   font-family: inherit;
-  &__range {
-    max-width: 620px;
-    margin: 0 auto 16px;
-  }
   &__stats {
     grid-template-columns: repeat(5, minmax(0, 1fr));
     margin: 0 0 16px;

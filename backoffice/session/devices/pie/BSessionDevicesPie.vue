@@ -15,7 +15,7 @@
 <template>
   <apexchart
     v-if="series && series.length"
-    :height="modern ? 220 : fullDetails ? 160 : 120"
+    :height="modern ? (small ? 180 : 220) : fullDetails ? 160 : 120"
     :options="modern ? modern_options : options"
     :series="series"
     class="mt-2 mt-sm-0"

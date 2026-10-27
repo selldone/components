@@ -20,7 +20,10 @@
         ? highlightedGroupColor
         : undefined,
     }"
-    :class="{ 'x--chart-bar--fit': fit }"
+    :class="{
+      'x--chart-bar--fit': fit,
+      'x--chart-bar--zero': zero_baseline,
+    }"
     class="x--chart-bar"
   >
     <div
@@ -94,7 +97,7 @@
       </div>
     </div>
 
-    <u-fade-scroll>
+    <u-fade-scroll v-if="!fit || (legend && labels && !hideLegend)">
       <div
         v-if="legend && labels && !hideLegend"
         class="d-flex text-start mx-2 small text-nowrap"
@@ -212,6 +215,14 @@ export default {
   }),
 
   computed: {
+    zero_baseline() {
+      if (!this.fit) return false;
+      const values = this.dataset.flat();
+      return (
+        values.some((value) => value === 0) &&
+        values.every((value) => value == null || value === 0)
+      );
+    },
     count() {
       return this.dataset[0] ? this.dataset[0].length : 0;
     },
@@ -370,12 +381,13 @@ export default {
   max-width: 100%;
 
   .--plot {
+    position: relative;
     min-width: 0;
     overflow: hidden;
 
     .--bars {
       // Fixed insets would make long histories wider than their metric cell.
-      flex: 1 1 0;
+      flex: 1 1 0px;
       min-width: 0;
       margin: 0;
       padding: 0;
@@ -396,9 +408,18 @@ export default {
     }
 
     &.-grouped .--bar {
-      flex: 1 1 0;
+      flex: 1 1 0px;
       width: 0;
     }
+  }
+
+  &.x--chart-bar--zero .--plot::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    border-block-end: 1px solid rgba(var(--v-theme-on-surface), 0.22);
+    pointer-events: none;
   }
 }
 </style>

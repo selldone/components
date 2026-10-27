@@ -51,8 +51,11 @@
         v-if="social_keys?.length && timeSeries.raw_data?.length"
         :class="modern ? 'b-dashboard-channels__chart' : 'mx-n5'"
       >
+        <!-- Native paths are drawn on creation; keep them in sync with plot size. -->
         <u-chart-funnel
+          :key="modern ? `${width}-${height}` : undefined"
           id="fun-data"
+          :modern="modern"
           :animated="!modern"
           :dark="modern && $vuetify.theme.current.dark"
           :colors="colors"
@@ -66,7 +69,7 @@
           :values="values"
           :width="width"
           class="mt-3"
-          hover-opacity-effect
+          :hover-opacity-effect="!modern"
         />
       </div>
       <section
@@ -138,9 +141,15 @@
           </tbody>
         </v-table>
       </section>
-      <p v-else-if="modern" class="sd-modern-empty-state" role="status">
-        {{ $t("admin_shop.dashboard.modern.channel_history_empty") }}
-      </p>
+      <div
+        v-else-if="modern"
+        class="b-dashboard-channels__empty"
+        :style="{ minHeight: height + 'px' }"
+        role="status"
+      >
+        <span class="b-dashboard-channels__empty-line" aria-hidden="true" />
+        <p>{{ $t("admin_shop.dashboard.modern.channel_history_empty") }}</p>
+      </div>
     </component>
   </div>
 </template>
@@ -250,11 +259,14 @@ export default {
     },
 
     height() {
+      if (this.modern) return this.$vuetify.display.smAndDown ? 260 : 300;
       return 150 + this.social_keys.length * 30;
     },
     width() {
       if (!this.timeSeries.raw_data) return 500;
-      return 500 + 45 * this.timeSeries.raw_data.length;
+      const days = this.timeSeries.raw_data.length;
+      const width = 500 + 45 * days;
+      return this.modern ? Math.min(width, Math.max(640, 56 * days)) : width;
     },
     colors() {
       return colorSet3.map((color) => [color, ShadeColor(color, -20)]);
@@ -276,8 +288,8 @@ export default {
   }
 
   .b-dashboard-channels__day-detail {
-    margin-block-start: 20px;
-    padding-block-start: 16px;
+    margin-block-start: 12px;
+    padding-block-start: 12px;
     border-block-start: 1px solid var(--sd-modern-border);
   }
 
@@ -319,13 +331,37 @@ export default {
     margin-inline: -8px;
   }
 
+  .b-dashboard-channels__empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px 8px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    text-align: center;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .b-dashboard-channels__empty-line {
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+
+  :deep(.u--chart-funnel) {
+    width: var(--width);
+    max-width: 100%;
+  }
+
   :deep(.u--chart-funnel > .--container) {
     max-width: 100%;
   }
 
   :deep(.u--chart-funnel > .--legend) {
-    gap: 12px 20px;
-    margin-block-start: 20px;
+    gap: 8px 20px;
+    margin-block: 12px 8px;
     font-size: 12px;
   }
 

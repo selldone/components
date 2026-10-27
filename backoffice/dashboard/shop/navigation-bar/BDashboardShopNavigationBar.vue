@@ -254,6 +254,7 @@ export default defineComponent({
           icon: "space_dashboard",
           label: "admin_shop.dashboard.modern.overview",
           active: ![
+            "ai-agents",
             "setup",
             "setup-packages",
             "expert",
@@ -262,6 +263,13 @@ export default defineComponent({
             "finance",
             "seo",
           ].includes(query),
+        },
+        {
+          code: "ai-agents",
+          query: "ai-agents",
+          icon: "smart_toy",
+          label: "admin_shop.dashboard.ai_agents.title",
+          active: query === "ai-agents",
         },
         {
           code: "setup",

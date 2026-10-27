@@ -14,6 +14,7 @@
 
 <template>
   <v-autocomplete
+    class="b-valuation-input text-start"
     v-model:search="search"
     :customFilter="() => true"
     :items="valuations"
@@ -33,7 +34,25 @@
     "
   >
     <template v-slot:selection="{ item }">
-      <b>{{ modelValue ? modelValue.title : item.raw.title }}</b>
+      <span class="b-valuation-input__selection">
+        <v-avatar size="24" class="me-2" aria-hidden="true">
+          <v-img
+            v-if="
+              (live_value || item.raw).icon_url || (live_value || item.raw).icon
+            "
+            :src="
+              (live_value || item.raw).icon_url ||
+              getShopImagePath((live_value || item.raw).icon, 64)
+            "
+            alt=""
+            cover
+          />
+          <v-icon v-else size="18">calculate</v-icon>
+        </v-avatar>
+        <b class="text-truncate">{{
+          modelValue ? modelValue.title : item.raw.title
+        }}</b>
+      </span>
     </template>
 
     <template v-if="live_value && live_value.user" v-slot:message>
@@ -56,6 +75,17 @@
 
     <template v-slot:item="{ item, props }">
       <v-list-item class="text-start" v-bind="props">
+        <template v-slot:prepend>
+          <v-avatar size="32" class="me-3" aria-hidden="true">
+            <v-img
+              v-if="item.raw.icon_url || item.raw.icon"
+              :src="item.raw.icon_url || getShopImagePath(item.raw.icon, 64)"
+              alt=""
+              cover
+            />
+            <v-icon v-else size="20">calculate</v-icon>
+          </v-avatar>
+        </template>
         <template v-slot:title>
           <b>{{ item.raw.title }}</b>
           <div v-if="item.raw.user" class="my-1 small">
@@ -163,4 +193,11 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-valuation-input__selection {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+}
+</style>

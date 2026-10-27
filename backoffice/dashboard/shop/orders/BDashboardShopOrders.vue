@@ -116,6 +116,7 @@
           <orders-que
             :order-que="orderQue"
             :type="item.code"
+            :show-distribution="!summary"
             class="b-dashboard-orders-summary__queue"
           />
           <b class="b-dashboard-orders-summary__count">{{
@@ -176,6 +177,7 @@
           <orders-que
             :order-que="avocadoQue"
             type="AVO"
+            :show-distribution="!summary"
             class="b-dashboard-orders-summary__queue"
           />
           <b class="b-dashboard-orders-summary__count">{{
@@ -328,6 +330,7 @@
           </div>
         </dl>
         <u-chart-funnel-simple
+          modern
           :colors="available_types.map((item) => item.colors)"
           :labels="funnel_labels"
           :sub-labels="available_types.map((item) => $t(item.name))"
@@ -355,17 +358,32 @@
           </div>
         </header>
         <div class="b-dashboard-orders-detail__table-wrap">
-          <table class="sd-modern-table b-dashboard-orders-detail__table">
+          <table
+            class="sd-modern-table sd-modern-table--dense b-dashboard-orders-detail__table"
+          >
             <thead>
               <tr>
                 <th>{{ $t("global.commons.type") }}</th>
+                <th class="b-dashboard-orders-detail__activity-heading">
+                  {{ $t("admin_shop.dashboard.modern.daily_order_activity") }}
+                  <span class="b-dashboard-orders-detail__activity-legend">
+                    <span
+                      ><i class="b-dashboard-orders-detail__cart-dot" />{{
+                        $t("global.commons.new_carts")
+                      }}</span
+                    >
+                    <span
+                      ><i class="b-dashboard-orders-detail__checkout-dot" />{{
+                        $t("global.commons.checkouts")
+                      }}</span
+                    >
+                  </span>
+                </th>
                 <th>{{ $t("admin_shop.dashboard.modern.current_queue") }}</th>
                 <th>{{ $t("global.commons.sells") }}</th>
-                <th>
-                  <span class="visually-hidden">{{
-                    $t("admin_shop.dashboard.modern.process_orders")
-                  }}</span>
-                </th>
+                <th
+                  :aria-label="$t('admin_shop.dashboard.modern.process_orders')"
+                ></th>
               </tr>
             </thead>
             <tbody>
@@ -376,6 +394,33 @@
                       $t(item.name)
                     }}</span
                   >
+                </td>
+                <td class="b-dashboard-orders-detail__inline-history">
+                  <u-chart-bar
+                    :dataset="getActivityHistory(item)"
+                    :colors="[
+                      'rgb(var(--v-theme-primary))',
+                      'rgba(var(--v-theme-on-surface), 0.4)',
+                    ]"
+                    :labels="[
+                      $t('global.commons.new_carts'),
+                      $t('global.commons.checkouts'),
+                    ]"
+                    :aria-label="
+                      $t('admin_shop.dashboard.modern.order_type_history', {
+                        type: $t(item.name),
+                      })
+                    "
+                    :start-date="daily_start_date"
+                    :end-date="timeSeries.endDate"
+                    :height="28"
+                    :show-title="false"
+                    fit
+                    grouped
+                    dense
+                    narrow
+                    hide-dates
+                  />
                 </td>
                 <td>{{ numeralFormat(getTotalPendingOrders(item), "0,0") }}</td>
                 <td>
@@ -1187,6 +1232,10 @@ import BDashboardShopOrdersAvocado from "../../../dashboard/shop/orders/avocado/
 import BDashboardShopOrdersBasket from "../../../dashboard/shop/orders/basket/BDashboardShopOrdersBasket.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+import {
+  getReportDailyValues,
+  getReportStartDate,
+} from "../performance/periodComparison";
 
 export default {
   name: "BDashboardShopOrders",
@@ -1233,6 +1282,9 @@ export default {
   }),
 
   computed: {
+    daily_start_date() {
+      return getReportStartDate(this.timeSeries);
+    },
     funnel_labels() {
       return ["leads", "new_carts", "checkouts", "sells"].map((key) =>
         this.$t(`global.commons.${key}`),
@@ -1318,6 +1370,13 @@ export default {
     this.calculate_funnel();
   },
   methods: {
+    getActivityHistory(type) {
+      const code = type.code.toLowerCase();
+      return getReportDailyValues(this.timeSeries, [
+        `order_${code}_added`,
+        `order_${code}_checkout`,
+      ]);
+    },
     getTotalPendingOrders(type) {
       let out = 0;
       this.orderQue
@@ -1497,8 +1556,6 @@ export default {
   }
   &__table th,
   &__table td {
-    padding: 4px 8px;
-    height: 44px;
     text-align: start;
   }
   &__table td {
@@ -1508,9 +1565,40 @@ export default {
   }
   &__table th:nth-child(2),
   &__table th:nth-child(3),
-  &__table td:nth-child(2),
-  &__table td:nth-child(3) {
+  &__table th:nth-child(4),
+  &__table td:nth-child(3),
+  &__table td:nth-child(4) {
     text-align: end;
+  }
+  &__table th.b-dashboard-orders-detail__activity-heading {
+    text-align: start;
+  }
+  &__inline-history {
+    width: 24%;
+    min-width: 150px;
+  }
+  &__activity-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-block-start: 3px;
+    font-size: 11px;
+  }
+  &__activity-legend > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  &__activity-legend i {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+  &__cart-dot {
+    background: rgb(var(--v-theme-primary));
+  }
+  &__checkout-dot {
+    background: rgba(var(--v-theme-on-surface), 0.4);
   }
   &__table td:last-child {
     width: 44px;
@@ -1550,7 +1638,7 @@ export default {
       gap: 16px;
     }
     &__table {
-      min-width: 320px;
+      min-width: 520px;
     }
   }
 }

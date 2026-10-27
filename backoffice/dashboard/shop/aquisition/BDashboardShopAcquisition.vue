@@ -215,15 +215,25 @@
             </div>
           </div>
         </header>
-        <apexchart
-          :height="240"
-          :options="options_pie"
-          :series="series_pie"
-          :key="modern ? chartThemeKey : 'legacy-pages'"
-          type="donut"
-          width="100%"
-          :class="{ 'b-dashboard-acquisition__composition-chart': modern }"
-        />
+        <div :class="{ 'b-dashboard-acquisition__composition-plot': modern }">
+          <apexchart
+            :height="240"
+            :options="options_pie"
+            :series="series_pie"
+            :key="modern ? chartThemeKey : 'legacy-pages'"
+            type="donut"
+            width="100%"
+            :class="{ 'b-dashboard-acquisition__composition-chart': modern }"
+          />
+          <div
+            v-if="modern && composition_is_zero"
+            class="b-dashboard-acquisition__composition-zero"
+            role="img"
+            :aria-label="$t('shop_visitors_widget.page_views') + ': 0'"
+          >
+            <span aria-hidden="true">0</span>
+          </div>
+        </div>
         <u-time-span
           v-model:end-date="end_date"
           v-model:start-date="start_date"
@@ -288,7 +298,12 @@
 
           <div :class="{ 'b-dashboard-acquisition__sankey': modern }">
             <b-session-chart-sankey
-              v-if="socials && Object.keys(socials).length"
+              v-if="
+                modern
+                  ? has_channel_data
+                  : socials && Object.keys(socials).length
+              "
+              :modern="modern"
               :Social="calcTotalSocials"
               :direct="calcTotalDirect"
               :other="calcTotalOther"
@@ -296,9 +311,21 @@
               :social-details="calSocialDetails"
               :height="modern ? '260px' : '150px'"
             ></b-session-chart-sankey>
-            <p v-else-if="modern" class="sd-modern-empty-state" role="status">
-              {{ $t("global.commons.no_data") }}
-            </p>
+            <div
+              v-else-if="modern"
+              class="b-dashboard-acquisition__flow-empty"
+              role="status"
+            >
+              <span>{{ $t("global.commons.sessions") }}</span>
+              <span class="b-dashboard-acquisition__flow-empty-count">{{
+                numeralFormat(all_new_visitors + all_returning_visitors, "0,0")
+              }}</span>
+              <span
+                class="b-dashboard-acquisition__flow-empty-line"
+                aria-hidden="true"
+              />
+              <span>{{ $t("global.commons.no_data") }}</span>
+            </div>
           </div>
         </v-col>
         <!-- ━━━━━━━━━━━━━━━━━━ Channels ━━━━━━━━━━━━━━━━━━ -->
@@ -347,6 +374,12 @@
                 >{{ numeralFormat(item.value, "0,0.[0]a") }}</component
               >
             </div>
+            <p
+              v-if="modern && !sorted_socials.length"
+              class="sd-modern-empty-state"
+            >
+              {{ $t("global.commons.no_data") }}
+            </p>
           </div>
         </v-col>
       </component>
@@ -398,6 +431,12 @@ export default {
   }),
 
   computed: {
+    has_channel_data() {
+      return Object.values(this.socials || {}).some(
+        (value) =>
+          typeof value === "number" && Number.isFinite(value) && value > 0,
+      );
+    },
     modern_metrics() {
       return [
         {
@@ -503,6 +542,12 @@ export default {
             this.all_view_products_file +
             this.all_view_products_service),
       ];
+    },
+    composition_is_zero() {
+      return (
+        this.series_pie.length > 0 &&
+        this.series_pie.every((value) => Number.isFinite(value) && value === 0)
+      );
     },
 
     options_pie() {
@@ -624,23 +669,86 @@ export default {
       // Keep narrow annotations inside the plot; native series names remain in the legend and tooltip.
       return maxPoints.map((point) => ({
         ...point,
+        id: `b-dashboard-acquisition__maximum-point-${point.marker.strokeColor.slice(1)}`,
+        seriesIndex: (this.has_amp
+          ? ["#FFA000", "#444", "#C2185B", "#1976D2"]
+          : ["#FFA000", "#C2185B", "#1976D2"]
+        ).indexOf(point.marker.strokeColor),
         label: {
           ...point.label,
           ...(this.$vuetify.display?.smAndDown
             ? { text: numeral(point.y).format("0,0") }
             : {}),
-          style: { ...point.label?.style, fontSize: "11px", fontWeight: 400 },
+          style: {
+            ...point.label?.style,
+            fontSize: "11px",
+            fontWeight: 400,
+            cssClass: "b-dashboard-acquisition__maximum-label",
+          },
         },
       }));
     },
 
+    endpointPoints() {
+      if (!this.modern) return [];
+      const keys = this.has_amp
+        ? ["page_views", "amp", "new_visitors", "returning_visitors"]
+        : ["page_views", "new_visitors", "returning_visitors"];
+      const icons = this.has_amp
+        ? ["\ue8f4", "\uea0b", "\ue7fe", "\ue889"]
+        : ["\ue8f4", "\ue7fe", "\ue889"];
+      const colors = this.has_amp
+        ? ["#FFA000", "#444", "#C2185B", "#1976D2"]
+        : ["#FFA000", "#C2185B", "#1976D2"];
+      return keys.flatMap((key, seriesIndex) => {
+        let last = null;
+        this.timeSeries.raw_data.forEach((row) => {
+          if (row[key] == null || row[key] === "") return;
+          const x = DateConverter.convertToLocalTime(
+            row.created_at,
+            true,
+          )?.getTime();
+          const y = Number(row[key]);
+          if (Number.isFinite(x) && Number.isFinite(y) && (!last || x > last.x))
+            last = { x, y };
+        });
+        if (!last) return [];
+        return [
+          {
+            ...last,
+            seriesIndex,
+            marker: {
+              size: 10,
+              fillColor: "rgb(var(--v-theme-surface))",
+              strokeColor: colors[seriesIndex],
+              strokeWidth: 2,
+              offsetX: 0,
+              offsetY: 0,
+              cssClass: "b-dashboard-acquisition__endpoint",
+            },
+            label: { text: "" },
+            customSVG: {
+              SVG: `<text y="0" dy=".35em" text-anchor="middle" font-family="Material Icons" font-size="12" fill="${colors[seriesIndex]}" aria-hidden="true">${icons[seriesIndex]}</text>`,
+              cssClass: "b-dashboard-acquisition__endpoint",
+              offsetX: 0,
+              offsetY: 0,
+            },
+          },
+        ];
+      });
+    },
+
     options() {
       return {
-        annotations: this.has_annotaion
-          ? {
-              points: this.maxPoints,
-            }
-          : undefined,
+        annotations:
+          this.has_annotaion || this.modern
+            ? {
+                points: [
+                  ...(this.has_annotaion ? this.maxPoints : []),
+                  ...this.endpointPoints,
+                ],
+              }
+            : undefined,
 
         theme: {
           mode:
@@ -654,6 +762,13 @@ export default {
           stacked: false,
           background: "transparent", // Set the background to transparent
           fontFamily: "var(--font)",
+
+          events: this.modern
+            ? {
+                mounted: this.separateEndpointMarkers,
+                updated: this.separateEndpointMarkers,
+              }
+            : undefined,
 
           /*  events:
             {
@@ -754,6 +869,9 @@ export default {
 
         grid: {
           show: true,
+          padding: this.modern
+            ? { top: 14, right: 16, bottom: 12, left: 12 }
+            : undefined,
           strokeDashArray: [2, 3],
           position: "back",
           xaxis: {
@@ -845,6 +963,112 @@ export default {
     },
   },
   methods: {
+    separateEndpointMarkers(chart) {
+      if (!this.modern) return;
+      this.spaceMaximumLabels(chart);
+      const root = chart.el;
+      const markers = root.querySelectorAll(
+        ".apexcharts-point-annotation-marker.b-dashboard-acquisition__endpoint",
+      );
+      const symbols = root.querySelectorAll(
+        ".apexcharts-point-annotations-custom-svg.b-dashboard-acquisition__endpoint",
+      );
+      root
+        .querySelectorAll(".b-dashboard-acquisition__endpoint-leader")
+        .forEach((line) => line.remove());
+      const positions = [];
+      markers.forEach((marker, index) => {
+        const x = Number(marker.getAttribute("cx"));
+        const y = Number(marker.getAttribute("cy"));
+        const width = chart.w.layout.gridWidth;
+        const direction = x >= width / 2 ? -1 : 1;
+        let offset = 0;
+        // Native pixel centers keep close series readable without changing their data or y position.
+        while (
+          positions.some(
+            (point) => Math.hypot(x + offset - point.x, y - point.y) < 24,
+          )
+        )
+          offset += direction * 24;
+        positions.push({ x: x + offset, y });
+        marker.setAttribute("transform", `translate(${offset}, 0)`);
+        symbols[index]?.setAttribute(
+          "transform",
+          `translate(${x + offset}, ${y})`,
+        );
+        if (offset) {
+          const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path",
+          );
+          line.setAttribute(
+            "class",
+            "b-dashboard-acquisition__endpoint b-dashboard-acquisition__endpoint-leader",
+          );
+          line.setAttribute(
+            "d",
+            `M ${x} ${y} H ${x + offset - direction * 10}`,
+          );
+          line.setAttribute("stroke", marker.getAttribute("stroke"));
+          line.setAttribute("stroke-width", "1");
+          line.setAttribute("opacity", "0.55");
+          line.setAttribute("fill", "none");
+          line.setAttribute("aria-hidden", "true");
+          marker.parentNode.insertBefore(line, marker.parentNode.firstChild);
+        }
+      });
+    },
+    spaceMaximumLabels(chart) {
+      const root = chart.el;
+      const labels = [
+        ...root.querySelectorAll(
+          ".apexcharts-point-annotation-label.b-dashboard-acquisition__maximum-label",
+        ),
+      ];
+      root
+        .querySelectorAll(".b-dashboard-acquisition__maximum-leader")
+        .forEach((line) => line.remove());
+      const width = chart.w.layout.gridWidth;
+      if (!Number.isFinite(width) || width <= 0) return;
+      labels.forEach((label, index) => {
+        const id = [...label.classList].find((name) =>
+          name.startsWith("b-dashboard-acquisition__maximum-point-"),
+        );
+        const background = id && root.querySelector(`rect.${id}`);
+        const marker =
+          id && root.querySelector(`.apexcharts-point-annotation-marker.${id}`);
+        if (!background || !marker) return;
+        const box = background.getBBox();
+        // Spread captions across the plot while the native marker retains the real maximum.
+        const center = Math.max(
+          box.width / 2 + 4,
+          Math.min(
+            width - box.width / 2 - 4,
+            (width * (index + 0.5)) / labels.length,
+          ),
+        );
+        const offset = center - box.x - box.width / 2;
+        label.setAttribute("transform", `translate(${offset}, 0)`);
+        background.setAttribute("transform", `translate(${offset}, 0)`);
+        if (Math.abs(offset) < 1) return;
+        const line = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path",
+        );
+        line.setAttribute("class", "b-dashboard-acquisition__maximum-leader");
+        line.setAttribute(
+          "d",
+          `M ${marker.getAttribute("cx")} ${marker.getAttribute("cy")} L ${center} ${box.y + box.height}`,
+        );
+        line.setAttribute("stroke", marker.getAttribute("stroke"));
+        line.setAttribute("stroke-width", "1");
+        line.setAttribute("stroke-dasharray", "2 3");
+        line.setAttribute("opacity", "0.35");
+        line.setAttribute("fill", "none");
+        line.setAttribute("aria-hidden", "true");
+        marker.parentNode.insertBefore(line, marker.parentNode.firstChild);
+      });
+    },
     getSumByKey(key, offset = null, days = null) {
       let start = null;
       let end = null;
@@ -937,9 +1161,28 @@ export default {
     order: 1;
   }
 
-  .b-dashboard-acquisition__composition-chart {
+  .b-dashboard-acquisition__composition-plot {
+    position: relative;
     order: 2;
     margin-block-start: 16px;
+  }
+
+  .b-dashboard-acquisition__composition-zero {
+    position: absolute;
+    inset-block-start: 16px;
+    inset-inline: 0;
+    display: grid;
+    place-items: center;
+    width: min(124px, 70%);
+    aspect-ratio: 1;
+    margin-inline: auto;
+    border: 18px solid rgba(var(--v-theme-on-surface), 0.1);
+    border-radius: 50%;
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 22px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
   }
 
   .b-dashboard-acquisition__amp {
@@ -991,6 +1234,30 @@ export default {
     margin-block-start: 0;
   }
 
+  .b-dashboard-acquisition__flow-empty {
+    display: flex;
+    min-height: 260px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px 8px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+  }
+
+  .b-dashboard-acquisition__flow-empty-count {
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 20px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .b-dashboard-acquisition__flow-empty-line {
+    align-self: stretch;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+
   :deep(.snaky-chart) {
     min-width: 440px;
   }
@@ -998,6 +1265,10 @@ export default {
   :deep(.snaky-chart .d2b-sankey-nodes text) {
     fill: rgb(var(--v-theme-on-surface));
     font-size: 12px;
+  }
+
+  :deep(.b-dashboard-acquisition__endpoint) {
+    pointer-events: none;
   }
 
   .b-dashboard-acquisition__source {

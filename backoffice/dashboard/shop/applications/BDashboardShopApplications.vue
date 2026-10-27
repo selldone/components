@@ -16,15 +16,23 @@
   <section v-if="modern" class="s--shop-applications-modern text-start">
     <header class="sd-modern-header">
       <div class="sd-modern-title">
-        <span class="sd-modern-icon sd-modern-icon--plain"
-          ><v-icon>phone_iphone</v-icon></span
-        >
+        <span class="s--shop-applications-modern__brand">
+          <img
+            :src="require('../../../../assets/selldone-logo/logo-purple.svg')"
+            alt=""
+            width="28"
+            height="34"
+          />
+        </span>
         <div>
+          <p class="sd-modern-eyebrow">
+            {{ $t("selldone_applications.workspace.label") }}
+          </p>
           <h2 class="sd-modern-title-text">
-            {{ $t("admin_shop.dashboard.modern.mobile_apps") }}
+            {{ $t("selldone_applications.workspace.title") }}
           </h2>
           <p class="sd-modern-subtitle">
-            {{ $t("selldone_applications.msg") }}
+            {{ $t("selldone_applications.workspace.subtitle") }}
           </p>
         </div>
       </div>
@@ -33,19 +41,33 @@
         class="sd-modern-icon-button"
         variant="text"
         :aria-label="$t('global.actions.close')"
-        v-tooltip="$t('global.actions.close')"
+        v-tooltip="{
+          text: $t('global.actions.close'),
+          location: 'top',
+          contentClass: 'sd-modern-tooltip text-start',
+          openOnFocus: true,
+        }"
         @click="close()"
         ><v-icon>close</v-icon></v-btn
       >
     </header>
     <div class="s--shop-applications-modern__content">
+      <div class="s--shop-applications-modern__intro">
+        <h3>{{ $t("selldone_applications.workspace.mobile_title") }}</h3>
+        <p>{{ $t("selldone_applications.workspace.mobile_description") }}</p>
+      </div>
       <div class="s--shop-applications-modern__badges">
         <a
           :href="ios"
           target="_blank"
           rel="noopener noreferrer"
-          :aria-label="$t('global.actions.download') + ' · App Store'"
-          v-tooltip="$t('global.actions.download') + ' · App Store'"
+          :aria-label="$t('selldone_applications.workspace.app_store')"
+          v-tooltip="{
+            text: $t('selldone_applications.workspace.app_store'),
+            location: 'top',
+            contentClass: 'sd-modern-tooltip text-start',
+            openOnFocus: true,
+          }"
           ><img
             :src="require('../../../../assets/trademark/appstore.png')"
             alt="App Store"
@@ -55,8 +77,13 @@
           :href="android"
           target="_blank"
           rel="noopener noreferrer"
-          :aria-label="$t('global.actions.download') + ' · Google Play'"
-          v-tooltip="$t('global.actions.download') + ' · Google Play'"
+          :aria-label="$t('selldone_applications.workspace.google_play')"
+          v-tooltip="{
+            text: $t('selldone_applications.workspace.google_play'),
+            location: 'top',
+            contentClass: 'sd-modern-tooltip text-start',
+            openOnFocus: true,
+          }"
           ><img
             :src="require('../../../../assets/trademark/googleplay.png')"
             alt="Google Play"
@@ -66,7 +93,7 @@
       <div class="s--shop-applications-modern__download">
         <v-btn-toggle
           v-model="tab"
-          :aria-label="$t('admin_shop.dashboard.modern.mobile_apps')"
+          :aria-label="$t('selldone_applications.workspace.qr_platform')"
           class="s--shop-applications-modern__platforms"
           mandatory
         >
@@ -75,7 +102,14 @@
             class="sd-modern-button"
             variant="text"
             :aria-pressed="tab === 'ios'"
-            v-tooltip="'iOS'"
+            v-tooltip="{
+              text: $t('selldone_applications.workspace.qr_for', {
+                platform: 'iOS',
+              }),
+              location: 'top',
+              contentClass: 'sd-modern-tooltip text-start',
+              openOnFocus: true,
+            }"
             ><v-icon start size="small">fa:fab fa-apple</v-icon>iOS</v-btn
           >
           <v-btn
@@ -83,53 +117,115 @@
             class="sd-modern-button"
             variant="text"
             :aria-pressed="tab === 'android'"
-            v-tooltip="'Android'"
+            v-tooltip="{
+              text: $t('selldone_applications.workspace.qr_for', {
+                platform: 'Android',
+              }),
+              location: 'top',
+              contentClass: 'sd-modern-tooltip text-start',
+              openOnFocus: true,
+            }"
             ><v-icon start size="small">fa:fab fa-android</v-icon>Android</v-btn
           >
         </v-btn-toggle>
-        <u-qrcode
-          :options="{ width: 220, color: { light: '#fff', dark: '#111' } }"
-          :value="qr"
-          class="s--shop-applications-modern__qr-code"
-        />
-        <p class="sd-modern-subtitle text-center">
+        <div
+          class="s--shop-applications-modern__qr-code no-inv"
+          role="img"
+          :aria-label="
+            $t('selldone_applications.workspace.qr_for', {
+              platform: tab === 'ios' ? 'iOS' : 'Android',
+            })
+          "
+        >
+          <u-qrcode
+            :options="{ width: 196, color: { light: '#fff', dark: '#111' } }"
+            :value="qr"
+          />
+        </div>
+        <p class="s--shop-applications-modern__scan">
           {{ $t("selldone_applications.scan_qr_code") }}
+        </p>
+        <p class="s--shop-applications-modern__scan-store" aria-live="polite">
+          {{
+            $t(
+              tab === "ios"
+                ? "selldone_applications.workspace.app_store"
+                : "selldone_applications.workspace.google_play",
+            )
+          }}
         </p>
       </div>
       <div class="s--shop-applications-modern__features">
-        <div class="s--shop-applications-modern__intro">
-          <h3 class="sd-modern-eyebrow">
-            {{ $t("selldone_applications.title") }}
-          </h3>
-          <span class="s--shop-applications-modern__availability"
-            ><span class="sd-modern-status__dot" />{{
-              $t("global.commons.available")
-            }}</span
-          >
-        </div>
         <div class="s--shop-applications-modern__feature">
-          <v-icon size="20">notifications_active</v-icon>
+          <v-icon size="18" aria-hidden="true">notifications_active</v-icon>
           <div>
-            <h3>{{ $t("selldone_applications.notification.title") }}</h3>
+            <h3>
+              {{ $t("selldone_applications.workspace.notification_title") }}
+            </h3>
             <p>{{ $t("selldone_applications.notification.subtitle") }}</p>
           </div>
         </div>
         <div class="s--shop-applications-modern__feature">
-          <v-icon size="20">shopping_bag</v-icon>
+          <v-icon size="18" aria-hidden="true">shopping_bag</v-icon>
           <div>
-            <h3>{{ $t("selldone_applications.order.title") }}</h3>
+            <h3>{{ $t("selldone_applications.workspace.order_title") }}</h3>
             <p>{{ $t("selldone_applications.order.subtitle") }}</p>
           </div>
         </div>
         <div class="s--shop-applications-modern__feature">
-          <v-icon size="20">shelves</v-icon>
+          <v-icon size="18" aria-hidden="true">shelves</v-icon>
           <div>
-            <h3>{{ $t("selldone_applications.product.title") }}</h3>
+            <h3>{{ $t("selldone_applications.workspace.product_title") }}</h3>
             <p>{{ $t("selldone_applications.product.subtitle") }}</p>
           </div>
         </div>
       </div>
     </div>
+    <div class="s--shop-applications-modern__desktop">
+      <span class="sd-modern-icon s--shop-applications-modern__desktop-icon"
+        ><v-icon size="20" aria-hidden="true">desktop_windows</v-icon></span
+      >
+      <div class="s--shop-applications-modern__desktop-copy">
+        <h3>{{ $t("selldone_applications.workspace.desktop_title") }}</h3>
+        <p>{{ $t("selldone_applications.workspace.desktop_description") }}</p>
+        <ul
+          class="s--shop-applications-modern__systems"
+          :aria-label="$t('selldone_applications.workspace.desktop_platforms')"
+        >
+          <li>
+            <v-icon size="16" aria-hidden="true">fa:fab fa-apple</v-icon
+            ><span dir="ltr">macOS</span>
+          </li>
+          <li>
+            <v-icon size="15" aria-hidden="true">fa:fab fa-windows</v-icon
+            ><span dir="ltr">Windows</span>
+          </li>
+          <li>
+            <v-icon size="17" aria-hidden="true">fa:fab fa-linux</v-icon
+            ><span dir="ltr">Linux</span>
+          </li>
+        </ul>
+      </div>
+      <a
+        :href="desktop"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="s--shop-applications-modern__desktop-link"
+        v-tooltip="{
+          text: $t('selldone_applications.workspace.desktop_help'),
+          location: 'top',
+          contentClass: 'sd-modern-tooltip text-start',
+          openOnFocus: true,
+        }"
+      >
+        {{ $t("selldone_applications.workspace.desktop_action")
+        }}<v-icon size="18" aria-hidden="true">open_in_new</v-icon>
+      </a>
+    </div>
+    <p class="s--shop-applications-modern__account">
+      <v-icon size="16" aria-hidden="true">check</v-icon
+      >{{ $t("selldone_applications.workspace.account") }}
+    </p>
   </section>
 
   <s-widget v-else class="position-relative">
@@ -275,6 +371,9 @@ export default {
   }),
 
   computed: {
+    desktop() {
+      return SetupService.MainServiceUrl() + "/desktop#downloads";
+    },
     qr() {
       return this.tab === "ios" ? this.ios : this.android;
     },
@@ -294,85 +393,140 @@ export default {
 
 <style lang="scss" scoped>
 .s--shop-applications-modern {
+  font-family: inherit;
+
   .sd-modern-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
+    align-items: center;
     gap: 16px;
-    margin-block-end: 24px;
+    margin-block-end: 28px;
   }
-  .sd-modern-title > div {
-    min-width: 0;
+  .sd-modern-title {
+    align-items: center;
+    gap: 15px;
+  }
+  .sd-modern-title-text {
+    font-size: 23px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .sd-modern-eyebrow {
+    margin-block-end: 5px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .sd-modern-subtitle {
+    margin-block-start: 6px;
+    font-size: 13px;
+  }
+  &__brand {
+    display: grid;
+    flex: 0 0 52px;
+    place-items: center;
+    height: 56px;
+    background: var(--sd-modern-inset);
+    border-radius: 13px;
+  }
+  &__brand img {
+    display: block;
+    object-fit: contain;
   }
   &__content {
     display: grid;
-    grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
-    grid-template-areas: "download features" "download badges";
+    grid-template-columns: minmax(0, 1fr) 206px;
+    grid-template-areas: "intro download" "features download" "badges download";
     align-items: start;
-    gap: 16px 28px;
+    gap: 18px 28px;
+    margin-block-end: 26px;
   }
   &__download {
     grid-area: download;
     min-width: 0;
-    max-width: 220px;
+    width: 206px;
+    max-width: 100%;
     justify-self: center;
+    align-self: center;
+    text-align: center;
   }
   &__platforms {
     display: flex;
     height: auto;
     gap: 4px;
-    margin-block-end: 12px;
+    padding: 4px;
+    margin-block-end: 11px;
+    background: var(--sd-modern-inset);
+    border-radius: 13px;
   }
-  &__platforms > .v-btn {
-    flex: 1 0 auto;
+  &__platforms.v-btn-group > .v-btn {
+    flex: 1 1 auto;
     min-width: 0;
-    padding-inline: 10px;
+    height: 36px;
+    padding-inline: 8px;
     font-size: 13px;
     white-space: nowrap;
+    border-radius: 9px;
   }
   &__platforms > .v-btn :deep(.v-btn__content) {
     white-space: nowrap;
     overflow-wrap: normal;
   }
   &__platforms .v-btn--active {
-    background: var(--sd-modern-inset);
+    background: rgb(var(--v-theme-surface));
+    box-shadow: 0 1px 4px rgba(var(--v-theme-on-surface), 0.06);
   }
   &__qr-code {
     width: 100%;
     aspect-ratio: 1;
+    padding: 5px;
     overflow: hidden;
+    background: #fff;
     border-radius: 12px;
+    line-height: 0;
   }
-  &__qr-code :deep(canvas) {
+  &__qr-code :deep(canvas),
+  &__qr-code :deep(.v-skeleton-loader) {
     display: block;
     max-width: 100%;
     height: auto !important;
   }
+  &__scan {
+    margin: 10px 0 0;
+    font-size: 13px;
+  }
+  &__scan-store {
+    margin: 3px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+  }
   &__features {
     grid-area: features;
+    display: grid;
+    gap: 15px;
     min-width: 0;
   }
   &__intro {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-block-end: 6px;
+    grid-area: intro;
   }
-  &__availability {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  &__intro h3,
+  &__desktop h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  &__intro p {
+    max-width: 360px;
+    margin: 7px 0 0;
     color: var(--sd-modern-muted);
-    font-size: 12px;
+    font-size: 13px;
+    line-height: 1.7;
   }
   &__feature {
     display: grid;
     grid-template-columns: 20px minmax(0, 1fr);
     align-items: start;
-    gap: 12px;
-    padding-block: 12px;
+    gap: 11px;
   }
   &__feature > .v-icon {
     margin-block-start: 2px;
@@ -380,14 +534,14 @@ export default {
   }
   &__feature h3 {
     margin: 0;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     line-height: 1.5;
   }
   &__feature p {
     margin: 3px 0 0;
     color: var(--sd-modern-muted);
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.6;
   }
   &__badges {
@@ -404,20 +558,136 @@ export default {
     border-radius: 8px;
   }
   &__badges img {
-    max-width: 100%;
+    display: block;
+    width: auto;
+    max-width: 145px;
+    height: 40px;
+    object-fit: contain;
   }
-  &__badges a:focus-visible {
+  &__badges a:focus-visible,
+  &__desktop-link:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
     outline-offset: 3px;
   }
+  &__desktop {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 13px;
+    padding-block: 21px 14px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  &__desktop-icon {
+    align-self: start;
+    width: 34px;
+    height: 34px;
+    margin-block-start: 1px;
+    color: var(--sd-modern-muted);
+    background: var(--sd-modern-inset);
+    border-radius: 9px;
+  }
+  &__desktop-copy {
+    min-width: 0;
+  }
+  &__desktop h3 {
+    font-size: 14px;
+  }
+  &__desktop p {
+    margin: 5px 0 9px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  &__systems {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    list-style: none;
+  }
+  &__systems li {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  &__desktop-link {
+    display: inline-flex;
+    align-items: center;
+    justify-self: end;
+    gap: 6px;
+    min-height: 44px;
+    padding-inline: 8px;
+    color: rgb(var(--v-theme-primary));
+    border-radius: 8px;
+    font-size: 13px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  &__desktop-link:hover {
+    background: var(--sd-modern-inset);
+  }
+  &__account {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin: 12px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 1.7;
+    text-align: center;
+  }
   @media (max-width: 600px) {
+    .sd-modern-header {
+      align-items: start;
+      gap: 10px;
+      margin-block-end: 24px;
+    }
+    .sd-modern-title {
+      gap: 11px;
+    }
+    .sd-modern-title-text {
+      font-size: 20px;
+    }
+    &__brand {
+      flex-basis: 42px;
+      height: 47px;
+      border-radius: 11px;
+    }
+    &__brand img {
+      width: 22px;
+      height: 28px;
+    }
     &__content {
       grid-template-columns: minmax(0, 1fr);
-      grid-template-areas: "badges" "download" "features";
+      grid-template-areas: "intro" "badges" "download" "features";
       gap: 20px;
+    }
+    &__intro p {
+      max-width: none;
     }
     &__platforms > .v-btn {
       min-height: 44px;
+    }
+    &__desktop {
+      grid-template-columns: 31px minmax(0, 1fr);
+      gap: 10px;
+      padding-block-start: 20px;
+    }
+    &__desktop-icon {
+      width: 31px;
+      height: 31px;
+    }
+    &__desktop-link {
+      grid-column: 2;
+      justify-self: start;
+      white-space: normal;
+    }
+    &__systems {
+      gap: 11px;
     }
   }
 }

@@ -76,7 +76,9 @@
       </v-btn>
     </header>
     <div class="b-dashboard-products-summary__total">
-      <strong>{{ numeralFormat(total_products, "0,0") }}</strong>
+      <strong>{{
+        total_products === null ? "—" : numeralFormat(total_products, "0,0")
+      }}</strong>
       <span class="sd-modern-subtitle">{{
         $t("global.commons.products")
       }}</span>
@@ -92,7 +94,7 @@
         <u-chart-bar
           class="b-dashboard-products-summary__inline-history"
           :dataset="getArray(`total_products_${item.code.toLowerCase()}`)"
-          :start-date="timeSeries.startDate"
+          :start-date="daily_start_date"
           :end-date="timeSeries.endDate"
           :colors="[item.color]"
           :height="28"
@@ -113,10 +115,14 @@
           hide-dates
         />
         <b>{{
-          numeralFormat(
+          Number.isFinite(
             lastDayData[`total_products_${item.code.toLowerCase()}`],
-            "0,0",
           )
+            ? numeralFormat(
+                lastDayData[`total_products_${item.code.toLowerCase()}`],
+                "0,0",
+              )
+            : "—"
         }}</b>
         <v-btn
           v-if="can_view_products"
@@ -338,7 +344,10 @@ import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelp
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
-import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
+import {
+  getReportDailyValues,
+  getReportStartDate,
+} from "../performance/periodComparison";
 
 export default {
   name: "BDashboardShopProducts",
@@ -363,6 +372,9 @@ export default {
   data: () => ({}),
 
   computed: {
+    daily_start_date() {
+      return getReportStartDate(this.timeSeries);
+    },
     can_view_products() {
       return this.readShopAccess(ShopPermissionRegions.PRODUCTS.code);
     },
@@ -386,6 +398,13 @@ export default {
     },
 
     total_products() {
+      if (
+        this.modern &&
+        !["physical", "virtual", "file", "service", "subscription"].every(
+          (type) => Number.isFinite(this.lastDayData[`total_products_${type}`]),
+        )
+      )
+        return null;
       return (
         this.lastDayData.total_products_virtual +
         this.lastDayData.total_products_physical +
@@ -397,34 +416,7 @@ export default {
   },
   methods: {
     getArray(key) {
-      if (this.modern) {
-        const start = new Date(this.timeSeries.startDate);
-        const end = new Date(this.timeSeries.endDate);
-        if (
-          !Number.isFinite(start.getTime()) ||
-          !Number.isFinite(end.getTime())
-        )
-          return [];
-        start.setHours(0, 0, 0, 0);
-        const recorded = new Map();
-        for (const row of this.timeSeries.raw_data || []) {
-          const date = DateConverter.convertToLocalTime(row.created_at, true);
-          if (date && !recorded.has(date.getTime()))
-            recorded.set(date.getTime(), row[key]);
-        }
-        const values = [];
-        for (
-          const date = start;
-          date <= end;
-          date.setDate(date.getDate() + 1)
-        ) {
-          const value = recorded.get(date.getTime());
-          values.push([
-            typeof value === "number" && Number.isFinite(value) ? value : null,
-          ]);
-        }
-        return values;
-      }
+      if (this.modern) return getReportDailyValues(this.timeSeries, [key]);
       return this.timeSeries
         .arrayOfForceInterpolateByLastValue(key, false, "created_at")
         .map((val) => [val >= 0 ? val : 0]);
@@ -465,10 +457,9 @@ export default {
   }
   &__type {
     display: grid;
-    grid-template-columns: 20px minmax(0, 1fr) clamp(48px, 16cqi, 104px) minmax(
-        28px,
-        auto
-      ) auto;
+    grid-template-columns:
+      20px minmax(0, 1fr) clamp(48px, 16cqi, 104px) minmax(28px, auto)
+      auto;
     align-items: center;
     gap: 9px;
     min-height: 44px;
@@ -494,7 +485,7 @@ export default {
     max-width: 100%;
   }
   &__inline-history :deep(.--bar) {
-    opacity: 0.22;
+    opacity: 0.45;
   }
   &__histories {
     margin-block-start: 16px;

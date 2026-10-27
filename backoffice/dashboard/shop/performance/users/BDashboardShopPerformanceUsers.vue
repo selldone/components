@@ -59,7 +59,12 @@
     <h3 :class="modern ? 'b-dashboard-performance-stat__value' : 'font--20'">
       <span>
         {{
-          numeralFormat(todayDataOffset ? todayDataOffset.users : 0, "0.[00]a")
+          modern && !Number.isFinite(todayDataOffset?.users)
+            ? "—"
+            : numeralFormat(
+                todayDataOffset ? todayDataOffset.users : 0,
+                "0.[00]a",
+              )
         }}
       </span>
 

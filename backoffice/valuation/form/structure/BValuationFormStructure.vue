@@ -33,7 +33,8 @@
         :collapse="drag || collapse"
         :element="element"
         :sample-product="sampleProduct"
-        class="mt-5"
+        :modern="modern"
+        :class="modern ? 'my-3' : 'mt-5'"
         @remove="removeField(index)"
       >
       </b-valuation-form-structure-row>
@@ -63,6 +64,7 @@ export default {
     },
 
     collapse: Boolean.prototype,
+    modern: { type: Boolean, default: false },
   },
 
   data: () => ({

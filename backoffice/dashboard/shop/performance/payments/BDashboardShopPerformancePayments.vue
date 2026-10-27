@@ -74,7 +74,7 @@
       </p>
 
       <b
-        v-if="payments[selected_currency]"
+        v-if="payments[selected_currency] !== undefined"
         :caption="$t('global.commons.total')"
         class="sub-caption b-12px me-1"
         :class="{ 'b-dashboard-performance-payments__total': modern }"
@@ -89,7 +89,7 @@
     <v-row no-gutters style="min-height: 29px">
       <div class="flex-grow-1" :class="{ 'min-width-200': !modern }">
         <div
-          v-for="finance in todayDataOffset?.finances ?? []"
+          v-for="finance in displayed_finances"
           :key="finance.currency"
           :title="title"
           :class="modern ? 'b-dashboard-performance-stat__payment' : 'font--20'"
@@ -245,6 +245,15 @@ export default {
     },
     available_currencies() {
       return Object.keys(this.payments);
+    },
+    displayed_finances() {
+      const finances = this.todayDataOffset?.finances;
+      if (!this.modern || !Array.isArray(finances) || finances.length)
+        return finances || [];
+      const currencies = this.available_currencies.length
+        ? this.available_currencies
+        : [this.user_selected_currency];
+      return currencies.map((currency) => ({ currency, pay: 0 }));
     },
     title() {
       return !this.todayDataOffset ||

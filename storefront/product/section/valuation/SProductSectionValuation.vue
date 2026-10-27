@@ -18,13 +18,17 @@
       structure && preferences_valuation && $product.price_input === 'custom'
     "
     :class="{ '-preview': previewMode }"
-    class="widget-box w-100 py-3 mt-5 pricing-form strong-field"
+    class="s-product-section-valuation pricing-form text-start"
   >
     <u-loading-progress v-if="busy_save"></u-loading-progress>
     <div
       v-for="(item, index) in structure"
       :key="index"
-      class="position-relative"
+      class="s-product-section-valuation__field"
+      :class="{
+        's-product-section-valuation__field--next-required':
+          next_required_index === index,
+      }"
     >
       <v-expand-transition group>
         <!-- Normal -->
@@ -36,8 +40,9 @@
           :placeholder="item.placeholder"
           :readonly="readonly"
           bg-color="transparent"
-          class="mx-4"
-          variant="underlined"
+          class="s-product-section-valuation__input"
+          variant="outlined"
+          rounded="lg"
           @blur="debounceSavePreferences()"
           @update:model-value="
             $emit('update:preferences', preferences);
@@ -54,8 +59,10 @@
           :min="0"
           :readonly="readonly"
           background-color="transparent"
-          class="mx-4"
-          variant="underlined"
+          :dark="$vuetify.theme.current.dark"
+          class="s-product-section-valuation__input"
+          variant="outlined"
+          rounded="lg"
           @blur="debounceSavePreferences()"
           @update:model-value="$emit('update:preferences', preferences)"
         >
@@ -74,10 +81,12 @@
           :placeholder="item.placeholder"
           :readonly="readonly"
           :return-object="false"
+          aria-required="true"
           bg-color="transparent"
-          class="mx-4"
+          class="s-product-section-valuation__input"
           clearable
-          variant="underlined"
+          variant="outlined"
+          rounded="lg"
           @click:clear="preferences_valuation[item.name] = null"
           @update:model-value="
             $emit('update:preferences', preferences);
@@ -102,7 +111,8 @@
           :true-title="
             item.true_title ? item.true_title : $t('global.actions.yes')
           "
-          class="mx-4 mb-5"
+          :dark="$vuetify.theme.current.dark"
+          class="s-product-section-valuation__switch"
           false-icon="close"
           true-icon="check"
           @change="debounceSavePreferences"
@@ -113,14 +123,6 @@
         >
         </u-smart-switch>
       </v-expand-transition>
-
-      <v-icon
-        v-if="index_blink === index"
-        class="blink-me-linear indic"
-        color="#1976D2"
-        size="x-small"
-        >circle
-      </v-icon>
     </div>
 
     <slot></slot>
@@ -193,13 +195,21 @@ export default {
       return this.getBasket(this.$product.type);
     },
 
-    index_blink() {
-      return this.structure.findIndex(
-        (row) =>
-          row.type !== "switch" &&
-          !this.preferences_valuation[row.name] &&
-          this.hasOptions(row),
-      );
+    next_required_index() {
+      if (this.readonly || !this.structure || !this.preferences_valuation)
+        return -1;
+
+      // Checkout requires available Select choices; text, numbers and switches are optional.
+      return this.structure.findIndex((row) => {
+        if (row.type !== "select" || !this.hasOptions(row)) return false;
+        const value = this.preferences_valuation[row.name];
+        return (
+          value === null ||
+          value === undefined ||
+          value === "" ||
+          (Array.isArray(value) && !value.length)
+        );
+      });
     },
   },
 
@@ -318,18 +328,67 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.pricing-form {
-  .indic {
-    position: absolute !important;
-    top: 50%;
-    right: unset;
-    left: -4px;
-    transform: translate(0, -50%);
+.s-product-section-valuation {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  min-width: 0;
+  margin-block-start: 20px;
+  margin-inline: auto;
+  padding: 20px;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+  border-radius: 16px;
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+
+  &__field {
+    position: relative;
+    min-width: 0;
+    margin-block-end: 16px;
+
+    &:last-of-type {
+      margin-block-end: 0;
+    }
+
+    &:empty {
+      display: none;
+    }
   }
 
-  &.-preview {
-    border: dashed 2px #333;
-    background: #fefefe !important;
+  &__input {
+    margin: 0;
+    font-size: 15px;
+  }
+
+  &__input :deep(.v-field__input) {
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  &__switch {
+    margin: 0;
+  }
+
+  &__switch :deep(h3) {
+    margin-block: 0 8px !important;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  &__switch :deep(.border-between-vertical > .row-hover) {
+    background-color: transparent !important;
+  }
+
+  &__field--next-required
+    :deep(.v-field:not(.v-field--error) .v-field__outline) {
+    --v-field-border-width: 2px;
+    --v-field-border-opacity: 1;
+    color: rgb(var(--v-theme-primary));
+  }
+
+  @media (max-width: 600px) {
+    padding: 16px;
   }
 }
 </style>

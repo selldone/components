@@ -13,109 +13,169 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <template v-if="can_add_conditions">
-    <v-row no-gutters>
-      <v-col class="p-1" cols="12" sm="6">
-        <v-select
-          v-model="axios_x"
-          :items="
-            structure_valuation.filter(
-              (i) => !axios_y || i.name !== axios_y.name,
-            )
-          "
-          clearable
-          item-title="title"
-          item-value="name"
-          messages="First condition"
-          return-object
-          variant="solo"
-        ></v-select>
-      </v-col>
-      <v-col class="p-1" cols="12" sm="6">
-        <v-select
-          v-model="axios_y"
-          :items="
-            structure_valuation.filter(
-              (i) => !axios_x || i.name !== axios_x.name,
-            )
-          "
-          clearable
-          item-title="title"
-          item-value="name"
-          messages="Second condition"
-          return-object
-          variant="solo"
-        ></v-select>
-      </v-col>
-    </v-row>
-
-    <div
-      v-if="axios_x && axios_y"
-      :class="{ rtl: $vuetify.locale.isRtl }"
-      class="cond-table small"
-    >
-      <!-- ▂▂▂▂▂▂▂▂▂▂▂ Header ▂▂▂▂▂▂▂▂▂▂▂ -->
-      <div>
-        <div class="cts"></div>
-        <div
-          v-for="x in axios_x.type === 'select'
-            ? axios_x.selects
-            : [`True`, `False`]"
-          :key="x"
-          class="cts"
-        >
-          <b>{{ x }}</b>
-        </div>
-      </div>
-
-      <!-- ▂▂▂▂▂▂▂▂▂▂▂ Rows ▂▂▂▂▂▂▂▂▂▂▂ -->
-
-      <div
-        v-for="y in axios_y.type === 'select'
-          ? axios_y.selects
-          : [`${axios_y.name}-TRUE`, `${axios_y.name}-FALSE`]"
-        :key="y"
-      >
-        <!-- ▂▂▂▂▂▂ Rows > First column ▂▂▂▂▂▂ -->
-
-        <div class="cts">
-          <b>{{ y }}</b>
-        </div>
-
-        <!-- ▂▂▂▂▂▂ Rows > Cells status ▂▂▂▂▂▂ -->
-
-        <div
-          v-for="x in axios_x.type === 'select'
-            ? axios_x.selects
-            : [`${axios_x.name}-TRUE`, `${axios_x.name}-FALSE`]"
-          :key="'c' + x"
-          class="cts"
-        >
-          <u-check
-            :model-value="
-              !(
-                modelValue.unavailable.includes(`${x}:${y}`) ||
-                modelValue.unavailable.includes(`${y}:${x}`)
+  <div
+    class="b-valuation-form-condition"
+    :class="{ 'b-valuation-form-condition--modern': modern }"
+  >
+    <template v-if="can_add_conditions">
+      <v-row no-gutters>
+        <v-col class="p-1" cols="12" sm="6">
+          <v-select
+            v-model="axios_x"
+            :items="
+              structure_valuation.filter(
+                (i) => !axios_y || i.name !== axios_y.name,
               )
             "
-            title="Change availability (in stock / out of stock)"
-            @update:model-value="
-              (val) =>
-                val
-                  ? modelValue.unavailable
-                      .remove(`${x}:${y}`)
-                      .remove(`${y}:${x}`)
-                  : modelValue.unavailable.add(`${x}:${y}`)
+            clearable
+            item-title="title"
+            item-value="name"
+            :label="
+              modern ? $t('valuation_add.modern.first_condition') : undefined
             "
-          ></u-check>
+            :messages="modern ? undefined : 'First condition'"
+            return-object
+            :variant="modern ? 'outlined' : 'solo'"
+            :density="modern ? 'compact' : undefined"
+          ></v-select>
+        </v-col>
+        <v-col class="p-1" cols="12" sm="6">
+          <v-select
+            v-model="axios_y"
+            :items="
+              structure_valuation.filter(
+                (i) => !axios_x || i.name !== axios_x.name,
+              )
+            "
+            clearable
+            item-title="title"
+            item-value="name"
+            :label="
+              modern ? $t('valuation_add.modern.second_condition') : undefined
+            "
+            :messages="modern ? undefined : 'Second condition'"
+            return-object
+            :variant="modern ? 'outlined' : 'solo'"
+            :density="modern ? 'compact' : undefined"
+          ></v-select>
+        </v-col>
+      </v-row>
+
+      <div
+        v-if="axios_x && axios_y"
+        :class="{ rtl: $vuetify.locale.isRtl }"
+        class="cond-table small"
+      >
+        <!-- ▂▂▂▂▂▂▂▂▂▂▂ Header ▂▂▂▂▂▂▂▂▂▂▂ -->
+        <div>
+          <div class="cts"></div>
+          <div
+            v-for="x in axios_x.type === 'select'
+              ? axios_x.selects
+              : [`True`, `False`]"
+            :key="x"
+            class="cts"
+          >
+            <b>{{ x }}</b>
+          </div>
+        </div>
+
+        <!-- ▂▂▂▂▂▂▂▂▂▂▂ Rows ▂▂▂▂▂▂▂▂▂▂▂ -->
+
+        <div
+          v-for="y in axios_y.type === 'select'
+            ? axios_y.selects
+            : [`${axios_y.name}-TRUE`, `${axios_y.name}-FALSE`]"
+          :key="y"
+        >
+          <!-- ▂▂▂▂▂▂ Rows > First column ▂▂▂▂▂▂ -->
+
+          <div class="cts">
+            <b>{{ y }}</b>
+          </div>
+
+          <!-- ▂▂▂▂▂▂ Rows > Cells status ▂▂▂▂▂▂ -->
+
+          <div
+            v-for="x in axios_x.type === 'select'
+              ? axios_x.selects
+              : [`${axios_x.name}-TRUE`, `${axios_x.name}-FALSE`]"
+            :key="'c' + x"
+            class="cts"
+          >
+            <v-btn
+              v-if="modern"
+              class="sd-modern-icon-button"
+              icon
+              variant="text"
+              :aria-pressed="isUnavailable(x, y)"
+              :aria-label="
+                $t(
+                  isUnavailable(x, y)
+                    ? 'valuation_add.modern.condition_allow'
+                    : 'valuation_add.modern.condition_block',
+                ) +
+                ': ' +
+                x +
+                ' / ' +
+                y
+              "
+              @click="toggleCombination(x, y)"
+            >
+              <v-icon
+                :color="isUnavailable(x, y) ? 'error' : 'success'"
+                size="20"
+                >{{ isUnavailable(x, y) ? "close" : "check" }}</v-icon
+              >
+              <v-tooltip
+                activator="parent"
+                location="top"
+                :open-on-focus="true"
+                content-class="sd-modern-tooltip text-start"
+                :persistent="false"
+                >{{
+                  $t(
+                    isUnavailable(x, y)
+                      ? "valuation_add.modern.condition_allow"
+                      : "valuation_add.modern.condition_block",
+                  )
+                }}</v-tooltip
+              >
+            </v-btn>
+            <u-check
+              v-else
+              :model-value="
+                !(
+                  modelValue.unavailable.includes(`${x}:${y}`) ||
+                  modelValue.unavailable.includes(`${y}:${x}`)
+                )
+              "
+              title="Change availability (in stock / out of stock)"
+              @update:model-value="
+                (val) =>
+                  val
+                    ? modelValue.unavailable
+                        .remove(`${x}:${y}`)
+                        .remove(`${y}:${x}`)
+                    : modelValue.unavailable.add(`${x}:${y}`)
+              "
+            ></u-check>
+          </div>
         </div>
       </div>
-    </div>
-  </template>
+    </template>
 
-  <div v-else class="pa-12 text-center text-muted">
-    <v-icon class="me-1">info_outline</v-icon>
-    It needs at least two selectable items.
+    <div
+      v-else
+      :class="modern ? 'sd-modern-empty-state' : 'pa-12 text-center text-muted'"
+    >
+      <v-icon class="me-1">info_outline</v-icon>
+      {{
+        modern
+          ? $t("valuation_add.modern.conditions_empty")
+          : "It needs at least two selectable items."
+      }}
+    </div>
   </div>
 </template>
 
@@ -126,6 +186,7 @@ export default {
   emits: ["update:modelValue"],
   props: {
     modelValue: {},
+    modern: { type: Boolean, default: false },
 
     shop: {
       required: true,
@@ -170,6 +231,19 @@ export default {
     this.autoSelect();
   },
   methods: {
+    isUnavailable(x, y) {
+      return (
+        this.modelValue.unavailable.includes(`${x}:${y}`) ||
+        this.modelValue.unavailable.includes(`${y}:${x}`)
+      );
+    },
+    toggleCombination(x, y) {
+      if (this.isUnavailable(x, y)) {
+        this.modelValue.unavailable.remove(`${x}:${y}`).remove(`${y}:${x}`);
+      } else {
+        this.modelValue.unavailable.add(`${x}:${y}`);
+      }
+    },
     check() {
       let conditions = this.modelValue;
 
@@ -258,6 +332,37 @@ export default {
         border-right: 1px solid #dee2e6;
       }
     }
+  }
+}
+
+.b-valuation-form-condition--modern {
+  min-width: 0;
+
+  .cond-table {
+    max-width: 100%;
+    padding-block-end: 4px;
+  }
+
+  .cond-table .cts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    color: rgb(var(--v-theme-on-surface));
+    background: rgb(var(--v-theme-surface));
+    border-color: var(
+      --sd-modern-border,
+      rgba(var(--v-theme-on-surface), 0.09)
+    );
+    overflow-wrap: anywhere;
+  }
+
+  .cond-table .cts:first-child {
+    justify-content: flex-start;
+  }
+
+  .cond-table .cts > b {
+    font-weight: 500;
   }
 }
 </style>

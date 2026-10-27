@@ -16,7 +16,8 @@
   <u-chart-funnel
     v-if="show_funnel"
     :animated="true"
-    :class="{ 'dense p-0': dense, dark: isDark}"
+    :modern="modern"
+    :class="{ 'dense p-0': dense, dark: isDark }"
     :colors="colors"
     :direction="direction"
     :display-percentage="displayPercentage"
@@ -38,6 +39,7 @@ export default {
   components: { UChartFunnel },
 
   props: {
+    modern: { type: Boolean, default: false },
     value: {
       type: Array,
       require: true,
@@ -141,6 +143,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

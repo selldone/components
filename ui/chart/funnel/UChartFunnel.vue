@@ -14,7 +14,25 @@
 
 <template>
   <div
-    v-if="!has_valid_data"
+    v-if="modern && has_zero_data"
+    class="u--chart-funnel-empty"
+    :class="{ '-vertical': direction === 'vertical' }"
+    :style="{ minHeight: height + 'px' }"
+    role="group"
+  >
+    <div class="u--chart-funnel-empty__stages">
+      <div
+        v-for="(label, index) in labels"
+        :key="index"
+        class="u--chart-funnel-empty__stage"
+      >
+        <span class="u--chart-funnel-empty__value">0</span>
+        <span>{{ label }}</span>
+      </div>
+    </div>
+  </div>
+  <div
+    v-else-if="!has_valid_data"
     class="d-flex align-center justify-center pa-5 text-h3 font-weight-thin op-0-3 ma-auto"
   >
     No Data!
@@ -168,6 +186,10 @@ export default {
   name: "UChartFunnel",
   components: { UChartFunnelHover },
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     animated: {
       type: Boolean,
       default: false,
@@ -251,6 +273,13 @@ export default {
     has_valid_data() {
       return this.values.some((value) => value.some((i) => i > 0.0001));
     },
+    has_zero_data() {
+      const values = this.values.flat();
+      return (
+        values.length > 0 &&
+        values.every((value) => typeof value === "number" && value === 0)
+      );
+    },
 
     is_vertical() {
       return this.direction === "vertical";
@@ -332,6 +361,30 @@ export default {
     },
   },
   methods: {
+    syncGraph() {
+      // Zero counts have labels, but no positive flow geometry to normalize.
+      if (this.modern && !this.has_valid_data) {
+        this.tween?.stop();
+        this.graph = null;
+        this.paths = [];
+        this.prevPaths = [];
+        return;
+      }
+      if (!this.graph) {
+        this.graph = new FunnelGraph({
+          height: this.height,
+          width: this.width,
+          direction: this.direction,
+          data: { labels: this.labels, values: this.values },
+        });
+      } else {
+        this.graph.setValues(this.values);
+      }
+      this.drawPaths();
+      try {
+        if (this.animated) this.makeAnimations();
+      } catch (e) {}
+    },
     enterTransition(el, done) {
       if (!this.animated) done();
       setTimeout(() => done(), 700);
@@ -426,29 +479,14 @@ export default {
     },
   },
   created() {
-    this.graph = new FunnelGraph({
-      height: this.height,
-      width: this.width,
-      direction: this.direction,
-      data: {
-        labels: this.labels,
-        values: this.values,
-      },
-    });
-    this.drawPaths();
-    try {
-      if (this.animated) this.makeAnimations();
-    } catch (e) {}
+    this.syncGraph();
   },
   watch: {
     values() {
-      this.graph.setValues(this.values);
-      this.drawPaths();
-      try {
-        if (this.animated) this.makeAnimations();
-      } catch (e) {}
+      this.syncGraph();
     },
     direction() {
+      if (!this.graph) return;
       this.graph
         .setDirection(this.direction)
         .setWidth(this.width)
@@ -458,6 +496,53 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.u--chart-funnel-empty {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  overflow-x: auto;
+  color: rgb(var(--v-theme-on-surface));
+  font: inherit;
+
+  &__stages {
+    display: flex;
+    flex: 1;
+    padding-block-end: 16px;
+    border-block-end: 1px solid rgba(var(--v-theme-on-surface), 0.18);
+  }
+
+  &__stage {
+    display: flex;
+    flex: 1 0 72px;
+    flex-direction: column;
+    gap: 8px;
+    padding-inline: 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  &__value {
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &.-vertical .u--chart-funnel-empty__stages {
+    flex-direction: column;
+    padding-block-end: 0;
+    border-block-end: 0;
+    border-inline-start: 1px solid rgba(var(--v-theme-on-surface), 0.18);
+  }
+
+  &.-vertical .u--chart-funnel-empty__stage {
+    flex-basis: auto;
+    padding-block: 8px;
+    text-align: start;
+  }
+}
+</style>
 
 <style lang="scss">
 /*

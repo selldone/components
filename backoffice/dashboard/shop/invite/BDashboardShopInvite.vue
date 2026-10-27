@@ -13,45 +13,12 @@
   -->
 
 <template>
-  <section v-if="modern && referral" class="s--shop-invite-modern text-start">
-    <header class="sd-modern-header">
-      <div class="sd-modern-title">
-        <span class="sd-modern-icon sd-modern-icon--plain"
-          ><v-icon>share</v-icon></span
-        >
-        <div>
-          <h2 class="sd-modern-title-text">
-            {{ $t("admin_shop.dashboard.modern.referral_program") }}
-          </h2>
-          <p class="sd-modern-subtitle">{{ $t("invite_friends.title") }}</p>
-        </div>
-      </div>
-      <v-btn
-        icon
-        class="sd-modern-icon-button"
-        variant="text"
-        :aria-label="$t('global.actions.close')"
-        v-tooltip="$t('global.actions.close')"
-        @click="close()"
-        ><v-icon>close</v-icon></v-btn
-      >
-    </header>
-    <p class="s--shop-invite-modern__message">{{ $t("invite_friends.msg") }}</p>
-    <div class="s--shop-invite-modern__actions">
-      <span class="s--shop-invite-modern__identity"
-        ><v-avatar size="28"
-          ><v-img :src="getUserAvatar(USER_ID(), 'big')">
-            <template #error>
-              <span class="s--shop-invite-modern__avatar-fallback"
-                ><v-icon size="20">person</v-icon></span
-              >
-            </template>
-          </v-img></v-avatar
-        >{{ USER().name }}</span
-      >
-      <s-invite-friends modern />
-    </div>
-  </section>
+  <s-invite-friends
+    v-if="modern && referral"
+    modern
+    embedded
+    @close="close()"
+  />
 
   <div v-else-if="referral" class="widget">
     <div>
@@ -106,6 +73,7 @@ import SInviteFriends from "../../../invite/friends/SInviteFriends.vue";
 export default {
   name: "BDashboardShopInvite",
   components: { SInviteFriends },
+  emits: ["close"],
   props: {
     modern: { type: Boolean, default: false },
     shop: {
@@ -132,46 +100,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.s--shop-invite-modern {
-  .sd-modern-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: start;
-    gap: 16px;
-    margin-block-end: 20px;
-  }
-  .sd-modern-title > div {
-    min-width: 0;
-  }
-  &__message {
-    margin: 0;
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--sd-modern-muted);
-  }
-  &__actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-block-start: 24px;
-  }
-  &__identity {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    color: var(--sd-modern-muted);
-    font-size: 13px;
-  }
-  &__avatar-fallback {
-    display: grid;
-    width: 100%;
-    height: 100%;
-    place-items: center;
-    background: var(--sd-modern-inset);
-  }
-}
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

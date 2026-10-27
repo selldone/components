@@ -5,9 +5,58 @@ import type {
 } from "@selldone/core-js/timeserie/TimeSeries";
 
 type ReportSeries = Pick<TimeSeries, "offset" | "raw_data"> &
-  Partial<Pick<TimeSeries, "days" | "startDate" | "endDate">>;
+  Partial<Pick<TimeSeries, "days" | "startDate" | "endDate">> & {
+    recorded_data?: IRawData[] | null;
+  };
 
-function recordedDays(timeSeries: ReportSeries, endDate?: Date | null) {
+export function getReportStartDate(timeSeries: ReportSeries) {
+  const start = new Date(
+    timeSeries.startDate ||
+      DateConverter.GetStartOfDateBefore(
+        (timeSeries.offset || 0) + (timeSeries.days || 30),
+      ),
+  );
+  start.setHours(0, 0, 0, 0);
+  if (timeSeries.recorded_data !== undefined)
+    start.setDate(start.getDate() + 1); // Shop API's lower calendar boundary is exclusive.
+  return start;
+}
+
+// Calendar slots and mini-chart labels share the same first displayed date.
+export function getReportDailyValues(timeSeries: ReportSeries, keys: string[]) {
+  const start = getReportStartDate(timeSeries);
+  const end = new Date(
+    timeSeries.endDate ||
+      DateConverter.GetEndOfDateBefore(timeSeries.offset || 0),
+  );
+  if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()))
+    return [];
+  const recorded = new Map<number, IRawData>();
+  for (const row of timeSeries.raw_data || []) {
+    const date = DateConverter.convertToLocalTime(row.created_at, true);
+    if (date && !recorded.has(date.getTime()))
+      recorded.set(date.getTime(), row);
+  }
+  const values: (number | null)[][] = [];
+  for (const date = start; date <= end; date.setDate(date.getDate() + 1)) {
+    const row = recorded.get(date.getTime());
+    values.push(
+      keys.map((key) => {
+        const value = row?.[key];
+        return typeof value === "number" && Number.isFinite(value)
+          ? value
+          : null;
+      }),
+    );
+  }
+  return values;
+}
+
+function recordedDays(
+  timeSeries: ReportSeries,
+  endDate?: Date | null,
+  rows = timeSeries.raw_data,
+) {
   const selectedEnd =
     timeSeries.endDate ||
     DateConverter.GetEndOfDateBefore(timeSeries.offset || 0);
@@ -28,7 +77,7 @@ function recordedDays(timeSeries: ReportSeries, endDate?: Date | null) {
   )
     return [];
 
-  for (const row of timeSeries.raw_data || []) {
+  for (const row of rows || []) {
     const date = DateConverter.convertToLocalTime(row.created_at, true);
     if (
       !date ||
@@ -62,7 +111,12 @@ export function getPeriodComparison(
   readValue: (row: IRawData) => number | null | undefined,
   endDate?: Date | null,
 ) {
-  const days = recordedDays(timeSeries, endDate);
+  // Display padding is not evidence of measured history for percentage changes.
+  const days = recordedDays(
+    timeSeries,
+    endDate,
+    timeSeries.recorded_data ?? timeSeries.raw_data,
+  );
   const values: number[] = [];
   let previousDate: Date | null = null;
   for (const { date, row } of days.reverse()) {
