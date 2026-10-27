@@ -15,8 +15,8 @@
 <template>
   <apexchart
     v-if="series && series.length"
-    :height="fullDetails ? 160 : 120"
-    :options="options"
+    :height="modern ? 220 : fullDetails ? 160 : 120"
+    :options="modern ? modern_options : options"
     :series="series"
     class="mt-2 mt-sm-0"
     :type="type"
@@ -26,11 +26,13 @@
 
 <script lang="ts">
 import numeral from "numeral";
+import { Analytics } from "@selldone/core-js";
 
 export default {
   name: "BSessionDevicesPie",
 
   props: {
+    modern: Boolean,
     type: {
       type: String,
       default: "donut",
@@ -92,26 +94,67 @@ export default {
             style: {
               fontSize: this.small ? "8px" : "10px",
             },
-            formatter: function(value) {
+            formatter: function (value) {
               return numeral(value).format("0.[0]a");
-            }
+            },
           },
         },
 
         tooltip: {
           y: {
-            formatter: function(value) {
+            formatter: function (value) {
               return numeral(value).format("0.[0]a");
-            }
-          }
+            },
+          },
         },
-
-
       },
     };
   },
 
   computed: {
+    modern_options() {
+      const theme = this.$vuetify.theme;
+      const colors =
+        theme.computedThemes?.[theme.name]?.colors || theme.current.colors;
+      const surface =
+        colors.surface || (theme.current.dark ? "#22242a" : "#ffffff");
+      const onSurface =
+        colors["on-surface"] || (theme.current.dark ? "#f1f2f6" : "#24272e");
+      return {
+        ...this.options,
+        chart: {
+          ...this.options.chart,
+          background: "transparent",
+          foreColor: onSurface,
+        },
+        theme: { mode: this.$vuetify.theme.current.dark ? "dark" : "light" },
+        stroke: { colors: [surface], width: 2 },
+        fill: { opacity: 0.7 },
+        legend: {
+          ...this.options.legend,
+          fontSize: "12px",
+          fontWeight: 400,
+          labels: { colors: onSurface },
+          markers: {
+            customHTML: Analytics.DeviceType.map(
+              (type) => () =>
+                `<i class="${type.icon.replace("fa:", "")}" aria-hidden="true" style="color:${type.color}"></i>`,
+            ),
+          },
+        },
+        yaxis: {
+          ...this.options.yaxis,
+          labels: {
+            ...this.options.yaxis.labels,
+            style: { fontSize: "11px", colors: onSurface },
+          },
+        },
+        tooltip: {
+          ...this.options.tooltip,
+          theme: this.$vuetify.theme.current.dark ? "dark" : "light",
+        },
+      };
+    },
     series() {
       return [this.desktop, this.mobile, this.tablet];
     },

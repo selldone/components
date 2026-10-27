@@ -13,16 +13,76 @@
   -->
 
 <template>
+  <section v-if="modern" class="b-dashboard-orders-basket-detail text-start">
+    <u-time-span
+      v-model:end-date="end_date"
+      v-model:start-date="start_date"
+      :max-days="timeSeries.days || 30"
+      :days="timeSeries.days || 30"
+      :offset="0"
+      :origin-date="timeSeries.endDate"
+      color="rgb(var(--v-theme-on-surface))"
+      class="b-dashboard-orders-basket-detail__range"
+    />
+    <dl class="sd-modern-stat-grid b-dashboard-orders-basket-detail__stats">
+      <div v-for="stage in modern_stages" :key="stage.key">
+        <dt>{{ $t(stage.label) }}</dt>
+        <dd>{{ numeralFormat(stage.value, "0,0") }}</dd>
+      </div>
+    </dl>
+    <apexchart
+      :options="options"
+      :series="series"
+      dir="ltr"
+      height="260"
+      type="area"
+      width="100%"
+    />
+    <v-expansion-panels
+      variant="accordion"
+      class="b-dashboard-orders-basket-detail__status"
+    >
+      <v-expansion-panel elevation="0" rounded="0">
+        <v-expansion-panel-title>{{
+          $t("global.commons.status")
+        }}</v-expansion-panel-title>
+        <v-expansion-panel-text
+          ><apexchart
+            :height="240"
+            :options="options_pie"
+            :series="series_pie"
+            type="donut"
+            width="100%"
+        /></v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+  </section>
   <s-widget-box
+    v-else
     :active="true"
-    :title="`<h5 class='align-items-center pb-1'>  ${$t(
-      'global.commons.orders',
-    )} | ${type}  </h5>`"
-    icon="shopping_bag"
+    :title="
+      modern
+        ? undefined
+        : `<h5 class='align-items-center pb-1'>  ${$t(
+            'global.commons.orders',
+          )} | ${type}  </h5>`
+    "
+    :icon="modern ? undefined : 'shopping_bag'"
+    :class="{ 'b-dashboard-orders-basket sd-modern-widget text-start': modern }"
+    :color="modern ? 'rgb(var(--v-theme-surface))' : undefined"
+    :dark="modern && $vuetify.theme.current.dark"
   >
     <template v-slot:actions>
-      <h3>
-        <img :src="image" class="me-1" height="36" width="36" />
+      <header v-if="modern" class="sd-modern-header">
+        <div class="sd-modern-title">
+          <span class="sd-modern-icon sd-modern-icon--plain">
+            <img :src="image" height="20" width="20" alt="" />
+          </span>
+          <h3 class="sd-modern-title-text">{{ type_label }}</h3>
+        </div>
+      </header>
+      <h3 v-else>
+        <img :src="image" class="me-1" height="36" width="36" alt="" />
         {{ title }}
       </h3>
       <v-row>
@@ -97,6 +157,7 @@ export default {
   name: "BDashboardShopOrdersBasket",
   components: { SWidgetBox, UpDownIcon, UTimeSpan },
   props: {
+    modern: { type: Boolean, default: false },
     timeSeries: {
       required: true,
       type: Object,
@@ -111,6 +172,40 @@ export default {
   }),
 
   computed: {
+    modern_stages() {
+      return [
+        {
+          key: `view_products_${this.column_name}`,
+          label: "global.commons.view",
+        },
+        {
+          key: `order_${this.column_name}_added`,
+          label: "global.commons.new_carts",
+        },
+        {
+          key: `order_${this.column_name}_checkout`,
+          label: "global.commons.checkout",
+        },
+        {
+          key: `sell_products_${this.column_name}`,
+          label: "global.commons.paid",
+        },
+        {
+          key: `send_products_${this.column_name}`,
+          label: "global.commons.delivered",
+        },
+      ].map((stage) => ({
+        ...stage,
+        value: this.timeSeries.totalOf(
+          stage.key,
+          this.start_date,
+          this.end_date,
+        ),
+      }));
+    },
+    type_label() {
+      return this.$t(ProductType[this.type]?.name ?? "global.commons.orders");
+    },
     image() {
       if (this.type === ProductType.PHYSICAL.code)
         return ProductType.PHYSICAL.basket;
@@ -192,7 +287,7 @@ export default {
           floating: false,
           style: {
             fontSize: "12px",
-            color: "#263238",
+            color: this.modern ? "rgb(var(--v-theme-on-surface))" : "#263238",
           },
         },
 
@@ -243,7 +338,8 @@ export default {
     options() {
       return {
         theme: {
-          mode: "light",
+          mode:
+            this.modern && this.$vuetify.theme.current.dark ? "dark" : "light",
           palette: "palette1",
         },
 
@@ -259,8 +355,8 @@ export default {
           enabled: false,
         },
         stroke: {
-          show: false,
-          width: 3,
+          show: this.modern,
+          width: this.modern ? 2 : 3,
           curve: "straight",
         },
         markers: {
@@ -269,7 +365,7 @@ export default {
 
         fill: {
           type: "solid",
-          opacity: 0.7,
+          opacity: this.modern ? 0.08 : 0.7,
           /* gradient: {
             opacityFrom: 0.75,
             opacityTo: 0.8,
@@ -281,6 +377,16 @@ export default {
         },
         xaxis: {
           type: "datetime",
+          ...(this.modern
+            ? {
+                min: this.start_date
+                  ? new Date(this.start_date).getTime()
+                  : undefined,
+                max: this.end_date
+                  ? new Date(this.end_date).getTime()
+                  : undefined,
+              }
+            : {}),
           labels: {
             format: undefined,
             formatter: function (value, timestamp, index) {
@@ -437,6 +543,46 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-dashboard-orders-basket-detail {
+  min-width: 0;
+  font-family: inherit;
+  &__range {
+    max-width: 620px;
+    margin: 0 auto 16px;
+  }
+  &__stats {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin: 0 0 16px;
+  }
+  &__stats dt {
+    font-size: 12px;
+    color: var(--sd-modern-muted);
+  }
+  &__stats dd {
+    margin: 6px 0 0;
+    font-size: 22px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+  &__status {
+    margin-block: 8px;
+  }
+  &__status :deep(.v-expansion-panel-title) {
+    min-height: 44px;
+    padding: 8px;
+    font-size: 13px;
+    font-weight: 400;
+  }
+  @media (max-width: 600px) {
+    &__stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+  }
+}
+.b-dashboard-orders-basket :deep(> .widget-body) {
+  margin-block-start: 0;
+}
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

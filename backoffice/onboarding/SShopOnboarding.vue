@@ -13,9 +13,185 @@
   -->
 
 <template>
-  <div class="s--shop-onboarding">
-    <div class="widget-box -x-large mb-5">
+  <div
+    class="s--shop-onboarding"
+    :class="{ 's--shop-onboarding--modern text-start': modern }"
+  >
+    <section
+      v-if="modern"
+      ref="setup_checklist"
+      tabindex="-1"
+      class="sd-modern-widget s--shop-onboarding__checklist"
+    >
+      <header class="sd-modern-header">
+        <div class="sd-modern-title">
+          <span class="sd-modern-icon sd-modern-icon--plain"
+            ><v-icon icon="auto_fix_high" size="20" aria-hidden="true"
+          /></span>
+          <div>
+            <h2 class="sd-modern-title-text">
+              {{ $t("admin_shop.dashboard.modern.setup_title") }}
+            </h2>
+            <p class="sd-modern-subtitle">
+              {{
+                $t("admin_shop.dashboard.modern.setup_progress", {
+                  completed: completed_steps,
+                  total: setup_steps.length,
+                })
+              }}
+            </p>
+          </div>
+        </div>
+        <v-btn class="sd-modern-button" variant="text" @click="openSetupTab(7)">
+          <v-icon start size="small">play_circle_outline</v-icon>
+          {{ $t("admin_shop.dashboard.modern.setup_tutorials") }}
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("admin_shop.dashboard.modern.setup_tutorials") }}</v-tooltip
+          >
+        </v-btn>
+      </header>
+      <v-progress-linear
+        :model-value="setup_progress"
+        :aria-label="
+          $t('admin_shop.dashboard.modern.setup_progress', {
+            completed: completed_steps,
+            total: setup_steps.length,
+          })
+        "
+        color="primary"
+        height="6"
+        rounded
+        class="s--shop-onboarding__progress"
+      />
+      <div class="s--shop-onboarding__steps">
+        <button
+          v-for="(step, index) in setup_steps"
+          :key="step.label"
+          type="button"
+          class="s--shop-onboarding__step text-start"
+          :aria-controls="`shop-setup-details-${shop.id}`"
+          :aria-expanded="show_step_details && tab === index"
+          @click="openSetupTab(index)"
+        >
+          <span class="s--shop-onboarding__number">{{ index + 1 }}</span>
+          <span class="s--shop-onboarding__step-copy">
+            <span class="s--shop-onboarding__step-title">{{
+              $t(step.label)
+            }}</span>
+            <span class="s--shop-onboarding__step-status">{{
+              $t(
+                step.complete
+                  ? "global.commons.completed"
+                  : next_setup_step === index
+                    ? "admin_shop.dashboard.modern.setup_next_step"
+                    : "global.commons.pending",
+              )
+            }}</span>
+          </span>
+          <v-icon
+            :icon="step.complete ? 'check' : 'arrow_forward'"
+            :color="step.complete ? 'success' : undefined"
+            size="18"
+            :class="{ 'flip-rtl': !step.complete }"
+            aria-hidden="true"
+          />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("global.actions.open") }} · {{ $t(step.label) }}</v-tooltip
+          >
+        </button>
+      </div>
+      <div class="sd-modern-actions s--shop-onboarding__actions">
+        <v-btn
+          v-if="next_setup_step >= 0"
+          class="sd-modern-button"
+          color="primary"
+          variant="flat"
+          @click="openSetupTab(next_setup_step)"
+        >
+          {{ $t("global.actions.continue") }} ·
+          {{ $t(setup_steps[next_setup_step].label) }}
+          <v-icon end size="small" class="flip-rtl">arrow_forward</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("global.actions.open") }} ·
+            {{ $t(setup_steps[next_setup_step].label) }}</v-tooltip
+          >
+        </v-btn>
+        <v-btn
+          v-else
+          :href="ShopURLs.MainShopUrl(shop)"
+          target="_blank"
+          rel="noopener"
+          class="sd-modern-button"
+          color="primary"
+          variant="flat"
+        >
+          {{ $t("onboarding.open_website") }}
+          <v-icon end size="small">open_in_new</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("onboarding.open_website") }}</v-tooltip
+          >
+        </v-btn>
+        <v-btn class="sd-modern-button" variant="text" @click="dismiss()">
+          <v-icon start size="small">close</v-icon
+          >{{ $t("global.actions.dismiss") }}
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("global.actions.dismiss") }}</v-tooltip
+          >
+        </v-btn>
+      </div>
+    </section>
+    <div
+      v-show="!modern || show_step_details"
+      ref="setup_details"
+      :id="modern ? `shop-setup-details-${shop.id}` : undefined"
+      :tabindex="modern ? -1 : undefined"
+      :class="
+        modern
+          ? 'sd-modern-widget s--shop-onboarding__details'
+          : 'widget-box -x-large mb-5'
+      "
+    >
+      <header v-if="modern" class="sd-modern-header">
+        <h2 class="sd-modern-title-text">{{ active_step_title }}</h2>
+        <v-btn
+          class="sd-modern-icon-button"
+          variant="text"
+          icon
+          :aria-label="$t('global.actions.close')"
+          @click="closeSetupDetails()"
+        >
+          <v-icon icon="close" size="18" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("global.actions.close") }}</v-tooltip
+          >
+        </v-btn>
+      </header>
       <u-widget-header
+        v-if="!modern"
         :add-caption="$t('global.actions.dismiss')"
         :title="$t('onboarding.shop.title')"
         add-icon="close"
@@ -23,7 +199,7 @@
         @click:add="dismiss()"
       >
       </u-widget-header>
-      <v-list-subheader>
+      <v-list-subheader v-if="!modern">
         {{ $t("onboarding.shop.subtitle") }}
       </v-list-subheader>
       <v-btn
@@ -31,6 +207,8 @@
         target="_blank"
         append-icon="open_in_new"
         class="nbt mb-3"
+        :class="{ 'sd-modern-button': modern }"
+        :variant="modern ? 'text' : undefined"
       >
         <v-avatar class="avatar-gradient -thin -shop ms-n2 me-2" size="24">
           <v-img :src="getShopImagePath(shop.icon, 128)" />
@@ -42,7 +220,7 @@
           <v-tabs
             v-model="tab"
             :direction="$vuetify.display.smAndUp ? 'vertical' : 'horizontal'"
-            color="#000"
+            :color="modern ? undefined : '#000'"
             show-arrows
           >
             <v-tab class="justify-start">
@@ -329,6 +507,84 @@
         </v-col>
       </v-row>
     </div>
+    <section
+      v-if="modern"
+      class="sd-modern-widget s--shop-onboarding__migration"
+    >
+      <header class="sd-modern-header">
+        <div class="sd-modern-title">
+          <span class="sd-modern-icon sd-modern-icon--plain"
+            ><v-icon icon="sync_alt" size="20" aria-hidden="true"
+          /></span>
+          <div>
+            <h2 class="sd-modern-title-text">
+              {{ $t("admin_shop.dashboard.modern.setup_migration_title") }}
+            </h2>
+            <p class="sd-modern-subtitle">
+              {{ $t("admin_shop.dashboard.modern.setup_migration_subtitle") }}
+            </p>
+          </div>
+        </div>
+      </header>
+      <div class="s--shop-onboarding__resources">
+        <v-btn class="sd-modern-button" variant="text" @click="openSetupTab(6)">
+          <img
+            :src="require('./assets/shopify.png')"
+            width="22"
+            height="22"
+            alt=""
+            class="me-2"
+          />
+          {{ $t("global.commons.import") }} · Shopify
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("onboarding.migration.title") }} · Shopify</v-tooltip
+          >
+        </v-btn>
+        <v-btn class="sd-modern-button" variant="text" @click="openSetupTab(6)">
+          <img
+            :src="require('./assets/woocommerce.svg')"
+            width="22"
+            height="22"
+            alt=""
+            class="me-2"
+          />
+          {{ $t("global.commons.import") }} · WooCommerce
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("onboarding.migration.title") }} · WooCommerce</v-tooltip
+          >
+        </v-btn>
+        <v-btn class="sd-modern-button" variant="text" @click="openSetupTab(2)">
+          <v-icon start size="small">upload_file</v-icon
+          >{{ $t("onboarding.product.step2.import_excel") }}
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("onboarding.product.step2.import_excel") }}</v-tooltip
+          >
+        </v-btn>
+        <v-btn class="sd-modern-button" variant="text" @click="openSetupTab(7)">
+          <v-icon start size="small">play_circle_outline</v-icon
+          >{{ $t("admin_shop.dashboard.modern.setup_tutorials") }}
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("admin_shop.dashboard.modern.setup_tutorials") }}</v-tooltip
+          >
+        </v-btn>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -356,6 +612,7 @@ export default {
     ShopOnboardingProductTab,
   },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -369,6 +626,7 @@ export default {
 
   data: () => ({
     tab: 0,
+    show_step_details: false,
 
     contents: [
       {
@@ -413,6 +671,44 @@ export default {
   }),
 
   computed: {
+    setup_steps() {
+      return [
+        {
+          label: "onboarding.customize_theme",
+          complete:
+            !!this.shop.theme && Object.keys(this.shop.theme).length > 0,
+        },
+        { label: "onboarding.setup_business", complete: !!this.shop.model },
+        { label: "onboarding.add_product", complete: this.has_product },
+        { label: "onboarding.setup_shipping", complete: !!this.has_warehouse },
+        {
+          label: "onboarding.add_domain",
+          complete: this.domains.some((domain) => domain.enable),
+        },
+        {
+          label: "onboarding.add_payment",
+          complete: this.gateways_online.length > 0,
+        },
+      ];
+    },
+    completed_steps() {
+      return this.setup_steps.filter((step) => step.complete).length;
+    },
+    setup_progress() {
+      return Math.round((100 * this.completed_steps) / this.setup_steps.length);
+    },
+    next_setup_step() {
+      return this.setup_steps.findIndex((step) => !step.complete);
+    },
+    active_step_title() {
+      return this.$t(
+        this.tab === 6
+          ? "onboarding.migration.title"
+          : this.tab === 7
+            ? "onboarding.overview.title"
+            : this.setup_steps[this.tab]?.label,
+      );
+    },
     ShopURLs() {
       return ShopURLs;
     },
@@ -474,6 +770,15 @@ export default {
   watch: {},
 
   methods: {
+    openSetupTab(index) {
+      this.tab = index;
+      this.show_step_details = true;
+      this.$nextTick(() => this.$refs.setup_details?.focus());
+    },
+    closeSetupDetails() {
+      this.show_step_details = false;
+      this.$nextTick(() => this.$refs.setup_checklist?.focus());
+    },
     dismiss() {
       localStorage.setItem(`shop:${this.shop.id}-setup`, "false");
       this.$router.push({ name: "BPageShopDashboard", hash: "" }); // Go to main dashboard page
@@ -502,6 +807,95 @@ export default {
     @media only screen and (max-width: 600px) {
       width: 48px !important;
       height: 48px !important;
+    }
+  }
+}
+
+.s--shop-onboarding--modern {
+  display: grid;
+  gap: 20px;
+
+  .s--shop-onboarding__progress {
+    margin-block-end: 12px;
+  }
+  .s--shop-onboarding__steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 25px;
+  }
+  .s--shop-onboarding__step {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) 22px;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    min-height: 60px;
+    padding: 10px 8px;
+    border-block-end: 1px solid var(--sd-modern-border);
+  }
+  .s--shop-onboarding__step:nth-last-child(-n + 2) {
+    border-block-end: 0;
+  }
+  .s--shop-onboarding__step:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 3px;
+    border-radius: 7px;
+  }
+  .s--shop-onboarding__step:hover {
+    background: var(--sd-modern-inset);
+    border-radius: 8px;
+  }
+  .s--shop-onboarding__number {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    background: var(--sd-modern-inset);
+    border-radius: 50%;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+  }
+  .s--shop-onboarding__step-copy {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+  .s--shop-onboarding__step-title {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .s--shop-onboarding__step-status {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+  }
+  .s--shop-onboarding__actions {
+    margin-block-start: 20px;
+    padding-block-start: 20px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  .s--shop-onboarding__details:focus-visible,
+  .s--shop-onboarding__checklist:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 3px;
+  }
+  .s--shop-onboarding__resources {
+    display: grid;
+    gap: 8px;
+    justify-items: start;
+  }
+
+  @media (max-width: 600px) {
+    .s--shop-onboarding__steps {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .s--shop-onboarding__step:nth-last-child(2) {
+      border-block-end: 1px solid var(--sd-modern-border);
+    }
+    .s--shop-onboarding__actions > .v-btn {
+      width: 100%;
+    }
+    .s--shop-onboarding__resources > .v-btn {
+      max-width: 100%;
     }
   }
 }

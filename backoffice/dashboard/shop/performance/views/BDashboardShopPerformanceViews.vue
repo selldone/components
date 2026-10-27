@@ -13,10 +13,56 @@
   -->
 
 <template>
-  <div class="h-100 d-flex flex-column">
-    <div class="d-flex mb-2">
-      <p class="font--14 font-weight-bold flex-grow-1 m-0">
+  <div
+    class="h-100 d-flex flex-column text-start"
+    :class="{ 'b-dashboard-performance-stat': modern }"
+  >
+    <div class="d-flex mb-2" :class="{ 'flex-wrap ga-1': modern }">
+      <p
+        class="flex-grow-1 m-0"
+        :class="
+          modern
+            ? 'sd-modern-eyebrow d-flex align-center ga-1'
+            : 'font--14 font-weight-bold'
+        "
+      >
         {{ $t("admin_shop.dashboard.performance.views") }}
+        <v-btn
+          v-if="modern"
+          class="sd-modern-icon-button sd-modern-info-button"
+          icon
+          variant="text"
+          :aria-label="
+            $t('global.commons.help') +
+            ' · ' +
+            $t('admin_shop.dashboard.performance.views')
+          "
+        >
+          <v-icon icon="info_outline" size="16" aria-hidden="true" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-click="true"
+            :open-on-focus="true"
+            interactive
+            :max-width="360"
+            content-class="sd-modern-tooltip text-start"
+          >
+            <p class="sd-modern-tooltip__body">
+              {{ $t("admin_shop.dashboard.modern.snapshot_day_help") }}
+            </p>
+            <p class="sd-modern-tooltip__body">
+              {{
+                $t("admin_shop.dashboard.modern.snapshot_period_help", {
+                  days: timeSeries.days,
+                })
+              }}
+            </p>
+            <p class="sd-modern-tooltip__body">
+              {{ $t("admin_shop.dashboard.modern.snapshot_weekly_help") }}
+            </p></v-tooltip
+          >
+        </v-btn>
       </p>
       <b
         :caption="$t('global.commons.total')"
@@ -24,8 +70,8 @@
         >{{ numeralFormat(total_views, "0.[0]a") }}</b
       >
     </div>
-    <h3 class="font--20">
-      <span :title="title">
+    <h3 :class="modern ? 'b-dashboard-performance-stat__value' : 'font--20'">
+      <span>
         {{
           numeralFormat(todayDataOffset ? todayDataOffset.views : 0, "0.[00]a")
         }}
@@ -39,6 +85,32 @@
         density="compact"
       ></u-chip-change>
     </h3>
+    <p
+      v-if="modern && weeklyComparison?.available"
+      class="b-dashboard-performance-stat__weekly"
+    >
+      <v-icon
+        v-if="weeklyComparison.change"
+        :icon="
+          weeklyComparison.change < 0 ? 'arrow_drop_down' : 'arrow_drop_up'
+        "
+        :color="weeklyComparison.change < 0 ? 'error' : 'success'"
+        size="18"
+        aria-hidden="true"
+      />
+      <span v-if="weeklyComparison.new_activity">{{
+        $t("admin_shop.dashboard.modern.new_activity")
+      }}</span>
+      <span v-else>{{ numeralFormat(weeklyComparison.value, "0.[0]") }}%</span>
+      <span>{{
+        $t(
+          weeklyComparison.days === 1
+            ? "admin_shop.dashboard.modern.comparison_previous_day"
+            : "admin_shop.dashboard.modern.comparison_previous_days",
+          { days: weeklyComparison.days },
+        )
+      }}</span>
+    </p>
     <v-spacer></v-spacer>
     <time-series-inline-chart
       v-if="timeSeries"
@@ -50,8 +122,9 @@
       :time-series="timeSeries"
       :value-titles="[$t('global.commons.views')]"
       class="w-100"
-      grid
-      type="bar"
+      :grid="!modern"
+      :flat-color="modern"
+      :type="modern ? 'line' : 'bar'"
     ></time-series-inline-chart>
   </div>
 </template>
@@ -69,6 +142,10 @@ export default {
     UChipChange,
   },
   props: {
+    modern: { type: Boolean, default: false },
+    weeklyComparison: { type: Object, default: null },
+    snapshot: { type: Object, default: null },
+    previousSnapshot: { type: Object, default: null },
     shop: {
       required: true,
       type: Object,
@@ -105,14 +182,17 @@ export default {
 
   computed: {
     has_yesterdayData() {
+      if (this.modern) return !!this.previousSnapshot;
       return this.timeSeries.hasYesterdayData();
     },
 
     todayDataOffset() {
-      return this.timeSeries.todayDataOffset();
+      return this.modern ? this.snapshot : this.timeSeries.todayDataOffset();
     },
     yesterdayDataOffset() {
-      return this.timeSeries.yesterdayDataOffset();
+      return this.modern
+        ? this.previousSnapshot
+        : this.timeSeries.yesterdayDataOffset();
     },
 
     todayData() {

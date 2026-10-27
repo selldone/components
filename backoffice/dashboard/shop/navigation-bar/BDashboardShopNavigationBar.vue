@@ -12,9 +12,38 @@
   - Tread carefully, for you're treading on dreams.
   -->
 <template>
-  <u-fade-scroll class="usn">
-    <div class="d-flex align-center px-4 py-2" style="min-height: 64px">
-      <div class="body-title me-3 d-flex" style="overflow: visible">
+  <component
+    :is="modern ? 'div' : 'u-fade-scroll'"
+    class="usn b-dashboard-navigation"
+    :class="{ 'b-dashboard-navigation--modern': modern }"
+  >
+    <div
+      class="d-flex align-center px-4 py-2 b-dashboard-navigation__row"
+      style="min-height: 64px"
+    >
+      <nav
+        v-if="modern"
+        class="b-dashboard-navigation__links"
+        :aria-label="$t('admin_shop.dashboard.title')"
+      >
+        <router-link
+          v-for="item in modern_items"
+          :key="item.code"
+          :to="{ query: item.query ? { dashboard: item.query } : {} }"
+          :aria-current="item.active ? 'page' : undefined"
+        >
+          <v-icon :icon="item.icon" size="17" aria-hidden="true" />
+          {{ $t(item.label) }}
+          <v-tooltip
+            activator="parent"
+            :open-on-focus="true"
+            location="bottom"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t(item.label) }}</v-tooltip
+          >
+        </router-link>
+      </nav>
+      <div v-else class="body-title me-3 d-flex" style="overflow: visible">
         <!-- Expert dashboard -->
         <template v-if="has_onboarding">
           <router-link
@@ -143,13 +172,15 @@
         </template>
       </div>
 
-      <v-spacer></v-spacer>
-      <small class="absolute-top-end x-small me-7 mt-n1 hide-on-small-600"
+      <v-spacer v-if="!modern"></v-spacer>
+      <small
+        v-if="!modern"
+        class="absolute-top-end x-small me-7 mt-n1 hide-on-small-600"
         >{{ $t("admin_shop.dashboard.online_staff") }}
         <i class="fas fa-caret-down"></i
       ></small>
 
-      <div class="d-flex flex-row">
+      <div v-if="!modern" class="d-flex flex-row">
         <v-tooltip
           v-for="online_staff in online_staffs"
           :key="online_staff.id"
@@ -192,7 +223,7 @@
         </v-tooltip>
       </div>
     </div>
-  </u-fade-scroll>
+  </component>
 </template>
 
 <script lang="ts">
@@ -203,6 +234,7 @@ export default defineComponent({
   name: "BDashboardShopNavigationBar",
   components: { UFadeScroll },
   props: {
+    modern: Boolean,
     shop: {
       type: Object,
       required: true,
@@ -213,6 +245,55 @@ export default defineComponent({
     },
   },
   computed: {
+    modern_items() {
+      const query = this.dashboard_query || "main";
+      return [
+        {
+          code: "main",
+          query: null,
+          icon: "space_dashboard",
+          label: "admin_shop.dashboard.modern.overview",
+          active: ![
+            "setup",
+            "setup-packages",
+            "expert",
+            "community",
+            "technical",
+            "finance",
+            "seo",
+          ].includes(query),
+        },
+        {
+          code: "setup",
+          query: "setup",
+          icon: "handyman",
+          label: "admin_shop.dashboard.modern.setup_services",
+          active: ["setup", "setup-packages", "expert"].includes(query),
+        },
+        ...(this.has_community
+          ? [
+              {
+                code: "community",
+                query: "community",
+                icon: "waving_hand",
+                label: "global.commons.community",
+                active: query === "community",
+              },
+            ]
+          : []),
+        ...[
+          ["technical", "monitor_heart"],
+          ["finance", "savings"],
+          ...(this.shop.search_console ? [["seo", "track_changes"]] : []),
+        ].map(([code, icon]) => ({
+          code,
+          query: code,
+          icon,
+          label: "global.commons." + code,
+          active: query === code,
+        })),
+      ];
+    },
     dashboard_query() {
       return this.$route.query.dashboard;
     },
@@ -273,6 +354,56 @@ export default defineComponent({
   &:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
     outline-offset: 2px;
+  }
+}
+.b-dashboard-navigation--modern {
+  background: transparent;
+  border-block-end: 1px solid
+    var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+
+  .b-dashboard-navigation__row {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    padding-inline: 24px !important;
+  }
+
+  .b-dashboard-navigation__links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+
+    > a {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 11px;
+      min-height: 40px;
+      border-radius: 8px;
+      color: rgba(var(--v-theme-on-surface), 0.66);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    > a[aria-current] {
+      color: rgb(var(--v-theme-primary));
+      background: rgba(var(--v-theme-primary), 0.07);
+    }
+
+    > a:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 2px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .b-dashboard-navigation__row {
+      padding-inline: 12px !important;
+    }
+    .b-dashboard-navigation__links > a {
+      min-height: 44px;
+    }
   }
 }
 </style>

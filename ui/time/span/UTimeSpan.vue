@@ -33,18 +33,18 @@
       :max="maxDays"
       :step="1"
       :tick-size="8"
-      color="amber"
+      :color="color || 'amber'"
       density="compact"
       hide-details
       min="0"
-      thumb-color="#c27800"
+      :thumb-color="color || '#c27800'"
       thumb-label
       @end="onChange"
     ></v-range-slider>
     <v-progress-linear
       v-show="loading"
       class="my-2"
-      color="deep-purple-accent-4"
+      :color="color || 'deep-purple-accent-4'"
       height="6"
       indeterminate
       rounded
@@ -82,6 +82,7 @@ export default {
     "update:days",
   ],
   props: {
+    color: String,
     startDate: {},
     endDate: {},
     dateRange: {},

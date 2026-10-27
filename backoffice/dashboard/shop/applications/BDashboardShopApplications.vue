@@ -13,7 +13,126 @@
   -->
 
 <template>
-  <s-widget class="position-relative">
+  <section v-if="modern" class="s--shop-applications-modern text-start">
+    <header class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"
+          ><v-icon>phone_iphone</v-icon></span
+        >
+        <div>
+          <h2 class="sd-modern-title-text">
+            {{ $t("admin_shop.dashboard.modern.mobile_apps") }}
+          </h2>
+          <p class="sd-modern-subtitle">
+            {{ $t("selldone_applications.msg") }}
+          </p>
+        </div>
+      </div>
+      <v-btn
+        icon
+        class="sd-modern-icon-button"
+        variant="text"
+        :aria-label="$t('global.actions.close')"
+        v-tooltip="$t('global.actions.close')"
+        @click="close()"
+        ><v-icon>close</v-icon></v-btn
+      >
+    </header>
+    <div class="s--shop-applications-modern__content">
+      <div class="s--shop-applications-modern__badges">
+        <a
+          :href="ios"
+          target="_blank"
+          rel="noopener noreferrer"
+          :aria-label="$t('global.actions.download') + ' · App Store'"
+          v-tooltip="$t('global.actions.download') + ' · App Store'"
+          ><img
+            :src="require('../../../../assets/trademark/appstore.png')"
+            alt="App Store"
+            height="40"
+        /></a>
+        <a
+          :href="android"
+          target="_blank"
+          rel="noopener noreferrer"
+          :aria-label="$t('global.actions.download') + ' · Google Play'"
+          v-tooltip="$t('global.actions.download') + ' · Google Play'"
+          ><img
+            :src="require('../../../../assets/trademark/googleplay.png')"
+            alt="Google Play"
+            height="40"
+        /></a>
+      </div>
+      <div class="s--shop-applications-modern__download">
+        <v-btn-toggle
+          v-model="tab"
+          :aria-label="$t('admin_shop.dashboard.modern.mobile_apps')"
+          class="s--shop-applications-modern__platforms"
+          mandatory
+        >
+          <v-btn
+            value="ios"
+            class="sd-modern-button"
+            variant="text"
+            :aria-pressed="tab === 'ios'"
+            v-tooltip="'iOS'"
+            ><v-icon start size="small">fa:fab fa-apple</v-icon>iOS</v-btn
+          >
+          <v-btn
+            value="android"
+            class="sd-modern-button"
+            variant="text"
+            :aria-pressed="tab === 'android'"
+            v-tooltip="'Android'"
+            ><v-icon start size="small">fa:fab fa-android</v-icon>Android</v-btn
+          >
+        </v-btn-toggle>
+        <u-qrcode
+          :options="{ width: 220, color: { light: '#fff', dark: '#111' } }"
+          :value="qr"
+          class="s--shop-applications-modern__qr-code"
+        />
+        <p class="sd-modern-subtitle text-center">
+          {{ $t("selldone_applications.scan_qr_code") }}
+        </p>
+      </div>
+      <div class="s--shop-applications-modern__features">
+        <div class="s--shop-applications-modern__intro">
+          <h3 class="sd-modern-eyebrow">
+            {{ $t("selldone_applications.title") }}
+          </h3>
+          <span class="s--shop-applications-modern__availability"
+            ><span class="sd-modern-status__dot" />{{
+              $t("global.commons.available")
+            }}</span
+          >
+        </div>
+        <div class="s--shop-applications-modern__feature">
+          <v-icon size="20">notifications_active</v-icon>
+          <div>
+            <h3>{{ $t("selldone_applications.notification.title") }}</h3>
+            <p>{{ $t("selldone_applications.notification.subtitle") }}</p>
+          </div>
+        </div>
+        <div class="s--shop-applications-modern__feature">
+          <v-icon size="20">shopping_bag</v-icon>
+          <div>
+            <h3>{{ $t("selldone_applications.order.title") }}</h3>
+            <p>{{ $t("selldone_applications.order.subtitle") }}</p>
+          </div>
+        </div>
+        <div class="s--shop-applications-modern__feature">
+          <v-icon size="20">shelves</v-icon>
+          <div>
+            <h3>{{ $t("selldone_applications.product.title") }}</h3>
+            <p>{{ $t("selldone_applications.product.subtitle") }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <s-widget v-else class="position-relative">
     <h2 class="text-h3 my-2 text-capitalize line-height-normal fadeIn">
       {{ $t("selldone_applications.title") }} 🎊
     </h2>
@@ -147,6 +266,7 @@ import { SetupService } from "@selldone/core-js/server/SetupService";
 
 export default {
   name: "BDashboardShopApplications",
+  props: { modern: { type: Boolean, default: false } },
 
   data: () => ({
     tab: "ios",
@@ -172,7 +292,135 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.s--shop-applications-modern {
+  .sd-modern-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 16px;
+    margin-block-end: 24px;
+  }
+  .sd-modern-title > div {
+    min-width: 0;
+  }
+  &__content {
+    display: grid;
+    grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+    grid-template-areas: "download features" "download badges";
+    align-items: start;
+    gap: 16px 28px;
+  }
+  &__download {
+    grid-area: download;
+    min-width: 0;
+    max-width: 220px;
+    justify-self: center;
+  }
+  &__platforms {
+    display: flex;
+    height: auto;
+    gap: 4px;
+    margin-block-end: 12px;
+  }
+  &__platforms > .v-btn {
+    flex: 1 0 auto;
+    min-width: 0;
+    padding-inline: 10px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  &__platforms > .v-btn :deep(.v-btn__content) {
+    white-space: nowrap;
+    overflow-wrap: normal;
+  }
+  &__platforms .v-btn--active {
+    background: var(--sd-modern-inset);
+  }
+  &__qr-code {
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+  &__qr-code :deep(canvas) {
+    display: block;
+    max-width: 100%;
+    height: auto !important;
+  }
+  &__features {
+    grid-area: features;
+    min-width: 0;
+  }
+  &__intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-block-end: 6px;
+  }
+  &__availability {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+  }
+  &__feature {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    align-items: start;
+    gap: 12px;
+    padding-block: 12px;
+  }
+  &__feature > .v-icon {
+    margin-block-start: 2px;
+    color: var(--sd-modern-muted);
+  }
+  &__feature h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  &__feature p {
+    margin: 3px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  &__badges {
+    grid-area: badges;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  &__badges a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    border-radius: 8px;
+  }
+  &__badges img {
+    max-width: 100%;
+  }
+  &__badges a:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 3px;
+  }
+  @media (max-width: 600px) {
+    &__content {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "badges" "download" "features";
+      gap: 20px;
+    }
+    &__platforms > .v-btn {
+      min-height: 44px;
+    }
+  }
+}
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

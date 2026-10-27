@@ -15,15 +15,45 @@
 <template>
   <s-widget-box
     :active="true"
-    :src="require('../../../../../assets/icons/avocado.svg')"
-    :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-green mr-sm' style='font-size: 6px;'></span>  ${$t(
-      'avocado_orders.title',
-    )}<span class='fw-normal ml-xs small'> ${$t(
-      'avocado_orders.title_small',
-    )}</span>  </h5>`"
+    :src="
+      modern ? undefined : require('../../../../../assets/icons/avocado.svg')
+    "
+    :title="
+      modern
+        ? undefined
+        : `<h5 class='align-items-center pb-1'>    <span class='circle bg-green mr-sm' style='font-size: 6px;'></span>  ${$t(
+            'avocado_orders.title',
+          )}<span class='fw-normal ml-xs small'> ${$t(
+            'avocado_orders.title_small',
+          )}</span>  </h5>`
+    "
     extended
+    :class="{
+      'b-dashboard-orders-avocado sd-modern-widget text-start': modern,
+    }"
+    :color="modern ? 'rgb(var(--v-theme-surface))' : undefined"
+    :dark="modern && $vuetify.theme.current.dark"
   >
+    <header v-if="modern" class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain">
+          <img
+            :src="require('../../../../../assets/icons/avocado.svg')"
+            width="20"
+            height="20"
+            alt=""
+          />
+        </span>
+        <div>
+          <h3 class="sd-modern-title-text">{{ $t("avocado_orders.title") }}</h3>
+          <p class="sd-modern-subtitle">
+            {{ $t("avocado_orders.title_small") }}
+          </p>
+        </div>
+      </div>
+    </header>
     <u-chart-area
+      :dark="modern && $vuetify.theme.current.dark"
       :colors="['#ddd', '#03A9F4', '#34e397']"
       :keys="['view_avocados', 'request_avocados', 'sell_avocados']"
       :labels-data="[
@@ -46,6 +76,7 @@ export default {
   name: "BDashboardShopOrdersAvocado",
   components: { UChartArea, SWidgetBox },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -64,6 +95,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-dashboard-orders-avocado :deep(> .widget-body) {
+  margin-block-start: 0;
+}
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

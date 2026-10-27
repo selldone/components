@@ -14,6 +14,15 @@
 
 <template>
   <v-row no-gutters>
+    <b-inventory-filter
+      v-model="filters"
+      :shop="$shop"
+      class="min-width-200 max-w-300"
+      dense
+      flat
+      variant="plain"
+      @change="onFilterChange"
+    />
     <v-spacer></v-spacer>
 
     <v-text-field
@@ -43,24 +52,24 @@
     <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ title ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
     <template v-slot:item.title="{ item }">
       <div class="d-flex align-center overflow-hidden">
-
-        <router-link :to="{
+        <router-link
+          :to="{
             name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
               ? 'Vendor_ProductDashboard'
               : 'BPageProductDashboard',
             params: { product_id: item.id },
-          }">
+          }"
+        >
           <b-product-window-product-mini
-              :product="item"
-              :shop="$shop"
-              :show-notes="false"
-              :show-select="false"
-              icon-only
-              class="my-n3"
+            :product="item"
+            :shop="$shop"
+            :show-notes="false"
+            :show-select="false"
+            icon-only
+            class="my-n3"
           >
           </b-product-window-product-mini>
         </router-link>
-
 
         <div class="text-start py-1 max-w-300">
           <div class="font-weight-bold">{{ item.title?.limitWords(8) }}</div>
@@ -135,8 +144,8 @@
           class="my-n3"
           :gray-on-clicked="false"
           :is-empty="
-                  item.category.is_empty /*We use it only in the vendor panel*/
-                "
+            item.category.is_empty /*We use it only in the vendor panel*/
+          "
         ></b-product-window-category-mini>
       </div>
     </template>
@@ -181,6 +190,7 @@ import { defineComponent } from "vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus.ts";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
+import BInventoryFilter from "@selldone/components-vue/backoffice/inventory/filter/BInventoryFilter.vue";
 import BProductWindowProductMini from "@selldone/components-vue/backoffice/product/window/product/mini/BProductWindowProductMini.vue";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import ProductVariantsView from "@selldone/components-vue/storefront/product/variant/ProductVariantsView.vue";
@@ -193,12 +203,12 @@ import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel.ts";
 import BVendorBox from "@selldone/components-vue/backoffice/vendor/box/BVendorBox.vue";
 import SCategoryCard from "@selldone/components-vue/storefront/category/card/SCategoryCard.vue";
-import BProductWindowCategoryMini
-  from "@selldone/components-vue/backoffice/product/window/category/mini/BProductWindowCategoryMini.vue";
+import BProductWindowCategoryMini from "@selldone/components-vue/backoffice/product/window/category/mini/BProductWindowCategoryMini.vue";
 
 export default defineComponent({
   name: "BProductsList",
   components: {
+    BInventoryFilter,
     BProductWindowCategoryMini,
     SCategoryCard,
     BVendorBox,
@@ -272,6 +282,13 @@ export default defineComponent({
   },
 
   computed: {
+    route_types() {
+      if (this.$route.name !== "BPageShopProductsList") return [];
+      const selected = [this.$route.query.types].flat();
+      return Object.values(ProductType)
+        .map((type) => type.code)
+        .filter((code) => selected.includes(code));
+    },
     IS_MARKETPLACE() {
       return this.$shop.model === BusinessModel.MARKETPLACE.code;
     },
@@ -350,6 +367,12 @@ export default defineComponent({
   },
 
   watch: {
+    "$route.query.types"() {
+      if (this.$route.name !== "BPageShopProductsList") return;
+      this.applyRouteTypes();
+      this.page = 1;
+      this.fetchProducts();
+    },
     itemsPerPage() {
       this.fetchProducts();
     },
@@ -381,10 +404,39 @@ export default defineComponent({
   },
 
   created() {
+    this.applyRouteTypes();
     this.fetchProducts();
   },
 
   methods: {
+    applyRouteTypes() {
+      if (this.$route.name !== "BPageShopProductsList") return;
+      this.filters = [
+        ...(this.filters || []).filter(
+          (code) =>
+            !Object.values(ProductType).some((type) => type.code === code),
+        ),
+        ...this.route_types,
+      ];
+    },
+    onFilterChange() {
+      if (this.$route.name === "BPageShopProductsList") {
+        const types = Object.values(ProductType)
+          .map((type) => type.code)
+          .filter((code) => this.filters?.includes(code));
+        if (types.join() !== this.route_types.join()) {
+          this.$router.push({
+            query: {
+              ...this.$route.query,
+              types: types.length ? types : undefined,
+            },
+          });
+          return;
+        }
+      }
+      this.page = 1;
+      this.fetchProducts();
+    },
     fetchProducts() {
       const handleSuccessResponse = ({
         folders,

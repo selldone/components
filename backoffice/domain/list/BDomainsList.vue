@@ -13,9 +13,9 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs">
+  <div v-bind="$attrs" :class="{ 'b-domains-list--modern text-start': modern }">
     <u-widget-header
-      v-if="showHeader"
+      v-if="showHeader && !modern"
       :add-caption="$t('admin_shop.dashboard.info.add_domain')"
       :title="$t('admin_shop.dashboard.info.shop_domains')"
       icon="dns"
@@ -24,17 +24,23 @@
     >
       <template v-slot:append-title> </template>
     </u-widget-header>
-    <v-list-subheader
+    <component
+      :is="modern ? 'div' : 'v-list-subheader'"
+      :class="{ 'b-domains-list__description sd-modern-subtitle': modern }"
       >{{ $t("domains.message") }}
 
       <s-widget-help code="Domain.RedirectWWW" inline></s-widget-help>
-    </v-list-subheader>
+    </component>
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <!-- █████████████████████████████ Search █████████████████████████████ -->
 
-    <v-row align="center" no-gutters>
-      <v-spacer></v-spacer>
+    <v-row
+      align="center"
+      no-gutters
+      :class="{ 'b-domains-list__toolbar': modern }"
+    >
+      <v-spacer v-if="!modern"></v-spacer>
       <v-text-field
         v-model="search"
         :placeholder="$t('global.commons.search')"
@@ -45,11 +51,28 @@
         single-line
         variant="plain"
       ></v-text-field>
+      <v-btn
+        v-if="modern && writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+        class="sd-modern-button"
+        color="primary"
+        variant="flat"
+        prepend-icon="add"
+        @click="showAddDomainDialog"
+      >
+        {{ $t("admin_shop.dashboard.info.add_domain") }}
+        <v-tooltip
+          activator="parent"
+          location="top"
+          open-on-focus
+          content-class="sd-modern-tooltip text-start"
+          >{{ $t("admin_shop.dashboard.info.add_domain") }}</v-tooltip
+        >
+      </v-btn>
     </v-row>
 
     <!-- █████████████████████████████ Domains █████████████████████████████ -->
     <div
-      v-if="$vuetify.display.xs && !showHeader && !search"
+      v-if="!modern && $vuetify.display.xs && !showHeader && !search"
       class="widget-buttons"
     >
       <v-btn
@@ -70,13 +93,22 @@
     </div>
 
     <v-data-table-server
-      v-if="$vuetify.display.smAndUp || show_domains || showHeader || search"
+      v-if="
+        modern ||
+        $vuetify.display.smAndUp ||
+        show_domains ||
+        showHeader ||
+        search
+      "
       v-model:expanded="expanded"
       expand-on-click
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
-      :class="{ 'min-height-40vh': showHeader }"
+      :class="{
+        'min-height-40vh': showHeader && !modern,
+        'sd-modern-data-table b-domains-list__table': modern,
+      }"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="shop_domains"
@@ -131,7 +163,10 @@
       <template v-slot:item.primary="{ item }">
         <v-btn
           v-if="item.official !== 'local'"
-          :color="item.primary ? 'amber' : '#999'"
+          :color="modern ? 'on-surface' : item.primary ? 'amber' : '#999'"
+          :class="{ 'sd-modern-icon-button': modern }"
+          :aria-label="$t('admin_shop.dashboard.info.table.primary')"
+          :aria-pressed="item.primary"
           :loading="busy_primary"
           icon
           title="Make this as main domain."
@@ -160,10 +195,14 @@
               !item.official && item.domain && !item.domain.externally_hosted
             "
             :title="`Set custom home page for ${item.domain.domain}`"
-            block
-            size="large"
-            variant="elevated"
-            color="#000"
+            :block="!modern"
+            :size="modern ? undefined : 'large'"
+            :variant="modern ? 'text' : 'elevated'"
+            :color="modern ? undefined : '#000'"
+            :class="{
+              'sd-modern-button sd-modern-button--inline b-domains-list__home':
+                modern,
+            }"
             @click.stop="showSetHomeDialog(item.domain)"
           >
             <img
@@ -174,12 +213,13 @@
                     : item.domain.home,
                 )
               "
-              class="me-2 ms-n2"
+              class="me-2"
+              :class="{ 'ms-n2': !modern }"
               height="24"
               width="24"
             />
 
-            <div class="text-start min-width-100">
+            <div class="text-start" :class="{ 'min-width-100': !modern }">
               <span class="text-uppercase small d-block">{{
                 GetDomainHomeName(getCorrespondingHomePageValue(item))
               }}</span>
@@ -219,9 +259,9 @@
             small
             small-width-mode
             text-start
-            color="#000"
+            :color="modern ? 'on-surface' : '#000'"
+            :background-color="modern ? 'transparent' : undefined"
             single-line
-
           >
             <template v-slot:prepend-value>
               <v-icon
@@ -257,11 +297,11 @@
                 <v-chip
                   v-if="item.domain?.externally_hosted"
                   class="me-1 tnt"
-                  color="#673AB7"
+                  :color="modern ? undefined : '#673AB7'"
                   label
                   prepend-icon="public"
                   size="x-small"
-                  variant="flat"
+                  :variant="modern ? 'text' : 'flat'"
                 >
                   {{ $t("admin_shop.dashboard.info.table.externally_hosted") }}
                 </v-chip>
@@ -270,13 +310,21 @@
                   v-if="item.domain && !can_edit_domain(item.domain)"
                 ></BShopLicenseBlockIcon>
 
-                <div v-if="item.error" class="text-start">
+                <div
+                  v-if="item.error"
+                  class="text-start"
+                  :tabindex="modern ? 0 : undefined"
+                >
                   <v-icon class="hover-scale-small" color="red"> error</v-icon>
                   <v-tooltip
                     activator="parent"
-                    color="#111"
-                    content-class="text-start"
-                    location="bottom"
+                    :color="modern ? undefined : '#111'"
+                    :content-class="
+                      modern ? 'sd-modern-tooltip text-start' : 'text-start'
+                    "
+                    :location="modern ? 'top' : 'bottom'"
+                    :open-on-focus="modern"
+                    :open-on-click="modern"
                     max-width="360"
                   >
                     <b class="d-block">Error</b>
@@ -293,16 +341,23 @@
                   check_circle
                 </v-icon>
 
-                <span v-else-if="item.approved !== undefined">
+                <span
+                  v-else-if="item.approved !== undefined"
+                  :tabindex="modern ? 0 : undefined"
+                >
                   <v-icon class="hover-scale-small" color="amber">
                     hourglass_full
                   </v-icon>
 
                   <v-tooltip
                     activator="parent"
-                    color="#111"
-                    content-class="text-start"
-                    location="bottom"
+                    :color="modern ? undefined : '#111'"
+                    :content-class="
+                      modern ? 'sd-modern-tooltip text-start' : 'text-start'
+                    "
+                    :location="modern ? 'top' : 'bottom'"
+                    :open-on-focus="modern"
+                    :open-on-click="modern"
                   >
                     <div>Waiting...</div>
                   </v-tooltip>
@@ -310,6 +365,32 @@
               </div>
             </template>
           </u-text-copy-box>
+          <span
+            v-if="modern && (item.error || item.approved !== undefined)"
+            class="sd-modern-status sd-modern-status--plain b-domains-list__domain-status"
+          >
+            <v-icon
+              :icon="
+                item.error
+                  ? 'error_outline'
+                  : item.approved
+                    ? 'check_circle_outline'
+                    : 'schedule'
+              "
+              :color="item.error ? 'error' : undefined"
+              size="14"
+              aria-hidden="true"
+            />
+            {{
+              $t(
+                item.error
+                  ? "admin_shop.dashboard.modern.domain_connection_error"
+                  : item.approved
+                    ? "admin_shop.dashboard.modern.domain_verified"
+                    : "admin_shop.dashboard.modern.domain_verification_pending",
+              )
+            }}
+          </span>
         </div>
       </template>
 
@@ -320,6 +401,7 @@
           :disabled="!item.enable"
           :href="item.url"
           class="tnt"
+          :class="{ 'sd-modern-button sd-modern-button--inline': modern }"
           color="primary"
           target="_blank"
           title="Open link"
@@ -336,6 +418,7 @@
         <v-btn
           v-if="!item.domain?.externally_hosted"
           class="tnt"
+          :class="{ 'sd-modern-button sd-modern-button--inline': modern }"
           color="primary"
           title="View site map url"
           variant="text"
@@ -361,6 +444,9 @@
           "
           icon
           variant="text"
+          :class="{ 'sd-modern-icon-button': modern }"
+          :aria-label="$t('admin_shop.dashboard.info.table.enable')"
+          :aria-pressed="item.enable"
           @click.stop="
             updateShopDomain(
               'enable',
@@ -385,8 +471,13 @@
           class="text-center"
         >
           <v-btn
-            :class="{ 'disabled op-0-6': item.official === 'local' }"
-            :color="item.indexed ? 'green' : '#444'"
+            :class="{
+              'disabled op-0-6': item.official === 'local',
+              'sd-modern-icon-button': modern,
+            }"
+            :color="modern ? 'on-surface' : item.indexed ? 'green' : '#444'"
+            :aria-label="$t('admin_shop.dashboard.info.table.indexed')"
+            :aria-pressed="item.indexed"
             :loading="
               busy_update_param ===
               `indexed-${item.domain ? item.domain.domain : item.official}`
@@ -415,15 +506,18 @@
         <tr>
           <td :colspan="columns.length">
             <div class="d-flex align-center py-1">
-              <div class="flex-grow-1">
+              <div
+                class="flex-grow-1"
+                :class="{ 'b-domains-list__metadata': modern }"
+              >
                 <v-chip
                   v-if="!item.domain?.home"
                   class=""
                   pill
                   size="x-small"
                   title="Same as main home!"
-                  variant="flat"
-                  color="#fff"
+                  :variant="modern ? 'text' : 'flat'"
+                  :color="modern ? undefined : '#fff'"
                   style="margin: 2px"
                   prepend-icon="home"
                 >
@@ -436,8 +530,8 @@
                   class=""
                   pill
                   size="x-small"
-                  variant="flat"
-                  color="#fff"
+                  :variant="modern ? 'text' : 'flat'"
+                  :color="modern ? undefined : '#fff'"
                   style="margin: 2px"
                   prepend-icon="assignment_ind"
                 >
@@ -448,8 +542,8 @@
                 <v-chip
                   v-if="!item.domain?.currencies?.length"
                   size="x-small"
-                  color="#fff"
-                  variant="flat"
+                  :color="modern ? undefined : '#fff'"
+                  :variant="modern ? 'text' : 'flat'"
                   prepend-icon="all_inclusive"
                   style="margin: 2px"
                 >
@@ -460,8 +554,8 @@
                   v-for="it in item.domain?.currencies"
                   :key="it"
                   size="x-small"
-                  color="#fff"
-                  variant="flat"
+                  :color="modern ? undefined : '#fff'"
+                  :variant="modern ? 'text' : 'flat'"
                   style="margin: 2px"
                 >
                   <flag
@@ -477,8 +571,8 @@
                 <v-chip
                   v-if="!item.domain?.languages?.length"
                   size="x-small"
-                  color="#fff"
-                  variant="flat"
+                  :color="modern ? undefined : '#fff'"
+                  :variant="modern ? 'text' : 'flat'"
                   prepend-icon="translate"
                   style="margin: 2px"
                 >
@@ -488,8 +582,8 @@
                   v-for="it in item.domain?.languages"
                   :key="it"
                   size="x-small"
-                  color="#fff"
-                  variant="flat"
+                  :color="modern ? undefined : '#fff'"
+                  :variant="modern ? 'text' : 'flat'"
                   prepend-icon="translate"
                   style="margin: 2px"
                 >
@@ -502,8 +596,8 @@
                   pill
                   size="x-small"
                   title="Last SSL certificate issued by Selldone."
-                  variant="flat"
-                  color="#fff"
+                  :variant="modern ? 'text' : 'flat'"
+                  :color="modern ? undefined : '#fff'"
                   style="margin: 2px"
                   prepend-icon="verified_user"
                 >
@@ -532,12 +626,12 @@
                 <v-chip
                   v-if="item.domain?.externally_hosted"
                   class=""
-                  color="#673AB7"
+                  :color="modern ? undefined : '#673AB7'"
                   pill
                   prepend-icon="public"
                   size="x-small"
                   style="margin: 2px"
-                  variant="flat"
+                  :variant="modern ? 'text' : 'flat'"
                 >
                   {{ $t("admin_shop.dashboard.info.table.externally_hosted") }}
                 </v-chip>
@@ -547,8 +641,8 @@
                   pill
                   size="x-small"
                   title="SSL certificate issued by Selldone with CDN protection."
-                  variant="flat"
-                  color="#E64A19"
+                  :variant="modern ? 'text' : 'flat'"
+                  :color="modern ? undefined : '#E64A19'"
                   style="margin: 2px"
                   prepend-icon="verified_user"
                 >
@@ -560,8 +654,8 @@
                   pill
                   size="x-small"
                   title="SSL certificate issued by external CDN provider."
-                  variant="flat"
-                  color="#673AB7"
+                  :variant="modern ? 'text' : 'flat'"
+                  :color="modern ? undefined : '#673AB7'"
                   style="margin: 2px"
                   prepend-icon="verified_user"
                 >
@@ -589,8 +683,12 @@
                 @click="deleteShopDomain(item.domain)"
                 prepend-icon="close"
                 :loading="busy_delete === item.domain.id"
-                class="ma-1 tnt border"
-                variant="elevated"
+                :class="
+                  modern
+                    ? 'ma-1 sd-modern-button sd-modern-button--inline'
+                    : 'ma-1 tnt border'
+                "
+                :variant="modern ? 'text' : 'elevated'"
                 size="small"
               >
                 {{ $t("global.actions.delete") }}
@@ -603,14 +701,18 @@
                   add_client_code ===
                     (item.domain ? item.domain.id : item.official)
                 "
-                class="ma-1 tnt border"
+                :class="
+                  modern
+                    ? 'ma-1 sd-modern-button sd-modern-button--inline'
+                    : 'ma-1 tnt border'
+                "
                 size="small"
                 @click="
                   createClientSecret(
                     item.domain ? item.domain.id : item.official,
                   )
                 "
-                variant="elevated"
+                :variant="modern ? 'text' : 'elevated'"
                 prepend-icon="build"
               >
                 {{ $t("admin_shop.dashboard.info.table.auto_repair") }}
@@ -620,17 +722,25 @@
                 <v-btn
                   @click="showEditDomainDialog(item.domain)"
                   prepend-icon="edit"
-                  class="ma-1 tnt border"
-                  variant="elevated"
+                  :class="
+                    modern
+                      ? 'ma-1 sd-modern-button sd-modern-button--inline'
+                      : 'ma-1 tnt border'
+                  "
+                  :variant="modern ? 'text' : 'elevated'"
                   size="small"
                 >
                   Edit Domain
                 </v-btn>
 
                 <v-btn
-                  class="ma-1 tnt"
+                  :class="
+                    modern
+                      ? 'ma-1 sd-modern-button sd-modern-button--inline'
+                      : 'ma-1 tnt'
+                  "
                   size="small"
-                  variant="elevated"
+                  :variant="modern ? 'text' : 'elevated'"
                   @click="showSetting(item.domain)"
                   prepend-icon="settings"
                 >
@@ -655,7 +765,7 @@
       </template>
     </v-data-table-server>
 
-    <div v-if="!showHeader" class="widget-buttons">
+    <div v-if="!showHeader && !modern" class="widget-buttons">
       <v-btn block color="primary" size="x-large" @click="showAddDomainDialog">
         <v-icon start>add</v-icon>
         <div>
@@ -665,10 +775,14 @@
       </v-btn>
     </div>
 
-    <v-list-subheader>
+    <component
+      :is="modern ? 'div' : 'v-list-subheader'"
+      :class="{ 'b-domains-list__footer': modern }"
+    >
+      <span v-if="modern">{{ totalItems }} {{ $t("commons.domains") }} · </span>
       <v-icon>domain</v-icon>
       {{ $t("commons.main_domain") }}: {{ shop.domain }}
-    </v-list-subheader>
+    </component>
   </div>
 
   <!-- ██████████████████████ Sitemap Dialog ██████████████████████ -->
@@ -820,6 +934,7 @@ export default {
     ShopSiteMap,
   },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -965,6 +1080,7 @@ export default {
   methods: {
     fetchDomains(page, sortBy, sortDesc = true) {
       this.busy_fetch = true;
+      const search = this.search;
 
       axios
         .get(window.API.GET_SHOP_DOMAINS(this.$route.params.shop_id), {
@@ -974,12 +1090,21 @@ export default {
             sortBy: sortBy,
             sortDesc: sortDesc,
 
-            search: this.search,
+            search,
           },
         })
         .then(({ data }) => {
           this.totalItems = data.total + (this.show_subdomains ? 2 : 0);
           this.domains = data.domains;
+          // Refresh the shared primary-first snapshot only from a complete, unfiltered list.
+          if (page === 1 && !search && data.total === data.domains.length) {
+            this.shop.domains = [...data.domains].sort(
+              (a, b) =>
+                Number(b.primary) - Number(a.primary) ||
+                Number(b.enable) - Number(a.enable) ||
+                Number(b.approved) - Number(a.approved),
+            );
+          }
         })
         .finally(() => {
           this.busy_fetch = false;
@@ -1153,6 +1278,119 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-domains-list--modern {
+  min-width: 0;
+  font-weight: 400;
+
+  .b-domains-list__description {
+    margin-block: 0 16px;
+  }
+
+  .b-domains-list__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-block-end: 16px;
+  }
+
+  .b-domains-list__toolbar .max-width-field {
+    width: min(100%, 280px);
+    flex: 1 1 180px;
+  }
+
+  .b-domains-list__home {
+    height: auto;
+    min-height: 36px;
+    padding-block: 6px;
+    line-height: 1.45;
+    white-space: normal;
+  }
+
+  .b-domains-list__home :deep(.v-btn__content) {
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .b-domains-list__home .small {
+    font-size: 11px;
+    font-weight: 400;
+  }
+
+  .b-domains-list__table :deep(.v-table__wrapper) {
+    max-width: 100%;
+  }
+
+  .b-domains-list__table :deep(th),
+  .b-domains-list__table :deep(td) {
+    padding-inline: 10px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.55;
+  }
+
+  .b-domains-list__table :deep(th) {
+    height: 44px;
+    color: var(--sd-modern-muted);
+  }
+
+  .b-domains-list__domain-status {
+    display: flex;
+    gap: 5px;
+    margin-block-start: 5px;
+    font-size: 11px;
+    font-weight: 400;
+  }
+
+  .b-domains-list__metadata {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    padding-block: 12px;
+  }
+
+  .b-domains-list__metadata :deep(.v-chip) {
+    height: auto;
+    min-height: 28px;
+    padding: 4px 6px;
+    font-size: 11px;
+    font-weight: 400;
+    white-space: normal;
+  }
+
+  .b-domains-list__metadata b {
+    font-weight: 400;
+  }
+
+  .b-domains-list__footer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-block-start: 16px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 600px) {
+    .b-domains-list__home {
+      min-height: 44px;
+    }
+
+    .b-domains-list__table :deep(.v-data-table__td-value) {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .b-domains-list__metadata {
+      gap: 4px;
+    }
+  }
+}
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

@@ -20,6 +20,7 @@
         ? highlightedGroupColor
         : undefined,
     }"
+    :class="{ 'x--chart-bar--fit': fit }"
     class="x--chart-bar"
   >
     <div
@@ -27,7 +28,7 @@
       class="font-weight-bold mb-2 small text-start px-2 d-flex align-center"
     >
       <slot name="title"></slot>
-      <v-icon v-if="icon" class="me-1">{{icon}}</v-icon>
+      <v-icon v-if="icon" class="me-1">{{ icon }}</v-icon>
       {{ title }}
       <v-spacer></v-spacer>
       <span
@@ -37,22 +38,22 @@
           $t('global.commons.max') +
           ' ' +
           (labels && labels.length > i ? labels[i] : '') +
-          ` : ${max} ${title ? title : ''}`
+          ` : ${fit && max == null ? '—' : max} ${title ? title : ''}`
         "
         class="small mx-1"
       >
         <v-icon
           :color="colors[i] ? colors[i] : '#333'"
-          class="hover-scale"
+          :class="{ 'hover-scale': !fit }"
           size="10"
           >circle</v-icon
         >
-        {{ numeralFormat(max, "0.[0]a") }}
+        {{ fit && max == null ? "—" : numeralFormat(max, "0.[0]a") }}
       </span>
     </div>
     <div
-      :class="{ 'px-4': !dense, '-grouped': grouped }"
-      class="d-flex justify-space-between w-100"
+      :class="{ 'px-4': !dense && !fit, '-grouped': grouped }"
+      class="d-flex justify-space-between w-100 --plot"
     >
       <div
         v-for="(it, i) in normalized"
@@ -63,21 +64,32 @@
           height: height + 'px',
         }"
         class="d-flex justify-center flex-grow-1 --bars"
+        :tabindex="fit ? 0 : undefined"
+        :role="fit ? 'img' : undefined"
+        :aria-label="fit ? barLabel(i) : undefined"
+        :aria-describedby="fit ? uid + '_tooltip' : undefined"
         @mouseenter.stop="mouseEnter(i)"
-        @mouseleave.stop="index = null;show_tooltip = false"
+        @mouseleave.stop="
+          index = null;
+          show_tooltip = false;
+        "
+        @focus="fit && mouseEnter(i)"
+        @blur="fit && (show_tooltip = false)"
+        @keydown.esc="fit && (show_tooltip = false)"
         :id="'c_' + i"
       >
         <div
           v-for="(col, j) in it"
-
           :key="'c-' + j"
           :style="{
             height: Math.abs(col) + '%',
             backgroundColor:
               col < 0 ? '#F44336' : colors[j] ? colors[j] : '#333',
+            margin: fit ? 0 : '0 1px',
+            padding: fit ? 0 : '1px',
+            visibility: fit && col == null ? 'hidden' : undefined,
           }"
           class="--bar"
-          style="margin: 0 1px; padding: 1px"
         ></div>
       </div>
     </div>
@@ -103,15 +115,17 @@
     </div>
 
     <v-tooltip
-        v-model="show_tooltip"
+      v-model="show_tooltip"
       :activator="`#${uid} #c_${index}`"
       :open-delay="350"
-      color="#222"
-      location="bottom"
-      transition="scale-transition"
-      content-class="bg-black text-start"
+      :color="fit ? undefined : '#222'"
+      :location="fit ? 'top' : 'bottom'"
+      :transition="fit ? false : 'scale-transition'"
+      :content-class="
+        fit ? 'sd-modern-tooltip text-start' : 'bg-black text-start'
+      "
     >
-      <div class="text-start">
+      <div :id="fit ? uid + '_tooltip' : undefined" class="text-start">
         <div v-if="startDate" class="py-2">
           {{ getLocalDateString(startDate.addDays(index)) }}
         </div>
@@ -125,7 +139,7 @@
           <span v-if="labels && labels.length > j" class="small me-1"
             >{{ labels[j] }}:
           </span>
-          <b>{{ col }}</b>
+          <b>{{ fit && col == null ? "—" : col }}</b>
         </div>
       </div>
     </v-tooltip>
@@ -161,13 +175,17 @@ export default {
       type: Boolean,
       default: true,
     },
-    icon:{},
+    icon: {},
     title: {},
     labels: {},
     height: {
       default: 80,
     },
     dense: {
+      type: Boolean,
+      default: false,
+    },
+    fit: {
       type: Boolean,
       default: false,
     },
@@ -182,8 +200,8 @@ export default {
     highlightedGroupColor: {
       default: "rgba(230, 230, 230, 0.1)",
     },
-    hideDates:Boolean,
-    hideLegend:Boolean
+    hideDates: Boolean,
+    hideLegend: Boolean,
   },
 
   data: () => ({
@@ -202,13 +220,15 @@ export default {
       this.dataset.forEach((it) => {
         let sum = 0;
 
-        sum += it.reduce((a, b) => a + b, 0);
+        sum += it.reduce((a, b) => a + (this.fit && b == null ? 0 : b), 0);
 
         max_sum = Math.max(max_sum, sum);
       });
       // Normalize:
       return this.dataset.map((i) =>
-        i.map((x) => Math.round((100 * x) / max_sum)),
+        i.map((x) =>
+          this.fit && x == null ? null : Math.round((100 * x) / max_sum),
+        ),
       );
     },
 
@@ -225,10 +245,11 @@ export default {
       const out = [];
 
       for (let i = 0; i < this.count; i++) {
-        let max = 0;
+        let max = this.fit ? null : 0;
         // console.log('this.dataset[i]',this.dataset)
         this.dataset.forEach((it) => {
-          max = Math.max(max, it[i]);
+          if (this.fit && it[i] == null) return;
+          max = Math.max(max ?? 0, it[i]);
         });
 
         out.push(max);
@@ -239,6 +260,21 @@ export default {
   },
 
   methods: {
+    barLabel(i) {
+      const date = this.startDate
+        ? this.getLocalDateString(this.startDate.addDays(i)) + ". "
+        : "";
+      return (
+        date +
+        this.dataset[i]
+          .map(
+            (value, j) =>
+              (this.labels && this.labels[j] ? this.labels[j] + ": " : "") +
+              (value ?? "—"),
+          )
+          .join(", ")
+      );
+    },
     mouseEnter(i) {
       this.index = i;
       this.selected = this.dataset[i];
@@ -326,6 +362,43 @@ export default {
     }
 
     // --bars
+  }
+}
+
+.x--chart-bar.x--chart-bar--fit {
+  min-width: 0;
+  max-width: 100%;
+
+  .--plot {
+    min-width: 0;
+    overflow: hidden;
+
+    .--bars {
+      // Fixed insets would make long histories wider than their metric cell.
+      flex: 1 1 0;
+      min-width: 0;
+      margin: 0;
+      padding: 0;
+
+      .--bar {
+        min-width: 0;
+        width: 100%;
+      }
+
+      &,
+      &:hover,
+      .--bar,
+      .--bar:hover {
+        transform: none;
+        transition: none;
+        animation: none;
+      }
+    }
+
+    &.-grouped .--bar {
+      flex: 1 1 0;
+      width: 0;
+    }
   }
 }
 </style>

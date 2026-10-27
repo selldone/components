@@ -13,9 +13,35 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
+  <div
+    class="s--shop-dashboard-technical text-start"
+    :class="{ 's--shop-dashboard-technical--modern': modern }"
+  >
     <!-- █████████████████████████ Domains █████████████████████████ -->
-    <s-widget-box :title="$t('admin_shop.dashboard.info.shop_domains')">
+    <section v-if="modern" class="sd-modern-widget">
+      <header class="sd-modern-header">
+        <div class="sd-modern-title">
+          <span class="sd-modern-icon sd-modern-icon--plain">
+            <img
+              :src="require('../../../../assets/icons/domains.svg')"
+              alt=""
+              height="20"
+              width="20"
+            />
+          </span>
+          <div>
+            <h2 class="sd-modern-title-text">
+              {{ $t("admin_shop.dashboard.info.shop_domains") }}
+            </h2>
+            <p class="sd-modern-subtitle">
+              {{ $t("admin_shop.dashboard.info.shop_domains_msg") }}
+            </p>
+          </div>
+        </div>
+      </header>
+      <b-domains-list :shop="shop" modern></b-domains-list>
+    </section>
+    <s-widget-box v-else :title="$t('admin_shop.dashboard.info.shop_domains')">
       <template v-slot:top-left>
         <img
           :src="require('../../../../assets/icons/domains.svg')"
@@ -69,6 +95,7 @@ export default {
     SWidgetBox,
   },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -193,4 +220,8 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.s--shop-dashboard-technical--modern .sd-modern-title-text {
+  font-weight: 500;
+}
+</style>

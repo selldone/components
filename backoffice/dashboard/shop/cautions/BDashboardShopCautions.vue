@@ -13,8 +13,23 @@
   -->
 
 <template>
-  <div v-if="cautions?.length" class="s--shop-dashboard-cations">
-    <p class="mb-1 small text-muted">
+  <div
+    v-if="cautions?.length"
+    :class="{ 'sd-modern-widget s--shop-dashboard-cations-modern': modern }"
+    class="s--shop-dashboard-cations"
+  >
+    <header v-if="modern" class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"
+          ><v-icon icon="health_and_safety" size="20" aria-hidden="true"
+        /></span>
+        <div>
+          <h2 class="sd-modern-title-text">{{ $t("admin_shop.dashboard.modern.store_health") }}</h2>
+          <p class="sd-modern-subtitle">{{ $t("cautions.title") }}</p>
+        </div>
+      </div>
+    </header>
+    <p v-else class="mb-1 small text-muted">
       <v-icon class="me-1">arrow_drop_down</v-icon>
       <b>{{ $t("global.commons.tips") }}: </b>
       {{ $t("cautions.title") }}
@@ -38,6 +53,7 @@ export default defineComponent({
   name: "BDashboardShopCautions",
   components: { BAlertCation },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -63,5 +79,22 @@ export default defineComponent({
  */
 .s--shop-dashboard-cations {
   text-align: start;
+}
+.s--shop-dashboard-cations-modern {
+  :deep(.b--alert-cation) {
+    color: rgb(var(--v-theme-on-surface));
+    background: var(--sd-modern-inset);
+    box-shadow: none !important;
+  }
+  :deep(.b--alert-cation .text-uppercase) {
+    color: rgb(var(--v-theme-on-surface)) !important;
+    font-size: 12px;
+    font-weight: 500 !important;
+  }
+  :deep(.b--alert-cation .text-subtitle-2) {
+    padding-inline-end: 24px !important;
+    font-size: 13px !important;
+    font-weight: 400;
+  }
 }
 </style>

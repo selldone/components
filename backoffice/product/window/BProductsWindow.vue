@@ -2217,6 +2217,13 @@ export default {
   }),
 
   computed: {
+    route_types() {
+      if (this.$route.name !== "BPageShopProductsList") return [];
+      const selected = [this.$route.query.types].flat();
+      return Object.values(ProductType)
+        .map((type) => type.code)
+        .filter((code) => selected.includes(code));
+    },
     ShopURLs() {
       return ShopURLs;
     },
@@ -2396,6 +2403,7 @@ export default {
     "$route.query"(query) {
       this.current_dir_id = query.dir ? parseInt(query.dir) : null;
       this.search = query.search;
+      this.applyRouteTypes();
       this.product_page = 1;
       this.folder_page = 1;
       this.fetchData();
@@ -2431,6 +2439,7 @@ export default {
   created() {
     // Load search query:
     this.search = this.$route.query.search;
+    this.applyRouteTypes();
 
     // Set initial view mode:
     this.local_view_mode = localStorage.getItem("products-view-mode");
@@ -2567,8 +2576,6 @@ export default {
 
           // Remove cut product:
           this.$store.commit("setCutProduct", null);
-
-
         });
       }
       // -------------------------- Category --------------------------
@@ -2594,7 +2601,6 @@ export default {
         });
       }
       this.onDragEnd();
-
 
       // Force clean all temporary cache!
       CleanCache();
@@ -2765,7 +2771,33 @@ export default {
     },
 
     onFilterChange() {
+      if (this.$route.name === "BPageShopProductsList") {
+        const types = Object.values(ProductType)
+          .map((type) => type.code)
+          .filter((code) => this.filters?.includes(code));
+        if (types.join() !== this.route_types.join()) {
+          this.$router.push({
+            query: {
+              ...this.$route.query,
+              types: types.length ? types : undefined,
+            },
+          });
+          return;
+        }
+      }
+      this.product_page = 1;
       this.fetchData();
+    },
+
+    applyRouteTypes() {
+      if (this.$route.name !== "BPageShopProductsList") return;
+      this.filters = [
+        ...(this.filters || []).filter(
+          (code) =>
+            !Object.values(ProductType).some((type) => type.code === code),
+        ),
+        ...this.route_types,
+      ];
     },
 
     fetchData(force = false) {
@@ -2773,6 +2805,8 @@ export default {
       const limit = this.max_products_per_page;
 
       const with_folders = this.product_page === 1;
+      // Type links open the complete catalog without changing the folder used by add/move actions.
+      const typed_catalog = this.route_types.length > 0 && !this.current_dir_id;
 
       const params = {
         statuses: this.filters?.filter((x) => !!ProductStatus[x]),
@@ -2784,13 +2818,13 @@ export default {
         sort: this.sort,
         available: this.only_available,
         set: this.set, // null : default  ,   spec: for copy spec (list)
-        dir: this.current_dir_id,
+        dir: typed_catalog ? "*" : this.current_dir_id,
         with_product_variants: this.withFullVariant,
         with_parent: with_folders, // No parent if load more items!
         search: this.search,
         vendor: this.vendor_filter,
 
-        products_only: !with_folders, // Only products if load more!
+        products_only: typed_catalog || !with_folders, // Only products if load more!
         with_total: true,
 
         show_deletes: this.showDeletes, // Show deletes items

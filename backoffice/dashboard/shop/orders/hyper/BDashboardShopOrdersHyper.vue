@@ -15,15 +15,39 @@
 <template>
   <s-widget-box
     :active="true"
-    :src="require('../../../../../assets/icons/hyper.svg')"
-    :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-green mr-sm' style='font-size: 6px;'></span>  ${$t(
-      'hyper_orders.title',
-    )}<span class='fw-normal ml-xs small'> ${$t(
-      'hyper_orders.title_small',
-    )}</span>  </h5>`"
+    :src="modern ? undefined : require('../../../../../assets/icons/hyper.svg')"
+    :title="
+      modern
+        ? undefined
+        : `<h5 class='align-items-center pb-1'>    <span class='circle bg-green mr-sm' style='font-size: 6px;'></span>  ${$t(
+            'hyper_orders.title',
+          )}<span class='fw-normal ml-xs small'> ${$t(
+            'hyper_orders.title_small',
+          )}</span>  </h5>`
+    "
     extended
+    :class="{ 'b-dashboard-orders-hyper sd-modern-widget text-start': modern }"
+    :color="modern ? 'rgb(var(--v-theme-surface))' : undefined"
+    :dark="modern && $vuetify.theme.current.dark"
   >
+    <header v-if="modern" class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain">
+          <img
+            :src="require('../../../../../assets/icons/hyper.svg')"
+            width="20"
+            height="20"
+            alt=""
+          />
+        </span>
+        <div>
+          <h3 class="sd-modern-title-text">{{ $t("hyper_orders.title") }}</h3>
+          <p class="sd-modern-subtitle">{{ $t("hyper_orders.title_small") }}</p>
+        </div>
+      </div>
+    </header>
     <u-chart-area
+      :dark="modern && $vuetify.theme.current.dark"
       :colors="['#ddd', '#FBC02D', '#FF5252', '#34e397']"
       :keys="[
         'hyper_views',
@@ -53,6 +77,7 @@ export default {
   name: "BDashboardShopOrdersHyper",
   components: { UChartArea, SWidgetBox },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -71,6 +96,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-dashboard-orders-hyper :deep(> .widget-body) {
+  margin-block-start: 0;
+}
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

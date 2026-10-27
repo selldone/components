@@ -13,136 +13,345 @@
   -->
 
 <template>
-
   <!-- ━━━━━━━━━━━━━━━━━━ BDashboardShopAcquisition ━━━━━━━━━━━━━━━━━━ -->
-  <s-widget-box
-    :active="true"
-    :icon-to="{ name: 'BPageShopCrmReport' }"
-    :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mx-sm' style='font-size: 6px;'></span> ${$t(
-      'shop_visitors_widget.title',
-    )}  </h5>`"
-    icon="fa:fas fa-users"
+  <component
+    :is="modern ? 'div' : 's-widget-box'"
+    :active="modern ? undefined : true"
+    :icon-to="modern ? undefined : { name: 'BPageShopCrmReport' }"
+    :title="
+      modern
+        ? undefined
+        : `<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mx-sm' style='font-size: 6px;'></span> ${$t(
+            'shop_visitors_widget.title',
+          )}  </h5>`
+    "
+    :icon="modern ? undefined : 'fa:fas fa-users'"
+    class="b-dashboard-acquisition text-start"
+    :class="{ 'b-dashboard-acquisition--modern': modern }"
   >
-    <template v-slot:actions>
-      <v-row>
-        <v-col cols="12" lg="9" order-lg="2">
-          <v-row class="text-center border-between" dense>
-            <v-col cols="4">
-              <h2 class="text-h5 text-sm-h4 font-weight-black">
-                {{ numeralFormat(all_new_visitors, "0.[0] a") }}
-              </h2>
-              <p class="small m-0">
-                {{ $t("shop_visitors_widget.new_visitors") }}
+    <v-row :class="{ 'b-dashboard-acquisition__layout': modern }">
+      <v-col
+        cols="12"
+        lg="9"
+        :order-lg="modern ? undefined : 2"
+        :class="{ 'sd-modern-widget b-dashboard-acquisition__trend': modern }"
+      >
+        <header v-if="modern" class="sd-modern-header">
+          <div class="sd-modern-title">
+            <span
+              class="sd-modern-icon sd-modern-icon--plain"
+              aria-hidden="true"
+            >
+              <v-icon icon="insights" size="20" />
+            </span>
+            <div>
+              <div class="d-flex align-center ga-1">
+                <h2 class="sd-modern-title-text">
+                  {{
+                    $t(
+                      "admin_shop.dashboard.modern.acquisition_analytics_title",
+                    )
+                  }}
+                </h2>
+                <v-btn
+                  class="sd-modern-icon-button sd-modern-info-button"
+                  icon
+                  variant="text"
+                  :aria-label="$t('shop_visitors_widget.title')"
+                >
+                  <v-icon icon="info_outline" size="16" aria-hidden="true" />
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                    :max-width="360"
+                    open-on-click
+                    open-on-focus
+                    interactive
+                    content-class="sd-modern-tooltip text-start"
+                  >
+                    {{
+                      $t("admin_shop.dashboard.modern.acquisition_detail_help")
+                    }}
+                  </v-tooltip>
+                </v-btn>
+              </div>
+              <p class="sd-modern-subtitle">
+                {{ $t("admin_shop.dashboard.modern.acquisition_subtitle") }}
               </p>
-              <p class="small m-0 op-0-8 text-truncate">
-                <up-down-icon
-                  :value="all_new_visitors_grow_week"
-                ></up-down-icon>
-                {{ numeralFormat(all_new_visitors_grow_week, "0.[0]") }}%
-                {{ $t("shop_visitors_widget.from_previous_7_days") }}
-              </p>
-            </v-col>
-            <v-col cols="4">
-              <h2 class="text-h5 text-sm-h4 font-weight-black">
-                {{ numeralFormat(all_returning_visitors, "0.[0] a") }}
-              </h2>
-              <p class="small m-0">
-                {{ $t("shop_visitors_widget.returning_visitors") }}
-              </p>
-              <p class="small m-0 op-0-8 text-truncate">
-                <up-down-icon
-                  :value="all_returning_visitors_grow_week"
-                ></up-down-icon>
-                {{ numeralFormat(all_returning_visitors_grow_week, "0.[0]") }}%
-                {{ $t("shop_visitors_widget.from_previous_7_days") }}
-              </p>
-            </v-col>
-            <v-col cols="4">
-              <h2 class="text-h5 text-sm-h4 font-weight-black">
-                {{ numeralFormat(all_page_views, "0.[0] a") }}
-              </h2>
-              <p class="small m-0">
-                {{ $t("shop_visitors_widget.page_views") }}
-              </p>
-              <p class="small m-0 op-0-8 text-truncate">
-                <up-down-icon :value="all_page_views_grow_week"></up-down-icon>
-                {{ numeralFormat(all_page_views_grow_week, "0.[0]") }}%
-                {{ $t("shop_visitors_widget.from_previous_7_days") }}
-              </p>
-            </v-col>
-          </v-row>
-
-          <div style="min-height: 250px">
-            <apexchart
-              :options="options"
-              :series="series"
-              class="mt-3 mx-n2 mx-sm-0"
-              height="250"
-              type="area"
-              width="100%"
-            />
+            </div>
           </div>
-        </v-col>
+          <v-btn
+            :to="{ name: 'BPageShopCrmReport' }"
+            class="sd-modern-icon-button"
+            variant="text"
+            icon
+            :aria-label="$t('shop_visitors_widget.title')"
+          >
+            <v-icon icon="arrow_outward" size="18" />
+            <v-tooltip
+              activator="parent"
+              location="top"
+              :open-on-focus="true"
+              content-class="sd-modern-tooltip text-start"
+            >
+              {{ $t("shop_visitors_widget.title") }}
+            </v-tooltip>
+          </v-btn>
+        </header>
+        <dl
+          v-if="modern"
+          class="sd-modern-stat-grid b-dashboard-acquisition__stats"
+        >
+          <div v-for="metric in modern_metrics" :key="metric.key">
+            <dt class="sd-modern-label">{{ $t(metric.label) }}</dt>
+            <dd class="b-dashboard-acquisition__value">
+              {{ numeralFormat(metric.total, "0.[0] a") }}
+            </dd>
+            <dd
+              v-if="metric.comparison.available"
+              class="b-dashboard-acquisition__comparison"
+            >
+              <up-down-icon
+                :value="metric.comparison.value ?? metric.comparison.change"
+                small
+              />
+              <span>{{
+                metric.comparison.new_activity
+                  ? $t("admin_shop.dashboard.modern.new_activity")
+                  : numeralFormat(metric.comparison.value, "0.[0]") + "%"
+              }}</span>
+              <span>{{
+                $t(
+                  metric.comparison.days === 1
+                    ? "admin_shop.dashboard.modern.comparison_previous_day"
+                    : "admin_shop.dashboard.modern.comparison_previous_days",
+                  { days: metric.comparison.days },
+                )
+              }}</span>
+            </dd>
+          </div>
+        </dl>
+        <v-row v-else class="text-center border-between" dense>
+          <v-col cols="4">
+            <h2 class="text-h5 text-sm-h4 font-weight-black">
+              {{ numeralFormat(all_new_visitors, "0.[0] a") }}
+            </h2>
+            <p class="small m-0">
+              {{ $t("shop_visitors_widget.new_visitors") }}
+            </p>
+            <p class="small m-0 op-0-8 text-truncate">
+              <up-down-icon :value="all_new_visitors_grow_week"></up-down-icon>
+              {{ numeralFormat(all_new_visitors_grow_week, "0.[0]") }}%
+              {{ $t("shop_visitors_widget.from_previous_7_days") }}
+            </p>
+          </v-col>
+          <v-col cols="4">
+            <h2 class="text-h5 text-sm-h4 font-weight-black">
+              {{ numeralFormat(all_returning_visitors, "0.[0] a") }}
+            </h2>
+            <p class="small m-0">
+              {{ $t("shop_visitors_widget.returning_visitors") }}
+            </p>
+            <p class="small m-0 op-0-8 text-truncate">
+              <up-down-icon
+                :value="all_returning_visitors_grow_week"
+              ></up-down-icon>
+              {{ numeralFormat(all_returning_visitors_grow_week, "0.[0]") }}%
+              {{ $t("shop_visitors_widget.from_previous_7_days") }}
+            </p>
+          </v-col>
+          <v-col cols="4">
+            <h2 class="text-h5 text-sm-h4 font-weight-black">
+              {{ numeralFormat(all_page_views, "0.[0] a") }}
+            </h2>
+            <p class="small m-0">
+              {{ $t("shop_visitors_widget.page_views") }}
+            </p>
+            <p class="small m-0 op-0-8 text-truncate">
+              <up-down-icon :value="all_page_views_grow_week"></up-down-icon>
+              {{ numeralFormat(all_page_views_grow_week, "0.[0]") }}%
+              {{ $t("shop_visitors_widget.from_previous_7_days") }}
+            </p>
+          </v-col>
+        </v-row>
 
-        <v-col cols="12" lg="3" order-lg="1">
+        <div style="min-height: 250px">
           <apexchart
-            :height="240"
-            :options="options_pie"
-            :series="series_pie"
-            type="donut"
+            :options="options"
+            :series="series"
+            :key="modern ? chartThemeKey : 'legacy-trend'"
+            class="mt-3 mx-n2 mx-sm-0"
+            height="250"
+            type="area"
             width="100%"
           />
-          <u-time-span
-            v-model:end-date="end_date"
-            v-model:start-date="start_date"
-            small-width
-          ></u-time-span>
-        </v-col>
+        </div>
+      </v-col>
 
-        <v-col cols="12" order="3" sm="8" class="text-body-2">
-          <p class="font-weight-bold">
+      <v-col
+        cols="12"
+        lg="3"
+        :order-lg="modern ? undefined : 1"
+        :class="{
+          'sd-modern-widget b-dashboard-acquisition__composition': modern,
+        }"
+      >
+        <header v-if="modern" class="sd-modern-header">
+          <div class="sd-modern-title">
+            <span
+              class="sd-modern-icon sd-modern-icon--plain"
+              aria-hidden="true"
+              ><v-icon icon="donut_small" size="20"
+            /></span>
+            <div>
+              <h2 class="sd-modern-title-text">
+                {{ $t("admin_shop.dashboard.modern.page_composition_title") }}
+              </h2>
+              <p class="sd-modern-subtitle">
+                {{
+                  $t("admin_shop.dashboard.modern.page_composition_subtitle")
+                }}
+              </p>
+            </div>
+          </div>
+        </header>
+        <apexchart
+          :height="240"
+          :options="options_pie"
+          :series="series_pie"
+          :key="modern ? chartThemeKey : 'legacy-pages'"
+          type="donut"
+          width="100%"
+          :class="{ 'b-dashboard-acquisition__composition-chart': modern }"
+        />
+        <u-time-span
+          v-model:end-date="end_date"
+          v-model:start-date="start_date"
+          :color="modern ? 'on-surface' : undefined"
+          :class="{ 'b-dashboard-acquisition__composition-range': modern }"
+          small-width
+        ></u-time-span>
+        <div v-if="modern && has_amp" class="b-dashboard-acquisition__amp">
+          <span
+            ><v-icon icon="bolt" size="16" aria-hidden="true" />{{
+              $t("shop_visitors_widget.amp")
+            }}</span
+          >
+          <span>{{
+            numeralFormat(
+              timeSeries.totalOf("amp", start_date, end_date),
+              "0,0.[0]a",
+            )
+          }}</span>
+        </div>
+      </v-col>
+
+      <component
+        :is="modern ? 'section' : 'div'"
+        :class="{
+          'sd-modern-widget b-dashboard-acquisition__flow-layout': modern,
+        }"
+        :style="modern ? undefined : { display: 'contents' }"
+      >
+        <header v-if="modern" class="sd-modern-header">
+          <div class="sd-modern-title">
+            <span
+              class="sd-modern-icon sd-modern-icon--plain"
+              aria-hidden="true"
+              ><v-icon icon="alt_route" size="20"
+            /></span>
+            <div>
+              <h2 class="sd-modern-title-text">
+                {{ $t("admin_shop.dashboard.modern.channel_flow_title") }}
+              </h2>
+              <p class="sd-modern-subtitle">
+                {{ $t("admin_shop.dashboard.modern.channel_flow_help") }}
+              </p>
+            </div>
+          </div>
+        </header>
+        <v-col
+          cols="12"
+          order="3"
+          :md="modern ? 8 : undefined"
+          :sm="modern ? 12 : 8"
+          class="text-body-2"
+          :class="{ 'b-dashboard-acquisition__flow': modern }"
+        >
+          <component
+            v-if="!modern"
+            :is="modern ? 'h3' : 'p'"
+            :class="modern ? 'sd-modern-eyebrow' : 'font-weight-bold'"
+          >
             {{ $t("global.commons.channels_overview") }}
-          </p>
+          </component>
 
-          <b-session-chart-sankey
-            v-if="socials && Object.keys(socials).length"
-            :Social="calcTotalSocials"
-            :direct="calcTotalDirect"
-            :other="calcTotalOther"
-            :search="calcTotalOrganicSearch"
-            :social-details="calSocialDetails"
-            height="150px"
-          ></b-session-chart-sankey>
+          <div :class="{ 'b-dashboard-acquisition__sankey': modern }">
+            <b-session-chart-sankey
+              v-if="socials && Object.keys(socials).length"
+              :Social="calcTotalSocials"
+              :direct="calcTotalDirect"
+              :other="calcTotalOther"
+              :search="calcTotalOrganicSearch"
+              :social-details="calSocialDetails"
+              :height="modern ? '260px' : '150px'"
+            ></b-session-chart-sankey>
+            <p v-else-if="modern" class="sd-modern-empty-state" role="status">
+              {{ $t("global.commons.no_data") }}
+            </p>
+          </div>
         </v-col>
         <!-- ━━━━━━━━━━━━━━━━━━ Channels ━━━━━━━━━━━━━━━━━━ -->
 
-        <v-col class="text-body-2" cols="12" order="4" sm="4">
-          <p class="font-weight-bold">
+        <v-col
+          class="text-body-2"
+          cols="12"
+          order="4"
+          :md="modern ? 4 : undefined"
+          :sm="modern ? 12 : 4"
+          :class="{ 'b-dashboard-acquisition__sources': modern }"
+        >
+          <component
+            :is="modern ? 'h3' : 'p'"
+            :class="modern ? 'sd-modern-eyebrow' : 'font-weight-bold'"
+          >
             {{ $t("global.commons.acquisition_channel") }}
-          </p>
-          <div class="overflow-auto thin-scroll pe-3" style="max-height: 150px">
+          </component>
+          <div
+            class="overflow-auto thin-scroll pe-3"
+            :style="{ maxHeight: modern ? '300px' : '150px' }"
+          >
             <div
               v-for="(item, i) in sorted_socials"
               :key="i"
-              class="my-1 d-flex"
+              :class="
+                modern ? 'b-dashboard-acquisition__source' : 'my-1 d-flex'
+              "
             >
-              <span class="text-capitalize">
+              <span
+                class="text-capitalize"
+                :class="{ 'd-inline-flex align-center': modern }"
+              >
                 <b-campaign-source-icon
                   :value="item.key"
                   class="me-1"
-                  height="15"
-                  width="15"
+                  :size="modern ? 20 : 15"
+                  alt=""
                 />
                 {{ item.key }}</span
               >
               <div class="dashed-flex-space"></div>
-              <b>{{ numeralFormat(item.value, "0,0.[0]a") }}</b>
+              <component
+                :is="modern ? 'span' : 'b'"
+                :class="{ 'b-dashboard-acquisition__source-count': modern }"
+                >{{ numeralFormat(item.value, "0,0.[0]a") }}</component
+              >
             </div>
           </div>
         </v-col>
-      </v-row>
-    </template>
-  </s-widget-box>
+      </component>
+    </v-row>
+  </component>
 </template>
 
 <script lang="ts">
@@ -157,6 +366,8 @@ import BSessionChartSankey from "../../../session/chart/sankey/BSessionChartSank
 import { CampaignHelper } from "@selldone/core-js/helper/campaign/CampaignHelper";
 import BCampaignSourceIcon from "../../../campaign/source/icon/BCampaignSourceIcon.vue";
 import { ChartAnnotations } from "../../../../ui/chart/helper/ChartAnnotations";
+import pagesIcon from "../../../../assets/icons/pages.svg";
+import { getPeriodComparison } from "../performance/periodComparison.ts";
 
 export default {
   name: "BDashboardShopAcquisition",
@@ -168,6 +379,7 @@ export default {
     SWidgetBox,
   },
   props: {
+    modern: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -186,6 +398,34 @@ export default {
   }),
 
   computed: {
+    modern_metrics() {
+      return [
+        {
+          key: "new_visitors",
+          label: "shop_visitors_widget.new_visitors",
+          total: this.all_new_visitors,
+        },
+        {
+          key: "returning_visitors",
+          label: "shop_visitors_widget.returning_visitors",
+          total: this.all_returning_visitors,
+        },
+        {
+          key: "page_views",
+          label: "shop_visitors_widget.page_views",
+          total: this.all_page_views,
+        },
+      ].map((metric) => ({
+        ...metric,
+        comparison: getPeriodComparison(
+          this.timeSeries,
+          (row) => row[metric.key],
+        ),
+      }));
+    },
+    chartThemeKey() {
+      return this.$vuetify.theme.name + "-" + this.$i18n.locale;
+    },
     sorted_socials() {
       const out = [];
 
@@ -269,9 +509,15 @@ export default {
       return {
         chart: {
           fontFamily: "var(--font)",
+          background: "transparent",
         },
+        theme: this.modern
+          ? { mode: this.$vuetify.theme.current.dark ? "dark" : "light" }
+          : undefined,
         title: {
-          text: this.$t("shop_visitors_widget.page_views"),
+          text: this.modern
+            ? undefined
+            : this.$t("shop_visitors_widget.page_views"),
           align: "center",
           margin: 4,
           offsetX: 0,
@@ -279,7 +525,9 @@ export default {
           floating: false,
           style: {
             fontSize: "12px",
-            color: "#263238",
+            color: this.modern
+              ? "rgba(var(--v-theme-on-surface), 0.66)"
+              : "#263238",
           },
         },
 
@@ -300,6 +548,22 @@ export default {
         ],
         legend: {
           position: "bottom",
+          fontSize: this.modern ? "12px" : undefined,
+          fontWeight: this.modern ? 400 : undefined,
+          markers: this.modern
+            ? {
+                customHTML: [
+                  ProductType.PHYSICAL.image,
+                  ProductType.VIRTUAL.image,
+                  ProductType.FILE.image,
+                  ProductType.SERVICE.image,
+                  pagesIcon,
+                ].map(
+                  (image) => () =>
+                    `<img class="b-dashboard-acquisition__legend-icon" src="${image}" alt="" aria-hidden="true">`,
+                ),
+              }
+            : undefined,
         },
 
         dataLabels: {
@@ -309,7 +573,7 @@ export default {
         plotOptions: {
           pie: {
             donut: {
-              size: "23%",
+              size: this.modern ? "64%" : "23%",
             },
           },
         },
@@ -356,7 +620,18 @@ export default {
         ["#FFA000", "#C2185B", "#1976D2"],
       );
 
-      return maxPoints;
+      if (!this.modern) return maxPoints;
+      // Keep narrow annotations inside the plot; native series names remain in the legend and tooltip.
+      return maxPoints.map((point) => ({
+        ...point,
+        label: {
+          ...point.label,
+          ...(this.$vuetify.display?.smAndDown
+            ? { text: numeral(point.y).format("0,0") }
+            : {}),
+          style: { ...point.label?.style, fontSize: "11px", fontWeight: 400 },
+        },
+      }));
     },
 
     options() {
@@ -368,7 +643,8 @@ export default {
           : undefined,
 
         theme: {
-          mode: "light",
+          mode:
+            this.modern && this.$vuetify.theme.current.dark ? "dark" : "light",
           palette: "palette1",
         },
 
@@ -376,7 +652,7 @@ export default {
           height: 350,
           type: "area",
           stacked: false,
-          background: 'transparent', // Set the background to transparent
+          background: "transparent", // Set the background to transparent
           fontFamily: "var(--font)",
 
           /*  events:
@@ -398,8 +674,8 @@ export default {
           enabled: false,
         },
         stroke: {
-          show: false,
-          width: 0,
+          show: this.modern,
+          width: this.modern ? 2 : 0,
           curve: "straight",
         },
         markers: {
@@ -427,7 +703,7 @@ export default {
 
         fill: {
           type: "solid",
-          opacity: 0.7,
+          opacity: this.modern ? 0.08 : 0.7,
           /* gradient: {
             opacityFrom: 0.75,
             opacityTo: 0.8,
@@ -436,6 +712,20 @@ export default {
         legend: {
           position: "bottom",
           horizontalAlign: "center",
+          fontSize: this.modern ? "12px" : undefined,
+          fontWeight: this.modern ? 400 : undefined,
+          markers: this.modern
+            ? {
+                size: 8,
+                customHTML: (this.has_amp
+                  ? ["visibility", "bolt", "person_add", "history"]
+                  : ["visibility", "person_add", "history"]
+                ).map(
+                  (icon) => () =>
+                    `<span class="material-icons b-dashboard-acquisition__trend-icon" aria-hidden="true">${icon}</span>`,
+                ),
+              }
+            : undefined,
         },
         xaxis: {
           type: "datetime",
@@ -457,9 +747,8 @@ export default {
           },
 
           y: {
-            formatter: function (value, timestamp, index) {
-              return numeral(value).format("0.[0]a");
-            },
+            formatter: (value) =>
+              numeral(value).format(this.modern ? "0,0" : "0.[0]a"),
           },
         },
 
@@ -469,7 +758,7 @@ export default {
           position: "back",
           xaxis: {
             lines: {
-              show: true,
+              show: !this.modern,
             },
           },
           yaxis: {
@@ -583,6 +872,197 @@ export default {
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
+.b-dashboard-acquisition--modern {
+  min-width: 0;
+
+  .b-dashboard-acquisition__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr);
+    align-items: stretch;
+    gap: 20px;
+    margin: 0;
+  }
+
+  .b-dashboard-acquisition__layout > .v-col-12 {
+    min-width: 0;
+    width: 100%;
+    max-width: none;
+    order: initial;
+  }
+
+  .b-dashboard-acquisition__stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .b-dashboard-acquisition__stats dt {
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .b-dashboard-acquisition__comparison {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 3px 5px;
+    margin: 0;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .b-dashboard-acquisition__value {
+    margin: 7px 0 6px;
+    font-size: clamp(21px, 2.2vw, 28px);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sd-modern-title-text {
+    font-weight: 500;
+  }
+
+  .b-dashboard-acquisition__composition {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .b-dashboard-acquisition__composition-range {
+    order: 1;
+  }
+
+  .b-dashboard-acquisition__composition-chart {
+    order: 2;
+    margin-block-start: 16px;
+  }
+
+  .b-dashboard-acquisition__amp {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    order: 3;
+    margin-block-start: 16px;
+    padding: 12px 0;
+    border-block-start: 1px solid var(--sd-modern-border);
+    font-size: 13px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .b-dashboard-acquisition__amp > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .b-dashboard-acquisition__flow-layout {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 0 28px;
+  }
+
+  .b-dashboard-acquisition__flow-layout > .sd-modern-header {
+    grid-column: 1 / -1;
+  }
+
+  .b-dashboard-acquisition__flow-layout > .v-col-12 {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    order: initial;
+    padding: 0;
+  }
+
+  .b-dashboard-acquisition__sources > .sd-modern-eyebrow {
+    font-weight: 500;
+  }
+
+  .b-dashboard-acquisition__sankey {
+    max-width: 100%;
+    overflow-x: auto;
+    margin-block-start: 0;
+  }
+
+  :deep(.snaky-chart) {
+    min-width: 440px;
+  }
+
+  :deep(.snaky-chart .d2b-sankey-nodes text) {
+    fill: rgb(var(--v-theme-on-surface));
+    font-size: 12px;
+  }
+
+  .b-dashboard-acquisition__source {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 8px;
+    border-block-end: 1px solid var(--sd-modern-border);
+    font-size: 13px;
+    font-weight: 400;
+  }
+
+  .b-dashboard-acquisition__source:last-child {
+    border: 0;
+  }
+
+  .b-dashboard-acquisition__source-count {
+    margin-inline-start: auto;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .b-dashboard-acquisition__source .dashed-flex-space {
+    display: none;
+  }
+
+  :deep(.b-dashboard-acquisition__legend-icon) {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    vertical-align: middle;
+  }
+
+  :deep(.b-dashboard-acquisition__trend-icon) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+    vertical-align: middle;
+  }
+
+  @media (max-width: 1050px) {
+    .b-dashboard-acquisition__layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .b-dashboard-acquisition__flow-layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .b-dashboard-acquisition__flow-layout > .sd-modern-header {
+      margin-block-end: 0;
+    }
+
+    .b-dashboard-acquisition__stats {
+      gap: 12px;
+    }
+  }
+}
 
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
