@@ -13,10 +13,126 @@
   -->
 
 <template>
-  <div>
+  <div
+    :class="{ 's-image-uploader--thumbnail text-start': thumbnail }"
+    @focusin="thumbnail && (focused = true)"
+    @focusout="thumbnail && (focused = false)"
+  >
+    <div v-if="thumbnail" class="s-image-uploader__thumbnail">
+      <div class="s-image-uploader__thumbnail-heading">
+        <slot name="thumbnail-heading"
+          ><span v-if="label">{{ label }}</span></slot
+        >
+      </div>
+      <button
+        type="button"
+        class="s-image-uploader__thumbnail-pick"
+        :disabled="
+          disabled ||
+          !thumbnail_ready ||
+          thumbnail_loading ||
+          thumbnail_processing
+        "
+        :aria-label="chooseLabel || $t('global.actions.upload')"
+        @click="browseThumbnail"
+        @dragover.prevent
+        @drop.prevent="dropThumbnail"
+        @focus="focused = true"
+      >
+        <span class="s-image-uploader__thumbnail-well">
+          <img
+            v-if="thumbnailSource"
+            :src="thumbnailSource"
+            :alt="label || ''"
+          />
+          <v-icon v-else icon="add_a_photo" size="23" aria-hidden="true" />
+        </span>
+        <v-tooltip
+          activator="parent"
+          :text="chooseLabel || $t('global.actions.upload')"
+          location="top"
+          :open-on-focus="true"
+          content-class="sd-modern-tooltip text-start"
+        />
+      </button>
+      <div class="s-image-uploader__thumbnail-caption">
+        <p v-if="hint" class="s-image-uploader__thumbnail-hint">{{ hint }}</p>
+        <p v-else class="s-image-uploader__thumbnail-hint">
+          {{ $t("global.image_uploader.max_size", { size: maxFileSize }) }}
+        </p>
+        <p
+          v-if="thumbnailFilename"
+          class="s-image-uploader__thumbnail-name"
+          :title="thumbnailFilename"
+        >
+          {{ thumbnailFilename }}
+        </p>
+        <div
+          v-if="thumbnailSource || thumbnail_file_id"
+          class="s-image-uploader__thumbnail-actions"
+        >
+          <v-btn
+            class="sd-modern-button sd-modern-button--small s-image-uploader__thumbnail-edit"
+            variant="text"
+            :disabled="
+              disabled ||
+              !thumbnail_ready ||
+              thumbnail_loading ||
+              thumbnail_processing
+            "
+            @click="browseThumbnail"
+            ><v-icon icon="edit" size="13" aria-hidden="true" />{{
+              editLabel || $t("global.actions.edit")
+            }}</v-btn
+          >
+          <v-tooltip
+            v-if="thumbnail_file_id || clearable"
+            :text="removeLabel || $t('global.actions.remove_image')"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            ><template #activator="{ props }"
+              ><v-btn
+                v-bind="props"
+                class="sd-modern-icon-button s-image-uploader__thumbnail-remove"
+                icon
+                variant="text"
+                :disabled="disabled || !thumbnail_ready || thumbnail_processing"
+                :aria-label="removeLabel || $t('global.actions.remove_image')"
+                @click="removeThumbnail"
+                ><v-icon
+                  icon="delete_outline"
+                  size="16"
+                  aria-hidden="true" /></v-btn></template
+          ></v-tooltip>
+        </div>
+        <p
+          v-if="thumbnail_error"
+          class="s-image-uploader__thumbnail-status"
+          role="alert"
+        >
+          {{ thumbnail_error }}
+        </p>
+        <p
+          v-else-if="thumbnail_loading || thumbnail_processing"
+          class="s-image-uploader__thumbnail-status"
+          role="status"
+        >
+          {{
+            $t(
+              thumbnail_processing
+                ? "global.commons.uploading"
+                : "global.commons.loading",
+            )
+          }}<span v-if="thumbnail_progress !== null">
+            {{ Math.round(thumbnail_progress * 100) }}%</span
+          >
+        </p>
+      </div>
+    </div>
     <!-- --------- Compact mode --------- -->
     <v-list-item
-      v-if="on_compact"
+      v-if="!thumbnail && on_compact"
       class="text-start"
       :class="{ 'py-5': !dense, 'py-2 px-0': dense }"
       lines="two"
@@ -94,8 +210,8 @@
     <!-- --------- Normal mode --------- -->
 
     <v-expand-transition>
-      <div v-if="!on_compact">
-        <div v-if="label" class="label-top" v-html="label"></div>
+      <div v-if="thumbnail || !on_compact">
+        <div v-if="label && !thumbnail" class="label-top" v-html="label"></div>
         <div
           :class="[
             {
@@ -104,6 +220,7 @@
               disabled: disabled,
               'has-value': true,
               ctrl: ctrl,
+              's-image-uploader__transport': thumbnail,
             },
             rounded ? `rounded-${rounded}` : '',
           ]"
@@ -133,11 +250,11 @@
             >fa:fas fa-paste
           </v-icon>
           <file-pond
-            v-if="!clearable || !last_image"
+            v-if="thumbnail || !clearable || !last_image"
             ref="pond"
             v-intersect="onIntersect"
             :accepted-file-types="acceptedFileTypes"
-            :allow-multiple="allowMultiple"
+            :allow-multiple="thumbnail ? false : allowMultiple"
             :instant-upload="!deferUpload"
             :allow-process="!deferUpload"
             :disabled="disabled"
@@ -161,7 +278,7 @@
                 'global.image_uploader.label',
               )}  </p>`
             "
-            :max-files="maxFiles"
+            :max-files="thumbnail ? 1 : maxFiles"
             :maxFileSize="maxFileSize"
             :name="paramName"
             :server="server_credential"
@@ -169,13 +286,15 @@
             class="pointer-pointer fadeIn filepond-style"
             credits="false"
             style="min-height: 84px"
-            @addfilestart="(file) => $emit('onAddFileStart', file)"
-            @addfile="(error, file) => $emit('onAddFile', { error, file })"
-            @removefile="(error, file) => $emit('onRemoveFile', { error, file })"
+            @init="thumbnail_ready = true"
+            @addfilestart="handleAddFileStart"
+            @addfile="handleAddFile"
+            @removefile="handleRemoveFile"
             @error="handleFilePondError"
             @processfile="handleProcessFile"
-            @processfileabort="(e) => $emit('onProcessFileAbort', e)"
-            @processfilestart="(e) => $emit('onProcessFileStart', e)"
+            @processfileabort="handleProcessAbort"
+            @processfilestart="handleProcessStart"
+            @processfileprogress="handleProcessProgress"
           />
 
           <p class="small file-size-limit text-dark">
@@ -244,6 +363,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    thumbnail: { type: Boolean, default: false },
+    chooseLabel: String,
+    editLabel: String,
+    removeLabel: String,
+    hint: String,
     extraParams: {
       type: Object,
     },
@@ -357,9 +481,23 @@ export default {
     key_listener_keyup: null,
 
     force_edit: false, // Force show upload (in auto compact mode!)
+    thumbnail_ready: false,
+    thumbnail_file_id: null,
+    thumbnail_name: "",
+    thumbnail_preview: null,
+    thumbnail_loading: false,
+    thumbnail_processing: false,
+    thumbnail_progress: null,
+    thumbnail_error: "",
   }),
 
   computed: {
+    thumbnailSource() {
+      return this.thumbnail_preview || this.image;
+    },
+    thumbnailFilename() {
+      return this.thumbnail_name || this.image?.split("/").pop()?.split("?")[0];
+    },
     on_compact() {
       return (
         this.autoCompact &&
@@ -445,12 +583,115 @@ export default {
   },
 
   beforeUnmount() {
+    this.releaseThumbnailPreview();
     //――――――――――――――――――――――  REMOVE key listener ――――――――――――――――――――
     document.removeEventListener("keydown", this.key_listener_keydown);
     document.removeEventListener("keyup", this.key_listener_keyup);
   },
 
   methods: {
+    releaseThumbnailPreview() {
+      if (this.thumbnail_preview) URL.revokeObjectURL(this.thumbnail_preview);
+      this.thumbnail_preview = null;
+    },
+    thumbnailError(error) {
+      return (
+        [error?.main, error?.sub].filter(Boolean).join(" · ") ||
+        error?.body ||
+        error?.message ||
+        this.$t("global.commons.invalid")
+      );
+    },
+    browseThumbnail() {
+      if (
+        this.disabled ||
+        !this.thumbnail_ready ||
+        this.thumbnail_loading ||
+        this.thumbnail_processing
+      )
+        return;
+      // FilePond's own input keeps native selection, type/size validation and its existing queue.
+      this.$refs.pond?.browse();
+    },
+    dropThumbnail(event) {
+      if (
+        this.disabled ||
+        !this.thumbnail_ready ||
+        this.thumbnail_loading ||
+        this.thumbnail_processing
+      )
+        return;
+      const files = event.dataTransfer?.files;
+      if (!files?.length) return;
+      if (files.length !== 1) {
+        this.thumbnail_error = this.$t("global.commons.invalid");
+        return;
+      }
+      this.$refs.pond?.addFile(files[0]).catch(() => {}); // FilePond reports validation through its error event.
+    },
+    removeThumbnail() {
+      if (this.disabled || !this.thumbnail_ready || this.thumbnail_processing)
+        return;
+      if (this.thumbnail_file_id) this.discardPendingFile()?.catch(() => {});
+      else if (this.clearable) {
+        this.last_image = null;
+        this.$emit("onClear");
+      }
+    },
+    handleAddFileStart(file) {
+      if (this.thumbnail) {
+        this.releaseThumbnailPreview();
+        this.thumbnail_file_id = file.id;
+        this.thumbnail_name = file.filename || "";
+        this.thumbnail_loading = true;
+        this.thumbnail_error = "";
+        this.thumbnail_progress = null;
+      }
+      this.$emit("onAddFileStart", file);
+    },
+    handleAddFile(error, file) {
+      if (this.thumbnail && file?.id === this.thumbnail_file_id) {
+        this.thumbnail_loading = false;
+        this.thumbnail_name = file.filename || file.file?.name || "";
+        this.thumbnail_error = error ? this.thumbnailError(error) : "";
+        if (!error && file.file instanceof Blob) {
+          this.releaseThumbnailPreview();
+          this.thumbnail_preview = URL.createObjectURL(file.file);
+        }
+      }
+      this.$emit("onAddFile", { error, file });
+    },
+    handleRemoveFile(error, file) {
+      if (this.thumbnail && !error && file?.id === this.thumbnail_file_id) {
+        this.releaseThumbnailPreview();
+        this.thumbnail_file_id = null;
+        this.thumbnail_name = "";
+        this.thumbnail_loading = false;
+        this.thumbnail_processing = false;
+        this.thumbnail_progress = null;
+        this.thumbnail_error = "";
+      }
+      this.$emit("onRemoveFile", { error, file });
+    },
+    handleProcessStart(file) {
+      if (this.thumbnail) {
+        this.thumbnail_processing = true;
+        this.thumbnail_progress = null;
+        this.thumbnail_error = "";
+      }
+      this.$emit("onProcessFileStart", file);
+    },
+    handleProcessAbort(file) {
+      if (this.thumbnail) {
+        this.thumbnail_processing = false;
+        this.thumbnail_progress = null;
+      }
+      this.$emit("onProcessFileAbort", file);
+    },
+    handleProcessProgress(file, progress) {
+      if (this.thumbnail && file?.id === this.thumbnail_file_id)
+        this.thumbnail_progress = progress;
+    },
     async processPendingFile() {
       const pond = this.$refs.pond;
       if (!this.deferUpload || !this.server || !pond)
@@ -459,29 +700,48 @@ export default {
       // FilePond can leave processing promises pending for loading or invalid files.
       if (files.length !== 1 || ![2, 5, 6].includes(files[0].status))
         throw new Error("Choose one ready image before uploading.");
-      const file = await pond.processFile(files[0].id);
-      const response = JSON.parse(file?.serverId);
-      if (
-        !response ||
-        response.error ||
-        response.success === false ||
-        !response.files ||
-        typeof response.files !== "object" ||
-        Array.isArray(response.files) ||
-        typeof response.files.path !== "string" ||
-        !response.files.path.trim()
-      )
-        throw new Error("Image upload returned an invalid response.");
-      return response.files;
+      if (this.thumbnail) {
+        this.thumbnail_processing = true;
+        this.thumbnail_error = "";
+        this.thumbnail_progress = null;
+      }
+      try {
+        const file = await pond.processFile(files[0].id);
+        const response = JSON.parse(file?.serverId);
+        if (
+          !response ||
+          response.error ||
+          response.success === false ||
+          !response.files ||
+          typeof response.files !== "object" ||
+          Array.isArray(response.files) ||
+          typeof response.files.path !== "string" ||
+          !response.files.path.trim()
+        )
+          throw new Error("Image upload returned an invalid response.");
+        return response.files;
+      } catch (error) {
+        if (this.thumbnail && !this.thumbnail_error)
+          this.thumbnail_error = this.thumbnailError(error);
+        throw error;
+      } finally {
+        if (this.thumbnail) this.thumbnail_processing = false;
+      }
     },
     discardPendingFile() {
       return this.$refs.pond?.removeFiles({ revert: false });
     },
     onIntersect(isIntersecting) {
+      if (this.thumbnail) return;
       this.focused = isIntersecting;
     },
 
     handleFilePondError(error, file, status) {
+      if (this.thumbnail && (!file || file.id === this.thumbnail_file_id)) {
+        this.thumbnail_loading = false;
+        this.thumbnail_processing = false;
+        this.thumbnail_error = this.thumbnailError(error);
+      }
       this.$emit("onError", error);
       if (error.main && error.sub)
         return NotificationService.showErrorAlert(error.main, error.sub);
@@ -492,6 +752,10 @@ export default {
     },
 
     handleProcessFile: function (error, file) {
+      if (this.thumbnail && file?.id === this.thumbnail_file_id) {
+        this.thumbnail_processing = false;
+        if (error) this.thumbnail_error = this.thumbnailError(error);
+      }
       // Deferred callers consume the validated result before delayed FilePond events arrive.
       if (this.deferUpload) return;
       if (!error) {
@@ -516,6 +780,9 @@ export default {
           });
         }
 
+        // Removing a local queue entry must not suggest deleting an already saved image.
+        if (this.thumbnail && response.files) this.thumbnail_file_id = null;
+
         return true;
       }
     },
@@ -523,4 +790,161 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.s-image-uploader--thumbnail {
+  position: relative;
+  min-width: 0;
+  .s-image-uploader__thumbnail-heading {
+    margin-block-end: 10px;
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 500;
+  }
+  .s-image-uploader__thumbnail-pick {
+    display: grid;
+    place-items: center;
+    width: 128px;
+    height: 128px;
+    max-width: 100%;
+    aspect-ratio: 1;
+    padding: 7px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 12px;
+    background: rgb(var(--v-theme-surface));
+    box-shadow: 0 3px 10px rgba(24, 40, 65, 0.05);
+    color: var(--sd-modern-muted);
+    cursor: pointer;
+    &:disabled {
+      cursor: default;
+    }
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 3px;
+    }
+  }
+  .s-image-uploader__thumbnail-well {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 7px;
+    background: var(--sd-modern-inset);
+    > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+  .s-image-uploader__thumbnail-caption {
+    max-width: 140px;
+    min-width: 0;
+  }
+  .s-image-uploader__thumbnail-hint,
+  .s-image-uploader__thumbnail-name,
+  .s-image-uploader__thumbnail-status {
+    margin: 10px 0 0;
+    color: var(--sd-modern-muted);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 16px;
+  }
+  .s-image-uploader__thumbnail-name {
+    margin-block-start: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .s-image-uploader__thumbnail-status {
+    color: rgb(var(--v-theme-on-surface));
+    overflow-wrap: anywhere;
+  }
+  .s-image-uploader__thumbnail-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-block-start: 4px;
+  }
+  .s-image-uploader__thumbnail-edit.v-btn {
+    min-width: 0;
+    min-height: 32px;
+    height: auto;
+    padding: 6px 0;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    :deep(.v-btn__content) {
+      gap: 5px;
+    }
+  }
+  .s-image-uploader__thumbnail-remove {
+    --sd-modern-icon-button-size: 32px;
+  }
+  .s-image-uploader__transport {
+    position: absolute;
+    inset-block-start: 0;
+    width: 128px;
+    height: 128px;
+    min-height: 0 !important;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+@media (max-width: 600px) {
+  .s-image-uploader--thumbnail {
+    .s-image-uploader__thumbnail {
+      display: grid;
+      grid-template-columns: 104px minmax(0, 1fr);
+      column-gap: 18px;
+    }
+    .s-image-uploader__thumbnail-heading {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: end;
+      margin-block-end: 6px;
+    }
+    .s-image-uploader__thumbnail-pick {
+      width: 104px;
+      height: 104px;
+      grid-column: 1;
+      grid-row: 1 / 3;
+      align-self: start;
+    }
+    .s-image-uploader__thumbnail-caption {
+      grid-column: 2;
+      grid-row: 2;
+      max-width: none;
+    }
+    .s-image-uploader__thumbnail-hint {
+      margin: 0;
+    }
+  }
+}
+@media (max-width: 360px) {
+  .s-image-uploader--thumbnail {
+    .s-image-uploader__thumbnail {
+      grid-template-columns: 88px minmax(0, 1fr);
+      column-gap: 13px;
+    }
+    .s-image-uploader__thumbnail-pick {
+      width: 88px;
+      height: 88px;
+    }
+  }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .s-image-uploader--thumbnail {
+    .s-image-uploader__thumbnail-remove {
+      --sd-modern-icon-button-size: 44px;
+    }
+    .s-image-uploader__thumbnail-edit.v-btn {
+      min-height: 44px;
+    }
+  }
+}
+</style>

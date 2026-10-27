@@ -272,7 +272,7 @@
       v-model="dialog_add"
       :persistent="busy_set || busy_upload"
       :fullscreen="!modern"
-      :max-width="modern ? 660 : undefined"
+      :max-width="modern ? 680 : undefined"
       :class="{ 'b-blog-category-dialog': modern }"
       scrollable
       @update:model-value="!$event && closeEditor()"
@@ -280,7 +280,7 @@
     >
       <v-card
         v-if="dialog_pre"
-        class="b-blog-category-editor text-start"
+        class="b-blog-category-editor b-blog-category-editor--form text-start"
         :class="{ 'b-blog-category-editor--modern sd-modern-widget': modern }"
       >
         <header class="b-blog-category-editor__header">
@@ -331,192 +331,301 @@
         </header>
         <v-card-text class="b-blog-category-editor__body">
           <v-form ref="editorForm" @submit.prevent="addCategory">
-            <div class="b-blog-category-editor__field">
-              <label
-                for="blog-category-name"
-                class="b-blog-category-editor__label"
-                >{{ $t("blog_category.modern.name") }}
-                <span aria-hidden="true">*</span></label
-              >
-              <div
-                class="b-blog-category-editor__name-row"
-                :class="{
-                  'b-blog-category-editor__name-row--locked':
-                    selected && !force_edit,
-                }"
-              >
-                <v-text-field
-                  id="blog-category-name"
-                  ref="categoryName"
-                  v-model="category"
-                  :autofocus="!selected"
-                  :readonly="!!selected && !force_edit"
-                  :disabled="!canWrite || busy_set || !!saved_category"
-                  :rules="[GlobalRules.required()]"
-                  :placeholder="$t('blog_category.modern.name_placeholder')"
-                  :aria-label="$t('blog_category.modern.name')"
-                  required
-                  variant="underlined"
-                  :messages="
-                    selected && !force_edit
-                      ? $t('blog_category.modern.locked_hint')
-                      : ' '
-                  "
-                >
-                  <template v-if="!selected" #message="{ message }">
-                    <span v-if="message?.trim()">{{ message }}</span>
-                    <u-smart-suggestion
-                      v-else-if="canWrite && !busy_set && !saved_category"
-                      :samples="$tm('suggestions.blog_category.category')"
-                      @select="category = $event"
-                  /></template>
-                </v-text-field>
-                <v-tooltip
-                  v-if="selected"
-                  :text="
-                    $t(
-                      force_edit
-                        ? 'blog_category.modern.lock'
-                        : 'blog_category.modern.unlock',
-                    )
-                  "
-                  content-class="sd-modern-tooltip text-start"
-                  location="top"
-                  :open-on-focus="true"
-                  ><template #activator="{ props }"
-                    ><v-btn
-                      v-bind="props"
-                      :disabled="!canWrite || busy_set"
-                      class="sd-modern-icon-button b-blog-category-editor__icon-button"
-                      icon
-                      variant="text"
-                      :aria-label="
+            <div class="b-blog-category-editor__details">
+              <section class="b-blog-category-editor__fields">
+                <template v-if="modern">
+                  <div class="b-blog-category-editor__section-heading">
+                    <h3>{{ $t("blog_category.modern.details_title") }}</h3>
+                    <v-tooltip
+                      v-model="details_help"
+                      location="top"
+                      content-class="sd-modern-tooltip text-start"
+                      :open-on-click="true"
+                    >
+                      <template #activator="{ props }">
+                        <v-btn
+                          v-bind="props"
+                          class="sd-modern-icon-button sd-modern-info-button b-blog-category-editor__info"
+                          icon
+                          variant="text"
+                          :aria-label="$t('blog_category.modern.details_help')"
+                        >
+                          <v-icon
+                            icon="info_outline"
+                            size="14"
+                            aria-hidden="true"
+                          />
+                        </v-btn>
+                      </template>
+                      {{ $t("blog_category.modern.details_help") }}
+                    </v-tooltip>
+                  </div>
+                  <p class="b-blog-category-editor__section-description">
+                    {{ $t("blog_category.modern.details_hint") }}
+                  </p>
+                </template>
+                <div class="b-blog-category-editor__field">
+                  <label
+                    for="blog-category-name"
+                    class="b-blog-category-editor__label"
+                    >{{ $t("blog_category.modern.name") }}
+                    <span aria-hidden="true">*</span></label
+                  >
+                  <div
+                    class="b-blog-category-editor__name-row"
+                    :class="{
+                      'b-blog-category-editor__name-row--locked':
+                        selected && !force_edit,
+                    }"
+                  >
+                    <v-text-field
+                      id="blog-category-name"
+                      ref="categoryName"
+                      v-model="category"
+                      :class="{ 'sd-modern-underlined-field': modern }"
+                      :autofocus="!selected"
+                      :readonly="!!selected && !force_edit"
+                      :disabled="!canWrite || busy_set || !!saved_category"
+                      :rules="[GlobalRules.required()]"
+                      :placeholder="$t('blog_category.modern.name_placeholder')"
+                      :aria-label="$t('blog_category.modern.name')"
+                      required
+                      variant="underlined"
+                      :messages="
+                        selected && !force_edit
+                          ? $t('blog_category.modern.locked_hint')
+                          : ' '
+                      "
+                    >
+                      <template v-if="!selected" #message="{ message }">
+                        <span v-if="message?.trim()">{{ message }}</span>
+                        <u-smart-suggestion
+                          v-if="
+                            canWrite &&
+                            !busy_set &&
+                            !saved_category &&
+                            (modern || !message?.trim())
+                          "
+                          :modern="modern"
+                          :more-label="
+                            $t('blog_category.modern.more_suggestions')
+                          "
+                          :samples="$tm('suggestions.blog_category.category')"
+                          @select="category = $event"
+                      /></template>
+                    </v-text-field>
+                    <v-tooltip
+                      v-if="selected"
+                      :text="
                         $t(
                           force_edit
                             ? 'blog_category.modern.lock'
                             : 'blog_category.modern.unlock',
                         )
                       "
-                      @click="toggleNameLock"
-                      ><v-icon
-                        :icon="force_edit ? 'lock_open' : 'lock_outline'"
-                        size="15"
-                        aria-hidden="true" /></v-btn></template
-                ></v-tooltip>
-              </div>
-            </div>
-            <div
-              v-if="selected && force_edit"
-              class="sd-modern-notice b-blog-category-editor__rename"
-              role="status"
-            >
-              <v-icon
-                icon="warning_amber"
-                size="16"
-                class="text-warning"
-                aria-hidden="true"
-              />
-              <div>
-                <strong>{{ $t("blog_category.modern.rename_title") }}</strong>
-                <p>{{ $t("blog_category.modern.rename_hint") }}</p>
-              </div>
-            </div>
-            <div class="b-blog-category-editor__field">
-              <label
-                for="blog-category-description"
-                class="b-blog-category-editor__label"
-                >{{ $t("blog_category.modern.description") }}
-                <span aria-hidden="true">*</span></label
-              >
-              <v-textarea
-                id="blog-category-description"
-                v-model="description"
-                :disabled="!canWrite || busy_set || !!saved_category"
-                :rules="[GlobalRules.required()]"
-                :placeholder="
-                  $t('blog_category.modern.description_placeholder')
-                "
-                :aria-label="$t('blog_category.modern.description')"
-                required
-                variant="underlined"
-                rows="2"
-                auto-grow
-                messages=" "
-              >
-                <template v-if="!selected" #message="{ message }">
-                  <span v-if="message?.trim()">{{ message }}</span>
-                  <u-smart-suggestion
-                    v-else-if="canWrite && !busy_set && !saved_category"
-                    :samples="$tm('suggestions.blog_category.description')"
-                    @select="description = $event"
-                /></template>
-              </v-textarea>
-            </div>
-            <u-smart-toggle
-              v-model="star"
-              :disabled="!canWrite || busy_set || !!saved_category"
-              :true-title="$t('blog_category.modern.featured_title')"
-              :false-title="$t('blog_category.modern.featured_title')"
-              :true-description="$t('blog_category.modern.featured_hint')"
-              :false-description="$t('blog_category.modern.featured_hint')"
-              class="b-blog-category-editor__featured"
-              role="checkbox"
-              :aria-label="$t('blog_category.modern.featured_title')"
-              :aria-checked="!!star"
-              :aria-disabled="!canWrite || busy_set || !!saved_category"
-              :tabindex="canWrite && !busy_set && !saved_category ? 0 : -1"
-              color="primary"
-              false-icon="star_border"
-              true-icon="auto_awesome"
-              @keydown.space.prevent="toggleFeatured"
-            />
-          </v-form>
-          <section class="b-blog-category-editor__cover">
-            <p class="b-blog-category-editor__cover-intro">
-              <span>{{ $t("blog_category.modern.optional") }}</span>
-              {{
-                $t(
-                  selected
-                    ? "blog_category.modern.cover_hint"
-                    : "blog_category.modern.create_cover_hint",
-                )
-              }}
-            </p>
-            <s-image-uploader
-              :key="editor_version"
-              ref="coverUploader"
-              :image="selected?.icon ? getShopImagePath(selected.icon) : null"
-              :server="coverServer"
-              :disabled="!canWrite || busy_set"
-              :auto-compact="!!selected"
-              :defer-upload="!selected"
-              dense
-              min-height="140px"
-              :label="$t('blog_category.modern.cover')"
-              max-file-size="2MB"
-              class="b-blog-category-editor__uploader"
-              v-on="coverHandlers"
-            >
-              <template v-if="modern" #compact-action="{ edit }">
-                <v-btn
-                  class="sd-modern-icon-button b-blog-category-editor__icon-button"
-                  icon
-                  variant="text"
-                  :aria-label="$t('blog_category.modern.edit_image')"
-                  @click="edit"
+                      content-class="sd-modern-tooltip text-start"
+                      location="top"
+                      :open-on-focus="true"
+                      ><template #activator="{ props }"
+                        ><v-btn
+                          v-bind="props"
+                          :disabled="!canWrite || busy_set"
+                          class="sd-modern-icon-button b-blog-category-editor__icon-button"
+                          icon
+                          variant="text"
+                          :aria-label="
+                            $t(
+                              force_edit
+                                ? 'blog_category.modern.lock'
+                                : 'blog_category.modern.unlock',
+                            )
+                          "
+                          @click="toggleNameLock"
+                          ><v-icon
+                            :icon="force_edit ? 'lock_open' : 'lock_outline'"
+                            size="15"
+                            aria-hidden="true" /></v-btn></template
+                    ></v-tooltip>
+                  </div>
+                </div>
+                <div
+                  v-if="selected && force_edit"
+                  class="sd-modern-notice b-blog-category-editor__rename"
+                  role="status"
                 >
-                  <v-icon icon="edit" size="16" aria-hidden="true" />
-                  <v-tooltip
-                    activator="parent"
-                    location="top"
-                    :open-on-focus="true"
-                    content-class="sd-modern-tooltip text-start"
-                    >{{ $t("blog_category.modern.edit_image") }}</v-tooltip
+                  <v-icon
+                    icon="warning_amber"
+                    size="16"
+                    class="text-warning"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <strong>{{
+                      $t("blog_category.modern.rename_title")
+                    }}</strong>
+                    <p>{{ $t("blog_category.modern.rename_hint") }}</p>
+                  </div>
+                </div>
+                <div class="b-blog-category-editor__field">
+                  <label
+                    for="blog-category-description"
+                    class="b-blog-category-editor__label"
+                    >{{ $t("blog_category.modern.description") }}
+                    <span aria-hidden="true">*</span></label
                   >
-                </v-btn>
+                  <v-textarea
+                    id="blog-category-description"
+                    v-model="description"
+                    :class="{ 'sd-modern-underlined-field': modern }"
+                    :disabled="!canWrite || busy_set || !!saved_category"
+                    :rules="[GlobalRules.required()]"
+                    :placeholder="
+                      $t('blog_category.modern.description_placeholder')
+                    "
+                    :aria-label="$t('blog_category.modern.description')"
+                    required
+                    variant="underlined"
+                    rows="2"
+                    auto-grow
+                    messages=" "
+                  >
+                    <template v-if="!selected" #message="{ message }">
+                      <span v-if="message?.trim()">{{ message }}</span>
+                      <u-smart-suggestion
+                        v-if="
+                          canWrite &&
+                          !busy_set &&
+                          !saved_category &&
+                          (modern || !message?.trim())
+                        "
+                        :modern="modern"
+                        :preview-count="2"
+                        :more-label="
+                          $t('blog_category.modern.more_suggestions')
+                        "
+                        :samples="$tm('suggestions.blog_category.description')"
+                        @select="description = $event"
+                    /></template>
+                  </v-textarea>
+                </div>
+              </section>
+              <section class="b-blog-category-editor__cover">
+                <p v-if="!modern" class="b-blog-category-editor__cover-intro">
+                  <span>{{ $t("blog_category.modern.optional") }}</span>
+                  {{
+                    $t(
+                      selected
+                        ? "blog_category.modern.cover_hint"
+                        : "blog_category.modern.create_cover_hint",
+                    )
+                  }}
+                </p>
+                <s-image-uploader
+                  :key="editor_version"
+                  ref="coverUploader"
+                  :image="
+                    selected?.icon ? getShopImagePath(selected.icon) : null
+                  "
+                  :server="coverServer"
+                  :disabled="!canWrite || busy_set"
+                  :thumbnail="modern"
+                  :choose-label="$t('blog_category.modern.choose_image')"
+                  :edit-label="$t('blog_category.modern.edit_image')"
+                  :remove-label="$t('blog_category.modern.remove_image')"
+                  :hint="
+                    modern ? $t('blog_category.modern.image_hint') : undefined
+                  "
+                  :auto-compact="!!selected"
+                  :defer-upload="!selected"
+                  dense
+                  min-height="140px"
+                  :label="
+                    $t(
+                      modern
+                        ? 'blog_category.modern.image_title'
+                        : 'blog_category.modern.cover',
+                    )
+                  "
+                  max-file-size="2MB"
+                  class="b-blog-category-editor__uploader"
+                  v-on="coverHandlers"
+                >
+                  <template v-if="modern" #thumbnail-heading>
+                    <div class="b-blog-category-editor__image-heading">
+                      <h3>{{ $t("blog_category.modern.image_title") }}</h3>
+                      <span>{{ $t("blog_category.modern.optional") }}</span>
+                    </div>
+                  </template>
+                  <template v-if="modern" #compact-action="{ edit }">
+                    <v-btn
+                      class="sd-modern-icon-button b-blog-category-editor__icon-button"
+                      icon
+                      variant="text"
+                      :aria-label="$t('blog_category.modern.edit_image')"
+                      @click="edit"
+                    >
+                      <v-icon icon="edit" size="16" aria-hidden="true" />
+                      <v-tooltip
+                        activator="parent"
+                        location="top"
+                        :open-on-focus="true"
+                        content-class="sd-modern-tooltip text-start"
+                        >{{ $t("blog_category.modern.edit_image") }}</v-tooltip
+                      >
+                    </v-btn>
+                  </template>
+                </s-image-uploader>
+              </section>
+            </div>
+            <section class="b-blog-category-editor__visibility">
+              <template v-if="modern">
+                <h3>{{ $t("blog_category.modern.visibility_title") }}</h3>
+                <p class="b-blog-category-editor__section-description">
+                  {{ $t("blog_category.modern.visibility_hint") }}
+                </p>
               </template>
-            </s-image-uploader>
-          </section>
+              <div class="b-blog-category-editor__featured-row">
+                <u-smart-toggle
+                  v-model="star"
+                  :disabled="!canWrite || busy_set || !!saved_category"
+                  :readonly="!canWrite || busy_set || !!saved_category"
+                  :true-title="$t('blog_category.modern.featured_title')"
+                  :false-title="$t('blog_category.modern.featured_title')"
+                  :true-description="$t('blog_category.modern.featured_hint')"
+                  :false-description="
+                    $t(
+                      modern
+                        ? 'blog_category.modern.featured_off_hint'
+                        : 'blog_category.modern.featured_hint',
+                    )
+                  "
+                  class="b-blog-category-editor__featured"
+                  :role="modern ? 'switch' : 'checkbox'"
+                  :aria-label="$t('blog_category.modern.featured_title')"
+                  :aria-checked="!!star"
+                  :aria-disabled="!canWrite || busy_set || !!saved_category"
+                  :tabindex="canWrite && !busy_set && !saved_category ? 0 : -1"
+                  color="primary"
+                  :false-icon="modern ? undefined : 'star_border'"
+                  :true-icon="modern ? undefined : 'auto_awesome'"
+                  @keydown.space.prevent="toggleFeatured"
+                  @keydown.enter.prevent="toggleFeatured"
+                />
+                <span
+                  v-if="modern"
+                  class="b-blog-category-editor__state"
+                  aria-hidden="true"
+                  >{{
+                    $t(
+                      star
+                        ? "blog_category.modern.featured_on"
+                        : "blog_category.modern.featured_off",
+                    )
+                  }}</span
+                >
+              </div>
+            </section>
+          </v-form>
           <div
             v-if="saved_category && !busy_upload"
             class="sd-modern-notice b-blog-category-editor__saved"
@@ -530,13 +639,15 @@
           ><v-btn
             :disabled="(busy_set || busy_upload) && !saved_category"
             class="sd-modern-button b-blog-category-editor__button"
-            variant="outlined"
+            :variant="modern ? 'text' : 'outlined'"
             @click="closeEditor"
             >{{
               $t(
                 busy_upload && saved_category
                   ? "blog_category.modern.cancel_upload"
-                  : "global.actions.close",
+                  : modern
+                    ? "global.actions.cancel"
+                    : "global.actions.close",
               )
             }}</v-btn
           ><v-btn
@@ -546,7 +657,12 @@
             color="primary"
             variant="flat"
             @click="addCategory"
-            >{{
+            ><v-icon
+              v-if="modern && !selected && !saved_category"
+              icon="add"
+              size="15"
+              aria-hidden="true"
+            />{{
               $t(
                 saved_category
                   ? image_state === "empty"
@@ -653,6 +769,7 @@ export default {
   data: () => ({
     dialog_add: false,
     dialog_pre: false,
+    details_help: false,
     dialog_delete: false,
     busy_set: false,
     busy_upload: false,
@@ -858,6 +975,7 @@ export default {
       this.focus_return = document.activeElement;
       this.focus_category_id = selected?.id || null;
       this.selected = selected;
+      this.details_help = false;
       this.saved_category = null;
       this.pending_image_id = null;
       this.image_state = "empty";
@@ -1329,12 +1447,13 @@ export default {
   font-family: inherit;
   font-size: 13px;
   line-height: 1.5;
-  border-radius: 18px;
+  border-radius: 20px;
   .b-blog-category-editor__header {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    padding: 24px 26px 20px;
+    padding: 24px 26px 22px;
+    border-block-end: 1px solid var(--sd-modern-border);
   }
   .b-blog-category-editor__header > div {
     flex: 1;
@@ -1357,22 +1476,60 @@ export default {
   }
   .b-blog-category-editor__icon-button {
     --sd-modern-icon-button-size: 32px;
-    border-radius: 8px;
+    border-radius: 9px;
   }
   .b-blog-category-editor__body {
-    padding: 0 26px 24px;
+    padding: 24px 26px 12px;
     font-size: 13px;
     line-height: 21px;
   }
   .b-blog-category-editor__body > p {
     margin: 0;
   }
+  .b-blog-category-editor__details {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 140px;
+    gap: 26px;
+    align-items: start;
+  }
+  .b-blog-category-editor__fields {
+    min-width: 0;
+  }
+  h3 {
+    margin: 0;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 19.5px;
+  }
+  .b-blog-category-editor__section-heading {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-block-end: 6px;
+  }
+  .b-blog-category-editor__info.v-btn {
+    --sd-modern-icon-button-size: 24px;
+    color: var(--sd-modern-muted);
+  }
+  .b-blog-category-editor__info.v-btn :deep(.v-icon) {
+    font-size: 14px;
+  }
+  .b-blog-category-editor__section-description {
+    margin: 0 0 18px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 18px;
+  }
   .b-blog-category-editor__field {
-    margin-block-end: 22px;
+    margin-block-end: 18px;
+  }
+  .b-blog-category-editor__field .sd-modern-underlined-field {
+    --sd-modern-field-height: 39px;
   }
   .b-blog-category-editor__label {
     display: block;
-    margin-block-end: 5px;
+    margin-block-end: 4px;
     font-size: 12px;
     font-weight: 500;
     line-height: 18px;
@@ -1389,26 +1546,26 @@ export default {
     color: var(--sd-modern-muted);
   }
   .b-blog-category-editor__field :deep(.v-field__input) {
-    min-height: 40px;
+    min-height: 39px;
     padding: 9px 0;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 400;
-    line-height: 22px;
+    line-height: 20px;
     letter-spacing: 0;
   }
   .b-blog-category-editor__field :deep(.v-field) {
     --v-field-padding-start: 0px;
     --v-field-padding-end: 0px;
-    font-size: 14px;
-    line-height: 22px;
+    font-size: 13px;
+    line-height: 20px;
   }
   .b-blog-category-editor__field :deep(.v-textarea .v-field__input) {
     min-height: 76px;
   }
   .b-blog-category-editor__field :deep(.v-input__details) {
     min-height: 0;
-    padding: 7px 0 0;
+    padding: 0;
     font-size: 11px;
     line-height: 17px;
   }
@@ -1423,6 +1580,9 @@ export default {
   }
   .b-blog-category-editor__field :deep(.v-input--error .v-messages) {
     color: rgb(var(--v-theme-on-surface));
+  }
+  .b-blog-category-editor__field :deep(.v-input--error .v-input__details) {
+    padding-block-start: 5px;
   }
   .b-blog-category-editor__field :deep(.u-smart-suggestion) {
     margin: 0;
@@ -1444,7 +1604,12 @@ export default {
     margin: 0;
   }
   .b-blog-category-editor__featured {
+    flex: 1;
+    min-width: 0;
     padding: 0;
+  }
+  .b-blog-category-editor__featured :deep(.pa-2) {
+    padding: 0 !important;
   }
   .b-blog-category-editor__featured:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
@@ -1457,49 +1622,50 @@ export default {
     line-height: 20px;
   }
   .b-blog-category-editor__featured :deep(.small) {
+    margin-block-start: 3px;
     font-size: 12px;
     font-weight: 400;
     line-height: 18px;
   }
   .b-blog-category-editor__cover {
-    margin-block-start: 22px;
-    padding-block-start: 22px;
-    border-block-start: 1px solid var(--sd-modern-border);
+    min-width: 0;
   }
-  .b-blog-category-editor__cover-intro {
+  .b-blog-category-editor__image-heading {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 6px 10px;
-    margin: 0 0 12px;
+    gap: 7px;
+    margin: 0;
     color: var(--sd-modern-muted);
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 11px;
+    line-height: 16.5px;
   }
-  .b-blog-category-editor__cover-intro > span {
+  .b-blog-category-editor__image-heading h3 {
     color: rgb(var(--v-theme-on-surface));
-    font-weight: 500;
   }
-  .b-blog-category-editor__uploader :deep(.v-list-item-title) {
-    font-size: 13px;
-    font-weight: 500;
+  .b-blog-category-editor__state {
+    padding-inline-start: 3px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
     line-height: 20px;
   }
-  .b-blog-category-editor__uploader :deep(.v-list-item-title b) {
-    font-weight: 500;
+  .b-blog-category-editor__visibility {
+    margin-block-start: 4px;
+    padding-block-start: 20px;
+    border-block-start: 1px solid var(--sd-modern-border);
   }
-  .b-blog-category-editor__uploader :deep(.v-list-item-subtitle) {
-    font-size: 11px;
-    line-height: 17px;
+  .b-blog-category-editor__visibility h3 {
+    margin-block-end: 6px;
   }
-  .b-blog-category-editor__uploader :deep(.label-top) {
-    font-size: 12px;
-    line-height: 18px;
+  .b-blog-category-editor__visibility
+    .b-blog-category-editor__section-description {
+    margin-block-end: 8px;
   }
-  .b-blog-category-editor__uploader :deep(.filepond--drop-label label),
-  .b-blog-category-editor__uploader :deep(.file-size-limit) {
-    font-size: 12px;
-    line-height: 18px;
+  .b-blog-category-editor__featured-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-block: 14px;
   }
   .b-blog-category-editor__saved {
     display: flex;
@@ -1518,7 +1684,7 @@ export default {
     align-items: center;
     justify-content: flex-end;
     gap: 8px;
-    padding: 17px 26px 22px;
+    padding: 18px 26px;
     border-block-start: 1px solid var(--sd-modern-border);
   }
   .b-blog-category-editor__actions > .v-btn {
@@ -1528,7 +1694,7 @@ export default {
     --v-btn-height: 38px;
     min-height: 38px;
     height: auto;
-    padding: 8px 13px;
+    padding: 8px 15px;
     border-radius: 9px;
     font-family: inherit;
     font-size: 13px;
@@ -1537,7 +1703,7 @@ export default {
     letter-spacing: 0;
   }
   .b-blog-category-editor__button :deep(.v-btn__content) {
-    gap: 6px;
+    gap: 7px;
     font: inherit;
     letter-spacing: inherit;
   }
@@ -1599,9 +1765,41 @@ export default {
     inset-block-start: 95px;
     max-height: calc(100% - 119px);
   }
-  .b-blog-category-editor.b-blog-category-editor--modern
+}
+@media (max-width: 600px) {
+  .b-blog-category-editor.b-blog-category-editor--modern {
+    .b-blog-category-editor__details {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .b-blog-category-editor__header {
+      padding: 22px 20px 20px;
+    }
+    &.b-blog-category-editor--form .b-blog-category-editor__header > .v-icon {
+      display: none;
+    }
+    .b-blog-category-editor__body {
+      padding: 22px 20px 10px;
+    }
+    .b-blog-category-editor__actions {
+      padding: 16px 20px;
+      flex-wrap: wrap;
+    }
     .b-blog-category-editor__icon-button {
-    --sd-modern-icon-button-size: 44px;
+      --sd-modern-icon-button-size: 44px;
+    }
+    .b-blog-category-editor__info.v-btn {
+      --sd-modern-icon-button-size: 44px;
+    }
+    .b-blog-category-editor__field :deep(.v-field__input) {
+      font-size: 16px;
+    }
+    .b-blog-category-editor__button.v-btn {
+      min-height: 44px;
+    }
+    .b-blog-category-editor__cover {
+      margin-block-end: 22px;
+    }
   }
 }
 @media (max-width: 480px) {
@@ -1616,25 +1814,13 @@ export default {
       min-height: 44px;
     }
   }
+}
+@media (max-width: 360px) {
   .b-blog-category-editor.b-blog-category-editor--modern {
-    .b-blog-category-editor__header {
-      padding: 20px 18px 16px;
-    }
-    .b-blog-category-editor__body {
-      padding: 0 18px 20px;
-    }
+    .b-blog-category-editor__header,
+    .b-blog-category-editor__body,
     .b-blog-category-editor__actions {
-      padding: 16px 18px 20px;
-      flex-wrap: wrap;
-    }
-    .b-blog-category-editor__field :deep(.v-field__input) {
-      font-size: 16px;
-    }
-    .b-blog-category-editor__button.v-btn {
-      min-height: 44px;
-    }
-    .b-blog-category-editor__uploader :deep(.v-list-item__append .v-btn) {
-      height: 44px;
+      padding-inline: 16px;
     }
   }
 }

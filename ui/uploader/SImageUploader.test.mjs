@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
-import { parse, compileScript, compileTemplate } from "@vue/compiler-sfc";
+import { parse, compileScript, compileTemplate, compileStyle } from "@vue/compiler-sfc";
 import * as Vue from "vue";
 import { renderToString } from "@vue/server-renderer";
 import ts from "typescript";
@@ -19,6 +19,9 @@ const template = compileTemplate({
   compilerOptions: { bindingMetadata: compiled.bindings },
 });
 assert.deepEqual(template.errors, []);
+for (const style of descriptor.styles) assert.deepEqual(compileStyle({
+  source: style.content, filename, id: "uploader-test", scoped: style.scoped, preprocessLang: style.lang,
+}).errors, []);
 const transpile = (source) => ts.transpileModule(source, {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
@@ -33,11 +36,19 @@ const metadata = { path: "shops_7_blog-categories_cover.png", url: "/cover.png",
 const result = (response = { success: true, files: metadata }) => ({ serverId: JSON.stringify(response) });
 
 function fixture(props = {}) {
-  const exports = {}, events = [], notices = [], calls = [];
+  const exports = {}, events = [], notices = [], calls = [], urls = [], revoked = [];
   let credentialReads = 0;
   vm.runInNewContext(script, {
     exports,
-    document: { head: { querySelector() { credentialReads++; return { content: "synthetic-csrf" }; } } },
+    Blob,
+    URL: {
+      createObjectURL: (file) => { urls.push(file); return `blob:local-preview-${urls.length}`; },
+      revokeObjectURL: (url) => revoked.push(url),
+    },
+    document: {
+      head: { querySelector() { credentialReads++; return { content: "synthetic-csrf" }; } },
+      removeEventListener() {},
+    },
     window: { axios: { defaults: { headers: { common: { Authorization: "synthetic-auth" } } } } },
     require(name) {
       if (name.includes("NotificationService")) return { default: {
@@ -56,6 +67,8 @@ function fixture(props = {}) {
     getFiles: () => [queued],
     processFile: async (id) => { calls.push(id); return result(); },
     removeFiles: (options) => { calls.push(options); },
+    browse: () => calls.push("browse"),
+    addFile: async (file) => { calls.push(file); },
     abortProcessing: () => { throw new Error("Cancellation must not await an abort promise"); },
   };
   const state = {
@@ -67,10 +80,10 @@ function fixture(props = {}) {
   };
   for (const [key, method] of Object.entries(component.methods)) state[key] = method.bind(state);
   for (const [key, getter] of Object.entries(component.computed)) Object.defineProperty(state, key, { get: () => getter.call(state) });
-  return { component, state, pond, queued, events, notices, calls, credentialReads: () => credentialReads };
+  return { component, state, pond, queued, events, notices, calls, urls, revoked, credentialReads: () => credentialReads };
 }
 
-async function renderPond(f, props) {
+async function renderPond(f, props, data = {}) {
   let attributes;
   const passthrough = Vue.defineComponent({ setup(_, { slots }) { return () => Vue.h("div", null, slots.default?.()); } });
   const pond = Vue.defineComponent({
@@ -81,11 +94,12 @@ async function renderPond(f, props) {
     `on${name[0].toUpperCase()}${name.slice(1)}`,
     (...args) => f.events.push([name, ...args]),
   ]));
-  const app = Vue.createSSRApp({ ...f.component, components: { FilePond: pond }, render: templateExports.render }, { ...props, ...listeners });
+  const app = Vue.createSSRApp({ ...f.component, data: () => ({ ...f.component.data(), ...data }), components: { FilePond: pond }, render: templateExports.render }, { ...props, ...listeners });
   for (const name of ["VExpandTransition", "VSlideYTransition", "VAvatar", "VImg", "VIcon", "VBtn", "VListItem", "VListItemTitle", "VListItemSubtitle"]) app.component(name, passthrough);
   app.config.globalProperties.$t = (key) => key;
+  app.component("VTooltip", Vue.defineComponent({ setup(_, { slots }) { return () => Vue.h("span", null, slots.activator?.({ props: {} })); } }));
   app.directive("intersect", { getSSRProps: () => ({}) });
-  await renderToString(app);
+  f.renderedHtml = await renderToString(app);
   assert.ok(attributes, "The existing FilePond input remains available");
   return attributes;
 }
@@ -212,4 +226,98 @@ for (const files of [metadata, [metadata]]) {
   assert.equal(f.state.discardPendingFile(), undefined);
 }
 
-console.log("SImageUploader: SFC compilation, deferred queue/configuration, readiness, response validation/retry, default events and discard checks passed.");
+assert.equal(fixture().component.props.thumbnail.default, false);
+{
+  const f = fixture({ thumbnail: true, deferUpload: true });
+  const props = await renderPond(f, {
+    thumbnail: true, deferUpload: true, allowMultiple: true, maxFiles: 4,
+    label: "Image", chooseLabel: "Choose image", editLabel: "Edit image", removeLabel: "Remove image", hint: "Up to 2MB.",
+  });
+  assert.equal(props["allow-multiple"], false);
+  assert.equal(props["max-files"], 1);
+  assert.equal(typeof props.onInit, "function");
+  assert.ok(f.renderedHtml.includes("s-image-uploader__transport"));
+  assert.ok(f.renderedHtml.includes("Up to 2MB."));
+  assert.ok(!f.renderedHtml.split("uploader-container")[0].includes("global.image_uploader.max_size"), "Custom guidance replaces the visible default limit caption");
+  f.state.browseThumbnail();
+  assert.deepEqual(f.calls, [], "The native input must be initialized before browsing");
+  f.state.thumbnail_ready = true;
+  f.state.browseThumbnail();
+  assert.deepEqual(f.calls, ["browse"]);
+  f.state.disabled = true;
+  f.state.browseThumbnail();
+  f.state.dropThumbnail({ dataTransfer: { files: [new Blob(["image"])] } });
+  assert.deepEqual(f.calls, ["browse"], "Disabled controls cannot choose or drop a file");
+}
+{
+  const f = fixture({ thumbnail: true, deferUpload: true });
+  const first = { id: "first", filename: "first.png", file: new Blob(["first"], { type: "image/png" }) };
+  const second = { id: "second", filename: "second.png", file: new Blob(["second"], { type: "image/png" }) };
+  f.state.handleAddFileStart(first);
+  assert.equal(f.state.thumbnail_loading, true);
+  f.state.handleAddFile(null, first);
+  assert.equal(f.state.thumbnail_loading, false);
+  assert.equal(f.state.thumbnailSource, "blob:local-preview-1");
+  assert.equal(f.state.thumbnailFilename, "first.png");
+  assert.equal(f.calls.length, 0, "Previewing a queued image cannot start an upload");
+  await assert.rejects(f.state.processPendingFile(), "A category URL is still required before upload");
+  f.state.handleAddFileStart(second);
+  assert.deepEqual(f.revoked, ["blob:local-preview-1"]);
+  f.state.handleRemoveFile(null, first);
+  assert.equal(f.state.thumbnail_file_id, "second", "Late removal of a replaced file cannot clear the new queue");
+  f.state.handleAddFile({ main: "Image too large", sub: "Maximum 2MB" }, second);
+  assert.equal(f.state.thumbnail_loading, false);
+  assert.equal(f.state.thumbnailSource, undefined);
+  assert.equal(f.state.thumbnail_error, "Image too large · Maximum 2MB");
+  await renderPond(f, { thumbnail: true, deferUpload: true }, { thumbnail_error: f.state.thumbnail_error });
+  assert.ok(f.renderedHtml.includes('role="alert"'));
+  assert.ok(f.renderedHtml.includes("Maximum 2MB"), "Hidden FilePond validation stays visible");
+  f.state.handleRemoveFile(null, second);
+  assert.equal(f.state.thumbnail_error, "");
+  assert.equal(f.state.thumbnail_file_id, null);
+  f.state.handleAddFileStart(second);
+  f.state.handleAddFile(null, second);
+  assert.equal(f.state.thumbnailSource, "blob:local-preview-2");
+  f.component.beforeUnmount.call(f.state);
+  assert.deepEqual(f.revoked, ["blob:local-preview-1", "blob:local-preview-2"]);
+}
+{
+  const f = fixture({ thumbnail: true, deferUpload: true, server: "/upload", disabled: true });
+  f.state.thumbnail_file_id = f.queued.id;
+  let resolve;
+  f.pond.processFile = (id) => { f.calls.push(id); return new Promise((yes) => { resolve = yes; }); };
+  const uploading = f.state.processPendingFile();
+  assert.equal(f.state.thumbnail_processing, true);
+  f.state.handleProcessProgress(f.queued, .5);
+  await renderPond(f, { thumbnail: true, deferUpload: true }, { thumbnail_processing: true, thumbnail_progress: .5 });
+  assert.ok(f.renderedHtml.includes('role="status"'));
+  assert.ok(f.renderedHtml.includes("50%"));
+  resolve(result());
+  assert.deepEqual(plain(await uploading), metadata);
+  assert.equal(f.state.thumbnail_processing, false);
+  assert.deepEqual(f.calls, [f.queued.id], "One explicit call processes the stable queue once, even while disabled");
+  f.queued.status = 6;
+  f.pond.processFile = async () => { throw new Error("Upload unavailable"); };
+  await assert.rejects(f.state.processPendingFile());
+  assert.equal(f.state.thumbnail_processing, false);
+  assert.equal(f.state.thumbnail_error, "Upload unavailable");
+}
+{
+  const f = fixture({ thumbnail: true, deferUpload: true });
+  f.state.thumbnail_ready = true;
+  f.state.thumbnail_file_id = "pending";
+  f.state.removeThumbnail();
+  assert.deepEqual(plain(f.calls), [{ revert: false }]);
+  assert.deepEqual(f.events, [], "The native remove event, rather than a duplicate synthetic event, owns parent queue updates");
+}
+{
+  const f = fixture({ thumbnail: true, image: "/saved.png" });
+  f.state.thumbnail_file_id = "uploaded";
+  f.state.handleProcessFile(null, { ...result(), id: "uploaded" });
+  assert.equal(f.state.thumbnail_file_id, null, "Immediate upload success is a persisted image, rather than a removable pending file");
+  await renderPond(f, { thumbnail: true, image: "/saved.png", editLabel: "Edit image", removeLabel: "Remove image" });
+  assert.ok(f.renderedHtml.includes("Edit image"));
+  assert.ok(!f.renderedHtml.includes("Remove image"), "No delete affordance is offered for an existing image without caller clear support");
+}
+
+console.log("SImageUploader: SFC/SCSS compilation, default/deferred behavior, thumbnail preview/browse/error/progress/cleanup, response retry and discard checks passed.");
