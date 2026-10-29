@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div>
+  <div :class="{ 's-article-editor--workspace': workspace }">
     <!-- ――――――――――――――――――――――― Article ――――――――――――――――――――――― -->
     <div
       :id="MASTER_ID"
@@ -25,8 +25,7 @@
       <div
         v-if="!onlyView"
         v-show="edit"
-        :class="{ 'position-relative': show_drop }"
-        class="px-2"
+        :class="{ 'position-relative': show_drop, 'px-2': !workspace }"
         @dragover="dragover"
       >
         <div>
@@ -35,7 +34,7 @@
             :id="EDITABLE_TITLE_ID"
             ref="editable_title"
             :data-placeholder="$t('global.article.editor.title_placeholder')"
-            class="h1 fw-semi-bold"
+            class="h1 fw-semi-bold s-article-editor__title"
             style="user-select: text; min-height: 84px"
             @edit="processEditOperationTitle"
             v-text="title"
@@ -48,7 +47,7 @@
             :id="EDITABLE_BODY_ID"
             ref="editable_body"
             :data-placeholder="$t('global.article.editor.body_placeholder')"
-            class="can-edit-medium-insert u-article-body-edit"
+            class="can-edit-medium-insert u-article-body-edit s-article-editor__body"
             style="user-select: text; min-height: 284px"
             @edit="processEditOperationBody"
             v-html="rendered_body"
@@ -64,6 +63,12 @@
           @drop="drop"
         >
           <div class="center-absolute p-3">
+            <template v-if="workspace">
+              <v-icon icon="upload_file" size="32" aria-hidden="true" />
+              <p>{{ $t('global.article.workspace_word.drop_hint') }}</p>
+              <p>{{ $t('global.article.workspace_word.formats_hint') }}</p>
+            </template>
+            <template v-else>
             <div>
               <v-icon class="m-2" color="#fff" size="64"
                 >fa:fas fa-file-word
@@ -76,6 +81,7 @@
               ,
               <v-chip class="m-1" color="amber" size="small">.odt</v-chip>
             </div>
+            </template>
           </div>
         </div>
       </div>
@@ -83,12 +89,13 @@
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ 💡 Normal show ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
       <div v-show="!edit" class="review-style px-2">
+        <slot name="before-title"></slot>
         <div
           v-if="enableTitle"
           :id="REVIEW_TITLE_ID"
           ref="review_title"
           :class="{ 'd-none': hideTitle }"
-          class="h1 fw-semi-bold"
+          class="h1 fw-semi-bold s-article-editor__title"
           style="user-select: text"
           v-html="title"
         />
@@ -106,7 +113,7 @@
           v-if="enableBody"
           :id="REVIEW_BODY_ID"
           ref="review_body"
-          class="pt-3 corrected u-article-body-view"
+          class="pt-3 corrected u-article-body-view s-article-editor__body"
           style="user-select: text"
           v-html="rendered_body_view /*Scripts not loaded by vue!*/"
         />
@@ -132,11 +139,50 @@
     <!-- ――――――――――――――――――――――― 💡 Select word file (docx) ――――――――――――――――――――――― -->
     <input
       ref="file_input"
-      accept=".docx"
+      :accept="workspace ? '.docx,.odt' : '.docx'"
       hidden="hidden"
       type="file"
       @change="onSelectWordFile"
     />
+    <v-dialog
+      v-if="workspace"
+      v-model="word_import_dialog"
+      :persistent="word_import_busy"
+      max-width="520"
+      @update:model-value="!$event && closeWordImport()"
+    >
+      <v-card class="s-article-word-import text-start sd-modern-widget" :aria-labelledby="`word-import-title-${suffixId}`">
+        <header class="s-article-word-import__header">
+          <v-icon icon="description" size="21" aria-hidden="true" />
+          <div>
+            <h2 :id="`word-import-title-${suffixId}`">{{ $t('global.article.workspace_word.title') }}</h2>
+            <p>{{ $t('global.article.workspace_word.subtitle') }}</p>
+          </div>
+          <v-tooltip :text="$t('global.actions.close')" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">
+            <template #activator="{ props }"><v-btn v-bind="props" class="sd-modern-icon-button" icon variant="text" :disabled="word_import_busy" :aria-label="$t('global.actions.close')" @click="closeWordImport"><v-icon icon="close" size="16" aria-hidden="true" /></v-btn></template>
+          </v-tooltip>
+        </header>
+        <v-card-text class="s-article-word-import__body">
+          <div class="s-article-word-import__drop" :aria-busy="word_import_busy" @dragover.prevent @drop.prevent.stop="stageWordFile($event.dataTransfer.files)">
+            <v-icon icon="upload_file" size="28" aria-hidden="true" />
+            <p>{{ $t('global.article.workspace_word.drop_hint') }}</p>
+            <v-btn class="sd-modern-button" variant="outlined" :disabled="!canImportWord || word_import_busy" @click="chooseWordFile"><v-icon start icon="folder_open" size="16" aria-hidden="true" />{{ $t('global.article.workspace_word.select_document') }}</v-btn>
+            <small>{{ $t('global.article.workspace_word.formats_hint') }}</small>
+          </div>
+          <p v-if="word_import_file" class="s-article-word-import__filename">{{ word_import_file.name }} <span class="text-medium-emphasis">· {{ numeralFormat(word_import_file.size, '0.[0] b') }}</span></p>
+          <div class="sd-modern-notice s-article-word-import__notice">
+            <v-icon icon="info_outline" size="17" aria-hidden="true" />
+            <div><strong>{{ $t('global.article.workspace_word.replacement_title') }}</strong><p>{{ $t('global.article.workspace_word.replacement_hint') }}</p><p>{{ $t('global.article.workspace_word.media_hint') }}</p></div>
+          </div>
+          <p v-if="word_import_error" class="s-article-word-import__status" role="alert">{{ word_import_error }}</p>
+          <p v-else-if="word_import_busy" class="s-article-word-import__status" role="status">{{ $t('global.article.workspace_word.converting') }}</p>
+        </v-card-text>
+        <v-card-actions class="s-article-word-import__actions">
+          <v-btn class="sd-modern-button" variant="text" :disabled="word_import_busy" @click="closeWordImport">{{ $t('global.actions.cancel') }}</v-btn>
+          <v-btn class="sd-modern-button" color="primary" variant="flat" :disabled="!canImportWord || !word_import_file || word_import_busy" :loading="word_import_busy" @click="confirmWordImport"><v-icon start icon="file_download" size="16" aria-hidden="true" />{{ $t('global.article.workspace_word.confirm') }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -319,7 +365,7 @@ const OPTIONS_BODY = {
 export default defineComponent({
   name: "SArticleEditor",
   mixins: [ImageMixin],
-  emits: ["change", "update:title", "update:body", "update:images"],
+  emits: ["change", "update:title", "update:body", "update:images", "workspace-busy"],
 
   components: {
     SArticleTableOfContents,
@@ -329,6 +375,7 @@ export default defineComponent({
   },
 
   props: {
+    workspace: { type: Boolean, default: false },
     onlyView: {
       required: false,
       default: false,
@@ -411,24 +458,42 @@ export default defineComponent({
 
       //----------------------------
       show_drop: false,
+      word_import_dialog: false,
+      word_import_file: null,
+      word_import_error: "",
+      word_import_busy: false,
+      word_import_request: 0,
     };
   },
 
   watch: {
     onlyView() {
+      if (this.workspace) this.resetWordImport();
       this.$nextTick(() => {
         this.refresh();
       });
     },
 
-    edit() {},
+    edit() {
+      if (this.workspace && !this.edit) this.resetWordImport();
+    },
+    workspace(value, previous) {
+      if (previous && this.word_import_busy) this.$emit("workspace-busy", false);
+      this.resetWordImport();
+    },
+    wordConverterUrl() { if (this.workspace) this.resetWordImport(); },
+    suffixId() { if (this.workspace) this.resetWordImport(); },
+    word_import_busy(value) { if (this.workspace) this.$emit("workspace-busy", value); },
 
     rendered_body() {
       this.processAfterChangeBody();
     },
   },
 
-  created() {},
+  created() {
+    // These independently mounted apps must not enter reactive article state.
+    this._addonApps = [];
+  },
 
   mounted() {
     this.$nextTick(() => {
@@ -443,6 +508,11 @@ export default defineComponent({
   },
 
   beforeUnmount() {
+    this._addonUnmounted = true;
+    clearTimeout(this._addonRenderTimer);
+    this.pruneAddonApps(true);
+    if (this.workspace && this.word_import_busy) this.$emit("workspace-busy", false);
+    this.resetWordImport();
     // Purge all excess elements:
 
     $(
@@ -454,6 +524,9 @@ export default defineComponent({
   },
 
   computed: {
+    canImportWord() {
+      return this.workspace && this.edit && !this.onlyView && !!this.wordConverterUrl;
+    },
     //------------------ Multiple Article In One-Page Support (Landing builder) ------------------
     MASTER_ID() {
       return `MASTER-ARTICLE-${this.suffixId}`;
@@ -491,9 +564,8 @@ export default defineComponent({
 
       //――――――――――――――――――――――― Unwrap span (Fix style font-size) ―――――――――――――――――――――
       div.find("p > span , blockquote > span").each(function () {
-        // Remove all direct span children !
-        if ($(this).length) console.log("Unwrap span", $(this)[0].innerText);
-        $(this).replaceWith($(this)[0].innerText);
+        // Keep inline formatting while removing the font-size wrapper.
+        $(this).replaceWith($(this).contents());
       });
       //――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――
 
@@ -516,15 +588,116 @@ export default defineComponent({
   },
 
   methods: {
+    resetWordImport() {
+      this.word_import_request++;
+      this.word_import_dialog = false;
+      this.word_import_file = null;
+      this.word_import_error = "";
+      this.word_import_busy = false;
+      this.show_drop = false;
+      if (this.$refs.file_input) this.$refs.file_input.value = "";
+    },
+    closeWordImport() {
+      if (!this.word_import_busy) this.resetWordImport();
+    },
+    chooseWordFile() {
+      if (!this.canImportWord || !this.word_import_dialog || this.word_import_busy) return;
+      this.$refs.file_input.value = "";
+      this.$refs.file_input.click();
+    },
+    stageWordFile(files) {
+      if (!this.canImportWord || this.word_import_busy) return;
+      this.word_import_dialog = true;
+      this.word_import_file = null;
+      this.word_import_error = "";
+      const file = files?.[0];
+      if (this.$refs.file_input) this.$refs.file_input.value = "";
+      if (!file) return;
+      if (!/\.(docx|odt)$/i.test(file.name) || file.size === 0) {
+        this.word_import_error = this.$t("global.article.workspace_word.invalid_format");
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        this.word_import_error = this.$t("global.article.workspace_word.too_large");
+        return;
+      }
+      this.word_import_file = file;
+    },
+    confirmWordImport() {
+      if (!this.canImportWord || !this.word_import_dialog || !this.word_import_file || this.word_import_busy) return;
+      const file = this.word_import_file;
+      const url = this.wordConverterUrl, suffix = this.suffixId;
+      const request = ++this.word_import_request;
+      const current = () => request === this.word_import_request && this.canImportWord &&
+        url === this.wordConverterUrl && suffix === this.suffixId;
+      let converted = false;
+      this.word_import_busy = true;
+      this.word_import_error = "";
+      const store = this.$store;
+      const fail = (data) => {
+        if (!current()) return;
+        const fileErrors = data?.errors?.file;
+        const first = Array.isArray(fileErrors) ? fileErrors[0] : fileErrors;
+        const message = typeof first === "string" && first.trim() ? first : typeof data?.error_msg === "string" ? data.error_msg : "";
+        this.word_import_error = message.trim().replace(/[\u0000-\u001f\u007f]+/g, " ").slice(0, 240) || this.$t("global.article.workspace_word.import_failed");
+      };
+      try {
+        const form = new FormData();
+        form.append("file", file, file.name);
+        window.axios.post(url, form, {
+          withCredentials: true,
+          onUploadProgress: (event) => {
+            const progress = event.total ? Math.floor((event.loaded / (event.total + 0.001)) * 100) : (event.progress || 1) * 100;
+            store.dispatch({ type: "addUploadingFile", file_id: file.name, name: file.name, progress, color: "amber", target: null });
+          },
+        }).then(({ data }) => {
+          if (data?.error) { fail(data); return; }
+          if (!current() || typeof data?.body !== "string" || typeof data?.title !== "string") return;
+          converted = true;
+          // Apply converter output only after a confirmed, successful conversion.
+          this.$emit("update:body", data.body);
+          this.$emit("update:title", data.title);
+          this.word_import_file = null;
+          this.word_import_dialog = false;
+          if (this.$refs.file_input) this.$refs.file_input.value = "";
+          this.$nextTick(() => {
+            if (!current()) return;
+            this.setDirection();
+            this.onEdited();
+            NotificationService.showSuccessAlert(null, this.$t("global.article.workspace_word.imported"));
+          });
+        }).catch((error) => {
+          const status = error?.response?.status;
+          fail(error?.response?.data);
+          if (current() && Number.isInteger(status) && status >= 100 && status <= 599)
+            console.warn("Word import failed", JSON.stringify({ status }));
+        }).finally(() => {
+          store.dispatch({ type: "removeUploadingFile", file_id: file.name });
+          if (current()) {
+            this.word_import_busy = false;
+            if (!converted && !this.word_import_error) this.word_import_error = this.$t("global.article.workspace_word.import_failed");
+          }
+        });
+      } catch {
+        store.dispatch({ type: "removeUploadingFile", file_id: file.name });
+        if (current()) {
+          this.word_import_busy = false;
+          fail(undefined);
+        }
+      }
+    },
     //――――――――――――――――――――――― Drop file (word) ―――――――――――――――――――――
     dragover(event) {
       if (!this.wordConverterUrl) return;
+      if (this.workspace && !this.canImportWord) return;
 
       // Word File:
       if (
-        Object.values(event.dataTransfer.items).some((i) =>
-          i.type.includes("application/vnd"),
-        )
+        this.workspace
+          ? Array.from(event.dataTransfer.types || []).includes("Files")
+          : Object.values(event.dataTransfer.items).some((i) =>
+              i.type.includes("application/vnd"),
+            )
       ) {
         this.show_drop = true;
         event.preventDefault();
@@ -539,6 +712,7 @@ export default defineComponent({
 
     drop(event) {
       if (!this.wordConverterUrl) return;
+      if (this.workspace && !this.canImportWord) return;
 
       this.show_drop = false;
 
@@ -549,16 +723,24 @@ export default defineComponent({
     },
 
     showSelectWord() {
+      if (this.workspace) {
+        if (!this.canImportWord || this.word_import_busy) return;
+        this.resetWordImport();
+        this.word_import_dialog = true;
+        return;
+      }
       const defaultFile = this.$refs.file_input;
       defaultFile.click();
     },
     onSelectWordFile() {
       const defaultFile = this.$refs.file_input;
+      if (this.workspace) return this.stageWordFile(defaultFile.files);
 
       // Send word file to server to convert to html:
       this.loadWordFile(defaultFile.files);
     },
     loadWordFile(files) {
+      if (this.workspace) return this.stageWordFile(files);
       if (!this.wordConverterUrl) return;
 
       // Word files:
@@ -630,10 +812,21 @@ export default defineComponent({
       }, 1000);
     },
 
+    pruneAddonApps(all = false) {
+      this._addonApps = (this._addonApps || []).filter(({ app, root }) => {
+        if (!all && root.isConnected && root.closest(`#${this.MASTER_ID}`)) return true;
+        app.unmount();
+        return false;
+      });
+    },
+
     reRenderAll() {
+      if (this._addonUnmounted) return;
+      this.pruneAddonApps();
       console.log("🍯 Re-render all contents.");
 
       this.$nextTick(() => {
+        if (this._addonUnmounted) return;
         //――――――――――――――――――――――― 💡 Mega Replacer ―――――――――――――――――――――――
         /**
          * Medium Insert Identifier: .code-editor
@@ -641,7 +834,10 @@ export default defineComponent({
          * Abstracted Node name (save in database):   <code-editor>...</code-editor>
          */
 
-        setTimeout(() => {
+        clearTimeout(this._addonRenderTimer);
+        this._addonRenderTimer = setTimeout(() => {
+          if (this._addonUnmounted) return;
+          this.pruneAddonApps();
           let t = this;
 
           const i18n = this.geti18n();
@@ -684,12 +880,11 @@ export default defineComponent({
             // Create a temporary element to mount the app
             const tempElement = document.createElement("div");
             app.mount(tempElement);
+            const root = tempElement.firstElementChild;
 
             // Replace the original element with the new one
-            element.parentNode.replaceChild(
-              tempElement.firstElementChild,
-              element,
-            );
+            element.parentNode.replaceChild(root, element);
+            this._addonApps.push({ app, root });
           });
 
           //――――――――――――――――――――――― 💡 Mega Replacer ▶ Images Compare ▶ Render Mode ―――――――――――――――――――――――
@@ -732,12 +927,11 @@ export default defineComponent({
             // Create a temporary element to mount the app
             const tempElement = document.createElement("div");
             app.mount(tempElement);
+            const root = tempElement.firstElementChild;
 
             // Replace the original element with the new one
-            element.parentNode.replaceChild(
-              tempElement.firstElementChild,
-              element,
-            );
+            element.parentNode.replaceChild(root, element);
+            this._addonApps.push({ app, root });
           });
 
           //――――――――――――――――――――――― 💡 Mega Replacer ▶ Flip Book ▶ Render Mode ―――――――――――――――――――――――
@@ -780,12 +974,11 @@ export default defineComponent({
             // Create a temporary element to mount the app
             const tempElement = document.createElement("div");
             app.mount(tempElement);
+            const root = tempElement.firstElementChild;
 
             // Replace the original element with the new one
-            element.parentNode.replaceChild(
-              tempElement.firstElementChild,
-              element,
-            );
+            element.parentNode.replaceChild(root, element);
+            this._addonApps.push({ app, root });
           });
 
           //――――――――――――――――――――――― 💡 Mega Replacer ▶ Image Overlay Canvas ▶ Render Mode ―――――――――――――――――――――――
@@ -828,12 +1021,11 @@ export default defineComponent({
             // Create a temporary element to mount the app
             const tempElement = document.createElement("div");
             app.mount(tempElement);
+            const root = tempElement.firstElementChild;
 
             // Replace the original element with the new one
-            element.parentNode.replaceChild(
-              tempElement.firstElementChild,
-              element,
-            );
+            element.parentNode.replaceChild(root, element);
+            this._addonApps.push({ app, root });
           });
 
           //――――――――――――――――――――――― 💡 Mega Replacer ▶ Embed ▶ Render Mode ―――――――――――――――――――――――
@@ -867,6 +1059,7 @@ export default defineComponent({
               $(element).find("video").attr("controls", true);
             },
           );
+          this.pruneAddonApps();
         }, 50); // important: Load with delay to work properly.
       });
     },
@@ -899,8 +1092,15 @@ export default defineComponent({
       // this.$emit('update:body',this.purifyBody())
     },
 
-    // Define the debounced version of onEdited
-    onEdited: debounce(function () {
+    onEdited() {
+      this.pruneAddonApps();
+      // Resource navigation must see a changed draft before the next click.
+      if (this.workspace) {
+        if (this.edit) this.state = "changed";
+        this.$emit("change", { title: this.title, body: this.body });
+      } else this.onEditedDebounced();
+    },
+    onEditedDebounced: debounce(function () {
       console.log("🍒 Article Editor | Edited (debounced)");
 
       if (this.edit) this.state = "changed";
@@ -950,8 +1150,8 @@ export default defineComponent({
         "no tools",
         this.noMediumInsert,
       );
-      // 🞇 Reset to default
-      this.resetToDefault();
+      // Keep the workspace import state and monotonic generation across editor refreshes.
+      if (!this.workspace) this.resetToDefault();
 
       this.setDirection();
 
@@ -1457,9 +1657,8 @@ export default defineComponent({
 
       //――――――――――――――――――――――― Unwrap span (Fix style font-size) ―――――――――――――――――――――――
       div.find("p > span , blockquote > span").each(function () {
-        // Remove all direct span children !
-        if ($(this).length) console.log("Unwrap span", $(this)[0].innerText);
-        $(this).replaceWith($(this)[0].innerText);
+        // Keep inline formatting while removing the font-size wrapper.
+        $(this).replaceWith($(this).contents());
       });
 
       //――――――――――――――――――――――― Final process ―――――――――――――――――――――――
@@ -1577,36 +1776,92 @@ export default defineComponent({
     unicode-bidi: embed !important;
   }
 
-  /**
-        blockquote
-        */
-
-  blockquote {
+  // Editorial quotes inherit the article's ink/background; social embeds own their appearance.
+  blockquote:not(.twitter-tweet):not(.instagram-media):not(.tiktok-embed):not(.reddit-embed-bq):not(:where(.medium-insert-embed *, .medium-insert-embeds *, .embed-raw-html *)) {
     display: flow-root;
-    //  display: block;
-    border-width: 2px 0;
-    border-style: solid;
-    border-color: #ddd;
-    padding: 0.7em 0 0.5em;
-    margin: 1.5em auto !important;
     position: relative;
-    width: 85%;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    margin: 28px 0 !important;
+    padding: 22px 24px;
+    padding-inline-start: 65px;
+    border: 0;
+    border-inline-start: 3px solid color-mix(in srgb, currentColor 36%, transparent);
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.75;
+    text-align: start;
+    overflow-wrap: anywhere;
 
     &:before {
-      content: "\f10d";
+      content: "\f10d" / "";
       position: absolute;
-      top: -5px;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: var(--background);
-      width: 3rem;
-      height: 2rem;
+      inset-block-start: 26px;
+      inset-inline-start: 24px;
+      width: 25px;
+      height: 25px;
       font-family: "Font Awesome 7 Free";
       font-weight: 900;
-      font-size: 6em/1.08em;
-      color: #666;
-      text-align: center;
-      font-size: x-large;
+      font-size: 25px;
+      line-height: 25px;
+      color: color-mix(in srgb, currentColor 62%, transparent);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    p, ol, ul, li {
+      color: inherit;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      text-align: start;
+    }
+
+    p { margin: 0; }
+    p + p { margin-block-start: 14px; }
+    > :first-child { margin-block-start: 0; }
+    > :last-child { margin-block-end: 0; }
+
+    ol, ul { margin-block: 12px; padding-inline-start: 1.4em; }
+    ol { list-style: decimal; }
+    ul { list-style: disc; }
+    li { display: list-item; margin: 6px 0; padding: 0; background: transparent; }
+    li:before { content: none; }
+
+    a, a:visited, a:hover {
+      color: inherit !important;
+      background: transparent !important;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    cite {
+      display: block;
+      margin-block-start: 10px;
+      color: inherit;
+      font-size: 12px;
+      font-style: normal;
+      line-height: 20px;
+    }
+
+    @media (max-width: 540px) {
+      padding: 18px 16px;
+      padding-inline-start: 46px;
+      font-size: 17px;
+
+      &:before {
+        inset-block-start: 22px;
+        inset-inline-start: 16px;
+        width: 20px;
+        height: 20px;
+        font-size: 20px;
+        line-height: 20px;
+      }
     }
   }
 
@@ -2557,9 +2812,6 @@ p iframe {
       text-align: justify;
     }
 
-    blockquote {
-      text-align: center;
-    }
   }
 }
 
@@ -2607,6 +2859,82 @@ p iframe {
 .u-article-body-edit {
   p {
     margin-bottom: 2rem;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.s-article-editor--workspace {
+  font-family: inherit;
+  .s-article-editor__title {
+    font-family: inherit;
+    font-size: 27px !important; // Legacy .h1 declares its size with !important.
+    font-weight: 500 !important;
+    line-height: 1.35;
+    letter-spacing: 0;
+    min-height: 38px !important;
+    margin-bottom: 26px;
+  }
+  .s-article-editor__body {
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.8;
+    :deep(p), :deep(ol), :deep(ul), :deep(li) { font-family: inherit; font-size: inherit; line-height: inherit; }
+  }
+  .drop-container {
+    color: rgb(var(--v-theme-on-surface));
+    background: var(--sd-modern-inset);
+    border: 1px solid var(--sd-modern-border);
+    p { margin: 8px 0 0; font-size: 13px; line-height: 20px; }
+  }
+}
+.s-article-word-import {
+  &.v-card { padding: 0; border-radius: 18px; }
+  font-family: inherit;
+  .s-article-word-import__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 24px 24px 0;
+    > .v-icon { margin-block-start: 2px; color: var(--sd-modern-muted); }
+    > div { flex: 1; min-width: 0; }
+    h2 { margin: 0 0 5px; font-size: 18px; font-weight: 500; line-height: 25px; }
+    p { margin: 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  }
+  .s-article-word-import__body { padding: 22px 24px; }
+  .s-article-word-import__drop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 16px;
+    border: 1px dashed var(--sd-modern-border);
+    border-radius: 12px;
+    text-align: center;
+    > .v-icon { color: var(--sd-modern-muted); }
+    p { margin: 0; font-size: 13px; line-height: 20px; }
+    small { color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; }
+  }
+  .s-article-word-import__filename { margin: 12px 0 0; overflow-wrap: anywhere; font-size: 13px; line-height: 20px; }
+  .s-article-word-import__notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-block-start: 18px;
+    padding: 14px;
+    > .v-icon { flex-shrink: 0; margin-block-start: 1px; }
+    strong { font-size: 12px; font-weight: 500; line-height: 19px; }
+    p { margin: 5px 0 0; color: rgb(var(--v-theme-on-surface)); font-size: 12px; line-height: 19px; }
+  }
+  .s-article-word-import__status { margin: 12px 0 0; font-size: 12px; line-height: 19px; color: rgb(var(--v-theme-on-surface)); }
+  .s-article-word-import__actions { justify-content: flex-end; gap: 8px; padding: 16px 24px; border-block-start: 1px solid var(--sd-modern-border); }
+}
+@media (max-width: 600px) {
+  .s-article-word-import {
+    .s-article-word-import__header { padding: 20px 18px 0; }
+    .s-article-word-import__body { padding: 20px 18px; }
+    .s-article-word-import__actions { padding: 16px 18px; flex-wrap: wrap; }
   }
 }
 </style>

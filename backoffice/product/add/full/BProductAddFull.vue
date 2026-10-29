@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs">
+  <div v-bind="$attrs" :class="{ 'b-product-add-full--modern text-start': modern }">
     <template v-if="$product.id">
       <v-row align="center" no-gutters>
         <div style="min-width: 48px">
@@ -219,11 +219,12 @@
 
     <!-- ███████████████████████ Product Type ███████████████████████ -->
 
-    <div v-if="step === TAB_TYPE" class="max-width-container-1280px mx-auto">
+    <div v-if="step === TAB_TYPE" class="max-width-container-1280px mx-auto" :class="{ 'sd-modern-widget b-product-add-full__type': modern }">
       <u-widget-header
         :title="$t('global.commons.product_type')"
         icon="workspaces"
-        icon-color="#333"
+        :icon-color="modern ? undefined : '#333'"
+        :class="{ 'sd-modern-form-header': modern }"
       ></u-widget-header>
       <v-list-subheader>
         {{ $t("add_product.select_type.title") }}
@@ -605,6 +606,7 @@ export default {
   inject: ["$shop", "$product"],
   emits: ["update:withTrashed", "update:product", "edit", "add", "delete"],
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -1421,6 +1423,37 @@ not need!
 </script>
 
 <style lang="scss" scoped>
+.b-product-add-full--modern {
+  width: 100%;
+  max-width: 1248px;
+  margin-inline: auto;
+  padding: 24px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+
+  .b-product-add-full__type { max-width: 1040px; padding: 24px; }
+  :deep(.widget-box) {
+    --background: rgb(var(--v-theme-surface));
+    max-width: 760px;
+    margin-inline: auto;
+    padding: 24px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 18px;
+    background: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
+  }
+  :deep(.widget-box > .s--widget-header h2) { font-family: inherit; font-size: 17px; font-weight: 500; line-height: 25px; }
+  :deep(.widget-box > .s--widget-header .--icon) { font-size: 20px !important; }
+  :deep(.widget-box > .v-list-subheader) { font-family: inherit; font-size: 12px; font-weight: 400; line-height: 19px; color: var(--sd-modern-muted); }
+
+  @media (max-width: 599px) {
+    padding: 20px 12px;
+    .b-product-add-full__type { padding: 20px 16px; }
+    :deep(.widget-box) { padding: 20px 16px; }
+  }
+}
+
 .seo-preview {
   //animation: blur 1s ease;
   transition: all 1s;

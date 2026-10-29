@@ -1018,7 +1018,16 @@ export default {
         marker.remove();
       });
 
-      if (selected_position && selected_position.lng && selected_position.lat) {
+      // Zero is a valid latitude/longitude, including on the equator/prime meridian.
+      if (
+        selected_position &&
+        [selected_position.lng, selected_position.lat].every(
+          (value) =>
+            ["number", "string"].includes(typeof value) &&
+            String(value).trim() !== "" &&
+            Number.isFinite(Number(value)),
+        )
+      ) {
         if (this.map_box) {
           const el = document.createElement("div");
 

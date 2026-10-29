@@ -15,7 +15,86 @@
 <template>
   <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Login devices ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-  <div class="widget-box mb-5">
+  <section
+    v-if="modern"
+    class="b-user-security-login-devices sd-modern-widget text-start"
+    :aria-busy="fetching_login_devices"
+    :aria-label="$t('user_security_control.modern.devices_title')"
+  >
+    <header class="sd-modern-header b-user-security-login-devices__header">
+      <div class="sd-modern-title">
+        <v-icon class="sd-modern-icon--plain" size="19" aria-hidden="true">devices</v-icon>
+        <div>
+          <h2 class="sd-modern-title-text b-user-security-login-devices__title">
+            {{ $t('user_security_control.modern.devices_title') }}
+          </h2>
+          <p class="sd-modern-subtitle b-user-security-login-devices__subtitle">
+            {{ $t('user_security_control.modern.devices_subtitle') }}
+          </p>
+        </div>
+      </div>
+      <v-btn
+        class="sd-modern-button sd-modern-button--small"
+        variant="text"
+        :loading="fetching_login_devices"
+        :disabled="fetching_login_devices"
+        prepend-icon="refresh"
+        @click="fetchLoginDevices"
+      >
+        {{ $t('global.actions.refresh') }}
+      </v-btn>
+    </header>
+
+    <u-loading-progress v-if="fetching_login_devices" />
+    <ul v-else-if="login_devices.length" class="b-user-security-login-devices__list">
+      <li
+        v-for="(login_device, index) in login_devices"
+        :key="index"
+        class="b-user-security-login-devices__row"
+      >
+        <v-avatar class="b-user-security-login-devices__identity" size="24" tile>
+          <img :src="getDeviceImage(login_device)" alt="" />
+        </v-avatar>
+        <div class="b-user-security-login-devices__details">
+          <bdi class="b-user-security-login-devices__ip">{{ login_device.ip_address }}</bdi>
+          <p class="b-user-security-login-devices__agent">{{ login_device.user_agent }}</p>
+        </div>
+        <div class="b-user-security-login-devices__activity">
+          <span class="sd-modern-list-header">{{ $t('user_security_control.modern.last_activity') }}</span>
+          <span>{{ getLocalTimeStringSmall(login_device.last_activity) }}</span>
+        </div>
+        <div class="b-user-security-login-devices__action">
+          <span
+            v-if="
+              current_device &&
+              current_device.user_agent === login_device.user_agent &&
+              current_device.ip_address === login_device.ip_address
+            "
+            class="sd-modern-status sd-modern-status--plain"
+          >
+            <span class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true" />
+            {{ $t('user_security_control.modern.current_device') }}
+          </span>
+          <v-btn
+            v-else
+            class="sd-modern-button sd-modern-button--small"
+            variant="outlined"
+            :loading="busy_logout_device === login_device"
+            :disabled="!current_device || !!busy_logout_device"
+            prepend-icon="logout"
+            @click="logoutSession(login_device)"
+          >
+            {{ $t('user_security_control.modern.logout') }}
+          </v-btn>
+        </div>
+      </li>
+    </ul>
+    <p v-else-if="login_devices_loaded" class="sd-modern-empty-state" role="status">
+      {{ $t('user_security_control.modern.no_devices') }}
+    </p>
+  </section>
+
+  <div v-else class="widget-box mb-5">
     <u-widget-header
       :add-caption="$t('global.actions.refresh')"
       :add-loading="fetching_login_devices"
@@ -103,11 +182,14 @@ export default {
   mixins: [DateMixin ],
 
   components: {},
-  props: {},
+  props: {
+    modern: Boolean,
+  },
   data: () => ({
     login_devices: [],
     current_device: null,
     fetching_login_devices: false,
+    login_devices_loaded: false,
     busy_logout_device: null,
   }),
 
@@ -126,6 +208,7 @@ export default {
         .then(({ data }) => {
           this.login_devices = data.sessions;
           this.current_device = data.current;
+          this.login_devices_loaded = true;
         })
         .catch((error) => {
           NotificationService.showLaravelError(error);
@@ -176,4 +259,104 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-user-security-login-devices {
+  &.sd-modern-widget {
+    padding: 24px;
+  }
+
+  &__header {
+    margin-block-end: 18px;
+  }
+
+  &__title {
+    font-size: 16px;
+    line-height: 23px;
+    letter-spacing: -0.3px;
+  }
+
+  &__subtitle {
+    margin-block: 5px 0;
+    font-size: 12px;
+    line-height: 19px;
+  }
+
+  &__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) minmax(110px, auto) 110px;
+    align-items: center;
+    gap: 16px;
+    padding-block: 18px;
+
+    & + & {
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+  }
+
+  &__identity {
+    align-self: start;
+    margin-block-start: 3px;
+  }
+
+  &__details {
+    min-width: 0;
+  }
+
+  &__ip {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 21px;
+    overflow-wrap: anywhere;
+  }
+
+  &__agent {
+    margin: 4px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 19px;
+    overflow-wrap: anywhere;
+  }
+
+  &__activity {
+    display: grid;
+    gap: 5px;
+    font-size: 12px;
+    line-height: 19px;
+  }
+
+  &__action {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+
+  @media (max-width: 640px) {
+    &.sd-modern-widget {
+      padding: 20px 17px;
+    }
+
+    &__row {
+      grid-template-columns: 24px minmax(0, 1fr) auto;
+      gap: 12px;
+    }
+
+    &__details {
+      grid-column: 2 / -1;
+    }
+
+    &__activity {
+      grid-column: 2;
+    }
+
+    &__action {
+      grid-column: 3;
+    }
+  }
+}
+</style>

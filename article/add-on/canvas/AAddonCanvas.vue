@@ -15,24 +15,29 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
     :data="json_data"
+    :class="{ 'a-article-addon--editable': editable }"
     class="image-overlay-canvas"
     contenteditable="false"
     spellcheck="false"
   >
     <a-addon-toolbar
       v-if="editable"
-      :edit-button="false"
       :element="element"
       :title="$t('global.commons.canvas')"
+      :edit-label="$t('global.article.inline_tools.canvas_settings')"
+      edit-icon="tune"
+      @click:edit="$refs.canvasEditor.toggleSettings()"
     >
     </a-addon-toolbar>
 
     <a-addon-canvas-editor
+      ref="canvasEditor"
       v-model:image="bg"
       v-model:ratio="ratio"
       v-model:rects="rects"
-      :editable="edit_mode"
+      :editable="editable"
       :upload-url="uploadUrl"
+      @change="onChange"
     >
     </a-addon-canvas-editor>
   </div>
@@ -41,6 +46,7 @@
 <script lang="ts">
 import AAddonCanvasEditor from "../../../article/add-on/canvas/editor/AAddonCanvasEditor.vue";
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
+import { articleAddonContext } from "../toolbar/article-addon-context";
 
 export default {
   name: "AAddonCanvas",
@@ -98,7 +104,12 @@ export default {
   mounted() {
     this.element = this.$el;
   },
-  methods: {},
+  methods: {
+    onChange() {
+      const context = this.editable && articleAddonContext(this.element);
+      if (context) this.$nextTick(() => context.core.triggerInput());
+    },
+  },
 };
 </script>
 

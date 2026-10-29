@@ -13,7 +13,121 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs" :class="{ 'b-domains-list--modern text-start': modern }">
+  <div v-bind="$attrs" :class="{ 'b-domains-list--modern text-start': modern, 'b-domains-list--refined sd-modern-widget': refinedView }">
+    <template v-if="refinedView">
+      <header v-if="showHeader" class="sd-modern-header b-domains-list__heading">
+        <div class="sd-modern-title">
+          <v-icon class="sd-modern-icon sd-modern-icon--plain" size="16">language</v-icon>
+          <div>
+            <h2 class="sd-modern-title-text">{{ $t('domains_modern.list.title') }}</h2>
+            <div class="sd-modern-subtitle">
+              {{ $t('domains_modern.list.subtitle') }}
+              <v-btn icon variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="$t('domains_modern.list.connection_help_label')">
+                <v-icon size="14">info_outline</v-icon>
+                <v-tooltip activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.list.connection_help') }}</v-tooltip>
+              </v-btn>
+            </div>
+          </div>
+        </div>
+        <v-btn v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)" class="sd-modern-button b-domains-list__add" color="primary" variant="flat" prepend-icon="add" @click="showAddDomainDialog">{{ $t('domains_modern.list.add') }}</v-btn>
+      </header>
+
+      <div class="sd-modern-list-toolbar b-domains-list__refined-toolbar">
+        <div class="b-domains-list__main-address">
+          <v-icon size="16">link</v-icon><span>{{ $t('domains_modern.list.main_address') }}</span><bdi dir="ltr">{{ shop.domain }}</bdi>
+        </div>
+        <v-text-field v-model="search" class="b-domains-list__search" :placeholder="$t('domains_modern.list.search')" :aria-label="$t('domains_modern.list.search')" clearable hide-details prepend-inner-icon="search" single-line variant="plain" />
+      </div>
+      <u-loading-progress v-if="busy_fetch" />
+
+      <v-data-table-server
+        v-model:expanded="expanded" v-model:options="options" v-model:page="page" v-model:sort-by="sortBy"
+        :headers="refinedHeaders" :items="shop_domains" :items-length="totalItems" :items-per-page="itemsPerPage"
+        :header-props="{ sortByText: $t('global.commons.sort_by') }" :mobile="$vuetify.display.width < 700"
+        :hide-default-header="$vuetify.display.width < 700"
+        :row-props="() => ({ class: 'sd-modern-clickable-item' })" :loading="busy_fetch"
+        class="sd-modern-data-table b-domains-list__refined-table bg-transparent" density="compact" hide-default-footer item-value="url" expand-on-click
+      >
+        <template #item.url="{ item }">
+          <div class="b-domains-list__address"><bdi dir="ltr">{{ item.url.replace(/^https?:\/\//, '') }}</bdi><BShopLicenseBlockIcon v-if="item.domain && !can_edit_domain(item.domain)" /></div>
+          <div class="b-domains-list__meta"><v-icon v-if="item.primary" size="13">star_border</v-icon>{{ item.primary ? $t('domains_modern.list.primary') : item.official === 'local' ? $t('domains_modern.list.store_address') : item.domain?.externally_hosted ? $t('admin_shop.dashboard.info.table.externally_hosted') : 'HTTPS' }}</div>
+        </template>
+        <template #item.home="{ item }">
+          <v-btn v-if="!item.official && !item.domain?.externally_hosted" class="b-domains-list__destination" variant="text" :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)" @click.stop="showSetHomeDialog(item.domain)">
+            <v-icon size="16">{{ item.primary || !item.domain.home ? 'home' : 'web' }}</v-icon>
+            <span><span>{{ item.primary || !item.domain.home ? $t('domains_modern.list.store_default') : GetDomainHomeName(getCorrespondingHomePageValue(item)) }}</span><span class="b-domains-list__meta">{{ item.primary || !item.domain.home ? GetDomainHomeName(shop.home) : ('' + item.domain.home).startsWith('/') ? item.domain.home : $t('domains_modern.list.custom_home') }}</span></span>
+          </v-btn>
+          <div v-else class="b-domains-list__destination-static"><v-icon size="16">{{ item.domain?.externally_hosted ? 'open_in_new' : 'home' }}</v-icon><span>{{ item.domain?.externally_hosted ? $t('admin_shop.dashboard.info.table.externally_hosted') : $t('domains_modern.list.store_default') }}<span v-if="!item.domain?.externally_hosted" class="b-domains-list__meta">{{ GetDomainHomeName(shop.home) }}</span></span></div>
+        </template>
+        <template #item.connection="{ item }">
+          <span class="sd-modern-status sd-modern-status--plain b-domains-list__connection"><span class="sd-modern-status__dot" :class="{ 'bg-warning': item.error || (!item.ssl && !item.domain?.externally_hosted), 'bg-success': item.ssl && !item.error && !item.domain?.externally_hosted && item.official !== 'local' }" />{{ item.domain?.externally_hosted ? $t('domains_modern.list.external') : item.error || !item.ssl ? $t('domains_modern.list.attention') : item.official === 'local' ? $t('domains_modern.list.store_address') : 'HTTPS' }}</span>
+          <div v-if="item.approved !== undefined && !item.domain?.externally_hosted" class="b-domains-list__meta">{{ $t(item.error ? 'domains_modern.list.connection_error' : item.approved ? 'domains_modern.list.verified' : 'domains_modern.list.pending') }}</div>
+        </template>
+        <template #item.visibility="{ item }">
+          <span class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="{ 'bg-success': item.enable }" />{{ $t(item.enable ? 'domains_modern.list.enabled' : 'domains_modern.list.disabled') }}</span>
+          <div v-if="item.official !== 'local'" class="b-domains-list__meta">{{ $t(item.indexed ? 'domains_modern.list.index_allowed' : 'domains_modern.list.index_off') }}</div>
+        </template>
+        <template #item.actions="{ item, internalItem, isExpanded, toggleExpand }">
+          <div class="b-domains-list__row-actions">
+            <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t('domains_modern.list.copy')" @click.stop="copyToClipboard(item.url)"><v-icon size="16">content_copy</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.list.copy') }}</v-tooltip></v-btn>
+            <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t(isExpanded(internalItem) ? 'domains_modern.list.collapse' : 'domains_modern.list.expand')" :aria-expanded="isExpanded(internalItem)" @click.stop="toggleExpand(internalItem)"><v-icon size="16">{{ isExpanded(internalItem) ? 'expand_less' : 'expand_more' }}</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t(isExpanded(internalItem) ? 'domains_modern.list.collapse' : 'domains_modern.list.expand') }}</v-tooltip></v-btn>
+          </div>
+        </template>
+        <template #expanded-row="{ columns, item }">
+          <tr class="b-domains-list__expanded"><td :colspan="columns.length">
+            <section class="b-domains-list__details text-start">
+              <div class="sd-modern-list-header">{{ $t('domains_modern.list.settings') }}</div>
+              <h3 class="b-domains-list__detail-title"><bdi dir="ltr">{{ item.domain?.domain || item.url }}</bdi></h3>
+              <b-domain-flow-map
+                :item="item" :shop="shop"
+                :read-only="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+                :busy-update="busy_update"
+                :busy-repair="busy_add_client && add_client_code === (item.domain ? item.domain.id : item.official)"
+                @update-domain="updateFlowDomain(item, $event)"
+                @edit-domain="handleFlowAction(item, 'edit-domain')"
+                @settings="handleFlowAction(item, 'settings', $event)"
+                @home="handleFlowAction(item, 'home')"
+                @default-home="handleFlowAction(item, 'default-home')"
+                @sitemap="handleFlowAction(item, 'sitemap')"
+                @repair="handleFlowAction(item, 'repair')"
+              />
+              <div class="b-domains-list__scopes">
+                <v-tooltip v-for="scope in ['currencies', 'languages']" :key="scope"
+                           location="top" open-on-focus :open-on-click="!item.domain || !writeShopAccess(ShopPermissionRegions.SETTINGS.code)" content-class="sd-modern-tooltip text-start">
+                  <template #activator="{ props }">
+                    <button v-bind="props" type="button" class="b-domains-list__scope-action"
+                            :aria-label="$t(scope === 'currencies' ? 'domains_modern.map.currenciesLabel' : 'domains_modern.map.languagesLabel')"
+                            :aria-disabled="!item.domain || !writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+                            @click.stop="handleFlowAction(item, 'settings', scope)">
+                      <template v-if="scope === 'currencies'">
+                        <span v-if="!item.domain?.currencies?.length">{{ $t('domains_modern.list.all_currencies') }}</span>
+                        <span v-for="currency in item.domain?.currencies" :key="currency"><flag :iso="GetCurrency(currency)?.flag" :squared="false" /> {{ currency }}</span>
+                      </template>
+                      <template v-else>
+                        <span v-if="!item.domain?.languages?.length">{{ $t('domains_modern.list.all_languages') }}</span>
+                        <span v-for="language in item.domain?.languages" :key="language">{{ getLanguageName(language) }}</span>
+                      </template>
+                    </button>
+                  </template>
+                  {{ domainScopeHelp(item, scope) }}
+                </v-tooltip>
+                <span v-if="item.affiliate_id">{{ $t('global.commons.affiliate') }}</span>
+              </div>
+              <div v-if="item.error" class="sd-modern-notice b-domains-list__error" role="alert"><v-icon color="error" size="16">error_outline</v-icon><span>{{ item.error }}</span></div>
+              <details v-if="item.domain || item.certificate" class="b-domains-list__advanced">
+                <summary>{{ $t(item.domain?.externally_hosted ? 'domains_modern.map.externalAdvanced' : 'domains_modern.map.advanced') }}</summary>
+                <div v-if="!item.domain?.externally_hosted && item.certificate" class="b-domains-list__certificate"><v-icon size="15">verified_user</v-icon><span>{{ item.certificate.Name }}</span><span>{{ getLocalDateString(item.certificate['Issue Date']) }} ~ {{ getLocalDateString(item.certificate['Expiry Date']) }}</span><span v-if="item.certificate['Expiry Date']?.convertToLocalDate(item.certificate['Expiry Date'])?.isBeforeToday()">{{ $t('domains_modern.list.expired') }}</span></div>
+                <div v-if="!item.domain?.externally_hosted && item.domain" class="b-domains-list__meta">{{ $t(item.domain.ssl_proxy ? 'domains_modern.list.selldone_ssl' : 'domains_modern.list.external_ssl') }}</div>
+                <details v-if="item.domain && writeShopAccess(ShopPermissionRegions.SETTINGS.code)" class="sd-modern-disclosure sd-modern-critical b-domains-list__critical"><summary>{{ $t('domains_modern.list.remove_title') }}</summary><p>{{ $t('domains_modern.list.remove_help') }}</p><v-btn :loading="busy_delete === item.domain.id" class="sd-modern-button sd-modern-button--danger" color="error" variant="elevated" prepend-icon="delete_outline" @click="deleteShopDomain(item.domain)">{{ $t('global.actions.delete') }}</v-btn></details>
+              </details>
+            </section>
+          </td></tr>
+        </template>
+        <template #no-data><div class="sd-modern-empty-state"><v-icon size="22">language</v-icon><span>{{ $t('domains_modern.list.empty') }}</span></div></template>
+        <template #bottom><div class="sd-modern-table-footer"><span class="sd-modern-page-summary">{{ $n(totalItems) }} {{ $t('commons.domains') }}</span><v-pagination v-model="page" :length="refinedPageCount" class="sd-modern-pagination" rounded /></div></template>
+      </v-data-table-server>
+    </template>
+    <template v-else>
     <u-widget-header
       v-if="showHeader && !modern"
       :add-caption="$t('admin_shop.dashboard.info.add_domain')"
@@ -791,6 +905,7 @@
       <v-icon>domain</v-icon>
       {{ $t("commons.main_domain") }}: {{ shop.domain }}
     </component>
+    </template>
   </div>
 
   <!-- ██████████████████████ Sitemap Dialog ██████████████████████ -->
@@ -826,7 +941,8 @@
   <v-dialog
     v-if="shop"
     v-model="dialog_set_domain"
-    fullscreen
+    :fullscreen="!refinedView"
+    :max-width="refinedView ? 760 : undefined"
     scrollable
     transition="dialog-bottom-transition"
   >
@@ -834,6 +950,7 @@
       v-if="dialog_pre"
       :domain="selected_shop_domain"
       :shop="shop"
+      :modern="refinedView"
       @add="(val) => AddOrUpdateItemByID(domains, val)"
       @update="(val) => AddOrUpdateItemByID(domains, val)"
       @click:close="dialog_set_domain = false"
@@ -845,11 +962,12 @@
   <v-dialog
     v-if="selected_domain"
     v-model="dialog_set_home"
-    fullscreen
+    :fullscreen="!refinedView"
+    :max-width="refinedView ? 1040 : undefined"
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card class="text-start">
+    <v-card class="text-start" :class="{ 'b-domains-list__home-dialog sd-modern-widget': refinedView }">
       <v-card-title class="d-flex align-center">
         <img
           :height="24"
@@ -857,20 +975,22 @@
           src="../../../assets/icons/home.svg"
           width="auto"
         />
-        Page
+        {{ refinedView ? $t('domains_modern.list.home_for_domain') : 'Page' }}
         <v-icon class="mx-1">{{ $t("icons.chevron_next") }}</v-icon>
         {{ selected_domain ? selected_domain.domain : "" }}
       </v-card-title>
       <v-card-subtitle class="text-start mt-0">
-        {{ $t("admin_shop.dashboard.info.set_home_dialog.title") }}
+        {{ $t(refinedView ? 'domains_modern.list.home_help' : "admin_shop.dashboard.info.set_home_dialog.title") }}
       </v-card-subtitle>
 
       <v-card-text>
-        <div class="widget-box -large mb-5">
+        <div :class="refinedView ? 'b-domains-list__home-picker' : 'widget-box -large mb-5'">
           <b-shop-home-select
             v-if="dialog_set_home"
             :domain="selected_domain"
             :shop="shop"
+            :modern="refinedView"
+            :read-only="refinedView && !writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
             clearable
           ></b-shop-home-select>
         </div>
@@ -878,7 +998,7 @@
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="dialog_set_home = false">
+          <v-btn :size="refinedView ? undefined : 'x-large'" :class="{ 'sd-modern-button': refinedView }" variant="text" @click="dialog_set_home = false">
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -891,14 +1011,19 @@
 
   <v-dialog
     v-model="show_setting"
-    fullscreen
+    :fullscreen="!refinedView"
+    :max-width="refinedView ? 1040 : undefined"
     scrollable
     transition="dialog-bottom-transition"
+    @after-enter="focusFlowSetting"
+    @after-leave="setting_section = null"
   >
     <b-domain-setting
       v-if="selected_domain"
+      ref="domainSetting"
       :domain="selected_domain"
       :shop="shop"
+      :modern="refinedView"
       @click:close="show_setting = false"
     >
     </b-domain-setting>
@@ -924,12 +1049,15 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import UMenuExpandable from "@selldone/components-vue/ui/menu/expandable/UMenuExpandable.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
+import BDomainFlowMap from "./BDomainFlowMap.vue";
 
 export default {
   name: "BDomainsList",
+  emits: ['show-default-home'],
   mixins: [DateMixin, DomainMixin, CurrencyMixin],
 
   components: {
+    BDomainFlowMap,
     ULoadingProgress,
     UMenuExpandable,
     UTextCopyBox,
@@ -941,6 +1069,7 @@ export default {
   },
   props: {
     modern: { type: Boolean, default: false },
+    refined: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -994,9 +1123,25 @@ export default {
 
     //---------------------------------
     show_setting: false,
+    setting_section: null,
   }),
 
   computed: {
+    refinedView() { return this.modern && this.refined; },
+    refinedPageCount() {
+      // Hosted addresses are added only to the first unfiltered page, outside the server's custom-domain limit.
+      const customDomains = this.totalItems - (this.show_subdomains ? 2 : 0);
+      return Math.max(1, Math.ceil(customDomains / this.itemsPerPage));
+    },
+    refinedHeaders() {
+      return [
+        { title: this.$t('domains_modern.list.domain'), key: 'url', value: 'url', sortable: false, width: '34%' },
+        { title: this.$t('domains_modern.list.home'), key: 'home', value: 'home', sortable: false, width: '23%' },
+        { title: this.$t('domains_modern.list.connection'), key: 'connection', value: 'connection', sortable: false, width: '18%' },
+        { title: this.$t('domains_modern.list.visibility'), key: 'visibility', value: 'visibility', sortable: false, width: '15%' },
+        { title: '', key: 'actions', value: 'actions', sortable: false, width: '10%', align: 'end' },
+      ];
+    },
     ShopPermissionRegions() {
       return ShopPermissionRegions;
     },
@@ -1084,6 +1229,46 @@ export default {
   },
   mounted() {},
   methods: {
+    updateFlowDomain(item, change) {
+      if (!this.writeShopAccess(ShopPermissionRegions.SETTINGS.code) || this.busy_update) return;
+      if (!['enable', 'indexed', 'primary'].includes(change?.param) || typeof change.value !== 'boolean') return;
+      if (item.official === 'local' && change.param !== 'enable') return;
+      if (change.param === 'primary' && (!change.value || item.primary)) return;
+      this.updateShopDomain(change.param, item.domain ? item.domain.domain : item.official, change.value);
+    },
+    handleFlowAction(item, action, section = null) {
+      if (action === 'sitemap') {
+        if (!item.domain?.externally_hosted) {
+          this.sitemap_base_url = item.url;
+          this.show_sitemap = true;
+        }
+        return;
+      }
+      if (action === 'default-home') {
+        if (!item.domain) this.$emit('show-default-home');
+        return;
+      }
+      if (!this.writeShopAccess(ShopPermissionRegions.SETTINGS.code)) return;
+      if (action === 'home' && item.domain && !item.domain.externally_hosted) this.showSetHomeDialog(item.domain);
+      else if (action === 'edit-domain' && item.domain) this.showEditDomainDialog(item.domain);
+      else if (action === 'settings' && item.domain) this.showFlowSetting(item.domain, section);
+      else if (action === 'repair' && !item.domain?.externally_hosted && !this.busy_add_client) {
+        this.createClientSecret(item.domain ? item.domain.id : item.official);
+      }
+    },
+    showFlowSetting(domain, section = null) {
+      this.setting_section = ['languages', 'currencies', 'ssl'].includes(section) ? section : null;
+      this.showSetting(domain);
+    },
+    focusFlowSetting() {
+      if (this.refinedView && this.setting_section) this.$refs.domainSetting?.focusSection(this.setting_section);
+    },
+    domainScopeHelp(item, scope) {
+      const currency = scope === 'currencies';
+      if (!item.domain) return this.$t(currency ? 'domains_modern.map.officialCurrencyHelp' : 'domains_modern.map.officialLanguageHelp');
+      if (!this.writeShopAccess(ShopPermissionRegions.SETTINGS.code)) return this.$t(currency ? 'domains_modern.map.currencyScopeReadOnlyHelp' : 'domains_modern.map.languageScopeReadOnlyHelp');
+      return this.$t(currency ? 'domains_modern.map.currencyScopeHelp' : 'domains_modern.map.languageScopeHelp');
+    },
     fetchDomains(page, sortBy, sortDesc = true) {
       this.busy_fetch = true;
       const search = this.search;
@@ -1284,6 +1469,85 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-domains-list__home-dialog {
+  &.sd-modern-widget { padding: 0; }
+  border-radius: 18px;
+  > .v-card-title { padding: 22px 25px 8px; font-size: 18px; font-weight: 500; line-height: 26px; white-space: normal; }
+  > .v-card-subtitle { padding-inline: 25px; font-size: 13px; line-height: 21px; white-space: normal; }
+  > .v-card-text { padding: 22px 25px; }
+  > .v-card-actions { padding: 0 25px 20px; }
+  .widget-buttons { display: flex; justify-content: flex-end; }
+  .widget-buttons .v-btn { flex: 0 1 auto; min-height: 38px; font-size: 12px; }
+  @media (max-width: 600px) {
+    > .v-card-title { padding-inline: 16px; }
+    > .v-card-subtitle { padding-inline: 16px; }
+    > .v-card-text { padding: 18px 16px; }
+    .widget-buttons .v-btn { min-height: 44px; }
+  }
+}
+.b-domains-list--refined {
+  padding: 25px;
+  border-radius: 18px;
+  .b-domains-list__heading { margin-block-end: 22px; gap: 18px; }
+  .sd-modern-title { align-items: flex-start; gap: 10px; }
+  .sd-modern-title > .v-icon { margin-block-start: 5px; }
+  .sd-modern-title-text { font-size: 18px; font-weight: 500; line-height: 26px; letter-spacing: -.1px; }
+  .sd-modern-subtitle { margin-block-start: 3px; font-size: 13px; font-weight: 400; line-height: 21px; }
+  .b-domains-list__add { height: 38px; min-height: 38px; font-size: 12px; line-height: 18px; padding-inline: 16px; border-radius: 10px; }
+  .b-domains-list__refined-toolbar { padding-block: 0 14px; margin-block-end: 0; }
+  .b-domains-list__main-address { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; min-width: 0; font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
+  .b-domains-list__main-address bdi { color: rgb(var(--v-theme-on-surface)); overflow-wrap: anywhere; }
+  .b-domains-list__search { max-width: 210px; min-width: 140px; margin-inline-start: auto; }
+  .b-domains-list__search :deep(.v-field__input) { font-size: 13px; line-height: 20px; }
+  .b-domains-list__refined-table { --v-table-header-height: 39px; width: 100%; }
+  .b-domains-list__refined-table :deep(.v-table__wrapper) { overflow: visible; }
+  .b-domains-list__refined-table :deep(table) { width: 100%; table-layout: fixed; }
+  .b-domains-list__refined-table :deep(thead th) { padding: 15px 8px 9px !important; }
+  .b-domains-list__refined-table :deep(tbody > tr:not(.b-domains-list__expanded) > td) { padding: 15px 8px !important; font-size: 12px; font-weight: 400; line-height: 19px; }
+  .b-domains-list__refined-table :deep(tbody > tr > td:first-child), .b-domains-list__refined-table :deep(thead th:first-child) { padding-inline-start: 0 !important; }
+  .b-domains-list__refined-table :deep(tbody > tr > td:last-child), .b-domains-list__refined-table :deep(thead th:last-child) { padding-inline-end: 0 !important; }
+  .b-domains-list__address { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; line-height: 20px; min-width: 0; overflow-wrap: anywhere; }
+  .b-domains-list__meta { display: flex; align-items: center; gap: 5px; margin-block-start: 3px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; overflow-wrap: anywhere; }
+  .b-domains-list__destination, .b-domains-list__destination-static { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; font-weight: 400; line-height: 19px; text-align: start; min-width: 0; }
+  .b-domains-list__destination { height: auto; min-height: 38px; border-radius: 8px; padding: 0; text-transform: none; letter-spacing: 0; white-space: normal; }
+  .b-domains-list__destination :deep(.v-btn__content) { white-space: normal; justify-content: flex-start; gap: 7px; text-align: start; min-width: 0; }
+  .b-domains-list__destination .v-icon, .b-domains-list__destination-static > .v-icon { margin-block-start: 2px; color: var(--sd-modern-muted); }
+  .b-domains-list__connection { white-space: normal; }
+  .b-domains-list__row-actions { --sd-modern-icon-button-size: 32px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+  .b-domains-list__expanded > td { padding: 0 !important; }
+  .b-domains-list__details { max-width: 760px; margin: 8px auto; padding: 24px; background: rgb(var(--v-theme-surface)); border: 1px solid var(--sd-modern-border); border-radius: 20px; }
+  .b-domains-list__detail-title { margin-block: 5px 0; font-size: 16px; font-weight: 500; line-height: 24px; overflow-wrap: anywhere; }
+  .b-domains-list__scopes { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin-block-start: 18px; padding-block-start: 17px; border-block-start: 1px solid var(--sd-modern-border); font-size: 11px; font-weight: 400; line-height: 17px; color: var(--sd-modern-muted); }
+  .b-domains-list__scope-action { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px; min-height: 28px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: inherit; font: inherit; text-align: start; }
+  .b-domains-list__scope-action > span { display: inline-flex; align-items: center; gap: 4px; }
+  .b-domains-list__scope-action[aria-disabled="true"] { cursor: default; }
+  .b-domains-list__scope-action:not([aria-disabled="true"]):hover { color: rgb(var(--v-theme-primary)); text-decoration: underline; }
+  .b-domains-list__scope-action:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 4px; }
+  .b-domains-list__advanced { margin-block-start: 17px; padding-block-start: 16px; border-block-start: 1px solid var(--sd-modern-border); font-size: 12px; font-weight: 400; line-height: 19px; }
+  .b-domains-list__advanced > summary { min-height: 28px; color: var(--sd-modern-muted); }
+  .b-domains-list__certificate { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-block-start: 15px; font-size: 11px; line-height: 18px; }
+  .b-domains-list__error { display: flex; align-items: flex-start; gap: 8px; margin-block-start: 15px; font-size: 12px; line-height: 19px; }
+  .b-domains-list__critical { margin-block-start: 16px; font-size: 12px; line-height: 19px; }
+  .b-domains-list__critical p { margin-block: 10px; color: var(--sd-modern-muted); }
+  .sd-modern-empty-state { padding-block: 40px; }
+  .sd-modern-table-footer { padding-block: 16px 0; }
+  @media (max-width: 699px) {
+    padding: 20px 15px;
+    .b-domains-list__heading { flex-direction: column; align-items: stretch; gap: 14px; }
+    .b-domains-list__refined-toolbar { flex-direction: column; align-items: stretch; }
+    .b-domains-list__search { width: 100%; max-width: none; margin-inline-start: 0; }
+    .b-domains-list__refined-table :deep(table) { table-layout: auto; }
+    .b-domains-list__refined-table :deep(tbody > tr:not(.b-domains-list__expanded) > td) { padding: 10px 0 !important; }
+    .b-domains-list__refined-table :deep(.v-data-table__td-value) { min-width: 0; max-width: 100%; }
+    .b-domains-list__details { padding: 18px 13px; border-radius: 16px; }
+    .b-domains-list__scope-action, .b-domains-list__advanced > summary { min-height: 44px; }
+    .b-domains-list__add { min-height: 44px; align-self: flex-start; }
+    .b-domains-list__search :deep(.v-field__input) { font-size: 16px; }
+  }
+  @media (pointer: coarse) {
+    .b-domains-list__scope-action, .b-domains-list__advanced > summary { min-height: 44px; }
+  }
+}
 .b-domains-list--modern {
   min-width: 0;
   font-weight: 400;

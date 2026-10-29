@@ -13,7 +13,521 @@
   -->
 
 <template>
-  <v-fade-transition group hide-on-leave tag="div">
+  <section v-if="modern" class="b-contact-conversation-modern text-start">
+    <header class="b-contact-conversation-modern__header">
+      <div class="b-contact-conversation-modern__identity">
+        <v-btn
+          icon
+          variant="text"
+          class="sd-modern-icon-button"
+          :aria-label="$t('shop_contacts.modern.back_to_conversations')"
+          @click="$emit('click:close')"
+        >
+          <v-icon :icon="$t('icons.chevron_back')" aria-hidden="true" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+          >
+            {{ $t("shop_contacts.modern.back_to_conversations") }}
+          </v-tooltip>
+        </v-btn>
+        <v-avatar size="32" class="hover-scale-small">
+          <img
+            :src="
+              selectedContact.user_id
+                ? getUserAvatar(selectedContact.user_id)
+                : require('../../../assets/icons/user.svg')
+            "
+            :alt="customerName"
+          />
+        </v-avatar>
+        <div class="b-contact-conversation-modern__customer">
+          <h2 dir="auto">{{ customerName }}</h2>
+          <p>
+            <span v-if="categoryName">{{ categoryName }} · </span>
+            {{
+              $t(
+                selectedContact.closed
+                  ? "shop_contacts.modern.closed"
+                  : selectedContact.waiting
+                    ? "shop_contacts.modern.awaiting_reply"
+                    : "shop_contacts.modern.open_conversation",
+              )
+            }}
+          </p>
+        </div>
+      </div>
+      <div class="b-contact-conversation-modern__actions">
+        <v-btn
+          icon
+          variant="text"
+          class="sd-modern-icon-button"
+          :aria-label="$t('shop_contacts.modern.context.title')"
+          @click="$emit('click:customer')"
+        >
+          <v-icon icon="view_sidebar" aria-hidden="true" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("shop_contacts.modern.context.title") }}</v-tooltip
+          >
+        </v-btn>
+        <v-btn
+          icon
+          variant="text"
+          class="sd-modern-icon-button"
+          :aria-label="$t('shop_contacts.modern.contact_details')"
+          @click="show_user_detail = true"
+        >
+          <v-icon icon="person_outline" aria-hidden="true" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+          >
+            {{ $t("shop_contacts.modern.contact_details") }}
+          </v-tooltip>
+        </v-btn>
+        <v-btn
+          :disabled="!canWrite || busy_contact || busy_delete !== null"
+          :loading="busy_close"
+          :prepend-icon="selectedContact.closed ? 'refresh' : 'check'"
+          variant="outlined"
+          class="sd-modern-button sd-modern-button--small"
+          @click="closeTicket()"
+        >
+          {{
+            $t(
+              selectedContact.closed
+                ? "global.commons.reopen_ticket"
+                : "global.commons.close_ticket",
+            )
+          }}
+        </v-btn>
+      </div>
+    </header>
+
+    <!-- The same server messages and product previews remain available in the modern view. -->
+    <div
+      ref="conversation_box"
+      class="b-contact-conversation-modern__messages"
+      role="log"
+      aria-live="polite"
+      :aria-label="$t('shop_contacts.modern.conversation_history')"
+    >
+      <p class="b-contact-conversation-modern__history">
+        {{ $t("shop_contacts.modern.conversation_history") }}
+      </p>
+      <article
+        v-for="(item, index) in selectedContact.messages"
+        :key="index"
+        class="b-contact-conversation-modern__message"
+        :class="{
+          'b-contact-conversation-modern__message--staff': item.officer,
+        }"
+      >
+        <div class="b-contact-conversation-modern__author">
+          <v-avatar size="22" class="hover-scale-small">
+            <img
+              :src="
+                item.user_id
+                  ? getUserAvatar(item.user_id)
+                  : require('../../../assets/icons/user.svg')
+              "
+              :alt="item.user || customerName"
+            />
+          </v-avatar>
+          <span>{{ item.user || customerName }}</span>
+          <span v-if="item.officer">· {{ $t("global.commons.officer") }}</span>
+        </div>
+        <div
+          v-if="item.message || item.link"
+          class="b-contact-conversation-modern__bubble"
+        >
+          <div
+            v-if="item.message"
+            class="b-contact-conversation-modern__body"
+            dir="auto"
+            v-html="smartConvert(item.message)"
+          />
+          <v-btn
+            v-if="item.link"
+            :href="item.link"
+            target="_blank"
+            rel="noopener noreferrer"
+            append-icon="north_east"
+            color="primary"
+            variant="text"
+            class="sd-modern-button sd-modern-button--small sd-modern-button--inline"
+            >{{ $t("shop_contacts.modern.open_link") }}</v-btn
+          >
+        </div>
+        <s-product-preview-by-id
+          v-if="item.product"
+          :product-id="item.product"
+          class="b-contact-conversation-modern__product"
+        />
+        <div class="b-contact-conversation-modern__message-meta">
+          <time v-if="item.date" :datetime="item.date">{{
+            getLocalTimeStringSmall(item.date)
+          }}</time>
+          <v-menu
+            v-if="
+              item.message ||
+              (item.officer && !selectedContact.closed && canWrite)
+            "
+            location="top end"
+            :offset="6"
+            content-class="sd-modern-select-menu"
+          >
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                :loading="busy_delete === index"
+                :aria-label="$t('shop_contacts.modern.message_actions')"
+                icon
+                variant="text"
+                class="sd-modern-icon-button b-contact-conversation-modern__message-action"
+              >
+                <v-icon icon="more_horiz" aria-hidden="true" />
+                <v-tooltip
+                  activator="parent"
+                  location="top"
+                  content-class="sd-modern-tooltip text-start"
+                >
+                  {{ $t("shop_contacts.modern.message_actions") }}
+                </v-tooltip>
+              </v-btn>
+            </template>
+            <v-list
+              density="compact"
+              class="b-contact-conversation-modern__message-menu text-start"
+            >
+              <v-list-item
+                v-if="item.message"
+                :key="item.message"
+                v-copy="item.message"
+                tag="button"
+                type="button"
+                link
+                prepend-icon="content_copy"
+                :title="$t('shop_contacts.modern.copy_message')"
+                class="b-contact-conversation-modern__message-menu-item"
+              />
+              <v-list-item
+                v-if="item.officer && !selectedContact.closed && canWrite"
+                :disabled="busy_delete !== null || busy_contact || busy_close"
+                prepend-icon="delete_outline"
+                :title="$t('shop_contacts.modern.delete_response')"
+                class="b-contact-conversation-modern__message-menu-item"
+                @click="deleteResponse(index)"
+              />
+            </v-list>
+          </v-menu>
+        </div>
+      </article>
+      <p
+        v-if="selectedContact.closed"
+        class="b-contact-conversation-modern__closed"
+      >
+        {{ $t("global.commons.closed_at") }}
+        {{ getLocalTimeStringSmall(selectedContact.closed_at) }}
+      </p>
+    </div>
+
+    <section
+      class="b-contact-conversation-modern__composer"
+      :aria-label="$t('shop_contacts.modern.reply_to_customer')"
+    >
+      <div class="b-contact-conversation-modern__composer-heading">
+        <span>{{
+          $t(
+            selectedContact.closed
+              ? "shop_contacts.modern.conversation_closed"
+              : "shop_contacts.modern.reply_to_customer",
+          )
+        }}</span>
+        <v-btn
+          icon
+          variant="text"
+          class="sd-modern-icon-button sd-modern-info-button"
+          :aria-label="$t('shop_contacts.modern.reply_help')"
+        >
+          <v-icon icon="info_outline" size="16" aria-hidden="true" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            open-on-click
+            open-on-focus
+            content-class="sd-modern-tooltip text-start"
+          >
+            {{ $t("shop_contacts.modern.reply_help") }}
+          </v-tooltip>
+        </v-btn>
+      </div>
+      <div class="b-contact-conversation-modern__editor">
+        <v-textarea
+          v-model="contact_message"
+          :disabled="
+            selectedContact.closed ||
+            !canWrite ||
+            busy_contact ||
+            busy_close ||
+            busy_delete !== null
+          "
+          :placeholder="
+            $t(
+              selectedContact.closed
+                ? 'shop_contacts.modern.reopen_to_reply'
+                : 'shop_contacts.modern.reply_placeholder',
+            )
+          "
+          :aria-label="$t('global.commons.message')"
+          :rules="[GlobalRules.counter(1024)]"
+          maxlength="1024"
+          rows="2"
+          max-rows="5"
+          auto-grow
+          hide-details="auto"
+          variant="plain"
+          class="b-contact-conversation-modern__reply"
+        />
+        <div class="b-contact-conversation-modern__composer-actions">
+          <v-btn
+            :disabled="
+              selectedContact.closed ||
+              !canWrite ||
+              busy_contact ||
+              busy_close ||
+              busy_delete !== null
+            "
+            prepend-icon="local_mall"
+            variant="text"
+            class="sd-modern-button sd-modern-button--small sd-modern-button--inline"
+            @click="showSelectProduct()"
+            >{{ $t("shop_contacts.modern.send_product") }}</v-btn
+          >
+          <div class="b-contact-conversation-modern__send">
+            <span class="b-contact-conversation-modern__counter"
+              >{{ (contact_message || "").length }} / 1024</span
+            >
+            <v-btn
+              :disabled="
+                selectedContact.closed ||
+                !canWrite ||
+                busy_close ||
+                busy_delete !== null ||
+                !contact_message?.trim() ||
+                contact_message.length > 1024
+              "
+              :loading="busy_contact"
+              prepend-icon="send"
+              color="primary"
+              variant="flat"
+              class="sd-modern-button sd-modern-button--small sd-modern-button--primary"
+              @click="sendResponse()"
+              >{{ $t("shop_contacts.modern.send_reply") }}</v-btn
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <v-dialog
+      v-model="show_user_detail"
+      max-width="560"
+      content-class="b-contact-conversation-modern-dialog"
+    >
+      <v-card class="b-contact-conversation-modern__dialog text-start">
+        <header class="b-contact-conversation-modern__dialog-header">
+          <h2>{{ $t("shop_contacts.modern.contact_details") }}</h2>
+          <v-btn
+            icon
+            variant="text"
+            class="sd-modern-icon-button"
+            :aria-label="$t('global.actions.close')"
+            @click="show_user_detail = false"
+          >
+            <v-icon icon="close" aria-hidden="true" />
+            <v-tooltip
+              activator="parent"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              >{{ $t("global.actions.close") }}</v-tooltip
+            >
+          </v-btn>
+        </header>
+        <v-card-text>
+          <dl class="b-contact-conversation-modern__details">
+            <div>
+              <dt>{{ $t("global.commons.user") }}</dt>
+              <dd>{{ customerName }}</dd>
+            </div>
+            <div v-if="categoryName">
+              <dt>{{ $t("global.commons.category") }}</dt>
+              <dd>{{ categoryName }}</dd>
+            </div>
+            <div>
+              <dt>{{ $t("global.commons.email") }}</dt>
+              <dd>
+                <button
+                  v-copy
+                  type="button"
+                  :aria-label="
+                    $t('global.actions.copy') +
+                    ': ' +
+                    $t('global.commons.email')
+                  "
+                >
+                  {{
+                    selectedContact.user
+                      ? selectedContact.user.email
+                      : selectedContact.email
+                  }}
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                    content-class="sd-modern-tooltip text-start"
+                    >{{ $t("global.actions.copy") }}</v-tooltip
+                  >
+                </button>
+              </dd>
+            </div>
+            <div>
+              <dt>{{ $t("global.commons.phone") }}</dt>
+              <dd>
+                <button
+                  v-copy
+                  type="button"
+                  :aria-label="
+                    $t('global.actions.copy') +
+                    ': ' +
+                    $t('global.commons.phone')
+                  "
+                >
+                  {{
+                    selectedContact.user
+                      ? selectedContact.user.phone
+                      : selectedContact.phone
+                  }}
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                    content-class="sd-modern-tooltip text-start"
+                    >{{ $t("global.actions.copy") }}</v-tooltip
+                  >
+                </button>
+              </dd>
+            </div>
+            <div>
+              <dt>{{ $t("global.commons.ticket_url") }}</dt>
+              <dd>
+                <button
+                  v-copy
+                  type="button"
+                  :aria-label="
+                    $t('global.actions.copy') +
+                    ': ' +
+                    $t('global.commons.ticket_url')
+                  "
+                >
+                  {{ selectedContact.url
+                  }}<v-tooltip
+                    activator="parent"
+                    location="top"
+                    content-class="sd-modern-tooltip text-start"
+                    >{{ $t("global.actions.copy") }}</v-tooltip
+                  >
+                </button>
+              </dd>
+            </div>
+            <div>
+              <dt>{{ $t("global.commons.rate") }}</dt>
+              <dd>
+                <u-rating-emoji
+                  v-model="selectedContact.rate"
+                  read-only
+                  x-small
+                />
+              </dd>
+            </div>
+          </dl>
+        </v-card-text>
+        <v-card-actions class="b-contact-conversation-modern__dialog-actions">
+          <v-btn
+            variant="text"
+            class="sd-modern-button sd-modern-button--small"
+            @click="show_user_detail = false"
+            >{{ $t("global.actions.close") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="show_products"
+      max-width="620"
+      content-class="b-contact-conversation-modern-dialog"
+    >
+      <v-card class="b-contact-conversation-modern__dialog text-start">
+        <header class="b-contact-conversation-modern__dialog-header">
+          <h2>{{ $t("shop_contacts.modern.send_product") }}</h2>
+          <v-btn
+            icon
+            variant="text"
+            class="sd-modern-icon-button"
+            :aria-label="$t('global.actions.close')"
+            @click="show_products = false"
+          >
+            <v-icon icon="close" aria-hidden="true" />
+            <v-tooltip
+              activator="parent"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              >{{ $t("global.actions.close") }}</v-tooltip
+            >
+          </v-btn>
+        </header>
+        <v-card-text>
+          <b-products-select-box
+            v-if="show_products"
+            v-model="selected_product_id"
+            :shop="shop"
+            auto-open-dialog
+            simple-mode
+            single-product-select
+          />
+        </v-card-text>
+        <v-card-actions class="b-contact-conversation-modern__dialog-actions">
+          <v-btn
+            variant="text"
+            class="sd-modern-button sd-modern-button--small"
+            @click="show_products = false"
+            >{{ $t("global.actions.back") }}</v-btn
+          >
+          <v-btn
+            :disabled="
+              !selected_product_id ||
+              selectedContact.closed ||
+              !canWrite ||
+              busy_close ||
+              busy_delete !== null
+            "
+            :loading="busy_contact"
+            prepend-icon="send"
+            color="primary"
+            variant="flat"
+            class="sd-modern-button sd-modern-button--small sd-modern-button--primary"
+            @click="sendResponse()"
+            >{{ $t("shop_contacts.modern.send_product") }}</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </section>
+  <v-fade-transition v-else group hide-on-leave tag="div">
     <v-card
       v-if="show_user_detail"
       key="detail"
@@ -25,7 +539,8 @@
         <v-btn
           :caption="$t('global.actions.close')"
           class="sub-caption -hover"
-          icon variant="text"
+          icon
+          variant="text"
           @click="show_user_detail = false"
         >
           <v-icon> close</v-icon>
@@ -175,7 +690,8 @@
                     :title="$t('global.actions.delete')"
                     class="absolute-top-end -zero"
                     color="red"
-                    icon variant="text"
+                    icon
+                    variant="text"
                     @click="deleteResponse(index)"
                   >
                     <v-icon>close</v-icon>
@@ -298,9 +814,17 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
  */
 export default {
   name: "BContactConversation",
-  mixins: [DateMixin ],
+  mixins: [DateMixin],
   components: { SProductPreviewById, BProductsSelectBox, URatingEmoji },
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
+    canWrite: {
+      type: Boolean,
+      default: true,
+    },
     shop: {
       required: true,
       type: Object,
@@ -336,13 +860,51 @@ export default {
     busy_rate: false,
   }),
 
+  computed: {
+    customerName() {
+      return (
+        this.selectedContact.user?.name ||
+        this.selectedContact.name ||
+        this.$t("global.commons.user")
+      );
+    },
+    categoryName() {
+      const category = SupportCategory[this.selectedContact.category];
+      return category ? this.$t(category.name) : this.selectedContact.category;
+    },
+  },
+
+  mounted() {
+    if (!this.modern) return;
+    this.$nextTick(() => {
+      const conversation = this.$refs.conversation_box;
+      if (conversation) conversation.scrollTop = conversation.scrollHeight;
+    });
+  },
+
   methods: {
     sendResponse() {
+      if (
+        this.modern &&
+        (!this.canWrite ||
+          this.selectedContact.closed ||
+          this.busy_contact ||
+          this.busy_close ||
+          this.busy_delete !== null ||
+          (this.contact_message || "").length > 1024)
+      )
+        return;
       // Can send message product without body:
       if (!this.contact_message && !this.selected_product_id) return;
 
       if (this.contact_message)
         this.contact_message = this.contact_message.replace(/<[^>]*>?/gm, "");
+      if (
+        this.modern &&
+        !this.contact_message?.trim() &&
+        !this.selected_product_id
+      )
+        return;
 
       this.busy_contact = true;
 
@@ -365,8 +927,10 @@ export default {
             if (!this.popup)
               // Not show success message in popup mode!
               NotificationService.showSuccessAlert(
-                "Send message",
-                "Your response sent successfully.",
+                this.modern ? null : "Send message",
+                this.modern
+                  ? this.$t("shop_contacts.modern.reply_sent")
+                  : "Your response sent successfully.",
               );
 
             this.$emit("update:selectedContact", data.contact);
@@ -381,7 +945,7 @@ export default {
 
             this.$nextTick(() => {
               const objDiv = this.$refs.conversation_box;
-              objDiv.scrollTop = objDiv.scrollHeight + 80;
+              if (objDiv) objDiv.scrollTop = objDiv.scrollHeight + 80;
             });
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
@@ -394,11 +958,41 @@ export default {
     },
 
     deleteResponse(index) {
+      // A closed ticket must be reopened before a staff response can be removed.
+      if (
+        this.modern &&
+        (!this.canWrite ||
+          this.selectedContact.closed ||
+          !this.selectedContact.messages[index]?.officer ||
+          this.busy_contact ||
+          this.busy_close ||
+          this.busy_delete !== null)
+      )
+        return;
+      const contact = this.selectedContact;
+      const response = contact.messages[index];
       NotificationService.openDangerAlert(
-        "Delete message",
-        "Are you sure to delete this response?",
-        "Yes, delete now",
+        this.modern
+          ? this.$t("shop_contacts.modern.delete_title")
+          : "Delete message",
+        this.modern
+          ? this.$t("shop_contacts.modern.delete_message")
+          : "Are you sure to delete this response?",
+        this.modern
+          ? this.$t("shop_contacts.modern.delete_confirm")
+          : "Yes, delete now",
         () => {
+          if (
+            this.modern &&
+            (!this.canWrite ||
+              this.selectedContact?.id !== contact.id ||
+              this.selectedContact.closed ||
+              this.selectedContact.messages[index] !== response ||
+              this.busy_contact ||
+              this.busy_close ||
+              this.busy_delete !== null)
+          )
+            return;
           this.busy_delete = index;
           axios
             .delete(
@@ -413,8 +1007,10 @@ export default {
                 if (!this.popup)
                   // Not show success message in popup mode!
                   NotificationService.showSuccessAlert(
-                    "Remove message",
-                    "Message response removed successfully.",
+                    this.modern ? null : "Remove message",
+                    this.modern
+                      ? this.$t("shop_contacts.modern.response_removed")
+                      : "Message response removed successfully.",
                   );
                 this.$emit("update:selectedContact", data.contact);
                 this.$emit("update", data.contact);
@@ -431,6 +1027,14 @@ export default {
     },
 
     closeTicket() {
+      if (
+        this.modern &&
+        (!this.canWrite ||
+          this.busy_close ||
+          this.busy_contact ||
+          this.busy_delete !== null)
+      )
+        return;
       this.busy_close = true;
       axios
         .post(
@@ -448,8 +1052,14 @@ export default {
             if (!this.popup)
               // Not show success message in popup mode!
               NotificationService.showSuccessAlert(
-                "Ticket closed",
-                "This ticket closed successfully.",
+                this.modern ? null : "Ticket closed",
+                this.modern
+                  ? this.$t(
+                      data.contact.closed
+                        ? "shop_contacts.modern.closed_success"
+                        : "shop_contacts.modern.reopened_success",
+                    )
+                  : "This ticket closed successfully.",
               );
             this.$emit("update:selectedContact", data.contact);
             this.$emit("update", data.contact);
@@ -476,7 +1086,10 @@ export default {
         )
         .then(({ data }) => {
           if (!data.error) {
-            NotificationService.showSuccessAlert(null, "Thanks, Your rate has been saved.");
+            NotificationService.showSuccessAlert(
+              null,
+              "Thanks, Your rate has been saved.",
+            );
 
             this.$emit("update:selectedContact", data.contact);
             this.$emit("update", data.contact);
@@ -491,6 +1104,15 @@ export default {
     },
 
     showSelectProduct() {
+      if (
+        this.modern &&
+        (!this.canWrite ||
+          this.selectedContact.closed ||
+          this.busy_contact ||
+          this.busy_close ||
+          this.busy_delete !== null)
+      )
+        return;
       this.show_products = true;
     },
     smartConvert(message) {
@@ -530,6 +1152,395 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.b-contact-conversation-modern,
+.b-contact-conversation-modern__dialog,
+.b-contact-conversation-modern__message-menu {
+  --sd-modern-border: rgba(var(--v-theme-on-surface), 0.09);
+  --sd-modern-muted: rgba(var(--v-theme-on-surface), 0.66);
+  color: rgb(var(--v-theme-on-surface));
+  background: rgb(var(--v-theme-surface));
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 21px;
+  min-width: 0;
+}
+
+.b-contact-conversation-modern {
+  display: flex;
+  flex-direction: column;
+  border-radius: inherit;
+
+  &.b-contacts-messenger__conversation {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+
+    .b-contact-conversation-modern__header,
+    .b-contact-conversation-modern__composer {
+      flex: 0 0 auto;
+    }
+
+    .b-contact-conversation-modern__messages {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+
+    .b-contact-conversation-modern__message,
+    .b-contact-conversation-modern__history,
+    .b-contact-conversation-modern__closed {
+      flex-shrink: 0;
+    }
+  }
+
+  &__header,
+  &__identity,
+  &__actions,
+  &__composer-actions,
+  &__send,
+  &__dialog-header,
+  &__dialog-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__header {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 18px 20px;
+    min-height: 78px;
+    border-block-end: 1px solid var(--sd-modern-border);
+  }
+
+  &__identity {
+    flex: 1;
+  }
+  &__customer {
+    min-width: 0;
+  }
+  &__customer h2 {
+    margin: 0;
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  &__customer p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 17px;
+    color: var(--sd-modern-muted);
+    overflow-wrap: anywhere;
+  }
+
+  &__actions {
+    gap: 8px;
+
+    > .sd-modern-button {
+      border-color: var(--sd-modern-border);
+    }
+  }
+  &__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+    min-height: 330px;
+    padding: 22px 23px 24px;
+  }
+  &__history {
+    align-self: center;
+    margin: 0;
+    font-size: 11px;
+    line-height: 17px;
+    color: var(--sd-modern-muted);
+  }
+  &__message {
+    align-self: flex-start;
+    max-width: 91%;
+    min-width: 0;
+  }
+  &__message--staff {
+    align-self: flex-end;
+  }
+  &__author {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-block-end: 5px;
+    font-size: 11px;
+    line-height: 17px;
+    color: var(--sd-modern-muted);
+  }
+  &__message--staff &__author {
+    justify-content: flex-end;
+  }
+  &__bubble {
+    padding: 11px 13px;
+    border-radius: 11px;
+    border-end-start-radius: 3px;
+    background: rgba(var(--v-theme-on-surface), 0.035);
+    font-size: 13px;
+    line-height: 21px;
+    overflow-wrap: anywhere;
+  }
+  &__message--staff &__bubble {
+    border-end-start-radius: 11px;
+    border-end-end-radius: 3px;
+    background: rgba(var(--v-theme-primary), 0.055);
+  }
+  &__body {
+    white-space: pre-line;
+    user-select: text;
+    :deep(p) {
+      margin: 0;
+    }
+    :deep(a) {
+      color: rgb(var(--v-theme-primary));
+    }
+  }
+  &__product {
+    width: 280px;
+    max-width: 100%;
+    margin-block-start: 9px;
+    :deep(.widget) {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      column-gap: 11px;
+      align-items: center;
+      min-height: 0;
+      padding: 11px;
+      border: 1px solid var(--sd-modern-border);
+      border-radius: 10px;
+      background: rgb(var(--v-theme-surface));
+      box-shadow: none;
+      font-size: 12px;
+      line-height: 18px;
+    }
+    :deep(.widget > .v-img) {
+      grid-row: 1 / span 3;
+      width: 48px !important;
+      height: 48px !important;
+      border-radius: 8px;
+    }
+    :deep(.widget > p) {
+      grid-column: 2;
+      margin: 0 !important;
+      min-width: 0;
+      overflow-wrap: anywhere;
+      font-size: 12px;
+      line-height: 18px;
+    }
+    :deep(.widget > .font-weight-bold) {
+      font-weight: 500 !important;
+    }
+    :deep(.widget > .product-variant-view) {
+      grid-column: 1 / -1;
+      margin-block-start: 8px;
+    }
+  }
+  &__message-meta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    margin-block-start: 5px;
+    font-size: 11px;
+    line-height: 17px;
+    color: var(--sd-modern-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  &__closed {
+    margin: 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 19px;
+    text-align: center;
+  }
+  &__composer {
+    padding: 17px 20px 20px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  &__editor {
+    padding: 10px 12px 9px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 11px;
+    background: rgb(var(--v-theme-surface));
+    &:focus-within {
+      border-color: rgb(var(--v-theme-primary));
+    }
+  }
+  &__composer-heading {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-block-end: 8px;
+    font-size: 12px;
+    line-height: 19px;
+    font-weight: 500;
+  }
+  &__reply {
+    // The editor supplies padding; Vuetify's label mask would hide the first text line.
+    :deep(textarea.v-field__input) {
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+    :deep(textarea::placeholder) {
+      color: var(--sd-modern-muted);
+      opacity: 1;
+    }
+    :deep(.v-field__input) {
+      padding: 0;
+      min-height: 76px;
+      font-family: inherit;
+      font-size: 13px;
+      line-height: 21px;
+    }
+  }
+  &__composer-actions {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-block-start: 8px;
+  }
+  &__send {
+    gap: 9px;
+    margin-inline-start: auto;
+  }
+  &__counter {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  &__message-action {
+    --sd-modern-icon-button-size: 28px;
+    :deep(.v-icon) {
+      font-size: 16px;
+    }
+  }
+  &__message-menu {
+    padding: 5px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 10px;
+  }
+  &__message-menu-item {
+    width: 100%;
+    min-height: 36px;
+    padding-inline: 8px;
+    border-radius: 6px;
+    :deep(.v-list-item-title) {
+      font-size: 12px;
+      line-height: 18px;
+    }
+    :deep(.v-list-item__prepend > .v-icon) {
+      font-size: 18px;
+      opacity: 1;
+    }
+    :deep(.v-list-item__prepend > .v-list-item__spacer) {
+      width: 8px;
+    }
+  }
+  &__dialog {
+    border-radius: 16px;
+  }
+  &__dialog-header {
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-block-end: 1px solid var(--sd-modern-border);
+    h2 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 500;
+    }
+  }
+  &__dialog-actions {
+    justify-content: flex-end;
+    padding: 16px 24px 20px;
+    gap: 10px;
+  }
+  &__details {
+    margin: 0;
+    display: grid;
+    gap: 18px;
+    min-width: 0;
+    > div {
+      min-width: 0;
+    }
+    dt {
+      color: var(--sd-modern-muted);
+      font-size: 12px;
+      line-height: 19px;
+      margin-block-end: 4px;
+    }
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+    button {
+      text-align: start;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+    button:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 3px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    &__header {
+      padding: 16px 18px;
+    }
+    &__identity {
+      flex-basis: 100%;
+    }
+    &__actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+    &__messages {
+      padding: 20px 18px;
+    }
+    &__message {
+      max-width: 96%;
+    }
+    &__composer {
+      padding: 17px 18px;
+    }
+    &__reply :deep(.v-field__input) {
+      font-size: 16px;
+    }
+    &__dialog-header {
+      padding: 18px;
+    }
+    &__dialog-actions {
+      padding: 16px 18px;
+      flex-wrap: wrap;
+    }
+    &__details button {
+      min-height: 44px;
+    }
+    &__message-action {
+      --sd-modern-icon-button-size: 44px;
+    }
+  }
+}
+.b-contact-conversation-modern__message-menu-item {
+  @media (max-width: 760px), (pointer: coarse) {
+    min-height: 44px;
+  }
+}
+</style>
 
 <style lang="scss">
 .chat-container {

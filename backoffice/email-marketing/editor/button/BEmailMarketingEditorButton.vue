@@ -16,7 +16,9 @@
   <div class="m-2">
     <v-btn
       v-if="!action && editMode"
-      variant="flat"
+      class="sd-modern-button sd-modern-button--inline"
+      color="primary"
+      variant="text"
       @click="
         $emit('update:action', {
           text: 'View more',
@@ -26,8 +28,8 @@
         })
       "
     >
-      <v-icon>add</v-icon>
-      Add action
+      <v-icon start aria-hidden="true">add</v-icon>
+      {{ $t("email_builder.workspace.add_action") }}
     </v-btn>
 
     <v-btn

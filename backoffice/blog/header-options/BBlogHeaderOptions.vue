@@ -17,11 +17,12 @@
   <s-article-category-shop-blog-input
     :model-value="categoryId"
     :shop="shop"
-    class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
+    :class="modern ? 'sd-modern-underlined-field' : 'm-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white'"
     clearable
+    :disabled="disabled"
     flat
     rounded
-    variant="solo"
+    :variant="modern ? 'underlined' : 'solo'"
     @update:model-value="(v) => setCategoryId(v)"
   >
   </s-article-category-shop-blog-input>
@@ -29,15 +30,16 @@
   <b-cluster-input
     :model-value="clusterId"
     :return-object="false"
-    class="m-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white"
+    :class="modern ? 'sd-modern-underlined-field' : 'm-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white'"
     clearable
+    :disabled="disabled"
     flat
     icon="workspaces_outline"
     label="Resource Cluster"
     no-home
     placeholder="Select a cluster... (optional)"
     rounded
-    solo
+    :variant="modern ? 'underlined' : 'solo'"
     @update:model-value="(v) => setClusterId(v)"
   ></b-cluster-input>
 </template>
@@ -51,6 +53,8 @@ export default defineComponent({
   name: "BBlogHeaderOptions",
   components: { SArticleCategoryShopBlogInput, BClusterInput },
   props: {
+    modern: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
     shop: {
       required: true,
     },

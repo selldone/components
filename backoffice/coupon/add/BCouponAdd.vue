@@ -21,386 +21,437 @@
       <v-form ref="form" lazy-validation>
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ General ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.general_config')"
             icon="tune"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("coupon_edit.config.subtitle") }}
           </v-list-subheader>
 
-          <u-price-input
-            v-model="charge"
-            :decimal="currencyObject.floats"
-            :hint="$t('coupon_edit.charge_message')"
-            :label="$t('coupon_edit.charge')"
-            :suffix="getCurrencyName(currency)"
-            append-icon="card_giftcard"
-            class="strong-field"
-            variant="underlined"
-          />
+          <div class="sd-modern-incentive-fields">
+            <u-price-input
+              v-model="charge"
+              :decimal="currencyObject.floats"
+              :hint="$t('coupon_edit.charge_message')"
+              :label="$t('coupon_edit.charge')"
+              :suffix="getCurrencyName(currency)"
+              append-icon="card_giftcard"
+              class="strong-field sd-modern-incentive-field"
+              variant="underlined"
+            />
 
-          <u-number-input
-            v-model="percent"
-            :decimal="0"
-            :hint="$t('coupon_edit.percent_message')"
-            :label="$t('coupon_edit.percent')"
-            :max="100"
-            :min="0"
-            :step="1"
-            append-icon="fa:fas fa-percentage"
-            class="strong-field"
-            variant="underlined"
-          />
+            <u-number-input
+              v-model="percent"
+              :decimal="0"
+              :hint="$t('coupon_edit.percent_message')"
+              :label="$t('coupon_edit.percent')"
+              :max="100"
+              :min="0"
+              :step="1"
+              append-icon="fa:fas fa-percentage"
+              class="strong-field sd-modern-incentive-field"
+              variant="underlined"
+            />
 
-          <u-currency-input
-            v-model="currency"
-            :disabled="coupon !== null && !cloneMode"
-            :messages="$t('coupon_edit.currency_input_message')"
-            :return-object="false"
-            variant="underlined"
-            :label="$t('global.commons.currency')"
-            :active-currencies="shop.currencies"
-          >
-          </u-currency-input>
+            <u-currency-input
+              class="sd-modern-incentive-fields__full sd-modern-incentive-field"
+              v-model="currency"
+              :disabled="coupon !== null && !cloneMode"
+              :messages="$t('coupon_edit.currency_input_message')"
+              :return-object="false"
+              variant="underlined"
+              :label="$t('global.commons.currency')"
+              :active-currencies="shop.currencies"
+            >
+            </u-currency-input>
 
-          <u-smart-switch
-            v-model="enable"
-            :false-title="$t('global.commons.disable')"
-            :true-title="$t('global.commons.enable')"
-            class="mt-5"
-            false-gray
-          ></u-smart-switch>
+            <u-smart-switch
+              v-model="enable"
+              :false-title="$t('global.commons.disable')"
+              :true-title="$t('global.commons.enable')"
+              class="mt-5 sd-modern-incentive-fields__full"
+              false-gray
+            ></u-smart-switch>
+          </div>
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Limits ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !charge && !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.limits_config')"
             icon="call_missed_outgoing"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("coupon_edit.limit.subtitle") }}
           </v-list-subheader>
 
-          <u-price-input
-            v-model="limit"
-            :decimal="currencyObject.floats"
-            :hint="$t('coupon_edit.limit_input_hint')"
-            :label="`${$t('coupon_edit.limit_input')}  ${getCurrencyName(
-              currency,
-            )}`"
-            :messages="limit === 0 ? $t('coupon_edit.limit.zero_message') : ''"
-            :suffix="getCurrencyName(currency)"
-            class="strong-field"
-            required
-            variant="underlined"
-          />
+          <div class="sd-modern-incentive-fields">
+            <u-price-input
+              v-model="limit"
+              :decimal="currencyObject.floats"
+              :hint="$t('coupon_edit.limit_input_hint')"
+              :label="`${$t('coupon_edit.limit_input')}  ${getCurrencyName(
+                currency,
+              )}`"
+              :messages="
+                limit === 0 ? $t('coupon_edit.limit.zero_message') : ''
+              "
+              :suffix="getCurrencyName(currency)"
+              class="strong-field sd-modern-incentive-field"
+              required
+              variant="underlined"
+            />
 
-          <v-text-field
-            v-model="max"
-            :hint="$t('coupon_edit.count_input_hint')"
-            :label="`${$t('coupon_edit.count_input')}*`"
-            :messages="
-              max === 0 ? $t('coupon_edit.limit_input_message') : undefined
-            "
-            variant="underlined"
-          />
+            <v-text-field
+              class="sd-modern-incentive-field"
+              v-model="max"
+              :hint="$t('coupon_edit.count_input_hint')"
+              :label="`${$t('coupon_edit.count_input')}*`"
+              :messages="
+                max === 0 ? $t('coupon_edit.limit_input_message') : undefined
+              "
+              variant="underlined"
+            />
+          </div>
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Duration ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !charge && !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.duration_config')"
             icon="schedule"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("coupon_edit.duration.subtitle") }}
           </v-list-subheader>
 
-          <u-date-input
-            v-model="start"
-            :label="$t('coupon_edit.date_start_input')"
-            :placeholder="$t('coupon_edit.date_start_input_placeholder')"
-            clearable
-            color="#C2185B"
-            return-utc
-            variant="underlined"
-          ></u-date-input>
+          <div class="sd-modern-incentive-fields">
+            <u-date-input
+              class="sd-modern-incentive-field"
+              v-model="start"
+              :label="$t('coupon_edit.date_start_input')"
+              :placeholder="$t('coupon_edit.date_start_input_placeholder')"
+              clearable
+              color="#C2185B"
+              return-utc
+              variant="underlined"
+            ></u-date-input>
 
-          <u-date-input
-            v-model="end"
-            :disabled="!start"
-            :label="$t('coupon_edit.date_end_input')"
-            :min="start"
-            :placeholder="$t('coupon_edit.date_end_input_placeholder')"
-            clearable
-            color="#C2185B"
-            return-utc
-            variant="underlined"
-          ></u-date-input>
+            <u-date-input
+              class="sd-modern-incentive-field"
+              v-model="end"
+              :disabled="!start"
+              :label="$t('coupon_edit.date_end_input')"
+              :min="start"
+              :placeholder="$t('coupon_edit.date_end_input_placeholder')"
+              clearable
+              color="#C2185B"
+              return-utc
+              variant="underlined"
+            ></u-date-input>
 
-          <u-time-progress-bar
-            :created-time="created_at"
-            :end-time="end"
-            :start-time="start"
-          ></u-time-progress-bar>
+            <u-time-progress-bar
+              class="sd-modern-incentive-fields__full"
+              :created-time="created_at"
+              :end-time="end"
+              :start-time="start"
+            ></u-time-progress-bar>
+          </div>
         </div>
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Design ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !charge && !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.design_config')"
             icon="architecture"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("coupon_edit.design.subtitle") }}
           </v-list-subheader>
 
-          <v-text-field
-            v-model="title"
-            :counter="48"
-            :hint="$t('coupon_edit.title_input_hint')"
-            :label="$t('coupon_edit.title_input') + '*'"
-            :rules="[GlobalRules.required()]"
-            messages=" "
-            variant="underlined"
-          >
-            <template v-slot:append-inner>
-              <b-translation-button-coupon
-                v-if="coupon?.id"
-                :coupon="coupon"
-                :label="$t('coupon_edit.title_input_hint')"
-                :shop="shop"
-                translation-key="title"
-              ></b-translation-button-coupon>
-            </template>
+          <div class="sd-modern-incentive-fields">
+            <v-text-field
+              class="sd-modern-incentive-fields__full sd-modern-incentive-field"
+              v-model="title"
+              :counter="48"
+              :hint="$t('coupon_edit.title_input_hint')"
+              :label="$t('coupon_edit.title_input') + '*'"
+              :rules="[GlobalRules.required()]"
+              messages=" "
+              variant="underlined"
+            >
+              <template v-slot:append-inner>
+                <b-translation-button-coupon
+                  v-if="coupon?.id"
+                  :coupon="coupon"
+                  :label="$t('coupon_edit.title_input_hint')"
+                  :shop="shop"
+                  translation-key="title"
+                ></b-translation-button-coupon>
+              </template>
 
-            <template v-slot:message>
-              <u-smart-suggestion
-                v-if="!coupon?.id || !title"
-                :samples="$tm('suggestions.coupon.title')"
-                class="mb-4"
-                @select="(v) => (title = v)"
-              ></u-smart-suggestion>
-            </template>
-          </v-text-field>
-          <v-text-field
-            v-model="description"
-            :counter="128"
-            :hint="$t('coupon_edit.description_input_hint')"
-            :label="$t('coupon_edit.description_input')"
-            messages=" "
-            variant="underlined"
-          >
-            <template v-slot:append-inner>
-              <b-translation-button-coupon
-                v-if="coupon?.id"
-                :coupon="coupon"
-                :label="$t('coupon_edit.description_input')"
-                :shop="shop"
-                translation-key="description"
-              ></b-translation-button-coupon>
-            </template>
+              <template v-slot:message>
+                <u-smart-suggestion
+                  v-if="!coupon?.id || !title"
+                  :samples="$tm('suggestions.coupon.title')"
+                  class="mb-4"
+                  @select="(v) => (title = v)"
+                ></u-smart-suggestion>
+              </template>
+            </v-text-field>
+            <v-text-field
+              class="sd-modern-incentive-fields__full sd-modern-incentive-field"
+              v-model="description"
+              :counter="128"
+              :hint="$t('coupon_edit.description_input_hint')"
+              :label="$t('coupon_edit.description_input')"
+              messages=" "
+              variant="underlined"
+            >
+              <template v-slot:append-inner>
+                <b-translation-button-coupon
+                  v-if="coupon?.id"
+                  :coupon="coupon"
+                  :label="$t('coupon_edit.description_input')"
+                  :shop="shop"
+                  translation-key="description"
+                ></b-translation-button-coupon>
+              </template>
 
-            <template v-slot:message>
-              <u-smart-suggestion
-                v-if="!coupon?.id || !description"
-                :samples="$tm('suggestions.coupon.description')"
-                class="mb-4"
-                @select="(v) => (description = v)"
-              ></u-smart-suggestion>
-            </template>
-          </v-text-field>
+              <template v-slot:message>
+                <u-smart-suggestion
+                  v-if="!coupon?.id || !description"
+                  :samples="$tm('suggestions.coupon.description')"
+                  class="mb-4"
+                  @select="(v) => (description = v)"
+                ></u-smart-suggestion>
+              </template>
+            </v-text-field>
 
-          <u-color-selector
-            v-model="color"
-            :title="$t('coupon_edit.coupon_color')"
-          ></u-color-selector>
+            <u-color-selector
+              class="sd-modern-incentive-fields__full"
+              v-model="color"
+              :title="$t('coupon_edit.coupon_color')"
+            ></u-color-selector>
+          </div>
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Constraints ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !charge && !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.constraints_config')"
             icon="border_outer"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("coupon_edit.constraints.subtitle") }}
           </v-list-subheader>
 
-          <v-switch
-            v-model="has_code"
-            :label="$t('coupon_edit.need_code')"
-            :messages="$t('coupon_edit.constraints.has_code_message')"
-            color="success"
-            density="compact"
-            inset
-          >
-          </v-switch>
+          <div class="sd-modern-incentive-fields">
+            <v-switch
+              class="sd-modern-incentive-fields__full"
+              v-model="has_code"
+              :label="$t('coupon_edit.need_code')"
+              :messages="$t('coupon_edit.constraints.has_code_message')"
+              color="success"
+              density="compact"
+              inset
+            >
+            </v-switch>
 
-          <v-text-field
-            v-model="code"
-            :counter="64"
-            :label="
-              $t('coupon_edit.coupon_code') +
-              ` (${$t('global.commons.optional')})`
-            "
-            :persistent-hint="has_code"
-            :readonly="!has_code"
-            :single-line="!has_code"
-            color="success"
-            hint="User should enter this code to add coupon."
-            variant="underlined"
-            @blur="has_code = !!code"
-            @click="has_code = true"
-          >
-          </v-text-field>
+            <v-text-field
+              class="sd-modern-incentive-fields__full sd-modern-incentive-field"
+              v-model="code"
+              :counter="64"
+              :label="
+                $t('coupon_edit.coupon_code') +
+                ` (${$t('global.commons.optional')})`
+              "
+              :persistent-hint="has_code"
+              :readonly="!has_code"
+              :single-line="!has_code"
+              color="success"
+              hint="User should enter this code to add coupon."
+              variant="underlined"
+              @blur="has_code = !!code"
+              @click="has_code = true"
+            >
+            </v-text-field>
 
-          <u-price-input
-            v-model="min_purchase"
-            :decimal="currencyObject.floats"
-            :hint="$t('coupon_edit.min_purchase_amount_hint')"
-            :label="$t('coupon_edit.min_purchase_amount')"
-            :suffix="getCurrencyName(currency)"
-            required
-            variant="underlined"
-          />
+            <u-price-input
+              class="sd-modern-incentive-fields__full sd-modern-incentive-field"
+              v-model="min_purchase"
+              :decimal="currencyObject.floats"
+              :hint="$t('coupon_edit.min_purchase_amount_hint')"
+              :label="$t('coupon_edit.min_purchase_amount')"
+              :suffix="getCurrencyName(currency)"
+              required
+              variant="underlined"
+            />
 
-          <b-products-select-box
-            v-model="products"
-            :label="$t('coupon_edit.should_exist_product')"
-            :shop="shop"
-            border-less
-            class="my-6"
-            >{{ $t("global.placeholders.select_products") }}
-          </b-products-select-box>
+            <b-products-select-box
+              v-model="products"
+              :label="$t('coupon_edit.should_exist_product')"
+              :shop="shop"
+              border-less
+              class="my-6 sd-modern-incentive-fields__full"
+              >{{ $t("global.placeholders.select_products") }}
+            </b-products-select-box>
 
-          <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Only first buy ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+            <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Only first buy ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-          <u-smart-switch
-            v-model="only_first_buy"
-            :false-description="$t('coupon_edit.apply_for_first_order_off')"
-            :false-title="$t('global.commons.flexible')"
-            :label="$t('global.commons.constraints')"
-            :true-description="$t('coupon_edit.apply_for_first_order_on')"
-            :true-title="$t('coupon_edit.apply_for_first_order')"
-            class="my-3"
-          >
-          </u-smart-switch>
+            <u-smart-switch
+              v-model="only_first_buy"
+              :false-description="$t('coupon_edit.apply_for_first_order_off')"
+              :false-title="$t('global.commons.flexible')"
+              :label="$t('global.commons.constraints')"
+              :true-description="$t('coupon_edit.apply_for_first_order_on')"
+              :true-title="$t('coupon_edit.apply_for_first_order')"
+              class="my-3 sd-modern-incentive-fields__full"
+            >
+            </u-smart-switch>
 
-          <v-expand-transition>
-            <div v-if="!only_first_buy">
-              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Has qualify ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+            <v-expand-transition>
+              <div v-if="!only_first_buy" class="sd-modern-incentive-fields__full">
+                <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Has qualify ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-              <u-smart-switch
-                v-model="qualify"
-                :false-title="$t('coupon_edit.constraints.no_limit')"
-                :label="$t('coupon_edit.has_qualify_constraints')"
-                :true-description="
-                  $t('coupon_edit.has_qualify_constraints_message')
-                "
-                :true-title="$t('coupon_edit.constraints.has_limit')"
-                class="my-3"
-              >
-              </u-smart-switch>
+                <u-smart-switch
+                  v-model="qualify"
+                  :false-title="$t('coupon_edit.constraints.no_limit')"
+                  :label="$t('coupon_edit.has_qualify_constraints')"
+                  :true-description="
+                    $t('coupon_edit.has_qualify_constraints_message')
+                  "
+                  :true-title="$t('coupon_edit.constraints.has_limit')"
+                  class="my-3"
+                >
+                </u-smart-switch>
 
-              <v-expand-transition>
-                <div v-if="qualify">
-                  <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Single / Multiple ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+                <v-expand-transition>
+                  <div v-if="qualify">
+                    <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Single / Multiple ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-                  <u-smart-switch
-                    v-model="qualify_single"
-                    :disabled="!qualify"
-                    :false-title="$t('coupons.multiple_use')"
-                    :label="$t('global.commons.usage_limit')"
-                    :true-description="$t('coupon_edit.one_time_use_message')"
-                    :true-title="$t('coupons.one_time_use')"
-                    class="my-3"
-                  >
-                  </u-smart-switch>
+                    <u-smart-switch
+                      v-model="qualify_single"
+                      :disabled="!qualify"
+                      :false-title="$t('coupons.multiple_use')"
+                      :label="$t('global.commons.usage_limit')"
+                      :true-description="$t('coupon_edit.one_time_use_message')"
+                      :true-title="$t('coupons.one_time_use')"
+                      class="my-3"
+                    >
+                    </u-smart-switch>
 
-                  <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Multiple constraints ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+                    <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Multiple constraints ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-                  <v-expand-transition>
-                    <div v-if="!qualify_single">
-                      <div class="py-3">
-                        <v-text-field
-                          v-model="qualify_daily"
-                          :disabled="!qualify"
-                          :label="$t('coupon_edit.daily_limit')"
-                          :messages="$t('coupon_edit.daily_limit_message')"
-                          :placeholder="$t('coupon_edit.no_limit')"
-                          clearable
-                          variant="underlined"
-                        />
-                        <v-text-field
-                          v-model="qualify_monthly"
-                          :disabled="!qualify"
-                          :label="$t('coupon_edit.monthly_limit')"
-                          :messages="$t('coupon_edit.monthly_limit_message')"
-                          :placeholder="$t('coupon_edit.no_limit')"
-                          clearable
-                          variant="underlined"
-                        />
-                        <v-text-field
-                          v-model="qualify_yearly"
-                          :disabled="!qualify"
-                          :label="$t('coupon_edit.yearly_limit')"
-                          :messages="$t('coupon_edit.yearly_limit_message')"
-                          :placeholder="$t('coupon_edit.no_limit')"
-                          clearable
-                          variant="underlined"
-                        />
+                    <v-expand-transition>
+                      <div v-if="!qualify_single">
+                        <div class="py-3">
+                          <v-text-field
+                            class="sd-modern-incentive-field"
+                            v-model="qualify_daily"
+                            :disabled="!qualify"
+                            :label="$t('coupon_edit.daily_limit')"
+                            :messages="$t('coupon_edit.daily_limit_message')"
+                            :placeholder="$t('coupon_edit.no_limit')"
+                            clearable
+                            variant="underlined"
+                          />
+                          <v-text-field
+                            class="sd-modern-incentive-field"
+                            v-model="qualify_monthly"
+                            :disabled="!qualify"
+                            :label="$t('coupon_edit.monthly_limit')"
+                            :messages="$t('coupon_edit.monthly_limit_message')"
+                            :placeholder="$t('coupon_edit.no_limit')"
+                            clearable
+                            variant="underlined"
+                          />
+                          <v-text-field
+                            class="sd-modern-incentive-field"
+                            v-model="qualify_yearly"
+                            :disabled="!qualify"
+                            :label="$t('coupon_edit.yearly_limit')"
+                            :messages="$t('coupon_edit.yearly_limit_message')"
+                            :placeholder="$t('coupon_edit.no_limit')"
+                            clearable
+                            variant="underlined"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </v-expand-transition>
-                </div>
-              </v-expand-transition>
-            </div>
-          </v-expand-transition>
+                    </v-expand-transition>
+                  </div>
+                </v-expand-transition>
+              </div>
+            </v-expand-transition>
+          </div>
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Clubs ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !charge && !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.clubs_config')"
             icon="groups"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("coupon_edit.club.subtitle") }}
           </v-list-subheader>
-          <b-club-constraint
-            v-model:bronze-club="bronze_club"
-            v-model:diamond-club="diamond_club"
-            v-model:gold-club="gold_club"
-            v-model:no-club="no_club"
-            v-model:platinum-club="platinum_club"
-            v-model:silver-club="silver_club"
-          >
-          </b-club-constraint>
+          <div class="sd-modern-incentive-fields">
+            <b-club-constraint
+              class="sd-modern-incentive-fields__full"
+              v-model:bronze-club="bronze_club"
+              v-model:diamond-club="diamond_club"
+              v-model:gold-club="gold_club"
+              v-model:no-club="no_club"
+              v-model:platinum-club="platinum_club"
+              v-model:silver-club="silver_club"
+            >
+            </b-club-constraint>
+          </div>
         </div>
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :add-caption="$t('global.commons.management')"
             :title="$t('global.commons.cluster')"
             :to="{ name: 'BPageShopClassificationClusters' }"
@@ -409,35 +460,47 @@
             icon="workspaces"
           ></u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("coupon_edit.cluster.subtitle") }}
           </v-list-subheader>
-          <b-cluster-input
-            v-model="cluster_id"
-            :return-object="false"
-            clearable
-            icon="workspaces_filled"
-            no-home
-            variant="underlined"
-          ></b-cluster-input>
+          <div class="sd-modern-incentive-fields">
+            <b-cluster-input
+              class="sd-modern-incentive-fields__full sd-modern-incentive-field"
+              v-model="cluster_id"
+              :return-object="false"
+              clearable
+              icon="workspaces_filled"
+              no-home
+              variant="underlined"
+            ></b-cluster-input>
+          </div>
         </div>
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Preview ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !charge && !percent }" class="widget-box mb-5">
-          <u-widget-header :title="$t('global.commons.preview')" icon="preview">
+        <div
+          :class="{ disabled: !charge && !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
+          <u-widget-header
+            class="sd-modern-incentive-group__header"
+            :title="$t('global.commons.preview')"
+            icon="preview"
+          >
           </u-widget-header>
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("coupon_edit.preview.subtitle") }}
           </v-list-subheader>
 
-          <s-storefront-coupon-view
-            :coupon="coupon_sample"
-            :disabled="!enable"
-            class="mx-auto mb-5"
-            style="min-width: 240px"
-          ></s-storefront-coupon-view>
+          <div class="sd-modern-incentive-fields">
+            <s-storefront-coupon-view
+              :coupon="coupon_sample"
+              :disabled="!enable"
+              class="mx-auto mb-5 sd-modern-incentive-fields__full"
+              style="min-width: 240px"
+            ></s-storefront-coupon-view>
+          </div>
         </div>
       </v-form>
       <BShopLicenseBlockOverlay
@@ -464,7 +527,11 @@
           size="x-large"
           variant="elevated"
           @click="createCoupon()"
-          v-ctrl.s="()=>{createCoupon()}"
+          v-ctrl.s="
+            () => {
+              createCoupon();
+            }
+          "
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create_clone") }}
@@ -477,7 +544,11 @@
           size="x-large"
           variant="elevated"
           @click="editCoupon()"
-          v-ctrl.s="()=>{editCoupon()}"
+          v-ctrl.s="
+            () => {
+              editCoupon();
+            }
+          "
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -490,7 +561,11 @@
           size="x-large"
           variant="elevated"
           @click="createCoupon"
-          v-ctrl.s="()=>{createCoupon()}"
+          v-ctrl.s="
+            () => {
+              createCoupon();
+            }
+          "
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

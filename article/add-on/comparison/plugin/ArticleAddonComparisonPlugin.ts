@@ -180,6 +180,8 @@ window.jQuery = $;
    */
 
   CustomAddon.prototype.addToolbar = function () {
+    // Vue custom blocks provide the complete contextual toolbar.
+    if (this.$currentImage?.find('.a-article-addon-tools').length) return;
     let $image = this.$el,
       mediumEditor = this.core.getEditor(),
       toolbarContainer = mediumEditor.options.elementsContainer || "body",
@@ -253,6 +255,7 @@ window.jQuery = $;
    * @param e
    */
   CustomAddon.prototype.deleteAction = function (e) {
+    if (!this.core.options.enabled) return;
     let images = [],
       $selectedImage = this.$el.find(ActiveClassNameSelector),
       $empty,

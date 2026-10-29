@@ -15,6 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
     :data="json_data"
+    :class="{ 'a-article-addon--editable': editable }"
     class="images-compare"
     contenteditable="false"
     spellcheck="false"
@@ -27,10 +28,11 @@
       @click:edit="showEdit()"
     >
       <v-btn
-        class="text-body-2 border-end pe-2 text-capitalize"
+        class="a-article-addon-tools__value"
         variant="text"
+        :aria-label="$t('global.article.inline_tools.max_width')"
         @click="showEdit('size')"
-        >{{ $t("global.commons.max_height") }}: <b>{{ max_width }}</b></v-btn
+        ><v-icon size="16">width_normal</v-icon>{{ max_width }}<v-icon size="12">arrow_drop_down</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip">{{ $t('global.article.inline_tools.max_width') }}</v-tooltip></v-btn
       >
     </a-addon-toolbar>
 
@@ -61,6 +63,7 @@
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import VueCompareImage from "../../../ui/image-compare/VueCompareImage.vue";
 import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
+import { articleAddonContext } from "../toolbar/article-addon-context";
 
 export default {
   name: "AAddonComparison",
@@ -124,18 +127,24 @@ export default {
   },
   methods: {
     showEdit(tab = null) {
-      if (!this.editable) return;
+      if (!this.editable || !articleAddonContext(this.element)) return;
       this.ShowImagesCompareGlobalDialog(
         Object.assign({}, this.muted_images),
         (val) => {
+          const context = this.editable && articleAddonContext(this.element);
+          if (!context) return;
           this.muted_images = val;
           this.show = false;
           this.$nextTick(() => {
             this.show = true;
+            context.core.triggerInput();
           });
         },
         () => {
-          this.$el.remove();
+          const context = this.editable && articleAddonContext(this.element);
+          if (!context) return;
+          context.element.remove();
+          context.core.triggerInput();
         },
         tab,
         this.masterId,

@@ -13,9 +13,11 @@
   -->
 
 <template>
-  <div>
-    <div class="widget-box mb-5">
+  <div class="b-shop-theme-footer text-start">
+    <div class="sd-modern-widget">
       <u-smart-select
+        class="sd-modern-smart-select"
+        border
         :model-value="footer_mode"
         :items="footer_modes"
         item-value="id"
@@ -29,15 +31,14 @@
     </div>
 
     <template v-if="footer_mode === 'custom'">
-      <div class="widget-box -large py-5">
+      <div class="sd-modern-widget">
         <u-widget-header
+          class="sd-modern-form-header"
           icon="code"
-          title="Custom Footer Code"
+          :title="$t('shop_theme.studio.custom_footer_title')"
         ></u-widget-header>
-        <v-list-subheader>
-          Paste custom HTML, Vue, or Vuetify component code here to replace the
-          default website footer. You must implement all footer functionality
-          yourself.
+        <v-list-subheader class="sd-modern-subtitle b-shop-theme-footer__subtitle">
+          {{ $t('shop_theme.studio.custom_footer_description') }}
         </v-list-subheader>
 
         <BShopHtmlEditor
@@ -76,26 +77,6 @@ export default defineComponent({
     ShopPermissionRegions: ShopPermissionRegions,
     footer_mode: "default" as "default" | "custom" | "none",
     last_custom_code: "",
-    footer_modes: [
-      {
-        id: "default",
-        title: "Default Smart Mode",
-        description: "Use the default dynamic, well-crafted footer optimized for conversion.",
-        icon: "auto_fix_high",
-      },
-      {
-        id: "custom",
-        title: "Custom Code Mode",
-        description: "Enter HTML/Vue code to replace the default footer.",
-        icon: "code",
-      },
-      {
-        id: "none",
-        title: "No Footer",
-        description: "Hide the storefront footer. A minimal empty placeholder will be saved automatically.",
-        icon: "visibility_off",
-      },
-    ],
   }),
   watch: {
     customCode(code) {
@@ -116,6 +97,13 @@ export default defineComponent({
     },
   },
   computed: {
+    footer_modes() {
+      return [
+        { id: "default", title: this.$t("shop_theme.studio.footer_modes.default_title"), description: this.$t("shop_theme.studio.footer_modes.default_description"), icon: "auto_fix_high" },
+        { id: "custom", title: this.$t("shop_theme.studio.footer_modes.custom_title"), description: this.$t("shop_theme.studio.footer_modes.custom_description"), icon: "code" },
+        { id: "none", title: this.$t("shop_theme.studio.footer_modes.none_title"), description: this.$t("shop_theme.studio.footer_modes.none_description"), icon: "visibility_off" },
+      ];
+    },
     theme() {
       return this.$shop.theme;
     },
@@ -168,4 +156,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.b-shop-theme-footer {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+
+  &__subtitle { padding: 0; margin-block: 0 20px; min-height: 0; }
+}
+</style>

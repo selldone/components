@@ -21,17 +21,19 @@
       <v-form ref="form" lazy-validation>
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ General ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.general_config')"
             icon="tune"
           >
           </u-widget-header>
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("offer_edit.config.subtitle") }}
           </v-list-subheader>
 
           <v-text-field
+            class="sd-modern-incentive-field sd-modern-incentive-fields__full"
             v-model="title"
             :counter="48"
             :hint="$t('offer_edit.title_input_hint')"
@@ -54,12 +56,13 @@
               <u-smart-suggestion
                 v-if="!offer?.id || !title"
                 :samples="$tm('suggestions.offer.title')"
-                class="mb-4"
+                class="mb-4 sd-modern-incentive-fields__full"
                 @select="(v) => (title = v)"
               ></u-smart-suggestion>
             </template>
           </v-text-field>
           <v-text-field
+            class="sd-modern-incentive-field sd-modern-incentive-fields__full"
             v-model="description"
             :counter="128"
             :hint="$t('offer_edit.description_input_hint')"
@@ -81,22 +84,26 @@
               <u-smart-suggestion
                 v-if="!offer?.id || !description"
                 :samples="$tm('suggestions.offer.description')"
-                class="mb-4"
+                class="mb-4 sd-modern-incentive-fields__full"
                 @select="(v) => (description = v)"
               ></u-smart-suggestion>
             </template>
           </v-text-field>
 
-          <u-widget-header :title="$t('offer_edit.enable')" icon="flash_auto">
+          <u-widget-header
+            class="sd-modern-incentive-group__header"
+            :title="$t('offer_edit.enable')"
+            icon="flash_auto"
+          >
           </u-widget-header>
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("offer_edit.max_actives_is_3") }}
           </v-list-subheader>
           <u-smart-switch
             v-model="enable"
             :false-title="$t('global.commons.disable')"
             :true-title="$t('global.commons.enable')"
-            class="mt-3"
+            class="mt-3 sd-modern-incentive-fields__full"
             false-gray
             false-icon="not_interested"
             true-icon="check_circle_outline"
@@ -105,17 +112,18 @@
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Limits ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div class="widget-box mb-5">
-          <h2>
+        <div class="widget-box mb-5 sd-modern-incentive-group">
+          <h2 class="sd-modern-incentive-group__header">
             <v-icon class="me-1">call_missed_outgoing</v-icon>
 
             {{ $t("global.commons.limits_config") }}
           </h2>
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("offer_edit.limit.subtitle") }}
           </v-list-subheader>
 
           <u-number-input
+            class="sd-modern-incentive-field"
             v-model="max"
             :hint="$t('offer_edit.count_input_hint')"
             :label="`${$t('offer_edit.count_input')}*`"
@@ -126,94 +134,107 @@
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Duration ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !percent }" class="widget-box mb-5">
-          <h2>
+        <div
+          :class="{ disabled: !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
+          <h2 class="sd-modern-incentive-group__header">
             <v-icon class="me-1">schedule</v-icon>
             {{ $t("global.commons.duration_config") }}
           </h2>
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("offer_edit.duration.subtitle") }}
           </v-list-subheader>
 
-          <u-date-input
-            v-model="start"
-            :label="$t('offer_edit.date_start_input')"
-            :placeholder="$t('offer_edit.date_start_input_placeholder')"
-            color="#C2185B"
-            return-utc
-            clearable
-            variant="underlined"
-          ></u-date-input>
+          <div class="sd-modern-incentive-fields">
+            <u-date-input
+              class="sd-modern-incentive-field"
+              v-model="start"
+              :label="$t('offer_edit.date_start_input')"
+              :placeholder="$t('offer_edit.date_start_input_placeholder')"
+              color="#C2185B"
+              return-utc
+              clearable
+              variant="underlined"
+            ></u-date-input>
 
-          <u-date-input
-            v-model="end"
-            :disabled="!start"
-            :label="$t('offer_edit.date_end_input')"
-            :min="start"
-            :placeholder="$t('offer_edit.date_end_input_placeholder')"
-            clearable
-            color="#C2185B"
-            return-utc
-            variant="underlined"
-          ></u-date-input>
+            <u-date-input
+              class="sd-modern-incentive-field"
+              v-model="end"
+              :disabled="!start"
+              :label="$t('offer_edit.date_end_input')"
+              :min="start"
+              :placeholder="$t('offer_edit.date_end_input_placeholder')"
+              clearable
+              color="#C2185B"
+              return-utc
+              variant="underlined"
+            ></u-date-input>
 
-          <u-time-progress-bar
-            :end-time="end"
-            :start-time="start"
-          ></u-time-progress-bar>
+            <u-time-progress-bar
+              class="sd-modern-incentive-fields__full"
+              :end-time="end"
+              :start-time="start"
+            ></u-time-progress-bar>
+          </div>
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Constraints ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div class="widget-box mb-5">
-          <h2>
+        <div class="widget-box mb-5 sd-modern-incentive-group">
+          <h2 class="sd-modern-incentive-group__header">
             <v-icon class="me-1">border_outer</v-icon>
 
             {{ $t("global.commons.constraints_config") }}
           </h2>
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("offer_edit.constraints.subtitle") }}
           </v-list-subheader>
 
-          <u-price-input
-            v-model="min_purchase"
-            :decimal="currencyObject.floats"
-            :hint="$t('offer_edit.min_purchase_hint')"
-            :label="$t('offer_edit.min_purchase')"
-            :suffix="getCurrencyName(currency)"
-            clearable
-            required
-            variant="underlined"
-          />
+          <div class="sd-modern-incentive-fields">
+            <u-price-input
+              class="sd-modern-incentive-field"
+              v-model="min_purchase"
+              :decimal="currencyObject.floats"
+              :hint="$t('offer_edit.min_purchase_hint')"
+              :label="$t('offer_edit.min_purchase')"
+              :suffix="getCurrencyName(currency)"
+              clearable
+              required
+              variant="underlined"
+            />
 
-          <u-currency-input
-            v-model="currency"
-            :disabled="offer !== null"
-            :label="$t('global.commons.currency')"
-            :messages="$t('offer_edit.currency_input_message')"
-            :return-object="false"
-            variant="underlined"
-            :active-currencies="shop.currencies"
-          >
-          </u-currency-input>
+            <u-currency-input
+              class="sd-modern-incentive-field"
+              v-model="currency"
+              :disabled="offer !== null"
+              :label="$t('global.commons.currency')"
+              :messages="$t('offer_edit.currency_input_message')"
+              :return-object="false"
+              variant="underlined"
+              :active-currencies="shop.currencies"
+            >
+            </u-currency-input>
 
-          <u-number-input
-            v-model="min_quantity"
-            :label="$t('offer_edit.min_items')"
-            :messages="$t('offer_edit.min_items_message')"
-            :min="1"
-            variant="underlined"
-          ></u-number-input>
+            <u-number-input
+              class="sd-modern-incentive-field"
+              v-model="min_quantity"
+              :label="$t('offer_edit.min_items')"
+              :messages="$t('offer_edit.min_items_message')"
+              :min="1"
+              variant="underlined"
+            ></u-number-input>
 
-          <b-products-select-box
-            v-model="buy_products"
-            :label="$t('offer_edit.qualified_products') + '*'"
-            :messages="$t('offer_edit.qualified_products_message')"
-            :shop="shop"
-            border-less
-            class="my-5"
-            >{{ $t("global.placeholders.select_products") }}
-          </b-products-select-box>
+            <b-products-select-box
+              v-model="buy_products"
+              :label="$t('offer_edit.qualified_products') + '*'"
+              :messages="$t('offer_edit.qualified_products_message')"
+              :shop="shop"
+              border-less
+              class="my-5 sd-modern-incentive-fields__full"
+              >{{ $t("global.placeholders.select_products") }}
+            </b-products-select-box>
+          </div>
         </div>
 
         <div class="text-center">
@@ -222,52 +243,58 @@
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Discounted Products ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('offer_edit.discounted_products.title')"
             icon="border_outer"
           ></u-widget-header>
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("offer_edit.discounted_products.subtitle") }}
           </v-list-subheader>
 
-          <b-products-select-box
-            v-model="get_products"
-            :label="$t('offer_edit.offered_products') + '*'"
-            :messages="$t('offer_edit.offered_products_message')"
-            :shop="shop"
-            border-less
-            class="my-5"
-            >{{ $t("global.placeholders.select_products") }}
-          </b-products-select-box>
+          <div class="sd-modern-incentive-fields">
+            <b-products-select-box
+              v-model="get_products"
+              :label="$t('offer_edit.offered_products') + '*'"
+              :messages="$t('offer_edit.offered_products_message')"
+              :shop="shop"
+              border-less
+              class="my-5 sd-modern-incentive-fields__full"
+              >{{ $t("global.placeholders.select_products") }}
+            </b-products-select-box>
 
-          <u-number-input
-            v-model="percent"
-            :alternative-button-text="$t('global.commons.free')"
-            :alternative-button-value="100"
-            :hint="$t('offer_edit.discount_percent_hint')"
-            :label="$t('offer_edit.discount_percent')"
-            :max="100"
-            :messages="$t('offer_edit.discount_percent_message')"
-            :min="1"
-            append-icon="fa:fas fa-percentage"
-            persistent-hint
-            variant="underlined"
-          />
+            <u-number-input
+              class="sd-modern-incentive-field"
+              v-model="percent"
+              :alternative-button-text="$t('global.commons.free')"
+              :alternative-button-value="100"
+              :hint="$t('offer_edit.discount_percent_hint')"
+              :label="$t('offer_edit.discount_percent')"
+              :max="100"
+              :messages="$t('offer_edit.discount_percent_message')"
+              :min="1"
+              append-icon="fa:fas fa-percentage"
+              persistent-hint
+              variant="underlined"
+            />
 
-          <u-number-input
-            v-model="per_order"
-            :label="$t('offer_edit.per_order')"
-            :messages="$t('offer_edit.per_order_message')"
-            :rounded="false"
-            clearable
-            variant="underlined"
-          ></u-number-input>
+            <u-number-input
+              class="sd-modern-incentive-field"
+              v-model="per_order"
+              :label="$t('offer_edit.per_order')"
+              :messages="$t('offer_edit.per_order_message')"
+              :rounded="false"
+              clearable
+              variant="underlined"
+            ></u-number-input>
+          </div>
         </div>
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :add-caption="$t('global.commons.management')"
             :title="$t('global.commons.cluster')"
             :to="{ name: 'BPageShopClassificationClusters' }"
@@ -276,10 +303,11 @@
             icon="workspaces"
           ></u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("offer_edit.cluster.subtitle") }}
           </v-list-subheader>
           <b-cluster-input
+            class="sd-modern-incentive-field sd-modern-incentive-fields__full"
             v-model="cluster_id"
             :return-object="false"
             clearable
@@ -314,7 +342,11 @@
           size="x-large"
           variant="elevated"
           @click="createOffer()"
-          v-ctrl.s="()=>{createOffer()}"
+          v-ctrl.s="
+            () => {
+              createOffer();
+            }
+          "
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create_clone") }}
@@ -327,7 +359,11 @@
           size="x-large"
           variant="elevated"
           @click="editOffer()"
-          v-ctrl.s="()=>{editOffer()}"
+          v-ctrl.s="
+            () => {
+              editOffer();
+            }
+          "
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -340,7 +376,11 @@
           size="x-large"
           variant="elevated"
           @click="createOffer"
-          v-ctrl.s="()=>{createOffer()}"
+          v-ctrl.s="
+            () => {
+              createOffer();
+            }
+          "
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

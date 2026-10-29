@@ -24,206 +24,256 @@
     <v-card-text class="text-start position-relative pt-6">
       <v-form ref="form" lazy-validation>
         <!-- ---------------------- General ---------------------- -->
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('discount_codes.dialog.config.title')"
             icon="tune"
           ></u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("discount_codes.dialog.config.subtitle") }}
           </v-list-subheader>
-          <v-text-field
-            v-model="code"
-            :label="`${$t('discount_codes.dialog.discount_code_input')}*`"
-            :rules="[GlobalRules.required()]"
-            append-inner-icon="shuffle"
-            class="strong-field"
-            hide-details
-            messages=" "
-            required
-            variant="underlined"
-            @click:append-inner="createRandomCode"
-          >
-          </v-text-field>
-          <u-smart-suggestion
-            v-if="!discountCode?.id"
-            :samples="$tm('suggestions.discount_code.code')"
-            class="mb-4"
-            @select="(v) => (code = v)"
-          ></u-smart-suggestion>
+          <div class="sd-modern-incentive-fields">
+            <v-text-field
+              v-model="code"
+              :label="`${$t('discount_codes.dialog.discount_code_input')}*`"
+              :rules="[GlobalRules.required()]"
+              class="strong-field sd-modern-incentive-fields__full sd-modern-incentive-field"
+              hide-details
+              messages=" "
+              required
+              variant="underlined"
+            >
+              <template #append-inner>
+                <v-btn
+                  :aria-label="$t('discount_codes.dialog.generate_code')"
+                  class="sd-modern-incentive-code-action"
+                  icon
+                  size="small"
+                  type="button"
+                  variant="text"
+                  @click="createRandomCode"
+                >
+                  <v-icon size="16">shuffle</v-icon>
+                  <v-tooltip
+                    activator="parent"
+                    content-class="sd-modern-tooltip text-start"
+                    location="top"
+                    :persistent="false"
+                  >
+                    {{ $t("discount_codes.dialog.generate_code") }}
+                  </v-tooltip>
+                </v-btn>
+              </template>
+            </v-text-field>
+            <u-smart-suggestion
+              v-if="!discountCode?.id"
+              :samples="$tm('suggestions.discount_code.code')"
+              class="mb-4 sd-modern-incentive-fields__full"
+              @select="(v) => (code = v)"
+            ></u-smart-suggestion>
 
-          <u-number-input
-            v-model="percent"
-            :decimal="0"
-            :hint="$t('discount_codes.dialog.discount_percent_input_hint')"
-            :label="`${$t('discount_codes.dialog.discount_percent_input')}*`"
-            :max="100"
-            :min="1"
-            :step="1"
-            append-icon="fa:fas fa-percentage"
-            class="strong-field"
-            persistent-hint
-            variant="underlined"
-          />
+            <u-number-input
+              v-model="percent"
+              :decimal="0"
+              :hint="$t('discount_codes.dialog.discount_percent_input_hint')"
+              :label="`${$t('discount_codes.dialog.discount_percent_input')}*`"
+              :max="100"
+              :min="1"
+              :step="1"
+              append-icon="fa:fas fa-percentage"
+              class="strong-field sd-modern-incentive-field"
+              persistent-hint
+              variant="underlined"
+            />
 
-          <u-currency-input
-            v-model="currency"
-            :disabled="discountCode !== null && !cloneMode"
-            :messages="$t('discount_codes.dialog.currency_input_message')"
-            :return-object="false"
-            variant="underlined"
-            :label="$t('global.commons.currency')"
-            :active-currencies="shop.currencies"
-          >
-          </u-currency-input>
+            <u-currency-input
+              class="sd-modern-incentive-field"
+              v-model="currency"
+              :disabled="discountCode !== null && !cloneMode"
+              :messages="$t('discount_codes.dialog.currency_input_message')"
+              :return-object="false"
+              variant="underlined"
+              :label="$t('global.commons.currency')"
+              :active-currencies="shop.currencies"
+            >
+            </u-currency-input>
+          </div>
         </div>
         <!-- ---------------------- Limits ---------------------- -->
 
-        <div :class="{ disabled: !code }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !code }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('discount_codes.dialog.limit.title')"
             icon="call_missed_outgoing"
           >
           </u-widget-header>
 
-          <v-list-subheader
+          <v-list-subheader class="sd-modern-incentive-group__subtitle"
             >{{ $t("discount_codes.dialog.limit.subtitle") }}
           </v-list-subheader>
-          <u-price-input
-            v-model="limit"
-            :decimal="currencyObject.floats"
-            :hint="$t('discount_codes.dialog.limit_input_hint')"
-            :label="`${$t(
-              'discount_codes.dialog.limit_input',
-            )}  ${getCurrencyName(currency)}`"
-            :messages="
-              limit === 0 ? $t('discount_codes.dialog.limit_input_message') : ''
-            "
-            :suffix="getCurrencyName(currency)"
-            class="strong-field"
-            required
-            variant="underlined"
-          />
+          <div class="sd-modern-incentive-fields">
+            <u-price-input
+              v-model="limit"
+              :decimal="currencyObject.floats"
+              :hint="$t('discount_codes.dialog.limit_input_hint')"
+              :label="`${$t(
+                'discount_codes.dialog.limit_input',
+              )}  ${getCurrencyName(currency)}`"
+              :messages="
+                limit === 0
+                  ? $t('discount_codes.dialog.limit_input_message')
+                  : ''
+              "
+              :suffix="getCurrencyName(currency)"
+              class="strong-field sd-modern-incentive-field"
+              required
+              variant="underlined"
+            />
 
-          <v-text-field
-            v-model="max"
-            :hint="$t('discount_codes.dialog.count_input_hint')"
-            :label="`${$t('discount_codes.dialog.count_input')}*`"
-            persistent-hint
-            variant="underlined"
-          />
+            <v-text-field
+              class="sd-modern-incentive-field"
+              v-model="max"
+              :hint="$t('discount_codes.dialog.count_input_hint')"
+              :label="`${$t('discount_codes.dialog.count_input')}*`"
+              persistent-hint
+              variant="underlined"
+            />
+          </div>
         </div>
 
         <!-- ---------------------- Duration ---------------------- -->
 
-        <div :class="{ disabled: !code }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !code }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('discount_codes.dialog.duration.title')"
             icon="schedule"
           >
           </u-widget-header>
 
-          <v-list-subheader
+          <v-list-subheader class="sd-modern-incentive-group__subtitle"
             >{{ $t("discount_codes.dialog.duration.subtitle") }}
           </v-list-subheader>
-          <u-date-input
-            v-model="dis_start"
-            :label="$t('discount_codes.dialog.date_start_input')"
-            :placeholder="
-              $t('discount_codes.dialog.date_start_input_placeholder')
-            "
-            clearable
-            return-utc
-            variant="underlined"
-          ></u-date-input>
+          <div class="sd-modern-incentive-fields">
+            <u-date-input
+              class="sd-modern-incentive-field"
+              v-model="dis_start"
+              :label="$t('discount_codes.dialog.date_start_input')"
+              :placeholder="
+                $t('discount_codes.dialog.date_start_input_placeholder')
+              "
+              clearable
+              return-utc
+              variant="underlined"
+            ></u-date-input>
 
-          <u-date-input
-            v-model="dis_end"
-            :disabled="!dis_start"
-            :label="$t('discount_codes.dialog.date_end_input')"
-            :min="dis_start"
-            :placeholder="
-              $t('discount_codes.dialog.date_end_input_placeholder')
-            "
-            clearable
-            return-utc
-            variant="underlined"
-          ></u-date-input>
+            <u-date-input
+              class="sd-modern-incentive-field"
+              v-model="dis_end"
+              :disabled="!dis_start"
+              :label="$t('discount_codes.dialog.date_end_input')"
+              :min="dis_start"
+              :placeholder="
+                $t('discount_codes.dialog.date_end_input_placeholder')
+              "
+              clearable
+              return-utc
+              variant="underlined"
+            ></u-date-input>
 
-          <u-time-progress-bar
-            :end-time="dis_end"
-            :start-time="dis_start"
-          ></u-time-progress-bar>
+            <u-time-progress-bar
+              class="sd-modern-incentive-fields__full"
+              :end-time="dis_end"
+              :start-time="dis_start"
+            ></u-time-progress-bar>
+          </div>
         </div>
         <!-- ---------------------- Design ---------------------- -->
 
-        <div :class="{ disabled: !code }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !code }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.design_config')"
             icon="architecture"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("discount_codes.dialog.design.subtitle") }}
           </v-list-subheader>
-          <v-text-field
-            v-model="title"
-            :counter="48"
-            :label="$t('discount_codes.dialog.title_input')"
-            :placeholder="$t('discount_codes.dialog.title_input_hint')"
-            hide-details
-            messages=" "
-            variant="underlined"
-          >
-            <template v-slot:append-inner>
-              <b-translation-button-discount-code
-                v-if="discountCode?.id"
-                :discount-code="discountCode"
-                :label="$t('discount_codes.dialog.title_input')"
-                :shop="shop"
-                translation-key="title"
-              ></b-translation-button-discount-code>
-            </template>
-          </v-text-field>
-          <u-smart-suggestion
-            v-if="!discountCode?.id || !title"
-            :samples="$tm('suggestions.discount_code.title')"
-            class="mb-4"
-            @select="(v) => (title = v)"
-          ></u-smart-suggestion>
+          <div class="sd-modern-incentive-fields">
+            <v-text-field
+              class="sd-modern-incentive-fields__full sd-modern-incentive-field"
+              v-model="title"
+              :counter="48"
+              :label="$t('discount_codes.dialog.title_input')"
+              :placeholder="$t('discount_codes.dialog.title_input_hint')"
+              hide-details
+              messages=" "
+              variant="underlined"
+            >
+              <template v-slot:append-inner>
+                <b-translation-button-discount-code
+                  v-if="discountCode?.id"
+                  :discount-code="discountCode"
+                  :label="$t('discount_codes.dialog.title_input')"
+                  :shop="shop"
+                  translation-key="title"
+                ></b-translation-button-discount-code>
+              </template>
+            </v-text-field>
+            <u-smart-suggestion
+              v-if="!discountCode?.id || !title"
+              :samples="$tm('suggestions.discount_code.title')"
+              class="mb-4 sd-modern-incentive-fields__full"
+              @select="(v) => (title = v)"
+            ></u-smart-suggestion>
 
-          <v-text-field
-            v-model="description"
-            :counter="128"
-            :label="$t('discount_codes.dialog.description_input')"
-            :placeholder="$t('discount_codes.dialog.description_input_hint')"
-            hide-details
-            messages=" "
-            variant="underlined"
-          >
-            <template v-slot:append-inner>
-              <b-translation-button-discount-code
-                v-if="discountCode?.id"
-                :discount-code="discountCode"
-                :label="$t('discount_codes.dialog.description_input')"
-                :shop="shop"
-                translation-key="description"
-              ></b-translation-button-discount-code>
-            </template>
-          </v-text-field>
-          <u-smart-suggestion
-            v-if="!discountCode?.id || !description"
-            :samples="$tm('suggestions.discount_code.description')"
-            class="mb-4"
-            @select="(v) => (description = v)"
-          ></u-smart-suggestion>
+            <v-text-field
+              class="sd-modern-incentive-fields__full sd-modern-incentive-field"
+              v-model="description"
+              :counter="128"
+              :label="$t('discount_codes.dialog.description_input')"
+              :placeholder="$t('discount_codes.dialog.description_input_hint')"
+              hide-details
+              messages=" "
+              variant="underlined"
+            >
+              <template v-slot:append-inner>
+                <b-translation-button-discount-code
+                  v-if="discountCode?.id"
+                  :discount-code="discountCode"
+                  :label="$t('discount_codes.dialog.description_input')"
+                  :shop="shop"
+                  translation-key="description"
+                ></b-translation-button-discount-code>
+              </template>
+            </v-text-field>
+            <u-smart-suggestion
+              v-if="!discountCode?.id || !description"
+              :samples="$tm('suggestions.discount_code.description')"
+              class="mb-4 sd-modern-incentive-fields__full"
+              @select="(v) => (description = v)"
+            ></u-smart-suggestion>
+          </div>
         </div>
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :add-caption="$t('global.commons.management')"
             :title="$t('global.commons.cluster')"
             :to="{ name: 'BPageShopClassificationClusters' }"
@@ -232,17 +282,20 @@
             icon="workspaces"
           ></u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("discount_codes.dialog.cluster.subtitle") }}
           </v-list-subheader>
-          <b-cluster-input
-            v-model="cluster_id"
-            :return-object="false"
-            clearable
-            icon="workspaces_filled"
-            no-home
-            variant="underlined"
-          ></b-cluster-input>
+          <div class="sd-modern-incentive-fields">
+            <b-cluster-input
+              class="sd-modern-incentive-fields__full sd-modern-incentive-field"
+              v-model="cluster_id"
+              :return-object="false"
+              clearable
+              icon="workspaces_filled"
+              no-home
+              variant="underlined"
+            ></b-cluster-input>
+          </div>
         </div>
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
       </v-form>
@@ -286,7 +339,11 @@
           size="x-large"
           variant="elevated"
           @click="editDiscountCode()"
-          v-ctrl.s="()=>{editDiscountCode()}"
+          v-ctrl.s="
+            () => {
+              editDiscountCode();
+            }
+          "
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -300,7 +357,11 @@
           size="x-large"
           variant="elevated"
           @click="createDiscountCode"
-          v-ctrl.s="()=>{createDiscountCode()}"
+          v-ctrl.s="
+            () => {
+              createDiscountCode();
+            }
+          "
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

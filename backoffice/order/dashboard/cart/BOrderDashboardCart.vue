@@ -14,14 +14,15 @@
 
 <template>
   <div
-    :class="{ '-activated': in_this_step }"
-    class="widget shadow my-3 mx-1 mx-md-3"
+    :class="modern ? 'sd-modern-widget b-order-cart-modern' : { '-activated': in_this_step, 'widget shadow my-3 mx-1 mx-md-3': true }"
+    class="text-start"
   >
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Header ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
     <u-widget-header
       icon="shopping_basket"
-      :title="$t('process_center.basket_items')"
+      :class="{ 'sd-modern-form-header b-order-cart-modern__header': modern }"
+      :title="$t(modern ? 'process_center.modern.basket_title' : 'process_center.basket_items')"
     >
       <template v-slot:append-actions>
         <small
@@ -33,17 +34,29 @@
       </template>
     </u-widget-header>
 
-    <v-list-subheader class="px-0 text-start">
+    <p v-if="modern" class="sd-modern-subtitle b-order-cart-modern__subtitle">
+      <span>{{ $t('process_center.modern.basket_subtitle') }}</span>
+      <v-tooltip location="top" content-class="sd-modern-tooltip text-start" :open-on-click="true">
+        <template #activator="{ props }">
+          <v-btn v-bind="props" icon="info_outline" variant="text" class="sd-modern-icon-button sd-modern-info-button b-order-cart-modern__help" :aria-label="$t('process_center.modern.basket_help')"></v-btn>
+        </template>
+        {{ $tm('process_center.basket_list.checklist').join(' ') }}
+      </v-tooltip>
+    </p>
+    <v-list-subheader v-else class="px-0 text-start">
       <span v-html="$t('process_center.basket_list.message')"></span>
     </v-list-subheader>
 
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Compact cart items ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-    <div
-      class="expand-button mb-2 mt-3 p-3 widget-hover rounded-xl position-relative pointer-pointer rounded-xl overflow-hidden"
+    <component
+      :is="modern ? 'button' : 'div'"
+      :type="modern ? 'button' : undefined"
+      :aria-expanded="modern ? force_show_items : undefined"
+      :class="modern ? 'b-order-cart-modern__summary' : 'expand-button mb-2 mt-3 p-3 widget-hover rounded-xl position-relative pointer-pointer rounded-xl overflow-hidden'"
       @click="force_show_items = !force_show_items"
     >
-      <span class="absolute-top-end text-muted px-2 small"
+      <span :class="modern ? 'b-order-cart-modern__summary-label' : 'absolute-top-end text-muted px-2 small'"
         ><v-icon
           :class="{ 'rotate-180': force_show_items }"
           class="mx-1 transition-all-400"
@@ -54,13 +67,13 @@
       </span>
 
       <b-order-cart-items-circle
-        class="d-flex overflow-auto pt-5 pb-2"
+        :class="modern ? 'b-order-cart-modern__preview' : 'd-flex overflow-auto pt-5 pb-2'"
         :delivery-state="basket.delivery_state"
         :items="items"
         :readonly="readonly"
       >
       </b-order-cart-items-circle>
-    </div>
+    </component>
 
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ List of Cart Items ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
@@ -76,6 +89,7 @@
           :shop="shop"
           :basket="basket"
           :type="basket.type"
+          :modern="modern"
           @fetch-order="$emit('fetch-order')"
         />
       </div>
@@ -252,7 +266,7 @@
                 <v-spacer></v-spacer>
                 <div>
                   <b-order-payment-actions-refund-button
-                    v-if="need_to_refund > 0"
+                    v-if="!isRolePanel && need_to_refund > 0"
                     :suggested-amount="refund_by_payment"
                     :payment="payment"
                   >
@@ -313,33 +327,38 @@
     </v-expand-transition>
 
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Seller Actions ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-    <div class="text-start">
+    <div :class="{ 'b-order-cart-modern__actions': modern }" class="text-start">
+      <p v-if="modern" class="b-order-cart-modern__guidance">
+        {{ $t('process_center.modern.basket_guidance') }}
+      </p>
       <v-btn
         v-if="!readonly"
-        :class="{ disabled: isActionDisabled }"
-        :color="in_this_step ? 'primary' : '#000'"
+        :class="{ disabled: isActionDisabled, 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && in_this_step && !isConfirmDisabled }"
+        :disabled="modern ? isConfirmDisabled : undefined"
+        :color="modern ? in_this_step && !isConfirmDisabled ? 'primary' : undefined : in_this_step ? 'primary' : '#000'"
         :loading="busy"
-        :size="in_this_step ? 'x-large' : undefined"
-        :variant="!in_this_step ? 'outlined' : 'elevated'"
+        :size="in_this_step && (!modern || !isConfirmDisabled) ? 'x-large' : undefined"
+        :variant="modern ? in_this_step && !isConfirmDisabled ? 'flat' : 'outlined' : !in_this_step ? 'outlined' : 'elevated'"
         class="mt-2 tnt"
         rounded
         @click="orderConfirm"
       >
-        <v-icon v-if="checked" start>check</v-icon>
-        <v-icon v-else-if="in_this_step" class="blink-me" start
+        <v-icon v-if="modern" start>{{ basket.delivery_state === PhysicalOrderStates.CheckQueue.code ? 'check' : 'save' }}</v-icon>
+        <v-icon v-else-if="checked" start>check</v-icon>
+        <v-icon v-else-if="in_this_step" :class="{ 'blink-me': !modern }" start
           >fiber_manual_record
         </v-icon>
 
         {{
           !isActionDisabled
             ? basket.delivery_state === PhysicalOrderStates.CheckQueue.code
-              ? $t("process_center.basket_list.action")
+              ? $t(modern ? 'process_center.modern.confirm_order' : 'process_center.basket_list.action')
               : $t("process_center.basket_list.apply_change_action")
             : $t("process_center.basket_list.cant_apply_change")
         }}
       </v-btn>
 
-      <ul class="tips mt-4">
+      <ul v-if="!modern" class="tips mt-4">
         <li
           v-for="item in $tm('process_center.basket_list.checklist')"
           :key="item"
@@ -384,6 +403,7 @@ export default {
   },
   emits: ["confirm-order","fetch-order"],
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       require: true,
       type: Object,
@@ -409,7 +429,7 @@ export default {
   data: function () {
     return {
       PhysicalOrderStates: Basket.PhysicalOrderStates,
-      force_show_items: false,
+      force_show_items: this.modern && this.isRolePanel,
       busy: false,
     };
   },
@@ -466,6 +486,10 @@ export default {
         this.basket.delivery_state ===
           Basket.PhysicalOrderStates.ToCustomer.code
       );
+    },
+    isConfirmDisabled() {
+      return this.readonly || this.busy || this.isActionDisabled || !!this.basket.reject ||
+        ![Basket.Status.Payed.code, Basket.Status.COD.code].includes(this.basket.status);
     },
 
     showItems() {
@@ -538,6 +562,7 @@ export default {
   },
   methods: {
     orderConfirm() {
+      if (this.modern && this.isConfirmDisabled) return;
       let list = [];
       this.busy = true;
 
@@ -565,6 +590,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-order-cart-modern {
+  &.sd-modern-widget { padding: 20px; margin-block-end: 18px; border-radius: 16px; font-family: inherit; font-size: 13px; line-height: 1.5; }
+  &.disabled { opacity: 1 !important; }
+
+  &__header { margin-block-end: 0; }
+  &__header :deep(h2) { font-family: inherit; font-size: 18px; font-weight: 500; line-height: 24px; }
+  &__header :deep(small) { color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; }
+  &__subtitle { display: flex; align-items: center; gap: 4px; margin: 4px 0 16px; font-size: 12px; line-height: 18px; }
+  &__help { pointer-events: auto; }
+  &__summary { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; width: 100%; min-height: 64px; padding: 10px 12px; color: inherit; font: inherit; text-align: start; background: var(--sd-modern-inset); border: 1px solid var(--sd-modern-border); border-radius: 10px; }
+  &__summary:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  &__summary-label { order: 2; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex: 1; font-size: 12px; }
+  &__summary-label > .v-icon { order: 2; }
+  &__preview { display: flex; flex: 0 1 auto; flex-wrap: wrap; min-width: 0; max-width: 100%; padding-block: 0 !important; padding-inline-end: 18px; overflow: visible !important; }
+  &__preview :deep(.v-badge) { flex: 0 0 auto; }
+  &__preview :deep(.v-avatar) { width: 36px !important; height: 36px !important; min-width: 36px !important; }
+  &__actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding-block-start: 16px; margin-block-start: 16px; border-block-start: 1px solid var(--sd-modern-border); }
+  &__guidance { flex: 1 1 220px; margin: 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 18px; }
+  &__actions > .v-btn { margin: 0 !important; }
+  // Keep disabled flat-button overlays from darkening the quiet neutral surface.
+  &__actions > .v-btn--disabled :deep(.v-btn__overlay) { opacity: 0; }
+  .lottery-prize { color: inherit; background: var(--sd-modern-inset); }
+  @media (max-width: 600px) { &.sd-modern-widget { padding: 17px 13px; } &__summary { gap: 8px; } }
+}
+
 .lottery-prize {
   text-align: start;
   background-color: #0f75ac;

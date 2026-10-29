@@ -25,7 +25,10 @@
     :variant="variant"
     item-title="name"
     item-value="name"
-    messages="Use source to identify a search engine, newsletter name, or other source."
+    :messages="
+      messages ??
+      'Use source to identify a search engine, newsletter name, or other source.'
+    "
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template v-slot:prepend-inner>

@@ -304,6 +304,11 @@ export default {
 
   methods: {
     selectCurrency(currency) {
+      // Keyboard clearing must not erase the committed billing currency.
+      if (this.saveLocalStorage && !currency) {
+        this.selectedCurrency = this.GetUserSelectedCurrency().code;
+        return;
+      }
       console.log("currency", currency, "save", this.saveLocalStorage);
 
       if (this.saveLocalStorage) {

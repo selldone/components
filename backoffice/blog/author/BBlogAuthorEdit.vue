@@ -1,7 +1,8 @@
 <template>
   <span
     v-if="article?.id && writeShopAccess(ShopPermissionRegions.BLOG.code)"
-    class="b-blog-author-edit d-inline-flex align-center text-start"
+    class="b-blog-author-edit text-start"
+    :class="$slots.activator ? 'd-block' : 'd-inline-flex align-center'"
     @click.stop
   >
     <v-dialog
@@ -11,8 +12,10 @@
       max-width="520"
     >
       <template v-slot:activator="{ props }">
+        <slot name="activator" :props="props">
         <v-btn
           v-bind="props"
+          :disabled="disabled || busy"
           :aria-label="$t('admin_shop.blogs.author.change_action')"
           icon
           :size="modern ? undefined : $vuetify.display.smAndDown ? 40 : 32"
@@ -32,6 +35,7 @@
             {{ $t("admin_shop.blogs.author.change_action") }}
           </v-tooltip>
         </v-btn>
+        </slot>
       </template>
       <v-card class="b-blog-author-edit text-start" rounded="xl">
         <v-card-title class="pa-5 pb-2 text-h6">
@@ -50,7 +54,7 @@
             :placeholder="$t('admin_shop.blogs.author.search_placeholder')"
             :suggestion-source="searchEligibleStaffs"
             :menu="true"
-            :disabled="busy"
+            :disabled="busy || disabled"
             :can-invite="false"
             variant="underlined"
             persistent-placeholder
@@ -86,11 +90,13 @@ import { CleanCache } from "@selldone/core-js/server";
 
 export default {
   name: "BBlogAuthorEdit",
+  emits: ["busy"],
   components: { SUserInput },
   props: {
     shop: { type: Object, required: true },
     article: { type: Object, required: true },
     modern: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
   },
   data: () => ({
     ShopPermissionRegions,
@@ -102,18 +108,22 @@ export default {
     can_assign() {
       return (
         !this.busy &&
+        !this.disabled &&
         !!this.selected_user?.id &&
         this.selected_user.id !== this.article.user_id
       );
     },
   },
   watch: {
+    busy(value) { this.$emit("busy", value); if (!value && this.disabled) this.open = false; },
+    disabled(value) { if (value && !this.busy) this.open = false; },
     open() {
       this.selected_user = null;
     },
   },
   methods: {
     searchEligibleStaffs(search) {
+      if (this.disabled || !this.writeShopAccess(ShopPermissionRegions.BLOG.code)) return Promise.resolve([]);
       return axios
         .get(window.API.GET_SHOP_ELIGIBLE_STAFFS(this.shop.id), {
           params: { search, limit: 30 },
@@ -131,6 +141,7 @@ export default {
         return;
 
       this.busy = true;
+      const sourceArticle = this.article, articleId = this.article.id, shopId = this.shop.id;
       axios
         .put(
           window.API.PUT_SHOP_ARTICLE_AUTHOR(this.shop.id, this.article.id),
@@ -139,6 +150,7 @@ export default {
           },
         )
         .then(({ data }) => {
+          if (sourceArticle !== this.article || articleId !== this.article.id || shopId !== this.shop.id || !this.writeShopAccess(ShopPermissionRegions.BLOG.code)) return;
           if (data.error)
             return NotificationService.showErrorAlert(null, data.error_msg);
 

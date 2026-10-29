@@ -13,8 +13,80 @@
   -->
 
 <template>
-  <v-card color="transparent" flat>
-    <v-card-text>
+  <v-card
+    color="transparent"
+    flat
+    :class="{ 's--onboarding-products text-start': modern }"
+  >
+    <div v-if="modern" class="s--onboarding-products__content">
+      <p class="s--onboarding-products__intro">
+        {{ $t("onboarding.modern.products.intro") }}
+      </p>
+      <div class="sd-modern-records s--onboarding-products__rows">
+        <div class="sd-modern-record s--onboarding-products__row">
+          <div>
+            <h3>{{ $t("onboarding.modern.products.catalog") }}</h3>
+            <p>{{ $t("onboarding.modern.products.catalog_description") }}</p>
+          </div>
+          <v-btn
+            :to="{ name: 'BPageShopProductsList', hash: '#add' }"
+            target="_blank"
+            rel="noopener noreferrer"
+            exact
+            class="sd-modern-button sd-modern-button--inline"
+            color="primary"
+            variant="text"
+            >{{ $t("onboarding.modern.products.add") }}<v-icon end size="16">north_east</v-icon></v-btn
+          >
+        </div>
+        <div
+          v-if="has_product"
+          class="sd-modern-record s--onboarding-products__row"
+        >
+          <div>
+            <h3>{{ $t("onboarding.modern.products.categories") }}</h3>
+            <p>{{ $t("onboarding.modern.products.categories_description") }}</p>
+          </div>
+          <v-btn
+            :to="{ name: 'BPageShopProductsList', hash: '#category' }"
+            target="_blank"
+            rel="noopener noreferrer"
+            exact
+            class="sd-modern-button sd-modern-button--inline"
+            color="primary"
+            variant="text"
+            >{{ $t("onboarding.modern.products.manage_categories") }}<v-icon end size="16">north_east</v-icon></v-btn
+          >
+        </div>
+        <div class="sd-modern-record s--onboarding-products__row">
+          <div>
+            <h3>{{ $t("onboarding.modern.products.import") }}</h3>
+            <p>{{ $t("onboarding.modern.products.import_description") }}</p>
+          </div>
+          <v-btn
+            :to="{ name: 'BPageShopProductsList' }"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="sd-modern-button sd-modern-button--inline"
+            color="primary"
+            variant="text"
+            >{{ $t("onboarding.modern.products.import_action") }}<v-icon end size="16">north_east</v-icon></v-btn
+          >
+        </div>
+      </div>
+      <div class="sd-modern-actions s--onboarding-products__actions">
+        <v-btn
+          class="sd-modern-button sd-modern-button--inline"
+          color="primary"
+          variant="text"
+          @click="dialog_sample = true"
+        >
+          <v-icon start size="16">download</v-icon
+          >{{ $t("onboarding.modern.products.templates") }}
+        </v-btn>
+      </div>
+    </div>
+    <v-card-text v-else>
       <u-widget-header
         :title="$t('onboarding.product.step1.title')"
         icon="looks_one"
@@ -99,6 +171,7 @@
     <!-- ------------------------ Dialog > Sample excel ---------------------- -->
     <b-product-importer-sample-dialog
       v-model="dialog_sample"
+      :modern="modern"
     ></b-product-importer-sample-dialog>
   </v-card>
 </template>
@@ -110,6 +183,7 @@ export default {
   name: "ShopOnboardingProductTab",
   components: { BProductImporterSampleDialog },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -160,4 +234,49 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.s--onboarding-products {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  min-width: 0;
+
+  &__intro {
+    margin: 0;
+    color: var(--sd-modern-muted);
+  }
+  &__rows {
+    margin-block-start: 18px;
+  }
+  &__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-block: 14px;
+    gap: 10px 16px;
+
+    h3 {
+      margin: 0;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: var(--sd-modern-muted);
+    }
+  }
+  &__actions {
+    margin-block-start: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .s--onboarding-products__row {
+    grid-template-columns: minmax(0, 1fr);
+    .sd-modern-button {
+      justify-self: start;
+    }
+  }
+}
+</style>

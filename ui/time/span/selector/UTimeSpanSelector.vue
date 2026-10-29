@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-menu>
+  <v-menu :content-class="menuClass">
     <template v-slot:activator="{ props }">
       <v-btn
         :class="buttonClass"
@@ -59,6 +59,7 @@ export default {
     },
     size: [Number, String],
     buttonClass: {},
+    menuClass: {},
   },
   data: () => ({}),
   computed: {

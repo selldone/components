@@ -21,7 +21,10 @@
     transition="dialog-bottom-transition"
     close-on-back
   >
-    <v-card color="#FFF">
+    <v-card
+      :color="modern ? undefined : '#FFF'"
+      :class="{ 'b-products-panel-add-product--modern sd-modern-canvas text-start': modern }"
+    >
       <v-card-title>
         <v-row no-gutters>
           <div class="body-title">
@@ -51,6 +54,7 @@
         </v-row>
       </v-card-title>
       <b-product-add-full
+        :modern="modern"
         :shop="$shop"
         :vendor="$vendor"
         @add="
@@ -67,13 +71,19 @@
 
       <v-card-actions>
         <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="close">
+          <v-btn
+            :size="modern ? 'default' : 'x-large'"
+            :class="{ 'sd-modern-button': modern }"
+            variant="text"
+            @click="close"
+          >
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
           <v-btn
             v-if="new_product?.id"
-            size="x-large"
+            :size="modern ? 'default' : 'x-large'"
+            :class="{ 'sd-modern-button': modern }"
             variant="text"
             :to="{
               name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -120,6 +130,7 @@ export default defineComponent({
   },
 
   props: {
+    modern: { type: Boolean, default: false },
     modelValue: Boolean,
     category: Object,
   },
@@ -160,4 +171,18 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.b-products-panel-add-product--modern {
+  > .v-card-title {
+    padding: 25px 24px 5px;
+    > .v-row { max-width: 1200px; margin-inline: auto; }
+    .body-title { font-family: inherit; font-size: 18px; font-weight: 500; line-height: 27px; }
+  }
+  > .v-card-actions {
+    padding: 14px 24px;
+    background: rgb(var(--v-theme-surface));
+    border-block-start: 1px solid var(--sd-modern-border);
+    .widget-buttons { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; max-width: 1200px; margin-inline: auto; }
+  }
+}
+</style>

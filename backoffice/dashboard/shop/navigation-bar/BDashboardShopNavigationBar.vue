@@ -156,7 +156,7 @@
         </router-link>
 
         <!-- SEO dashboard -->
-        <template v-if="shop.search_console">
+        <template v-if="shop.search_console || shop.search_console_sample">
           <span class="mx-1">/</span>
 
           <router-link
@@ -292,7 +292,9 @@ export default defineComponent({
         ...[
           ["technical", "monitor_heart"],
           ["finance", "savings"],
-          ...(this.shop.search_console ? [["seo", "track_changes"]] : []),
+          ...(this.shop.search_console || this.shop.search_console_sample
+            ? [["seo", "track_changes"]]
+            : []),
         ].map(([code, icon]) => ({
           code,
           query: code,

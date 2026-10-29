@@ -12,1404 +12,1616 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="pb-16" v-bind="$attrs">
-    <!-- ██████████████████████████ Config ██████████████████████████ -->
-
-    <div class="widget-box -large mb-5">
-      <u-widget-header
-        :title="$t('global.commons.general_config')"
-        add-caption="how it works?"
-        add-icon="support"
-        add-text
-        icon="tune"
-        @click:add="show_guide = true"
-      ></u-widget-header>
-      <v-list-subheader
-        >The campaign name is visible exclusively to administrators. Currency is
-        utilized to determine the campaign fee and evaluate your campaign's
-        overall performance.
-      </v-list-subheader>
-      <v-form ref="form" class="max-widget-width mx-auto" lazy-validation>
-        <v-text-field
-          id="mail_name"
-          v-model="mail_name"
-          :rules="[GlobalRules.required()]"
-          hide-details
-          label="* Campaign name"
-          variant="underlined"
+<template>
+  <div class="b-email-editor text-start" v-bind="$attrs">
+    <div class="sd-modern-content b-email-editor__content">
+      <header class="b-email-editor__page-header">
+        <div class="sd-modern-title">
+          <v-icon size="18" aria-hidden="true">outgoing_mail</v-icon>
+          <div>
+            <h1 class="sd-modern-title-text">
+              {{
+                $t(
+                  email
+                    ? "email_builder.workspace.title"
+                    : "email_builder.workspace.create_title",
+                )
+              }}
+            </h1>
+            <p class="sd-modern-subtitle">
+              {{
+                $t(
+                  email
+                    ? "email_builder.workspace.subtitle"
+                    : "email_builder.workspace.create_subtitle",
+                )
+              }}
+            </p>
+          </div>
+        </div>
+        <span class="sd-modern-status sd-modern-status--plain"
+          ><span
+            class="sd-modern-status__dot"
+            :class="emailStateTone"
+            aria-hidden="true"
+          />{{ emailStateLabel }}</span
         >
-        </v-text-field>
-        <u-smart-suggestion
-          :samples="$tm('suggestions.shop_email.name')"
-          add-session
-          @select="(v) => (mail_name = v)"
-        ></u-smart-suggestion>
-
-        <u-currency-input
-          v-model="mail_currency"
-          :active-currencies="shop.currencies"
-          :disabled="!!email"
-          :return-object="false"
-          :title="$t('global.commons.currency')"
-          class="mb-5"
-          messages="* Not changeable after create!"
-          variant="underlined"
-        ></u-currency-input>
-
-        <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
-        <b-cluster-input
-          v-model="cluster_id"
-          :return-object="false"
-          clearable
-          icon="workspaces_filled"
-          label="Cluster"
-          messages="By associating this email with a cluster, you can easily manage it alongside other resources in a single location."
-          no-home
-          variant="underlined"
-        ></b-cluster-input>
-        <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
-      </v-form>
-    </div>
-
-    <!-- ██████████████████████████ User ██████████████████████████ -->
-
-    <div class="widget-box -large mb-5">
-      <u-widget-header
-        :title="$t('global.commons.filter')"
-        icon="filter_alt"
-      ></u-widget-header>
-      <v-list-subheader
-        >Improve results by sending tailored emails to specific audiences. Apply
-        filters to refine your target audience here.
-      </v-list-subheader>
-
-      <b-customers-funnel
-        v-model="filter"
-        :height="300"
-        :permanent-filters="[{ type: 'SUBSCRIBED', subscribed: true }]"
-        :shop="shop"
-        :width="500"
-        class="mx-auto"
-        vertical
-        @update:count="(val) => (users_count = val)"
-      ></b-customers-funnel>
-    </div>
-
-    <!-- ██████████████████████████ Design ██████████████████████████ -->
-
-    <div class="email-page widget-box -large">
-      <div class="py-3 text-uppercase d-flex align-center">
-        <v-icon class="mx-1">arrow_drop_down</v-icon>
-        <small>{{ $t("email_builder.design_section") }}</small>
-
-        <v-spacer></v-spacer>
-
-        <v-btn
-          class="mx-1 tnt"
-          variant="text"
-          @click="track_mode = !track_mode"
+      </header>
+      <div class="b-email-editor__layout">
+        <nav
+          class="sd-modern-section-nav b-email-editor__nav"
+          :aria-label="$t('email_builder.workspace.title')"
         >
-          <v-icon class="me-1"
-            >{{ track_mode ? "architecture" : "ads_click" }}
-          </v-icon>
-          {{ track_mode ? "Edit mode" : "Show trackers" }}
-        </v-btn>
+          <button
+            v-for="section in editorSections"
+            :key="section.key"
+            type="button"
+            class="sd-modern-section-nav__item"
+            :aria-current="
+              active_section === section.key ? 'location' : undefined
+            "
+            @click="active_section = section.key"
+          >
+            <v-icon size="17" aria-hidden="true">{{ section.icon }}</v-icon
+            ><span>{{ section.title }}</span>
+          </button>
+          <p class="b-email-editor__nav-help">
+            <v-icon size="14" aria-hidden="true">info_outline</v-icon
+            >{{ $t("email_builder.workspace.save_help") }}
+          </p>
+        </nav>
+        <div class="b-email-editor__workspace">
+          <div
+            v-if="email?.sent || !hasWriteAccess"
+            class="sd-modern-notice b-email-editor__readonly"
+            role="status"
+          >
+            <v-icon size="17" aria-hidden="true">info_outline</v-icon>
+            <p>
+              {{
+                $t(
+                  email?.sent
+                    ? "email_builder.workspace.sent_readonly"
+                    : "email_builder.workspace.read_only",
+                )
+              }}
+            </p>
+          </div>
 
-        <v-btn
-          class="mx-1 tnt"
-          variant="flat"
-          @click="showEdit(EmailOptionsHelper.GeneratePageOptions(structure))"
-        >
-          <v-icon class="me-1">{{ "tune" }}</v-icon>
-          Page Settings
-        </v-btn>
-
-        <u-smart-menu :items="menu_items"></u-smart-menu>
-      </div>
-
-      <!-- ██████████████████████████ Email Editor ██████████████████████████ -->
-      <div
-        :class="{ 'on-drop': draged }"
-        :style="{
-          '--color-1': structure.color_1,
-          '--color-2': structure.color_2,
-          '--font-title': structure.font_title
-            ? structure.font_title
-            : 'Roboto',
-          '--font-text': structure.font_text ? structure.font_text : 'Roboto',
-          backgroundColor: structure.page_color
-            ? structure.page_color
-            : '#FAFAFA',
-        }"
-        class="s-drop-zone mx-auto d-flex flex-column rounded-lg"
-        @dragenter="draged = true"
-        @dragexit="draged = false"
-        @dragover="dragOverHandler"
-        @drop="dropHandler"
-      >
-        <div
-          ref="scale_container"
-          :class="{ scale: scale_down }"
-          :style="{
-            'max-height': max_h,
-            maxWidth: structure.max_width ? structure.max_width : '600px',
-            backgroundColor: structure.sections_color
-              ? structure.sections_color
-              : '#FFF',
-          }"
-          class="scale-container mx-auto"
-        >
-          <b-email-marketing-track-spot
-            v-if="track_mode"
-            bg-color1="#1976D2"
-            bg-color2="#0097A7"
-            class="zoomIn"
-            color="#0288D1"
-            label="view"
-            top="5%"
-          ></b-email-marketing-track-spot>
-
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ HEADER ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-          <v-expand-transition>
-            <div
-              v-if="structure.header"
-              :style="{
-                'background-color': structure.color_1,
-                'background-image': structure.header.bg_image
-                  ? `url('${structure.header.bg_image}')`
-                  : `linear-gradient(160deg, ${structure.color_1} 0%, ${structure.color_2} 100%)`,
-              }"
-              class="py-5 position-relative"
-            >
-              <!--  ---------------------- Header ---------------------- -->
-
-              <v-btn
-                v-if="editMode"
-                class="option-btn"
-                icon
-                title="Edit email design preferences."
-                variant="flat"
-                @click="
-                  showEdit(EmailOptionsHelper.GenerateHeaderOptions(structure))
-                "
-              >
-                <v-icon>edit</v-icon>
-              </v-btn>
-
-              <div
-                :style="{ textAlign: structure.header.align }"
-                class="mx-auto p-5 mx-auto"
-                style="max-width: 960px"
-              >
-                <v-img
-                  v-if="structure.header.image"
-                  :max-width="structure.header.image_max_width"
-                  :src="structure.header.image"
-                  :width="
-                    structure.header.image_width
-                      ? structure.header.image_width
-                      : '50%'
-                  "
-                  class="mx-auto my-2 zoomIn"
-                  height="auto"
-                  min-height="200px"
-                />
-
-                <h1
-                  :class="{ editable: editMode }"
-                  :contenteditable="editMode"
-                  class="font-weight-black text-white mt-10"
-                  @blur="(e) => innerUpdate(e, 'title', structure.header)"
-                  v-html="structure.header.title"
-                ></h1>
-
-                <p
-                  :class="{ editable: editMode }"
-                  :contenteditable="editMode"
-                  class="text-white"
-                  @blur="(e) => innerUpdate(e, 'sub_title', structure.header)"
-                  v-html="structure.header.sub_title"
-                ></p>
-                <b-email-marketing-editor-button
-                  v-model:action="structure.header.action"
-                  :edit-mode="editMode"
-                  :structure="structure"
-                  :tracking-mode="track_mode"
-                  @show-edit="showEdit"
-                ></b-email-marketing-editor-button>
+          <!-- ██████████████████████████ Config ██████████████████████████ -->
+          <section
+            v-show="active_section === 'general'"
+            class="sd-modern-widget b-email-editor__panel"
+          >
+            <header class="sd-modern-header">
+              <div>
+                <h2 class="sd-modern-title-text">
+                  {{ $t("email_builder.workspace.general_title") }}
+                </h2>
+                <p class="sd-modern-subtitle">
+                  {{ $t("email_builder.workspace.general_subtitle") }}
+                </p>
               </div>
-            </div>
-          </v-expand-transition>
-
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ SECTIONS ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-          <div class="text-center" style="min-height: 40vh">
-            <div
-              v-for="(section, index) in structure.sections"
-              :key="index"
-              :class="{ 'section-container-editable': editMode }"
-              :style="{
-                'background-image': section.bg_image
-                  ? `url('${section.bg_image}')`
-                  : null,
-              }"
-              class="position-relative"
-              style="background-size: cover; background-position: center"
+              <v-btn
+                class="sd-modern-icon-button sd-modern-info-button"
+                icon
+                variant="text"
+                :aria-label="$t('email_builder.workspace.general_title')"
+                ><v-icon size="15" aria-hidden="true">info_outline</v-icon
+                ><v-tooltip
+                  activator="parent"
+                  location="top"
+                  open-on-click
+                  content-class="sd-modern-tooltip text-start"
+                  >{{ $t("email_builder.workspace.internal_name_help") }}
+                  {{ $t("email_builder.workspace.currency_locked") }}
+                  {{ $t("email_builder.workspace.save_help") }}</v-tooltip
+                ></v-btn
+              >
+            </header>
+            <v-form
+              ref="form"
+              class="b-email-editor__fields sd-modern-underlined-field"
+              :disabled="!can_edit"
+              @submit.prevent="saveEmail()"
             >
-              <v-chip
-                v-if="editMode"
-                class="section-label justify-center"
-                color="#000"
-                label
-                size="x-small"
-                variant="flat"
-                >{{ section.type }}
-              </v-chip>
-              <span
-                caption="Move Down"
-                class="option-btn left-loc-1 sub-caption -hover"
-              >
-                <v-btn
-                  v-if="editMode && index < structure.sections.length - 1"
-                  icon
-                  size="small"
-                  variant="text"
-                  @click="moveDown(section)"
-                >
-                  <v-icon>keyboard_arrow_down</v-icon>
-                </v-btn>
-              </span>
-              <span
-                caption="Move Up"
-                class="option-btn left-loc-2 sub-caption -hover"
-              >
-                <v-btn
-                  v-if="editMode && index > 0"
-                  icon
-                  size="small"
-                  variant="text"
-                  @click="moveUp(section)"
-                >
-                  <v-icon>keyboard_arrow_up</v-icon>
-                </v-btn>
-              </span>
-              <span
-                caption="Delete"
-                class="option-btn left-loc-3 sub-caption -hover"
-              >
-                <v-btn
-                  v-if="editMode"
-                  color="red"
-                  icon
-                  size="small"
-                  variant="text"
-                  @click="deleteSection(index)"
-                >
-                  <v-icon>close</v-icon>
-                </v-btn>
-              </span>
-
-              <div
-                :style="{
-                  'background-color': section.bg_color,
-                  color: section.dark ? '#fff' : 'unset',
-                }"
-                class="section-content"
-              >
-                <!--  ---------------------- Section > Product ---------------------- -->
-                <v-btn
-                  v-if="editMode && section.type === 'product'"
-                  class="option-btn"
-                  icon
-                  title="Edit product section."
-                  variant="flat"
-                  @click="
-                    showEdit(EmailOptionsHelper.GenerateProductOptions(section))
+              <div class="b-email-editor__field-full">
+                <v-text-field
+                  id="mail_name"
+                  v-model="mail_name"
+                  :rules="[GlobalRules.required()]"
+                  :label="$t('email_builder.workspace.internal_name') + ' *'"
+                  :messages="$t('email_builder.workspace.internal_name_help')"
+                  maxlength="255"
+                  required
+                  variant="underlined"
+                /><u-smart-suggestion
+                  :samples="$tm('suggestions.shop_email.name')"
+                  :class="{ 'b-email-editor__inactive': !can_edit }"
+                  :inert="!can_edit || undefined"
+                  add-session
+                  @select="
+                    (v) => {
+                      if (can_edit) mail_name = v;
+                    }
                   "
-                >
-                  <v-icon>edit</v-icon>
-                </v-btn>
+                />
+              </div>
+              <v-text-field
+                v-if="email"
+                class="b-email-editor__currency-field"
+                :model-value="mail_currency"
+                :label="$t('global.commons.currency')"
+                :messages="$t('email_builder.workspace.currency_locked')"
+                variant="underlined"
+                readonly
+              >
+                <template #prepend-inner>
+                  <u-currency-icon :currency="mail_currency" flag-only small />
+                </template>
+                <template #append-inner>
+                  <v-icon size="14" aria-hidden="true">lock_outline</v-icon>
+                </template>
+              </v-text-field>
+              <u-currency-input
+                v-else
+                v-model="mail_currency"
+                :active-currencies="shop.currencies"
+                :return-object="false"
+                :label="$t('global.commons.currency')"
+                :messages="$t('email_builder.workspace.currency_locked')"
+                variant="underlined"
+              />
+              <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
+              <b-cluster-input
+                v-model="cluster_id"
+                :return-object="false"
+                clearable
+                no-home
+                :label="$t('email_builder.workspace.cluster')"
+                :messages="$t('email_builder.workspace.cluster_help')"
+                variant="underlined"
+              />
+            </v-form>
+            <footer class="b-email-editor__actions">
+              <span>{{ $t("email_builder.workspace.changes_apply") }}</span
+              ><v-btn
+                class="sd-modern-button sd-modern-button--primary"
+                variant="flat"
+                color="primary"
+                :prepend-icon="email ? 'save' : 'add'"
+                :disabled="!can_edit || busy_send"
+                :loading="busy_save"
+                @click="saveEmail()"
+                >{{
+                  $t(
+                    email
+                      ? "email_builder.workspace.save"
+                      : "email_builder.workspace.create",
+                  )
+                }}</v-btn
+              >
+            </footer>
+          </section>
 
-                <v-container
-                  v-if="section.type === 'product'"
-                  :style="{ textAlign: section.align }"
-                  class=""
-                >
-                  <v-row align="center" justify="center">
-                    <v-col :order="section.reverse ? 1 : 2" cols="12" sm="6">
+          <!-- ██████████████████████████ User ██████████████████████████ -->
+          <section
+            v-show="active_section === 'audience'"
+            class="sd-modern-widget b-email-editor__panel b-email-editor__audience"
+          >
+            <header class="sd-modern-header">
+              <div>
+                <h2 class="sd-modern-title-text">
+                  {{ $t("email_builder.workspace.audience_title") }}
+                </h2>
+                <p class="sd-modern-subtitle">
+                  {{ $t("email_builder.workspace.audience_subtitle") }}
+                </p>
+              </div>
+              <v-btn
+                class="sd-modern-icon-button sd-modern-info-button"
+                icon
+                variant="text"
+                :aria-label="$t('email_builder.workspace.audience_title')"
+                ><v-icon size="15" aria-hidden="true">info_outline</v-icon
+                ><v-tooltip
+                  activator="parent"
+                  location="top"
+                  open-on-click
+                  content-class="sd-modern-tooltip text-start"
+                  >{{ $t("email_builder.workspace.audience_help") }}</v-tooltip
+                ></v-btn
+              >
+            </header>
+            <div class="b-email-editor__audience-summary">
+              <span class="sd-modern-eyebrow">{{
+                $t("email_builder.workspace.matching_customers")
+              }}</span
+              ><strong>{{
+                users_count === null ? "—" : $n(users_count)
+              }}</strong>
+            </div>
+            <b-customers-funnel
+              v-model="filter"
+              :read-only="!can_edit"
+              :permanent-filters="[{ type: 'SUBSCRIBED', subscribed: true }]"
+              :shop="shop"
+              modern
+              @update:count="(val) => (users_count = val)"
+            />
+            <footer class="b-email-editor__actions">
+              <span>{{ $t("email_builder.workspace.changes_apply") }}</span
+              ><v-btn
+                class="sd-modern-button sd-modern-button--primary"
+                variant="flat"
+                color="primary"
+                :prepend-icon="email ? 'save' : 'add'"
+                :disabled="!can_edit || busy_send"
+                :loading="busy_save"
+                @click="saveEmail()"
+                >{{
+                  $t(
+                    email
+                      ? "email_builder.workspace.save"
+                      : "email_builder.workspace.create",
+                  )
+                }}</v-btn
+              >
+            </footer>
+          </section>
+
+          <!-- ██████████████████████████ Design ██████████████████████████ -->
+          <section
+            v-show="active_section === 'design'"
+            class="sd-modern-widget b-email-editor__panel b-email-editor__design"
+          >
+            <header class="sd-modern-header">
+              <div>
+                <h2 class="sd-modern-title-text">
+                  {{ $t("email_builder.workspace.design_title") }}
+                </h2>
+                <p class="sd-modern-subtitle">
+                  {{ $t("email_builder.workspace.design_subtitle") }}
+                </p>
+              </div>
+              <div class="sd-modern-actions">
+                <v-btn
+                  class="sd-modern-button sd-modern-button--inline"
+                  variant="text"
+                  color="primary"
+                  :prepend-icon="track_mode ? 'architecture' : 'ads_click'"
+                  @click="track_mode = !track_mode"
+                  >{{
+                    $t(
+                      track_mode
+                        ? "email_builder.workspace.edit_mode"
+                        : "email_builder.workspace.show_trackers",
+                    )
+                  }}</v-btn
+                ><u-smart-menu
+                  :items="menu_items"
+                  modern
+                  :title="$t('email_builder.workspace.options_title')"
+                />
+              </div>
+            </header>
+            <div class="b-email-editor__design-toolbar">
+              <div class="sd-modern-actions">
+                <v-btn
+                  class="sd-modern-button sd-modern-button--inline"
+                  variant="text"
+                  color="primary"
+                  prepend-icon="tune"
+                  :disabled="!editMode"
+                  @click="
+                    showEdit(EmailOptionsHelper.GeneratePageOptions(structure))
+                  "
+                  >{{ $t("email_builder.workspace.page_settings") }}</v-btn
+                ><v-menu v-if="editMode" content-class="text-start"
+                  ><template #activator="{ props }"
+                    ><v-btn
+                      v-bind="props"
+                      class="sd-modern-button sd-modern-button--inline"
+                      variant="text"
+                      color="primary"
+                      prepend-icon="add"
+                      >{{ $t("email_builder.workspace.add_section") }}</v-btn
+                    ></template
+                  ><v-list density="compact" class="text-start"
+                    ><v-list-item
+                      v-for="(definition, key) in EmailSectionStructures"
+                      :key="key"
+                      :title="sectionTitle(key)"
+                      :prepend-icon="sectionIcon(key)"
+                      @click="
+                        addSection(key, structure.sections.length - 1)
+                      " /></v-list
+                ></v-menu>
+              </div>
+              <span>{{ structure.max_width || "600px" }}</span>
+            </div>
+            <p class="b-email-editor__design-tip">
+              <v-icon size="14" aria-hidden="true">touch_app</v-icon
+              >{{ $t("email_builder.workspace.design_tip") }}
+            </p>
+            <!-- ██████████████████████████ Email Editor ██████████████████████████ -->
+            <div
+              :class="{ 'on-drop': draged }"
+              :style="{
+                '--color-1': structure.color_1,
+                '--color-2': structure.color_2,
+                '--font-title': structure.font_title
+                  ? structure.font_title
+                  : 'Roboto',
+                '--font-text': structure.font_text
+                  ? structure.font_text
+                  : 'Roboto',
+                backgroundColor: structure.page_color
+                  ? structure.page_color
+                  : '#FAFAFA',
+              }"
+              class="s-drop-zone mx-auto d-flex flex-column rounded-lg"
+              @dragenter="draged = true"
+              @dragexit="draged = false"
+              @dragover="dragOverHandler"
+              @drop="dropHandler"
+            >
+              <div
+                ref="scale_container"
+                :style="{
+                  maxWidth: structure.max_width ? structure.max_width : '600px',
+                  backgroundColor: structure.sections_color
+                    ? structure.sections_color
+                    : '#FFF',
+                }"
+                class="scale-container mx-auto"
+              >
+                <b-email-marketing-track-spot
+                  v-if="track_mode"
+                  bg-color1="#1976D2"
+                  bg-color2="#0097A7"
+                  class="zoomIn"
+                  color="#0288D1"
+                  label="view"
+                  top="5%"
+                ></b-email-marketing-track-spot>
+
+                <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ HEADER ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+                <v-expand-transition>
+                  <div
+                    v-if="structure.header"
+                    :style="{
+                      'background-color': structure.color_1,
+                      'background-image': structure.header.bg_image
+                        ? `url('${structure.header.bg_image}')`
+                        : `linear-gradient(160deg, ${structure.color_1} 0%, ${structure.color_2} 100%)`,
+                    }"
+                    class="py-5 position-relative"
+                  >
+                    <!--  ---------------------- Header ---------------------- -->
+
+                    <v-btn
+                      v-if="editMode"
+                      class="option-btn sd-modern-icon-button"
+                      icon
+                      :aria-label="$t('email_builder.workspace.edit_section')"
+                      variant="flat"
+                      @click="
+                        showEdit(
+                          EmailOptionsHelper.GenerateHeaderOptions(structure),
+                        )
+                      "
+                    >
+                      <v-icon size="16" aria-hidden="true">edit</v-icon
+                      ><v-tooltip
+                        activator="parent"
+                        location="top"
+                        content-class="sd-modern-tooltip text-start"
+                        >{{
+                          $t("email_builder.workspace.edit_section")
+                        }}</v-tooltip
+                      >
+                    </v-btn>
+
+                    <div
+                      :style="{ textAlign: structure.header.align }"
+                      class="mx-auto p-5 mx-auto"
+                      style="max-width: 960px"
+                    >
                       <v-img
-                        :src="
-                          section.product
-                            ? getProductImage(section.product, 256)
-                            : image_placeholder
+                        v-if="structure.header.image"
+                        :max-width="structure.header.image_max_width"
+                        :src="structure.header.image"
+                        :width="
+                          structure.header.image_width
+                            ? structure.header.image_width
+                            : '50%'
                         "
-                        class="mx-auto my-3 pointer-pointer"
-                        height="100%"
-                        min-height="84"
-                        min-width="84"
-                        width="100%"
-                        @click="
-                          showEdit([
-                            {
-                              type: 'product',
-                              object: section,
-                              key: 'product',
-                            },
-                          ])
-                        "
+                        class="mx-auto my-2 zoomIn"
+                        height="auto"
+                        min-height="200px"
                       />
-                    </v-col>
 
-                    <v-col :order="section.reverse ? 2 : 1" cols="12" sm="6">
-                      <span
-                        v-if="section.span || editMode"
+                      <h1
                         :class="{ editable: editMode }"
                         :contenteditable="editMode"
-                        class="subheading"
-                        @blur="(e) => innerUpdate(e, 'span', section)"
-                        v-html="section.span"
-                      ></span>
-
-                      <h2
-                        :class="editMode ? ' editable' : ''"
-                        :contenteditable="editMode"
-                        class="my-5"
-                        @blur="(e) => innerUpdate(e, 'title', section)"
-                        v-html="section.title"
-                      ></h2>
+                        class="font-weight-black text-white mt-10"
+                        @blur="(e) => innerUpdate(e, 'title', structure.header)"
+                        v-html="structure.header.title"
+                      ></h1>
 
                       <p
-                        :class="editMode ? ' editable' : ''"
+                        :class="{ editable: editMode }"
                         :contenteditable="editMode"
-                        @blur="(e) => innerUpdate(e, 'message', section)"
-                        v-html="section.message"
-                      ></p>
-
-                      <b-email-marketing-editor-button
-                        v-model:action="section.action"
-                        :edit-mode="editMode"
-                        :structure="structure"
-                        :tracking-mode="track_mode"
-                        @show-edit="showEdit"
-                      ></b-email-marketing-editor-button>
-                    </v-col>
-                  </v-row>
-                </v-container>
-
-                <!--  ---------------------- Section > Image ---------------------- -->
-                <v-btn
-                  v-if="editMode && section.type === 'image'"
-                  class="option-btn"
-                  icon
-                  title="Edit image section."
-                  variant="flat"
-                  @click="
-                    showEdit(EmailOptionsHelper.GenerateImageOptions(section))
-                  "
-                >
-                  <v-icon>edit</v-icon>
-                </v-btn>
-
-                <div
-                  v-if="section.type === 'image'"
-                  :style="{ textAlign: section.align }"
-                  class="pt-5"
-                >
-                  <span
-                    v-if="section.span || editMode"
-                    :class="{ editable: editMode }"
-                    :contenteditable="editMode"
-                    class="text-center subheading"
-                    @blur="(e) => innerUpdate(e, 'span', section)"
-                    v-html="section.span"
-                  ></span>
-
-                  <v-img
-                    :class="section.class"
-                    :max-height="section.image_max_height"
-                    :max-width="section.image_max_width"
-                    :src="section.image ? section.image : image_placeholder"
-                    class="mx-auto my-3 pointer-pointer"
-                    min-height="64"
-                    min-width="64"
-                    width="100%"
-                    @click="
-                      showEdit([
-                        {
-                          type: 'section',
-                          key: 'section1',
-                          title: 'Image',
-                          icon: 'image',
-                          description:
-                            'You can upload an image in this location.',
-                        },
-
-                        {
-                          type: 'image',
-                          object: section,
-                          key: 'image',
-                          label: 'Select image',
-                        },
-                      ])
-                    "
-                  />
-
-                  <h3
-                    v-if="section.title || editMode"
-                    :class="{ editable: editMode }"
-                    :contenteditable="editMode"
-                    class="my-5"
-                    @blur="(e) => innerUpdate(e, 'title', section)"
-                    v-html="section.title"
-                  ></h3>
-
-                  <b-email-marketing-editor-button
-                    v-model:action="section.action"
-                    :edit-mode="editMode"
-                    :structure="structure"
-                    :tracking-mode="track_mode"
-                    @show-edit="showEdit"
-                  ></b-email-marketing-editor-button>
-
-                  <p
-                    v-if="section.message || editMode"
-                    :class="
-                      (section.message_class ? section.message_class : '') +
-                      (editMode ? ' editable' : '')
-                    "
-                    :contenteditable="editMode"
-                    @blur="(e) => innerUpdate(e, 'message', section)"
-                    v-html="section.message"
-                  ></p>
-                </div>
-
-                <!--  ---------------------- Section > Two Columns ---------------------- -->
-                <v-btn
-                  v-if="editMode && section.type === 'two-columns'"
-                  class="option-btn"
-                  icon
-                  title="Edit columns section."
-                  variant="flat"
-                  @click="
-                    showEdit(
-                      EmailOptionsHelper.GenerateTwoColumnsOptions(section),
-                    )
-                  "
-                >
-                  <v-icon>edit</v-icon>
-                </v-btn>
-
-                <v-container v-if="section.type === 'two-columns'">
-                  <v-row align="center" justify="center">
-                    <v-col
-                      :style="{ textAlign: section.s1.align }"
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-img
-                        :src="
-                          section.s1.image
-                            ? section.s1.image
-                            : image_placeholder
-                        "
-                        class="mx-auto my-3 pointer-pointer"
-                        height="84"
-                        width="84"
-                        @click="
-                          showEdit([
-                            {
-                              type: 'section',
-                              key: 'section1',
-                              title: 'Image',
-                              icon: 'image',
-                              description:
-                                'You can upload an image in this location.',
-                            },
-
-                            {
-                              type: 'image',
-                              object: section.s1,
-                              key: 'image',
-                              label: 'Select image',
-                            },
-                          ])
-                        "
-                      />
-
-                      <h2
-                        :class="editMode ? ' editable' : ''"
-                        :contenteditable="editMode"
-                        class="my-5"
-                        @blur="(e) => innerUpdate(e, 'title', section.s1)"
-                        v-html="section.s1.title"
-                      ></h2>
-
-                      <p
-                        :class="
-                          section.s1.class + (editMode ? ' editable' : '')
-                        "
-                        :contenteditable="editMode"
-                        @blur="(e) => innerUpdate(e, 'html', section.s1)"
-                        v-html="section.s1.html"
-                      ></p>
-
-                      <b-email-marketing-editor-button
-                        v-model:action="section.s1.action"
-                        :edit-mode="editMode"
-                        :structure="structure"
-                        :tracking-mode="track_mode"
-                        @show-edit="showEdit"
-                      ></b-email-marketing-editor-button>
-                    </v-col>
-
-                    <v-col
-                      :style="{ textAlign: section.s2.align }"
-                      cols="12"
-                      sm="6"
-                    >
-                      <v-img
-                        :src="
-                          section.s2.image
-                            ? section.s2.image
-                            : image_placeholder
-                        "
-                        class="mx-auto my-3 pointer-pointer"
-                        height="84"
-                        width="84"
-                        @click="
-                          showEdit([
-                            {
-                              type: 'section',
-                              key: 'section1',
-                              title: 'Image',
-                              icon: 'image',
-                              description:
-                                'You can upload an image in this location.',
-                            },
-
-                            {
-                              type: 'image',
-                              object: section.s2,
-                              key: 'image',
-                              label: 'Select image',
-                            },
-                          ])
-                        "
-                      />
-
-                      <h2
-                        :class="editMode ? ' editable' : ''"
-                        :contenteditable="editMode"
-                        class="my-5"
-                        @blur="(e) => innerUpdate(e, 'title', section.s2)"
-                        v-html="section.s2.title"
-                      ></h2>
-
-                      <p
-                        :class="
-                          section.s2.class + (editMode ? ' editable' : '')
-                        "
-                        :contenteditable="editMode"
-                        @blur="(e) => innerUpdate(e, 'html', section.s2)"
-                        v-html="section.s2.html"
-                      ></p>
-
-                      <b-email-marketing-editor-button
-                        v-model:action="section.s2.action"
-                        :edit-mode="editMode"
-                        :structure="structure"
-                        :tracking-mode="track_mode"
-                        @show-edit="showEdit"
-                      ></b-email-marketing-editor-button>
-                    </v-col>
-                  </v-row>
-                </v-container>
-
-                <!--  ---------------------- Section > Text ---------------------- -->
-                <v-btn
-                  v-if="editMode && section.type === 'text'"
-                  class="option-btn"
-                  icon
-                  title="Edit text section."
-                  variant="flat"
-                  @click="
-                    showEdit(EmailOptionsHelper.GenerateTextOptions(section))
-                  "
-                >
-                  <v-icon>edit</v-icon>
-                </v-btn>
-
-                <div
-                  v-if="section.type === 'text'"
-                  :style="{ textAlign: section.align }"
-                  class="pt-5"
-                >
-                  <span
-                    :class="section.class + (editMode ? ' editable' : '')"
-                    :contenteditable="editMode"
-                    class="mx-auto subheading"
-                    @blur="(e) => innerUpdate(e, 'span', section)"
-                    v-html="section.span"
-                  ></span>
-
-                  <h2
-                    :class="section.class + (editMode ? ' editable' : '')"
-                    :contenteditable="editMode"
-                    class="mt-5 mb-5 mx-auto"
-                    @blur="(e) => innerUpdate(e, 'title', section)"
-                    v-html="section.title"
-                  ></h2>
-
-                  <b-email-marketing-editor-button
-                    v-model:action="section.action"
-                    :edit-mode="editMode"
-                    :structure="structure"
-                    :tracking-mode="track_mode"
-                    @show-edit="showEdit"
-                  ></b-email-marketing-editor-button>
-
-                  <p
-                    :class="section.class + (editMode ? ' editable' : '')"
-                    :contenteditable="editMode"
-                    class="max-width-container-1280px mx-auto mb-5 mt-3"
-                    @blur="(e) => innerUpdate(e, 'text', section)"
-                    v-html="section.text"
-                  ></p>
-                </div>
-
-                <!--  ---------------------- Add > Actions ---------------------- -->
-
-                <v-row class="pb-5" justify="center">
-                  <div v-for="(action, index) in section.actions" :key="index">
-                    <b-email-marketing-editor-button
-                      :action="action"
-                      :edit-mode="editMode"
-                      :in-array="section.actions"
-                      :structure="structure"
-                      :tracking-mode="track_mode"
-                      @update:action="(v) => (action = v)"
-                      @show-edit="showEdit"
-                    ></b-email-marketing-editor-button>
-                  </div>
-                </v-row>
-              </div>
-
-              <!--  ---------------------- Add > Buttons ---------------------- -->
-
-              <div v-if="editMode" class="actions-container">
-                <p>Add extra</p>
-                <v-btn
-                  v-if="editMode"
-                  class="ma-2"
-                  color="primary"
-                  prepend-icon="add"
-                  variant="flat"
-                  @click="addAction(section)"
-                >
-                  Actions
-                </v-btn>
-              </div>
-
-              <!--  ---------------------- Add > Inline Sections ---------------------- -->
-
-              <div v-if="editMode" class="inline-section">
-                <!-- ================= Add Sections ================= -->
-                <div class="hed-line center-absolute"></div>
-                <p class="hed center-absolute">
-                  <v-icon>keyboard_arrow_down</v-icon>
-                  Add
-                </p>
-                <div class="overflow-auto d-flex justify-center">
-                  <v-btn
-                    v-for="(sec_type, key) in EmailSectionStructures"
-                    :key="key"
-                    class="m-2"
-                    color="#fff"
-                    prepend-icon="add"
-                    variant="outlined"
-                    @click="addSection(key, index)"
-                  >
-                    {{ key }}
-                  </v-btn>
-                </div>
-              </div>
-            </div>
-
-            <!--  ============== END SECTIONS ================ -->
-
-            <!--  ---------------------- Add > Inline Sections (No section exist!) ---------------------- -->
-
-            <v-sheet
-              v-if="editMode && !structure.sections.length"
-              color="#00a89a"
-              dark
-            >
-              <!-- ================= Add Sections ================= -->
-              <p class="hed">
-                <v-icon>keyboard_arrow_down</v-icon>
-                Add
-              </p>
-              <div class="overflow-auto d-flex justify-center">
-                <v-btn
-                  v-for="(sec_type, key) in EmailSectionStructures"
-                  :key="key"
-                  class="m-2"
-                  size="large"
-                  variant="outlined"
-                  @click="addSection(key, 0)"
-                >
-                  <v-icon>add</v-icon>
-                  {{ key }}
-                </v-btn>
-              </div>
-            </v-sheet>
-
-            <div style="min-height: 5vh" />
-
-            <!-- =================================== FOOTER ================================== -->
-            <v-expand-transition>
-              <v-sheet v-if="structure.footer" class="position-relative" dark>
-                <v-container
-                  v-if="structure.footer"
-                  class="position-relative text-start"
-                >
-                  <v-row>
-                    <v-col cols="12">
-                      <h2>
-                        <img
-                          :src="getShopIcon(shop.id, 64)"
-                          height="32"
-                          style="border-radius: 50%; vertical-align: bottom"
-                          width="32"
-                        />
-                        {{ shop.title }}
-                      </h2>
-
-                      <p
-                        v-if="!edit_description"
-                        class="mt-2 animate-underline-editable"
-                        @click="edit_description = true"
-                      >
-                        {{
-                          structure.footer.description
-                            ? structure.footer.description.substring(0, 128)
-                            : shop.description.substring(0, 128)
-                        }}
-                      </p>
-                      <v-text-field
-                        v-else
-                        v-model="structure.footer.description"
-                        :counter="128"
-                        class="mt-2"
-                        density="compact"
-                        flat
-                        variant="solo"
+                        class="text-white"
                         @blur="
-                          (e) => {
-                            edit_description = false;
-                          }
+                          (e) => innerUpdate(e, 'sub_title', structure.header)
                         "
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="8">
-                      <h2>Contact Info</h2>
-                      <p class="text-muted">
-                        {{ info.address }}
-                        <br />
-                        {{ info.phone }}
-                        <br />
-                        {{ info.email }}
-                      </p>
-                    </v-col>
-                    <v-col cols="4">
-                      <h2>Menu</h2>
-                      <p class="text-muted">
-                        Visit Store
-                        <br />
-                        About Us
-                        <br />
-                        FAQ
-                        <br />
-                        Privacy
-                      </p>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-sheet>
-            </v-expand-transition>
-          </div>
-        </div>
-      </div>
+                        v-html="structure.header.sub_title"
+                      ></p>
+                      <b-email-marketing-editor-button
+                        v-model:action="structure.header.action"
+                        :edit-mode="editMode"
+                        :structure="structure"
+                        :tracking-mode="track_mode"
+                        @show-edit="showEdit"
+                      ></b-email-marketing-editor-button>
+                    </div>
+                  </div>
+                </v-expand-transition>
 
-      <!-- ██████████████████████████ Toolbar bottom ██████████████████████████ -->
-      <div v-if="editMode" class="max-widget-width mx-auto mt-5">
-        <u-smart-toggle
-          v-model="has_header"
-          class="my-3"
-          false-gray
-          false-icon="browser_not_supported"
-          true-description="Show/hide top banner."
-          true-icon="drag_handle"
-          true-title="Header"
-        >
-        </u-smart-toggle>
+                <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ SECTIONS ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <u-smart-toggle
-          v-model="has_footer"
-          class="my-3"
-          false-gray
-          false-icon="browser_not_supported"
-          true-description="Show/hide auto-generated footer."
-          true-icon="call_to_action"
-          true-title="Footer"
-        >
-        </u-smart-toggle>
-      </div>
+                <div class="text-center" style="min-height: 80px">
+                  <div
+                    v-for="(section, index) in structure.sections"
+                    :key="index"
+                    :class="{ 'section-container-editable': editMode }"
+                    :style="{
+                      'background-image': section.bg_image
+                        ? `url('${section.bg_image}')`
+                        : null,
+                    }"
+                    class="position-relative"
+                    style="background-size: cover; background-position: center"
+                  >
+                    <div v-if="editMode" class="b-email-editor__block-toolbar">
+                      <span>{{ sectionTitle(section.type) }}</span>
+                      <div>
+                        <v-btn
+                          class="sd-modern-icon-button"
+                          icon
+                          variant="text"
+                          :disabled="index === 0"
+                          :aria-label="$t('email_builder.workspace.move_up')"
+                          @click="moveUp(section)"
+                          ><v-icon size="16" aria-hidden="true"
+                            >arrow_upward</v-icon
+                          ><v-tooltip
+                            activator="parent"
+                            location="top"
+                            content-class="sd-modern-tooltip text-start"
+                            >{{
+                              $t("email_builder.workspace.move_up")
+                            }}</v-tooltip
+                          ></v-btn
+                        >
+                        <v-btn
+                          class="sd-modern-icon-button"
+                          icon
+                          variant="text"
+                          :disabled="index === structure.sections.length - 1"
+                          :aria-label="$t('email_builder.workspace.move_down')"
+                          @click="moveDown(section)"
+                          ><v-icon size="16" aria-hidden="true"
+                            >arrow_downward</v-icon
+                          ><v-tooltip
+                            activator="parent"
+                            location="top"
+                            content-class="sd-modern-tooltip text-start"
+                            >{{
+                              $t("email_builder.workspace.move_down")
+                            }}</v-tooltip
+                          ></v-btn
+                        >
+                        <v-btn
+                          class="sd-modern-icon-button"
+                          icon
+                          variant="text"
+                          :aria-label="
+                            $t('email_builder.workspace.edit_section')
+                          "
+                          @click="editSection(section)"
+                          ><v-icon size="16" aria-hidden="true">edit</v-icon
+                          ><v-tooltip
+                            activator="parent"
+                            location="top"
+                            content-class="sd-modern-tooltip text-start"
+                            >{{
+                              $t("email_builder.workspace.edit_section")
+                            }}</v-tooltip
+                          ></v-btn
+                        >
+                        <v-btn
+                          class="sd-modern-icon-button"
+                          icon
+                          variant="text"
+                          :aria-label="
+                            $t('email_builder.workspace.delete_section')
+                          "
+                          @click="deleteSection(index)"
+                          ><v-icon size="16" aria-hidden="true"
+                            >delete_outline</v-icon
+                          ><v-tooltip
+                            activator="parent"
+                            location="top"
+                            content-class="sd-modern-tooltip text-start"
+                            >{{
+                              $t("email_builder.workspace.delete_section")
+                            }}</v-tooltip
+                          ></v-btn
+                        >
+                      </div>
+                    </div>
+                    <div
+                      :style="{
+                        'background-color': section.bg_color,
+                        color: section.dark ? '#fff' : 'unset',
+                      }"
+                      class="section-content"
+                    >
+                      <!--  ---------------------- Section > Product ---------------------- -->
 
-      <!-- ================ Save ================ -->
+                      <v-container
+                        v-if="section.type === 'product'"
+                        :style="{ textAlign: section.align }"
+                        class=""
+                      >
+                        <v-row align="center" justify="center">
+                          <v-col
+                            :order="section.reverse ? 1 : 2"
+                            cols="12"
+                            sm="6"
+                          >
+                            <v-img
+                              :src="
+                                section.product
+                                  ? getProductImage(section.product, 256)
+                                  : image_placeholder
+                              "
+                              class="mx-auto my-3 pointer-pointer"
+                              height="100%"
+                              min-height="84"
+                              min-width="84"
+                              width="100%"
+                              @click="
+                                showEdit([
+                                  {
+                                    type: 'product',
+                                    object: section,
+                                    key: 'product',
+                                  },
+                                ])
+                              "
+                            />
+                          </v-col>
 
-      <!-- ██████████████████████ Server Not Available Alert ██████████████████████ -->
+                          <v-col
+                            :order="section.reverse ? 2 : 1"
+                            cols="12"
+                            sm="6"
+                          >
+                            <span
+                              v-if="section.span || editMode"
+                              :class="{ editable: editMode }"
+                              :contenteditable="editMode"
+                              class="subheading"
+                              @blur="(e) => innerUpdate(e, 'span', section)"
+                              v-html="section.span"
+                            ></span>
 
-      <v-alert
-        v-if="email && (!service || !service.enable)"
-        class="m-2"
-        color="red"
-        density="compact"
-        type="warning"
-        >{{ $t("email_builder.service_unavailable") }}
-      </v-alert>
+                            <h2
+                              :class="editMode ? ' editable' : ''"
+                              :contenteditable="editMode"
+                              class="my-5"
+                              @blur="(e) => innerUpdate(e, 'title', section)"
+                              v-html="section.title"
+                            ></h2>
 
-      <div class="widget-buttons mt-5">
-        <v-btn
-          :disabled="!can_edit"
-          :loading="busy_save"
-          color="primary"
-          size="x-large"
-          @click="saveEmail()"
-        >
-          <v-icon class="me-2">{{ email ? "save" : "add" }}</v-icon>
-          {{ email ? $t("global.actions.save") : $t("global.actions.add") }}
-        </v-btn>
-      </div>
-      <v-list-subheader v-if="schedule_enable && mail_schedule">
-        <v-icon class="me-1">schedule_send</v-icon>
-        Mail has been schedule for {{ getLocalTimeString(mail_schedule) }} ●
-        <b class="ms-1">{{ getFromNowString(mail_schedule) }}</b
-        >.
-        <v-chip
-          v-if="invalid_schedule"
-          class="ma-1"
-          closable
-          color="red"
-          variant="elevated"
-          @click="
-            mail_schedule = null;
-            schedule_enable = false;
-          "
-          >Invalid date! Click to remove.
-        </v-chip>
-      </v-list-subheader>
+                            <p
+                              :class="editMode ? ' editable' : ''"
+                              :contenteditable="editMode"
+                              @blur="(e) => innerUpdate(e, 'message', section)"
+                              v-html="section.message"
+                            ></p>
 
-      <template v-if="email">
-        <div :data-content="$t('global.commons.or')" class="hr-text my-4"></div>
-        <div class="widget-buttons">
-          <v-btn
-            append-icon="send"
-            class="s--button-flex"
-            color="primary"
-            size="x-large"
-            @click="dialog_send = true"
+                            <b-email-marketing-editor-button
+                              v-model:action="section.action"
+                              :edit-mode="editMode"
+                              :structure="structure"
+                              :tracking-mode="track_mode"
+                              @show-edit="showEdit"
+                            ></b-email-marketing-editor-button>
+                          </v-col>
+                        </v-row>
+                      </v-container>
+
+                      <!--  ---------------------- Section > Image ---------------------- -->
+
+                      <div
+                        v-if="section.type === 'image'"
+                        :style="{ textAlign: section.align }"
+                        class="pt-5"
+                      >
+                        <span
+                          v-if="section.span || editMode"
+                          :class="{ editable: editMode }"
+                          :contenteditable="editMode"
+                          class="text-center subheading"
+                          @blur="(e) => innerUpdate(e, 'span', section)"
+                          v-html="section.span"
+                        ></span>
+
+                        <v-img
+                          :class="section.class"
+                          :max-height="section.image_max_height"
+                          :max-width="section.image_max_width"
+                          :src="
+                            section.image ? section.image : image_placeholder
+                          "
+                          class="mx-auto my-3 pointer-pointer"
+                          min-height="64"
+                          min-width="64"
+                          width="100%"
+                          @click="
+                            showEdit([
+                              {
+                                type: 'section',
+                                key: 'section1',
+                                title: 'Image',
+                                icon: 'image',
+                                description:
+                                  'You can upload an image in this location.',
+                              },
+
+                              {
+                                type: 'image',
+                                object: section,
+                                key: 'image',
+                                label: 'Select image',
+                              },
+                            ])
+                          "
+                        />
+
+                        <h3
+                          v-if="section.title || editMode"
+                          :class="{ editable: editMode }"
+                          :contenteditable="editMode"
+                          class="my-5"
+                          @blur="(e) => innerUpdate(e, 'title', section)"
+                          v-html="section.title"
+                        ></h3>
+
+                        <b-email-marketing-editor-button
+                          v-model:action="section.action"
+                          :edit-mode="editMode"
+                          :structure="structure"
+                          :tracking-mode="track_mode"
+                          @show-edit="showEdit"
+                        ></b-email-marketing-editor-button>
+
+                        <p
+                          v-if="section.message || editMode"
+                          :class="
+                            (section.message_class
+                              ? section.message_class
+                              : '') + (editMode ? ' editable' : '')
+                          "
+                          :contenteditable="editMode"
+                          @blur="(e) => innerUpdate(e, 'message', section)"
+                          v-html="section.message"
+                        ></p>
+                      </div>
+
+                      <!--  ---------------------- Section > Two Columns ---------------------- -->
+
+                      <v-container v-if="section.type === 'two-columns'">
+                        <v-row align="center" justify="center">
+                          <v-col
+                            :style="{ textAlign: section.s1.align }"
+                            cols="12"
+                            sm="6"
+                          >
+                            <v-img
+                              :src="
+                                section.s1.image
+                                  ? section.s1.image
+                                  : image_placeholder
+                              "
+                              class="mx-auto my-3 pointer-pointer"
+                              height="84"
+                              width="84"
+                              @click="
+                                showEdit([
+                                  {
+                                    type: 'section',
+                                    key: 'section1',
+                                    title: 'Image',
+                                    icon: 'image',
+                                    description:
+                                      'You can upload an image in this location.',
+                                  },
+
+                                  {
+                                    type: 'image',
+                                    object: section.s1,
+                                    key: 'image',
+                                    label: 'Select image',
+                                  },
+                                ])
+                              "
+                            />
+
+                            <h2
+                              :class="editMode ? ' editable' : ''"
+                              :contenteditable="editMode"
+                              class="my-5"
+                              @blur="(e) => innerUpdate(e, 'title', section.s1)"
+                              v-html="section.s1.title"
+                            ></h2>
+
+                            <p
+                              :class="
+                                section.s1.class + (editMode ? ' editable' : '')
+                              "
+                              :contenteditable="editMode"
+                              @blur="(e) => innerUpdate(e, 'html', section.s1)"
+                              v-html="section.s1.html"
+                            ></p>
+
+                            <b-email-marketing-editor-button
+                              v-model:action="section.s1.action"
+                              :edit-mode="editMode"
+                              :structure="structure"
+                              :tracking-mode="track_mode"
+                              @show-edit="showEdit"
+                            ></b-email-marketing-editor-button>
+                          </v-col>
+
+                          <v-col
+                            :style="{ textAlign: section.s2.align }"
+                            cols="12"
+                            sm="6"
+                          >
+                            <v-img
+                              :src="
+                                section.s2.image
+                                  ? section.s2.image
+                                  : image_placeholder
+                              "
+                              class="mx-auto my-3 pointer-pointer"
+                              height="84"
+                              width="84"
+                              @click="
+                                showEdit([
+                                  {
+                                    type: 'section',
+                                    key: 'section1',
+                                    title: 'Image',
+                                    icon: 'image',
+                                    description:
+                                      'You can upload an image in this location.',
+                                  },
+
+                                  {
+                                    type: 'image',
+                                    object: section.s2,
+                                    key: 'image',
+                                    label: 'Select image',
+                                  },
+                                ])
+                              "
+                            />
+
+                            <h2
+                              :class="editMode ? ' editable' : ''"
+                              :contenteditable="editMode"
+                              class="my-5"
+                              @blur="(e) => innerUpdate(e, 'title', section.s2)"
+                              v-html="section.s2.title"
+                            ></h2>
+
+                            <p
+                              :class="
+                                section.s2.class + (editMode ? ' editable' : '')
+                              "
+                              :contenteditable="editMode"
+                              @blur="(e) => innerUpdate(e, 'html', section.s2)"
+                              v-html="section.s2.html"
+                            ></p>
+
+                            <b-email-marketing-editor-button
+                              v-model:action="section.s2.action"
+                              :edit-mode="editMode"
+                              :structure="structure"
+                              :tracking-mode="track_mode"
+                              @show-edit="showEdit"
+                            ></b-email-marketing-editor-button>
+                          </v-col>
+                        </v-row>
+                      </v-container>
+
+                      <!--  ---------------------- Section > Text ---------------------- -->
+
+                      <div
+                        v-if="section.type === 'text'"
+                        :style="{ textAlign: section.align }"
+                        class="pt-5"
+                      >
+                        <span
+                          :class="section.class + (editMode ? ' editable' : '')"
+                          :contenteditable="editMode"
+                          class="mx-auto subheading"
+                          @blur="(e) => innerUpdate(e, 'span', section)"
+                          v-html="section.span"
+                        ></span>
+
+                        <h2
+                          :class="section.class + (editMode ? ' editable' : '')"
+                          :contenteditable="editMode"
+                          class="mt-5 mb-5 mx-auto"
+                          @blur="(e) => innerUpdate(e, 'title', section)"
+                          v-html="section.title"
+                        ></h2>
+
+                        <b-email-marketing-editor-button
+                          v-model:action="section.action"
+                          :edit-mode="editMode"
+                          :structure="structure"
+                          :tracking-mode="track_mode"
+                          @show-edit="showEdit"
+                        ></b-email-marketing-editor-button>
+
+                        <p
+                          :class="section.class + (editMode ? ' editable' : '')"
+                          :contenteditable="editMode"
+                          class="max-width-container-1280px mx-auto mb-5 mt-3"
+                          @blur="(e) => innerUpdate(e, 'text', section)"
+                          v-html="section.text"
+                        ></p>
+                      </div>
+
+                      <!--  ---------------------- Add > Actions ---------------------- -->
+
+                      <v-row class="pb-5" justify="center">
+                        <div
+                          v-for="(action, index) in section.actions"
+                          :key="index"
+                        >
+                          <b-email-marketing-editor-button
+                            :action="action"
+                            :edit-mode="editMode"
+                            :in-array="section.actions"
+                            :structure="structure"
+                            :tracking-mode="track_mode"
+                            @update:action="(v) => (action = v)"
+                            @show-edit="showEdit"
+                          ></b-email-marketing-editor-button>
+                        </div>
+                      </v-row>
+                    </div>
+
+                    <!--  ---------------------- Add > Buttons ---------------------- -->
+
+                    <div v-if="editMode" class="b-email-editor__extra-actions">
+                      <v-btn
+                        class="sd-modern-button sd-modern-button--inline"
+                        color="primary"
+                        prepend-icon="add"
+                        variant="text"
+                        @click="addAction(section)"
+                        >{{
+                          $t("email_builder.workspace.add_extra_action")
+                        }}</v-btn
+                      >
+                    </div>
+
+                    <!--  ---------------------- Add > Inline Sections ---------------------- -->
+
+                    <div v-if="editMode" class="b-email-editor__insert">
+                      <v-menu content-class="text-start"
+                        ><template #activator="{ props }"
+                          ><v-btn
+                            v-bind="props"
+                            class="sd-modern-button sd-modern-button--inline"
+                            variant="text"
+                            color="primary"
+                            prepend-icon="add"
+                            >{{
+                              $t("email_builder.workspace.insert_section")
+                            }}</v-btn
+                          ></template
+                        ><v-list density="compact" class="text-start"
+                          ><v-list-item
+                            v-for="(definition, key) in EmailSectionStructures"
+                            :key="key"
+                            :title="sectionTitle(key)"
+                            :prepend-icon="sectionIcon(key)"
+                            @click="addSection(key, index)" /></v-list
+                      ></v-menu>
+                    </div>
+                  </div>
+
+                  <!--  ============== END SECTIONS ================ -->
+
+                  <!--  ---------------------- Add > Inline Sections (No section exist!) ---------------------- -->
+
+                  <div
+                    v-if="editMode && !structure.sections.length"
+                    class="b-email-editor__empty"
+                  >
+                    <v-icon size="24" aria-hidden="true">view_quilt</v-icon>
+                    <p>{{ $t("email_builder.workspace.empty") }}</p>
+                    <span>{{ $t("email_builder.workspace.empty_help") }}</span>
+                    <div>
+                      <v-btn
+                        v-for="(definition, key) in EmailSectionStructures"
+                        :key="key"
+                        class="sd-modern-button"
+                        variant="outlined"
+                        :prepend-icon="sectionIcon(key)"
+                        @click="addSection(key, -1)"
+                        >{{ sectionTitle(key) }}</v-btn
+                      >
+                    </div>
+                  </div>
+
+                  <div style="min-height: 5vh" />
+
+                  <!-- =================================== FOOTER ================================== -->
+                  <v-expand-transition>
+                    <v-sheet
+                      v-if="structure.footer"
+                      class="position-relative"
+                      dark
+                    >
+                      <v-container
+                        v-if="structure.footer"
+                        class="position-relative text-start"
+                      >
+                        <v-row>
+                          <v-col cols="12">
+                            <h2>
+                              <img
+                                :src="getShopIcon(shop.id, 64)"
+                                height="32"
+                                style="
+                                  border-radius: 50%;
+                                  vertical-align: bottom;
+                                "
+                                width="32"
+                              />
+                              {{ shop.title }}
+                            </h2>
+
+                            <p
+                              v-if="!edit_description || !editMode"
+                              class="mt-2 animate-underline-editable"
+                              @click="editMode && (edit_description = true)"
+                            >
+                              {{
+                                structure.footer.description
+                                  ? structure.footer.description.substring(
+                                      0,
+                                      128,
+                                    )
+                                  : (shop.description || "").substring(0, 128)
+                              }}
+                            </p>
+                            <v-text-field
+                              v-else
+                              v-model="structure.footer.description"
+                              :counter="128"
+                              class="mt-2"
+                              density="compact"
+                              flat
+                              variant="solo"
+                              @blur="
+                                (e) => {
+                                  edit_description = false;
+                                }
+                              "
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="8">
+                            <h2>Contact Info</h2>
+                            <p class="text-muted">
+                              {{ info.address }}
+                              <br />
+                              {{ info.phone }}
+                              <br />
+                              {{ info.email }}
+                            </p>
+                          </v-col>
+                          <v-col cols="4">
+                            <h2>Menu</h2>
+                            <p class="text-muted">
+                              Visit Store
+                              <br />
+                              About Us
+                              <br />
+                              FAQ
+                              <br />
+                              Privacy
+                            </p>
+                          </v-col>
+                        </v-row>
+                      </v-container>
+                    </v-sheet>
+                  </v-expand-transition>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="editMode" class="b-email-editor__toggles">
+              <u-smart-toggle
+                v-model="has_header"
+                false-gray
+                false-icon="browser_not_supported"
+                true-icon="drag_handle"
+                :true-title="$t('email_builder.workspace.header')"
+                :true-description="$t('email_builder.workspace.header_help')"
+              /><u-smart-toggle
+                v-model="has_footer"
+                false-gray
+                false-icon="browser_not_supported"
+                true-icon="call_to_action"
+                :true-title="$t('email_builder.workspace.footer')"
+                :true-description="$t('email_builder.workspace.footer_help')"
+              />
+            </div>
+            <footer class="b-email-editor__actions">
+              <span>{{ $t("email_builder.workspace.changes_apply") }}</span
+              ><v-btn
+                class="sd-modern-button sd-modern-button--primary"
+                variant="flat"
+                color="primary"
+                :prepend-icon="email ? 'save' : 'add'"
+                :disabled="!can_edit || busy_send"
+                :loading="busy_save"
+                @click="saveEmail()"
+                >{{
+                  $t(
+                    email
+                      ? "email_builder.workspace.save"
+                      : "email_builder.workspace.create",
+                  )
+                }}</v-btn
+              >
+            </footer>
+          </section>
+
+          <section
+            v-show="active_section === 'send'"
+            class="sd-modern-widget b-email-editor__panel"
           >
-            <div>
-              {{ $t("global.actions.send") }}
-              <div class="small">Set sender, subject, schedule and send.</div>
+            <header class="sd-modern-header">
+              <div>
+                <h2 class="sd-modern-title-text">
+                  {{ $t("email_builder.workspace.send_title") }}
+                </h2>
+                <p class="sd-modern-subtitle">
+                  {{ $t("email_builder.workspace.send_subtitle") }}
+                </p>
+              </div>
+              <span class="sd-modern-status sd-modern-status--plain">
+                <span
+                  class="sd-modern-status__dot"
+                  :class="emailStateTone"
+                  aria-hidden="true"
+                />
+                {{ emailStateLabel }}
+              </span>
+            </header>
+
+            <div v-if="!email" class="sd-modern-notice" role="status">
+              <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+              <span>{{ $t("email_builder.workspace.create_first") }}</span>
             </div>
-          </v-btn>
-        </div>
-      </template>
-
-      <slot></slot>
-    </div>
-  </div>
-
-  <!-- ██████████████████████████ DIALOG : Edit ██████████████████████████ -->
-  <b-email-marketing-editor-section
-    v-if="editMode"
-    ref="section_editor"
-    :email="email"
-    :loaded-fonts="loaded_fonts"
-    :shop="shop"
-  >
-  </b-email-marketing-editor-section>
-
-  <!-- ██████████████████████████ DIALOG : Load file ██████████████████████████ -->
-  <v-dialog
-    v-model="load_file"
-    fullscreen
-    scrollable
-    transition="dialog-bottom-transition"
-  >
-    <v-card>
-      <v-card-title>
-        <v-icon class="me-1">architecture</v-icon>
-        Load template file
-      </v-card-title>
-      <v-card-text>
-        <div class="widget-box mb-5">
-          <u-widget-header
-            icon="upload"
-            title="Upload design file"
-          ></u-widget-header>
-          <v-list-subheader
-            >You can export and import design files and use prev-designed
-            emails.
-          </v-list-subheader>
-          <s-drop-zone
-            extension=".smail"
-            hint="Drag and drop your email template file here, or click on the input field at the top."
-            icon="all_inbox"
-            label="Click & select email file (.smail)"
-            @select:file="
-              (event) => {
-                loadFileTemplate(event);
-                load_file = false;
-              }
-            "
-          ></s-drop-zone>
-        </div>
-      </v-card-text>
-      <v-card-actions>
-        <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="load_file = false">
-            <v-icon start>close</v-icon>
-            {{ $t("global.actions.close") }}
-          </v-btn>
-        </div>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-
-  <!-- ███████████████████████ Dialog > Guide ███████████████████████ -->
-  <v-dialog
-    v-model="show_guide"
-    fullscreen
-    scrollable
-    transition="dialog-bottom-transition"
-  >
-    <v-card>
-      <v-card-title>
-        <v-icon class="me-1">support</v-icon>
-        Guide
-      </v-card-title>
-      <v-card-text class="text-start">
-        <v-container class="typo-body">
-          <h2>Running an Email Campaign: A Step-by-Step Guide</h2>
-
-          Follow these simple steps to create and execute a successful email
-          campaign:
-          <ol>
-            <li>Create a new email campaign.</li>
-            <li>Choose your target audience using the filter section.</li>
-            <li>
-              Design your email in the design section and set up tracking spots
-              (optional).
-            </li>
-            <li>Input the sender's name and email address.</li>
-            <li>Optionally schedule your send, and click <b>Send Now</b>.</li>
-            <li>
-              A confirmation link is sent to the shop owner. If you have manager
-              access, you can approve this campaign in the
-              <b>Dashboard tab</b>.
-            </li>
-            <li>
-              Once approved, the email will be sent to the selected audience.
-            </li>
-          </ol>
-
-          <h2 class="mt-5">Who can approve this campaign?</h2>
-
-          <div class="d-flex align-center my-3">
-            <v-avatar class="avatar-gradient -thin -officer me-3">
-              <img :src="getUserAvatar(review_user_id)" />
-            </v-avatar>
-            <div v-if="review_user" class="flex-grow-1">
-              <b class="d-block">{{ review_user?.name }}</b>
-              <small class="d-block">{{ review_user?.email }}</small>
+            <div v-else-if="email.sent" class="sd-modern-notice" role="status">
+              <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+              <span>{{ $t("email_builder.workspace.sent_readonly") }}</span>
             </div>
-            <v-btn
-              :to="{ name: 'BPageShopSettingEmail' }"
-              color="primary"
-              variant="text"
+
+            <div class="b-email-editor__provider">
+              <v-avatar v-if="service_provider" size="32" rounded="lg">
+                <v-img
+                  :src="service_provider.icon"
+                  :alt="service_provider.title"
+                />
+              </v-avatar>
+              <v-icon v-else size="24" aria-hidden="true">mail_outline</v-icon>
+              <div class="b-email-editor__provider-copy">
+                <strong>{{
+                  service_provider?.title ||
+                  $t("email_builder.workspace.provider_title")
+                }}</strong>
+                <p class="sd-modern-muted">
+                  {{ $t("email_builder.workspace.provider_help") }}
+                </p>
+              </div>
+              <span
+                v-if="mailService"
+                class="sd-modern-status sd-modern-status--plain"
+              >
+                <span
+                  class="sd-modern-status__dot"
+                  :class="
+                    mailService.enable
+                      ? 'sd-modern-status__dot--success'
+                      : 'sd-modern-status__dot--error'
+                  "
+                  aria-hidden="true"
+                />
+                {{
+                  $t(
+                    mailService.enable
+                      ? "global.commons.enable"
+                      : "global.commons.disable",
+                  )
+                }}
+              </span>
+              <v-btn
+                :to="{ name: 'BPageShopSettingEmail' }"
+                class="sd-modern-button sd-modern-button--inline"
+                color="primary"
+                variant="text"
+                prepend-icon="settings"
+              >
+                {{ $t("email_builder.workspace.provider_settings") }}
+              </v-btn>
+            </div>
+            <p class="sd-modern-subtitle">
+              {{ $t("email_builder.workspace.provider_domain_help") }}
+            </p>
+            <div
+              v-if="mailService?.error"
+              class="sd-modern-notice"
+              role="alert"
             >
-              <v-icon class="me-1" size="small">settings</v-icon>
-              Edit reviewer
-            </v-btn>
-          </div>
+              <v-icon size="18" color="error" aria-hidden="true">report</v-icon>
+              <span>{{ $t("email_builder.workspace.provider_issue") }}</span>
+            </div>
+            <div
+              v-if="email && (!service || !service.enable)"
+              class="sd-modern-notice"
+              role="status"
+            >
+              <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+              <span>{{ $t("email_builder.workspace.no_service") }}</span>
+            </div>
 
-          <h2 class="mt-5">
-            Will re-running a campaign result in duplicate emails for previous
-            recipients?
-          </h2>
-          <p>
-            No, each recipient will only receive a single campaign email.
-            However, when you re-run the campaign, new qualifying users will be
-            sent emails.
-          </p>
-        </v-container>
-      </v-card-text>
+            <v-form
+              ref="send_form"
+              @submit.prevent="
+                !sendDisabled && email && SaveAndSendMail(!email.in_que)
+              "
+            >
+              <div
+                class="b-email-editor__fields b-email-editor__send-fields sd-modern-underlined-field"
+              >
+                <v-text-field
+                  v-model="mail_from"
+                  class="b-email-editor__sender"
+                  dir="ltr"
+                  :disabled="
+                    !email ||
+                    !can_edit ||
+                    !hasWriteAccess ||
+                    busy_save ||
+                    busy_send
+                  "
+                  :label="$t('email_builder.workspace.sender')"
+                  :messages="
+                    $t('email_builder.workspace.sender_help', {
+                      domain: `@${mail_host}`,
+                    })
+                  "
+                  :rules="[GlobalRules.counter(24), GlobalRules.required()]"
+                  :suffix="'@' + mail_host"
+                  counter="24"
+                  placeholder="no-reply"
+                  variant="underlined"
+                />
+                <div>
+                  <v-text-field
+                    v-model="mail_subject"
+                    :disabled="
+                      !email ||
+                      !can_edit ||
+                      !hasWriteAccess ||
+                      busy_save ||
+                      busy_send
+                    "
+                    :label="$t('email_builder.workspace.subject')"
+                    :messages="$t('email_builder.workspace.subject_help')"
+                    :rules="[GlobalRules.counter(120), GlobalRules.required()]"
+                    counter="120"
+                    variant="underlined"
+                  />
+                  <u-smart-suggestion
+                    v-if="
+                      email &&
+                      can_edit &&
+                      hasWriteAccess &&
+                      !busy_save &&
+                      !busy_send
+                    "
+                    :samples="$tm('suggestions.shop_email.subject')"
+                    @select="(value) => (mail_subject = value)"
+                  />
+                </div>
+              </div>
 
-      <v-card-actions>
-        <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="show_guide = false">
-            <v-icon start>close</v-icon>
-            {{ $t("global.actions.close") }}
-          </v-btn>
-        </div>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+              <div class="b-email-editor__group">
+                <h3>{{ $t("email_builder.workspace.delivery_timing") }}</h3>
+                <p class="sd-modern-subtitle">
+                  {{ $t("email_builder.workspace.schedule_help") }}
+                </p>
+                <u-smart-select
+                  v-model="schedule_enable"
+                  :items="deliveryChoices"
+                  item-value="id"
+                  item-text="title"
+                  item-description="description"
+                  item-icon="icon"
+                  accessible
+                  force-show-all
+                  :aria-label="$t('email_builder.workspace.delivery_timing')"
+                  :disabled="
+                    !email ||
+                    !can_edit ||
+                    !hasWriteAccess ||
+                    busy_save ||
+                    busy_send
+                  "
+                  class="sd-modern-smart-select b-email-editor__timing"
+                  border
+                />
+                <div
+                  v-show="schedule_enable"
+                  class="sd-modern-underlined-field b-email-editor__schedule-field"
+                >
+                  <u-date-input
+                    v-model="mail_schedule"
+                    :disabled="
+                      !email ||
+                      !can_edit ||
+                      !hasWriteAccess ||
+                      !schedule_enable ||
+                      busy_save ||
+                      busy_send
+                    "
+                    :label="$t('email_builder.workspace.schedule_at')"
+                    :messages="$t('email_builder.workspace.schedule_time_help')"
+                    :min="new Date().toISOString()"
+                    :placeholder="$t('email_builder.schedule_placeholder')"
+                    clearable
+                    return-utc
+                    variant="underlined"
+                  />
+                  <div
+                    v-if="invalid_schedule"
+                    class="sd-modern-notice"
+                    role="alert"
+                  >
+                    <v-icon size="18" color="error" aria-hidden="true"
+                      >error_outline</v-icon
+                    >
+                    <span>{{
+                      $t("email_builder.workspace.invalid_schedule")
+                    }}</span>
+                    <v-btn
+                      class="sd-modern-button sd-modern-button--inline"
+                      variant="text"
+                      :disabled="
+                        !email ||
+                        !can_edit ||
+                        !hasWriteAccess ||
+                        busy_save ||
+                        busy_send
+                      "
+                      prepend-icon="close"
+                      @click="
+                        mail_schedule = null;
+                        schedule_enable = false;
+                      "
+                      >{{
+                        $t("email_builder.workspace.remove_schedule")
+                      }}</v-btn
+                    >
+                  </div>
+                </div>
+              </div>
 
-  <!-- ██████████████████████████ Dialog >  Send ██████████████████████████ -->
+              <div class="b-email-editor__cost">
+                <u-text-value-dashed>
+                  <template #label>{{
+                    $t("email_builder.workspace.cost_title")
+                  }}</template>
+                  <u-price
+                    v-if="email && service && cost !== null"
+                    :amount="cost"
+                    :currency="email.currency"
+                  />
+                  <span v-else>—</span>
+                </u-text-value-dashed>
+                <p class="sd-modern-subtitle">
+                  {{
+                    email && service && cost !== null
+                      ? $t("email_builder.workspace.cost_help", {
+                          count: $n(users_count),
+                          currency: email.currency,
+                        })
+                      : $t("email_builder.workspace.cost_unavailable")
+                  }}
+                </p>
+              </div>
+            </v-form>
 
-  <v-bottom-sheet
-    v-if="email"
-    v-model="dialog_send"
-    content-class="rounded-t-xl"
-    max-width="840"
-    scrollable
-    width="98vw"
-  >
-    <v-card class="text-start" rounded="t-xl">
-      <v-card-title>
-        <v-icon class="me-2" color="#111">send</v-icon>
-        {{ $t("global.commons.send") }}
-
-        <v-chip
-          v-if="email?.sent"
-          class="ms-2"
-          color="green"
-          label
-          size="small"
-          variant="flat"
-        >
-          <v-icon size="small" start>check_circle</v-icon>
-
-          Sent
-        </v-chip>
-      </v-card-title>
-      <v-card-text>
-        <div
-          :class="{ disabled: email?.sent }"
-          class="max-widget-width mx-auto"
-        >
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Custom mail service ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-          <div class="widget-box -large mb-5">
-            <u-widget-header :title="$t('global.commons.from')" icon="person">
-            </u-widget-header>
-            <v-list-subheader
-              >To send emails from your domain, configure a custom email
-              provider by navigating to Settings > Emails tab.
-            </v-list-subheader>
-            <v-list-item v-if="service_provider" class="mb-5">
-              <template v-slot:prepend>
-                <v-avatar>
-                  <v-img :src="service_provider.icon"></v-img>
-                </v-avatar>
-              </template>
-
-              <v-list-item-title class="d-flex align-center">
-                <b>{{ service_provider.title }}</b>
-
-                <v-spacer></v-spacer>
-                <v-chip
-                  v-if="mailService.enable"
-                  class="mx-1"
-                  color="success"
-                  label
-                  size="small"
-                  variant="flat"
-                  >{{ $t("global.commons.enable") }}
-                </v-chip>
-                <v-chip
-                  v-else
-                  class="mx-1"
-                  color="red"
-                  label
-                  size="small"
-                  variant="flat"
-                  >{{ $t("global.commons.disable") }}
-                </v-chip>
-              </v-list-item-title>
-
-              <v-list-item-subtitle v-if="mailService.error" class="text-red">
-                <v-icon class="me-1" color="red" size="small">report</v-icon>
-                {{ mailService.error }} (<b>{{ mailService.errors }}</b
-                >)
-
+            <div class="b-email-editor__group">
+              <h3>{{ $t("email_builder.workspace.approval_title") }}</h3>
+              <p class="sd-modern-subtitle">
+                {{ $t("email_builder.workspace.approval_help") }}
+              </p>
+              <div class="b-email-editor__reviewer">
+                <v-avatar size="32"
+                  ><v-img :src="getUserAvatar(review_user_id)" alt=""
+                /></v-avatar>
+                <div class="b-email-editor__reviewer-copy">
+                  <span class="sd-modern-muted">{{
+                    $t("email_builder.workspace.reviewer")
+                  }}</span>
+                  <strong v-if="review_user?.name">{{
+                    review_user.name
+                  }}</strong>
+                  <small v-if="review_user?.email">{{
+                    review_user.email
+                  }}</small>
+                  <small v-else>{{
+                    $t("email_builder.workspace.reviewer_help")
+                  }}</small>
+                </div>
                 <v-btn
                   :to="{ name: 'BPageShopSettingEmail' }"
-                  class="mx-2 tnt"
+                  class="sd-modern-button sd-modern-button--inline"
                   color="primary"
-                  size="small"
                   variant="text"
+                  prepend-icon="settings"
                 >
-                  <v-icon class="me-1" size="small">settings_suggest</v-icon>
-                  Fix issue
+                  {{ $t("email_builder.workspace.reviewer_settings") }}
                 </v-btn>
-              </v-list-item-subtitle>
-            </v-list-item>
-
-            <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Sender Info ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-            <v-text-field
-              v-model="mail_from"
-              :hint="`You can use ...@${mail_host}`"
-              :label="$t('global.commons.email_from')"
-              :rules="[GlobalRules.counter(24), GlobalRules.required()]"
-              :suffix="'@' + mail_host"
-              counter="24"
-              placeholder="no-reply"
-              variant="underlined"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="mail_subject"
-              :label="$t('global.commons.subject')"
-              :rules="[GlobalRules.counter(120), GlobalRules.required()]"
-              placeholder="Amazing title for your email.."
-              variant="underlined"
-            ></v-text-field>
-            <u-smart-suggestion
-              :samples="$tm('suggestions.shop_email.subject')"
-              @select="(v) => (mail_subject = v)"
-            ></u-smart-suggestion>
-          </div>
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Schedule ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-          <div class="widget-box -large mb-5">
-            <u-widget-header
-              :title="$t('global.commons.schedule')"
-              icon="av_timer"
-            >
-            </u-widget-header>
-            <v-list-subheader
-              >You can either send this email immediately after admin approval
-              or schedule it to be sent at a specific time.
-            </v-list-subheader>
-
-            <u-smart-switch
-              v-model="schedule_enable"
-              :color="schedule_enable ? '#C2185B' : undefined"
-              :hint="$t('email_builder.schedule_switch')"
-              :true-title="$t('global.commons.schedule')"
-              class="my-3"
-              false-description="This email will be sent immediately after confirmation by shop admin."
-              false-icon="send"
-              false-title="Instant send"
-              true-description="The email will be sent after confirmation and at the specified time."
-              true-icon="schedule_send"
-            >
-            </u-smart-switch>
-            <v-expand-transition>
-              <div v-if="schedule_enable">
-                <u-date-input
-                  v-model="mail_schedule"
-                  :disabled="!schedule_enable"
-                  :label="$t('global.commons.schedule')"
-                  :min="new Date().toISOString()"
-                  :placeholder="$t('email_builder.schedule_placeholder')"
-                  class="pt-5"
-                  clearable
-                  color="#C2185B"
-                  return-utc
-                  style="min-width: 320px"
-                  variant="underlined"
-                ></u-date-input>
               </div>
-            </v-expand-transition>
-          </div>
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Cost ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-          <div class="widget-box -large mb-5">
-            <u-widget-header
-              :title="$t('global.commons.cost')"
-              icon="request_quote"
+
+              <b-email-marketing-send-flow
+                :email="email"
+                :schedule-at="mail_schedule"
+                :schedule-enabled="schedule_enable"
+                :provider="service_provider"
+                :active="active_section === 'send'"
+              />
+              <p
+                v-if="schedule_enable && mail_schedule"
+                class="sd-modern-subtitle"
+              >
+                {{
+                  $t("email_builder.workspace.scheduled_for", {
+                    date: getLocalTimeString(mail_schedule),
+                  })
+                }}
+              </p>
+            </div>
+
+            <footer class="b-email-editor__actions">
+              <div>
+                <p class="sd-modern-subtitle">
+                  {{
+                    $t(
+                      !email
+                        ? "email_builder.workspace.create_first"
+                        : email.sent
+                          ? "email_builder.workspace.sent_readonly"
+                          : email.in_que
+                            ? "email_builder.workspace.cancel_help"
+                            : "email_builder.workspace.send_request_help",
+                    )
+                  }}
+                </p>
+                <v-btn
+                  class="sd-modern-button sd-modern-button--inline"
+                  variant="text"
+                  color="primary"
+                  prepend-icon="account_tree"
+                  @click="show_guide = true"
+                  >{{ $t("email_builder.workspace.guide_title") }}</v-btn
+                >
+              </div>
+              <v-btn
+                v-if="email"
+                :class="{
+                  'sd-modern-button--primary': !email.in_que && !email.sent,
+                }"
+                class="sd-modern-button"
+                :color="!email.in_que && !email.sent ? 'primary' : undefined"
+                :variant="email.in_que ? 'outlined' : 'elevated'"
+                :prepend-icon="
+                  email.sent
+                    ? 'done'
+                    : email.in_que
+                      ? 'cancel_schedule_send'
+                      : schedule_enable
+                        ? 'schedule_send'
+                        : 'send'
+                "
+                :disabled="sendDisabled"
+                :loading="busy_save || busy_send"
+                @click="SaveAndSendMail(!email.in_que)"
+                >{{
+                  $t(
+                    email.sent
+                      ? "global.commons.done"
+                      : email.in_que
+                        ? "email_builder.workspace.cancel_request"
+                        : schedule_enable
+                          ? "email_builder.workspace.schedule_request"
+                          : "email_builder.workspace.send_request",
+                  )
+                }}</v-btn
+              >
+            </footer>
+          </section>
+
+          <footer class="b-email-editor__section-footer">
+            <v-btn
+              class="sd-modern-button sd-modern-button--inline"
+              variant="text"
+              color="primary"
+              :disabled="sectionIndex === 0"
+              prepend-icon="arrow_back"
+              @click="active_section = editorSections[sectionIndex - 1].key"
+              >{{ $t("global.actions.previous") }}</v-btn
+            ><span
+              >{{ editorSections[sectionIndex].title }} ·
+              {{ $n(sectionIndex + 1) }} / {{ $n(editorSections.length) }}</span
+            ><v-btn
+              class="sd-modern-button sd-modern-button--inline"
+              variant="text"
+              color="primary"
+              :disabled="sectionIndex === editorSections.length - 1"
+              append-icon="arrow_forward"
+              @click="active_section = editorSections[sectionIndex + 1].key"
+              >{{ $t("global.actions.next") }}</v-btn
             >
-            </u-widget-header>
-            <v-list-subheader
-              >We only charge you for emails sent through campaigns managed by
-              Selldone, as part of our commitment to preventing spam and
-              avoiding customer annoyance. Please ensure that your connected
-              wallet has sufficient funds.
-            </v-list-subheader>
-            <u-text-value-dashed>
-              <template v-slot:label>
-                <v-icon class="me-1" color="#111">monetization_on</v-icon>
-                <b> {{ $t("global.commons.total") }}</b>
-              </template>
-              <u-price
-                v-if="service"
-                :amount="cost"
-                :currency="email.currency"
-                dark
-                style="color: #0bc034"
-                x-large
-              ></u-price>
-            </u-text-value-dashed>
-            <small class="d-block mb-5"
-              >This will be the cost of sending emails to
-              {{ users_count }} users.</small
-            >
-          </div>
+          </footer>
         </div>
+      </div>
+    </div>
+    <slot />
 
-        <u-pods-panel>
-          <u-pod-node icon="email" title="Email"></u-pod-node>
+    <!-- ██████████████████████████ DIALOG : Edit ██████████████████████████ -->
+    <b-email-marketing-editor-section
+      v-if="editMode"
+      ref="section_editor"
+      :email="email"
+      :loaded-fonts="loaded_fonts"
+      :shop="shop"
+      modern
+    />
 
-          <u-pod-wire forward></u-pod-wire>
-
-          <u-pod-node
-            :color="!is_accepted ? '#eee' : undefined"
-            :icon="
-              is_accepted
-                ? 'check_circle'
-                : is_rejected
-                  ? 'cancel'
-                  : 'hourglass_empty'
-            "
-            :icon-color="is_accepted ? 'green' : is_rejected ? 'red' : '#111'"
-            :title="
-              is_accepted
-                ? 'Verified'
-                : is_rejected
-                  ? 'Rejected'
-                  : 'Waiting verify'
-            "
-          >
-          </u-pod-node>
-
-          <u-pod-wire
-            :color="!is_accepted ? '#eee' : undefined"
-            :stop="!is_accepted"
-            forward
-          >
-          </u-pod-wire>
-
-          <template v-if="mail_schedule">
-            <u-pod-node
-              :color="!is_accepted || !email.in_que ? '#eee' : undefined"
-              icon="watch_later"
-              title="Schedule"
-            >
-            </u-pod-node>
-
-            <u-pod-wire
-              :color="
-                !is_accepted || !email.in_que || is_before_schedule_time
-                  ? '#eee'
-                  : undefined
-              "
-              :stop="!is_accepted || !email.in_que || is_before_schedule_time"
-              forward
-            >
-            </u-pod-wire>
-          </template>
-
-          <u-pod-node
-            :color="
-              !is_accepted || !email.in_que || is_before_schedule_time
-                ? '#eee'
-                : undefined
-            "
-            :image="service_provider?.icon"
-            title="Provider"
-          >
-          </u-pod-node>
-
-          <u-pod-wire
-            :color="
-              !is_accepted || !email.in_que || is_before_schedule_time
-                ? '#eee'
-                : undefined
-            "
-            :stop="!is_accepted || !email.in_que || is_before_schedule_time"
-            forward
-          >
-          </u-pod-wire>
-
-          <u-pod-node
-            :color="!email.sent ? '#eee' : undefined"
-            icon="groups"
-            title="User"
-          >
-          </u-pod-node>
-        </u-pods-panel>
-
-        <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Actions ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-        <v-list-subheader v-if="email.sent">
-          <v-icon class="me-1">warning_amber</v-icon>
-          The email has already been sent, and therefore, it cannot be edited
-          any further. Each email campaign can only be sent to users once.
-        </v-list-subheader>
-      </v-card-text>
-      <v-card-actions>
-        <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="dialog_send = false">
-            <v-icon start>close</v-icon>
-            {{ $t("global.actions.close") }}
-          </v-btn>
-
+    <v-dialog v-model="load_file" max-width="570" scrollable
+      ><v-card class="sd-modern-widget b-email-editor-dialog text-start"
+        ><header class="sd-modern-header">
+          <div>
+            <h2 class="sd-modern-title-text">
+              {{ $t("email_builder.workspace.import_template") }}
+            </h2>
+            <p class="sd-modern-subtitle">
+              {{ $t("email_builder.workspace.import_template_help") }}
+            </p>
+          </div>
           <v-btn
-            v-if="email"
-            :class="{ disabled: email.sent }"
-            :color="
-              !email.sent && !email.in_que
-                ? mail_schedule
-                  ? '#C2185B'
-                  : 'primary'
-                : '#111'
-            "
-            :loading="busy_send"
-            :variant="
-              !email.in_que
-                ? 'elevated'
-                : email.in_que && !email.sent
-                  ? 'outlined'
-                  : email.sent
-                    ? 'text'
-                    : undefined
-            "
-            size="x-large"
-            @click="SaveAndSendMail(!email.in_que)"
+            class="sd-modern-icon-button"
+            icon
+            variant="text"
+            :aria-label="$t('global.actions.close')"
+            @click="load_file = false"
+            ><v-icon size="17" aria-hidden="true">close</v-icon
+            ><v-tooltip
+              activator="parent"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              >{{ $t("global.actions.close") }}</v-tooltip
+            ></v-btn
           >
-            {{
-              email.sent
-                ? $t("global.commons.done")
-                : !email.in_que
-                  ? mail_schedule
-                    ? $t("global.actions.schedule")
-                    : $t("global.actions.send_now")
-                  : $t("global.actions.cancel")
-            }}
-            <v-icon class="ms-2"
-              >{{
-                email.sent
-                  ? "check"
-                  : !email.in_que
-                    ? mail_schedule
-                      ? "schedule_send"
-                      : "send"
-                    : "cancel_schedule_send"
-              }}
-            </v-icon>
-          </v-btn>
-        </div>
-      </v-card-actions>
-    </v-card>
-  </v-bottom-sheet>
+        </header>
+        <s-drop-zone
+          extension=".smail"
+          icon="all_inbox"
+          :label="$t('email_builder.workspace.import_template')"
+          :hint="$t('email_builder.workspace.import_template_help')"
+          @select:file="
+            (event) => {
+              loadFileTemplate(event);
+              load_file = false;
+            }
+          " /></v-card
+    ></v-dialog>
+    <v-dialog v-model="show_guide" max-width="650" scrollable
+      ><v-card class="sd-modern-widget b-email-editor-dialog text-start"
+        ><header class="sd-modern-header">
+          <h2 class="sd-modern-title-text">
+            {{ $t("email_builder.workspace.guide_title") }}
+          </h2>
+          <v-btn
+            class="sd-modern-icon-button"
+            icon
+            variant="text"
+            :aria-label="$t('global.actions.close')"
+            @click="show_guide = false"
+            ><v-icon size="17" aria-hidden="true">close</v-icon
+            ><v-tooltip
+              activator="parent"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              >{{ $t("global.actions.close") }}</v-tooltip
+            ></v-btn
+          >
+        </header>
+        <p class="sd-modern-subtitle">
+          {{ $t("email_builder.workspace.guide_intro") }}
+        </p>
+        <ol class="b-email-editor-dialog__steps">
+          <li
+            v-for="step in [
+              'create',
+              'audience',
+              'design',
+              'save',
+              'request',
+              'approve',
+              'sending',
+            ]"
+            :key="step"
+          >
+            {{ $t("email_builder.workspace.guide_" + step) }}
+          </li>
+        </ol>
+        <div class="b-email-editor__reviewer">
+          <v-avatar size="30"
+            ><v-img :src="getUserAvatar(review_user_id)"
+          /></v-avatar>
+          <div class="b-email-editor__reviewer-copy">
+            {{ review_user?.name || $t("email_builder.workspace.reviewer")
+            }}<small v-if="review_user">{{ review_user.email }}</small>
+          </div>
+          <v-btn
+            class="sd-modern-button sd-modern-button--inline"
+            color="primary"
+            variant="text"
+            prepend-icon="settings"
+            :to="{ name: 'BPageShopSettingEmail' }"
+            >{{ $t("email_builder.workspace.reviewer_settings") }}</v-btn
+          >
+        </div></v-card
+      ></v-dialog
+    >
+  </div>
 </template>
 
 <script lang="ts">
+import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions.ts";
 import EmailSectionStructures from "./section/structure/EmailSectionStructures";
 import BCustomersFunnel from "../../customer/funnel/BCustomersFunnel.vue";
 import BEmailMarketingTrackSpot from "../../email-marketing/track-spot/BEmailMarketingTrackSpot.vue";
@@ -1419,13 +1631,12 @@ import BEmailMarketingEditorButton from "./button/BEmailMarketingEditorButton.vu
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import SDropZone from "../../../ui/uploader/SDropZone.vue";
 import UTextValueDashed from "../../../ui/text/value-dashed/UTextValueDashed.vue";
-import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
+import USmartSelect from "../../../ui/smart/select/USmartSelect.vue";
 import { EmailProviders } from "@selldone/core-js/enums/email/EmailProviders";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
 import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue";
-import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
-import UPodNode from "../../../ui/pod/node/UPodNode.vue";
-import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
+import BEmailMarketingSendFlow from "./flow/BEmailMarketingSendFlow.vue";
+
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
 import USmartMenu from "../../../ui/smart/menu/USmartMenu.vue";
 import { InlineEditorMixin } from "../../../mixin/InlineEditorMixin";
@@ -1433,25 +1644,25 @@ import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import BEmailMarketingEditorSection from "../../email-marketing/editor/section/BEmailMarketingEditorSection.vue";
 import { EmailOptionsHelper } from "./section/options/EmailOptionsHelper.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
-import {FileHelper} from "@selldone/core-js";
+import { FileHelper } from "@selldone/core-js";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 var WebFont = require("webfontloader");
 export default {
   name: "BEmailMarketingEditor",
-  mixins: [InlineEditorMixin, DateMixin ],
+  mixins: [InlineEditorMixin, DateMixin],
 
   components: {
+    UCurrencyIcon,
     BEmailMarketingEditorSection,
     USmartMenu,
     BClusterInput,
-    UPodWire,
-    UPodNode,
-    UPodsPanel,
+
+    BEmailMarketingSendFlow,
     USmartSuggestion,
     USmartToggle,
-    USmartSwitch,
+    USmartSelect,
     UTextValueDashed,
     SDropZone,
     BEmailMarketingEditorButton,
@@ -1464,6 +1675,10 @@ export default {
   props: {
     email: {
       require: false,
+    },
+    initialConfig: {
+      type: Object,
+      default: null,
     },
     service: {}, // enable    cost
 
@@ -1525,7 +1740,8 @@ export default {
       has_footer: !!this.$props.structure.footer,
 
       //-----------------------
-      tab: "design",
+      active_section: "general",
+      request_epoch: 0,
 
       busy_save: false,
 
@@ -1544,7 +1760,7 @@ export default {
       busy_html: false,
 
       //-----------------------
-      users_count: 0,
+      users_count: null,
 
       track_mode: false,
 
@@ -1553,6 +1769,96 @@ export default {
     };
   },
   computed: {
+    deliveryChoices() {
+      return [
+        {
+          id: false,
+          title: "email_builder.workspace.send_after_approval",
+          description: "email_builder.workspace.send_after_approval_help",
+          icon: "send",
+        },
+        {
+          id: true,
+          title: "email_builder.workspace.schedule_later",
+          description: "email_builder.workspace.schedule_later_help",
+          icon: "schedule_send",
+        },
+      ];
+    },
+    resourceKey() {
+      return String(this.shop?.id) + ":" + String(this.email?.id ?? "new");
+    },
+    hasWriteAccess() {
+      return this.canWriteCurrent();
+    },
+    editorSections() {
+      return [
+        {
+          key: "general",
+          icon: "tune",
+          title: this.$t("email_builder.workspace.general_title"),
+        },
+        {
+          key: "audience",
+          icon: "groups",
+          title: this.$t("email_builder.workspace.audience_title"),
+        },
+        {
+          key: "design",
+          icon: "view_quilt",
+          title: this.$t("email_builder.workspace.design_title"),
+        },
+        {
+          key: "send",
+          icon: "send",
+          title: this.$t("email_builder.workspace.send_title"),
+        },
+      ];
+    },
+    sectionIndex() {
+      return this.editorSections.findIndex(
+        (section) => section.key === this.active_section,
+      );
+    },
+    emailStateLabel() {
+      if (!this.email) return this.$t("email_builder.workspace.status_new");
+      if (this.email.sent) return this.$t("global.commons.sent");
+      if (this.email.approve === "REJECT")
+        return this.$t("email_builder.workspace.rejected");
+      if (this.email.in_que)
+        return this.$t(
+          this.email.approve === "ACCEPT"
+            ? this.is_before_schedule_time
+              ? "email_builder.workspace.schedule"
+              : "email_builder.workspace.accepted"
+            : "email_builder.workspace.pending",
+        );
+      return this.$t("email_builder.workspace.status_not_queued");
+    },
+    emailStateTone() {
+      if (
+        this.email?.sent ||
+        (this.email?.in_que &&
+          this.email.approve === "ACCEPT" &&
+          !this.is_before_schedule_time)
+      )
+        return "sd-modern-status__dot--success";
+      if (this.email?.approve === "REJECT")
+        return "sd-modern-status__dot--error";
+      if (this.email?.in_que) return "sd-modern-status__dot--warning";
+      return "";
+    },
+    sendDisabled() {
+      if (!this.email || !this.can_edit || this.busy_save || this.busy_send)
+        return true;
+      if (this.email.in_que) return false; // Cancellation is independent of provider and audience availability.
+      return (
+        !this.service?.enable ||
+        !(this.users_count > 0) ||
+        this.invalid_schedule ||
+        (this.schedule_enable && !this.mail_schedule)
+      );
+    },
     EmailOptionsHelper() {
       return EmailOptionsHelper;
     },
@@ -1583,11 +1889,10 @@ export default {
 
     menu_items() {
       const out = [];
-      if (this.can_edit) {
+      if (this.editMode) {
         out.push({
-          title: "Import Email Template",
-          subtitle:
-            "Select the .smail file, then import and load the email template.",
+          title: this.$t("email_builder.workspace.import_template"),
+          subtitle: this.$t("email_builder.workspace.import_template_help"),
 
           click: this.showLoadFile,
           icon: "folder_open",
@@ -1598,25 +1903,26 @@ export default {
         out.push(
           ...[
             {
-              title: "Export Email Template",
-              subtitle: "Download this email design as a template.",
+              title: this.$t("email_builder.workspace.export_template"),
+              subtitle: this.$t("email_builder.workspace.export_template_help"),
               click: this.downloadJson,
               icon: "download",
             },
             {
-              title: "Export Email HTML",
+              title: this.$t("email_builder.workspace.export_html"),
 
-              subtitle: "Download the HTML renderer of this email.",
+              subtitle: this.$t("email_builder.workspace.export_html_help"),
               click: this.downloadHtml,
               icon: "html",
             },
 
             {
-              title: "Render Output",
+              title: this.$t("email_builder.workspace.render_output"),
 
-              subtitle: "View the HTML version of this email.",
+              subtitle: this.$t("email_builder.workspace.render_output_help"),
               href: window.API.GET_EMAIL_RENDER(this.shop.id, this.email.id),
               target: "_blank",
+              rel: "noopener noreferrer",
               icon: "pageview",
             },
           ],
@@ -1629,16 +1935,13 @@ export default {
     editMode() {
       return this.hasEditMode && this.can_edit;
     },
-    scale_down() {
-      return this.track_mode;
-    },
 
     can_edit() {
-      return !this.email || !this.email.sent;
+      return this.hasWriteAccess && (!this.email || !this.email.sent);
     },
 
     cost() {
-      if (!this.service) return 0;
+      if (!this.service || this.users_count === null) return null;
       return this.users_count * this.service.cost;
     },
 
@@ -1673,16 +1976,14 @@ export default {
   },
 
   watch: {
-    scale_down(scale_down) {
-      let height = this.$refs.scale_container.clientHeight;
-      // console.log('---------height----------',height)
-      if (scale_down) {
-        this.max_h = height / 2 + "px";
-      } else {
-        this.max_h = "unset";
-      }
+    resourceKey() {
+      this.request_epoch++;
+      this.busy_save = false;
+      this.busy_send = false;
+      this.busy_html = false;
+      this.load_file = false;
+      this.show_guide = false;
     },
-
     has_footer(has_footer) {
       if (has_footer) this.addFooter();
       else this.removeFooter();
@@ -1711,6 +2012,11 @@ export default {
       this.cluster_id = this.email.cluster_id;
 
       this.$emit("update:structure", this.structure);
+    } else if (this.initialConfig) {
+      this.mail_name = this.initialConfig.name ?? null;
+      if (this.shop.currencies?.includes(this.initialConfig.currency))
+        this.mail_currency = this.initialConfig.currency;
+      this.cluster_id = this.initialConfig.cluster_id ?? null;
     }
 
     // Load initial fonts:
@@ -1732,12 +2038,69 @@ export default {
     ScrollHelper.scrollToTop(0, "smooth");
   },
 
+  beforeUnmount() {
+    this.request_epoch++;
+  },
   methods: {
+    canWriteCurrent() {
+      return (
+        !!this.shop?.id &&
+        typeof this.readShopAccess === "function" &&
+        this.readShopAccess(ShopPermissionRegions.MARKETING.code) &&
+        typeof this.writeShopAccess === "function" &&
+        this.writeShopAccess(ShopPermissionRegions.MARKETING.code)
+      );
+    },
+    isCurrentRequest(key, epoch) {
+      return this.resourceKey === key && this.request_epoch === epoch;
+    },
+    sectionTitle(type) {
+      return this.$t(
+        "email_builder.workspace.section_" + type.replace("-", "_"),
+      );
+    },
+    sectionIcon(type) {
+      return (
+        {
+          product: "inventory_2",
+          image: "image",
+          "two-columns": "view_column",
+          text: "text_fields",
+        }[type] || "view_quilt"
+      );
+    },
+    editSection(section) {
+      const generators = {
+        product: "GenerateProductOptions",
+        image: "GenerateImageOptions",
+        "two-columns": "GenerateTwoColumnsOptions",
+        text: "GenerateTextOptions",
+      };
+      if (generators[section.type])
+        this.showEdit(EmailOptionsHelper[generators[section.type]](section));
+    },
+    innerUpdate(event, key, object) {
+      if (this.editMode && this.canWriteCurrent())
+        InlineEditorMixin.methods.innerUpdate.call(this, event, key, object);
+    },
     downloadHtml() {
+      if (
+        !this.email ||
+        this.busy_html ||
+        !this.readShopAccess(ShopPermissionRegions.MARKETING.code)
+      )
+        return;
+      const key = this.resourceKey,
+        epoch = this.request_epoch;
       this.busy_html = true;
       axios
         .get(window.API.GET_EMAIL_RENDER(this.shop.id, this.email.id))
         .then(({ data }) => {
+          if (
+            !this.isCurrentRequest(key, epoch) ||
+            !this.readShopAccess(ShopPermissionRegions.MARKETING.code)
+          )
+            return;
           if (!data.error)
             FileHelper.DownloadText(
               this.email.name + ".html",
@@ -1746,23 +2109,58 @@ export default {
             );
           else NotificationService.showErrorAlert(null, data.error_msg);
         })
-        .catch((err) => NotificationService.showErrorAlert(null, err))
+        .catch((err) => {
+          if (
+            this.isCurrentRequest(key, epoch) &&
+            this.readShopAccess(ShopPermissionRegions.MARKETING.code)
+          )
+            NotificationService.showErrorAlert(null, err);
+        })
 
         .finally(() => {
-          this.busy_html = false;
+          if (this.isCurrentRequest(key, epoch)) this.busy_html = false;
         });
     },
     showLoadFile() {
+      if (!this.editMode || !this.canWriteCurrent()) return;
       this.load_file = true;
     },
     loadFileTemplate(event) {
-      if (!event) return;
+      if (!event || !this.editMode || !this.canWriteCurrent()) return;
+      const key = this.resourceKey,
+        epoch = this.request_epoch;
       FileHelper.LoadFile(event)
         .then((json) => {
-          //console.log("---Load Json---", json);
+          if (
+            !this.isCurrentRequest(key, epoch) ||
+            !this.editMode ||
+            !this.canWriteCurrent()
+          )
+            return;
+          if (
+            !json ||
+            typeof json !== "object" ||
+            !Array.isArray(json.sections) ||
+            json.sections.some(
+              (section) => !section || !EmailSectionStructures[section.type],
+            )
+          ) {
+            NotificationService.showErrorAlert(
+              null,
+              this.$t("email_builder.workspace.template_invalid"),
+            );
+            return;
+          }
           this.$emit("update:structure", json);
         })
-        .catch((err) => NotificationService.showErrorAlert(null, err));
+        .catch((err) => {
+          if (
+            this.isCurrentRequest(key, epoch) &&
+            this.editMode &&
+            this.canWriteCurrent()
+          )
+            NotificationService.showErrorAlert(null, err);
+        });
     },
 
     dropHandler(ev) {
@@ -1800,142 +2198,204 @@ export default {
       ev.preventDefault();
     },
 
-    validate() {
-      this.$refs.form.validate();
-      if (!this.mail_name) {
-        ScrollHelper.scrollToElement("#mail_name", 100, "smooth");
-
+    async validate() {
+      const result = await this.$refs.form?.validate();
+      if (
+        !result?.valid ||
+        !this.mail_name?.trim() ||
+        (!this.email && !this.shop.currencies?.includes(this.mail_currency))
+      ) {
+        this.active_section = "general";
         return false;
       }
       return true;
     },
 
-    saveEmail(callback = null) {
-      if (!this.validate()) return;
-
+    async saveEmail(callback = null) {
+      if (
+        !this.canWriteCurrent() ||
+        this.email?.sent ||
+        this.busy_save ||
+        this.busy_send
+      )
+        return false;
       this.busy_save = true;
-
-      const pack = {
-        currency: this.mail_currency,
-        name: this.mail_name,
-        schedule_at: this.mail_schedule,
-        structure: this.structure,
-        filter: this.filter,
-        subject: this.mail_subject,
-        from: this.mail_from,
-        cluster_id: this.cluster_id,
-      };
-
-      let promise = null;
-      if (this.email) {
-        promise = axios.put(
-          window.API.PUT_UPDATE_EMAIL(this.shop.id, this.email.id),
-          pack,
+      const key = this.resourceKey,
+        epoch = this.request_epoch,
+        shopId = this.shop.id,
+        emailId = this.email?.id;
+      try {
+        if (
+          !(await this.validate()) ||
+          !this.isCurrentRequest(key, epoch) ||
+          !this.canWriteCurrent() ||
+          this.email?.sent
+        )
+          return false;
+        const pack = {
+          currency: this.email?.currency || this.mail_currency,
+          name: this.mail_name,
+          schedule_at: this.mail_schedule,
+          structure: this.structure,
+          filter: this.filter,
+          subject: this.mail_subject,
+          from: this.mail_from,
+          cluster_id: this.cluster_id,
+        };
+        const { data } = emailId
+          ? await axios.put(window.API.PUT_UPDATE_EMAIL(shopId, emailId), pack)
+          : await axios.post(window.API.POST_CREATE_EMAIL(shopId), pack);
+        if (!this.isCurrentRequest(key, epoch) || !this.canWriteCurrent())
+          return false;
+        if (data.error) {
+          NotificationService.showErrorAlert(null, data.error_msg);
+          return false;
+        }
+        if (
+          !data.email?.id ||
+          (emailId && String(data.email.id) !== String(emailId)) ||
+          (data.email.shop_id != null &&
+            String(data.email.shop_id) !== String(shopId))
+        )
+          return false;
+        NotificationService.showSuccessAlert(
+          null,
+          this.$t("email_builder.workspace.saved"),
         );
-      } else {
-        promise = axios.post(window.API.POST_CREATE_EMAIL(this.shop.id), pack);
-      }
-      promise
-        .then(({ data }) => {
-          if (!data.error) {
-            NotificationService.showSuccessAlert(null, "Email saved.");
-
-            if (callback) callback();
-
-            // Go to mail edit page:
-            if (!this.email) {
-              this.$router.push({
-                name: "BPageEmailMarketingEdit",
-                params: { email_id: data.email.id },
-              });
-              return;
-            }
-
-            this.$emit(
-              "update:email",
-              this.MergeObjects(this.email, data.email),
-            );
-          } else {
-            NotificationService.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => {
+        if (!emailId) {
+          this.$router.push({
+            name: "BPageEmailMarketingEdit",
+            params: { shop_id: shopId, email_id: data.email.id },
+          });
+          return true;
+        }
+        this.$emit("update:email", this.MergeObjects(this.email, data.email));
+        if (
+          callback &&
+          this.isCurrentRequest(key, epoch) &&
+          this.canWriteCurrent() &&
+          !this.email?.sent
+        )
+          await callback();
+        return true;
+      } catch (error) {
+        if (this.isCurrentRequest(key, epoch) && this.canWriteCurrent())
           NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_save = false;
-        });
-    },
-    SaveAndSendMail(send) {
-      if (send)
-        // Force save if send clicked!
-        this.saveEmail(() => {
-          this.sendMail(send);
-        });
-      else {
-        this.sendMail(send);
+        return false;
+      } finally {
+        if (this.isCurrentRequest(key, epoch)) this.busy_save = false;
       }
     },
-
-    sendMail(send) {
-      this.busy_send = false;
-      let promise = null;
-      if (send) {
-        promise = axios.post(
-          window.API.POST_SEND_EMAIL(this.shop.id, this.email.id),
-        );
-      } else {
-        promise = axios.post(
-          window.API.POST_CANCEL_EMAIL(this.shop.id, this.email.id),
-        );
+    async SaveAndSendMail(send) {
+      if (
+        !this.email ||
+        !this.canWriteCurrent() ||
+        this.email.sent ||
+        this.busy_save ||
+        this.busy_send
+      )
+        return;
+      if (!send) {
+        if (this.email.in_que) return this.sendMail(false);
+        return;
       }
-      promise
-        .then(({ data }) => {
-          if (!data.error) {
-            // console.log(Object.assign({}, this.email, data.email));
-
-            this.$emit(
-              "update:email",
-              this.MergeObjects(this.email, data.email),
-            );
-
-            NotificationService.showSuccessAlert(null, "Email updated.");
-          } else {
-            NotificationService.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => {
+      if (this.sendDisabled || this.email.in_que) return;
+      const key = this.resourceKey,
+        epoch = this.request_epoch;
+      const validation = await this.$refs.send_form?.validate();
+      if (
+        !validation?.valid ||
+        !this.isCurrentRequest(key, epoch) ||
+        !this.canWriteCurrent() ||
+        this.sendDisabled
+      )
+        return;
+      // Force save if send clicked; approval remains a separate server-reviewed operation.
+      return this.saveEmail(() => this.sendMail(true));
+    },
+    async sendMail(send) {
+      if (
+        !this.email ||
+        !this.canWriteCurrent() ||
+        this.email.sent ||
+        this.busy_send ||
+        (send && this.email.in_que) ||
+        (!send && !this.email.in_que)
+      )
+        return;
+      if (
+        send &&
+        (!this.service?.enable ||
+          !(this.users_count > 0) ||
+          this.invalid_schedule ||
+          (this.schedule_enable && !this.mail_schedule))
+      )
+        return;
+      this.busy_send = true;
+      const key = this.resourceKey,
+        epoch = this.request_epoch,
+        shopId = this.shop.id,
+        emailId = this.email.id;
+      try {
+        const { data } = await axios.post(
+          send
+            ? window.API.POST_SEND_EMAIL(shopId, emailId)
+            : window.API.POST_CANCEL_EMAIL(shopId, emailId),
+        );
+        if (!this.isCurrentRequest(key, epoch) || !this.canWriteCurrent())
+          return;
+        if (data.error) {
+          NotificationService.showErrorAlert(null, data.error_msg);
+          return;
+        }
+        if (
+          !data.email ||
+          String(data.email.id) !== String(emailId) ||
+          (data.email.shop_id != null &&
+            String(data.email.shop_id) !== String(shopId))
+        )
+          return;
+        this.$emit("update:email", this.MergeObjects(this.email, data.email));
+        NotificationService.showSuccessAlert(
+          null,
+          this.$t("email_builder.workspace.updated"),
+        );
+      } catch (error) {
+        if (this.isCurrentRequest(key, epoch) && this.canWriteCurrent())
           NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_send = false;
-        });
+      } finally {
+        if (this.isCurrentRequest(key, epoch)) this.busy_send = false;
+      }
     },
 
     hasTracker(actions) {
       return actions && actions.some((item) => item.tracking);
     },
     moveDown(section) {
+      if (!this.editMode || !this.canWriteCurrent()) return;
       const index = this.structure.sections.indexOf(section);
+      if (index < 0 || index >= this.structure.sections.length - 1) return;
       this.structure.sections.splice(index, 1);
 
       this.structure.sections.splice(index + 1, 0, section);
     },
     moveUp(section) {
+      if (!this.editMode || !this.canWriteCurrent()) return;
       const index = this.structure.sections.indexOf(section);
+      if (index <= 0) return;
       this.structure.sections.splice(index, 1);
 
       this.structure.sections.splice(index - 1, 0, section);
     },
 
     showEdit(options) {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
       this.$refs.section_editor.showEmailSectionEditor(options);
     },
 
     //---------------------------------------
     addSection(type, index) {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
 
       let section = JSON.parse(JSON.stringify(EmailSectionStructures[type]));
       if (!this.structure.sections) this.structure.sections = [];
@@ -1945,13 +2405,13 @@ export default {
       this.$emit("update:structure", Object.assign({}, this.structure));
     },
     deleteSection(index) {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
       this.structure.sections.splice(index, 1);
       this.$emit("update:structure", Object.assign({}, this.structure));
     },
 
     addFooter() {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
 
       this.structure.footer = { message: "" };
 
@@ -1959,7 +2419,7 @@ export default {
     },
 
     removeFooter() {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
 
       this.structure.footer = null;
 
@@ -1967,7 +2427,7 @@ export default {
     },
 
     addAction(section) {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
 
       if (!section.actions) section.actions = [];
 
@@ -1983,7 +2443,7 @@ export default {
     },
 
     addNewItemToList(list, item) {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
 
       list.push({ item });
 
@@ -1991,7 +2451,7 @@ export default {
     },
     removeItemToList(list, item) {
       //console.log("removeItemToList", item);
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
       const index = list.indexOf(item);
       if (index >= 0) {
         list.splice(index, 1);
@@ -2002,14 +2462,14 @@ export default {
 
     //----------------------------------------------------------------
     addHeader() {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
 
       if (!this.structure.header) this.structure.header = {};
 
       this.$emit("update:structure", Object.assign({}, this.structure));
     },
     removeHeader() {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
 
       this.structure.header = null;
 
@@ -2019,20 +2479,21 @@ export default {
     //----------------------------------------------------------------
 
     deleteProperty(section, key) {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
 
       delete section[key];
       this.$emit("update:structure", Object.assign({}, this.structure));
     },
 
     addProperty(section, key, val = {}) {
-      if (!this.editMode) return;
+      if (!this.editMode || !this.canWriteCurrent()) return;
 
       section[key] = val;
       this.$emit("update:structure", Object.assign({}, this.structure));
     },
 
     forceUpdateContent() {
+      if (!this.editMode || !this.canWriteCurrent()) return;
       this.$emit("update:structure", Object.assign({}, this.structure));
     },
     //---------------------------------------
@@ -2045,6 +2506,11 @@ export default {
     },
 
     downloadJson() {
+      if (
+        !this.email ||
+        !this.readShopAccess(ShopPermissionRegions.MARKETING.code)
+      )
+        return;
       FileHelper.DownloadText(
         this.email.name + ".smail",
         JSON.stringify(this.structure, null, 4),
@@ -2055,226 +2521,938 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.option-btn {
-  position: absolute;
-  right: 16px;
-  opacity: 0.9;
-  // margin-top: 12px;
-  top: 36px !important;
-  background-color: #fff;
-  z-index: 10;
-  border-radius: 50%;
+.b-email-editor {
+  .option-btn {
+    position: absolute;
+    right: 16px;
+    opacity: 0.9;
+    // margin-top: 12px;
+    top: 36px !important;
+    background-color: #fff;
+    z-index: 10;
+    border-radius: 50%;
 
-  transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 
-  &:hover {
-    transform: scale(1.5, 1.5);
-  }
+    &:hover {
+      transform: scale(1.5, 1.5);
+    }
 
-  &.loc2 {
-    right: 64px;
-  }
-
-  &.left-loc-1 {
-    right: unset;
-    left: 16px;
-  }
-
-  &.left-loc-2 {
-    right: unset;
-    left: 64px;
-  }
-
-  &.left-loc-3 {
-    right: unset;
-    left: 112px;
-  }
-
-  @media only screen and (min-width: 900px) {
-    right: calc(-16px - 36px);
     &.loc2 {
-      right: calc(-64px - 36px);
+      right: 64px;
     }
+
     &.left-loc-1 {
-      left: calc(-16px - 36px);
+      right: unset;
+      left: 16px;
     }
+
     &.left-loc-2 {
-      left: calc(-64px - 36px);
+      right: unset;
+      left: 64px;
     }
+
     &.left-loc-3 {
-      left: calc(-112px - 36px);
+      right: unset;
+      left: 112px;
+    }
+
+    @media only screen and (min-width: 900px) {
+      right: calc(-16px - 36px);
+      &.loc2 {
+        right: calc(-64px - 36px);
+      }
+      &.left-loc-1 {
+        left: calc(-16px - 36px);
+      }
+      &.left-loc-2 {
+        left: calc(-64px - 36px);
+      }
+      &.left-loc-3 {
+        left: calc(-112px - 36px);
+      }
+    }
+
+    &:hover {
+      opacity: 1;
     }
   }
 
-  &:hover {
-    opacity: 1;
+  .section-label {
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    text-transform: uppercase;
+    min-width: 100px;
+    text-align: center;
+    @media only screen and (min-width: 900px) {
+      left: -120px;
+    }
   }
-}
 
-.section-label {
-  position: absolute;
-  left: 6px;
-  top: 4px;
-  text-transform: uppercase;
-  min-width: 100px;
-  text-align: center;
-  @media only screen and (min-width: 900px) {
-    left: -120px;
+  .section-content {
+    max-width: 570px;
+    margin: auto;
+    overflow: hidden;
   }
-}
 
-.section-content {
-  max-width: 570px;
-  margin: auto;
-  overflow: hidden;
-}
+  .section-container-editable {
+    min-height: 200px;
+    transition: all 0.45s !important;
+    z-index: 0;
 
-.section-container-editable {
-  min-height: 200px;
-  transition: all 0.45s !important;
-  z-index: 0;
+    &:hover {
+      box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.2);
+      transition: all 0.35s !important;
+      background-color: #fff !important;
+      transform: translateY(-2px);
+      z-index: 1;
 
-  &:hover {
-    box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.2);
-    transition: all 0.35s !important;
-    background-color: #fff !important;
-    transform: translateY(-2px);
-    z-index: 1;
+      .actions-container {
+        -webkit-animation-name: slideInUp;
+        animation-name: slideInUp;
+        pointer-events: unset;
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
 
     .actions-container {
-      -webkit-animation-name: slideInUp;
-      animation-name: slideInUp;
-      pointer-events: unset;
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
+      position: absolute;
+      pointer-events: none;
+      transition: all 0.4s;
+      bottom: 40px;
+      opacity: 0;
+      left: 6px;
+      background-color: rgba(250, 250, 250, 0.94);
+      padding: 8px;
+      border-radius: 6px;
+      border: solid #eee thin;
+      box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.2) !important;
+      transform: translate3d(0, 100%, 0);
+
+      p {
+        margin: 0;
+        text-align: start;
+        font-size: 0.8em;
+        color: #aaa;
+      }
     }
   }
 
-  .actions-container {
+  .inline-section {
+    max-height: 36px;
+    min-height: 36px;
+    z-index: 20;
+
     position: absolute;
-    pointer-events: none;
-    transition: all 0.4s;
-    bottom: 40px;
-    opacity: 0;
-    left: 6px;
-    background-color: rgba(250, 250, 250, 0.94);
-    padding: 8px;
-    border-radius: 6px;
-    border: solid #eee thin;
-    box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.2) !important;
-    transform: translate3d(0, 100%, 0);
-
-    p {
-      margin: 0;
-      text-align: start;
-      font-size: 0.8em;
-      color: #aaa;
-    }
-  }
-}
-
-.inline-section {
-  max-height: 36px;
-  min-height: 36px;
-  z-index: 20;
-
-  position: absolute;
-  left: 0;
-  width: 100%;
-  bottom: -18px;
-  transition: all 0.4s;
-  cursor: pointer;
-  opacity: 0.8;
-  padding-top: 36px;
-  overflow: hidden;
-
-  .hed {
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-
-    background-color: #00a89a;
-    border-radius: 12px;
-    padding: 4px 12px;
-
-    i {
-      vertical-align: bottom;
-    }
-  }
-
-  .hed-line {
-    background-color: #00a89a;
-    height: 4px;
+    left: 0;
     width: 100%;
-  }
-
-  &:hover {
-    max-height: 120px;
-    opacity: 1;
-    padding-top: 0px;
-    background-color: #00a89a;
+    bottom: -18px;
+    transition: all 0.4s;
+    cursor: pointer;
+    opacity: 0.8;
+    padding-top: 36px;
+    overflow: hidden;
 
     .hed {
-      opacity: 0;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+
+      background-color: #00a89a;
+      border-radius: 12px;
+      padding: 4px 12px;
+
+      i {
+        vertical-align: bottom;
+      }
+    }
+
+    .hed-line {
+      background-color: #00a89a;
+      height: 4px;
+      width: 100%;
+    }
+
+    &:hover {
+      max-height: 120px;
+      opacity: 1;
+      padding-top: 0px;
+      background-color: #00a89a;
+
+      .hed {
+        opacity: 0;
+      }
+    }
+  }
+
+  .email-page {
+    position: relative;
+    border-radius: 16px;
+  }
+
+  .scale-container {
+    transition: all 0.5s;
+    position: relative;
+
+    &.scale {
+      transform: scale(0.5);
+      transform-origin: top;
+    }
+  }
+
+  .editable {
+    min-height: 24px;
+    font-family: var(--font-text), serif;
+  }
+
+  .subheading {
+    margin-bottom: 20px !important;
+    display: inline-block;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    min-height: 20px;
+  }
+
+  .subheading::after {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -10px;
+    content: "";
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-1);
+    background-image: linear-gradient(
+      to left,
+      var(--color-1) 0%,
+      var(--color-2) 100%
+    );
+    margin: 0 auto;
+  }
+
+  .scale-container {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: var(--font-title), serif;
     }
   }
 }
-
-.email-page {
+.b-email-editor {
+  padding: 34px 32px 38px;
   position: relative;
-  border-radius: 16px;
-}
-
-.scale-container {
-  transition: all 0.5s;
-  position: relative;
-
-  &.scale {
-    transform: scale(0.5);
-    transform-origin: top;
+  color: rgb(var(--v-theme-on-surface));
+  &__content {
+    max-width: 1040px;
+    width: 100%;
+    min-width: 0;
+    margin: auto;
+  }
+  &__page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-block-end: 25px;
+  }
+  .sd-modern-title {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .sd-modern-title > .v-icon {
+    margin-block-start: 5px;
+  }
+  .sd-modern-title-text {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 27px;
+    letter-spacing: 0;
+    margin: 0;
+  }
+  .sd-modern-subtitle {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 21px;
+    margin: 5px 0 0;
+    overflow-wrap: anywhere;
+  }
+  .sd-modern-button {
+    font-size: 13px;
+    line-height: 20px;
+  }
+  .sd-modern-eyebrow {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0.8px;
+  }
+  .sd-modern-status--plain {
+    font-size: 11px;
+    line-height: 18px;
+    white-space: nowrap;
+    padding-block-start: 4px;
+  }
+  &__layout {
+    display: grid;
+    grid-template-columns: 155px minmax(0, 1fr);
+    gap: 25px;
+    align-items: start;
+  }
+  &__nav {
+    display: grid;
+    gap: 6px;
+    padding: 4px 2px;
+  }
+  &__nav .sd-modern-section-nav__item {
+    font-size: 12px;
+    line-height: 19px;
+    padding: 12px;
+    gap: 11px;
+    min-height: 43px;
+    text-align: start;
+  }
+  &__nav-help {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 19px 10px 0;
+    margin: 0;
+    font-size: 11px;
+    line-height: 18px;
+    color: var(--sd-modern-muted);
+    > .v-icon {
+      margin-block-start: 2px;
+    }
+  }
+  &__workspace {
+    min-width: 0;
+  }
+  &__panel.sd-modern-widget {
+    padding: 27px;
+    border-radius: 18px;
+    font-size: 13px;
+    line-height: 21px;
+    min-width: 0;
+  }
+  .sd-modern-header {
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    gap: 16px;
+    margin-block-end: 25px;
+  }
+  .sd-modern-header > div:first-child {
+    min-width: 0;
+  }
+  .sd-modern-header > .sd-modern-actions {
+    flex-shrink: 0;
+  }
+  &__fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px 23px;
+  }
+  &__field-full {
+    grid-column: 1/-1;
+    min-width: 0;
+  }
+  &__fields.b-email-editor__send-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  &__sender :deep(.v-text-field__suffix) {
+    align-self: stretch;
+    align-items: center;
+    padding-block: 28px 8px;
+    font-size: 13px;
+    line-height: 24px;
+  }
+  &__fields > :deep(.v-input),
+  &__fields > :deep(.v-select) {
+    min-width: 0;
+  }
+  &__fields :deep(.v-field__input),
+  &__fields :deep(.v-field__field) {
+    font-size: 13px;
+    line-height: 20px;
+  }
+  &__fields :deep(.v-label) {
+    font-size: 12px;
+    line-height: 19px;
+  }
+  &__fields :deep(.v-messages) {
+    font-size: 11px;
+    line-height: 18px;
+  }
+  &__fields :deep(.v-input__details) {
+    padding-inline: 0;
+  }
+  &__fields :deep(.u-smart-suggestion) {
+    margin-block-start: 7px;
+  }
+  &__inactive {
+    opacity: 0.6;
+  }
+  &__currency-field :deep(.-flag) {
+    width: 18px;
+    margin: 0 !important;
+  }
+  &__currency-field :deep(.imc) {
+    width: 18px;
+    min-width: 18px;
+  }
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+    border-block-start: 1px solid var(--sd-modern-border);
+    padding-block-start: 21px;
+    margin-block-start: 27px;
+    > span {
+      font-size: 11px;
+      line-height: 18px;
+      color: var(--sd-modern-muted);
+      flex: 1;
+      min-width: 120px;
+    }
+    > div {
+      flex: 1;
+      min-width: 200px;
+    }
+  }
+  &__readonly {
+    margin-block-end: 18px;
+    font-size: 12px;
+    line-height: 20px;
+    align-items: flex-start;
+    p {
+      margin: 0;
+    }
+  }
+  &__audience-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-block-end: 22px;
+    strong {
+      font-size: 30px;
+      line-height: 40px;
+      font-weight: 400;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+  &__audience :deep(.b-customers-funnel-modern) {
+    display: grid;
+    grid-template-columns: minmax(0, 0.87fr) minmax(0, 1.2fr);
+    gap: 25px;
+  }
+  &__audience :deep(.b-customers-funnel-modern__report) {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 0 23px 0 0;
+    border: 0;
+    border-inline-end: 1px solid var(--sd-modern-border);
+    margin: 0;
+    min-width: 0;
+  }
+  &__audience :deep(.b-customers-filter-design-modern) {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+  }
+  &__audience :deep(.b-customers-funnel-modern__report .sd-modern-header) {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-block-end: 18px;
+  }
+  &__audience :deep(.b-customers-funnel-modern__report .sd-modern-actions) {
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  &__audience :deep(.b-customers-funnel-modern__report .sd-modern-button) {
+    font-size: 12px;
+    line-height: 20px;
+    padding: 6px 3px;
+    min-height: 32px;
+  }
+  &__audience :deep(.b-customers-funnel-modern__step) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 9px;
+    margin-block-end: 21px;
+    padding: 0;
+    border: 0;
+  }
+  &__audience :deep(.b-customers-funnel-modern__label) {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 12px;
+    line-height: 19px;
+  }
+  &__audience :deep(.b-customers-funnel-modern__count) {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 12px;
+    line-height: 19px;
+  }
+  &__audience :deep(.b-customers-funnel-modern__track) {
+    grid-column: 1/-1;
+    grid-row: 2;
+    height: 6px;
+    border-radius: 9px;
+  }
+  &__audience :deep(.b-customers-funnel-modern__track > span) {
+    background: #8a75ce;
+  }
+  &__audience :deep(.b-customers-funnel-modern__drop) {
+    grid-column: 2;
+    grid-row: 3;
+    margin: 0;
+    font-size: 11px;
+    line-height: 18px;
+  }
+  &__audience :deep(.b-customers-filter-design-modern__row) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px;
+    padding: 11px 0;
+  }
+  &__audience :deep(.b-customers-filter-design-modern__number),
+  &__audience :deep(.b-customers-filter-design-modern__handle) {
+    display: none;
+  }
+  &__audience :deep(.b-customers-filter-design-modern__edit) {
+    grid-column: 1;
+    min-width: 0;
+    padding: 0;
+    text-align: start;
+  }
+  &__audience :deep(.b-customers-filter-design-modern__actions) {
+    grid-column: 1/-1;
+    justify-content: flex-end;
+    gap: 7px;
+  }
+  &__audience
+    :deep(.b-customers-filter-design-modern__actions .sd-modern-icon-button) {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+  }
+  &__audience
+    :deep(.b-customers-filter-design-modern__edit .b--customers-filter-item) {
+    font-size: 12px;
+    line-height: 19px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  &__audience :deep(.b-customers-filter-design-modern > .sd-modern-button) {
+    background: transparent;
+    color: rgb(var(--v-theme-primary));
+    min-height: 32px;
+    font-size: 12px;
+    padding-inline: 0;
+    box-shadow: none;
+  }
+  &__design .sd-modern-header {
+    flex-wrap: wrap;
+    margin-block-end: 16px;
+  }
+  &__design-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-block-start: 1px solid var(--sd-modern-border);
+    padding-block: 10px;
+    > span {
+      font-size: 11px;
+      line-height: 18px;
+      color: var(--sd-modern-muted);
+    }
+  }
+  &__design .sd-modern-button--inline {
+    font-size: 12px;
+    line-height: 20px;
+    min-height: 32px;
+  }
+  &__design-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 11px;
+    line-height: 18px;
+    color: var(--sd-modern-muted);
+    margin: 0 0 14px;
+    > .v-icon {
+      margin-block-start: 2px;
+    }
+  }
+  .s-drop-zone {
+    padding: 20px 15px;
+    border: 1px dashed var(--sd-modern-border);
+    overflow: visible;
+  }
+  .scale-container {
+    width: 100%;
+    font-size: 15px;
+    line-height: 22.5px;
+    min-width: 0;
+  }
+  .option-btn {
+    position: absolute;
+    inset-inline-end: 10px;
+    inset-inline-start: auto;
+    top: 10px !important;
+    opacity: 1;
+    background: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
+    border-radius: 8px;
+    transition: none;
+    &:hover {
+      transform: none;
+    }
+  }
+  .section-container-editable {
+    min-height: 0;
+    transition: none !important;
+    &:hover {
+      box-shadow: none;
+      background-color: transparent !important;
+      transform: none;
+      z-index: auto;
+    }
+  }
+  &__block-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
+    border-block-end: 1px solid var(--sd-modern-border);
+    > span {
+      font-size: 10px;
+      font-weight: 400;
+      line-height: 16px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--sd-modern-muted);
+    }
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+  }
+  &__block-toolbar .sd-modern-icon-button {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+  }
+  &__extra-actions {
+    text-align: start;
+    background: rgb(var(--v-theme-surface));
+    padding: 5px 12px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  &__insert {
+    padding: 7px 8px;
+    background: rgb(var(--v-theme-surface));
+    border-block: 1px dashed var(--sd-modern-border);
+    text-align: center;
+  }
+  &__empty {
+    display: grid;
+    justify-items: center;
+    gap: 9px;
+    padding: 30px 14px;
+    background: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 13px;
+    line-height: 21px;
+    > span {
+      font-size: 12px;
+      color: var(--sd-modern-muted);
+    }
+    > div {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+  }
+  &__toggles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    border-block-start: 1px solid var(--sd-modern-border);
+    padding-block-start: 17px;
+    margin-block-start: 20px;
+  }
+  &__group {
+    margin-block-start: 23px;
+    padding-block-start: 24px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  &__group .sd-modern-title-text,
+  &__group > h3 {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    margin: 0;
+  }
+  &__group > .sd-modern-subtitle {
+    font-size: 12px;
+    line-height: 19px;
+    margin-block-start: 4px;
+  }
+  &__timing {
+    margin-block-start: 16px;
+  }
+  &__timing :deep(> .rounded-card) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  &__timing :deep(> .rounded-card > .pp) {
+    min-width: 0;
+    border-block: 0 !important;
+    padding: 16px 13px !important;
+  }
+  &__schedule-field {
+    margin-block-start: 20px;
+  }
+  &__cost {
+    margin-block-start: 25px;
+  }
+  &__cost :deep(.u--price) {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 27px;
+  }
+  &__provider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-block-end: 1px solid var(--sd-modern-border);
+    padding-block-end: 20px;
+    margin-block-end: 23px;
+  }
+  &__provider-copy {
+    flex: 1;
+    min-width: 100px;
+  }
+  &__provider .v-avatar,
+  &__reviewer .v-avatar {
+    flex: 0 0 32px;
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    aspect-ratio: 1;
+  }
+  &__provider small {
+    display: block;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 18px;
+  }
+  &__provider strong {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  &__provider p {
+    font-size: 11px;
+    line-height: 18px;
+    margin: 0;
+  }
+  &__reviewer {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin-block: 18px;
+    > .b-email-editor__reviewer-copy {
+      flex: 1;
+      min-width: 0;
+      font-size: 12px;
+      line-height: 19px;
+      > span,
+      > strong {
+        display: block;
+        font-weight: 400;
+      }
+      overflow-wrap: anywhere;
+    }
+    small {
+      display: block;
+      color: var(--sd-modern-muted);
+      font-size: 11px;
+      line-height: 18px;
+      overflow-wrap: anywhere;
+    }
+  }
+  &__section-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 17px 2px 0;
+    > span {
+      font-size: 11px;
+      line-height: 18px;
+      color: var(--sd-modern-muted);
+      text-align: center;
+    }
+    .sd-modern-button {
+      font-size: 12px;
+      line-height: 20px;
+      min-height: 32px;
+    }
+  }
+  @media (max-width: 760px) {
+    padding: 25px 20px 28px;
+    &__layout {
+      grid-template-columns: 1fr;
+      gap: 17px;
+    }
+    &__nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    &__nav .sd-modern-section-nav__item {
+      flex: 1;
+      min-width: 100px;
+      justify-content: center;
+      white-space: normal;
+      padding: 10px;
+    }
+    &__nav-help {
+      display: none;
+    }
+    &__page-header {
+      margin-block-end: 16px;
+    }
+    &__panel.sd-modern-widget {
+      padding: 24px;
+    }
+  }
+  @media (max-width: 510px) {
+    padding: 22px 12px;
+    &__page-header {
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+    &__panel.sd-modern-widget {
+      padding: 20px;
+      border-radius: 15px;
+    }
+    &__fields,
+    &__toggles {
+      grid-template-columns: 1fr;
+    }
+    &__timing :deep(> .rounded-card) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    &__reviewer {
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr);
+      > .sd-modern-button {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+    &__audience :deep(.b-customers-funnel-modern) {
+      grid-template-columns: 1fr;
+    }
+    &__audience :deep(.b-customers-funnel-modern__report) {
+      grid-column: 1;
+      grid-row: 1;
+      border-inline-end: 0;
+      padding-inline-end: 0;
+      padding-block-end: 20px;
+      border-block-end: 1px solid var(--sd-modern-border);
+    }
+    &__audience :deep(.b-customers-filter-design-modern) {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    &__fields :deep(.v-field__input) {
+      font-size: 16px;
+    }
+    .s-drop-zone {
+      padding: 9px;
+    }
+    &__block-toolbar {
+      padding: 9px 6px;
+      gap: 6px;
+    }
+    &__block-toolbar > div {
+      gap: 5px;
+    }
+    &__actions > .sd-modern-button {
+      margin-inline-start: auto;
+    }
+    &__section-footer > span {
+      font-size: 10px;
+    }
+  }
+  @media (pointer: coarse) {
+    &__nav .sd-modern-section-nav__item,
+    &__design .sd-modern-button--inline,
+    &__section-footer .sd-modern-button {
+      min-height: 44px;
+    }
+    &__block-toolbar .sd-modern-icon-button,
+    &__audience
+      :deep(.b-customers-filter-design-modern__actions .sd-modern-icon-button) {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scale-container {
+      transition: none;
+    }
   }
 }
-
-.editable {
-  min-height: 24px;
-  font-family: var(--font-text), serif;
-}
-
-.subheading {
-  margin-bottom: 20px !important;
-  display: inline-block;
+.b-email-editor-dialog.sd-modern-widget {
+  padding: 24px;
+  border-radius: 18px;
   font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  position: relative;
-  min-height: 20px;
-}
-
-.subheading::after {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -10px;
-  content: "";
-  width: 100%;
-  height: 2px;
-  background-color: var(--color-1);
-  background-image: linear-gradient(
-    to left,
-    var(--color-1) 0%,
-    var(--color-2) 100%
-  );
-  margin: 0 auto;
-}
-
-.scale-container {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-title), serif;
+  line-height: 21px;
+  .sd-modern-title-text {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 27px;
+  }
+  .sd-modern-subtitle {
+    font-size: 13px;
+    line-height: 21px;
+  }
+  .sd-modern-header {
+    align-items: flex-start;
+  }
+  .b-email-editor-dialog__steps {
+    margin-block: 20px;
+    padding-inline-start: 22px;
+    li {
+      margin-block: 13px;
+    }
   }
 }
 </style>

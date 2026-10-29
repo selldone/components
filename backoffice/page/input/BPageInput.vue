@@ -14,11 +14,13 @@
 
 <template>
   <v-autocomplete
+    :class="{ 'sd-modern-underlined-field': modern }"
+    :menu-props="modern ? { contentClass: 'sd-modern-select-menu' } : undefined"
     v-model:menu="menu"
     v-model:search="search"
     :clearable="clearable"
     :items="pages"
-    :label="label?label:$t('campaign.setting.general_setting.page_input')"
+    :label="label ? label : $t('campaign.setting.general_setting.page_input')"
     :loading="busy"
     :messages="message"
     :model-value="modelValue"
@@ -35,24 +37,42 @@
     @click:clear="$emit('click:clear')"
   >
     <template
-      v-if="!noEditButton && (returnObject?modelValue?.id:modelValue) && $route.params.shop_id"
+      v-if="
+        !noEditButton &&
+        (returnObject ? modelValue?.id : modelValue) &&
+        $route.params.shop_id
+      "
       v-slot:append-inner
     >
       <v-btn
         :to="{
           name: 'BPageLandingEditor',
-          params: { page_id: returnObject?modelValue.id:modelValue },
+          params: { page_id: returnObject ? modelValue.id : modelValue },
         }"
-        class="tnt"
+        :class="modern ? 'sd-modern-icon-button sd-modern-input-action' : 'tnt'"
+        :icon="modern"
+        :aria-label="
+          modern ? $t('campaign.landing.refined.edit_page') : undefined
+        "
         size="small"
         target="_blank"
-        title="Edit page"
-        variant="elevated"
+        :title="modern ? undefined : 'Edit page'"
+        :variant="modern ? 'text' : 'elevated'"
         @click.stop
-        prepend-icon="edit"
-        append-icon="launch"
+        :prepend-icon="modern ? undefined : 'edit'"
+        :append-icon="modern ? undefined : 'launch'"
       >
-        {{ $t("global.actions.edit") }}
+        <template v-if="modern"
+          ><v-icon size="16">north_east</v-icon
+          ><v-tooltip
+            activator="parent"
+            location="top"
+            open-on-focus
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("campaign.landing.refined.edit_page") }}</v-tooltip
+          ></template
+        >
+        <template v-else>{{ $t("global.actions.edit") }}</template>
       </v-btn>
     </template>
 
@@ -151,9 +171,9 @@ export default {
   name: "BPageInput",
   components: {},
   emits: ["update:modelValue", "click:clear"],
-  inject:["$shop"],
+  inject: ["$shop"],
   props: {
-
+    modern: Boolean,
     clearable: Boolean,
     modelValue: {},
 
@@ -162,8 +182,8 @@ export default {
       type: Boolean,
     },
     disabled: Boolean,
-    label:{},
-    message:{},
+    label: {},
+    message: {},
     noEditButton: {
       default: false,
       type: Boolean,
@@ -224,7 +244,7 @@ export default {
 
       window.$backoffice.page
         .optimize(60)
-      //  .cancellation(true) disable to support multi page-inputs!
+        //  .cancellation(true) disable to support multi page-inputs!
         .list(this.$shop.id, 0, 20, {
           // Must contain this id:
           contain:

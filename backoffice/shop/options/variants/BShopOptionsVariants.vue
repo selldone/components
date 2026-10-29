@@ -14,44 +14,48 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Custom Variants ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-  <div class="widget-box -large mb-5">
-    <u-widget-header icon="autofps_select" :title="$t('b_shop_options_variants.custom_variants.title')">
+  <div class="b-shop-theme-variants sd-modern-widget text-start">
+    <u-widget-header class="sd-modern-form-header" icon="autofps_select" :title="$t('b_shop_options_variants.custom_variants.title')">
     </u-widget-header>
-    <v-list-subheader>
+    <v-list-subheader class="sd-modern-subtitle b-shop-theme-variants__subtitle">
       {{$t('b_shop_options_variants.custom_variants.subtitle')}}
     </v-list-subheader>
 
-    <v-list class="rounded-18px border-between-vertical" density="compact">
+    <v-list class="b-shop-theme-variants__list border-between-vertical bg-transparent" density="compact">
       <v-list-item v-for="(variant, key) in ProductVariants" :key="key">
         <template v-slot:prepend>
-          <v-icon color="#111">{{ variant.icon }}</v-icon>
+          <v-icon>{{ variant.icon }}</v-icon>
         </template>
         <v-row>
-          <v-col>
+          <v-col cols="12" sm="6">
             <v-text-field
+              class="sd-modern-underlined-field"
+              :disabled="!canWriteSettings || busy_variants"
               v-model="variants[variant.code]"
               :placeholder="$t(variant.name)"
               :prefix="`${$t(variant.name)}: `"
               flat
               hide-details
               persistent-placeholder
-              variant="solo"
+              variant="underlined"
               @change="variants_change = true"
             ></v-text-field>
           </v-col>
-          <v-col>
+          <v-col cols="12" sm="6">
             <v-text-field
+              class="sd-modern-underlined-field"
+              :disabled="!canWriteSettings || busy_variants"
               v-model="variants[variant.code + '_icon']"
               :placeholder="variant.icon"
               flat
               hide-details
               persistent-placeholder
               :prefix="`${$t('global.commons.icon')}: `"
-              variant="solo"
+              variant="underlined"
               @change="variants_change = true"
             >
               <template v-slot:append-inner>
-                <v-btn color="#111" icon size="small" variant="text">
+                <v-btn class="sd-modern-icon-button sd-modern-input-action" icon variant="text" :aria-label="$t('global.commons.icon')">
                   <v-icon>info</v-icon>
 
                   <v-menu
@@ -61,7 +65,7 @@
                     max-width="420"
                     open-on-hover
                   >
-                    <v-sheet class="text-start pa-3" color="#111" rounded="xl">
+                    <v-sheet class="b-shop-theme-variants__icon-help sd-modern-widget text-start">
                       <div>● {{$t('commons.google_icon_font_sample')}}:</div>
                       <div class="my-1">
                         <v-icon class="me-2" size="small">tapas</v-icon>
@@ -69,13 +73,14 @@
                       </div>
                       <div class="widget-buttons">
                         <v-btn
-                          class="tnt"
-                          color="amber"
+                          class="sd-modern-button sd-modern-button--inline"
+                          color="primary"
                           href="https://fonts.google.com/icons?selected=Material+Icons"
                           target="_blank"
+                          rel="noopener noreferrer"
                           variant="text"
-                          >Icons list
-                          <v-icon end>open_in_new</v-icon>
+                          >{{ $t('shop_theme.studio.icons_list') }}
+                          <v-icon end>north_east</v-icon>
                         </v-btn>
                       </div>
 
@@ -97,11 +102,12 @@
     </v-list>
 
     <v-expand-transition>
-      <s-widget-buttons v-if="variants_change">
+      <s-widget-buttons v-if="variants_change && canWriteSettings" class="sd-modern-form-actions">
         <v-btn
+          class="sd-modern-button sd-modern-button--primary"
           :loading="busy_variants"
+          :disabled="!canWriteSettings"
           color="primary"
-          size="x-large"
           @click="saveVariants"
         >
           <v-icon start>save</v-icon>
@@ -121,6 +127,7 @@ import {
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions.ts";
 
 export default {
   name: "BShopOptionsVariants",
@@ -141,13 +148,18 @@ export default {
     variants: {},
   }),
 
-  computed: {},
+  computed: {
+    canWriteSettings() {
+      return this.writeShopAccess(ShopPermissionRegions.SETTINGS.code);
+    },
+  },
 
   created() {
     this.variants = ShopOptionsHelper.GetCustomVariants(this.shop);
   },
   methods: {
     saveVariants() {
+      if (!this.canWriteSettings || this.busy_variants) return;
       this.busy_variants = true;
 
       axios
@@ -180,4 +192,12 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.b-shop-theme-variants {
+  min-width: 0;
+
+  &__subtitle { padding: 0; margin-block: 0 18px; min-height: 0; }
+  &__list :deep(.v-list-item) { padding-inline: 0; }
+  &__icon-help { padding: 20px; max-width: min(420px, calc(100vw - 32px)); font-size: 12px; }
+}
+</style>

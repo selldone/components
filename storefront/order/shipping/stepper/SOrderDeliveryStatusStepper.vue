@@ -78,7 +78,7 @@
               <div class="sd-modern-tooltip__title">{{ $t(item.name) }}</div>
               <div class="sd-modern-tooltip__body">
                 <span class="d-block mb-1">{{ $t(`admin_shop.orders.physical.modern.stages.${activeIndex > index ? 'completed' : activeIndex === index ? 'current' : 'upcoming'}`) }}</span>
-                {{ $t(`admin_shop.orders.physical.modern.stages.${_key}`) }}
+                {{ $t(`${modernTooltipPrefix}.${_key}`) }}
               </div>
             </v-tooltip>
           </button>
@@ -154,6 +154,10 @@ export default {
     modernTooltips: {
       type: Boolean,
       default: false,
+    },
+    modernTooltipPrefix: {
+      type: String,
+      default: "admin_shop.orders.physical.modern.stages",
     },
     dark: {
       type: Boolean,

@@ -568,7 +568,7 @@ test("real5/15 buckets, zeros, clusters and new-event-only finite pulses remain 
 test("actual template renders placeholders, all map controls and complete aggregate panels", async () => {
   const e = environment(),
     render = evaluate(compiled.code, e.globals).render;
-  async function html(value) {
+  async function html(value, report = false) {
     const component = {
       ...e.component,
       render,
@@ -584,6 +584,8 @@ test("actual template renders placeholders, all map controls and complete aggreg
       shop: { id: 7 },
       windowMinutes: 5,
       windowControl: true,
+      modern: report,
+      report,
     });
     app.config.globalProperties.$t = e.state.$t;
     app.config.globalProperties.$i18n = { locale: "en" };
@@ -608,6 +610,25 @@ test("actual template renders placeholders, all map controls and complete aggreg
   const initial = await html(null);
   assert.equal((initial.match(/<strong>—<\/strong>/g) || []).length, 4);
   const loaded = await html(snapshot({ enabled: false }));
+  const report = await html(snapshot({ enabled: false }), true);
+  assert.ok(report.includes("b-live-view--report"));
+  assert.ok(report.includes("b-live-view__report-header"));
+  assert.equal((report.match(/<select/g) || []).length, 1);
+  assert.ok(report.includes('aria-label="geo_map.live.pause"'));
+  for (const key of [
+    "zoom_in",
+    "zoom_out",
+    "fit_world",
+    "locate",
+    "active_sessions",
+    "signed_in_customers",
+    "add_to_cart",
+    "orders_placed",
+    "purchase_actions",
+    "recent_activity",
+    "active_locations",
+  ])
+    assert.ok(report.includes("geo_map.live." + key));
   for (const key of [
     "active_sessions",
     "signed_in_customers",

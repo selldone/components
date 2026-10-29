@@ -13,9 +13,11 @@
   -->
 
 <template>
-  <div>
-    <div class="widget-box  mb-5">
+  <div class="b-shop-theme-header text-start">
+    <div class="sd-modern-widget">
       <u-smart-select
+        class="sd-modern-smart-select"
+        border
         :model-value="header_mode"
         :items="header_modes"
         item-value="id"
@@ -29,15 +31,14 @@
     </div>
 
     <template v-if="header_mode === 'custom'">
-      <div class="widget-box -large py-5">
+      <div class="sd-modern-widget">
         <u-widget-header
+          class="sd-modern-form-header"
           icon="code"
-          title="Custom Header Code"
+          :title="$t('shop_theme.studio.custom_header_title')"
         ></u-widget-header>
-        <v-list-subheader>
-          Paste custom HTML, Vue, or Vuetify component code here to replace the
-          default website header. You must implement all header functionality
-          yourself.
+        <v-list-subheader class="sd-modern-subtitle b-shop-theme-header__subtitle">
+          {{ $t('shop_theme.studio.custom_header_description') }}
         </v-list-subheader>
 
         <BShopHtmlEditor
@@ -49,8 +50,8 @@
     </template>
 
     <template v-else-if="header_mode === 'default'">
-      <div class="max-widget-width py-5">
-        <v-list-subheader class="op-0-5"
+      <div class="b-shop-theme-header__preview">
+        <v-list-subheader class="sd-modern-eyebrow"
           >{{ $t("global.commons.preview") }}
         </v-list-subheader>
 
@@ -74,7 +75,7 @@
             </v-avatar>
           </v-btn>
 
-          <span v-if="title!==null && title!==''" class="ms-2 font-weight-bold" style="font-size: 22px">
+          <span v-if="title!==null && title!==''" class="b-shop-theme-header__store-title ms-2">
             {{ title ? title : $shop.title }}
           </span>
 
@@ -92,12 +93,13 @@
         </v-toolbar>
       </div>
 
-      <div class="widget-box mb-5">
+      <div class="sd-modern-widget">
         <u-widget-header
+          class="sd-modern-form-header"
           icon="photo"
           :title="$t('b_shop_theme_header.logo.title')"
         ></u-widget-header>
-        <v-list-subheader>
+        <v-list-subheader class="sd-modern-subtitle b-shop-theme-header__subtitle">
           {{ $t("b_shop_theme_header.logo.subtitle") }}
         </v-list-subheader>
 
@@ -116,6 +118,7 @@
         <v-row>
           <v-col cols="6">
             <u-dimension-input
+              class="sd-modern-underlined-field"
               :model-value="logoH"
               @update:model-value="(v) => $emit('update:logoH', v)"
               :label="$t('b_shop_theme_header.inputs.height.label')"
@@ -124,6 +127,7 @@
           </v-col>
           <v-col cols="6">
             <u-dimension-input
+              class="sd-modern-underlined-field"
               :model-value="logoW"
               @update:model-value="(v) => $emit('update:logoW', v)"
               :label="$t('b_shop_theme_header.inputs.width.label')"
@@ -133,17 +137,19 @@
         </v-row>
       </div>
 
-      <div class="widget-box mb-5">
+      <div class="sd-modern-widget">
         <u-widget-header
+          class="sd-modern-form-header"
           icon="edit_square"
           :title="$t('b_shop_theme_header.header_title.title')"
         ></u-widget-header>
 
-        <v-list-subheader>
+        <v-list-subheader class="sd-modern-subtitle b-shop-theme-header__subtitle">
           {{ $t("b_shop_theme_header.header_title.subtitle") }}
         </v-list-subheader>
 
         <v-text-field
+          class="sd-modern-underlined-field"
           :model-value="title"
           @update:model-value="(v) => $emit('update:title', v)"
           hide-details
@@ -152,14 +158,14 @@
           :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
           clearable
           persistent-placeholder
-          placeholder="Do not show shop name!"
+          :placeholder="$t('shop_theme.studio.hide_shop_name')"
         ></v-text-field>
         <div
           v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
           class="text-end mb-3"
         >
           <v-btn
-            class="tnt"
+            class="sd-modern-button sd-modern-button--inline"
             size="small"
             variant="text"
             @click="$emit('update:title', '')"
@@ -211,26 +217,6 @@ export default defineComponent({
     ShopPermissionRegions: ShopPermissionRegions,
     header_mode: "default" as "default" | "custom" | "none",
     last_custom_code: "",
-    header_modes: [
-      {
-        id: "default",
-        title: "Default Smart Mode",
-        description: "Use the default dynamic, well-crafted header optimized for conversion.",
-        icon: "auto_fix_high",
-      },
-      {
-        id: "custom",
-        title: "Custom Code Mode",
-        description: "Enter HTML/Vue code to replace the default header.",
-        icon: "code",
-      },
-      {
-        id: "none",
-        title: "No Header",
-        description: "Hide the storefront header. A minimal empty placeholder will be saved automatically.",
-        icon: "visibility_off",
-      },
-    ],
   }),
   watch: {
     customCode(code) {
@@ -251,6 +237,13 @@ export default defineComponent({
     },
   },
   computed: {
+    header_modes() {
+      return [
+        { id: "default", title: this.$t("shop_theme.studio.header_modes.default_title"), description: this.$t("shop_theme.studio.header_modes.default_description"), icon: "auto_fix_high" },
+        { id: "custom", title: this.$t("shop_theme.studio.header_modes.custom_title"), description: this.$t("shop_theme.studio.header_modes.custom_description"), icon: "code" },
+        { id: "none", title: this.$t("shop_theme.studio.header_modes.none_title"), description: this.$t("shop_theme.studio.header_modes.none_description"), icon: "visibility_off" },
+      ];
+    },
     theme() {
       return this.$shop.theme;
     },
@@ -315,4 +308,14 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.b-shop-theme-header {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+
+  &__subtitle { padding: 0; margin-block: 0 20px; min-height: 0; }
+  &__store-title { font-size: 15px; font-weight: 500; line-height: 22px; }
+  &__preview { min-width: 0; }
+}
+</style>

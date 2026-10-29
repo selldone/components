@@ -27,9 +27,10 @@
       style="list-style-type: none"
       tag="div"
       v-bind="dragOptions"
+      :move="(event) => canMoveItem(event.draggedContext.index, event.draggedContext.futureIndex)"
       @end="drag = false"
       @start="drag = true"
-      @update:modelValue="(val) => $emit('update:modelValue', val)"
+      @update:modelValue="(val) => { if (!readOnly) $emit('update:modelValue', val); }"
     >
       <template v-slot:item="{ element, index }">
         <li
@@ -44,12 +45,17 @@
               index + 1
             }}</span>
             <v-icon
+              v-if="!readOnly && !isPermanent(element)"
               class="b-customers-filter-design-modern__handle"
               size="18"
               aria-hidden="true"
               >drag_indicator</v-icon
             >
+            <div v-if="readOnly || isPermanent(element)" class="b-customers-filter-design-modern__edit b-customers-filter-design-modern__readonly">
+              <b-customers-filter-item :filter="element" :types="types" read-only />
+            </div>
             <button
+              v-else
               type="button"
               class="b-customers-filter-design-modern__edit"
               @click="editDialog(element)"
@@ -60,24 +66,26 @@
                 read-only
               />
             </button>
-            <div class="b-customers-filter-design-modern__actions">
+            <div v-if="!readOnly && !isPermanent(element)" class="b-customers-filter-design-modern__actions">
               <v-btn
                 class="sd-modern-icon-button"
                 icon
                 variant="text"
-                :disabled="index === 0"
+                :disabled="!canMoveItem(index, index - 1)"
                 :aria-label="`${$t('global.actions.previous')}: ${getName(element)}`"
                 @click.stop="moveItem(index, -1)"
-                ><v-icon size="18">arrow_upward</v-icon></v-btn
+                ><v-icon size="18">arrow_upward</v-icon>
+                <v-tooltip activator="parent" location="top" :open-on-focus="true" :persistent="false" content-class="sd-modern-tooltip text-start" :text="`${$t('global.actions.previous')}: ${getName(element)}`" /></v-btn
               >
               <v-btn
                 class="sd-modern-icon-button"
                 icon
                 variant="text"
-                :disabled="index === modelValue.length - 1"
+                :disabled="!canMoveItem(index, index + 1)"
                 :aria-label="`${$t('global.actions.next')}: ${getName(element)}`"
                 @click.stop="moveItem(index, 1)"
-                ><v-icon size="18">arrow_downward</v-icon></v-btn
+                ><v-icon size="18">arrow_downward</v-icon>
+                <v-tooltip activator="parent" location="top" :open-on-focus="true" :persistent="false" content-class="sd-modern-tooltip text-start" :text="`${$t('global.actions.next')}: ${getName(element)}`" /></v-btn
               >
               <v-btn
                 class="sd-modern-icon-button"
@@ -85,7 +93,8 @@
                 variant="text"
                 :aria-label="`${$t('global.actions.edit')}: ${getName(element)}`"
                 @click.stop="editDialog(element)"
-                ><v-icon size="18">edit</v-icon></v-btn
+                ><v-icon size="18">edit</v-icon>
+                <v-tooltip activator="parent" location="top" :open-on-focus="true" :persistent="false" content-class="sd-modern-tooltip text-start" :text="`${$t('global.actions.edit')}: ${getName(element)}`" /></v-btn
               >
               <v-btn
                 v-if="!isPermanent(element)"
@@ -94,7 +103,8 @@
                 variant="text"
                 :aria-label="`${$t('global.actions.delete')}: ${getName(element)}`"
                 @click.stop="deleteItem(index)"
-                ><v-icon size="18">close</v-icon></v-btn
+                ><v-icon size="18">close</v-icon>
+                <v-tooltip activator="parent" location="top" :open-on-focus="true" :persistent="false" content-class="sd-modern-tooltip text-start" :text="`${$t('global.actions.delete')}: ${getName(element)}`" /></v-btn
               >
             </div>
           </template>
@@ -108,7 +118,7 @@
             :open-on-focus="true"
             :open-on-click="modern"
             :persistent="false"
-            max-width="360"
+            :max-width="modern ? undefined : 360"
           >
             <template v-slot:activator="{ props }">
               <v-btn
@@ -140,12 +150,13 @@
             v-if="!modern"
             :filter="element"
             :types="types"
+            :read-only="readOnly"
             dark
           >
           </b-customers-filter-item>
 
           <v-btn
-            v-if="!modern && !isPermanent(element)"
+            v-if="!modern && !readOnly && !isPermanent(element)"
             class="delete-button"
             icon
             size="small"
@@ -160,7 +171,7 @@
       </template>
     </draggable>
 
-    <v-menu v-if="modern && hasAdd" max-width="420" content-class="text-start">
+    <v-menu v-if="modern && hasAdd && !readOnly" max-width="420" content-class="text-start">
       <template #activator="{ props }">
         <v-btn
           v-bind="props"
@@ -183,7 +194,7 @@
       </v-list>
     </v-menu>
     <v-list
-      v-else-if="hasAdd"
+      v-else-if="hasAdd && !readOnly"
       class="py-0 text-start border-between-vertical border"
       density="compact"
       rounded
@@ -206,6 +217,7 @@
 
   <!-- ==================== ADD DIALOG ===================== -->
   <v-dialog
+    v-if="!readOnly"
     v-model="show_add"
     content-class="no-shadow-dialog"
     max-width="540"
@@ -397,6 +409,7 @@ export default {
   },
   emits: ["update:modelValue"],
   props: {
+    readOnly: { type: Boolean, default: false },
     modern: {
       type: Boolean,
       default: false,
@@ -435,7 +448,7 @@ export default {
       return {
         animation: 200,
         group: "description",
-        disabled: false,
+        disabled: this.readOnly,
         ghostClass: this.modern
           ? "b-customers-filter-design-modern__ghost"
           : "ghost",
@@ -452,15 +465,31 @@ export default {
     },
   },
 
-  watch: {},
+  watch: {
+    readOnly(value) {
+      if (!value) return;
+      this.show_add = false;
+      this.add_type = null;
+      this.add_item = null;
+      this.drag = false;
+    },
+  },
 
   created() {
-    if (!this.modelValue) this.$emit("update:modelValue", []);
+    if (!this.modelValue && !this.readOnly) this.$emit("update:modelValue", []);
   },
   methods: {
+    canMoveItem(index, target) {
+      if (this.readOnly) return false;
+      if (!this.modern) return true;
+      if (index < 0 || target < 0 || index >= this.modelValue.length || target >= this.modelValue.length) return false;
+      return !this.modelValue.slice(Math.min(index, target), Math.max(index, target) + 1).some(item => this.isPermanent(item));
+    },
     moveItem(index, delta) {
+      if (this.readOnly) return;
       const target = index + delta;
       if (target < 0 || target >= this.modelValue.length) return;
+      if (this.modern && !this.canMoveItem(index, target)) return;
       const items = [...this.modelValue];
       const [item] = items.splice(index, 1);
       items.splice(target, 0, item);
@@ -474,10 +503,12 @@ export default {
     },
 
     deleteItem(index) {
+      if (this.readOnly || this.modern && (!this.modelValue[index] || this.isPermanent(this.modelValue[index]))) return;
       this.modelValue.splice(index, 1);
       this.$emit("update:modelValue", this.modelValue);
     },
     add() {
+      if (this.readOnly) return;
       this.AddOrUpdateItemByID(this.modelValue, this.add_item, "type");
       this.show_add = false;
       this.add_type = null;
@@ -498,6 +529,7 @@ export default {
       return this.types[item.type].icon;
     },
     addDialog(type) {
+      if (this.readOnly) return;
       this.add_type = this.types[type];
       this.add_item = {
         type: this.add_type.type,
@@ -505,6 +537,7 @@ export default {
       this.show_add = true;
     },
     editDialog(item) {
+      if (this.readOnly || this.modern && (!item || this.isPermanent(item))) return;
       this.add_item = item;
       this.add_type = this.types[item.type];
       this.show_add = true;
@@ -589,6 +622,7 @@ export default {
     max-width: 100%;
     gap: 5px;
   }
+  &__readonly { cursor: default; }
   @media (max-width: 599px) {
     &__row {
       gap: 8px;

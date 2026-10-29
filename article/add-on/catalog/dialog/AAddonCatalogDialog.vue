@@ -193,10 +193,7 @@ export default {
   },
 
   mounted() {
-    EventBus.$on(
-      EventName.ARTICLE_FLIP_BOOK_SHOW,
-
-      ({ pack, callback, deleteCallback, tab, masterId }) => {
+    this._openAddonDialog = ({ pack, callback, deleteCallback, tab, masterId }) => {
         // Check master ID (For prevent duplicated open dialog - in the page builder)
         if (this.masterId !== masterId) {
           return;
@@ -210,11 +207,11 @@ export default {
         this.tab = tab;
 
         this.showDialog();
-      },
-    );
+      };
+    EventBus.$on(EventName.ARTICLE_FLIP_BOOK_SHOW, this._openAddonDialog);
   },
   beforeUnmount() {
-    EventBus.$off(EventName.ARTICLE_FLIP_BOOK_SHOW);
+    EventBus.$off(EventName.ARTICLE_FLIP_BOOK_SHOW, this._openAddonDialog);
   },
 
   methods: {

@@ -18,6 +18,7 @@
       v-if="busy || busy_delete"
       :color="busy_delete ? 'red' : undefined"
     ></u-loading-progress>
+    <template v-if="!useModernTimeline">
     <div class="widget-buttons">
       <v-btn
         :disabled="show_add"
@@ -366,43 +367,122 @@
         </template>
       </v-fade-transition>
     </div>
+    </template>
+    <b-order-timeline-grouped
+      v-else
+      :shop="shop"
+      :order="order"
+      :order-type="timelineOrderType"
+      :timelines="timelines"
+      :get-title="getTimelineTitleHtml"
+      :busy="busy"
+      :failed="load_error"
+      :busy-edit="busy_edit"
+      :busy-delete="busy_delete"
+      :busy-resend="busy_resend"
+      :show-add="show_add"
+      @add-note="show_add = true"
+      @preview="clickItem"
+      @resend="resendEmail"
+      @edit="showEdit($event, true)"
+      @save="editNote"
+      @cancel-edit="showEdit($event, false)"
+      @pin="togglePinItem"
+      @delete="showDeleteNoteDialog"
+      @retry="fetchTimeline"
+    >
+      <template #composer>
+        <div v-if="show_add" class="b-order-timeline__composer text-start">
+          <u-text-mention-input
+            v-model="message"
+            v-model:mentions="mentions"
+            :label="$t('order_timeline.message_input')"
+            :shop-id="shop.id"
+            modern
+            auto-grow
+          />
+          <u-dense-circles-users
+            v-if="mentions && mentions.users"
+            :ids="mentions.users"
+            :size="32"
+            class="mt-3"
+          />
+          <div class="b-order-timeline__composer-actions">
+            <span class="b-order-timeline__note-count">{{ $t('order_timeline.modern.note_length', { count: noteLength, max: 1024 }) }}</span>
+            <v-btn
+              class="sd-modern-button sd-modern-button--compact"
+              variant="outlined"
+              :disabled="saving"
+              @click="show_add = false"
+            >
+              <v-icon start size="18">close</v-icon>
+              {{ $t('global.actions.cancel') }}
+            </v-btn>
+            <v-btn
+              class="sd-modern-button sd-modern-button--compact"
+              color="primary"
+              variant="elevated"
+              :loading="saving"
+              :disabled="!message.trim() || noteLength > 1024"
+              @click="addNewNote"
+            >
+              <v-icon start size="18">add</v-icon>
+              {{ $t('global.commons.add_note') }}
+            </v-btn>
+          </div>
+        </div>
+      </template>
+    </b-order-timeline-grouped>
   </div>
 
   <!-- ----------------------- Email Preview Dialog ----------------------------- -->
 
   <v-dialog
     v-model="show_email"
-    fullscreen
+    :fullscreen="!useModernTimeline"
+    :max-width="useModernTimeline ? 960 : undefined"
     scrollable
     transition="dialog-bottom-transition"
+    :aria-label="useModernTimeline ? $t('order_timeline.modern.preview_email') : undefined"
   >
-    <v-card class="text-start">
-      <v-card-title>
-        <v-icon class="me-2">fa:fas fa-envelope</v-icon>
+    <v-card class="text-start" :class="{ 'sd-modern-widget': useModernTimeline, 'b-order-timeline-email--modern': useModernTimeline }">
+      <v-card-title class="b-order-timeline-email__title">
+        <v-icon class="me-2">{{ useModernTimeline ? 'mail_outline' : 'fa:fas fa-envelope' }}</v-icon>
         <span v-html="email_title"></span>
       </v-card-title>
 
       <u-loading-ellipsis v-if="busy_email" css-mode light></u-loading-ellipsis>
       <v-card-text>
+        <div v-if="useModernTimeline" class="sd-modern-notice mb-4">
+          <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+          <span>{{ $t('order_timeline.modern.preview_help') }}</span>
+        </div>
         <div
-          class="widget-box -large mb-5 min-height-60vh"
+          :class="useModernTimeline ? 'b-order-timeline-email__preview' : 'widget-box -large mb-5 min-height-60vh'"
           v-html="email_html"
         ></div>
       </v-card-text>
 
       <v-card-actions>
-        <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="show_email = false">
+        <div :class="useModernTimeline ? 'b-order-timeline-email__actions' : 'widget-buttons'">
+          <v-btn
+            :size="useModernTimeline ? undefined : 'x-large'"
+            :class="useModernTimeline ? 'sd-modern-button' : undefined"
+            variant="text"
+            @click="show_email = false"
+          >
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
 
           <v-btn
-            size="x-large"
+            :size="useModernTimeline ? undefined : 'x-large'"
+            :class="useModernTimeline ? 'sd-modern-button' : undefined"
+            :disabled="useModernTimeline && (busy_email || !email_html)"
             variant="text"
             @click="copyToClipboard(email_html)"
           >
-            <v-icon start>fa:fab fa-html5</v-icon>
+            <v-icon start>{{ useModernTimeline ? 'content_copy' : 'fa:fab fa-html5' }}</v-icon>
             {{ $t("order_timeline.copy_html") }}
           </v-btn>
         </div>
@@ -433,12 +513,14 @@ import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import UArrow from "@selldone/components-vue/ui/arrow/UArrow.vue";
+import BOrderTimelineGrouped from "./BOrderTimelineGrouped.vue";
 
 export default {
   name: "BOrderTimeline",
   mixins: [DateMixin, MapMixin],
 
   components: {
+    BOrderTimelineGrouped,
     UArrow,
     ULoadingEllipsis,
     USmartMenu,
@@ -447,6 +529,14 @@ export default {
     UTextMentionInput,
   },
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
+    orderType: {
+      type: String,
+      default: null,
+    },
     shop: {
       require: true,
       type: Object,
@@ -518,10 +608,32 @@ export default {
       email_title: null,
 
       busy: false,
+      load_error: false,
       busy_delete: false,
     };
   },
   computed: {
+    useModernTimeline() {
+      return this.modern && !this.IS_VENDOR_PANEL;
+    },
+    noteLength() {
+      return Array.from(this.message || "").length;
+    },
+    timelineOrderType() {
+      const type = this.orderType || this.order?.type;
+      if (typeof type === "string" && ["physical", "virtual", "file", "service", "subscription", "pos", "fulfillment", "avocado", "hyper"].includes(type.toLowerCase())) {
+        return type.toLowerCase();
+      }
+      if (this.isPhysical) return "physical";
+      if (this.isVirtual) return "virtual";
+      if (this.isFile) return "file";
+      if (this.isService) return "service";
+      if (this.isPos) return "pos";
+      if (this.isDropShopping) return "fulfillment";
+      if (this.isAvocado) return "avocado";
+      if (this.isHyper) return "hyper";
+      return "physical";
+    },
     MapHelper() {
       return MapHelper
     },
@@ -633,7 +745,7 @@ export default {
             )
             : item.type;
       const messageText = item.data?.message
-        ? this.compileMarkdown(item.data.message)
+        ? this.compileMarkdown(String(item.data.message))
         : "";
 
       const titleHtml = titleText ? this.smartBeautify(titleText) : "";
@@ -789,11 +901,13 @@ export default {
 
     fetchTimeline() {
       this.busy = true;
+      this.load_error = false;
 
       axios
         .get(this.base_url)
         .then(({ data }) => {
           if (data.error) {
+            this.load_error = true;
             NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.timelines = data.timelines;
@@ -801,6 +915,7 @@ export default {
           }
         })
         .catch((error) => {
+          this.load_error = true;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
@@ -989,6 +1104,53 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-order-timeline__composer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block-start: 14px;
+}
+
+.b-order-timeline__note-count {
+  margin-inline-end: auto;
+  font-size: 11px;
+  line-height: 17px;
+  color: var(--sd-modern-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.b-order-timeline-email--modern.v-card {
+  padding: 0;
+  border-radius: 16px;
+
+  .b-order-timeline-email__title {
+    display: flex;
+    align-items: center;
+    white-space: normal;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 24px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--sd-modern-border);
+  }
+
+  .b-order-timeline-email__preview {
+    overflow-wrap: anywhere;
+  }
+
+  .b-order-timeline-email__actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+}
+
 .-timeline-list-item {
   padding-top: 0;
   padding-bottom: 0;

@@ -325,9 +325,15 @@
         <div class="pa-1">
           <v-btn
             v-if="!transportation_orders.some((i) => i.basket_id === item.id)"
+            :class="{
+              'sd-modern-button': modern,
+              'sd-modern-button--x-large': modern && prominentAction && item.rate && !busy_request?.includes(item.id),
+            }"
+            :size="modern && prominentAction && item.rate && !busy_request?.includes(item.id) ? 'x-large' : undefined"
             :disabled="!item.rate"
             :loading="busy_request && busy_request.includes(item.id)"
-            color="primary"
+            :color="modern ? prominentAction && item.rate && !busy_request?.includes(item.id) ? 'primary' : undefined : 'primary'"
+            :variant="modern ? prominentAction && item.rate && !busy_request?.includes(item.id) ? 'flat' : 'outlined' : undefined"
             @click.stop="requestService([item.id], item.rate)"
           >
             <v-icon start>add</v-icon>
@@ -419,6 +425,8 @@ export default {
     ProductsDenseImagesCircles,
   },
   props: {
+    modern: { type: Boolean, default: false },
+    prominentAction: { type: Boolean, default: false },
     shop: { type: Object, required: true },
     vendor: { type: Object, required: false },
 

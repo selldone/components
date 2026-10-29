@@ -13,16 +13,25 @@
           </h2>
           <v-btn
             class="sd-modern-icon-button"
-            icon="close"
+            icon
             variant="text"
             :aria-label="$t('global.actions.close')"
             @click="close"
-          />
+          >
+            <v-icon>close</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="top"
+              :open-on-focus="true"
+              :persistent="false"
+              content-class="sd-modern-tooltip text-start"
+            >{{ $t("global.actions.close") }}</v-tooltip>
+          </v-btn>
         </header>
 
         <v-card-text class="b-process-center-filters__fields sd-modern-form">
           <b-products-select-box
-            v-if="!fixedProductId"
+            v-if="allowProduct && !fixedProductId"
             v-model="draft.productId"
             :shop="shop"
             :label="$t('admin_shop.orders.physical.modern.filters.product')"
@@ -36,7 +45,7 @@
           </b-products-select-box>
 
           <b-customer-input
-            v-if="!fixedCustomerId"
+            v-if="allowCustomer && !fixedCustomerId"
             v-model="draft.customerId"
             :shop="shop"
             :label="$t('admin_shop.orders.physical.modern.filters.customer')"
@@ -45,7 +54,7 @@
             @update:user="draft.customerName = $event?.name || ''"
           />
 
-          <div>
+          <div v-if="allowUpdatedAfter">
             <u-date-input
               v-model="draft.updatedAfter"
               :label="$t('admin_shop.orders.physical.modern.filters.updated_after')"
@@ -104,16 +113,20 @@ export default {
     shop: { type: Object, required: true },
     fixedProductId: { type: [Number, String], default: null },
     fixedCustomerId: { type: [Number, String], default: null },
+    allowProduct: { type: Boolean, default: true },
+    allowCustomer: { type: Boolean, default: true },
+    allowUpdatedAfter: { type: Boolean, default: true },
   },
   data: () => ({
     draft: { productId: null, customerId: null, updatedAfter: null, customerName: "" },
   }),
   computed: {
     normalizedFilters() {
-      const productId = filterId(this.fixedProductId ?? this.draft.productId);
-      const customerId = filterId(this.fixedCustomerId ?? this.draft.customerId);
+      // Fixed contextual constraints remain authoritative when their picker is unavailable.
+      const productId = filterId(this.fixedProductId ?? (this.allowProduct ? this.draft.productId : null));
+      const customerId = filterId(this.fixedCustomerId ?? (this.allowCustomer ? this.draft.customerId : null));
       if (Number.isNaN(productId) || Number.isNaN(customerId)) return null;
-      const value = this.draft.updatedAfter;
+      const value = this.allowUpdatedAfter ? this.draft.updatedAfter : null;
       let updatedAfter = null;
       if (value !== null && value !== undefined && value !== "") {
         if (typeof value !== "string" || value.length > 80) return null;
@@ -125,7 +138,7 @@ export default {
         productId,
         customerId,
         updatedAfter,
-        customerName: customerId && customerId === filterId(this.draft.customerId) && typeof this.draft.customerName === "string"
+        customerName: this.allowCustomer && customerId && customerId === filterId(this.draft.customerId) && typeof this.draft.customerName === "string"
           ? this.draft.customerName.trim().slice(0, 120)
           : "",
       };
@@ -137,10 +150,10 @@ export default {
       handler(open) {
         if (!open) return;
         this.draft = {
-          productId: this.filters.productId ?? null,
-          customerId: this.filters.customerId ?? null,
-          updatedAfter: this.filters.updatedAfter ?? null,
-          customerName: this.filters.customerName ?? "",
+          productId: this.allowProduct ? this.filters.productId ?? null : null,
+          customerId: this.allowCustomer ? this.filters.customerId ?? null : null,
+          updatedAfter: this.allowUpdatedAfter ? this.filters.updatedAfter ?? null : null,
+          customerName: this.allowCustomer ? this.filters.customerName ?? "" : "",
         };
       },
     },

@@ -25,7 +25,10 @@
     :variant="variant"
     item-title="name"
     item-value="name"
-    messages="Use medium to identify a medium such as email or cost-per- click."
+    :messages="
+      messages ??
+      'Use medium to identify a medium such as email or cost-per- click.'
+    "
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
     <template v-slot:prepend-inner>

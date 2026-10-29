@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <tr class="text-start">
+  <tr class="text-start" :class="{ 'b-order-payment-fee-cashback--modern': modern }">
     <td>
       <div class="d-flex align-center">
         <img
@@ -32,11 +32,12 @@
             :label="$t('process_center.payment_widget.samin.special_cashback')"
           />
           <v-tooltip
-            :text="$t('process_center.payment_widget.samin.cashback_tooltip')"
+            :text="$t(modern ? 'process_center.modern.payment_fee_cashback_help' : 'process_center.payment_widget.samin.cashback_tooltip')"
             activator="parent"
-            content-class="text-start"
-            location="bottom"
-            max-width="320"
+            :content-class="modern ? 'sd-modern-tooltip text-start' : 'text-start'"
+            :location="modern ? 'top' : 'bottom'"
+            :max-width="modern ? undefined : 320"
+            :open-on-click="modern ? true : undefined"
             open-on-focus
             open-on-hover
           />
@@ -88,10 +89,15 @@
         v-for="(cashback, index) in cashbacks"
         :key="`fee-cashback-transactions-${index}`"
       >
-        <div class="d-flex flex-column align-stretch ga-1 py-2">
-          <div class="d-flex align-center justify-space-between flex-wrap ga-1">
-            <div class="d-flex align-center flex-wrap ga-1">
+        <div class="d-flex flex-column align-stretch ga-1 py-2" :class="{ 'b-order-payment-fee-cashback__entry': modern }">
+          <div class="d-flex align-center justify-space-between flex-wrap ga-1" :class="{ 'b-order-payment-fee-cashback__heading': modern }">
+            <div class="d-flex align-center flex-wrap ga-1" :class="{ 'b-order-payment-fee-cashback__identity': modern }">
+              <span v-if="modern" class="sd-modern-status sd-modern-status--plain">
+                <span class="sd-modern-status__dot" :class="cashback.status === 'reversed' ? 'bg-warning' : cashback.transferred ? 'bg-success' : 'bg-secondary'" />
+                {{ cashback.status === 'reversed' ? $t('global.actions.reverse_fund') : !cashback.transferred ? $t('global.commons.pending') : $t('global.commons.credit') }}
+              </span>
               <v-chip
+                v-else
                 :color="
                   cashback.status === 'reversed'
                     ? 'warning'
@@ -119,7 +125,7 @@
                       : $t("global.commons.credit")
                 }}
               </v-chip>
-              <small class="d-inline-flex align-center ga-1">
+              <small class="d-inline-flex align-center ga-1" :class="{ 'b-order-payment-fee-cashback__source': modern }">
                 <v-icon aria-hidden="true" size="14">
                   {{ cashback.component === "gift_card" ? "redeem" : "paid" }}
                 </v-icon>
@@ -131,7 +137,7 @@
               </small>
             </div>
 
-            <strong class="text-subtitle-2">
+            <strong class="text-subtitle-2" :class="{ 'b-order-payment-fee-cashback__rate': modern }">
               <template v-if="isFiniteNumericValue(cashback.cashback_bps)">
                 {{
                   numeralFormat(
@@ -141,16 +147,21 @@
                 }}%
               </template>
               <template v-else>—</template>
+              <v-btn v-if="modern" class="sd-modern-icon-button sd-modern-info-button" icon variant="text" :aria-label="$t('process_center.payment_widget.samin.cashback_deal')">
+                <v-icon size="14" aria-hidden="true">info_outline</v-icon>
+                <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.payment_fee_cashback_percent_help') }}</v-tooltip>
+              </v-btn>
             </strong>
           </div>
 
           <v-progress-linear
             v-if="isFiniteNumericValue(cashback.cashback_bps)"
+            :class="{ 'b-order-payment-fee-cashback__progress': modern }"
             :aria-label="`${$t('process_center.payment_widget.samin.percent')}: ${numeralFormat(cashbackPercent(cashback.cashback_bps), '0.[00]')}%`"
             bg-color="surface-variant"
             bg-opacity="0.12"
-            :color="cashback.status === 'reversed' ? 'warning' : 'primary'"
-            height="6"
+            :color="cashback.status === 'reversed' ? 'warning' : modern ? 'success' : 'primary'"
+            :height="modern ? 4 : 6"
             :model-value="cashbackProgress(cashback.cashback_bps)"
             rounded
           />
@@ -161,6 +172,7 @@
               isFiniteNumericValue(cashback.fee_amount)
             "
             class="d-flex align-center justify-space-between flex-wrap ga-x-3 ga-y-1 text-caption text-medium-emphasis"
+            :class="{ 'b-order-payment-fee-cashback__meta': modern }"
           >
             <span v-if="isFiniteNumericValue(cashback.cashback_bps)">
               {{ cashback.cashback_bps }} bps
@@ -169,7 +181,7 @@
               v-if="isFiniteNumericValue(cashback.fee_amount)"
               class="d-inline-flex align-center ga-1"
             >
-              {{ $t("process_center.payment_widget.samin.title") }}:
+              {{ $t(modern ? "process_center.payment_widget.gateway_wage" : "process_center.payment_widget.samin.title") }}:
               <u-price
                 :amount="cashback.fee_amount"
                 :currency="cashback.currency"
@@ -231,6 +243,7 @@ export default {
       required: true,
     },
     isRolePanel: Boolean,
+    modern: { type: Boolean, default: false },
   },
   computed: {
     cashbackWallets() {
@@ -274,3 +287,21 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.b-order-payment-fee-cashback--modern {
+  .b-order-payment-fee-cashback__entry { display: grid !important; grid-template-columns: minmax(0, 84px) minmax(0, 1fr); gap: 6px 10px !important; padding-block: 6px !important; }
+  .b-order-payment-fee-cashback__heading { grid-column: 1 / -1; display: flex !important; justify-content: flex-start !important; gap: 4px 8px !important; min-width: 0; }
+  .b-order-payment-fee-cashback__identity { display: inline-flex !important; gap: 4px 8px !important; min-width: 0; }
+  .b-order-payment-fee-cashback__identity > .sd-modern-status { font-size: 11px; font-weight: 400; line-height: 17px; }
+  .b-order-payment-fee-cashback__source { color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; }
+  .b-order-payment-fee-cashback__rate { display: inline-flex; align-items: center; gap: 3px; font-size: 11px !important; font-weight: 400 !important; line-height: 17px; }
+  .b-order-payment-fee-cashback__rate > .sd-modern-info-button { margin-block: -6px; }
+  .b-order-payment-fee-cashback__progress { grid-column: 1; grid-row: 2; align-self: center; width: 100%; }
+  .b-order-payment-fee-cashback__meta { grid-column: 2; grid-row: 2; justify-content: flex-start !important; gap: 4px 10px !important; min-width: 0; font-size: 11px !important; font-weight: 400; line-height: 17px; }
+  .b-order-payment-fee-cashback__meta :deep(.u--price) { font-size: 11px; font-weight: 400; }
+  @media (max-width: 680px), (pointer: coarse) {
+    .b-order-payment-fee-cashback__rate > .sd-modern-info-button { margin-block: 0; }
+  }
+}
+</style>

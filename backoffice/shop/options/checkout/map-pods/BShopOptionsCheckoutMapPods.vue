@@ -13,7 +13,14 @@
   -->
 
 <template>
-  <div class="overflow-x-auto">
+  <b-shop-checkout-flow-diagram
+    v-if="modern"
+    class="b-checkout-map-pods text-start"
+    :steps="modernSteps"
+    emphasis="delivery"
+    :aria-label="modernFlowDescription"
+  />
+  <div v-else class="overflow-x-auto">
     <v-row
       :style="{ minWidth: 3 * 115 + 'px' }"
       align="center"
@@ -108,10 +115,13 @@
 <script lang="ts">
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import BShopCheckoutFlowDiagram from "../flow-diagram/BShopCheckoutFlowDiagram.vue";
 
 export default {
   name: "BShopOptionsCheckoutMapPods",
+  components: { BShopCheckoutFlowDiagram },
   props: {
+    modern: { type: Boolean, default: false },
     shop: { required: true },
     map: {},
   },
@@ -120,6 +130,57 @@ export default {
   }),
 
   computed: {
+    modernSteps() {
+      return [
+        {
+          id: "checkout",
+          icon: "shopping_bag",
+          title: this.$t("global.commons.checkout"),
+          baskets: Object.values(ProductType).map((type) => ({
+            src: type.basket,
+            alt: this.$t(type.name),
+          })),
+        },
+        ...(this.has_delivery_physical || this.has_delivery_Service
+          ? [
+              {
+                id: "delivery",
+                icon: this.map ? "map" : "edit_location_alt",
+                title: this.$t(
+                  this.map
+                    ? "shop_configuration.flow_modern.checkout.map_node"
+                    : "shop_configuration.flow_modern.checkout.manual_node",
+                ),
+                baskets: [
+                  ...(this.has_delivery_physical ? [ProductType.PHYSICAL] : []),
+                  ...(this.has_delivery_Service ? [ProductType.SERVICE] : []),
+                ].map((type) => ({
+                  src: type.basket,
+                  alt: this.$t(type.name),
+                })),
+              },
+            ]
+          : []),
+        {
+          id: "payment",
+          icon: "payments",
+          title: this.$t("global.commons.payment"),
+        },
+      ];
+    },
+    modernFlowDescription() {
+      const steps = [this.$t("global.commons.checkout")];
+      if (this.has_delivery_physical || this.has_delivery_Service)
+        steps.push(
+          this.$t(
+            this.map
+              ? "shop_configuration.flow_modern.checkout.map_node"
+              : "shop_configuration.flow_modern.checkout.manual_node",
+          ),
+        );
+      steps.push(this.$t("global.commons.payment"));
+      return steps.join(" → ");
+    },
     has_delivery_physical() {
       return ShopOptionsHelper.AskShippingAddress(
         this.shop,

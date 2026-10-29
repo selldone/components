@@ -1,7 +1,84 @@
 <!-- Copyright (c) Selldone® Business OS™. -->
 <template>
-  <div class="b-live-view text-start">
-    <div v-if="windowControl" class="b-live-view__window">
+  <div
+    class="b-live-view text-start"
+    :class="{ 'b-live-view--report': report }"
+  >
+    <header
+      v-if="report"
+      class="sd-modern-widget sd-modern-header b-live-view__report-header"
+    >
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"
+          ><v-icon size="20" aria-hidden="true">sensors</v-icon></span
+        >
+        <div>
+          <h2 class="sd-modern-title-text">{{ $t("geo_map.live.title") }}</h2>
+          <p class="b-live-view__connection" role="status">
+            <span
+              class="sd-modern-status sd-modern-status--plain"
+              :class="{ 'b-live-view__connected': connection === 'live' }"
+              ><span class="sd-modern-status__dot" />{{
+                $t("geo_map.live." + connection)
+              }}</span
+            >
+            <span>{{
+              snapshot
+                ? $t("geo_map.live.updated_at", { time: time(snapshot.as_of) })
+                : $t("geo_map.live.waiting_first")
+            }}</span>
+            <span
+              v-if="snapshot?.simulated"
+              class="sd-modern-status sd-modern-status--plain"
+              ><v-icon size="14" aria-hidden="true">science</v-icon
+              >{{ $t("geo_map.live.sample_data") }}</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="sd-modern-actions">
+        <label v-if="windowControl" class="b-live-view__report-window">
+          <select
+            v-model.number="selectedMinutes"
+            :aria-label="$t('geo_map.live.activity_window')"
+          >
+            <option :value="5">
+              {{ $t("geo_map.live.window_scope", { minutes: 5 }) }}
+            </option>
+            <option :value="15">
+              {{ $t("geo_map.live.window_scope", { minutes: 15 }) }}
+            </option>
+          </select>
+        </label>
+        <v-btn
+          icon
+          variant="text"
+          class="sd-modern-icon-button"
+          :aria-label="
+            $t(paused ? 'geo_map.live.resume' : 'geo_map.live.pause')
+          "
+          v-tooltip="
+            tooltip($t(paused ? 'geo_map.live.resume' : 'geo_map.live.pause'))
+          "
+          @click="togglePause"
+          ><v-icon size="18" aria-hidden="true">{{
+            paused ? "play_arrow" : "pause"
+          }}</v-icon></v-btn
+        >
+        <v-btn
+          icon
+          variant="text"
+          class="sd-modern-icon-button"
+          :loading="loading"
+          :disabled="paused || !visible || !online"
+          :aria-label="$t('geo_map.live.refresh')"
+          v-tooltip="tooltip($t('geo_map.live.refresh'))"
+          @click="refresh"
+          ><v-icon size="18" aria-hidden="true">refresh</v-icon></v-btn
+        >
+      </div>
+    </header>
+    <div v-if="windowControl && !report" class="b-live-view__window">
       <label
         >{{ $t("geo_map.live.activity_window")
         }}<select
@@ -64,7 +141,7 @@
       </div>
     </section>
     <section class="sd-modern-widget b-live-view__activity">
-      <header class="sd-modern-header">
+      <header v-if="!report" class="sd-modern-header">
         <div class="sd-modern-title">
           <span class="sd-modern-icon sd-modern-icon--plain"
             ><v-icon aria-hidden="true">public</v-icon></span
@@ -122,38 +199,49 @@
           >
         </div>
       </header>
-      <p v-if="snapshot?.simulated" class="b-live-view__notice-copy">
-        {{ $t("geo_map.live.sample_help") }}
-      </p>
-      <div
-        v-if="loadError"
-        class="sd-modern-notice b-live-view__notice"
-        role="alert"
-      >
-        <v-icon size="19" aria-hidden="true">error_outline</v-icon>
-        <div>
-          <p>{{ $t("geo_map.live.load_error") }}</p>
-          <p v-if="snapshot">{{ $t("geo_map.live.showing_last") }}</p>
-        </div>
-        <v-btn
-          class="sd-modern-button"
-          variant="text"
-          :disabled="paused || !visible || !online"
-          v-tooltip="tooltip($t('geo_map.live.retry'))"
-          @click="refresh"
-          >{{ $t("geo_map.live.retry") }}</v-btn
+      <div :class="{ 'b-live-view__report-notices': report }">
+        <p v-if="snapshot?.simulated" class="b-live-view__notice-copy">
+          {{ $t("geo_map.live.sample_help") }}
+        </p>
+        <div
+          v-if="loadError"
+          class="sd-modern-notice b-live-view__notice"
+          role="alert"
         >
+          <v-icon size="19" aria-hidden="true">error_outline</v-icon>
+          <div>
+            <p>{{ $t("geo_map.live.load_error") }}</p>
+            <p v-if="snapshot">{{ $t("geo_map.live.showing_last") }}</p>
+          </div>
+          <v-btn
+            class="sd-modern-button"
+            variant="text"
+            :disabled="paused || !visible || !online"
+            v-tooltip="tooltip($t('geo_map.live.retry'))"
+            @click="refresh"
+            >{{ $t("geo_map.live.retry") }}</v-btn
+          >
+        </div>
+        <p
+          v-else-if="
+            snapshot && connection !== 'live' && connection !== 'snapshot_mode'
+          "
+          class="b-live-view__notice-copy"
+        >
+          {{ $t("geo_map.live.showing_last") }}
+        </p>
+        <p
+          v-if="report && snapshot?.truncated"
+          class="b-live-view__notice-copy"
+        >
+          {{ $t("geo_map.live.truncated") }}
+        </p>
       </div>
-      <p
-        v-else-if="
-          snapshot && connection !== 'live' && connection !== 'snapshot_mode'
-        "
-        class="b-live-view__notice-copy"
-      >
-        {{ $t("geo_map.live.showing_last") }}
-      </p>
       <div class="b-live-view__map-layout">
-        <div class="b-live-view__map-side">
+        <div
+          class="b-live-view__map-side"
+          :class="{ 'sd-modern-widget': report }"
+        >
           <div ref="mapStage" class="b-live-view__map-stage">
             <svg
               ref="mapSvg"
@@ -335,6 +423,7 @@
         </div>
         <aside
           class="b-live-view__events"
+          :class="{ 'sd-modern-widget': report }"
           :aria-label="$t('geo_map.live.recent_activity')"
         >
           <header>
@@ -412,7 +501,7 @@
           </dl>
         </aside>
       </div>
-      <p v-if="snapshot?.truncated" class="b-live-view__notice-copy">
+      <p v-if="!report && snapshot?.truncated" class="b-live-view__notice-copy">
         {{ $t("geo_map.live.truncated") }}
       </p>
     </section>
@@ -544,6 +633,7 @@
                 <td>
                   <button
                     type="button"
+                    :class="{ 'sd-modern-clickable-item': report }"
                     v-tooltip="
                       tooltip(
                         $t('geo_map.live.select_country', {
@@ -621,6 +711,8 @@ export default {
   name: "GeoMap",
   inheritAttrs: false,
   props: {
+    modern: Boolean,
+    report: Boolean,
     shop: { type: Object, default: null },
     windowMinutes: {
       type: Number,
@@ -1427,6 +1519,237 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.b-live-view.b-live-view--report {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  grid-template-areas: "header header" "metrics metrics" "notices notices" "map countries" "events trend";
+  gap: 0;
+
+  .sd-modern-widget {
+    font-size: 13px;
+  }
+  .sd-modern-title-text {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 26px;
+  }
+  .b-live-view__report-header {
+    grid-area: header;
+    margin: 0;
+    padding: 22px 22px 0;
+    border-block-end: 0;
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .b-live-view__report-window select {
+    min-height: 36px;
+    padding: 6px 0;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    font: inherit;
+    font-size: 12px;
+  }
+  .b-live-view__report-window option {
+    background: rgb(var(--v-theme-surface));
+  }
+  .b-live-view__metrics {
+    grid-area: metrics;
+    margin: 0;
+    border-block: 0;
+    border-radius: 0;
+    padding: 18px 22px;
+    row-gap: 0;
+  }
+  .b-live-view__metric {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+  }
+  .b-live-view__metric + .b-live-view__metric {
+    border-inline-start: 1px solid var(--sd-modern-border);
+    padding-inline-start: 20px;
+  }
+  .b-live-view__metric-label {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-block-size: 28px;
+    font-size: 12px;
+    line-height: 18px;
+    align-items: center;
+  }
+  .b-live-view__metric strong {
+    font-size: 25px;
+    line-height: 32px;
+    margin-block: 3px;
+  }
+  .b-live-view__metric p {
+    font-size: 11px;
+  }
+  .b-live-view__spark {
+    margin-block-start: 8px;
+  }
+  .b-live-view__activity,
+  .b-live-view__map-layout,
+  .b-live-view__bottom {
+    display: contents;
+  }
+  .b-live-view__report-notices {
+    grid-area: notices;
+    background: rgb(var(--v-theme-surface));
+    border-inline: 1px solid var(--sd-modern-border);
+    padding-inline: 22px;
+  }
+  .b-live-view__map-side {
+    grid-area: map;
+    padding: 4px 22px 22px;
+    border-block-start: 0;
+    border-inline-end: 0;
+    border-radius: 0;
+    border-end-start-radius: 18px;
+  }
+  .b-live-view__countries {
+    grid-area: countries;
+    padding: 4px 22px 22px;
+    border-block-start: 0;
+    border-inline-start: 0;
+    border-radius: 0;
+    border-end-end-radius: 18px;
+  }
+  .b-live-view__countries .sd-modern-header {
+    margin-block-end: 12px;
+  }
+  .b-live-view__countries .sd-modern-title-text {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  .b-live-view__countries .sd-modern-subtitle {
+    font-size: 11px;
+  }
+  .b-live-view__map-stage {
+    height: 330px;
+  }
+  .b-live-view__map-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    inset-inline: auto 4px;
+    inset-block-start: 4px;
+  }
+  .b-live-view__location-detail {
+    padding-inline: 0;
+    border-radius: 0;
+    background: transparent;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  .b-live-view__events {
+    grid-area: events;
+    margin-block-start: 18px;
+    padding: 22px;
+    border-inline-end: 0;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .b-live-view__events h3 {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 26px;
+  }
+  .b-live-view__events li {
+    padding-block: 10px;
+  }
+  .b-live-view__events ol {
+    display: block;
+  }
+  .b-live-view__secondary {
+    display: block;
+  }
+  .b-live-view__bottom > section:first-child {
+    grid-area: trend;
+    margin-block-start: 18px;
+    padding: 22px;
+    border-inline-start: 0;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+  .b-live-view__countries td button {
+    min-height: 44px;
+  }
+  .b-live-view__countries .sd-modern-table td {
+    padding-block: 0;
+    font-size: 12px;
+  }
+
+  @media (max-width: 780px) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "header" "metrics" "notices" "map" "countries" "events" "trend";
+    .b-live-view__map-side {
+      border-inline-end: 1px solid var(--sd-modern-border);
+      border-radius: 0;
+    }
+    .b-live-view__countries {
+      border-inline-start: 1px solid var(--sd-modern-border);
+      border-block-start: 0;
+      border-start-start-radius: 0;
+      border-start-end-radius: 0;
+      border-end-start-radius: 18px;
+      border-end-end-radius: 18px;
+    }
+    .b-live-view__events {
+      border-inline-end: 1px solid var(--sd-modern-border);
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+      border-start-start-radius: 18px;
+      border-start-end-radius: 18px;
+    }
+    .b-live-view__bottom > section:first-child {
+      margin-block-start: 0;
+      border-inline-start: 1px solid var(--sd-modern-border);
+      border-block-start: 0;
+      border-start-start-radius: 0;
+      border-start-end-radius: 0;
+      border-end-start-radius: 18px;
+      border-end-end-radius: 18px;
+    }
+  }
+  @media (max-width: 600px) {
+    .b-live-view__metric-label {
+      min-block-size: 44px;
+    }
+    .b-live-view__report-header {
+      padding: 17px 15px 0;
+    }
+    .b-live-view__metrics {
+      padding: 18px 15px;
+      gap: 0 15px;
+    }
+    .b-live-view__metric + .b-live-view__metric {
+      border-inline-start: 0;
+      padding-inline-start: 0;
+    }
+    .b-live-view__metric:nth-child(n + 3) {
+      margin-block-start: 15px;
+    }
+    .b-live-view__map-stage {
+      height: 270px;
+    }
+    .b-live-view__map-side,
+    .b-live-view__countries,
+    .b-live-view__events,
+    .b-live-view__bottom > section:first-child {
+      padding-inline: 15px;
+    }
+    .b-live-view__report-notices {
+      padding-inline: 15px;
+    }
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    .b-live-view__report-window select {
+      min-height: 44px;
+      font-size: 16px;
+    }
+  }
+}
 .b-live-view {
   --live-cart: rgb(var(--v-theme-warning));
   --live-order: rgb(var(--v-theme-success));

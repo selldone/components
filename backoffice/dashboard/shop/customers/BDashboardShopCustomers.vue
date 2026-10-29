@@ -16,6 +16,7 @@
   <div
     v-if="modern && !summary"
     class="b-dashboard-customers-detail text-start"
+    :class="{ 'b-dashboard-customers-detail--report': report }"
   >
     <section class="sd-modern-widget">
       <header class="sd-modern-header">
@@ -54,7 +55,9 @@
             </p>
           </div>
         </div>
+        <slot v-if="report" name="period" />
         <v-btn
+          v-if="!report"
           :to="{ name: 'BPageShopCrmReport' }"
           :active="false"
           class="sd-modern-button"
@@ -75,6 +78,9 @@
         <div>
           <dt>{{ $t("admin_shop.dashboard.modern.customer_total") }}</dt>
           <dd>{{ modern_customer_total }}</dd>
+          <dd v-if="report" class="b-dashboard-customers-detail__scope">
+            {{ $t("shop_crm_report.latest_customer_stock") }}
+          </dd>
         </div>
         <div>
           <dt>{{ $t("admin_shop.dashboard.modern.customer_new_today") }}</dt>
@@ -87,7 +93,46 @@
           <dd>{{ numeralFormat(change_week, "0,0a") }}</dd>
         </div>
       </dl>
+      <div v-if="report" class="b-dashboard-customers-detail__plots">
+        <section>
+          <h3>{{ $t("admin_shop.dashboard.modern.customer_total") }}</h3>
+          <p class="b-dashboard-customers-detail__scope">
+            {{ $t("shop_crm_report.shop_period") }}
+          </p>
+          <apexchart
+            :key="'stock-' + $i18n.locale + '-' + $vuetify.theme.name"
+            :options="report_chart_options.stock"
+            :series="[series[0]]"
+            :aria-label="$t('admin_shop.dashboard.modern.customer_total')"
+            dir="ltr"
+            height="300"
+            type="line"
+            width="100%"
+          />
+        </section>
+        <section>
+          <h3>
+            {{ $t("admin_shop.dashboard.customers.chart.new_customers") }}
+          </h3>
+          <p class="b-dashboard-customers-detail__scope">
+            {{ $t("shop_crm_report.shop_period") }}
+          </p>
+          <apexchart
+            :key="'added-' + $i18n.locale + '-' + $vuetify.theme.name"
+            :options="report_chart_options.added"
+            :series="[{ ...series[1], type: 'bar' }]"
+            :aria-label="
+              $t('admin_shop.dashboard.customers.chart.new_customers')
+            "
+            dir="ltr"
+            height="300"
+            type="bar"
+            width="100%"
+          />
+        </section>
+      </div>
       <apexchart
+        v-else
         :aria-label="$t('admin_shop.dashboard.modern.customer_history')"
         :options="options"
         :series="series"
@@ -130,7 +175,138 @@
           >
         </v-btn>
       </header>
-      <div class="b-dashboard-customers-detail__clubs">
+      <template v-if="report">
+        <table class="sd-modern-table b-dashboard-customers-detail__club-table">
+          <thead>
+            <tr>
+              <th>{{ $t("admin_shop.dashboard.modern.club_title") }}</th>
+              <th>{{ $t("global.commons.users") }}</th>
+              <th>{{ $t("shop_crm_report.monthly_threshold") }}</th>
+              <th>{{ $t("shop_crm_report.annual_threshold") }}</th>
+              <th>{{ $t("global.commons.discount") }}</th>
+              <th :aria-label="$t('global.commons.detail')"></th>
+            </tr>
+          </thead>
+          <tbody v-for="level in levels" :key="level.code">
+            <tr class="b-dashboard-customers-detail__club-row">
+              <td class="b-dashboard-customers-detail__club-id-cell">
+                <div class="b-dashboard-customers-detail__club-identity">
+                  <img
+                    :src="level.icon"
+                    :class="{ 'img-grayscale': !level.club }"
+                    alt=""
+                    width="28"
+                    height="28"
+                  />
+                  <div>
+                    <h3>{{ $t(level.name) }}</h3>
+                    <span class="sd-modern-status sd-modern-status--plain"
+                      ><span
+                        class="sd-modern-status__dot"
+                        :class="{
+                          'b-dashboard-customers-detail__inactive': !level.club,
+                        }"
+                        aria-hidden="true"
+                      />{{
+                        $t(level.club ? "global.active" : "global.inactive")
+                      }}</span
+                    >
+                  </div>
+                </div>
+              </td>
+              <td :data-label="$t('global.commons.users')">
+                {{ level.club ? numeralFormat(level.club.count, "0,0") : "—" }}
+              </td>
+              <td :data-label="$t('shop_crm_report.monthly_threshold')">
+                <u-price
+                  v-if="level.club"
+                  :amount="level.club.monthly"
+                  :currency="level.club.currency"
+                /><span v-else>—</span>
+              </td>
+              <td :data-label="$t('shop_crm_report.annual_threshold')">
+                <u-price
+                  v-if="level.club"
+                  :amount="level.club.annually"
+                  :currency="level.club.currency"
+                /><span v-else>—</span>
+              </td>
+              <td :data-label="$t('global.commons.discount')">
+                {{ level.club ? level.club.percent + "%" : "—" }}
+              </td>
+              <td class="b-dashboard-customers-detail__club-action">
+                <v-btn
+                  class="sd-modern-icon-button"
+                  icon
+                  variant="text"
+                  :aria-label="
+                    $t('shop_crm_report.club_details', { club: $t(level.name) })
+                  "
+                  :aria-expanded="expanded_clubs.includes(level.code)"
+                  :aria-controls="'crm-report-club-' + $.uid + '-' + level.code"
+                  @click="toggleClubDetails(level.code)"
+                >
+                  <v-icon size="18" aria-hidden="true">{{
+                    expanded_clubs.includes(level.code)
+                      ? "expand_less"
+                      : "expand_more"
+                  }}</v-icon>
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                    open-on-focus
+                    content-class="sd-modern-tooltip text-start"
+                    >{{
+                      $t("shop_crm_report.club_details", {
+                        club: $t(level.name),
+                      })
+                    }}</v-tooltip
+                  >
+                </v-btn>
+              </td>
+            </tr>
+            <tr
+              v-show="expanded_clubs.includes(level.code)"
+              class="b-dashboard-customers-detail__club-expanded"
+            >
+              <td
+                colspan="6"
+                :id="'crm-report-club-' + $.uid + '-' + level.code"
+              >
+                <div class="b-dashboard-customers-detail__expanded-content">
+                  <template v-if="level.club">
+                    <span
+                      >{{ $t("shop_crm_report.discount_cap") }}:
+                      <u-price
+                        v-if="level.club.limit"
+                        :amount="level.club.limit"
+                        :currency="level.club.currency"
+                      /><span v-else>{{
+                        $t("global.commons.unlimited")
+                      }}</span></span
+                    >
+                    <span v-if="level.club.description">{{
+                      level.club.description
+                    }}</span>
+                  </template>
+                  <span v-else>{{ $t("global.inactive") }}</span>
+                  <v-btn
+                    :to="{ name: 'BPageShopCrmClub' }"
+                    :active="false"
+                    class="sd-modern-button sd-modern-button--inline"
+                    variant="text"
+                    >{{ $t("admin_shop.dashboard.modern.manage_clubs") }}</v-btn
+                  >
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="b-dashboard-customers-detail__scope">
+          {{ $t("shop_crm_report.club_threshold_help") }}
+        </p>
+      </template>
+      <div v-else class="b-dashboard-customers-detail__clubs">
         <section
           v-for="level in levels"
           :key="level.code"
@@ -570,6 +746,7 @@ export default {
   props: {
     modern: { type: Boolean, default: false },
     summary: { type: Boolean, default: false },
+    report: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -582,6 +759,7 @@ export default {
   },
 
   data: () => ({
+    expanded_clubs: [],
     series: [
       {
         type: "line",
@@ -603,6 +781,43 @@ export default {
   }),
 
   computed: {
+    report_chart_options() {
+      const options = this.options;
+      const plot = (index) => ({
+        ...options,
+        dataLabels: { enabled: false },
+        colors: [this.$vuetify.theme.current.colors.primary],
+        chart: {
+          ...options.chart,
+          redrawOnParentResize: true,
+          redrawOnWindowResize: true,
+        },
+        yaxis: [{ ...options.yaxis[index], title: { text: undefined } }],
+        xaxis: {
+          ...options.xaxis,
+          labels: { ...options.xaxis.labels, trim: false, rotate: 0 },
+        },
+        grid: {
+          ...options.grid,
+          padding: { top: 52, right: 24, bottom: 10, left: 24 },
+        },
+        responsive: [
+          {
+            breakpoint: 600,
+            options: {
+              chart: { height: 340 },
+              grid: { padding: { top: 104, right: 24, bottom: 10, left: 24 } },
+            },
+          },
+        ],
+        legend: { ...options.legend, show: false },
+        tooltip: {
+          ...options.tooltip,
+          y: { formatter: (value) => numeral(value).format("0,0") },
+        },
+      });
+      return { stock: plot(1), added: plot(0) };
+    },
     modern_customer_total() {
       return Number.isFinite(this.lastDayData.users)
         ? this.numeralFormat(this.lastDayData.users, "0,0a")
@@ -913,6 +1128,11 @@ export default {
   },
 
   methods: {
+    toggleClubDetails(code) {
+      this.expanded_clubs = this.expanded_clubs.includes(code)
+        ? this.expanded_clubs.filter((item) => item !== code)
+        : [...this.expanded_clubs, code];
+    },
     update_series() {
       this.calculate_funnel();
       this.options.xaxis.categories =
@@ -974,6 +1194,209 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-dashboard-customers-detail.b-dashboard-customers-detail--report {
+  gap: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+
+  .sd-modern-widget {
+    --sd-modern-font-body: 13px;
+    --sd-modern-font-small: 12px;
+    padding: 22px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .sd-modern-header {
+    margin-block-end: 17px;
+  }
+  .sd-modern-title-text {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+  .sd-modern-subtitle {
+    font-size: 12px;
+    line-height: 18px;
+  }
+  .b-dashboard-customers-detail__stats dd {
+    font-size: 27px;
+    font-weight: 600;
+    line-height: 36px;
+  }
+  .b-dashboard-customers-detail__scope,
+  .b-dashboard-customers-detail__stats dd.b-dashboard-customers-detail__scope {
+    margin: 4px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+  }
+  .b-dashboard-customers-detail__plots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+    margin-block-start: 24px;
+  }
+  .b-dashboard-customers-detail__plots > section {
+    min-width: 0;
+  }
+  :deep(.apexcharts-toolbar) {
+    --sd-report-chart-tool-size: 36px;
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 0;
+    background: transparent;
+    backdrop-filter: none;
+  }
+  :deep(.apexcharts-toolbar > [class*="-icon"]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 var(--sd-report-chart-tool-size);
+    width: var(--sd-report-chart-tool-size);
+    height: var(--sd-report-chart-tool-size);
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 9px;
+    color: rgb(var(--v-theme-on-surface)) !important;
+    background: rgb(var(--v-theme-surface));
+  }
+  :deep(.apexcharts-toolbar > [class*="-icon"] svg) {
+    width: 18px;
+    height: 18px;
+  }
+  :deep(.apexcharts-toolbar > .apexcharts-selected) {
+    border-color: rgb(var(--v-theme-primary));
+    background: var(--sd-modern-inset);
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    :deep(.apexcharts-toolbar) {
+      --sd-report-chart-tool-size: 44px;
+    }
+  }
+  .b-dashboard-customers-detail__plots > section + section {
+    padding-inline-start: 25px;
+    border-inline-start: 1px solid var(--sd-modern-border);
+  }
+  h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  .b-dashboard-customers-detail__club-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .b-dashboard-customers-detail__club-table th {
+    text-align: start;
+    padding: 0 10px 10px !important;
+  }
+  .b-dashboard-customers-detail__club-table td {
+    padding: 14px 10px !important;
+    vertical-align: middle;
+    font-size: 12px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  .b-dashboard-customers-detail__club-identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .b-dashboard-customers-detail__club-identity img {
+    flex: 0 0 28px;
+  }
+  .b-dashboard-customers-detail__club-identity .sd-modern-status {
+    font-size: 11px;
+  }
+  .b-dashboard-customers-detail__inactive {
+    background: var(--sd-modern-muted);
+  }
+  .b-dashboard-customers-detail__club-action {
+    width: 56px;
+    text-align: end;
+  }
+  .b-dashboard-customers-detail__club-expanded td {
+    padding-block-start: 0 !important;
+    border: 0;
+  }
+  .b-dashboard-customers-detail__expanded-content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    background: var(--sd-modern-inset);
+    border-radius: 9px;
+    padding: 10px 14px;
+    overflow-wrap: anywhere;
+  }
+  :deep(.u--price) {
+    font: inherit;
+  }
+
+  @media (max-width: 780px) {
+    .b-dashboard-customers-detail__plots {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 23px;
+    }
+    .b-dashboard-customers-detail__plots > section + section {
+      padding-inline-start: 0;
+      border-inline-start: 0;
+      padding-block-start: 20px;
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+    .b-dashboard-customers-detail__club-table,
+    .b-dashboard-customers-detail__club-table tbody {
+      display: block;
+    }
+    .b-dashboard-customers-detail__club-table thead {
+      display: none;
+    }
+    .b-dashboard-customers-detail__club-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px;
+      gap: 8px 15px;
+      border-block-start: 1px solid var(--sd-modern-border);
+      padding-block: 17px;
+    }
+    .b-dashboard-customers-detail__club-table td {
+      padding: 0 !important;
+      border: 0;
+      border-block-end: 0 !important;
+      text-align: start;
+    }
+    .b-dashboard-customers-detail__club-id-cell {
+      grid-column: 1 / 3;
+    }
+    .b-dashboard-customers-detail__club-table td[data-label]::before {
+      display: block;
+      content: attr(data-label);
+    }
+    .b-dashboard-customers-detail__club-action {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      width: auto;
+    }
+    .b-dashboard-customers-detail__club-expanded,
+    .b-dashboard-customers-detail__club-expanded td {
+      display: block;
+    }
+    .b-dashboard-customers-detail__club-expanded td {
+      padding-block-end: 12px !important;
+    }
+  }
+  @media (max-width: 520px) {
+    .sd-modern-widget {
+      padding: 17px 15px;
+    }
+  }
+}
+
 .b-dashboard-customers-detail {
   display: grid;
   gap: 20px;

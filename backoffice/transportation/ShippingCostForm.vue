@@ -13,10 +13,62 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
+  <div
+    class="b-shipping-cost-form text-start"
+    :class="{ 'b-shipping-cost-form--modern sd-modern-underlined-field': modern }"
+  >
     <!-- ▃▃▃▃▃▃▃▃▃▃▃▃ State ▃▃▃▃▃▃▃▃▃▃▃▃ -->
     <template v-if="states?.length">
-      <v-row dense class="my-1">
+      <div v-if="modern" class="b-shipping-cost-form__states">
+        <v-btn
+          class="sd-modern-button sd-modern-button--small"
+          :variant="!selected_state ? 'outlined' : 'text'"
+          @click="selected_state = null"
+          >{{ $t("transportation_manage.settings.country_default") }}</v-btn
+        >
+        <div
+          v-for="(it, key) in modelValue.states"
+          :key="key"
+          class="b-shipping-cost-form__state"
+        >
+          <v-btn
+            class="sd-modern-button sd-modern-button--small"
+            :variant="selected_state === key ? 'outlined' : 'text'"
+            @click="selected_state = selected_state === key ? null : key"
+          >
+            <s-state-flag
+              :country="country"
+              :region="key"
+              class="me-2"
+              height="16"
+            />
+            {{ key
+            }}<u-price
+              :amount="it.const || 0"
+              :currency="currency"
+              class="ms-2"
+            />
+          </v-btn>
+          <v-tooltip
+            :text="$t('transportation_manage.settings.remove_override')"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+          >
+            <template #activator="{ props }"
+              ><v-btn
+                v-bind="props"
+                class="sd-modern-icon-button"
+                icon="close"
+                variant="text"
+                :aria-label="
+                  $t('transportation_manage.settings.remove_override')
+                "
+                @click="removeOverrideState(key)"
+            /></template>
+          </v-tooltip>
+        </div>
+      </div>
+      <v-row v-else dense class="my-1">
         <v-chip
           class="ma-1"
           size="small"
@@ -77,7 +129,7 @@
         v-model="selected_state"
         :items="states"
         :return-object="false"
-        bg-color="#fff"
+        :bg-color="modern ? undefined : '#fff'"
         rounded="lg"
         clearable
         flat
@@ -86,13 +138,20 @@
         item-title="name"
         item-value="code"
         :placeholder="
-          'Default ● Apply to all except modified' +
+          (modern
+            ? $t('transportation_manage.settings.country_default')
+            : 'Default ● Apply to all except modified') +
           (!isEmpty(modelValue.states)
             ? `: ${Object.keys(modelValue.states).join(', ')}`
             : '')
         "
-        variant="solo"
-        messages="⯅ Select a state to override shipping cost."
+        :variant="modern ? 'underlined' : 'solo'"
+        :class="{ 'sd-modern-underlined-field': modern }"
+        :messages="
+          modern
+            ? $t('transportation_manage.settings.state_override_hint')
+            : '⯅ Select a state to override shipping cost.'
+        "
       >
         <template v-if="selected_state" v-slot:prepend-inner>
           <s-state-flag :country="country" :region="selected_state" class="me-2"
@@ -102,8 +161,18 @@
 
         <template v-slot:selection="{ item }">
           {{ item.raw.name }}
+          <span
+            v-if="
+              modern && modelValue.states && modelValue.states[item.raw.code]
+            "
+            class="sd-modern-status sd-modern-status--plain ms-2"
+            ><span class="sd-modern-status__dot"></span
+            >{{ $t("global.commons.override") }}</span
+          >
           <v-chip
-            v-if="modelValue.states && modelValue.states[item.raw.code]"
+            v-if="
+              !modern && modelValue.states && modelValue.states[item.raw.code]
+            "
             class="mx-2"
             color="blue"
             label
@@ -123,8 +192,22 @@
               ></s-state-flag>
 
               {{ item.raw.name }}
+              <span
+                v-if="
+                  modern &&
+                  modelValue.states &&
+                  modelValue.states[item.raw.code]
+                "
+                class="sd-modern-status sd-modern-status--plain ms-2"
+                ><span class="sd-modern-status__dot"></span
+                >{{ $t("global.commons.override") }}</span
+              >
               <v-chip
-                v-if="modelValue.states && modelValue.states[item.raw.code]"
+                v-if="
+                  !modern &&
+                  modelValue.states &&
+                  modelValue.states[item.raw.code]
+                "
                 class="mx-2"
                 color="blue"
                 label
@@ -139,11 +222,18 @@
     </template>
 
     <v-expand-transition>
-      <div v-if="current_value" key="a">
+      <div
+        v-if="current_value"
+        key="a"
+        :class="{ 'b-shipping-cost-form__fields': modern }"
+      >
         <u-smart-select
           v-model="cost_mode"
+          :accessible="modern"
+          :border="modern"
           :items="COST_MODES"
-          class="my-3"
+          :class="modern ? 'b-shipping-cost-form__mode my-0' : 'my-3'"
+          :label="modern ? $t('transportation_manage.settings.calculation_method') : undefined"
           item-description="desc"
           item-text="title"
           item-value="value"
@@ -157,6 +247,7 @@
           :currency="currency"
           :label="$t('admin_shop.logistic.delivery.delivery_form.const_input')"
           class="strong-field"
+          :class="{ 'b-shipping-cost-form__base': modern }"
           suffix=" "
         >
           <template v-slot:append-inner>
@@ -291,28 +382,58 @@
           class="strong-field"
         />
 
-        <div v-if="selected_state" class="text-end">
+        <div
+          v-if="selected_state"
+          class="text-end b-shipping-cost-form__revert"
+        >
           <v-btn
             class="tnt"
+            :class="{ 'sd-modern-button sd-modern-button--small': modern }"
             variant="text"
             @click="removeOverrideState(selected_state)"
           >
-            <v-icon color="red" start>close</v-icon>
-            Set default shipping for
-            <b>{{ selected_state }}</b></v-btn
+            <v-icon :color="modern ? undefined : 'red'" start>undo</v-icon>
+            {{
+              modern
+                ? $t("transportation_manage.settings.revert_state")
+                : "Set default shipping for"
+            }}
+            <span class="ms-1">{{ selected_state }}</span></v-btn
           >
         </div>
       </div>
-      <div v-else key="b" class="d-flex align-center justify-space-between">
-        <div class="text-green text-subtitle-2">● Default country profile</div>
+      <div
+        v-else
+        key="b"
+        class="d-flex align-center justify-space-between flex-wrap ga-3"
+      >
+        <div
+          :class="
+            modern
+              ? 'sd-modern-status sd-modern-status--plain'
+              : 'text-green text-subtitle-2'
+          "
+        >
+          <span v-if="modern" class="sd-modern-status__dot"></span
+          >{{
+            modern
+              ? $t("transportation_manage.settings.country_default")
+              : "● Default country profile"
+          }}
+        </div>
         <v-btn
-          class="nbt my-1"
+          class="my-1"
+          :class="modern ? 'sd-modern-button sd-modern-button--small' : 'nbt'"
           variant="elevated"
           @click="addOverrideState(selected_state)"
         >
           <v-icon start>edit_square</v-icon>
-          Override shipping for
-          <b>{{ selected_state }}</b></v-btn
+          {{
+            modern
+              ? $t("transportation_manage.settings.override_state")
+              : "Override shipping for"
+          }}
+          <span class="ms-1">{{ selected_state }}</span></v-btn
         >
       </div>
     </v-expand-transition>
@@ -349,6 +470,7 @@ export default {
     modelValue: { type: Object },
     autoSelectMode: { type: Boolean, default: false },
     country: {}, // Selected profile country (null: default)
+    modern: { type: Boolean, default: false },
   },
 
   data: () => ({
@@ -388,6 +510,19 @@ export default {
     },
 
     COST_MODES() {
+      if (this.modern)
+        return [
+          ["FLAT", "flat"],
+          ["DISTANCE", "distance"],
+          ["WEIGHT", "weight"],
+          ["DISTANCE_WEIGHT", "distance_weight"],
+          ["WEIGHT_PRICE", "weight_price"],
+          ["DISTANCE_WEIGHT_PRICE", "distance_weight_price"],
+        ].map(([value, key]) => ({
+          value,
+          title: this.$t(`transportation_manage.settings.rate_modes.${key}`),
+          desc: this.$t("transportation_manage.settings.rate_mode_hint"),
+        }));
       const FLAT = {
         value: "FLAT",
         title: "Flat shipping cost",
@@ -504,9 +639,15 @@ export default {
     removeOverrideState(state_code) {
       const state_name = this.states?.find((v) => v.code === state_code)?.name;
       NotificationService.openDangerAlert(
-        `Remove Override for ${state_name ? state_name : state_code}`,
-        `Are you sure you want to remove the override rule for ${state_name ? state_name : state_code}? This action cannot be undone.`,
-        "Yes, Remove Override",
+        this.modern
+          ? this.$t("transportation_manage.settings.remove_override")
+          : `Remove Override for ${state_name ? state_name : state_code}`,
+        this.modern
+          ? this.$t("transportation_manage.settings.revert_state_hint", {
+              state: state_name || state_code,
+            })
+          : `Are you sure you want to remove the override rule for ${state_name ? state_name : state_code}? This action cannot be undone.`,
+        this.modern ? this.$t("global.actions.delete") : "Yes, Remove Override",
         () => {
           delete this.modelValue.states[state_code];
           this.setCurrentValue();
@@ -518,4 +659,73 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-shipping-cost-form--modern {
+  width: 100%;
+  max-width: 560px;
+  margin-inline: 0;
+  font-size: 12px;
+  line-height: 1.5;
+
+  .b-shipping-cost-form__states {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-block-end: 14px;
+  }
+
+  .b-shipping-cost-form__state {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .b-shipping-cost-form__fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+    row-gap: 8px;
+  }
+
+  .b-shipping-cost-form__mode,
+  .b-shipping-cost-form__base,
+  .b-shipping-cost-form__revert {
+    grid-column: 1 / -1;
+  }
+
+  .b-shipping-cost-form__mode {
+    :deep(h3), :deep(b) {
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 18px;
+    }
+    :deep(.small) {
+      font-size: 11px;
+      line-height: 16px;
+    }
+  }
+
+  :deep(.v-field__input) {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  :deep(.v-messages) {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  @media (max-width: 600px) {
+    .b-shipping-cost-form__fields {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    :deep(.v-field__input) {
+      font-size: 16px;
+    }
+  }
+}
+</style>

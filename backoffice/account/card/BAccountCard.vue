@@ -13,7 +13,133 @@
   -->
 
 <template>
-  <div style="height: 100%" @click="$emit('select', account)">
+  <article
+    v-if="modern"
+    class="b-account-card--modern sd-modern-clickable-item text-start"
+    @click="$emit('select', account)"
+  >
+    <header class="b-account-card__header">
+      <u-currency-icon
+        v-if="currency"
+        :currency="currency"
+        class="b-account-card__currency"
+        flag
+        gradient
+        small
+      />
+      <div class="b-account-card__identity">
+        <button
+          type="button"
+          class="b-account-card__name"
+          @click.stop="$emit('select', account)"
+        >
+          <bdi>{{ title }}</bdi>
+        </button>
+        <div class="b-account-card__code">{{ account.currency }}</div>
+        <p v-if="!currency" class="b-account-card__currency-error" role="status">
+          <v-icon size="16" color="error" aria-hidden="true">warning_amber</v-icon>
+          {{ account.currency }} not found in the currency list of webapp!
+        </p>
+      </div>
+    </header>
+
+    <div class="b-account-card__balance-block">
+      <div class="b-account-card__label">{{ $t("account_card.balance") }}</div>
+      <u-price
+        :amount="account.balance"
+        :currency="account.currency"
+        :class="{ 'text-error': account.balance < 0 }"
+        class="b-account-card__balance"
+      />
+    </div>
+
+    <div class="b-account-card__locked">
+      <span>{{ $t("account_card.locked") }}:</span>
+      <u-price
+        :amount="account.locked"
+        :currency="account.currency"
+        :class="{ 'text-error': account.locked < 0 }"
+        class="b-account-card__locked-value"
+      />
+    </div>
+
+    <div class="b-account-card__number-row">
+      <button
+        v-if="title_big"
+        v-copy="formatCard(account.account_number)"
+        type="button"
+        class="b-account-card__number"
+        :aria-label="$t('account_card.copy_account_number')"
+        @click.stop
+      >
+        <bdi dir="ltr">{{ formatCard(account.account_number) }}</bdi>
+        <v-icon size="14" aria-hidden="true">content_copy</v-icon>
+        <v-tooltip
+          activator="parent"
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          open-on-focus
+        >{{ $t("account_card.copy_account_number") }}</v-tooltip>
+      </button>
+    </div>
+
+    <div class="b-account-card__states">
+      <span class="sd-modern-status sd-modern-status--plain b-account-card__status">
+        <span class="sd-modern-status__dot" :class="modern_status_class" aria-hidden="true" />
+        {{ title_big_span }}
+      </span>
+      <span
+        v-if="account.deleted_at"
+        class="sd-modern-status sd-modern-status--plain b-account-card__status"
+      >
+        <span class="sd-modern-status__dot sd-modern-status__dot--error" aria-hidden="true" />
+        {{ $t("global.commons.archived") }}
+      </span>
+      <span
+        v-else-if="account.status === 'Payment'"
+        class="sd-modern-status sd-modern-status--plain b-account-card__status"
+      >
+        <span class="sd-modern-status__dot sd-modern-status__dot--warning" aria-hidden="true" />
+        {{ $t("global.commons.pending") }}
+      </span>
+    </div>
+
+    <div class="b-account-card__receipt">
+      <v-btn
+        v-if="account.status === 'Payment'"
+        color="primary"
+        class="sd-modern-button sd-modern-button--compact"
+        variant="flat"
+        @click.stop="ShowReceiptPaymentDialog(account.fee_receipt.receipt_number)"
+      >{{ $t("account_card.pay_create_receipt") }}</v-btn>
+    </div>
+
+    <div class="b-account-card__footer">
+      <template v-if="extended">
+        <v-btn
+          :to="{
+            name: 'BPageAccountTransfer',
+            params: { account_number: account.account_number },
+          }"
+          class="sd-modern-button sd-modern-button--compact b-account-card__action"
+          variant="text"
+          prepend-icon="north"
+          @click.stop
+        >{{ $t("account_card.transfer") }}</v-btn>
+        <v-btn
+          :to="{
+            name: 'BPageAccountDeposit',
+            params: { account_number: account.account_number },
+          }"
+          class="sd-modern-button sd-modern-button--compact b-account-card__action"
+          variant="text"
+          prepend-icon="south"
+          @click.stop
+        >{{ $t("account_card.charge") }}</v-btn>
+      </template>
+    </div>
+  </article>
+  <div v-else style="height: 100%" @click="$emit('select', account)">
     <s-widget
       :class="[small ? 'm-1' : '', dark ? 'widget-dark' : '']"
       :style="`background: ${color}`"
@@ -152,6 +278,10 @@ export default {
   mixins: [BEventBusMixin,AccountMixin],
   components: {URibbon, UCurrencyIcon },
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     account: {
       required: true,
       type: Object,
@@ -213,6 +343,13 @@ export default {
     status_class() {
       return AccountStatus[this.account.status]?.class;
     },
+
+    modern_status_class() {
+      if (this.account.status === "Approved") return "sd-modern-status__dot--success";
+      if (["Checking", "Payment"].includes(this.account.status)) return "sd-modern-status__dot--warning";
+      if (["Rejected", "Deleted", "Banned"].includes(this.account.status)) return "sd-modern-status__dot--error";
+      return undefined;
+    },
   },
   created() {},
   mounted() {},
@@ -229,5 +366,205 @@ export default {
 .float-numbers {
   font-size: 0.8em;
   opacity: 0.7;
+}
+
+.b-account-card--modern {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  padding: 18px 16px 12px;
+  border: 1px solid var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+  border-radius: 14px;
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+  font-family: inherit;
+
+  @supports (grid-template-rows: subgrid) {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 7;
+    row-gap: 0;
+  }
+
+  .b-account-card__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+    padding-block-end: 22px;
+  }
+
+  .b-account-card__currency {
+    flex-shrink: 0;
+    min-height: 34px;
+    line-height: 34px;
+  }
+
+  .b-account-card__identity {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .b-account-card__name {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: start;
+    overflow-wrap: anywhere;
+
+    &:hover {
+      color: rgb(var(--v-theme-primary));
+    }
+  }
+
+  .b-account-card__code,
+  .b-account-card__label,
+  .b-account-card__locked,
+  .b-account-card__status {
+    color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), 0.66));
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+  }
+
+  .b-account-card__code {
+    margin-block-start: 2px;
+    line-height: 16px;
+  }
+
+  .b-account-card__currency-error {
+    margin: 8px 0 0;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .b-account-card__balance {
+    display: block;
+    margin-block: 3px 7px;
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 32px;
+    letter-spacing: -0.7px;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+
+    :deep(.small) {
+      font-size: 25px !important;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    :deep(.cur-name) {
+      font-size: 11px !important;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+  }
+
+  .b-account-card__locked {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .b-account-card__locked-value {
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+    font-variant-numeric: tabular-nums;
+
+    :deep(.small),
+    :deep(.cur-name) {
+      font-size: 11px !important;
+      font-weight: 400;
+    }
+  }
+
+  .b-account-card__number-row {
+    padding-block-start: 20px;
+    min-width: 0;
+  }
+
+  .b-account-card__number {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 26px;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    font-variant-numeric: tabular-nums;
+
+    bdi {
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .b-account-card__states {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    padding-block: 7px 16px;
+  }
+
+  .b-account-card__status {
+    line-height: 16px;
+  }
+
+  .b-account-card__receipt:has(.v-btn) {
+    padding-block-end: 12px;
+  }
+
+  .b-account-card__footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-block-start: auto;
+  }
+
+  .b-account-card__footer:has(.v-btn) {
+    padding-block-start: 11px;
+    border-block-start: 1px solid var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+  }
+
+  .b-account-card__action {
+    flex: 1;
+    min-width: 0;
+    color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), 0.66));
+
+    :deep(.v-icon) {
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 599px), (pointer: coarse) {
+    .b-account-card__name,
+    .b-account-card__number {
+      min-height: 44px;
+    }
+
+    .b-account-card__header {
+      padding-block-end: 17px;
+    }
+
+    .b-account-card__number-row {
+      padding-block-start: 15px;
+    }
+  }
 }
 </style>

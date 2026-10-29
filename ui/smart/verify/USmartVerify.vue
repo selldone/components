@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="text-start">
+  <div class="s--smart-verify text-start" :class="{ 's--smart-verify--checked': modelValue }">
     <h3 v-if="label" class="my-2">{{ label }}</h3>
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
@@ -31,7 +31,7 @@
               'avatar-gradient': modelValue,
             }"
             :color="falseGray && !modelValue ? '#33' : color"
-            class="-thin -gray flex-grow-0 h-auto center-absolute"
+            class="s--smart-verify__indicator -thin -gray flex-grow-0 h-auto center-absolute"
             size="24"
             >{{ modelValue ? "lens" : "radio_button_unchecked" }}
           </v-icon>

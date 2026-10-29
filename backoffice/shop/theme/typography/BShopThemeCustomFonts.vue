@@ -4,30 +4,34 @@
   - Shop custom font manager.
   -->
 <template>
-  <div class="widget-box mb-5">
+  <div class="b-shop-theme-fonts sd-modern-widget text-start">
     <u-widget-header
-      :add-caption="$t('b_shop_theme_typography.custom_fonts.actions.add')"
-      :add-loading="busy_fetch"
-      :add-sub-caption="quota_caption"
-      :disabled="!can_add"
-      :disabled-access="!can_write"
-      :disabled-reason="
-        $t('b_shop_theme_typography.custom_fonts.quota_reached')
-      "
+      class="sd-modern-form-header"
       icon="font_download"
       :title="$t('b_shop_theme_typography.custom_fonts.title')"
-      @click:add="openCreateDialog"
     >
       <template #append-title>
-        <v-chip class="ms-2" label size="x-small" variant="tonal">
+        <span class="sd-modern-status sd-modern-status--plain ms-2">
           {{ quota.used }} / {{ quota.limit }}
-        </v-chip>
+        </span>
+      </template>
+      <template #actions>
+        <v-btn :disabled="!can_add" :loading="busy_fetch" color="primary"
+               class="sd-modern-button sd-modern-button--primary" prepend-icon="add"
+               @click="openCreateDialog">
+          {{ $t('b_shop_theme_typography.custom_fonts.actions.add') }}
+        </v-btn>
       </template>
     </u-widget-header>
 
-    <v-list-subheader>
+    <v-list-subheader class="sd-modern-subtitle b-shop-theme-fonts__subtitle">
       {{ $t("b_shop_theme_typography.custom_fonts.subtitle") }}
     </v-list-subheader>
+    <p class="b-shop-theme-fonts__quota">
+      {{ quota_caption }}
+      <span v-if="!can_write"> · {{ $t('error.no_write_access') }}</span>
+      <span v-else-if="!can_add"> · {{ $t('b_shop_theme_typography.custom_fonts.quota_reached') }}</span>
+    </p>
 
     <u-loading-progress v-if="busy_fetch" />
 
@@ -39,7 +43,7 @@
       <v-list-item
         v-for="font in fonts"
         :key="font.id"
-        :class="{ 'row-hover': can_write, disabled: busy_delete === font.id }"
+        :class="{ 'sd-modern-clickable-item': can_write, disabled: busy_delete === font.id }"
         @click="can_write ? openEditDialog(font) : undefined"
       >
         <template #prepend>
@@ -103,8 +107,8 @@
       </v-list-item>
     </v-list>
 
-    <div v-else class="py-8 text-center text-medium-emphasis">
-      <v-icon class="op-0-3" size="64">font_download</v-icon>
+    <div v-else class="sd-modern-empty-state text-center">
+      <v-icon class="op-0-3" size="36">font_download</v-icon>
       <h3 class="font-weight-light mt-2">
         {{ $t("b_shop_theme_typography.custom_fonts.empty_title") }}
       </h3>
@@ -123,7 +127,7 @@
     scrollable
     width="98vw"
   >
-    <v-card class="font-dialog-card text-start" rounded="t-xl">
+    <v-card class="b-shop-theme-fonts-dialog font-dialog-card sd-modern-widget text-start" rounded="t-xl">
       <div class="font-dialog-header">
         <div class="font-dialog-icon" aria-hidden="true">
           <v-icon size="22">font_download</v-icon>
@@ -140,14 +144,14 @@
             {{ $t("b_shop_theme_typography.custom_fonts.dialog.subtitle") }}
           </div>
         </div>
-        <v-btn
-          :aria-label="$t('global.actions.close')"
-          class="font-dialog-close"
-          icon="close"
-          size="small"
-          variant="text"
-          @click="dialog = false"
-        />
+        <v-tooltip location="top" content-class="sd-modern-tooltip text-start">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" :aria-label="$t('global.actions.close')"
+                   class="sd-modern-icon-button" icon="close" variant="text"
+                   @click="dialog = false" />
+          </template>
+          {{ $t('global.actions.close') }}
+        </v-tooltip>
       </div>
 
       <v-divider />
@@ -158,7 +162,7 @@
             <v-col cols="12" sm="7">
               <v-text-field
                 v-model="form.name"
-                bg-color="white"
+                bg-color="surface"
                 :counter="80"
                 density="comfortable"
                 :disabled="busy_save"
@@ -175,7 +179,7 @@
             <v-col cols="12" sm="5">
               <v-select
                 v-model="form.fallback"
-                bg-color="white"
+                bg-color="surface"
                 density="comfortable"
                 :disabled="busy_save"
                 :items="font_fallbacks"
@@ -202,12 +206,14 @@
               </div>
               <code dir="ltr">{{ cssFamily(form.family, form.fallback) }}</code>
             </div>
-            <v-btn
-              v-copy="cssFamily(form.family, form.fallback)"
-              icon="content_copy"
-              size="small"
-              variant="text"
-            />
+            <v-tooltip location="top" content-class="sd-modern-tooltip text-start">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" v-copy="cssFamily(form.family, form.fallback)"
+                       class="sd-modern-icon-button" icon="content_copy" variant="text"
+                       :aria-label="$t('global.actions.copy')" />
+              </template>
+              {{ $t('global.actions.copy') }}
+            </v-tooltip>
           </div>
         </section>
 
@@ -236,7 +242,7 @@
               </div>
             </div>
             <v-btn
-              class="font-add-face-btn"
+              class="sd-modern-button"
               :disabled="busy_save || form.faces.length >= 18"
               prepend-icon="add"
               size="small"
@@ -261,21 +267,22 @@
                   {{ face.weight }} · {{ fontStyleTitle(face.style) }}
                 </div>
               </div>
-              <v-btn
-                :aria-label="$t('global.actions.delete')"
-                :disabled="busy_save || form.faces.length <= 1"
-                icon="delete_outline"
-                size="x-small"
-                variant="text"
-                @click="removeFace(index)"
-              />
+              <v-tooltip location="top" content-class="sd-modern-tooltip text-start">
+                <template #activator="{ props }">
+                  <v-btn v-bind="props" :aria-label="$t('global.actions.delete')"
+                         :disabled="busy_save || form.faces.length <= 1"
+                         class="sd-modern-icon-button" icon="delete_outline" variant="text"
+                         @click="removeFace(index)" />
+                </template>
+                {{ $t('global.actions.delete') }}
+              </v-tooltip>
             </div>
 
             <v-row align="start" dense>
               <v-col cols="12" sm="5" md="3">
                 <v-select
                   v-model="face.weight"
-                  bg-color="white"
+                  bg-color="surface"
                   class="font-weight-select"
                   density="compact"
                   :disabled="busy_save"
@@ -302,7 +309,6 @@
                 <v-btn-toggle
                   v-model="face.style"
                   class="font-style-toggle"
-                  color="black"
                   density="compact"
                   :disabled="busy_save"
                   mandatory
@@ -323,7 +329,7 @@
               <v-col cols="12" md="5">
                 <v-file-input
                   :accept="file_accept"
-                  bg-color="white"
+                  bg-color="surface"
                   chips
                   density="compact"
                   :disabled="busy_save"
@@ -367,31 +373,30 @@
           </div>
         </section>
 
-        <v-alert
+        <div
           v-if="form_error"
-          class="mt-4"
-          density="compact"
-          type="error"
-          variant="tonal"
+          class="sd-modern-notice mt-4"
+          role="alert"
         >
-          {{ form_error }}
-        </v-alert>
+          <v-icon color="error" aria-hidden="true">error_outline</v-icon>
+          <span>{{ form_error }}</span>
+        </div>
       </v-card-text>
 
       <div class="font-dialog-footer">
         <v-btn
+          class="sd-modern-button"
           :disabled="busy_save"
-          size="large"
           variant="text"
           @click="dialog = false"
         >
           {{ $t("global.actions.cancel") }}
         </v-btn>
         <v-btn
-          class="font-dialog-save"
+          class="sd-modern-button sd-modern-button--primary"
+          color="primary"
           :loading="busy_save"
           :prepend-icon="editing ? 'save' : 'add'"
-          size="large"
           variant="flat"
           @click="saveFont"
         >
@@ -953,287 +958,60 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.font-dialog-card {
-  overflow: hidden;
-  background: #fff;
-  color: #141414;
-  border: 1px solid #e7e7e9;
-  box-shadow: 0 -16px 50px rgba(0, 0, 0, 0.12) !important;
-}
-
-.font-dialog-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 20px 24px;
-  background: #fff;
-}
-
-.font-dialog-icon {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
-  place-items: center;
-  color: #111;
-  background: #f3f3f4;
-  border: 1px solid #e6e6e8;
-  border-radius: 12px;
-}
-
-.font-dialog-title {
-  overflow: hidden;
-  color: #111;
-  font-size: 1.05rem;
-  font-weight: 700;
-  line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.font-dialog-subtitle,
-.font-section-subtitle {
-  margin-top: 3px;
-  color: #6b6b72;
-  font-size: 0.78rem;
-  line-height: 1.5;
-}
-
-.font-dialog-close {
-  color: #555 !important;
-  background: #f6f6f7;
-}
-
-.font-dialog-body {
-  padding: 24px !important;
-  background: #fbfbfc;
-}
-
-.font-dialog-section {
-  padding: 18px;
-  background: #fff;
-  border: 1px solid #e7e7e9;
-  border-radius: 14px;
-}
-
-.font-css-token {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.b-shop-theme-fonts {
   min-width: 0;
-  margin-top: 10px;
-  padding: 11px 12px;
-  background: #f7f7f8;
-  border: 1px solid #e7e7e9;
-  border-radius: 10px;
+  &__subtitle { padding: 0; margin: 0; min-height: 0; }
+  &__quota { margin: 8px 0 20px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
 }
 
-.font-css-token__content {
-  flex: 1 1 auto;
-}
-
-.font-css-token__content code {
-  display: block;
-  overflow: hidden;
-  color: #222;
-  font-size: 0.75rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.font-css-token__label,
-.font-control-label {
-  margin-bottom: 4px;
-  color: #77777e;
-  font-size: 0.68rem;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.font-upload-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  margin: 14px 0;
-  padding: 11px 13px;
-  color: #44444a;
-  font-size: 0.78rem;
-  line-height: 1.55;
-  background: #f1f1f2;
-  border-radius: 11px;
-}
-
-.font-upload-note .v-icon {
-  margin-top: 1px;
-  color: #222;
-}
-
-.font-faces-section {
-  padding: 0;
-  overflow: hidden;
-}
-
-.font-faces-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 18px;
-  border-bottom: 1px solid #ececef;
-}
-
-.font-section-title {
-  color: #151515;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.font-add-face-btn {
-  flex: 0 0 auto;
-  color: #151515;
-  border-color: #cfcfd3;
-  border-radius: 9px;
-}
-
-.font-face-row {
-  padding: 14px 18px 16px;
-  background: #fff;
-  border-bottom: 1px solid #ececef;
-}
-
-.font-face-row:last-child {
-  border-bottom: 0;
-}
-
-.font-face-row__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 28px;
-  margin-bottom: 9px;
-}
-
-.font-face-index {
-  display: inline-grid;
-  width: 23px;
-  height: 23px;
-  flex: 0 0 23px;
-  place-items: center;
-  color: #555;
-  font-size: 0.7rem;
-  font-weight: 700;
-  background: #f1f1f2;
-  border-radius: 7px;
-}
-
-.font-face-summary {
-  overflow: hidden;
-  color: #28282b;
-  font-size: 0.78rem;
-  font-weight: 650;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.font-style-toggle {
-  width: 100%;
-  height: 40px !important;
-  padding: 3px;
-  background: #f2f2f3;
-  border: 1px solid #dedee1;
-}
-
-.font-style-toggle :deep(.v-btn) {
-  min-width: 0;
-  height: 32px !important;
-  flex: 1 1 0;
-  color: #626269;
-  font-size: 0.75rem;
-  letter-spacing: 0;
-  text-transform: none;
-  border-radius: 7px !important;
-}
-
-.font-style-toggle :deep(.v-btn--active) {
-  color: #111 !important;
-  background: #fff !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-}
-
-.font-stored-files {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.font-stored-files :deep(.v-chip) {
-  max-width: 100%;
-  color: #333;
-  background: #fafafa;
-  border-color: #dedee1;
-}
-
-.font-dialog-footer {
-  position: sticky;
-  z-index: 2;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 13px 24px;
-  background: rgba(255, 255, 255, 0.96);
-  border-top: 1px solid #e7e7e9;
-  backdrop-filter: blur(12px);
-}
-
-.font-dialog-save {
-  min-width: 140px;
-  color: #fff !important;
-  background: #111 !important;
-  border-radius: 10px;
-  box-shadow: none !important;
-}
-
-.min-width-0 {
-  min-width: 0;
-}
-
-@media (max-width: 600px) {
-  .font-dialog-header,
-  .font-dialog-body,
-  .font-dialog-footer {
-    padding-inline: 16px !important;
-  }
-
-  .font-dialog-body {
-    padding-block: 16px !important;
-  }
-
-  .font-dialog-section {
-    padding: 14px;
-  }
-
-  .font-faces-section {
+.b-shop-theme-fonts-dialog {
+  &.font-dialog-card {
+    overflow: hidden;
     padding: 0;
+    color: rgb(var(--v-theme-on-surface));
+    background: rgb(var(--v-theme-surface));
+    border: 1px solid var(--sd-modern-border);
   }
+  .font-dialog-header { display: flex; align-items: center; gap: 12px; padding: 20px 24px; }
+  .font-dialog-icon { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; color: var(--sd-modern-muted); background: var(--sd-modern-inset); border-radius: 12px; }
+  .font-dialog-title { font-size: 18px; font-weight: 500; line-height: 25px; }
+  .font-dialog-subtitle, .font-section-subtitle { margin-top: 3px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  .font-dialog-body { padding: 24px !important; background: var(--sd-modern-inset); }
+  .font-dialog-section { padding: 18px; background: rgb(var(--v-theme-surface)); border: 1px solid var(--sd-modern-border); border-radius: 14px; }
+  .font-css-token { display: flex; align-items: center; gap: 12px; min-width: 0; margin-top: 10px; padding: 11px 12px; background: var(--sd-modern-inset); border-radius: 10px; }
+  .font-css-token__content { flex: 1 1 auto; }
+  .font-css-token__content code { display: block; color: inherit; font-size: 12px; overflow-wrap: anywhere; white-space: normal; }
+  .font-css-token__label, .font-control-label { margin-bottom: 4px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; }
+  .font-upload-note { display: flex; align-items: flex-start; gap: 9px; margin: 14px 0; padding: 11px 13px; color: inherit; font-size: 12px; line-height: 19px; background: var(--sd-modern-inset); border-radius: 11px; }
+  .font-upload-note .v-icon { margin-top: 1px; color: var(--sd-modern-muted); }
+  .font-faces-section { padding: 0; overflow: hidden; }
+  .font-faces-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; border-block-end: 1px solid var(--sd-modern-border); }
+  .font-section-title { font-size: 14px; font-weight: 500; line-height: 21px; }
+  .font-face-row { padding: 14px 18px 16px; background: rgb(var(--v-theme-surface)); border-block-end: 1px solid var(--sd-modern-border); }
+  .font-face-row:last-child { border-block-end: 0; }
+  .font-face-row__header { display: flex; align-items: center; justify-content: space-between; min-height: 32px; margin-bottom: 9px; }
+  .font-face-index { display: inline-grid; width: 23px; height: 23px; flex: 0 0 23px; place-items: center; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; background: var(--sd-modern-inset); border-radius: 7px; }
+  .font-face-summary { font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
+  .font-style-toggle { width: 100%; height: 40px !important; gap: 4px; padding: 3px; background: var(--sd-modern-inset); border: 1px solid var(--sd-modern-border); }
+  .font-style-toggle :deep(.v-btn) { min-width: 0; height: 32px !important; flex: 1 1 0; color: var(--sd-modern-muted); font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform: none; border-radius: 7px !important; }
+  .font-style-toggle :deep(.v-btn--active) { color: rgb(var(--v-theme-on-surface)) !important; background: rgb(var(--v-theme-surface)) !important; box-shadow: var(--sd-modern-selected-shadow); --v-activated-opacity: 0; }
+  .font-stored-files { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .font-stored-files :deep(.v-chip) { max-width: 100%; color: inherit; background: var(--sd-modern-inset); border-color: var(--sd-modern-border); }
+  .font-dialog-footer { position: sticky; z-index: 2; inset-block-end: 0; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 13px 24px; background: rgb(var(--v-theme-surface)); border-block-start: 1px solid var(--sd-modern-border); }
+  .min-width-0 { min-width: 0; }
 
-  .font-faces-header {
-    align-items: flex-start;
-    padding: 14px;
+  @media (max-width: 600px) {
+    .font-dialog-header, .font-dialog-body, .font-dialog-footer { padding-inline: 16px !important; }
+    .font-dialog-body { padding-block: 16px !important; }
+    .font-dialog-section { padding: 14px; }
+    .font-faces-section { padding: 0; }
+    .font-faces-header { align-items: flex-start; padding: 14px; flex-wrap: wrap; }
+    .font-face-row { padding-inline: 14px; }
+    .font-dialog-footer > .v-btn { flex: 1 1 0; }
   }
-
-  .font-face-row {
-    padding-inline: 14px;
-  }
-
-  .font-dialog-footer > .v-btn {
-    flex: 1 1 0;
-  }
-
-  .font-dialog-save {
-    min-width: 0;
+  @media (max-width: 600px), (pointer: coarse) {
+    .font-style-toggle { height: 52px !important; }
+    .font-style-toggle :deep(.v-btn) { height: 44px !important; }
   }
 }
 </style>

@@ -41,6 +41,7 @@
       :cols="cols"
       :headers="headers"
       :items="items"
+      :modern="modern"
       :styler="styler"
     ></b-spreadsheet>
 
@@ -73,6 +74,7 @@ export default {
     BSpreadsheet,
   },
   props: {
+    modern: { type: Boolean, default: false },
     canSelectFile: {
       type: Boolean,
       default: true,

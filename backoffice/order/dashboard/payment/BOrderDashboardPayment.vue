@@ -15,37 +15,47 @@
 <template>
   <div
     :class="{
-      'border-warning': isRequireAction,
-      'border-danger': isCanceled,
-      'border-info': isProcessing,
-      'border-success': isSucceeded && !isTestPayment,
-      'border-lime': isCOD,
-      'border-purple': isSucceeded && isTestPayment,
-      '-activated': in_this_step,
+      'border-warning': !modern && isRequireAction,
+      'border-danger': !modern && isCanceled,
+      'border-info': !modern && isProcessing,
+      'border-success': !modern && isSucceeded && !isTestPayment,
+      'border-lime': !modern && isCOD,
+      'border-purple': !modern && isSucceeded && isTestPayment,
+      '-activated': !modern && in_this_step,
+      'sd-modern-widget b-order-payment--modern text-start': modern,
+      'b-order-payment--workspace': modern && viewMode === 'workspace',
+      'widget shadow my-3 mx-1 mx-md-3 overflow-hidden pb-0': !modern,
     }"
-    class="widget shadow my-3 mx-1 mx-md-3 overflow-hidden pb-0"
-    style="border-top: 2px solid #dee2e6"
+    class="b-order-payment"
+    :style="modern ? undefined : { borderTop: '2px solid #dee2e6' }"
     v-bind="$attrs"
   >
     <!-- █████████████████████ Header █████████████████████ -->
 
     <u-widget-header
-      :title="$t('process_center.payment_widget.title')"
+      :title="modern ? undefined : $t('process_center.payment_widget.title')"
       icon="payment"
+      :class="{ 'b-order-payment__header': modern }"
     >
+      <template v-if="modern" v-slot:title>
+        <span class="b-order-payment__title-stack">
+          <span class="sd-modern-title-text">{{ $t('process_center.payment_widget.title') }}</span>
+          <span class="sd-modern-subtitle">{{ $t('process_center.modern.payment_subtitle') }}</span>
+        </span>
+      </template>
       <template v-slot:actions>
         <v-sheet
-          color="#fff"
+          :color="modern ? undefined : '#fff'"
           rounded="xl"
-          class="pa-1 d-flex align-center justify-space-between"
+          :class="modern ? 'b-order-payment__header-actions' : 'pa-1 d-flex align-center justify-space-between'"
         >
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Main payment check button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <v-btn
-            v-if="gateway && payment.unique_id"
+            v-if="!isRolePanel && gateway && payment.unique_id"
             :loading="busy_check"
-            class="me-2 tnt"
-            color="#333"
+            :class="modern ? 'sd-modern-button sd-modern-button--compact b-order-payment__check' : 'me-2 tnt'"
+            :color="modern ? undefined : '#333'"
             size="small"
             rounded="xl"
             variant="elevated"
@@ -60,18 +70,22 @@
               class="ms-2"
               height="20"
             />
+            <v-tooltip v-if="modern" activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">
+              {{ $t('process_center.modern.payment_check_help', { gateway: gateway.name }) }}
+            </v-tooltip>
           </v-btn>
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Pending payment check button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
           <v-btn
             v-for="(item, index) in transactions_pending"
+            v-if="!isRolePanel"
             :key="index"
             :disabled="!item.unique_id"
             :loading="busy_check"
-            class="me-2 tnt"
+            :class="modern ? 'sd-modern-button sd-modern-button--compact b-order-payment__check' : 'me-2 tnt'"
             rounded="xl"
-            color="#333"
+            :color="modern ? undefined : '#333'"
             size="small"
             variant="elevated"
             @click="
@@ -81,19 +95,21 @@
             <v-icon start>refresh</v-icon>
             {{ $t("global.actions.check") }}
             <img :src="getShopImagePath(item.logo)" class="mx-1" height="20" />
+            <v-tooltip v-if="modern" activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">
+              {{ $t('process_center.modern.payment_check_help', { gateway: item.name }) }}
+            </v-tooltip>
           </v-btn>
 
-          <u-currency-icon
-            :currency="order.currency"
-            flag
-            small
-          ></u-currency-icon>
+          <span :class="{ 'b-order-payment__currency': modern }">
+            <u-currency-icon :currency="order.currency" flag small />
+            <bdi v-if="modern">{{ order.currency }}</bdi>
+          </span>
         </v-sheet>
       </template>
     </u-widget-header>
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Live/Debug mode ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-    <v-list-subheader class="px-0">
+    <v-list-subheader v-if="!modern" class="px-0">
       <span v-if="payment" class="mx-2">
         <v-icon
           :color="payment.livemode ? 'green' : 'amber'"
@@ -110,8 +126,24 @@
     </v-list-subheader>
 
     <!-- █████████████████████ Payment Digest Status █████████████████████ -->
-    <div class="text-start mt-2">
-      <p>
+    <div class="text-start mt-2" :class="{ 'b-order-payment__context': modern }">
+      <div v-if="modern" class="b-order-payment__summary">
+        <div>
+          <span class="sd-modern-eyebrow">{{ $t('process_center.payment_widget.total_order_price_before_tax') }}</span>
+          <u-price class="b-order-payment__amount" :amount="order.price" :currency="order.currency" />
+        </div>
+        <div class="b-order-payment__statuses" role="status">
+          <span v-if="isRequireAction" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-warning" />{{ $t('process_center.payment_widget.waiting_for_pay') }}</span>
+          <span v-if="isProcessing" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-info" />{{ $t('process_center.payment_widget.processing_payment') }}</span>
+          <span v-if="is_require_capture" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-warning" />{{ $t('process_center.payment_widget.require_capture') }}</span>
+          <span v-if="isCanceled" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-error" />{{ $t('process_center.payment_widget.processing_cancel') }}</span>
+          <span v-if="isSucceeded" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-success" />{{ $t('process_center.payment_widget.paid') }}</span>
+          <span v-if="isCOD" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-warning" />{{ $t('global.commons.cod') }}</span>
+          <span v-if="payment" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="payment.livemode ? 'bg-success' : 'bg-warning'" />{{ payment.livemode ? $t('shop_gateway.transactions.live_mode') : $t('shop_gateway.transactions.test_mode') }}</span>
+          <span v-if="order.subscription_id" class="sd-modern-status sd-modern-status--plain"><v-icon size="16">shopping_bag</v-icon>SN-{{ order.subscription_id }}</span>
+        </div>
+      </div>
+      <p v-else>
         <span :class="{ 'text-muted': !isPayed }" class="h3">
           <u-price :amount="order.price" :currency="order.currency"></u-price>
         </span>
@@ -190,18 +222,18 @@
 
       <!-- █████████████████████ User & Customer █████████████████████ -->
 
-      <v-row>
+      <v-row :class="{ 'b-order-payment__identities': modern }">
         <v-col v-if="buyer || !customer /*Guest*/" cols="12" sm="6">
           <!-- ⬬⬬⬬⬬⬬⬬⬬ Buyer > 🥵 User ⬬⬬⬬⬬⬬⬬⬬ -->
 
-          <div v-if="buyer" class="py-2 d-flex align-items-center">
+          <div v-if="buyer" class="py-2 d-flex align-items-center" :class="{ 'b-order-payment__identity': modern }">
             <small
               class="me-3 ms-1 flex-grow-1 flex-sm-grow-0 op-0-5"
               title="This is the user's profile on Selldone. It remains consistent across all stores on Selldone."
               >{{ $t("global.commons.buyer") }}
             </small>
             <component
-              :is="order.customer_id ? 'router-link' : 'span'"
+              :is="order.customer_id && !modern ? 'router-link' : 'span'"
               :to="
                 isRolePanel || IS_VENDOR_PANEL
                   ? {}
@@ -213,8 +245,12 @@
               class="flex-grow-0"
               @click.stop
             >
-              <v-avatar class="m-1 hover-scale force-top" size="42">
-                <img :src="getUserAvatar(buyer.id)" />
+              <v-avatar class="m-1 hover-scale force-top" :class="{ 'b-order-payment__avatar': modern }" size="42">
+                <v-img v-if="modern && buyer.id" :src="getUserAvatar(buyer.id)" :alt="buyer.name">
+                  <template #error><v-icon size="22" aria-hidden="true">person_outline</v-icon></template>
+                </v-img>
+                <v-icon v-else-if="modern" size="22" aria-hidden="true">person_outline</v-icon>
+                <img v-else :src="getUserAvatar(buyer.id)" />
               </v-avatar>
             </component>
 
@@ -231,15 +267,29 @@
                 <span v-copy class="p-0">{{ buyer.phone }}</span>
               </p>
             </span>
+            <v-btn
+              v-if="modern && order.customer_id && !isRolePanel && !IS_VENDOR_PANEL"
+              :to="{ name: 'BPageCustomerDashboard', params: { customer_id: order.customer_id } }"
+              target="_blank"
+              rel="noopener noreferrer"
+              icon
+              variant="text"
+              class="sd-modern-icon-button b-order-payment__profile"
+              :aria-label="$t('process_center.modern.open_buyer_profile')"
+              @click.stop
+            >
+              <v-icon size="16" aria-hidden="true">north_east</v-icon>
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.open_buyer_profile') }}</v-tooltip>
+            </v-btn>
           </div>
           <!-- ⬬⬬⬬⬬⬬⬬⬬ Buyer > 🥶 Guest ⬬⬬⬬⬬⬬⬬⬬ -->
 
-          <div v-else-if="!customer" class="py-2 d-flex align-items-center">
+          <div v-else-if="!customer" class="py-2 d-flex align-items-center" :class="{ 'b-order-payment__identity': modern }">
             <small class="me-3 ms-1 flex-grow-1 flex-sm-grow-0 op-0-5"
               >{{ $t("global.commons.buyer") }}
             </small>
 
-            <v-avatar class="m-1 hover-scale force-top flex-grow-0" size="42">
+            <v-avatar class="m-1 hover-scale force-top flex-grow-0" :class="{ 'b-order-payment__avatar': modern }" size="42">
               <img :src="require('../../../../assets/icons/user.svg')" />
             </v-avatar>
 
@@ -260,13 +310,20 @@
         <v-col v-if="customer" cols="12" sm="6">
           <!-- ⬬⬬⬬⬬⬬⬬⬬ Buyer > 🧜 Customer ⬬⬬⬬⬬⬬⬬⬬ -->
 
-          <div class="py-2 d-flex align-items-center">
+          <div class="py-2 d-flex align-items-center" :class="{ 'b-order-payment__identity': modern }">
             <small
               class="me-3 ms-1 flex-grow-1 flex-sm-grow-0 op-0-5"
               title="This is the user's profile in your shop, and you can edit it."
               >{{ $t("global.commons.customer") }}</small
             >
+            <v-avatar v-if="modern" size="34" class="b-order-payment__avatar flex-grow-0">
+              <v-img v-if="customer.user_id" :src="getUserAvatar(customer.user_id)" :alt="customer.name">
+                <template #error><v-icon size="22" aria-hidden="true">person_outline</v-icon></template>
+              </v-img>
+              <v-icon v-else size="22" aria-hidden="true">person_outline</v-icon>
+            </v-avatar>
             <v-btn
+              v-else
               :to="
                 isRolePanel || IS_VENDOR_PANEL
                   ? {}
@@ -288,7 +345,7 @@
 
             <span class="ps-2">
               <p
-                v-if="customer.name && (!buyer || customer.name !== buyer.name)"
+                v-if="customer.name && (modern || !buyer || customer.name !== buyer.name)"
                 class="m-0 font-weight-bold"
               >
                 <span class="highlight-yellow">{{ customer.name }}</span>
@@ -315,6 +372,20 @@
                 <span v-copy class="p-0">{{ customer.phone }}</span>
               </p>
             </span>
+            <v-btn
+              v-if="modern && order.customer_id && !isRolePanel && !IS_VENDOR_PANEL"
+              :to="{ name: 'BPageCustomerDashboard', params: { customer_id: order.customer_id } }"
+              target="_blank"
+              rel="noopener noreferrer"
+              icon
+              variant="text"
+              class="sd-modern-icon-button b-order-payment__profile"
+              :aria-label="$t('process_center.modern.open_customer_profile')"
+              @click.stop
+            >
+              <v-icon size="16" aria-hidden="true">north_east</v-icon>
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.open_customer_profile') }}</v-tooltip>
+            </v-btn>
           </div>
         </v-col>
       </v-row>
@@ -457,7 +528,7 @@
 
       <!-- █████████████████████ Tips █████████████████████ -->
 
-      <ul class="tips mt-4">
+      <ul v-if="!modern" class="tips mt-4">
         <li
           v-for="item in $tm('process_center.payment_widget.checklist')"
           :key="item"
@@ -468,7 +539,7 @@
 
       <!-- █████████████████████ COD Action █████████████████████ -->
 
-      <div v-if="isCOD && !payment" class="p-2">
+      <div v-if="!isRolePanel && isCOD && !payment" class="p-2">
         <v-btn
           :class="{
             disabled:
@@ -510,7 +581,7 @@
 
       <!-- █████████████████████ Payment summery █████████████████████ -->
 
-      <v-row class="text-subtitle-2" no-gutters>
+      <v-row class="text-subtitle-2" :class="{ 'b-order-payment__facts': modern }" no-gutters>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Summery > Date ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <v-col
           v-if="payment"
@@ -552,7 +623,12 @@
             {{ gateway.name }}
           </p>
           <div class="text-center">
-            <v-chip class="mx-1" color="#fafafa" size="small" variant="flat">
+            <span v-if="modern" class="sd-modern-status sd-modern-status--plain b-order-payment__gateway-status" tabindex="0">
+              <span class="sd-modern-status__dot" :class="gateway.enable ? 'bg-success' : 'bg-error'" aria-hidden="true" />
+              {{ gateway.cod ? $t('global.commons.cod') : gateway.cash ? $t('global.commons.cash') : gateway.dir ? $t('global.commons.dir_payment') : $t('global.commons.online') }}
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">{{ $t(gateway.enable ? 'process_center.modern.gateway_enabled' : 'process_center.modern.gateway_disabled') }}</v-tooltip>
+            </span>
+            <v-chip v-else class="mx-1" color="#fafafa" size="small" variant="flat">
               <v-icon
                 :color="gateway.enable ? 'green' : 'red'"
                 :title="
@@ -576,15 +652,20 @@
               }}
             </v-chip>
           </div>
+          <div v-if="modern && gateway.code" class="b-order-payment__gateway-code">
+            <span class="sd-modern-eyebrow">{{ $t('process_center.modern.gateway_code') }}</span>
+            <bdi>{{ gateway.code }}</bdi>
+          </div>
         </v-col>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Summery > Card + Payment method ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <v-col
-          v-if="payment && payment.card"
+          v-if="payment && (payment.card || modern)"
           class="border-end-grater-md p-2"
           cols="6"
           md="2"
         >
+          <template v-if="payment.card">
           <small class="font-weight-bold"
             >{{ $t("process_center.payment_widget.payment_method") }}
           </small>
@@ -632,10 +713,25 @@
           </div>
 
           <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+          </template>
+          <div v-if="modern" class="b-order-payment__risk">
+            <u-payment-risk-indicator v-if="payment.risk !== null && payment.risk !== undefined" :risk="payment.risk" small />
+            <span v-else aria-hidden="true">—</span>
+            <div>
+              <span class="sd-modern-eyebrow b-order-payment__risk-label">
+                {{ $t('process_center.payment_widget.risk') }}
+                <v-btn class="sd-modern-icon-button sd-modern-info-button" icon variant="text" :aria-label="$t('process_center.payment_widget.risk')">
+                  <v-icon size="14" aria-hidden="true">info_outline</v-icon>
+                  <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.payment_risk_help') }}</v-tooltip>
+                </v-btn>
+              </span>
+              <p>{{ $t(payment.risk !== null && payment.risk !== undefined ? 'process_center.modern.risk_review' : 'process_center.modern.risk_not_recorded') }}</p>
+            </div>
+          </div>
         </v-col>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Summery > Risk ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <v-col v-if="payment" class="border-end-grater-md p-2" cols="6" md="2">
+        <v-col v-if="payment && !modern" class="border-end-grater-md p-2" cols="6" md="2">
           <small class="font-weight-bold"
             >{{ $t("process_center.payment_widget.risk") }}
           </small>
@@ -651,7 +747,7 @@
 
         <v-col
           v-if="billing_details"
-          class="border-end-grater-md p-2"
+          class="border-end-grater-md p-2 b-order-payment__billing-fact"
           cols="6"
           md="2"
         >
@@ -664,12 +760,16 @@
         </v-col>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Summery > Country + Map ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <v-col v-if="card" class="pa-2 text-center" cols="6" md="2">
+        <v-col v-if="card" class="pa-2 text-center b-order-payment__country-fact" cols="6" md="2">
           <u-map-countries-single
             :country="card.country"
           ></u-map-countries-single>
         </v-col>
       </v-row>
+      <div v-if="modern" class="sd-modern-notice b-order-payment__review">
+        <v-icon size="17" aria-hidden="true">checklist</v-icon>
+        <p>{{ $t(isVirtual ? 'process_center.modern.virtual_payment_review' : 'process_center.modern.payment_review') }}</p>
+      </div>
     </div>
 
     <!-- █████████████████████ Payment detail table █████████████████████ -->
@@ -677,23 +777,26 @@
     <div
       v-if="order"
       :class="{
-        'mx-n6': $vuetify.display.smAndDown,
-        'rounded-xl mb-4 border': !$vuetify.display.smAndDown,
+        'mx-n6': !modern && $vuetify.display.smAndDown,
+        'rounded-xl mb-4 border': !modern && !$vuetify.display.smAndDown,
+        'b-order-payment__ledger': modern,
+        'mt-5 overflow-hidden': !modern,
       }"
-      class="mt-5 overflow-hidden"
     >
       <b-order-payment-table
         :cod-enable="codEnable"
         :is-role-panel="isRolePanel"
         :order="order"
         :shop="shop"
+        :modern="modern"
+        :class="{ 'b-order-payment-table--workspace': modern && viewMode === 'workspace' }"
         style="border-radius: unset"
         @fetch-order="$emit('fetch-order')"
       >
       </b-order-payment-table>
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Footer ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-      <v-row align="center" class="border-top bg-light" no-gutters>
+      <v-row align="center" :class="modern ? 'b-order-payment__footer' : 'border-top bg-light'" no-gutters>
         <v-col class="p-2" cols="12" sm="3">
           <p class="font-weight-bold text-muted small my-1">
             {{
@@ -711,18 +814,35 @@
           <u-price :amount="tax" :currency="order.currency"></u-price>
         </v-col>
 
-        <v-col cols="12" sm="6">
+        <v-col cols="12" sm="6" :class="{ 'b-order-payment__flow': modern }">
+          <div v-if="modern" class="b-order-payment__flow-heading">
+            <h3>{{ $t('process_center.modern.payment_flow') }}</h3>
+            <v-btn class="sd-modern-icon-button sd-modern-info-button" icon variant="text" :aria-label="$t('process_center.modern.payment_flow')">
+              <v-icon size="14" aria-hidden="true">info_outline</v-icon>
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.payment_flow_help') }}</v-tooltip>
+            </v-btn>
+            <span class="b-order-payment__currency"><u-currency-icon :currency="order.currency" flag small /><bdi>{{ order.currency }}</bdi></span>
+          </div>
           <u-chart-sankey
-            :config="
-              (config) => {
-                config.sankey().sankey().nodePadding(7);
-                config.sankey().nodeDraggableY(true);
-              }
-            "
-            :data="payment_sankey_data"
-            style="height: 100px; font-size: 11px"
+            :config="configurePaymentSankey"
+            :generator="modern ? modern_sankey_generator : undefined"
+            :data="payment_sankey_chart_data"
+            :class="{ 'b-order-payment__sankey': modern }"
+            :style="modern ? undefined : { height: '100px', fontSize: '11px' }"
           >
           </u-chart-sankey>
+          <details v-if="modern" class="b-order-payment__flow-values">
+            <summary>{{ $t('process_center.modern.payment_flow_values') }} · <bdi>{{ order.currency }}</bdi></summary>
+            <table class="sd-modern-table">
+              <thead><tr><th scope="col">{{ $t('global.commons.title') }}</th><th scope="col">{{ $t('global.commons.amount') }}</th></tr></thead>
+              <tbody>
+                <template v-for="node in payment_sankey_chart_data.nodes" :key="node.name">
+                  <tr v-if="node.amount != null"><th scope="row">{{ node.name }}</th><td><bdi>{{ formatSankeyAmount(node.amount) }}</bdi></td></tr>
+                </template>
+              </tbody>
+            </table>
+          </details>
+          <p v-if="modern" class="sd-modern-subtitle b-order-payment__flow-help">{{ $t('process_center.modern.payment_flow_drag') }}</p>
         </v-col>
       </v-row>
     </div>
@@ -731,6 +851,7 @@
   <!-- █████████████████████████ Dialog > Confirm COD Payment █████████████████████████ -->
 
   <v-bottom-sheet
+    v-if="!isRolePanel"
     v-model="dialog_customer_pay_money_cod"
     max-width="98vw"
     width="680"
@@ -842,6 +963,9 @@ import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
 import { TransactionStatus } from "@selldone/core-js/enums/payment/TransactionStatus";
 import BOrderPaymentTable from "../../../order/payment/table/BOrderPaymentTable.vue";
 import UChartSankey from "../../../../ui/chart/sankey/UChartSankey.vue";
+import chartSankey from "../../../../ui/chart/sankey/core/sankey.js";
+import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { Basket, Bill, ShopOptionsHelper } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
@@ -851,8 +975,8 @@ import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHead
 
 export default {
   name: "BOrderDashboardPayment",
-  mixins: [DateMixin, ClubMixin],
-  inject: ["$shop"],
+  mixins: [DateMixin, ClubMixin, CurrencyMixin],
+  inject: { $shop: { default: null } },
 
   components: {
     UWidgetHeader,
@@ -894,6 +1018,12 @@ export default {
       default: false,
     },
     isRolePanel: Boolean,
+    modern: { type: Boolean, default: false },
+    viewMode: {
+      type: String,
+      default: 'refined',
+      validator: (value: string) => ['refined', 'workspace'].includes(value),
+    },
   },
 
   data: function () {
@@ -922,6 +1052,8 @@ export default {
 
       //---------------------------------------------
       show_tax_detail: false,
+      // Keep this order's presentation settings out of other shared chart instances.
+      modern_sankey_generator: chartSankey(),
     };
   },
 
@@ -959,7 +1091,7 @@ export default {
 
     //------------------------------------------------------------------------
     checkout() {
-      return ShopOptionsHelper.GetCheckout(this.$shop);
+      return ShopOptionsHelper.GetCheckout(this.shop || this.$shop);
     },
 
     /**
@@ -1155,6 +1287,58 @@ export default {
         });
 
       return out;
+    },
+
+    payment_sankey_chart_data() {
+      const data = this.payment_sankey_data;
+      if (!this.modern) return data;
+
+      const label = (key) => this.$t(`global.commons.${key}`);
+      const colors = {
+        [label("order")]: "#85828b",
+        [label("items")]: "#85828b",
+        [label("payment")]: "#6b62bb",
+        [label("you")]: "#268754",
+        [label("tax")]: "#ba8b3f",
+        [label("shipping_tax")]: "#ba8b3f",
+        [label("incentives")]: "#7953b5",
+        [label("discount")]: "#13a4be",
+        [label("coupon")]: "#c2185b",
+        [label("club")]: "#651fff",
+      };
+      // Display recorded amounts, not D3's max(inflow,outflow) or layout epsilon.
+      const amounts = {
+        [label("items")]: Math.max(
+          0,
+          this.order.price + this.order.discount -
+          (this.order.delivery_price > 0 ? this.order.delivery_price : 0),
+        ),
+        [label("payment")]: this.total_payed,
+        [label("you")]: data.links.find((link) => link.target === label("you"))?.value,
+        [label("tax")]: Math.abs(this.tax),
+        [label("shipping_tax")]: Math.abs(this.tax_shipping),
+        [label("delivery")]: Math.abs(this.order.delivery_price),
+        [label("discount")]: Math.abs(this.items_discount),
+        [label("discount_code")]: Math.abs(this.discount_code_amount),
+        [label("coupon")]: Math.abs(this.coupon_amount),
+        [label("club")]: Math.abs(this.club_amount),
+        [label("lottery")]: Math.abs(this.lottery_amount),
+        [label("cross_sell")]: Math.abs(this.total_cross_sells_discount),
+        [label("incentives")]:
+          Math.abs(this.items_discount) + Math.abs(this.discount_code_amount) +
+          Math.abs(this.coupon_amount) + Math.abs(this.club_amount) +
+          Math.abs(this.lottery_amount) + Math.abs(this.total_cross_sells_discount),
+      };
+      const nodes = data.nodes.map((node) => ({
+        ...node,
+        color: colors[node.name] || node.color,
+        amount: amounts[node.name],
+      }));
+      const links = data.links.map((link) => {
+        const color = nodes.find((node) => node.name === link.target)?.color;
+        return { ...link, sourceColor: color, targetColor: color };
+      });
+      return { ...data, padding: 0, nodes, links };
     },
 
     payment_sankey_data() {
@@ -1576,9 +1760,30 @@ export default {
     },
   },
   methods: {
+    configurePaymentSankey(config) {
+      const sankey = config.sankey();
+      sankey.sankey().nodePadding(this.modern ? 32 : 7);
+      sankey.nodeDraggableY(true);
+      if (!this.modern) return;
+      sankey.sankey().nodeWidth(7).nodeSort(null);
+      sankey.nodeValueLabel((node) =>
+        node.amount == null ? null : this.formatSankeyAmount(node.amount),
+      );
+    },
+
+    formatSankeyAmount(amount) {
+      const value = this.FormatNumberCurrency(amount, this.order.currency);
+      const sign = this.GetUserSelectedCurrencyName(this.order.currency, true);
+      const atEnd = this.shop?.theme?.reverse_currency ||
+        CurrencyHelper.GetUserSelectedCurrencySignAtEnd(this.GetUserSelectedCurrency(), this.order.currency);
+      return atEnd ? `${value} ${sign}` : `${sign}${value}`;
+    },
+
     //――――――――――――――――――――――― Check payment status ―――――――――――――――――――――――
 
     checkPaymentStatus(gateway_code, unique_id, gateway_name) {
+      // Payment reconciliation and collection use shop APIs, outside role actions.
+      if (this.isRolePanel) return;
       this.busy_check = true;
 
       axios
@@ -1638,6 +1843,7 @@ export default {
     //――――――――――――――――――――――― COD > Confirm payment ―――――――――――――――――――――――
 
     confirmCODPaymentCompleted(gateway_code) {
+      if (this.isRolePanel) return;
       this.busy_pay = true;
 
       axios
@@ -1678,4 +1884,160 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-order-payment--modern {
+  margin: 0 0 18px;
+  padding: 20px 20px 0;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  overflow: visible;
+
+  .b-order-payment__header {
+    margin-block-end: 17px;
+    align-items: center !important;
+
+    :deep(h2) { align-items: flex-start !important; min-width: 0; font-family: inherit; font-size: 18px !important; font-weight: 500 !important; line-height: 24px !important; }
+    :deep(.--icon) { margin-block-start: 2px; font-size: 20px !important; color: var(--sd-modern-muted); }
+  }
+
+  .b-order-payment__title-stack { display: flex; flex-direction: column; gap: 4px; }
+  .b-order-payment__title-stack .sd-modern-title-text { font-size: 18px; font-weight: 500; line-height: 24px; letter-spacing: 0; }
+  .b-order-payment__title-stack .sd-modern-subtitle { margin: 0; font-size: 12px; font-weight: 400; line-height: 18px; }
+  .b-order-payment__header-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; background: transparent; }
+  .b-order-payment__currency { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 400; color: var(--sd-modern-muted); }
+  .b-order-payment__check { flex: 0 0 auto; min-width: 104px; height: 32px; min-height: 32px; padding: 4px 8px 4px 10px; border-radius: 999px; background: rgb(var(--v-theme-on-surface)); color: rgb(var(--v-theme-surface)); box-shadow: none; white-space: nowrap; }
+  .b-order-payment__check :deep(.v-btn__content) { gap: 5px; font-size: 12px; line-height: 18px; white-space: nowrap; }
+  .b-order-payment__check :deep(.v-icon) { font-size: 14px; margin: 0; }
+  .b-order-payment__context { margin: 0 !important; }
+  .b-order-payment__summary { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; padding-block: 2px 19px; }
+  .b-order-payment__summary .sd-modern-eyebrow { font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: .65px; }
+  .b-order-payment__amount { display: block; margin-block-start: 3px; font-size: 24px; line-height: 31px; font-weight: 500; letter-spacing: -.5px; }
+  .b-order-payment__amount :deep(.small) { font-size: 14px !important; font-weight: 500; }
+  .b-order-payment__statuses { display: flex; flex-direction: column; gap: 4px; }
+  .b-order-payment__statuses .sd-modern-status { font-size: 12px; line-height: 18px; }
+  .b-order-payment__identities { margin: 0; padding-block: 13px; border-block: 1px solid var(--sd-modern-border); }
+  .b-order-payment__identities > div { padding: 0; min-width: 0; }
+  .b-order-payment__identity { display: grid !important; grid-template-columns: 34px minmax(0, 1fr) auto; column-gap: 10px; align-items: center; padding-inline-end: 16px; }
+  .b-order-payment__identity > small { grid-column: 2; grid-row: 1; margin: 0 !important; opacity: 1; }
+  .b-order-payment__identity > .flex-grow-0 { grid-column: 1; grid-row: 1 / 3; margin: 0 !important; }
+  .b-order-payment__identity > .ps-2 { grid-column: 2; grid-row: 2; min-width: 0; padding: 0 !important; overflow-wrap: anywhere; }
+  .b-order-payment__identity > .b-order-payment__profile { grid-column: 3; grid-row: 1 / 3; }
+  .b-order-payment__avatar { margin: 0 !important; background: rgba(var(--v-theme-on-surface), .04); }
+  .b-order-payment__avatar :deep(.v-img__error) { display: flex; align-items: center; justify-content: center; }
+  .b-order-payment__identities :deep(.v-avatar) { width: 34px !important; height: 34px !important; min-width: 34px; }
+  .b-order-payment__identities :deep(.highlight-yellow) { background: transparent; color: inherit; }
+  .b-order-payment__identities :deep(.font-weight-bold) { font-size: 12px; line-height: 18px; font-weight: 500 !important; }
+  .b-order-payment__identities :deep(.text-subtitle-2) { font-family: inherit !important; font-size: 11px !important; line-height: 17px; font-weight: 400; }
+  .b-order-payment__identities :deep(small) { font-size: 10px; line-height: 15px; font-weight: 400; letter-spacing: .65px; text-transform: uppercase; color: var(--sd-modern-muted); }
+  .b-order-payment__review { margin-block: 16px; padding: 11px 12px; gap: 9px; align-items: flex-start; font-size: 11px; line-height: 17px; }
+  .b-order-payment__review p { margin: 0; }
+  .b-order-payment__facts { display: flex; flex-wrap: wrap; padding-block: 17px; row-gap: 18px; }
+  .b-order-payment__facts > div { flex: 1 1 135px; min-width: 0; max-width: none; padding: 0 12px !important; font-size: 12px; line-height: 18px; }
+  .b-order-payment__facts > div:first-child { padding-inline-start: 0 !important; }
+  .b-order-payment__facts > div + div { border-inline-start: 1px solid var(--sd-modern-border); }
+  .b-order-payment__facts > div > small { display: block; margin-block-end: 7px; font-size: 10px; line-height: 15px; font-weight: 400 !important; letter-spacing: .65px; text-transform: uppercase; color: var(--sd-modern-muted); }
+  .b-order-payment__facts > div > small .sd-modern-info-button { margin-block: -8px; }
+  .b-order-payment__facts > div > p { margin-block: 0 7px !important; font-size: 11px; line-height: 17px; text-wrap: balance; }
+  .b-order-payment__facts > div > img { margin-inline: 0 !important; }
+  .b-order-payment__facts :deep(.v-chip) { height: auto; background: transparent !important; padding: 0; font-size: 11px; line-height: 17px; }
+  .b-order-payment__facts :deep(.v-chip__underlay) { display: none; }
+  .b-order-payment__facts :deep(.text-center) { text-align: start !important; }
+  .b-order-payment__facts :deep(.b-order-payment__facts > div > br) { display: none; }
+  .b-order-payment__gateway-status { gap: 6px; font-size: 11px; line-height: 17px; }
+  .b-order-payment__gateway-status .sd-modern-status__dot { flex-shrink: 0; margin: 0; }
+  .b-order-payment__gateway-code { display: flex; flex-direction: column; gap: 3px; margin-block-start: 12px; overflow-wrap: anywhere; font-size: 11px; }
+  .b-order-payment__gateway-code .sd-modern-eyebrow,
+  .b-order-payment__risk-label { font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: .65px; }
+  .b-order-payment__risk { display: flex; align-items: center; gap: 8px; margin-block-start: 14px; }
+  .b-order-payment__risk > :deep(.v-avatar) { flex: none; }
+  .b-order-payment__risk > div { min-width: 0; }
+  .b-order-payment__risk-label { display: inline-flex; align-items: center; gap: 4px; margin: 0; }
+  .b-order-payment__risk-label .sd-modern-info-button { margin-block: -8px; }
+  .b-order-payment__risk p { margin: 2px 0 0; font-size: 11px; font-weight: 400; line-height: 17px; color: var(--sd-modern-muted); }
+  .b-order-payment__ledger { margin-block-start: 2px; }
+  .b-order-payment__footer { margin: 0; border-block-start: 1px solid var(--sd-modern-border); display: flex; flex-wrap: wrap; }
+  .b-order-payment__footer > div:not(.b-order-payment__flow) { flex: 0 1 25%; padding: 17px 9px !important; font-size: 13px; font-weight: 400; }
+  .b-order-payment__footer > div > .font-weight-bold { margin-block: 0 5px !important; font-size: 10px; line-height: 15px; font-weight: 400 !important; text-transform: uppercase; letter-spacing: .65px; color: var(--sd-modern-muted) !important; }
+  .b-order-payment__footer :deep(.u--price) { font-size: 13px; font-weight: 400; }
+  .b-order-payment__footer :deep(.u--price .small) { font-size: inherit !important; font-weight: 400; }
+  .b-order-payment__flow { flex: 0 0 100%; max-width: 100%; padding: 17px 0 16px; border-block-start: 1px solid var(--sd-modern-border); container-type: inline-size; }
+  .b-order-payment__flow-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-block-end: 12px; }
+  .b-order-payment__flow-heading h3 { margin: 0; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; }
+  .b-order-payment__flow-heading > .b-order-payment__currency { margin-inline-start: auto; }
+  .b-order-payment__flow-help { margin-block: 8px 0; font-size: 11px; font-weight: 400; line-height: 17px; }
+  .b-order-payment__sankey { height: 250px; padding: 15px 10px 29px; font-family: inherit; font-size: 11px; }
+  .b-order-payment__sankey :deep(svg.d2b-chart) { overflow: visible; }
+  .b-order-payment__sankey :deep(text) { fill: rgb(var(--v-theme-on-surface)); font-family: inherit; font-size: 11px; font-weight: 400; }
+  .b-order-payment__sankey :deep(.d2b-sankey-node-value) { opacity: .7; direction: ltr; unicode-bidi: isolate; }
+  .b-order-payment__sankey :deep(.d2b-sankey-nodes rect) { stroke: none; opacity: 1; }
+  .b-order-payment__sankey :deep(.d2b-sankey-link path),
+  .b-order-payment__sankey :deep(.d2b-sankey-link rect) { opacity: .24; transition: opacity .15s; }
+  .b-order-payment__sankey :deep(.d2b-sankey-link:hover path),
+  .b-order-payment__sankey :deep(.d2b-sankey-link:hover rect) { opacity: .55; }
+  .b-order-payment__flow-values { display: none; font-size: 11px; line-height: 17px; }
+  .b-order-payment__flow-values summary { display: list-item; min-height: 44px; padding-block: 12px; color: rgb(var(--v-theme-primary)); cursor: pointer; }
+  .b-order-payment__flow-values table { width: 100%; border-collapse: collapse; }
+  .b-order-payment__flow-values th, .b-order-payment__flow-values td { padding: 7px 3px; border-block-end: 1px solid var(--sd-modern-border); text-align: start; font-weight: 400; }
+  .b-order-payment__flow-values th:last-child, .b-order-payment__flow-values td:last-child { text-align: end; }
+
+  @container (max-width: 295px) {
+    .b-order-payment__sankey :deep(.d2b-sankey-node-value) { display: none; }
+    .b-order-payment__flow-values { display: block; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .b-order-payment__sankey :deep(.d2b-sankey-link path),
+    .b-order-payment__sankey :deep(.d2b-sankey-link rect) { transition: none; }
+  }
+  @media (max-width: 580px) { .b-order-payment__sankey { height: 285px; padding-inline: 8px; } }
+
+  @media (min-width: 681px) and (max-width: 1100px) {
+    .b-order-payment__facts > div { flex-basis: 30%; }
+    .b-order-payment__facts > div:nth-child(3n + 1) { padding-inline-start: 0 !important; border-inline-start: 0; }
+  }
+  @media (max-width: 680px) {
+    padding: 17px 13px 0;
+    border-radius: 13px;
+    .b-order-payment__header { flex-direction: column !important; align-items: stretch !important; }
+    .b-order-payment__header :deep(> div:first-child) { flex-wrap: wrap; width: 100%; }
+    .b-order-payment__header :deep(h2) { flex-basis: 100%; }
+    .b-order-payment__header :deep(> div:first-child > .v-spacer) { display: none; }
+    .b-order-payment__header-actions { flex-basis: 100%; width: 100%; justify-content: space-between; padding-block-start: 12px; }
+    .b-order-payment__check { height: 44px; min-height: 44px; }
+    .b-order-payment__identities { row-gap: 12px; }
+    .b-order-payment__facts > div { flex-basis: 40%; padding-inline: 0 12px !important; border: 0 !important; }
+    .b-order-payment__footer > div:not(.b-order-payment__flow) { flex-basis: 50%; }
+  }
+  @media (pointer: coarse) { .b-order-payment__check { height: 44px; min-height: 44px; } }
+
+  @media (min-width: 801px) {
+    &.b-order-payment--workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.9fr) minmax(230px, 1fr);
+      column-gap: 20px;
+
+      .b-order-payment__header { grid-column: 1 / -1; min-width: 0; }
+      .b-order-payment__context { grid-column: 2; grid-row: 2; min-width: 0; padding-inline-start: 18px; border-inline-start: 1px solid var(--sd-modern-border); }
+      // Keep the original table, footer and chart mounted while changing their placement.
+      .b-order-payment__ledger { display: contents; }
+      .b-order-payment__ledger > :deep(.b-order-payment-table--modern) { grid-column: 1; grid-row: 2; min-width: 0; align-self: start; }
+      .b-order-payment__footer { grid-column: 1 / -1; grid-row: 3; margin-block-start: 16px; }
+      .b-order-payment__identities { gap: 15px; }
+      .b-order-payment__identities > div { flex-basis: 100%; max-width: 100%; }
+      .b-order-payment__identity { padding-inline-end: 0; }
+      .b-order-payment__facts { row-gap: 16px; }
+      .b-order-payment__facts > div { flex-basis: 40%; padding: 0 !important; padding-inline-end: 10px !important; border: 0 !important; }
+      .b-order-payment__facts > .b-order-payment__billing-fact,
+      .b-order-payment__facts > .b-order-payment__country-fact { flex-basis: 100%; }
+      .b-order-payment__country-fact > :deep(.text-center) { display: flex; align-items: center; gap: 8px; overflow-wrap: anywhere; }
+      .b-order-payment__country-fact :deep(.vue-world-map) { flex: 0 0 76px; width: 76px; height: 64px !important; margin: 0 !important; }
+      .b-order-payment__review { flex-wrap: nowrap; }
+      .b-order-payment__review > .v-icon { flex: none; }
+      .b-order-payment__review p { flex: 1; min-width: 0; }
+    }
+  }
+}
+</style>

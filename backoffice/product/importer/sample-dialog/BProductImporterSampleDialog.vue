@@ -18,9 +18,87 @@
     max-width="640"
     width="98vw"
     content-class="rounded-t-xl"
+    :aria-label="modern ? $t('importer.product_templates.title') : undefined"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <v-card class="text-start" dir="ltr" rounded="t-xl">
+    <v-card
+      v-if="modern"
+      class="sd-modern-widget s--product-template-dialog text-start"
+      rounded="t-xl"
+    >
+      <header class="sd-modern-header">
+        <div class="sd-modern-title">
+          <img
+            src="../../../../assets/file/excel.svg"
+            width="28"
+            height="28"
+            alt=""
+          />
+          <div>
+            <h2 class="sd-modern-title-text">
+              {{ $t("importer.product_templates.title") }}
+            </h2>
+            <p class="sd-modern-subtitle">
+              {{ $t("importer.product_templates.description") }}
+            </p>
+          </div>
+        </div>
+      </header>
+      <div class="s--product-template-dialog__rows">
+        <section
+          v-for="template in templates"
+          :key="template.code"
+          class="s--product-template-dialog__row"
+        >
+          <div>
+            <h3>{{ $t(`importer.product_templates.${template.code}`) }}</h3>
+            <p>
+              {{
+                $t(`importer.product_templates.${template.code}_description`)
+              }}
+            </p>
+            <span
+              v-if="template.code === 'simple'"
+              class="s--product-template-dialog__recommendation"
+              >{{ $t("global.commons.recommended") }}</span
+            >
+          </div>
+          <v-btn
+            :href="template.href"
+            target="_blank"
+            rel="noopener"
+            class="sd-modern-button sd-modern-button--inline"
+            color="primary"
+            variant="text"
+            :aria-label="`${$t('global.actions.download')} · ${$t(`importer.product_templates.${template.code}`)}`"
+          >
+            <v-icon start size="16">download</v-icon
+            >{{ $t("global.actions.download")
+            }}<v-icon end size="16">north_east</v-icon>
+          </v-btn>
+        </section>
+      </div>
+      <footer class="s--product-template-dialog__footer">
+        <v-btn
+          href="https://github.com/selldone/excel"
+          target="_blank"
+          rel="noopener"
+          class="sd-modern-button sd-modern-button--inline"
+          color="primary"
+          variant="text"
+        >
+          {{ $t("importer.product_templates.samples")
+          }}<v-icon end size="16">north_east</v-icon>
+        </v-btn>
+        <v-btn
+          class="sd-modern-button"
+          variant="text"
+          @click="$emit('update:modelValue', false)"
+          >{{ $t("global.actions.close") }}</v-btn
+        >
+      </footer>
+    </v-card>
+    <v-card v-else class="text-start" dir="ltr" rounded="t-xl">
       <v-card-title>
         <img
           class="me-1"
@@ -123,9 +201,107 @@ export default {
   name: "BProductImporterSampleDialog",
   emits: ["update:modelValue"],
   props: {
+    modern: { type: Boolean, default: false },
     modelValue: {},
   },
+  data: () => ({
+    templates: [
+      {
+        code: "simple",
+        href: "/app/excel/products-import-no-variants-small.xlsx",
+      },
+      { code: "full", href: "/app/excel/products-import-variants-full.xlsx" },
+      {
+        code: "wholesaler",
+        href: "/app/excel/products-import-wholesaler.xlsx",
+      },
+    ],
+  }),
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.s--product-template-dialog {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 22px;
+
+  .sd-modern-header {
+    margin-block-end: 18px;
+  }
+  .sd-modern-title {
+    align-items: start;
+  }
+  .sd-modern-title-text {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .sd-modern-subtitle {
+    font-size: 13px;
+  }
+  .sd-modern-button {
+    min-height: 36px;
+  }
+  &__rows {
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px 18px;
+    padding-block: 16px;
+    border-block-end: 1px solid var(--sd-modern-border);
+    h3 {
+      margin: 0;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.45;
+    }
+    p {
+      margin: 5px 0 0;
+      font-size: 13px;
+      color: var(--sd-modern-muted);
+      overflow-wrap: anywhere;
+    }
+  }
+  &__recommendation {
+    display: inline-block;
+    margin-block-start: 5px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+  }
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-block-start: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .s--product-template-dialog {
+    padding: 18px;
+    .sd-modern-button {
+      min-height: 44px;
+    }
+    &__row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      .sd-modern-button {
+        justify-self: start;
+      }
+    }
+  }
+}
+@media (pointer: coarse) {
+  .s--product-template-dialog .sd-modern-button {
+    min-height: 44px;
+  }
+}
+</style>

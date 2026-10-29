@@ -81,6 +81,11 @@ export default function () {
       graph.nodes = graph.nodes.filter((n) => !!n.value);
       graph = $$.sankey.nodes(graph.nodes).links(graph.links)();
 
+      graph.nodes.forEach((node) => {
+        node.valueLabel = $$.nodeValueLabel(node.data, node.value);
+      });
+      const hasValueLabels = graph.nodes.some(hasValueLabel);
+
       // render link gradients
       let linkDefs = el.selectAll(".d2b-sankey-link-defs").data([graph.links]),
         linksDefsEnter = linkDefs
@@ -231,7 +236,13 @@ export default function () {
       updater(transition);
 
       function labelX(d) {
-        return labelLeft(d) ? nodeWidth + 5 : -5;
+        const gap = hasValueLabels ? 7 : 5;
+        return labelLeft(d) ? nodeWidth + gap : -gap;
+      }
+
+      function hasValueLabel(d) {
+        return d.valueLabel !== null &&
+          d.valueLabel !== undefined && d.valueLabel !== "";
       }
 
       function labelLeft(d) {
@@ -239,7 +250,7 @@ export default function () {
       }
 
       function labelY(d) {
-        return 5 + Math.max(0, d.y1 - d.y0) / 2;
+        return (hasValueLabels ? -2 : 5) + Math.max(0, d.y1 - d.y0) / 2;
       }
 
       function drag(event, d, nodeElement) {
@@ -266,6 +277,8 @@ export default function () {
       function updater(transition = false) {
         nodeStatic
           .select("text")
+          .attr("x", labelX)
+          .attr("y", labelY)
           .classed("d2b-text-anchor-end", (d) => !labelLeft(d))
           .call(
             textWrap,
@@ -277,6 +290,16 @@ export default function () {
             },
             "middle",
           );
+
+        nodeStatic
+          .selectAll(".d2b-sankey-node-value")
+          .data((d) => hasValueLabel(d) ? [d] : [])
+          .join("text")
+          .attr("class", "d2b-sankey-node-value")
+          .classed("d2b-text-anchor-end", (d) => !labelLeft(d))
+          .attr("x", labelX)
+          .attr("y", (d) => Math.max(0, d.y1 - d.y0) / 2 + 13)
+          .text((d) => d.valueLabel);
 
         const l = transition ? link : linkStatic,
           n = transition ? node : nodeStatic;
@@ -341,6 +364,7 @@ export default function () {
     .addPropFunctor("nodes", (d) => d.nodes)
     .addPropFunctor("nodeKey", (d) => d.name)
     .addPropFunctor("nodeLabel", (d, i, key) => key)
+    .addPropFunctor("nodeValueLabel", null)
     .addPropFunctor("nodeLabelWrapLength", Infinity)
     .addPropFunctor("nodeDraggableX", false)
     .addPropFunctor("nodeDraggableY", false)

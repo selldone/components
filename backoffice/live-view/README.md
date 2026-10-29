@@ -2,6 +2,8 @@
 
 `GeoMap` presents the approved Refined Live View in the shop dashboard and existing CRM report. It accepts an optional `shop`; CRM callers without it use `route.params.shop_id`. `windowMinutes` selects 5 or 15 minutes, and `windowControl=false` lets the dashboard own that selector.
 
+The opt-in `report` layout groups the activity-window control, connection/as-of state, four headline metrics, map and active-country list in one CRM report widget, with recent activity and trends below. It keeps the existing data, map operations, local geolocation and recovery paths. Report icon actions use the shared square-button and top-tooltip primitives; the dashboard layout remains unchanged when `report` is false.
+
 Four headline metrics separate recorded sessions/customers active in the last 60 seconds from selected-window cart additions and successfully placed orders. Product views, cart removals and purchase attempts remain distinct secondary counters. Recent rows are minute/country/activity aggregates, not individual orders or second-by-second activity. Initial unknown values are dashes; real server zeroes remain zero. Presence mini-trends contain snapshots received by this mounted view; event trends use returned minute buckets, including the current partial minute.
 
 Server snapshots with `simulated=true` show an explicit Sample data label and generated-activity explanation. Only the canonical backend sample-shop allow-list selects that mode; the component never generates data or chooses simulation from a client/query flag. Ordinary snapshots retain their real values and omit the sample disclosure.

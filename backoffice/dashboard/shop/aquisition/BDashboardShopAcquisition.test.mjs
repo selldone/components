@@ -54,9 +54,12 @@ const document = new JSDOM().window.document;
 const maximumFixtures = ["#FFA000", "#C2185B", "#1976D2"].map(
   (color, index) => ({
     x: 280,
-    y: [30, 100, 110][index],
+    y: [26476, 100, 110][index],
     marker: { size: 4, strokeColor: color },
-    label: { text: `Maximum ${index}`, style: { background: color } },
+    label: {
+      text: `Maximum ${index}: ${[26476, 100, 110][index]}`,
+      style: { background: color },
+    },
   }),
 );
 
@@ -71,8 +74,7 @@ const req = (name) => {
   if (name.includes("/Brands.ts")) return { Brands: [] };
   if (name === "@selldone/core-js/helper")
     return { colorSet3: ["#1976d2"], ShadeColor: (color) => color };
-  if (name === "numeral")
-    return { default: (n) => ({ format: () => String(n) }) };
+  if (name === "numeral") return { default: require("numeral") };
   if (name.includes("DateConverter")) return { DateConverter: dc };
   if (name.includes("TimeSeries")) return { TimeSeries: Series };
   if (name.includes("ChartAnnotations"))
@@ -428,8 +430,43 @@ async function renderEmptyFixture(
     maximumFixtures.map((p) => [p.x, p.y]),
     "Caption placement never changes maximum observations",
   );
+  const originalMaxima = JSON.stringify(maximumFixtures);
+  assert.equal(
+    ac.maxPoints[0].label.text,
+    "shop_visitors_widget.page_views: 26.5K",
+    "Desktop maximum labels retain the translated series name with a compact value",
+  );
+  assert.equal(
+    ac.maxPoints[1].label.text,
+    "shop_visitors_widget.new_visitors: 100",
+  );
+  assert.ok(
+    ac.maxPoints.every(
+      (point) =>
+        point.label.textAnchor === "middle" && point.label.offsetX === 0,
+    ),
+    "Native captions are centered over each actual maximum",
+  );
+  ac.$vuetify.display.smAndDown = true;
+  assert.equal(
+    ac.maxPoints[0].label.text,
+    "26.5K",
+    "Mobile maximum labels contain only the compact value",
+  );
+  assert.deepEqual(
+    plain(ac.maxPoints.map((point) => [point.x, point.y])),
+    maximumFixtures.map((point) => [point.x, point.y]),
+  );
+  ac.$vuetify.display.smAndDown = false;
   ac.modern = false;
   assert.equal(ac.endpointPoints.length, 0);
+  assert.equal(ac.maxPoints, maximumFixtures);
+  assert.equal(ac.maxPoints[0].label.text, "Maximum 0: 26476");
+  assert.equal(
+    JSON.stringify(maximumFixtures),
+    originalMaxima,
+    "Modern formatting leaves the shared helper's observations and legacy labels unchanged",
+  );
 
   const sessions = load(paths.sessions).component;
   const s = state(sessions, {
@@ -782,12 +819,21 @@ async function renderEmptyFixture(
     customSVG: {},
     image: {},
   }));
-  function maxCaptions(width, hidden = [], outside = []) {
+  function maxCaptions(
+    width,
+    hidden = [],
+    outside = [],
+    xs = [0, width / 2, width],
+  ) {
     const root = element("g");
     nativeContext.el = root;
     nativeW.layout.gridWidth = width;
     nativeW.globals.collapsedSeriesIndices = hidden;
-    maxima.forEach((point, index) => {
+    const scaledMaxima = maxima.map((point, index) => ({
+      ...point,
+      x: xs[index],
+    }));
+    scaledMaxima.forEach((point, index) => {
       native.addPointAnnotation(
         { ...point, outsideZoom: outside.includes(index) },
         root,
@@ -814,13 +860,13 @@ async function renderEmptyFixture(
         text.getAttribute("transform"),
         "Caption text and native background move together",
       );
-      return 280 + transform;
+      return Number(text.getAttribute("x")) + transform;
     });
     assert.deepEqual(
       [...root.querySelectorAll(".apexcharts-point-annotation-marker")].map(
         (n) => [n.getAttribute("cx"), n.getAttribute("cy")],
       ),
-      maxima
+      scaledMaxima
         .filter(
           (p, i) => !hidden.includes(p.seriesIndex) && !outside.includes(i),
         )
@@ -830,14 +876,10 @@ async function renderEmptyFixture(
   }
   for (const width of [230, 600]) {
     const { root, centers } = maxCaptions(width);
-    assert.ok(
-      centers.every(
-        (center, i) => Math.abs(center - (width * (i + 0.5)) / 3) < 1e-9,
-      ),
-    );
-    assert.ok(
-      centers.every((center, i) => !i || center - centers[i - 1] >= 60),
-      "Desktop and mobile maximum captions do not overlap",
+    assert.deepEqual(
+      centers,
+      [34, width / 2, width - 34],
+      "Only edge captions move inward; the interior caption stays centered over its peak",
     );
     const before = [...root.querySelectorAll("text")].map((n) =>
       n.getAttribute("transform"),
@@ -852,17 +894,36 @@ async function renderEmptyFixture(
     );
     assert.equal(
       root.querySelectorAll(".b-dashboard-acquisition__maximum-leader").length,
-      3,
+      2,
+      "Only edge clamps add leaders to the original maxima",
+    );
+    const interiorXs = [40, width / 2, width - 40];
+    const interior = maxCaptions(width, [], [], interiorXs);
+    assert.deepEqual(interior.centers, interiorXs);
+    assert.equal(
+      interior.root.querySelectorAll(".b-dashboard-acquisition__maximum-leader")
+        .length,
+      0,
+      "Interior captions keep their actual peak positions without leaders",
+    );
+    assert.ok(
+      [
+        ...interior.root.querySelectorAll(
+          ".b-dashboard-acquisition__maximum-label",
+        ),
+      ].every(
+        (caption) => caption.getAttribute("transform") === "translate(0, 0)",
+      ),
     );
   }
   assert.deepEqual(
     maxCaptions(600, [2]).centers,
-    [150, 450],
-    "A hidden series releases its caption space",
+    [34, 566],
+    "Hiding a series does not reposition the remaining captions away from their maxima",
   );
   assert.deepEqual(
     maxCaptions(600, [], [0, 1]).centers,
-    [300],
+    [566],
     "Zoomed-out maximum observations are not recreated",
   );
 

@@ -13,7 +13,40 @@
   -->
 
 <template>
-  <div class="px-4">
+  <div v-if="workspace" class="s-structure-input text-start">
+    <details v-if="isArray && !isEnumsArray" class="s-structure-input__nested" :open="Array.isArray(modelValue) && modelValue.length > 0">
+      <summary>{{ fieldLabel }} <span class="s-structure-input__count">{{ Array.isArray(modelValue) ? modelValue.length : 0 }}</span></summary>
+      <div v-for="(value, index) in Array.isArray(modelValue) ? modelValue : []" :key="index" class="s-structure-input__entry">
+        <div class="s-structure-input__entry-heading">
+          <span>{{ fieldLabel }} {{ index + 1 }}</span>
+          <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="$t('global.article.workspace.structure_remove_item')" @click="removeItem(index)">
+            <v-icon>delete_outline</v-icon>
+            <v-tooltip activator="parent" content-class="sd-modern-tooltip" location="top">{{ $t('global.article.workspace.structure_remove_item') }}</v-tooltip>
+          </v-btn>
+        </div>
+        <s-structure-data-input :model-value="value" :name="name" :label="$t('global.article.workspace.structure_item', { index: index + 1 })" :type="type[0]" workspace inline-object @update:model-value="updateItem(index, $event)" />
+      </div>
+      <v-btn class="sd-modern-button sd-modern-button--compact s-structure-input__add" variant="text" prepend-icon="add" @click="addItem()">{{ $t('global.article.workspace.structure_add_item') }}</v-btn>
+    </details>
+    <component :is="inlineObject ? 'div' : 'details'" v-else-if="isObject" :class="{ 's-structure-input__nested': !inlineObject }" :open="inlineObject ? undefined : objectExpanded" @toggle="objectExpanded = $event.target.open">
+      <summary v-if="!inlineObject">{{ fieldLabel }}</summary>
+      <div v-if="inlineObject || objectExpanded" class="s-structure-input__object">
+        <s-structure-data-input v-for="(childType, key) in editableBlueprint" :key="key" :model-value="modelValue?.[key]" :name="key" :type="childType" workspace @update:model-value="updateProperty(key, $event)" />
+      </div>
+    </component>
+    <div v-else class="s-structure-input__field" @focusin="inputTouched = true" @pointerdown="inputTouched = true" @keydown="inputTouched = true">
+      <label :for="inputId">{{ fieldLabel }}</label>
+      <v-select v-if="isEnum || isEnumsArray" :id="inputId" :model-value="modelValue" :items="isEnumsArray ? type[0] : type" :multiple="isEnumsArray" :item-title="fineName" :aria-label="fieldLabel" class="sd-modern-underlined-field" variant="underlined" hide-details="auto" @update:model-value="onInput" />
+      <u-number-input v-else-if="type === 'number'" :id="inputId" :model-value="modelValue" :aria-label="fieldLabel" class="sd-modern-underlined-field" variant="underlined" hide-details="auto" @update:model-value="onInput" />
+      <u-price-input v-else-if="type === 'price'" :id="inputId" :model-value="modelValue" :decimal="2" :aria-label="fieldLabel" class="sd-modern-underlined-field" variant="underlined" hide-details="auto" @update:model-value="onInput" />
+      <u-currency-input v-else-if="type === 'currency'" :id="inputId" :model-value="modelValue" :return-object="false" :aria-label="fieldLabel" class="sd-modern-underlined-field" variant="underlined" hide-details="auto" @update:model-value="onInput" />
+      <u-date-input v-else-if="type === 'date'" :id="inputId" :model-value="modelValue" format="YYYY-MM-DDTHH:mm:ssZ" :aria-label="fieldLabel" class="sd-modern-underlined-field" variant="underlined" hide-details="auto" @update:model-value="onInput" />
+      <v-textarea v-else-if="name === 'description' || name === 'text'" :id="inputId" :model-value="modelValue" :aria-label="fieldLabel" class="sd-modern-underlined-field" variant="underlined" rows="3" auto-grow hide-details="auto" @update:model-value="onInput" />
+      <v-text-field v-else :id="inputId" :model-value="modelValue" :aria-label="fieldLabel" :type="type === 'url' ? 'url' : 'text'" :rules="type === 'url' ? [GlobalRules.url()] : undefined" :placeholder="type === 'duration' ? 'PT30M' : undefined" class="sd-modern-underlined-field" :class="{ 's-structure-input__technical': type === 'url' || type === 'duration' }" variant="underlined" hide-details="auto" @update:model-value="onInput" />
+      <p v-if="type === 'duration'" class="s-structure-input__help">{{ $t('global.article.workspace.structure_duration_hint') }}</p>
+    </div>
+  </div>
+  <div v-else class="px-4">
     <v-btn
       v-if="deletable"
       class="float-end"
@@ -225,6 +258,9 @@ export default {
   },
   emits: ["update:modelValue", "delete"],
   props: {
+    workspace: { type: Boolean, default: false },
+    inlineObject: { type: Boolean, default: false },
+    label: { type: String, default: '' },
     modelValue: {},
     type: {
       require: true,
@@ -241,6 +277,8 @@ export default {
   data() {
     return {
       Duration: Duration,
+      inputTouched: false,
+      objectExpanded: !!this.modelValue,
 
       blueprints: {
         "@Person": { "@type": "Person", name: "text" },
@@ -266,7 +304,7 @@ export default {
           priceCurrency: "currency",
           availability: Availability,
           price: "price",
-          eligibleRegion: "[@Country",
+          eligibleRegion: ["@Country"],
         },
         "@Country": { "@type": "Country", name: "text" },
         "@WebPage": { "@type": "WebPage", lastReviewed: "date" },
@@ -341,6 +379,13 @@ export default {
     };
   },
   computed: {
+    inputId() { return `structure-field-${this.$.uid}`; },
+    fieldLabel() { return this.label || this.$t(`global.article.workspace.structure_fields.${this.name}`); },
+    editableBlueprint() {
+      const entries = Object.entries(this.blueprint || {}).filter(([key]) => key !== '@type');
+      if (this.type === '@HowToStep') entries.sort(([a], [b]) => ['name', 'text', 'url', 'itemListElement', 'image'].indexOf(a) - ['name', 'text', 'url', 'itemListElement', 'image'].indexOf(b));
+      return Object.fromEntries(entries);
+    },
     isArray() {
       return Array.isArray(this.type) && !this.isEnum; // Enums are array by default!
     },
@@ -360,6 +405,8 @@ export default {
   },
 
   created() {
+    // Workspace fields stay absent until the user edits them; opening a form is not a change.
+    if (this.workspace) return;
     if (this.isArray) {
       if (!this.modelValue || !Array.isArray(this.modelValue))
         this.$emit(
@@ -384,6 +431,31 @@ export default {
   },
 
   methods: {
+    onInput(value) {
+      // Shared numeric/currency controls emit defaults on mount; only user editing changes this draft.
+      if (!this.inputTouched || Object.is(value, this.modelValue) || (value == null && this.modelValue == null)) return;
+      this.$emit('update:modelValue', value);
+    },
+    updateProperty(key, value) {
+      this.$emit('update:modelValue', { ...(this.modelValue || {}), '@type': this.blueprint['@type'], [key]: value });
+    },
+    addItem() {
+      const type = this.type[0];
+      const value = typeof type === 'string' && type.startsWith('@') ? { '@type': this.blueprints[type]?.['@type'] || type.slice(1) } : '';
+      this.$emit('update:modelValue', [...(Array.isArray(this.modelValue) ? this.modelValue : []), value]);
+      this.$nextTick(() => {
+        const entries = this.$el.querySelectorAll(':scope > details > .s-structure-input__entry');
+        entries[entries.length - 1]?.querySelector('.s-structure-input__field input, .s-structure-input__field textarea, .s-structure-input__field select')?.focus();
+      });
+    },
+    updateItem(index, value) {
+      const values = [...this.modelValue];
+      values[index] = value;
+      this.$emit('update:modelValue', values);
+    },
+    removeItem(index) {
+      this.$emit('update:modelValue', this.modelValue.filter((_, i) => i !== index));
+    },
     fineName(val) {
       return val
         .replace("http://schema.org/", "")
@@ -393,4 +465,38 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.s-structure-input {
+  min-width: 0;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+  &__field { margin-block-end: 22px; min-width: 0; }
+  &__field > label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 500; line-height: 20px; }
+  &__nested { margin-block: 16px; padding: 18px; border: 1px solid var(--sd-modern-border); border-radius: 12px; min-width: 0; }
+  &__nested > summary { font-size: 12px; font-weight: 500; line-height: 20px; cursor: pointer; }
+  &__object { margin-top: 18px; min-width: 0; }
+  &__object > .s-structure-input:last-child :deep(.s-structure-input__field) { margin-bottom: 0; }
+  &__entry { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--sd-modern-border); }
+  &__entry-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; font-size: 12px; font-weight: 500; }
+  &__entry > .s-structure-input > .s-structure-input__object { margin-top: 0; }
+  &__count { margin-inline-start: 6px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; }
+  &__add { margin-top: 14px; }
+  &__help { margin: 6px 0 0; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
+  &__technical :deep(input) { direction: ltr; text-align: start; }
+  .sd-modern-underlined-field {
+    --sd-modern-field-height: 36px;
+    :deep(.v-field__input) { font-family: inherit; font-size: 13px !important; font-weight: 400; line-height: 20px !important; letter-spacing: 0; }
+    // These fields have an external label, so the shared floating-label inset is unnecessary.
+    :deep(.v-field.v-field--variant-underlined input.v-field__input),
+    :deep(.v-field.v-field--variant-underlined div.v-field__input) { min-height: 36px; height: 36px; padding: 7px 0 8px; box-sizing: border-box; }
+    :deep(.v-field.v-field--variant-underlined textarea.v-field__input) { min-height: 88px; padding: 7px 0 8px; box-sizing: border-box; }
+    :deep(.v-field.v-field--variant-underlined .v-field__append-inner),
+    :deep(.v-field.v-field--variant-underlined .v-field__prepend-inner) { padding-block: 0; align-items: center; }
+    :deep(.v-input__details), :deep(.v-messages__message) { font-size: 11px !important; line-height: 18px !important; }
+  }
+}
+@media (max-width: 580px), (pointer: coarse) {
+  .s-structure-input .sd-modern-underlined-field :deep(.v-field__input) { font-size: 16px !important; }
+}
+</style>

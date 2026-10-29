@@ -15,22 +15,17 @@
 <template>
   <draggable
     v-model="list"
-    :component-data="{
-      tag: 'ul',
-      type: 'transition-group',
-      name: !drag ? 'flip-list' : 'fade',
-    }"
+    :item-key="(image) => image"
     class="list-group list-group-flush"
     style="list-style-type: none"
-    tag="transition-group"
+    tag="ul"
     v-bind="dragOptions"
     @end="drag = false"
     @start="drag = true"
     @update:modelValue="$emit('update:modelValue', list)"
   >
-    <template v-slot:item="{ element }">
+    <template v-slot:item="{ element, index }">
       <li
-        :key="item"
         :style="{ 'background-image': `url('${element}')` }"
         class="list-group-item"
       >
@@ -47,7 +42,7 @@
     </template>
 
     <template v-slot:footer>
-      <div class="py-2">
+      <div key="add-image" class="py-2">
         <v-btn
           v-if="hasAdd"
           rounded
@@ -79,7 +74,6 @@ export default {
 
   data: () => ({
     drag: false,
-    index: 0,
     list: [],
   }),
 

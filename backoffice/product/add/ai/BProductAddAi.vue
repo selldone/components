@@ -13,26 +13,30 @@
   -->
 
 <template>
-  <v-sheet :dark="dark !== 'upload'" color="transparent" class="text-center">
+  <v-sheet
+    :dark="modern ? false : dark !== 'upload'"
+    color="transparent"
+    :class="modern ? 'b-product-add-ai--modern sd-modern-canvas text-start' : 'text-center'"
+  >
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Drop Image ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <v-expand-transition>
       <div v-if="step === 'upload'">
         <u-loading-progress v-if="uploading"></u-loading-progress>
 
-        <div class="max-widget-width mx-auto">
-          <u-widget-header title="Write about product" icon="looks_one">
+        <div class="max-widget-width mx-auto" :class="{ 'sd-modern-widget sd-modern-form': modern }">
+          <u-widget-header :title="modern ? $t('products_select.modern.ai.write_about_product') : 'Write about product'" icon="looks_one" :class="{ 'sd-modern-form-header': modern }">
           </u-widget-header>
           <v-text-field
             v-model="title"
             class="strong-field"
-            label="Name of product? (optional)"
+            :label="modern ? $t('products_select.modern.ai.product_name_optional') : 'Name of product? (optional)'"
             persistent-placeholder
-            placeholder="Model name, product tile or ..."
+            :placeholder="modern ? $t('products_select.modern.ai.product_name_placeholder') : 'Model name, product tile or ...'"
             variant="underlined"
           ></v-text-field>
 
-          <u-widget-header title="Select product's image" icon="looks_two">
+          <u-widget-header :title="modern ? $t('products_select.modern.ai.select_product_image') : &quot;Select product's image&quot;" icon="looks_two" :class="{ 'sd-modern-form-header': modern }">
           </u-widget-header>
 
           <div class="position-relative">
@@ -78,56 +82,43 @@
               width="84"
             />
             <div
-              class="typo-body text-white fadeIn delay_300 max-widget-width mx-auto py-2"
+              :class="modern ? 'b-product-add-ai__guidance' : 'typo-body text-white fadeIn delay_300 max-widget-width mx-auto py-2'"
             >
-              You just need to take a photo or drag and drop an image here!
+              {{ modern ? $t('products_select.modern.ai.image_guidance') : 'You just need to take a photo or drag and drop an image here!' }}
             </div>
             <div
               v-if="!demo"
               class="max-widget-width mx-auto py-2 text-start text-subtitle-2"
             >
               <v-icon class="me-1" size="small">auto_awesome</v-icon>
-              Currently, free users receive 10 tokens daily, while premium users
+              <template v-if="modern">{{ $t('products_select.modern.ai.tokens_guidance') }}</template>
+              <template v-else>Currently, free users receive 10 tokens daily, while premium users
               get 100 tokens. To get more tokens, you can upgrade your user to
-              premium.
+              premium.</template>
             </div>
           </div>
-
-          <v-alert class="my-5 text-start" closable variant="outlined">
-            <v-row align="center" no-gutters>
-              <div>Discover how it works.</div>
-              <v-spacer></v-spacer>
-              <v-btn
-                class="ma-1 tnt"
-                color="#fff"
-                size="small"
-                variant="flat"
-                @click="dialog_video = true"
-              >
-                <v-icon class="me-1">smart_display</v-icon>
-                Watch Now
-              </v-btn>
-            </v-row>
-          </v-alert>
 
           <v-alert
             v-if="!is_premium && !demo"
             class="my-5 text-start"
+            :class="{ 'sd-modern-notice': modern }"
             variant="outlined"
           >
             <v-row align="center" no-gutters>
               <div>
-                Upgrade to <b>✨Premium User</b> and enjoy additional free
-                background removal tokens.
+                <template v-if="modern">{{ $t('products_select.modern.ai.premium_guidance') }}</template>
+                <template v-else>Upgrade to <b>✨Premium User</b> and enjoy additional free
+                background removal tokens.</template>
               </div>
               <v-spacer></v-spacer>
               <v-btn
                 class="ma-1 tnt"
-                color="#fff"
+                :color="modern ? 'primary' : '#fff'"
+                :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
                 size="small"
                 variant="flat"
                 @click="showNeedSubscribePremium()"
-                >View Plan
+                >{{ modern ? $t('products_select.modern.ai.view_plan') : 'View Plan' }}
               </v-btn>
             </v-row>
           </v-alert>
@@ -140,24 +131,27 @@
     <v-expand-transition>
       <div v-if="step === 'edit'">
         <v-sheet
-          :style="{ '--background': '#344695' }"
+          :style="{ '--background': modern ? 'rgb(var(--v-theme-surface))' : '#344695' }"
           class="widget-box mb-5"
-          color="#344695"
-          theme="dark"
+          :class="{ 'sd-modern-widget sd-modern-form': modern }"
+          :color="modern ? undefined : '#344695'"
+          :theme="modern ? undefined : 'dark'"
         >
           <u-widget-header
             :href="ShopURLs.GetProductLink(shop, product.id, product.slug)"
-            add-caption="View Product"
+            :add-caption="modern ? $t('products_select.modern.ai.view_product') : 'View Product'"
             add-icon="open_in_new"
             add-text
-            button-color="#FFEB3B"
+            :button-color="modern ? 'primary' : '#FFEB3B'"
             icon="warehouse"
             target="_blank"
-            title="Type & Inventory"
+            :title="modern ? $t('products_select.modern.ai.type_inventory') : 'Type & Inventory'"
+            :class="{ 'sd-modern-form-header': modern }"
           ></u-widget-header>
           <v-list-subheader
-            >Here you can change the product type and quantity for the product
-            you've added.
+            ><template v-if="modern">{{ $t('products_select.modern.ai.type_inventory_guidance') }}</template>
+            <template v-else>Here you can change the product type and quantity for the product
+            you've added.</template>
           </v-list-subheader>
 
           <div class="position-relative">
@@ -204,7 +198,9 @@
 
           <u-smart-select
             v-model="type"
-            :dark="dark"
+            :dark="modern ? false : dark"
+            :class="{ 'sd-modern-smart-select': modern }"
+            :border="modern || undefined"
             :items="types"
             class="my-3"
             item-description="description"
@@ -230,18 +226,21 @@
         </v-sheet>
 
         <v-sheet
-          :style="{ '--background': '#344695' }"
+          :style="{ '--background': modern ? 'rgb(var(--v-theme-surface))' : '#344695' }"
           class="widget-box mb-5"
-          color="#344695"
-          theme="dark"
+          :class="{ 'sd-modern-widget sd-modern-form': modern }"
+          :color="modern ? undefined : '#344695'"
+          :theme="modern ? undefined : 'dark'"
         >
           <u-widget-header
             icon="price_change"
-            title="Pricing"
+            :title="modern ? $t('global.commons.price') : 'Pricing'"
+            :class="{ 'sd-modern-form-header': modern }"
           ></u-widget-header>
           <v-list-subheader
-            >Here you can specify the price and discount for the product you've
-            added.
+            ><template v-if="modern">{{ $t('products_select.modern.ai.pricing_guidance') }}</template>
+            <template v-else>Here you can specify the price and discount for the product you've
+            added.</template>
           </v-list-subheader>
 
           <u-currency-input
@@ -258,7 +257,7 @@
             :currency="currency"
             :label="$t('add_product.pricing.price_input')"
             class="strong-field"
-            dark
+            :dark="!modern"
             required
           ></u-price-input>
 
@@ -269,7 +268,7 @@
             :messages="`${$t(
               'add_product.pricing.discount_input_message',
             )}: ${discount_percent}%`"
-            dark
+            :dark="!modern"
             required
           ></u-price-input>
         </v-sheet>
@@ -278,8 +277,9 @@
           <v-btn
             :disabled="!type"
             :loading="busy_edit"
-            color="#FFF"
-            size="x-large"
+            :color="modern ? 'primary' : '#FFF'"
+            :size="modern ? 'default' : 'x-large'"
+            :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
             @click="saveProduct()"
           >
             <v-icon start>save</v-icon>
@@ -313,15 +313,17 @@
     <v-expand-transition>
       <div v-if="step === 'finish'">
         <v-sheet
-          :style="{ '--background': '#344695' }"
+          :style="{ '--background': modern ? 'rgb(var(--v-theme-surface))' : '#344695' }"
           class="widget-box mb-5"
-          color="#344695"
-          theme="dark"
+          :class="{ 'sd-modern-widget sd-modern-form': modern }"
+          :color="modern ? undefined : '#344695'"
+          :theme="modern ? undefined : 'dark'"
         >
-          <u-widget-header icon="done_all" title="Finish"></u-widget-header>
+          <u-widget-header icon="done_all" :title="modern ? $t('global.actions.finish') : 'Finish'" :class="{ 'sd-modern-form-header': modern }"></u-widget-header>
           <v-list-subheader
-            >Congratulations, your product has been successfully added to your
-            store and is now in the current folder.
+            ><template v-if="modern">{{ $t('products_select.modern.ai.finish_guidance') }}</template>
+            <template v-else>Congratulations, your product has been successfully added to your
+            store and is now in the current folder.</template>
           </v-list-subheader>
           <div class="widget-buttons">
             <v-btn
@@ -332,8 +334,9 @@
                 params: { product_id: product.id },
               }"
               class="single-line"
-              color="#FFF"
-              size="x-large"
+              :color="modern ? undefined : '#FFF'"
+              :size="modern ? 'default' : 'x-large'"
+              :class="{ 'sd-modern-button': modern }"
               variant="outlined"
             >
               <v-avatar class="avatar-gradient -thin -current mx-2" size="32">
@@ -341,9 +344,9 @@
               </v-avatar>
 
               <div class="flex-grow-1" style="max-width: calc(100% - 64px)">
-                <div class="mb-1">Open {{ title }}</div>
+                <div class="mb-1">{{ modern ? $t('products_select.modern.ai.open_product', { title }) : 'Open ' + title }}</div>
                 <div class="small">
-                  Inventory: {{ product.quantity }} | Price:
+                  {{ modern ? $t('global.commons.inventory') : 'Inventory' }}: {{ product.quantity }} | {{ modern ? $t('global.commons.price') : 'Price' }}:
                   <u-price
                     :amount="product.price"
                     :currency="product.currency"
@@ -357,51 +360,20 @@
 
           <div class="widget-buttons">
             <v-btn
-              color="#FFF"
-              size="x-large"
+              :color="modern ? 'primary' : '#FFF'"
+              :size="modern ? 'default' : 'x-large'"
+              :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
               variant="elevated"
               @click="reset()"
             >
               <v-icon class="me-1">add_box</v-icon>
-              Add New Product
+              {{ modern ? $t('add_product.title_new') : 'Add New Product' }}
             </v-btn>
           </div>
         </v-sheet>
       </div>
     </v-expand-transition>
 
-    <!-- █████████████████████ Dialog > Video █████████████████████ -->
-
-    <v-dialog v-model="dialog_video" dark fullscreen scrim="#000">
-      <v-card class="d-flex align-center justify-center" color="#000">
-        <v-btn
-          class="absolute-top-end z99"
-          color="#FFF"
-          icon
-          size="large"
-          variant="text"
-          @click="dialog_video = false"
-        >
-          <v-icon>close</v-icon>
-        </v-btn>
-
-        <v-container class="max-width-container-1280px mx-auto">
-          <video
-            v-if="dialog_video"
-            :autoplay="true"
-            :controls="true"
-            class="rounded-28px"
-            fullscreen
-            height="100%"
-            preload="metadata"
-            style="position: relative; background-color: #000"
-            width="100%"
-          >
-            <source src="./assets/ai-add-product-small.mp4" type="video/mp4" />
-          </video>
-        </v-container>
-      </v-card>
-    </v-dialog>
   </v-sheet>
 </template>
 
@@ -438,6 +410,7 @@ export default {
   },
   emits: ["product-add", "product-updated"],
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
     },
@@ -469,8 +442,6 @@ export default {
     raw_selected_image: null,
 
     show_thumbnails: false,
-
-    dialog_video: false,
 
     uploading: false,
   }),
@@ -611,4 +582,23 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-product-add-ai--modern {
+  padding: 24px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  .sd-modern-widget { --background: rgb(var(--v-theme-surface)); padding: 24px; margin-inline: auto; }
+  .b-product-add-ai__guidance { margin-block: 10px; font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
+  .v-list-subheader { font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
+  .sd-modern-notice { background: var(--sd-modern-inset); border: 0; color: rgb(var(--v-theme-on-surface)); }
+  .widget-buttons { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; max-width: 760px; margin-inline: auto; }
+  .sd-modern-form-header { margin-block: 14px; }
+  .sd-modern-form-header:first-child { margin-block-start: 0; }
+
+  @media (max-width: 599px) {
+    padding: 20px 12px;
+    .sd-modern-widget { padding: 20px 16px; }
+  }
+}
+</style>

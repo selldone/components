@@ -56,22 +56,23 @@
           :shop="shop"
           bg-color="transparent"
           class="min-width-200 max-width-field"
+          :class="{ 'b-process-center-list__subscription-plan': modern }"
           clearable
           flat
           hide-details
           single-line
-          variant="solo"
-          @change="refreshOrders"
+          :variant="modern ? 'plain' : 'solo'"
+          @change="!modern && refreshOrders()"
         >
         </b-product-subscription-pricing-input>
       </div>
 
       <v-text-field
         v-model="search"
-        :placeholder="modern ? $t('admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
+        :placeholder="modern ? $t(isDropShipping ? 'admin_shop.orders.modern.reseller_search' : 'admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
         bg-color="transparent"
         class="min-width-200 max-width-field b-process-center-list__search"
-        :aria-label="modern ? $t('admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
+        :aria-label="modern ? $t(isDropShipping ? 'admin_shop.orders.modern.reseller_search' : 'admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
         clearable
         flat
         hide-details
@@ -131,7 +132,7 @@
         (_data) => {
           return {
             class:
-              'row-hover anim-hover-targets ' +
+              'row-hover anim-hover-targets ' + (modern ? 'sd-modern-clickable-item ' : '') +
               (HIGHLIGHT_ID === _data.item.id ? 'drop-down-delayed' : ''),
           };
         }
@@ -151,9 +152,10 @@
             style="max-height: 400px; object-fit: contain"
             width="85%"
           />
-          <h2 class="text-h4 font-weight-thin">
+          <h2 v-if="!modern" class="text-h4 font-weight-thin">
             Your orders will appear here...
           </h2>
+          <p v-else class="sd-modern-help mb-0">{{ $t('admin_shop.orders.modern.empty') }}</p>
         </div>
         <div v-else class="text-center px-3 py-5 text-muted">
           <v-icon class="me-1">sentiment_dissatisfied</v-icon>
@@ -218,7 +220,7 @@
               <v-img :src="basket_image" :width="21" :height="27" />
             </router-link>
             <!-- Avocado -->
-            <div v-if="isAvocado" class="flex-grow-1">
+            <div v-if="isAvocado" class="flex-grow-1 b-process-center-list__avocado">
               <div class="mt-1 d-flex align-center">
                 <b class="flex-grow-1 flex-md-grow-0 text-start"
                   >AVO-{{ item.id }} <small>|</small> {{ item.title }}
@@ -234,8 +236,16 @@
                   border
                   class="py-1"
                   raw-images-path
+                  :size="modern ? 27 : 32"
                   style="vertical-align: super; display: inline"
                 ></products-dense-images-circles>
+                <return-request-button-badge
+                  v-if="modern && item.basket_item_returns?.length"
+                  :basket-item-returns="item.basket_item_returns"
+                  modern
+                  class="b-process-center-list__return"
+                  @click:return="openReturnRequest(item)"
+                />
               </div>
               <span
                 class="text-subtitle-2 single-line max-w-200 overflow-hidden"
@@ -243,6 +253,8 @@
               >
               <div
                 class="d-flex justify-end position-relative max-w-100 py-1 hover-scale-y-3x"
+                :tabindex="modern ? 0 : undefined"
+                :aria-label="modern ? $t('admin_shop.orders.modern.avocado.progress', { progress: item.progress }) : undefined"
               >
                 <v-progress-linear
                   :color="
@@ -257,8 +269,9 @@
                   rounded
                 >
                 </v-progress-linear>
-                <v-tooltip activator="parent" location="top">
-                  Fulfillment progress: {{ item.progress }}%
+                <v-tooltip activator="parent" location="top" :open-on-focus="modern ? true : undefined" :open-on-click="modern ? true : undefined" :content-class="modern ? 'sd-modern-tooltip text-start' : undefined">
+                  <template v-if="modern">{{ $t('admin_shop.orders.modern.avocado.progress', { progress: item.progress }) }}</template>
+                  <template v-else>Fulfillment progress: {{ item.progress }}%</template>
                 </v-tooltip>
               </div>
             </div>
@@ -274,14 +287,26 @@
               <b v-else class="flex-grow-1 flex-md-grow-0 text-start b-process-center-list__code">
                 {{ getBasketOrderCode(item) }}
               </b>
-              <products-dense-images-circles
-                :ids="getProductsIDs(item)"
-                :size="modern ? 27 : 32"
-                big-scale
-                border
-                class="py-1 b-process-center-list__products"
-                style="vertical-align: super; display: inline"
-              ></products-dense-images-circles>
+              <div
+                class="b-process-center-list__products"
+                :style="modern ? undefined : { display: 'contents' }"
+              >
+                <products-dense-images-circles
+                  :ids="getProductsIDs(item)"
+                  :size="modern ? 27 : 32"
+                  big-scale
+                  border
+                  class="py-1"
+                  style="vertical-align: super; display: inline"
+                ></products-dense-images-circles>
+                <return-request-button-badge
+                  v-if="modern && item.basket_item_returns?.length"
+                  :basket-item-returns="item.basket_item_returns"
+                  modern
+                  class="b-process-center-list__return"
+                  @click:return="openReturnRequest(item)"
+                />
+              </div>
 
               <v-chip
                 v-if="
@@ -368,31 +393,40 @@
             </v-chip>
 
 
-            <img
-              v-if="item.link_id"
-              :title="$t('global.commons.campaign')"
-              class="mx-1"
-              height="20"
-              src="../../../assets/icons/campaign.svg"
-              width="20"
-            />
-            <img
-              v-if="item.affiliate_id"
-              :title="$t('global.commons.affiliate')"
-              class="mx-1"
-              height="20"
-              src="../../../assets/icons/affiliate.svg"
-              width="20"
-            />
-
-            <img
-              v-if="hasDropShipping(item)"
-              :title="$t('global.commons.drop_shipping')"
-              class="mx-1"
-              height="20"
-              src="../../../assets/icons/dropshipping.svg"
-              width="20"
-            />
+            <div
+              class="b-process-center-list__attribution"
+              :style="modern ? undefined : { display: 'contents' }"
+            >
+              <span v-if="modern && item.channel" class="b-process-center-list__channel">
+                <v-icon class="rotate-90-e" size="13">alt_route</v-icon>
+                <b-campaign-source-icon :value="item.channel" :size="16" alt="" />
+                <span>{{ item.channel }}</span>
+              </span>
+              <img
+                v-if="item.link_id"
+                :title="$t('global.commons.campaign')"
+                class="mx-1"
+                height="20"
+                src="../../../assets/icons/campaign.svg"
+                width="20"
+              />
+              <img
+                v-if="item.affiliate_id"
+                :title="$t('global.commons.affiliate')"
+                class="mx-1"
+                height="20"
+                src="../../../assets/icons/affiliate.svg"
+                width="20"
+              />
+              <img
+                v-if="hasDropShipping(item)"
+                :title="$t('global.commons.drop_shipping')"
+                class="mx-1"
+                height="20"
+                src="../../../assets/icons/dropshipping.svg"
+                width="20"
+              />
+            </div>
           </div>
 
           <b-process-center-customer
@@ -405,8 +439,9 @@
       </template>
 
       <template v-if="modern" v-slot:item.customer="{ item }">
+        <!-- Fulfillment customer_id belongs to the reseller's shop, not this supplier. -->
         <b-process-center-customer
-          :item="item"
+          :item="isDropShipping ? { buyer: item.buyer } : item"
           :shop="shop"
           :is-affiliate-pos="isAffiliatePos"
         />
@@ -432,17 +467,9 @@
             title="Payment"
           >
             <return-request-button-badge
-              v-if="item.basket_item_returns?.length"
+              v-if="!modern && item.basket_item_returns?.length"
               :basket-item-returns="item.basket_item_returns"
-              @click:return="
-                cacheRouteState(item.id);
-                $router.push({
-                  name: return_request_page_name,
-                  params: {
-                    basket_id: item.id,
-                  },
-                });
-              "
+              @click:return="openReturnRequest(item)"
             ></return-request-button-badge>
 
             <connect-order-chip
@@ -456,7 +483,8 @@
             <!-- 🎗️ Subscription payment active -->
             <v-chip
               v-if="item.meta?.subscription_period && item.status === 'Payed'"
-              class="mx-1"
+              class="mx-1 b-process-center-list__subscription-meta"
+              :tabindex="modern ? 0 : undefined"
               label
               size="small"
               variant="text"
@@ -471,15 +499,16 @@
               </v-icon>
               {{ getPeriodTitle(item.meta.subscription_period) }}
 
-              <v-tooltip activator="parent">
-                It's an active subscription.
+              <v-tooltip activator="parent" :location="modern ? 'top' : undefined" :open-on-focus="modern ? true : undefined" :open-on-click="modern ? true : undefined" :content-class="modern ? 'sd-modern-tooltip text-start' : undefined">
+                {{ modern ? $t('admin_shop.orders.modern.subscription.active_help') : "It's an active subscription." }}
               </v-tooltip>
             </v-chip>
 
             <!-- 🎗️ Created by a subscription basket -->
             <v-chip
               v-if="item.subscription_id"
-              class="m-1"
+              class="m-1 b-process-center-list__subscription-meta"
+              :tabindex="modern ? 0 : undefined"
               label
               title=""
               variant="text"
@@ -489,9 +518,12 @@
               </v-avatar>
               SN-{{ item.subscription_id }}
 
-              <v-tooltip activator="parent" content-class="bg-black">
-                <div>Auto created by subscription.</div>
-                <div class="small">Physical products are in subscription.</div>
+              <v-tooltip activator="parent" :location="modern ? 'top' : undefined" :open-on-focus="modern ? true : undefined" :open-on-click="modern ? true : undefined" :content-class="modern ? 'sd-modern-tooltip text-start' : 'bg-black'">
+                <template v-if="modern">{{ $t('admin_shop.orders.modern.subscription.origin_help') }}</template>
+                <template v-else>
+                  <div>Auto created by subscription.</div>
+                  <div class="small">Physical products are in subscription.</div>
+                </template>
               </v-tooltip>
             </v-chip>
 
@@ -555,7 +587,7 @@
           <div
             v-if="isSubscribed(item) && nextPaymentDate(item)"
             class="text-center"
-            title="The next payment"
+            :title="modern ? $t('admin_shop.orders.modern.subscription.next_payment') : 'The next payment'"
           >
             <div class="max-w-120 mx-auto mt-1">
               <v-progress-linear
@@ -666,7 +698,7 @@
       <!-- Status > Delivery -->
       <template v-if="has_delivery_col" v-slot:item.delivery_state="{ item }">
         <div
-          v-if="($vuetify.display.xs || modern) && item.channel"
+          v-if="!modern && $vuetify.display.xs && item.channel"
           style="font-size: 12px; font-weight: 500"
           class="d-flex align-center"
         >
@@ -687,6 +719,7 @@
           :state="item.delivery_state"
           :states="deliveryStates"
           :modern-tooltips="modern"
+          :modern-tooltip-prefix="modernTooltipPrefix"
           class="my-1 b-process-center-list__stepper"
           :color="modern ? 'rgba(var(--v-theme-on-surface), 0.25)' : undefined"
           :dark-color="modern ? 'rgb(var(--v-theme-on-surface))' : undefined"
@@ -810,7 +843,7 @@
             ></span>
           </span>
 
-          <br />
+          <br v-if="!modern" />
           <small>
             {{
               getLocalTimeString(
@@ -829,8 +862,9 @@
       </template>
     </v-data-table-server>
 
-    <slot></slot>
+    <slot v-if="!modern"></slot>
     </div>
+    <slot v-if="modern"></slot>
 
     <b-process-center-filters
       v-if="modern && dialogExtraFilters"
@@ -839,6 +873,9 @@
       :shop="shop"
       :fixed-product-id="filterProductId"
       :fixed-customer-id="filterCustomerId"
+      :allow-product="extraFilterSupport.product"
+      :allow-customer="extraFilterSupport.customer"
+      :allow-updated-after="extraFilterSupport.updatedAfter"
       @apply="applyExtraFilters"
     />
 
@@ -1063,12 +1100,25 @@ export default {
   },
   computed: {
 
+    extraFilterSupport() {
+      return { product: !this.isAvocado, customer: !this.isDropShipping, updatedAfter: !this.isPos };
+    },
+    selectedSubscriptionPriceId() {
+      return this.selected_subscription_price?.id ?? this.selected_subscription_price ?? null;
+    },
+    modernTooltipPrefix() {
+      const type = this.isAvocado ? 'avocado' : this.type?.code?.toLowerCase();
+      return type && type !== 'physical'
+        ? `admin_shop.orders.modern.${type}.stages`
+        : 'admin_shop.orders.physical.modern.stages';
+    },
+
     extraFilterSummaries() {
       const filters = [];
       const labels = 'admin_shop.orders.physical.modern.filters';
-      if (this.extraFilters.productId && !this.filterProductId) filters.push({ key: 'productId', label: `${this.$t(`${labels}.product`)} #${this.extraFilters.productId}`, icon: 'inventory_2' });
-      if (this.extraFilters.customerId && !this.filterCustomerId) filters.push({ key: 'customerId', label: `${this.$t(`${labels}.customer`)}: ${this.extraFilters.customerName || `#${this.extraFilters.customerId}`}`, icon: 'person' });
-      if (this.extraFilters.updatedAfter) filters.push({ key: 'updatedAfter', label: `${this.$t(`${labels}.updated_after`)}: ${this.getLocalDateString(this.extraFilters.updatedAfter)}`, description: this.getLocalTimeString(this.extraFilters.updatedAfter), icon: 'update' });
+      if (this.extraFilterSupport.product && this.extraFilters.productId && !this.filterProductId) filters.push({ key: 'productId', label: `${this.$t(`${labels}.product`)} #${this.extraFilters.productId}`, icon: 'inventory_2' });
+      if (this.extraFilterSupport.customer && this.extraFilters.customerId && !this.filterCustomerId) filters.push({ key: 'customerId', label: `${this.$t(`${labels}.customer`)}: ${this.extraFilters.customerName || `#${this.extraFilters.customerId}`}`, icon: 'person' });
+      if (this.extraFilterSupport.updatedAfter && this.extraFilters.updatedAfter) filters.push({ key: 'updatedAfter', label: `${this.$t(`${labels}.updated_after`)}: ${this.getLocalDateString(this.extraFilters.updatedAfter)}`, description: this.getLocalTimeString(this.extraFilters.updatedAfter), icon: 'update' });
       return filters;
     },
 
@@ -1107,13 +1157,17 @@ export default {
 
     headers() {
       if (this.modern) {
+        const widths = this.isDropShipping ? ['18%', '17%', '13%', '13%', '20%', '12%']
+          : this.has_delivery_col ? ['21%', '18%', '13%', '13%', '23%', '12%']
+          : ['25%', '24%', '18%', '17%', null, '16%'];
         return [
-          { title: this.$t('admin_shop.orders.physical.table.order_number'), value: 'id', align: 'start', sortable: true, width: '21%' },
-          { title: this.$t('global.commons.customer'), value: 'customer', align: 'start', sortable: false, width: '18%' },
-          { title: this.$t('admin_shop.orders.physical.table.price'), value: 'price', align: 'end', sortable: true, width: '13%' },
-          { title: this.$t('admin_shop.orders.physical.table.payment_status'), value: 'status', align: 'start', sortable: true, width: '13%' },
-          { title: this.$t('admin_shop.orders.physical.table.status'), value: 'delivery_state', align: 'start', sortable: true, width: '23%' },
-          { title: this.$t('admin_shop.orders.physical.table.order_date'), value: 'reserved_at', align: 'start', sortable: true, width: '12%' },
+          { title: this.$t('admin_shop.orders.physical.table.order_number'), value: 'id', align: 'start', sortable: true, width: widths[0] },
+          { title: this.$t(this.isDropShipping ? 'admin_shop.orders.modern.reseller' : 'global.commons.customer'), value: 'customer', align: 'start', sortable: false, width: widths[1] },
+          ...(this.isDropShipping ? [{ title: this.$t('global.commons.country'), value: 'country', align: 'start', sortable: true, width: '7%' }] : []),
+          { title: this.$t('admin_shop.orders.physical.table.price'), value: 'price', align: 'end', sortable: true, width: widths[2] },
+          { title: this.$t('admin_shop.orders.physical.table.payment_status'), value: 'status', align: 'start', sortable: true, width: widths[3] },
+          ...(this.has_delivery_col ? [{ title: this.$t('admin_shop.orders.physical.table.status'), value: 'delivery_state', align: 'start', sortable: true, width: widths[4], cellProps: { class: 'b-process-center-list__wide-cell' } }] : []),
+          { title: this.$t('admin_shop.orders.physical.table.order_date'), value: 'reserved_at', align: 'start', sortable: true, width: widths[5], cellProps: { class: 'b-process-center-list__wide-cell' } },
         ];
       }
       if (this.isDropShipping) {
@@ -1352,25 +1406,17 @@ export default {
     },
 
     deliveryStates() {
-      if (this.isDropShipping) return Basket.PhysicalOrderStates;
-      if (this.isAvocado) return Avocado.DeliveryStates;
-
-      if (this.type?.code === ProductType.PHYSICAL.code) {
-        if (this.modern) {
-          return Object.fromEntries(Object.entries(Basket.PhysicalOrderStates).map(([key, state]) => [key, { ...state, icon: modernPhysicalIcons[key] }]));
-        }
-        return Basket.PhysicalOrderStates;
-      }
-      else if (this.type?.code === ProductType.VIRTUAL.code)
-        return Basket.VirtualOrderStates;
-      else if (this.type?.code === ProductType.FILE.code)
-        return Basket.FileOrderStates;
-      else if (this.type?.code === ProductType.SERVICE.code)
-        return Basket.ServiceOrderStates;
-      else if (this.type?.code === ProductType.SUBSCRIPTION.code)
-        return Basket.SubscriptionOrderStates;
-
-      return null;
+      const states = this.isDropShipping ? Basket.PhysicalOrderStates
+        : this.isAvocado ? Avocado.DeliveryStates
+        : this.type?.code === ProductType.PHYSICAL.code ? Basket.PhysicalOrderStates
+        : this.type?.code === ProductType.VIRTUAL.code ? Basket.VirtualOrderStates
+        : this.type?.code === ProductType.FILE.code ? Basket.FileOrderStates
+        : this.type?.code === ProductType.SERVICE.code ? Basket.ServiceOrderStates
+        : this.type?.code === ProductType.SUBSCRIPTION.code ? Basket.SubscriptionOrderStates : null;
+      if (!this.modern || !states) return states;
+      return Object.fromEntries(Object.entries(states).map(([key, state]) => [key, {
+        ...state, icon: this.type?.code === ProductType.FILE.code ? state.icon : modernPhysicalIcons[key] || state.icon,
+      }]));
     },
     has_cod() {
       return this.type?.code === ProductType.PHYSICAL.code;
@@ -1406,6 +1452,9 @@ export default {
     },
   },
   watch: {
+    selectedSubscriptionPriceId(value, previous) {
+      if (this.modern && this.isSubscription && value !== previous) this.refreshOrders();
+    },
     sortBy() {
       this.fetchOrders(
         this.page,
@@ -1450,6 +1499,10 @@ export default {
   },
 
   methods: {
+    openReturnRequest(item) {
+      this.cacheRouteState(item.id);
+      this.$router.push({ name: this.return_request_page_name, params: { basket_id: item.id } });
+    },
     applyExtraFilters(filters) {
       this.extraFilters = filters;
       this.refreshOrders();
@@ -1574,13 +1627,13 @@ export default {
             params: {
               offset: (page - 1) * this.itemsPerPage,
               limit: this.itemsPerPage,
-              product_id: this.filterProductId ?? (this.modern ? this.extraFilters.productId ?? undefined : undefined),
-              customer_id: this.filterCustomerId ?? (this.modern ? this.extraFilters.customerId ?? undefined : undefined), // Show just for this customer
-              updated_at: this.modern && this.extraFilters.updatedAfter ? new Date(this.extraFilters.updatedAfter).toISOString().slice(0, 19).replace('T', ' ') : undefined,
+              product_id: this.filterProductId ?? (this.modern && this.extraFilterSupport.product ? this.extraFilters.productId ?? undefined : undefined),
+              customer_id: this.filterCustomerId ?? (this.modern && this.extraFilterSupport.customer ? this.extraFilters.customerId ?? undefined : undefined), // Show just for this customer
+              updated_at: this.modern && this.extraFilterSupport.updatedAfter && this.extraFilters.updatedAfter ? new Date(this.extraFilters.updatedAfter).toISOString().slice(0, 19).replace('T', ' ') : undefined,
               subscription_price_id: this.isSubscription
                 ? this.filterSubscriptionPriceId
                   ? this.filterSubscriptionPriceId
-                  : this.selected_subscription_price?.id
+                  : this.modern ? this.selectedSubscriptionPriceId : this.selected_subscription_price?.id
                 : null, // 🎗️ Only baskets contain this subscription price
               sortBy: sortBy,
               sortDesc: sortDesc,
@@ -1600,7 +1653,9 @@ export default {
                 ? this.resellerShopId
                 : null, // Only for this reseller shop ID.
 
-              with:['buyer','payment-compact'] // Return payment card + status + risk only!
+              // These list endpoints opt into their existing bounded buyer relation separately.
+              buyer: this.modern && (this.isPos || this.isAvocado || this.isHyper || this.isDropShipping) ? true : undefined,
+              with:['buyer','payment-compact'] // Compact payment details only where the existing endpoint supports them.
             },
           },
         )
@@ -1829,6 +1884,15 @@ export default {
     :deep(input::placeholder) { color: var(--sd-modern-muted); opacity: 1; }
   }
 
+  .b-process-center-list__subscription-plan {
+    min-width: 160px !important;
+    max-width: 260px !important;
+    :deep(.v-field__input) { min-height: 30px; padding-block: 4px !important; font-family: inherit; font-size: 12px; line-height: 20px; }
+    :deep(.v-field-label) { font-family: inherit; font-size: 12px; line-height: 18px; }
+    :deep(.v-list-item) { padding: 0; min-height: 30px; }
+    :deep(.v-list-item-title) { font-size: 12px; line-height: 18px; }
+  }
+
   .b-process-center-list__statuses {
     padding: 4px !important;
     border-radius: 11px !important;
@@ -1889,7 +1953,7 @@ export default {
 
     :deep(.v-table__wrapper > table > tbody > tr > td) {
       height: 82px;
-      padding: 15px 14px;
+      padding: 9px 14px;
       font-family: inherit;
       font-size: 13px;
       font-weight: 400;
@@ -1907,8 +1971,34 @@ export default {
   }
 
   .b-process-center-list__basket { flex: 0 0 21px; }
+  .b-process-center-list__attribution {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 100%;
+    margin-inline-start: auto;
+    gap: 6px;
+    > img { flex: 0 0 20px; margin-inline: 0 !important; }
+  }
+  .b-process-center-list__channel {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    gap: 4px;
+    font-size: 11px;
+    line-height: 16px;
+    > .v-icon, > img { flex-shrink: 0; }
+    > span { min-width: 0; overflow-wrap: anywhere; }
+  }
+  .b-process-center-list__avocado {
+    min-width: 0;
+    > .d-flex { flex-wrap: wrap; gap: 4px 8px; }
+    .text-subtitle-2 { font-family: inherit; font-size: 11px !important; font-weight: 400; line-height: 16px; }
+  }
   .b-process-center-list__code { flex: 0 1 auto !important; font-size: 13px; font-weight: 500; }
-  .b-process-center-list__products { flex-basis: 100%; order: 2; padding: 0 !important; padding-inline-start: 25px !important; }
+  .b-process-center-list__products { display: flex; align-items: center; flex-wrap: wrap; flex-basis: 100%; order: 2; gap: 4px 8px; min-width: 0; padding: 0 !important; padding-inline-start: 25px !important; }
+  .b-process-center-list__return { flex: 0 0 auto; margin-inline-start: auto; }
   .b-process-center-list__withdrawal {
     height: 18px;
     max-width: 100%;
@@ -1941,6 +2031,8 @@ export default {
     gap: 4px;
     font-size: 14px;
     font-weight: 400 !important;
+    > .v-spacer { display: none; }
+    > .b-process-center-list__subscription-meta { flex-basis: 100%; order: 2; justify-content: flex-end; margin: 0 !important; font-size: 10px; }
     :deep(.u--price) { font-size: 14px; font-weight: 400; white-space: nowrap; }
   }
   .b-process-center-list__amount-details {
@@ -1966,8 +2058,9 @@ export default {
 
   .b-process-center-list__stepper {
     display: flow-root;
-    :deep(.container-stepper > div) { top: 12px !important; height: 1px !important; }
+    :deep(.container-stepper > div:not(.top-chain)) { top: 12px !important; height: 1px !important; }
     :deep(.container-stepper > div:nth-child(2)) { background: rgb(var(--v-theme-on-surface)) !important; }
+    :deep(.top-chain) { --chain-color: rgb(var(--v-theme-on-surface)); font-size: 10px; font-weight: 500; }
     :deep(.progressbar li::before) { width: 25px; height: 25px; line-height: 23px; border-width: 1px; background: rgb(var(--v-theme-surface)); }
     :deep(.progressbar li.active::before) { background: rgb(var(--v-theme-on-surface)); }
     :deep(.progressbar li.active .v-icon) { color: rgb(var(--v-theme-surface)) !important; }
@@ -1987,12 +2080,17 @@ export default {
   }
   .b-process-center-list__checkout {
     min-width: 0 !important;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 4px;
     font-size: 11px;
     line-height: 16px;
-    > small { display: inline-block; margin-block-start: 5px; font-size: 10px; color: var(--sd-modern-muted); }
+    > span { float: none !important; display: inline-flex; align-items: center; }
+    > small { grid-column: 1 / -1; display: block; width: 100%; margin-block-start: 5px; font-size: 10px; color: var(--sd-modern-muted); text-wrap: balance; }
   }
   .b-process-center-list__chat { width: 25px; height: 25px; color: var(--sd-modern-muted) !important; :deep(.v-icon) { font-size: 15px; } }
-  .b-process-center-list__attention { width: 28px; height: 28px; padding: 0; vertical-align: middle; }
+  .b-process-center-list__attention { width: 28px; height: 20px; padding: 0; vertical-align: middle; }
   .b-process-center-list__footer { padding: 17px 18px; gap: 12px; color: var(--sd-modern-muted); font-size: 11px; line-height: 16px; }
 
   @media (min-width: 1000px) {
@@ -2007,13 +2105,13 @@ export default {
       :deep(thead > tr > th) { display: block; width: 100% !important; height: auto !important; }
       :deep(.v-data-table__tr--mobile) { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 12px; padding: 16px 13px; border-block-end: 1px solid var(--sd-modern-border); }
       :deep(.v-table__wrapper > table > tbody > .v-data-table__tr--mobile > td) { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 7px; width: auto !important; height: auto; min-height: 0; padding: 0; border: 0; }
-      :deep(.v-data-table__tr--mobile > td:nth-child(5)), :deep(.v-data-table__tr--mobile > td:nth-child(6)) { grid-column: 1 / -1; }
+      :deep(.v-data-table__tr--mobile > .b-process-center-list__wide-cell) { grid-column: 1 / -1; }
       :deep(.v-data-table__td-value) { text-align: start !important; min-width: 0; }
     }
     .b-process-center-list__order { align-content: flex-start; }
     .b-process-center-list__products { padding-inline: 0 !important; }
     .b-process-center-list__amount { text-align: start; }
-    .b-process-center-list__amount-value { justify-content: flex-start; > .v-spacer { display: none; } }
+    .b-process-center-list__amount-value { justify-content: flex-start; > .v-spacer { display: none; } > .b-process-center-list__subscription-meta { justify-content: flex-start; } }
     .b-process-center-list__amount-details { align-items: flex-start; }
     .b-process-center-list__delivery-caption > div, .b-process-center-list__checkout > small { font-size: 11px; }
     .b-process-center-list__checkout { border-block-start: 1px solid var(--sd-modern-border); padding-block-start: 10px !important; }

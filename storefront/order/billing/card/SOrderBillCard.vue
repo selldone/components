@@ -95,7 +95,7 @@
     <!-- ------------------------ Billing Info ------------------------ -->
 
     <template v-if="billing">
-      <hr class="my-2" />
+      <slot name="billing-header"><hr class="my-2" /></slot>
 
       <u-text-value-dashed>
         <template v-slot:label>

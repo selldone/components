@@ -13,13 +13,26 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-card-text>
-    <div class="widget-box mb-5">
+  <v-card-text
+    :class="
+      modern
+        ? 'b-category-filter-editor b-category-filter-editor--modern sd-modern-content text-start'
+        : undefined
+    "
+  >
+    <div
+      :class="
+        modern
+          ? 'b-category-filter-editor__widget sd-modern-widget'
+          : 'widget-box mb-5'
+      "
+    >
       <u-widget-header
         :title="$t('add_category.filter.title')"
         icon="filter_list"
+        :class="{ 'sd-modern-form-header': modern }"
       ></u-widget-header>
-      <v-list-subheader>
+      <v-list-subheader :class="{ 'b-category-filter-editor__help': modern }">
         {{ $t("add_category.filter.sub_title") }}
       </v-list-subheader>
 
@@ -27,10 +40,20 @@
       <v-chip
         v-for="item in present_variants_in_filter"
         :key="item.value"
-        :color="ignore.includes(item.value) ? '#aaa' : '#111'"
-        :variant="ignore.includes(item.value) ? 'outlined' : 'flat'"
+        :color="
+          modern ? undefined : ignore.includes(item.value) ? '#aaa' : '#111'
+        "
+        :variant="modern || ignore.includes(item.value) ? 'outlined' : 'flat'"
         class="m-2"
-        title="Make this variant active/inactive in filter"
+        :class="{
+          'b-category-filter-editor__dimension': modern,
+          'b-category-filter-editor__dimension--active':
+            modern && !ignore.includes(item.value),
+        }"
+        :title="
+          modern ? undefined : 'Make this variant active/inactive in filter'
+        "
+        :aria-pressed="modern ? !ignore.includes(item.value) : undefined"
         @click="ignore.toggle(item.value)"
       >
         <v-icon class="me-2" start
@@ -39,6 +62,21 @@
 
         <v-icon class="me-2">{{ item.icon }}</v-icon>
         {{ item.text }}
+        <v-tooltip
+          v-if="modern"
+          activator="parent"
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          :open-on-focus="true"
+        >
+          {{
+            $t(
+              ignore.includes(item.value)
+                ? "global.commons.enable"
+                : "global.commons.disable",
+            )
+          }}: {{ item.text }}
+        </v-tooltip>
       </v-chip>
 
       <!-- ███████████████████████████ Spec List ███████████████████████████ -->
@@ -47,8 +85,9 @@
         :title="$t('add_category.edit_filter.spec_input')"
         class="mt-5"
         icon="summarize"
+        :class="{ 'sd-modern-form-header': modern }"
       ></u-widget-header>
-      <v-list-subheader>
+      <v-list-subheader :class="{ 'b-category-filter-editor__help': modern }">
         {{ $t("add_category.filter.message") }}
       </v-list-subheader>
       <v-select
@@ -63,10 +102,16 @@
         multiple
         :placeholder="$t('add_category.edit_filter.inputs.spec.placeholder')"
         variant="underlined"
+        :class="{ 'b-category-filter-editor__multiple': modern }"
       >
       </v-select>
 
-      <v-list-subheader>
+      <v-list-subheader
+        :class="{
+          'b-category-filter-editor__help b-category-filter-editor__manual':
+            modern,
+        }"
+      >
         <div>
           <v-icon size="small">published_with_changes</v-icon>
           <span
@@ -89,6 +134,7 @@
             v-for="val in filters[item.value]"
             :key="val"
             class="ma-1"
+            :class="{ 'b-category-filter-editor__value': modern }"
             size="small"
             variant="tonal"
           >
@@ -120,7 +166,8 @@
             v-for="price in prices"
             :key="price.currency"
             class="mx-2"
-            color="#fafafa"
+            :color="modern ? undefined : '#fafafa'"
+            :class="{ 'b-category-filter-editor__value': modern }"
             size="small"
           >
             <u-currency-icon
@@ -155,13 +202,28 @@
             <v-spacer></v-spacer>
             <v-btn
               class="ms-1"
-              color="red"
+              :class="{ 'sd-modern-icon-button': modern }"
+              :color="modern ? undefined : 'red'"
               icon
-              title="Remove this spec from the filter list."
+              :title="
+                modern ? undefined : 'Remove this spec from the filter list.'
+              "
+              :aria-label="
+                modern ? `${$t('global.actions.delete')}: ${item}` : undefined
+              "
               variant="text"
               @click="remove(selected_specs, item)"
             >
               <v-icon>close</v-icon>
+              <v-tooltip
+                v-if="modern"
+                activator="parent"
+                location="top"
+                content-class="sd-modern-tooltip text-start"
+                :open-on-focus="true"
+              >
+                {{ $t("global.actions.delete") }}: {{ item }}
+              </v-tooltip>
             </v-btn>
           </div>
 
@@ -170,7 +232,8 @@
               v-for="val in filters[item]"
               :key="val"
               class="mx-2"
-              color="#fafafa"
+              :color="modern ? undefined : '#fafafa'"
+              :class="{ 'b-category-filter-editor__value': modern }"
               size="small"
             >
               {{ val?.toString().limitWords(3) }}
@@ -181,12 +244,29 @@
     </div>
   </v-card-text>
 
-  <v-card-actions>
+  <v-card-actions
+    :class="
+      modern
+        ? 'b-category-filter-editor b-category-filter-editor--modern sd-modern-content sd-modern-form-actions text-start'
+        : undefined
+    "
+  >
     <div class="widget-buttons">
       <v-btn
+        v-if="modern"
+        :disabled="busy_edit || busy_get_specs"
+        class="sd-modern-button"
+        variant="outlined"
+        @click="cancelFilters"
+      >
+        {{ $t("global.actions.cancel") }}
+      </v-btn>
+      <v-btn
         :loading="busy_edit"
+        :disabled="modern && busy_get_specs"
+        :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
         color="primary"
-        size="x-large"
+        :size="modern ? undefined : 'x-large'"
         variant="elevated"
         @click="editCategoryFilter"
       >
@@ -209,11 +289,12 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BCategoryFilterEditor",
-  mixins: [CurrencyMixin ],
+  mixins: [CurrencyMixin],
 
   components: { UCurrencyIcon, UVariantAssetImage },
-  emits: ["edit-filters"],
+  emits: ["edit-filters", "cancel"],
   props: {
+    modern: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -333,6 +414,7 @@ export default {
       this.selected_specs = _list;
       this.ignore = filters?.ignore;
       if (!this.ignore || !Array.isArray(this.ignore)) this.ignore = [];
+      else if (this.modern) this.ignore = [...this.ignore];
     },
   },
 
@@ -340,6 +422,19 @@ export default {
     this.getCategoryFilter();
   },
   methods: {
+    cancelFilters() {
+      this.ignore = Array.isArray(this.filters?.ignore)
+        ? [...this.filters.ignore]
+        : [];
+      this.selected_specs = Object.keys(this.filters || {}).filter(
+        (key) =>
+          !this.suggested_list.some((item) => item.value === key) &&
+          key !== "prices" &&
+          key !== "ignore",
+      );
+      this.$emit("cancel");
+    },
+
     coloName(color) {
       return GetNameOfColor(color);
     },
@@ -348,6 +443,7 @@ export default {
       this.filters = this.category.filters;
       this.ignore = this.filters?.ignore;
       if (!this.ignore || !Array.isArray(this.ignore)) this.ignore = [];
+      else if (this.modern) this.ignore = [...this.ignore];
 
       this.busy_get_specs = true;
       axios
@@ -422,5 +518,104 @@ export default {
   font-size: 1.2rem;
   font-weight: 600;
   text-align: start;
+}
+
+.b-category-filter-editor--modern {
+  padding: 0;
+
+  .b-category-filter-editor__widget {
+    padding: 23px;
+    border-radius: 15px;
+  }
+
+  :deep(.sd-modern-form-header h2) {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+
+  .b-category-filter-editor__help {
+    height: auto;
+    min-height: 0;
+    padding-inline: 0;
+    margin-block: 0 18px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 19px;
+    white-space: normal;
+
+    :deep(.v-list-subheader__text) {
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+    }
+  }
+
+  .b-category-filter-editor__multiple {
+    min-width: 0;
+    font-family: inherit;
+
+    :deep(.v-field__input) {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0;
+    }
+
+    :deep(.v-field-label) {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      letter-spacing: 0;
+    }
+
+    :deep(.v-field-label--floating) {
+      font-size: 12px;
+      line-height: 18px;
+    }
+  }
+
+  .b-category-filter-editor__dimension {
+    min-height: 37px;
+    margin: 4px;
+    font-size: 12px;
+    border-color: var(--sd-modern-border);
+    border-radius: 8px;
+  }
+
+  .b-category-filter-editor__dimension--active {
+    border-color: rgb(var(--v-theme-primary));
+  }
+
+  .b-category-filter-editor__value {
+    color: rgb(var(--v-theme-on-surface));
+    background: var(--sd-modern-inset);
+    font-size: 12px;
+  }
+
+  .b-category-filter-editor__manual {
+    margin-block: 22px 14px;
+  }
+
+  .s-filter-header {
+    gap: 7px;
+    padding: 14px 0 8px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  @media (max-width: 760px) {
+    .b-category-filter-editor__widget {
+      padding: 19px;
+    }
+  }
+
+  @media (max-width: 600px), (pointer: coarse) {
+    .b-category-filter-editor__dimension {
+      min-height: 44px;
+    }
+  }
 }
 </style>

@@ -1,0 +1,13 @@
+# ChatGPT shopping setup
+
+This channel prepares a shopping assistant package in the browser. Download the public catalog and `shopping-instructions.md`, then copy the creation prompt into a compatible ChatGPT plugin creator. Review and test the generated skill before installation or sharing. These actions do not install, connect or publish an assistant.
+
+The catalog uses the existing public XAPI listing with an isolated credential-free GET request. A configured origin-relative XAPI path such as `/xapi` resolves against the current browser origin, retaining that path; no host is inferred. It includes only `id`, `title`, `type` and the official product link. It excludes customer information, unpublished products, management exports, arbitrary metadata, prices and stock. CSV cells are bounded and protected against spreadsheet formulas. Store content remains untrusted data for an assistant.
+
+Snapshots fetch at most ten pages of 100 products. A full tenth page is explicitly partial, including when the store has exactly 1,000 products; no extra probe is sent. A failed or malformed page returns no file. Offset pagination cannot guarantee a consistent catalog during concurrent edits. Refresh the file after catalog changes, and keep option selection, current price, availability and checkout on the storefront. Restricted purchases continue through the store's existing customer access checks.
+
+Private stores, hosted preview storefronts and invalid storefront/API URLs, including wildcard hosts, cannot export a public catalog. Never use owner credentials to bypass this restriction. The caller checks current Channel and Product read access before each action, aborts exports on shop/access changes and rechecks the same shop before saving the local file. Files are browser downloads; no files or bytes are saved to a database or server storage.
+
+The optional OpenAPI file describes only existing public GET operations with the configured XAPI URL. It requires public HTTPS addresses, manual import and testing in ChatGPT, and no authentication. Its response schemas document a verified subset; they do not filter the API response. Product details also support a known Unlisted product ID under the existing public contract: discover only published listing results and do not enumerate IDs. Existing public reads can record view analytics. A separate MCP server is required for live MCP tools; merchant MCP authorization is never part of this customer package.
+
+No backend routes, permissions, credentials, checkout behavior or export jobs are changed. Focused tests mock network responses; ordinary verification never calls live APIs or the legacy merchant export.

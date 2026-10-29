@@ -12,13 +12,14 @@
   - Tread carefully, for you're treading on dreams.
   -->
 <template>
-  <div class="widget-box mb-5">
+  <div class="b-shop-theme-typography sd-modern-widget text-start">
     <u-widget-header
+      class="sd-modern-form-header"
       icon="font_download"
       :title="$t('b_shop_theme_typography.main_font.title')"
     ></u-widget-header>
 
-    <v-list-subheader>
+    <v-list-subheader class="sd-modern-subtitle b-shop-theme-typography__subtitle">
       <div>
         {{ $t("b_shop_theme_typography.main_font.subtitle") }}
 
@@ -26,14 +27,16 @@
           class="mx-1 font-weight-bold"
           href="https://fonts.google.com"
           target="_blank"
+          rel="noopener noreferrer"
         >
           <v-icon class="mx-1" size="small">fa:fab fa-google</v-icon>
-          https://fonts.google.com</a
+          https://fonts.google.com<v-icon size="14" class="ms-1" aria-hidden="true">north_east</v-icon></a
         >.
       </div>
     </v-list-subheader>
 
     <v-autocomplete
+      class="sd-modern-underlined-field"
       v-if="customFonts.length"
       :clearable="true"
       :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
@@ -75,6 +78,7 @@
     </v-autocomplete>
 
     <v-text-field
+      class="sd-modern-underlined-field"
       :model-value="fontFamily"
       @update:model-value="(v) => $emit('update:fontFamily', v)"
       :label="$t('b_shop_theme_typography.inputs.font_family.label')"
@@ -89,17 +93,18 @@
     >
       <template v-slot:append-inner>
         <v-slide-y-transition>
-          <v-btn
-            v-if="font_family_name && !selectedCustomFont"
-            :href="`https://fonts.google.com/?query=${font_family_name}`"
-            class="me-2"
-            icon
-            size="small"
-            target="_blank"
-            title="Find font"
-          >
-            <v-icon>search</v-icon>
-          </v-btn>
+          <v-tooltip v-if="font_family_name && !selectedCustomFont" location="top" content-class="sd-modern-tooltip text-start">
+            <template #activator="{ props }">
+              <v-btn v-bind="props"
+                     :href="`https://fonts.google.com/?query=${font_family_name}`"
+                     class="sd-modern-icon-button sd-modern-input-action me-2"
+                     icon variant="text" target="_blank" rel="noopener noreferrer"
+                     :aria-label="$t('shop_theme.studio.find_font')">
+                <v-icon>search</v-icon>
+              </v-btn>
+            </template>
+            {{ $t('shop_theme.studio.find_font') }}
+          </v-tooltip>
         </v-slide-y-transition>
 
         <v-icon
@@ -120,12 +125,12 @@
         <v-expansion-panel-text>
           <div class="mb-10">
             <div>
-              <small>Sample 1</small>
+              <small>{{ $t('shop_theme.studio.sample_number', { number: 1 }) }}</small>
               <code class="d-block mt-1"> 'Black Han Sans', sans-serif </code>
             </div>
 
             <div class="mt-3">
-              <small>Sample 2</small>
+              <small>{{ $t('shop_theme.studio.sample_number', { number: 2 }) }}</small>
               <code class="d-block mt-1">
                 "Roboto", "Graphik", -apple-system, BlinkMacSystemFont, "Segoe
                 UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji",
@@ -137,9 +142,8 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <hr />
-
     <v-textarea
+      class="sd-modern-underlined-field"
       :model-value="fontRes"
       @update:model-value="(v) => $emit('update:fontRes', v)"
       :rows="3"
@@ -178,12 +182,12 @@
         <v-expansion-panel-text>
           <div class="mb-5">
             <div>
-              <small>Sample 1</small>
+              <small>{{ $t('shop_theme.studio.sample_number', { number: 1 }) }}</small>
               <code class="d-block mt-1" v-text="sample1"></code>
             </div>
 
             <div class="mt-3">
-              <small>Sample 2</small>
+              <small>{{ $t('shop_theme.studio.sample_number', { number: 2 }) }}</small>
               <code class="d-block mt-1" v-text="sample2"></code>
             </div>
           </div>
@@ -296,4 +300,13 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.b-shop-theme-typography {
+  min-width: 0;
+
+  &__subtitle { padding: 0; margin-block: 0 20px; min-height: 0; }
+  :deep(.v-expansion-panel-title) { min-height: 44px; padding-inline: 0; font-size: 12px; }
+  :deep(.v-expansion-panel-text__wrapper) { padding-inline: 0; }
+  code { overflow-wrap: anywhere; white-space: normal; }
+}
+</style>

@@ -44,6 +44,7 @@
             <v-text-field
               v-if="editMode"
               v-model="faq.question"
+              @update:model-value="workspace && onChange()"
               flat
               hide-details
               placeholder="Write question..."
@@ -78,7 +79,7 @@
                 color="red"
                 icon
                 variant="text"
-                @click.stop="remove(faqs, faq)"
+                @click.stop="removeFaq(faq)"
               >
                 <v-icon>close</v-icon>
               </v-btn>
@@ -149,6 +150,7 @@ export default {
   name: "SArticleFaqs",
   mixins: [InlineEditorMixin],
   props: {
+    workspace: { type: Boolean, default: false },
     editMode: {
       type: Boolean,
       default: false,
@@ -198,6 +200,7 @@ export default {
     },
 
     add() {
+      if (this.workspace && !this.editMode) return;
       let out = this.faqs;
       if (!out || !Array.isArray(out)) out = [];
 
@@ -212,20 +215,30 @@ export default {
     },
 
     onChange() {
+      if (this.workspace && !this.editMode) return;
       this.$emit("change");
+    },
+    removeFaq(faq) {
+      if (this.workspace && !this.editMode) return;
+      this.remove(this.faqs, faq);
+      if (this.workspace) this.onChange();
     },
 
     moveDown(faq) {
+      if (this.workspace && !this.editMode) return;
       const index = this.faqs.indexOf(faq);
       this.faqs.splice(index, 1);
 
       this.faqs.splice(index + 1, 0, faq);
+      if (this.workspace) this.onChange();
     },
     moveUp(faq) {
+      if (this.workspace && !this.editMode) return;
       const index = this.faqs.indexOf(faq);
       this.faqs.splice(index, 1);
 
       this.faqs.splice(index - 1, 0, faq);
+      if (this.workspace) this.onChange();
     },
   },
 };

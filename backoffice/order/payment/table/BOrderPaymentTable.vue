@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-table v-bind="$attrs">
+  <v-table v-bind="$attrs" :class="{ 'sd-modern-table b-order-payment-table--modern': modern }">
     <template v-slot:default>
       <thead>
         <tr>
@@ -26,7 +26,7 @@
           <th class="text-start min-width-200">
             {{ $t("process_center.payment_widget.table.description") }}
           </th>
-          <th class="text-center min-width-200">
+          <th :class="modern ? 'text-start min-width-200' : 'text-center min-width-200'">
             {{ $t("process_center.payment_widget.table.info") }}
           </th>
         </tr>
@@ -495,6 +495,10 @@
               alt="Tax"
             />
             {{ $t("global.commons.tax") }}
+            <v-btn v-if="modern" class="sd-modern-icon-button sd-modern-info-button" icon variant="text" :aria-label="$t('global.commons.tax')" @click.stop>
+              <v-icon size="14" aria-hidden="true">info_outline</v-icon>
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.payment_tax_help') }}</v-tooltip>
+            </v-btn>
           </td>
           <td class="text-left">
             <u-price :amount="tax" :currency="order.currency"></u-price>
@@ -508,9 +512,11 @@
             <v-btn
               v-if="has_tax_detail"
               class="tnt"
+              :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--inline': modern }"
               color="primary"
               variant="text"
               @click.stop="show_tax_detail = !show_tax_detail"
+              :aria-expanded="show_tax_detail"
               :append-icon="
                 show_tax_detail ? 'arrow_drop_up' : 'arrow_drop_down'
               "
@@ -559,6 +565,8 @@
           v-for="item in gift_cards"
           :key="'gif' + item.number"
           :giftcard="item"
+          :readonly="isRolePanel"
+          :modern="modern"
         >
         </b-order-payment-row-giftcard>
 
@@ -569,14 +577,13 @@
           :key="'pp' + index"
           :busyCheck="busy_check"
           :transaction="transaction_pending"
+          :readonly="isRolePanel"
+          :modern="modern"
           @check:payment="
             ({ gateway_code, unique_id, gateway_name }) =>
               checkPaymentStatus(gateway_code, unique_id, gateway_name)
           "
-          @show-confirm-payment-dir="
-            accept_action = false;
-            dialog_customer_pay_money_dir = true;
-          "
+          @show-confirm-payment-dir="showConfirmPaymentDir"
         >
         </b-order-payment-row-pending>
 
@@ -689,7 +696,7 @@
                 <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Bill > Service Only ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
                 <template
                   v-else-if="
-                    !isSubscription /*Manual payment not supported for subscription!*/ &&
+                    !isRolePanel && !isSubscription /*Manual payment not supported for subscription!*/ &&
                     bill.status !== BillStatus.PAYED.code
                   "
                 >
@@ -795,6 +802,8 @@
               :key="'gif-' + item.number"
               :class="{ 'no-border-bottom-tr': bill.payment }"
               :giftcard="item"
+              :readonly="isRolePanel"
+              :modern="modern"
               class="fadeIn"
               sub
             >
@@ -806,6 +815,8 @@
               v-if="bill.payment"
               :key="'pay-' + index + 'pay'"
               :payment="bill.payment"
+              :readonly="isRolePanel"
+              :modern="modern"
               class="fadeIn"
               has-map
               sub
@@ -825,7 +836,9 @@
           <td class="py-2" colspan="4">
             <v-btn
               :disabled="bills_remains <= 0"
-              color="success"
+              :color="modern ? 'primary' : 'success'"
+              :variant="modern ? 'text' : undefined"
+              :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--inline': modern }"
               @click="showAddPayment()"
             >
               <v-icon start>add</v-icon>
@@ -843,6 +856,8 @@
           v-if="payment"
           key="pay"
           :payment="payment"
+          :readonly="isRolePanel"
+          :modern="modern"
           class="border-top-medium"
           @payment-captured="$emit('fetch-order')"
         >
@@ -943,8 +958,9 @@
               </div>
             </div>
           </td>
-          <td class="text-center">
+          <td :class="modern ? 'text-start' : 'text-center'">
             <v-btn-toggle
+              v-if="!isRolePanel"
               :mandatory="affiliate_order.status !== 'PENDING'"
               :model-value="affiliate_order.status"
               :selected-class="'colored-flat'"
@@ -970,6 +986,7 @@
                 >{{ $t("global.actions.reject") }}
               </v-btn>
             </v-btn-toggle>
+            <span v-else>{{ affiliate_order.status }}</span>
           </td>
         </tr>
 
@@ -977,8 +994,10 @@
 
         <b-order-payment-row-cashback
           v-if="payment"
+          :readonly="isRolePanel"
           key="cashback"
           :order="order"
+          :modern="modern"
         >
         </b-order-payment-row-cashback>
 
@@ -995,11 +1014,12 @@
             <span class="d-inline-flex" tabindex="0">
               {{ $t("process_center.payment_widget.samin.title") }}
               <v-tooltip
-                :text="$t('process_center.payment_widget.samin.description')"
+                :text="$t(modern ? 'process_center.modern.payment_fee_help' : 'process_center.payment_widget.samin.description')"
                 activator="parent"
-                content-class="text-start"
-                location="bottom"
-                max-width="320"
+                :content-class="modern ? 'sd-modern-tooltip text-start' : 'text-start'"
+                :location="modern ? 'top' : 'bottom'"
+                :max-width="modern ? undefined : 320"
+                :open-on-click="modern ? true : undefined"
                 open-on-focus
                 open-on-hover
               />
@@ -1017,8 +1037,16 @@
             />
           </td>
 
-          <td class="text-center">
+          <td :class="modern ? 'text-start' : 'text-center'">
+            <span v-if="modern" class="b-order-payment-table__fee-rate">
+              {{ numeralFormat(wage / final_price, "0.[00]%") }}
+              <v-btn class="sd-modern-icon-button sd-modern-info-button" icon variant="text" :aria-label="$t('process_center.payment_widget.samin.percent')">
+                <v-icon size="14" aria-hidden="true">info_outline</v-icon>
+                <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.payment_fee_percent_help') }}</v-tooltip>
+              </v-btn>
+            </span>
             <v-chip
+              v-else
               :title="
                 $t('process_center.payment_widget.samin.tooltip') +
                 ' : ' +
@@ -1045,6 +1073,7 @@
           :accounts="shop.accounts || []"
           :cashbacks="order.selldone_fee_cashbacks"
           :is-role-panel="isRolePanel"
+          :modern="modern"
         />
         <!-- ╺╺╺╺╺╺╺╺╺ 💸 End Selldone Fee Cashback · Payment Ledger Row ╺╺╺╺╺╺╺╺╺ -->
       </tbody>
@@ -1054,6 +1083,7 @@
   <!-- █████████████████████████ Dialog > Edit Bill █████████████████████████ -->
 
   <v-bottom-sheet
+    v-if="!isRolePanel"
     v-model="edit_bill_dialog"
     max-width="680"
     width="98vw"
@@ -1135,6 +1165,7 @@
   <!-- █████████████████████████ Dialog > Add Bill █████████████████████████ -->
 
   <v-bottom-sheet
+    v-if="!isRolePanel"
     v-model="add_bill_dialog"
     max-width="680"
     width="98vw"
@@ -1210,6 +1241,7 @@
   <!-- █████████████████████████ Dialog > Confirm Cash Payment (For bill only) █████████████████████████ -->
 
   <v-bottom-sheet
+    v-if="!isRolePanel"
     v-model="dialog_pay_bill_by_cash"
     max-width="680"
     width="98vw"
@@ -1284,6 +1316,7 @@
   <!-- █████████████████████████ Dialog > Confirm DIR (Direct transfer money) Payment █████████████████████████ -->
 
   <v-bottom-sheet
+    v-if="!isRolePanel"
     v-model="dialog_customer_pay_money_dir"
     content-class="rounded-t-xl"
     max-width="680"
@@ -1425,6 +1458,7 @@ export default {
       default: false,
     },
     isRolePanel: Boolean,
+    modern: { type: Boolean, default: false },
   },
 
   data: function () {
@@ -1544,7 +1578,7 @@ export default {
       return this.isService && this.order.items.some((it) => !it.service_item);
     },
     can_add_pending_transaction() {
-      return this.isService; // Always can edit bills (Not paid bills)
+      return !this.isRolePanel && this.isService; // Always can edit bills (Not paid bills)
     },
 
     isPayed() {
@@ -1844,7 +1878,15 @@ export default {
   methods: {
     //――――――――――――――――――――――― Check payment status ―――――――――――――――――――――――
 
+    showConfirmPaymentDir() {
+      if (this.isRolePanel) return;
+      this.accept_action = false;
+      this.dialog_customer_pay_money_dir = true;
+    },
+
     checkPaymentStatus(gateway_code, unique_id, gateway_name) {
+      // Keep role ledgers readable without granting shop payment operations.
+      if (this.isRolePanel) return;
       this.busy_check = true;
 
       axios
@@ -1905,6 +1947,7 @@ export default {
     //――――――――――――――――――――――― DIR > Confirm payment ―――――――――――――――――――――――
 
     confirmDIRPaymentCompleted(gateway_code) {
+      if (this.isRolePanel) return;
       this.busy_pay = true;
 
       axios
@@ -1939,6 +1982,7 @@ export default {
     //――――――――――――――――――――――― Update Affiliate status ―――――――――――――――――――――――
 
     updateAffiliateStatus(status) {
+      if (this.isRolePanel) return;
       this.busy_affiliate = status;
       axios
         .post(
@@ -1969,10 +2013,12 @@ export default {
 
     //――――――――――――――――――――――― Add Payment (Service) ―――――――――――――――――――――――
     showAddPayment() {
+      if (this.isRolePanel) return;
       this.add_bill_dialog = true;
       this.bill_price = 0;
     },
     addBill() {
+      if (this.isRolePanel) return;
       this.busy_add_bill = true;
       axios
         .post(window.API.POST_ADD_BILL(this.shop.id, this.order.id), {
@@ -1999,6 +2045,7 @@ export default {
     },
 
     editBillPrice() {
+      if (this.isRolePanel) return;
       this.busy_edit_bill = true;
       axios
         .put(
@@ -2031,6 +2078,7 @@ export default {
         });
     },
     updateBillStatus(bill, status) {
+      if (this.isRolePanel) return;
       this.busy_update_bill_status = bill.id + status;
       axios
         .put(
@@ -2064,17 +2112,20 @@ export default {
         });
     },
     showEditBill(bill) {
+      if (this.isRolePanel) return;
       this.edit_bill_dialog = true;
       this.bill_price = bill.price;
       this.selected_bill = bill;
     },
 
     deleteBill(bill) {
+      if (this.isRolePanel) return;
       NotificationService.openDangerAlert(
         this.$t("process_center.delete_bill_dialog.title"),
         this.$t("process_center.delete_bill_dialog.message"),
         this.$t("process_center.delete_bill_dialog.action"),
         () => {
+          if (this.isRolePanel) return;
           axios
             .delete(
               window.API.DELETE_BILL(this.shop.id, this.order.id, bill.id),
@@ -2097,11 +2148,13 @@ export default {
 
     //――――――――――――――――――――――― Bill > Confirm payment (Cash gateways) ―――――――――――――――――――――――
     showManuallyPayment(bill) {
+      if (this.isRolePanel) return;
       this.selected_bill_to_pay = bill;
       this.accept_action = false;
       this.dialog_pay_bill_by_cash = true;
     },
     confirmCashPaymentForBill(bill, gateway_code) {
+      if (this.isRolePanel) return;
       this.busy_pay = true;
       axios
         .post(
@@ -2138,4 +2191,65 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-order-payment-table--modern {
+  font-family: inherit;
+  background: transparent;
+  color: rgb(var(--v-theme-on-surface));
+
+  :deep(> .v-table__wrapper) { overflow: visible; }
+  :deep(> .v-table__wrapper > table) { table-layout: fixed; width: 100%; }
+  :deep(> .v-table__wrapper > table > thead > tr > th) { min-width: 0 !important; padding-inline: 9px !important; }
+  :deep(> .v-table__wrapper > table > thead > tr > th:first-child) { width: 26%; }
+  :deep(> .v-table__wrapper > table > thead > tr > th:nth-child(2)) { width: 15%; }
+  :deep(> .v-table__wrapper > table > thead > tr > th:nth-child(3)) { width: 30%; }
+  :deep(> .v-table__wrapper > table > tbody > tr > td) { min-width: 0 !important; height: auto !important; padding: 12px 9px !important; font-family: inherit; font-size: 12px; font-weight: 400; line-height: 18px; vertical-align: middle; overflow-wrap: anywhere; }
+  :deep(> .v-table__wrapper > table > tbody > tr > td:nth-child(2)) { font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  :deep(> .v-table__wrapper > table > tbody > tr > td:nth-child(4)) { text-align: start !important; }
+  :deep(.sd-modern-button--inline) { margin: 0 !important; box-shadow: none; }
+  .b-order-payment-table__fee-rate { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; line-height: 18px; font-weight: 400; }
+  :deep(> .v-table__wrapper > table > tbody > tr > td:first-child > img),
+  :deep(> .v-table__wrapper > table > tbody > tr > td:first-child > div > img) { width: 21px; height: 21px; margin-inline: 0 9px !important; }
+  :deep(.v-btn:not(.sd-modern-icon-button)) { font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0; text-indent: 0; }
+  :deep(.v-btn__content) { font: inherit; letter-spacing: 0; }
+  :deep(.v-chip) { background: transparent !important; color: inherit; font-family: inherit; font-size: 11px; font-weight: 400; }
+  :deep(.v-chip__underlay) { display: none; }
+  :deep(.small), :deep(small) { font-size: 11px; line-height: 17px; font-weight: 400; }
+  :deep(.text-subtitle-2) { font-family: inherit !important; font-size: 12px !important; font-weight: 400; line-height: 18px; }
+  :deep(.u--price) { font-size: 13px; font-weight: 400; }
+  :deep(.u--price .small) { font-size: inherit !important; font-weight: 400; }
+  :deep(.border-top-medium > td) { border-block-start: 1px solid rgba(var(--v-theme-on-surface), .6); }
+  :deep(.sd-modern-info-button) { vertical-align: middle; }
+
+  @media (min-width: 801px) {
+    &.b-order-payment-table--workspace {
+      :deep(> .v-table__wrapper) { overflow-x: auto; }
+      :deep(> .v-table__wrapper > table) { min-width: 540px; }
+      :deep(> .v-table__wrapper > table > thead > tr > th),
+      :deep(> .v-table__wrapper > table > tbody > tr > td) { padding-inline: 5px !important; }
+      :deep(> .v-table__wrapper > table > thead > tr > th:first-child) { width: 25%; }
+      :deep(> .v-table__wrapper > table > thead > tr > th:nth-child(2)) { width: 17%; }
+      :deep(> .v-table__wrapper > table > thead > tr > th:nth-child(3)) { width: 26%; }
+      :deep(> .v-table__wrapper > table > tbody > tr > td) { font-size: 11px; line-height: 17px; }
+      :deep(> .v-table__wrapper > table > tbody > tr > td:first-child > img),
+      :deep(> .v-table__wrapper > table > tbody > tr > td:first-child > div > img) { width: 16px; height: 16px; margin-inline-end: 5px !important; }
+      :deep(.u--price) { font-size: 12px; }
+    }
+  }
+  @media (max-width: 680px) {
+    :deep(> .v-table__wrapper > table > thead) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    :deep(> .v-table__wrapper > table > tbody > tr) { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 9px; padding-block: 12px; border-block-end: 1px solid var(--sd-modern-border); }
+    :deep(> .v-table__wrapper > table > tbody > tr > td) { padding: 0 !important; border: 0 !important; min-width: 0; max-width: 100%; font-size: 12px; }
+    :deep(> .v-table__wrapper > table > tbody > tr > td:first-child) { grid-column: 1; grid-row: 1; }
+    :deep(> .v-table__wrapper > table > tbody > tr > td:nth-child(2)) { grid-column: 2; grid-row: 1; text-align: end !important; }
+    :deep(> .v-table__wrapper > table > tbody > tr > td:nth-child(n + 3)) { grid-column: 1 / -1; padding-inline-start: 30px !important; text-align: start !important; }
+    :deep(> .v-table__wrapper > table > tbody > tr > td:empty) { display: none; }
+    :deep(> .v-table__wrapper > table > tbody > tr:has(> td[colspan])) { display: block; }
+    :deep(> .v-table__wrapper > table > tbody > tr > td[colspan]) { display: block; width: 100%; }
+    :deep(.min-width-200), :deep(.min-width-150) { min-width: 0 !important; }
+    :deep(.widget-buttons) { margin: 8px 0; }
+    :deep(.widget-toggle) { flex-wrap: wrap; height: auto; }
+    :deep(.v-btn) { min-height: 44px; }
+  }
+}
+</style>

@@ -66,7 +66,11 @@
       </div>
       <div class="my-1">
         <v-btn
+          v-if="!readonly"
           class="nbt"
+          :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--inline': modern }"
+          :color="modern ? 'primary' : undefined"
+          :variant="modern ? 'text' : undefined"
           size="x-small"
           target="_blank"
           :to="{
@@ -75,7 +79,7 @@
           }"
           >{{ $t("global.commons.management") }}
 
-          <v-icon end size="small">launch</v-icon>
+          <v-icon end size="small">{{ modern ? 'north_east' : 'launch' }}</v-icon>
         </v-btn>
       </div>
     </td>
@@ -91,6 +95,7 @@ export default {
   mixins: [DateMixin,AccountMixin],
 
   props: {
+    readonly: Boolean,
     giftcard: {
       require: true,
     },
@@ -98,6 +103,7 @@ export default {
       default: false,
       type: Boolean,
     },
+    modern: { type: Boolean, default: false },
   },
 };
 </script>

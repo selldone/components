@@ -14,7 +14,7 @@
 
 <template>
   <!------------ Cashback ------------>
-  <tr v-if="cashback_order" class="text-start">
+  <tr v-if="cashback_order" class="text-start" :class="{ 'b-order-payment-cashback--modern': modern }">
     <td>
       <img
         class="mx-2"
@@ -36,17 +36,20 @@
         {{ cashback?.description }}
       </p>
     </td>
-    <td class="text-center">
+    <td :class="modern ? 'text-start' : 'text-center'">
       <v-btn
-        v-if="cashback"
+        v-if="!readonly && cashback"
         size="x-small"
         target="_blank"
         class="tnt"
+        :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--inline': modern }"
+        :color="modern ? 'primary' : undefined"
+        :variant="modern ? 'text' : undefined"
         :to="{
           name: 'BPageCashbackDashboard',
           params: { cashback_id: cashback.id },
         }"
-        append-icon="launch"
+        :append-icon="modern ? 'north_east' : 'launch'"
       >
         {{ $t("global.commons.cashback") }}
       </v-btn>
@@ -60,7 +63,9 @@ export default {
   components: {},
   emits: ["payment-captured"],
   props: {
+    readonly: Boolean,
     order: Object,
+    modern: { type: Boolean, default: false },
   },
 
   data: function () {
@@ -80,4 +85,9 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-order-payment-cashback--modern .single-line {
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+}
+</style>

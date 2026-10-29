@@ -391,13 +391,19 @@
                       :aria-label="$t('blog_category.modern.name')"
                       required
                       variant="underlined"
+                      :hide-details="modern ? 'auto' : false"
                       :messages="
                         selected && !force_edit
                           ? $t('blog_category.modern.locked_hint')
-                          : ' '
+                          : modern
+                            ? []
+                            : ' '
                       "
                     >
-                      <template v-if="!selected" #message="{ message }">
+                      <template
+                        v-if="!selected && !modern"
+                        #message="{ message }"
+                      >
                         <span v-if="message?.trim()">{{ message }}</span>
                         <u-smart-suggestion
                           v-if="
@@ -447,6 +453,19 @@
                             aria-hidden="true" /></v-btn></template
                     ></v-tooltip>
                   </div>
+                  <u-smart-suggestion
+                    v-if="
+                      modern &&
+                      !selected &&
+                      canWrite &&
+                      !busy_set &&
+                      !saved_category
+                    "
+                    modern
+                    :more-label="$t('blog_category.modern.more_suggestions')"
+                    :samples="$tm('suggestions.blog_category.category')"
+                    @select="category = $event"
+                  />
                 </div>
                 <div
                   v-if="selected && force_edit"
@@ -487,9 +506,13 @@
                     variant="underlined"
                     rows="2"
                     auto-grow
-                    messages=" "
+                    :hide-details="modern ? 'auto' : false"
+                    :messages="modern ? [] : ' '"
                   >
-                    <template v-if="!selected" #message="{ message }">
+                    <template
+                      v-if="!selected && !modern"
+                      #message="{ message }"
+                    >
                       <span v-if="message?.trim()">{{ message }}</span>
                       <u-smart-suggestion
                         v-if="
@@ -507,6 +530,20 @@
                         @select="description = $event"
                     /></template>
                   </v-textarea>
+                  <u-smart-suggestion
+                    v-if="
+                      modern &&
+                      !selected &&
+                      canWrite &&
+                      !busy_set &&
+                      !saved_category
+                    "
+                    modern
+                    :preview-count="2"
+                    :more-label="$t('blog_category.modern.more_suggestions')"
+                    :samples="$tm('suggestions.blog_category.description')"
+                    @select="description = $event"
+                  />
                 </div>
               </section>
               <section class="b-blog-category-editor__cover">
@@ -1585,7 +1622,7 @@ export default {
     padding-block-start: 5px;
   }
   .b-blog-category-editor__field :deep(.u-smart-suggestion) {
-    margin: 0;
+    margin: 2px 0 0;
     font-size: 11px;
   }
   .b-blog-category-editor__rename {

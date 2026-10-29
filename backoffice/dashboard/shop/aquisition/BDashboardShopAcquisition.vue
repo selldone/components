@@ -15,6 +15,7 @@
 <template>
   <!-- ━━━━━━━━━━━━━━━━━━ BDashboardShopAcquisition ━━━━━━━━━━━━━━━━━━ -->
   <component
+    ref="reportRoot"
     :is="modern ? 'div' : 's-widget-box'"
     :active="modern ? undefined : true"
     :icon-to="modern ? undefined : { name: 'BPageShopCrmReport' }"
@@ -27,7 +28,11 @@
     "
     :icon="modern ? undefined : 'fa:fas fa-users'"
     class="b-dashboard-acquisition text-start"
-    :class="{ 'b-dashboard-acquisition--modern': modern }"
+    :class="{
+      'b-dashboard-acquisition--modern': modern,
+      'b-dashboard-acquisition--report': modern && report,
+      'b-dashboard-acquisition--summary': modern && summary,
+    }"
   >
     <v-row :class="{ 'b-dashboard-acquisition__layout': modern }">
       <v-col
@@ -49,7 +54,9 @@
                 <h2 class="sd-modern-title-text">
                   {{
                     $t(
-                      "admin_shop.dashboard.modern.acquisition_analytics_title",
+                      report && summary
+                        ? "shop_crm_report.acquisition_summary_title"
+                        : "admin_shop.dashboard.modern.acquisition_analytics_title",
                     )
                   }}
                 </h2>
@@ -80,7 +87,9 @@
               </p>
             </div>
           </div>
+          <slot v-if="report" name="period" />
           <v-btn
+            v-if="!report"
             :to="{ name: 'BPageShopCrmReport' }"
             class="sd-modern-icon-button"
             variant="text"
@@ -129,6 +138,20 @@
                 )
               }}</span>
             </dd>
+            <apexchart
+              v-if="report && summary"
+              :options="report_summary_options"
+              :series="[
+                {
+                  name: $t(metric.label),
+                  data: reportMetricData(metric.key),
+                },
+              ]"
+              :aria-label="$t(metric.label)"
+              height="42"
+              type="area"
+              width="100%"
+            />
           </div>
         </dl>
         <v-row v-else class="text-center border-between" dense>
@@ -175,7 +198,40 @@
           </v-col>
         </v-row>
 
-        <div style="min-height: 250px">
+        <div
+          v-if="modern && report && !summary"
+          class="b-dashboard-acquisition__report-plots"
+        >
+          <section>
+            <h3>{{ $t("shop_crm_report.visitors_title") }}</h3>
+            <p class="b-dashboard-acquisition__scope">
+              {{ $t("shop_crm_report.shop_period") }}
+            </p>
+            <apexchart
+              :options="report_plot_options.visitors"
+              :series="report_series.visitors"
+              :key="chartThemeKey + '-visitors'"
+              height="300"
+              type="area"
+              width="100%"
+            />
+          </section>
+          <section>
+            <h3>{{ $t("shop_crm_report.page_views_title") }}</h3>
+            <p class="b-dashboard-acquisition__scope">
+              {{ $t("shop_crm_report.shop_period") }}
+            </p>
+            <apexchart
+              :options="report_plot_options.views"
+              :series="report_series.views"
+              :key="chartThemeKey + '-views'"
+              height="300"
+              type="area"
+              width="100%"
+            />
+          </section>
+        </div>
+        <div v-else-if="!summary" style="min-height: 250px">
           <apexchart
             :options="options"
             :series="series"
@@ -189,6 +245,7 @@
       </v-col>
 
       <v-col
+        v-if="!summary"
         cols="12"
         lg="3"
         :order-lg="modern ? undefined : 1"
@@ -218,15 +275,15 @@
         <div :class="{ 'b-dashboard-acquisition__composition-plot': modern }">
           <apexchart
             :height="240"
-            :options="options_pie"
-            :series="series_pie"
+            :options="report ? report_composition_options : options_pie"
+            :series="report ? report_composition_series : series_pie"
             :key="modern ? chartThemeKey : 'legacy-pages'"
-            type="donut"
+            :type="report ? 'bar' : 'donut'"
             width="100%"
             :class="{ 'b-dashboard-acquisition__composition-chart': modern }"
           />
           <div
-            v-if="modern && composition_is_zero"
+            v-if="modern && !report && composition_is_zero"
             class="b-dashboard-acquisition__composition-zero"
             role="img"
             :aria-label="$t('shop_visitors_widget.page_views') + ': 0'"
@@ -241,6 +298,12 @@
           :class="{ 'b-dashboard-acquisition__composition-range': modern }"
           small-width
         ></u-time-span>
+        <p
+          v-if="modern && report"
+          class="b-dashboard-acquisition__scope b-dashboard-acquisition__composition-scope"
+        >
+          {{ $t("shop_crm_report.composition_scope") }}
+        </p>
         <div v-if="modern && has_amp" class="b-dashboard-acquisition__amp">
           <span
             ><v-icon icon="bolt" size="16" aria-hidden="true" />{{
@@ -257,6 +320,7 @@
       </v-col>
 
       <component
+        v-if="!summary"
         :is="modern ? 'section' : 'div'"
         :class="{
           'sd-modern-widget b-dashboard-acquisition__flow-layout': modern,
@@ -280,6 +344,12 @@
             </div>
           </div>
         </header>
+        <p
+          v-if="modern && report"
+          class="b-dashboard-acquisition__scope b-dashboard-acquisition__flow-scope"
+        >
+          {{ $t("shop_crm_report.source_scope") }}
+        </p>
         <v-col
           cols="12"
           order="3"
@@ -298,6 +368,7 @@
 
           <div :class="{ 'b-dashboard-acquisition__sankey': modern }">
             <b-session-chart-sankey
+              ref="reportFlow"
               v-if="
                 modern
                   ? has_channel_data
@@ -373,6 +444,20 @@
                 :class="{ 'b-dashboard-acquisition__source-count': modern }"
                 >{{ numeralFormat(item.value, "0,0.[0]a") }}</component
               >
+              <span
+                v-if="modern && report"
+                class="b-dashboard-acquisition__source-share"
+                :aria-label="$t('shop_crm_report.source_share')"
+                >{{
+                  all_new_visitors + all_returning_visitors > 0
+                    ? numeralFormat(
+                        (100 * item.value) /
+                          (all_new_visitors + all_returning_visitors),
+                        "0.[0]",
+                      ) + "%"
+                    : "—"
+                }}</span
+              >
             </div>
             <p
               v-if="modern && !sorted_socials.length"
@@ -413,6 +498,8 @@ export default {
   },
   props: {
     modern: Boolean,
+    report: Boolean,
+    summary: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -425,12 +512,136 @@ export default {
   },
 
   data: () => ({
+    report_resize_observer: null,
     start_date: null,
     end_date: null,
     has_annotaion: true,
   }),
 
   computed: {
+    report_summary_options() {
+      return {
+        chart: {
+          sparkline: { enabled: true },
+          background: "transparent",
+          fontFamily: "var(--font)",
+          redrawOnParentResize: true,
+          redrawOnWindowResize: true,
+        },
+        theme: { mode: this.$vuetify.theme.current.dark ? "dark" : "light" },
+        colors: [this.$vuetify.theme.current.colors.primary],
+        stroke: { curve: "straight", width: 1.5 },
+        fill: { type: "solid", opacity: 0.06 },
+        dataLabels: { enabled: false },
+        xaxis: { type: "datetime" },
+        tooltip: {
+          x: {
+            formatter: (value) =>
+              DateConverter.ConvertTimestampToShortString(value, false),
+          },
+          y: { formatter: (value) => numeral(value).format("0,0") },
+        },
+      };
+    },
+    report_series() {
+      const plot = (key) => ({
+        name: this.$t("shop_visitors_widget." + key),
+        data: this.reportMetricData(key),
+      });
+      return {
+        visitors: ["new_visitors", "returning_visitors"].map(plot),
+        views: (this.has_amp ? ["page_views", "amp"] : ["page_views"]).map(
+          plot,
+        ),
+      };
+    },
+    report_plot_options() {
+      const options = this.options;
+      const plot = (colors, icons) => ({
+        ...options,
+        annotations: undefined,
+        chart: {
+          ...options.chart,
+          events: undefined,
+          redrawOnParentResize: true,
+          redrawOnWindowResize: true,
+        },
+        colors,
+        xaxis: {
+          ...options.xaxis,
+          labels: { ...options.xaxis.labels, trim: false, rotate: 0 },
+        },
+        grid: {
+          ...options.grid,
+          padding: { top: 52, right: 24, bottom: 12, left: 24 },
+        },
+        responsive: [
+          {
+            breakpoint: 600,
+            options: {
+              chart: { height: 340 },
+              grid: { padding: { top: 104, right: 24, bottom: 12, left: 24 } },
+            },
+          },
+        ],
+        legend: {
+          ...options.legend,
+          markers: {
+            customHTML: icons.map(
+              (icon) => () =>
+                `<span class="material-icons b-dashboard-acquisition__trend-icon" aria-hidden="true">${icon}</span>`,
+            ),
+          },
+        },
+      });
+      return {
+        visitors: plot(["#C2185B", "#1976D2"], ["person_add", "history"]),
+        views: plot(
+          this.has_amp ? ["#FFA000", "#444"] : ["#FFA000"],
+          this.has_amp ? ["visibility", "bolt"] : ["visibility"],
+        ),
+      };
+    },
+    report_composition_series() {
+      return this.options_pie.labels.map((name, index) => ({
+        name,
+        data: [this.series_pie[index]],
+      }));
+    },
+    report_composition_options() {
+      return {
+        ...this.options_pie,
+        chart: {
+          ...this.options_pie.chart,
+          type: "bar",
+          stacked: true,
+          stackType: "100%",
+          toolbar: { show: false },
+          redrawOnParentResize: true,
+          redrawOnWindowResize: true,
+        },
+        plotOptions: { bar: { horizontal: true, barHeight: "42%" } },
+        stroke: { width: 1, colors: ["rgb(var(--v-theme-surface))"] },
+        dataLabels: { enabled: false },
+        xaxis: {
+          categories: [this.$t("shop_visitors_widget.page_views")],
+          labels: { show: false },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        yaxis: { show: false },
+        grid: {
+          show: false,
+          padding: { top: -20, bottom: -15, left: 0, right: 0 },
+        },
+        legend: {
+          ...this.options_pie.legend,
+          formatter: (name, { seriesIndex }) =>
+            `${name}: ${numeral(this.series_pie[seriesIndex]).format("0,0")}`,
+        },
+        tooltip: { y: { formatter: (value) => numeral(value).format("0,0") } },
+      };
+    },
     has_channel_data() {
       return Object.values(this.socials || {}).some(
         (value) =>
@@ -651,18 +862,17 @@ export default {
     },
 
     maxPoints() {
-      let maxPoints = [];
-
-      // Create max points annotations:
-      maxPoints = ChartAnnotations.CreateMaxPoints(
+      const labels = [
+        this.$t("shop_visitors_widget.page_views"),
+        this.$t("shop_visitors_widget.new_visitors"),
+        this.$t("shop_visitors_widget.returning_visitors"),
+      ];
+      const colors = ["#FFA000", "#C2185B", "#1976D2"];
+      const maxPoints = ChartAnnotations.CreateMaxPoints(
         this.timeSeries,
         ["page_views", "new_visitors", "returning_visitors"],
-        [
-          this.$t("shop_visitors_widget.page_views"),
-          this.$t("shop_visitors_widget.new_visitors"),
-          this.$t("shop_visitors_widget.returning_visitors"),
-        ],
-        ["#FFA000", "#C2185B", "#1976D2"],
+        labels,
+        colors,
       );
 
       if (!this.modern) return maxPoints;
@@ -676,9 +886,13 @@ export default {
         ).indexOf(point.marker.strokeColor),
         label: {
           ...point.label,
-          ...(this.$vuetify.display?.smAndDown
-            ? { text: numeral(point.y).format("0,0") }
-            : {}),
+          text:
+            (this.$vuetify.display?.smAndDown
+              ? ""
+              : labels[colors.indexOf(point.marker.strokeColor)] + ": ") +
+            numeral(point.y).format("0.[0]a").toUpperCase(),
+          textAnchor: "middle",
+          offsetX: 0,
           style: {
             ...point.label?.style,
             fontSize: "11px",
@@ -963,6 +1177,23 @@ export default {
     },
   },
   methods: {
+    reportMetricData(key) {
+      return (this.timeSeries.raw_data || []).flatMap((row) => {
+        const timestamp = DateConverter.convertToLocalTime(
+          row.created_at,
+          true,
+        )?.getTime();
+        if (!Number.isFinite(timestamp)) return [];
+        return [
+          [
+            timestamp,
+            typeof row[key] === "number" && Number.isFinite(row[key])
+              ? row[key]
+              : null,
+          ],
+        ];
+      });
+    },
     separateEndpointMarkers(chart) {
       if (!this.modern) return;
       this.spaceMaximumLabels(chart);
@@ -1030,7 +1261,7 @@ export default {
         .forEach((line) => line.remove());
       const width = chart.w.layout.gridWidth;
       if (!Number.isFinite(width) || width <= 0) return;
-      labels.forEach((label, index) => {
+      labels.forEach((label) => {
         const id = [...label.classList].find((name) =>
           name.startsWith("b-dashboard-acquisition__maximum-point-"),
         );
@@ -1039,12 +1270,12 @@ export default {
           id && root.querySelector(`.apexcharts-point-annotation-marker.${id}`);
         if (!background || !marker) return;
         const box = background.getBBox();
-        // Spread captions across the plot while the native marker retains the real maximum.
+        // Keep each caption over its real peak, moving inward only to avoid clipping.
         const center = Math.max(
           box.width / 2 + 4,
           Math.min(
             width - box.width / 2 - 4,
-            (width * (index + 0.5)) / labels.length,
+            Number(marker.getAttribute("cx")),
           ),
         );
         const offset = center - box.x - box.width / 2;
@@ -1086,13 +1317,177 @@ export default {
     },
   },
   created() {},
-  mounted() {},
+  mounted() {
+    if (!this.report || this.summary || typeof ResizeObserver === "undefined")
+      return;
+    const root = this.$refs.reportRoot?.$el || this.$refs.reportRoot;
+    if (root?.nodeType !== 1) return;
+    let previousWidth = 0;
+    this.report_resize_observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      if (width > 0 && width !== previousWidth) {
+        previousWidth = width;
+        this.$refs.reportFlow?.refreshChart();
+      }
+    });
+    this.report_resize_observer.observe(root);
+  },
 
-  beforeUnmount() {},
+  beforeUnmount() {
+    this.report_resize_observer?.disconnect();
+  },
 };
 </script>
 
 <style lang="scss" scoped>
+.b-dashboard-acquisition--modern.b-dashboard-acquisition--report {
+  font-size: 13px;
+  line-height: 1.5;
+
+  .b-dashboard-acquisition__layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  .sd-modern-widget {
+    --sd-modern-font-body: 13px;
+    --sd-modern-font-small: 12px;
+    padding: 22px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .sd-modern-header {
+    margin-block-end: 17px;
+  }
+  .sd-modern-title-text {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+  .sd-modern-subtitle {
+    font-size: 12px;
+    line-height: 18px;
+  }
+  .b-dashboard-acquisition__value {
+    font-size: 27px;
+    font-weight: 600;
+    line-height: 36px;
+    letter-spacing: 0;
+    margin-block: 3px;
+  }
+  .b-dashboard-acquisition__report-plots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+    margin-block-start: 24px;
+  }
+  .b-dashboard-acquisition__report-plots > section {
+    min-width: 0;
+  }
+  .b-dashboard-acquisition__report-plots :deep(.apexcharts-toolbar) {
+    --sd-report-chart-tool-size: 36px;
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 0;
+    background: transparent;
+    backdrop-filter: none;
+  }
+  .b-dashboard-acquisition__report-plots
+    :deep(.apexcharts-toolbar > [class*="-icon"]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 var(--sd-report-chart-tool-size);
+    width: var(--sd-report-chart-tool-size);
+    height: var(--sd-report-chart-tool-size);
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 9px;
+    color: rgb(var(--v-theme-on-surface)) !important;
+    background: rgb(var(--v-theme-surface));
+  }
+  .b-dashboard-acquisition__report-plots
+    :deep(.apexcharts-toolbar > [class*="-icon"] svg) {
+    width: 18px;
+    height: 18px;
+  }
+  .b-dashboard-acquisition__report-plots
+    :deep(.apexcharts-toolbar > .apexcharts-selected) {
+    border-color: rgb(var(--v-theme-primary));
+    background: var(--sd-modern-inset);
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    .b-dashboard-acquisition__report-plots :deep(.apexcharts-toolbar) {
+      --sd-report-chart-tool-size: 44px;
+    }
+  }
+  .b-dashboard-acquisition__report-plots > section + section {
+    padding-inline-start: 25px;
+    border-inline-start: 1px solid var(--sd-modern-border);
+  }
+  .b-dashboard-acquisition__report-plots h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  .b-dashboard-acquisition__scope {
+    margin: 4px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+  }
+  .b-dashboard-acquisition__composition-range {
+    max-width: 440px;
+    width: 100%;
+  }
+  .b-dashboard-acquisition__composition-scope {
+    order: 1;
+  }
+  .b-dashboard-acquisition__flow-scope {
+    grid-column: 1 / -1;
+    margin-block: -8px 17px;
+  }
+  .b-dashboard-acquisition__source {
+    font-size: 12px;
+  }
+  .b-dashboard-acquisition__source-share {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    min-width: 42px;
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 780px) {
+    .b-dashboard-acquisition__report-plots {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 23px;
+    }
+    .b-dashboard-acquisition__report-plots > section + section {
+      padding-inline-start: 0;
+      padding-block-start: 20px;
+      border-inline-start: 0;
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+  }
+  @media (max-width: 520px) {
+    .sd-modern-widget {
+      padding: 17px 15px;
+    }
+    .b-dashboard-acquisition__stats {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 15px;
+    }
+    .b-dashboard-acquisition__stats > div + div {
+      padding-block-start: 15px;
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+  }
+}
+
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

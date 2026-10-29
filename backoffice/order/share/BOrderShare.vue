@@ -13,7 +13,186 @@
   -->
 
 <template>
-  <div v-if="order_link" class="widget-box -large">
+  <section
+    v-if="order_link && modern"
+    class="sd-modern-widget b-order-access text-start"
+    :aria-label="$t('b_order_chat_box.modern.access.title')"
+  >
+    <header class="b-order-access__header">
+      <div>
+        <h2 class="b-order-access__heading">
+          {{ $t("b_order_chat_box.modern.access.title") }}
+        </h2>
+        <p class="b-order-access__subtitle">
+          {{ $t("b_order_chat_box.modern.access.subtitle") }}
+        </p>
+      </div>
+      <v-btn
+        icon
+        variant="text"
+        class="sd-modern-icon-button sd-modern-info-button"
+        :aria-label="$t('b_order_chat_box.modern.access.help_label')"
+      >
+        <v-icon size="16" aria-hidden="true">info_outline</v-icon>
+        <v-tooltip
+          activator="parent"
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          open-on-click
+          open-on-focus
+        >
+          {{ $t("b_order_chat_box.modern.access.help") }}
+        </v-tooltip>
+      </v-btn>
+    </header>
+
+    <div
+      class="b-order-access__options"
+      :class="{ 'b-order-access__options--guest': has_guest_checkout }"
+    >
+      <div class="b-order-access__option">
+        <div class="b-order-access__title">
+          <v-icon size="16" aria-hidden="true">lock_outline</v-icon>
+          <h3>{{ $t("b_order_chat_box.modern.access.customer_title") }}</h3>
+          <span class="b-order-access__meta">
+            {{ $t("b_order_chat_box.modern.access.authentication") }}
+          </span>
+        </div>
+        <p class="b-order-access__description">
+          {{ $t("b_order_chat_box.modern.access.customer_description") }}
+        </p>
+        <div class="b-order-access__url-row">
+          <span class="b-order-access__url" dir="ltr">{{ order_link }}</span>
+          <v-btn
+            icon
+            variant="text"
+            class="sd-modern-icon-button"
+            :aria-label="$t('b_order_chat_box.modern.access.copy_customer')"
+            @click.stop="copyToClipboard(order_link)"
+          >
+            <v-icon size="16" aria-hidden="true">content_copy</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              open-on-focus
+            >
+              {{ $t("b_order_chat_box.modern.access.copy_customer") }}
+            </v-tooltip>
+          </v-btn>
+        </div>
+      </div>
+
+      <div v-if="has_guest_checkout" class="b-order-access__option">
+        <div class="b-order-access__title">
+          <v-icon size="16" aria-hidden="true">link</v-icon>
+          <h3>{{ $t("b_order_chat_box.modern.access.guest_title") }}</h3>
+          <span class="b-order-access__meta">
+            {{ $t("b_order_chat_box.modern.access.validity") }}
+          </span>
+        </div>
+        <p class="b-order-access__description">
+          {{ $t("b_order_chat_box.modern.access.guest_description") }}
+        </p>
+        <div class="b-order-access__guest-control">
+          <template v-if="secure_link">
+            <span class="b-order-access__ready" role="status">
+              <v-icon size="16" aria-hidden="true">check_circle_outline</v-icon>
+              {{ $t("b_order_chat_box.modern.access.guest_ready") }}
+            </span>
+            <v-btn
+              icon
+              variant="text"
+              class="sd-modern-icon-button"
+              :aria-label="$t('b_order_chat_box.modern.access.copy_guest')"
+              @click.stop="copyToClipboard(secure_link)"
+            >
+              <v-icon size="16" aria-hidden="true">content_copy</v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+                content-class="sd-modern-tooltip text-start"
+                open-on-focus
+              >
+                {{ $t("b_order_chat_box.modern.access.copy_guest") }}
+              </v-tooltip>
+            </v-btn>
+          </template>
+          <v-btn
+            v-else
+            class="sd-modern-button b-order-access__create"
+            variant="outlined"
+            :loading="busy_secure_link"
+            :disabled="busy_secure_link"
+            @click="dialog_guest = true"
+          >
+            <v-icon size="16" start aria-hidden="true">add_link</v-icon>
+            {{ $t("b_order_chat_box.modern.access.create_guest") }}
+          </v-btn>
+          <span class="b-order-access__private">
+            <v-icon size="14" aria-hidden="true">verified_user</v-icon>
+            {{ $t("b_order_chat_box.modern.access.share_privately") }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <v-dialog
+      v-model="dialog_guest"
+      max-width="480"
+      :aria-label="$t('b_order_chat_box.modern.access.confirm_title')"
+    >
+      <v-card class="sd-modern-widget b-order-access-dialog text-start">
+        <header class="b-order-access__header">
+          <div>
+            <h2 class="b-order-access__heading">
+              {{ $t("b_order_chat_box.modern.access.confirm_title") }}
+            </h2>
+            <p class="b-order-access__subtitle">
+              {{ $t("b_order_chat_box.modern.access.confirm_description") }}
+            </p>
+          </div>
+          <v-btn
+            icon
+            variant="text"
+            class="sd-modern-icon-button"
+            :aria-label="$t('global.actions.close')"
+            @click="dialog_guest = false"
+          >
+            <v-icon size="16" aria-hidden="true">close</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              open-on-focus
+            >{{ $t("global.actions.close") }}</v-tooltip>
+          </v-btn>
+        </header>
+        <div class="sd-modern-notice b-order-access-dialog__notice">
+          <v-icon size="18" aria-hidden="true">verified_user</v-icon>
+          <p>{{ $t("b_order_chat_box.modern.access.security_notice") }}</p>
+        </div>
+        <div class="b-order-access-dialog__actions">
+          <v-btn
+            class="sd-modern-button"
+            variant="text"
+            @click="dialog_guest = false"
+          >{{ $t("global.actions.cancel") }}</v-btn>
+          <v-btn
+            class="sd-modern-button sd-modern-button--primary"
+            color="primary"
+            :loading="busy_secure_link"
+            :disabled="busy_secure_link || !has_guest_checkout"
+            @click="createSecureLink"
+          >
+            <v-icon size="16" start aria-hidden="true">add_link</v-icon>
+            {{ $t("b_order_chat_box.modern.access.create_guest") }}
+          </v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+  </section>
+  <div v-else-if="order_link" class="widget-box -large">
     <u-widget-header
       :title="$t('b_order_share.title')"
       icon="shopping_bag"
@@ -107,10 +286,13 @@ export default defineComponent({
   inject: ["$shop"],
   props: {
     basket: { type: Object, required: true },
+    modern: { type: Boolean, default: false },
   },
   data: () => ({
     secure_link: null,
     busy_secure_link: false,
+    dialog_guest: false,
+    context_unmounted: false,
   }),
 
   computed: {
@@ -152,8 +334,30 @@ export default defineComponent({
       return null;
     },
   },
+  watch: {
+    "basket.id"() {
+      if (!this.modern) return;
+      // A guest link must never carry over into another order's access widget.
+      this.secure_link = null;
+      this.dialog_guest = false;
+      this.busy_secure_link = false;
+    },
+    "$shop.id"() {
+      if (!this.modern) return;
+      this.secure_link = null;
+      this.dialog_guest = false;
+      this.busy_secure_link = false;
+    },
+  },
+  beforeUnmount() {
+    this.context_unmounted = true;
+  },
   methods: {
     createSecureLink() {
+      if (this.busy_secure_link || (this.modern && !this.has_guest_checkout)) return;
+      const modern = this.modern;
+      const basket_id = this.basket.id;
+      const shop_id = this.$shop.id;
       this.busy_secure_link = true;
 
       axios
@@ -169,10 +373,13 @@ export default defineComponent({
               ),
         )
         .then(({ data }) => {
+          // Ignore late access credentials after the merchant changes orders or shops.
+          if (modern && (this.context_unmounted || this.basket.id !== basket_id || this.$shop.id !== shop_id)) return;
           if (data.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
           } else {
             this.secure_link = data.url;
+            this.dialog_guest = false;
             NotificationService.showSuccessAlert(
               null,
               $t("b_order_share.notifications.secure_link_created"),
@@ -180,9 +387,11 @@ export default defineComponent({
           }
         })
         .catch((error) => {
+          if (modern && (this.context_unmounted || this.basket.id !== basket_id || this.$shop.id !== shop_id)) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (modern && (this.context_unmounted || this.basket.id !== basket_id || this.$shop.id !== shop_id)) return;
           this.busy_secure_link = null;
         });
     },
@@ -190,4 +399,176 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.b-order-access,
+.b-order-access-dialog {
+  --sd-modern-icon-button-size: 32px;
+  padding: 19px 22px 20px;
+  font-family: inherit;
+
+  .sd-modern-icon-button :deep(.v-icon) {
+    font-size: 16px;
+  }
+
+  .b-order-access__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-block-end: 15px;
+
+    > div { min-width: 0; }
+  }
+
+  .b-order-access__heading {
+    margin: 0;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 23px;
+  }
+
+  .b-order-access__subtitle,
+  .b-order-access__description {
+    margin: 4px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    text-wrap: pretty;
+  }
+}
+
+.b-order-access {
+  &__options {
+    display: grid;
+    gap: 22px;
+  }
+
+  &__options--guest {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  &__option {
+    min-width: 0;
+
+    + .b-order-access__option {
+      padding-inline-start: 22px;
+      border-inline-start: 1px solid var(--sd-modern-border);
+    }
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    > .v-icon { color: var(--sd-modern-muted); }
+
+    > h3 {
+      min-width: 0;
+      margin: 0;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 21px;
+    }
+  }
+
+  &__meta,
+  &__private {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+
+  &__meta { margin-inline-start: auto; }
+
+  &__url-row,
+  &__guest-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-block-start: 12px;
+    min-height: 42px;
+  }
+
+  &__url {
+    min-width: 0;
+    flex: 1;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    overflow-wrap: anywhere;
+  }
+
+  &__guest-control { flex-wrap: wrap; }
+
+  &__private,
+  &__ready {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__ready {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+
+    > .v-icon { color: rgb(var(--v-theme-success)); }
+  }
+
+  &__create {
+    font-size: 13px;
+    line-height: 20px;
+  }
+}
+
+.b-order-access-dialog {
+  .b-order-access__heading {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  &__notice {
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 20px;
+
+    > p { flex: 1; min-width: 0; margin: 0; }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-block-start: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .b-order-access,
+  .b-order-access-dialog { padding-inline: 18px; }
+
+  .b-order-access {
+    &__options--guest { grid-template-columns: minmax(0, 1fr); }
+    &__option + &__option {
+      padding-block-start: 18px;
+      padding-inline-start: 0;
+      border-block-start: 1px solid var(--sd-modern-border);
+      border-inline-start: 0;
+    }
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .b-order-access,
+  .b-order-access-dialog { --sd-modern-icon-button-size: 44px; }
+}
+</style>

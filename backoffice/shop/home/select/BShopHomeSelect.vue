@@ -13,8 +13,71 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
-    <v-row align="start" class="m-0 py-16" justify="center">
+  <div :class="{ 'b-shop-home-select-modern': modern }">
+    <div :class="{ 'b-shop-home-select-modern__layout': modern }">
+      <div :class="{ 'b-shop-home-select-modern__controls': modern }">
+        <template v-if="modern">
+          <div v-if="domain" class="b-shop-home-select-modern__domain-help">
+            {{ $t('domains_modern.home.domain_help') }}
+          </div>
+          <div class="b-shop-home-select-modern__label">
+            {{ $t('domains_modern.home.type_label') }}
+          </div>
+          <div class="b-shop-home-select-modern__options">
+            <div
+              v-for="option in modernOptions"
+              :key="option.value"
+              :class="{ 'is-selected': selectedModernType === option.value }"
+              class="b-shop-home-select-modern__option"
+            >
+              <v-tooltip
+                :disabled="!option.disabled"
+                content-class="sd-modern-tooltip text-start"
+                location="top"
+                :open-on-click="true"
+              >
+                <template #activator="{ props: tooltipProps }">
+                  <span class="b-shop-home-select-modern__choice-wrap" v-bind="tooltipProps">
+                    <button
+                      type="button"
+                      :aria-pressed="selectedModernType === option.value"
+                      :aria-label="option.disabled ? option.title + ': ' + option.disabledHelp : undefined"
+                      :disabled="option.disabled || busy_set || readOnly"
+                      class="b-shop-home-select-modern__choice"
+                      @click="selectModernHome(option)"
+                    >
+                      <img :src="option.src" alt="" height="16" width="16" />
+                      <span>{{ option.title }}</span>
+                      <span class="b-shop-home-select-modern__choice-dot" aria-hidden="true"></span>
+                    </button>
+                  </span>
+                </template>
+                {{ option.disabledHelp }}
+              </v-tooltip>
+              <v-tooltip
+                v-if="option.route"
+                content-class="sd-modern-tooltip text-start"
+                location="top"
+                :open-on-click="true"
+              >
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    v-bind="tooltipProps"
+                    :to="{ name: option.route }"
+                    :aria-label="$t('domains_modern.home.manage_type', { type: option.title })"
+                    class="sd-modern-icon-button b-shop-home-select-modern__settings"
+                    icon
+                    variant="text"
+                  >
+                    <v-icon size="16">settings</v-icon>
+                  </v-btn>
+                </template>
+                {{ $t('domains_modern.home.manage_type', { type: option.title }) }}
+              </v-tooltip>
+            </div>
+          </div>
+        </template>
+    <v-row v-else align="start" class="m-0 py-16" justify="center">
       <u-button-feature
         :name="$t('global.commons.store')"
         :selected="
@@ -165,17 +228,35 @@
     <template v-if="static_page_mode">
       <v-text-field
         v-model="home_page"
-        :disabled="busy_set"
-        class="max-width-field-large mx-auto mt-8 mb-4 fadeIn"
+        :disabled="busy_set || readOnly"
+        :class="modern ? 'sd-modern-underlined-field b-shop-home-select-modern__field b-shop-home-select-modern__path' : 'max-width-field-large mx-auto mt-8 mb-4 fadeIn'"
         flat
-        label="Page path"
-        messages="Paths should begin with a forward slash '/'. For example, to access a specific folder, you can use the path '/Folder1'."
-        variant="solo"
+        :label="modern ? $t('domains_modern.home.path_label') : 'Page path'"
+        :messages="modern ? $t('domains_modern.home.path_help') : &quot;Paths should begin with a forward slash '/'. For example, to access a specific folder, you can use the path '/Folder1'.&quot;"
+        :variant="modern ? 'underlined' : 'solo'"
         @keydown.enter="setHomePage"
       >
         <template v-slot:append-inner>
+          <v-tooltip v-if="modern" content-class="sd-modern-tooltip text-start" location="top">
+            <template #activator="{ props: tooltipProps }">
+              <v-btn
+                v-bind="tooltipProps"
+                :disabled="old_page === home_page || readOnly"
+                :loading="busy_set"
+                :aria-label="$t('global.actions.save')"
+                class="sd-modern-icon-button sd-modern-input-action"
+                icon
+                variant="text"
+                @click="setHomePage"
+              >
+                <v-icon size="16">save</v-icon>
+              </v-btn>
+            </template>
+            {{ $t('global.actions.save') }}
+          </v-tooltip>
           <v-btn
-            :disabled="old_page === home_page"
+            v-else
+            :disabled="old_page === home_page || readOnly"
             :loading="busy_set"
             class="ma-1"
             color="primary"
@@ -188,13 +269,13 @@
         </template>
       </v-text-field>
 
-      <div class="max-width-field-large mx-auto my-4">
+      <div :class="modern ? 'b-shop-home-select-modern__manage' : 'max-width-field-large mx-auto my-4'">
         <v-btn
           :to="{ name: 'BPageShopPagesStatic' }"
-          class="tnt"
+          :class="modern ? 'sd-modern-button sd-modern-button--small b-shop-home-select-modern__manage-button' : 'tnt'"
           color="primary"
           variant="text"
-          >Manage static pages
+          >{{ modern ? $t('domains_modern.home.manage_static') : 'Manage static pages' }}
           <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
         </v-btn>
       </div>
@@ -203,12 +284,13 @@
     <v-select
       v-if="landing_page_mode"
       v-model="home_page"
-      :disabled="busy_set"
+      :disabled="busy_set || readOnly"
       :items="pages"
       :label="$t('shop_home_edit.default_home')"
       :placeholder="$t('shop_home_edit.default_home_placeholder')"
       :return-object="false"
-      class="max-width-field-large mx-auto mt-8 mb-4 fadeIn"
+      :class="modern ? 'sd-modern-underlined-field b-shop-home-select-modern__field' : 'max-width-field-large mx-auto mt-8 mb-4 fadeIn'"
+      :menu-props="modern ? { contentClass: 'sd-modern-select-menu' } : undefined"
       clearable
       item-title="title"
       item-value="id"
@@ -219,8 +301,8 @@
       <template v-slot:append-inner>
         <v-progress-circular
           v-if="busy_set || busy_fetch"
-          :color="busy_set ? 'green' : 'blue'"
-          class="margin-n7px"
+            :color="modern ? 'primary' : busy_set ? 'green' : 'blue'"
+          :class="{ 'margin-n7px': !modern }" :size="modern ? 16 : undefined" :width="modern ? 2 : undefined"
           indeterminate
         >
         </v-progress-circular>
@@ -269,9 +351,27 @@
       </template>
     </v-select>
 
-    <div v-if="clearable" class="widget-buttons mt-5">
+    <div v-if="modern && landing_page_mode" class="b-shop-home-select-modern__manage">
+      <v-btn
+        :to="{ name: 'BPageShopPagesLandings' }"
+        class="sd-modern-button sd-modern-button--small b-shop-home-select-modern__manage-button"
+        variant="text"
+      >
+        <v-icon size="16" start>settings</v-icon>
+        {{ $t('domains_modern.home.manage_pages') }}
+        <v-icon size="16" end>{{ $t('icons.chevron_next') }}</v-icon>
+      </v-btn>
+    </div>
+
+    <p v-if="modern" class="b-shop-home-select-modern__inherit-help">
+      {{ $t(domain ? 'domains_modern.home.domain_scope' : 'domains_modern.home.default_scope') }}
+    </p>
+
+    <div v-if="clearable" :class="modern ? 'b-shop-home-select-modern__reset' : 'widget-buttons mt-5'">
       <v-btn
         :loading="busy_set && !home_page"
+        :disabled="readOnly"
+        :class="modern ? 'sd-modern-button sd-modern-button--small' : undefined"
         size="x-large"
         variant="outlined"
         @click="
@@ -280,8 +380,48 @@
         "
       >
         <v-icon start>restart_alt</v-icon>
-        Clear <small>(Set shop default)</small>
+        <template v-if="modern">{{ $t('domains_modern.home.use_default') }}</template>
+        <template v-else>Clear <small>(Set shop default)</small></template>
       </v-btn>
+    </div>
+      </div>
+
+      <aside v-if="modern" class="b-shop-home-select-modern__preview">
+        <div class="sd-modern-list-header">{{ $t('domains_modern.home.preview_title') }}</div>
+        <div
+          class="b-shop-home-select-modern__browser"
+          role="img"
+          :aria-label="$t('domains_modern.home.preview_label', { type: modernPreviewName })"
+        >
+          <div class="b-shop-home-select-modern__address">
+            <v-icon size="12">language</v-icon>
+            <bdi dir="ltr">{{ domain?.domain || shop.domain || shop.name }}</bdi>
+          </div>
+          <div class="b-shop-home-select-modern__page">
+            <div class="b-shop-home-select-modern__preview-nav">
+              <span>{{ shop.title || shop.name }}</span>
+              <img :src="modernPreviewIcon" alt="" height="16" width="16" />
+            </div>
+            <div class="b-shop-home-select-modern__hero">
+              <span class="b-shop-home-select-modern__preview-caption">{{ modernPreviewName }}</span>
+              <strong><bdi :dir="modernPreviewType === 'static' ? 'ltr' : 'auto'">{{ modernPreviewTitle }}</bdi></strong>
+              <span class="b-shop-home-select-modern__placeholder-line" aria-hidden="true"></span>
+              <span v-if="modernPreviewType === 'landing' || modernPreviewType === 'shop'" class="b-shop-home-select-modern__preview-cta">
+                {{ $t('domains_modern.home.preview_cta') }}
+              </span>
+            </div>
+            <div class="b-shop-home-select-modern__preview-blocks" aria-hidden="true">
+              <span v-for="block in 3" :key="block"><v-icon size="18">{{ modernPreviewBlockIcon }}</v-icon></span>
+            </div>
+          </div>
+        </div>
+        <p class="b-shop-home-select-modern__preview-help">{{ $t('domains_modern.home.preview_help') }}</p>
+      </aside>
+    </div>
+    <div v-if="modern" class="b-shop-home-select-modern__status" role="status" aria-live="polite">
+      <v-progress-circular v-if="busy_set" indeterminate size="12" width="1.5" color="primary" />
+      <span v-else class="sd-modern-status__dot"></span>
+      {{ $t(readOnly ? 'domains_modern.home.read_only' : busy_set ? 'domains_modern.home.saving' : static_page_mode ? 'domains_modern.home.static_save_help' : 'domains_modern.home.auto_save') }}
     </div>
   </div>
 </template>
@@ -291,10 +431,11 @@ import UButtonFeature from "../../../../ui/button/feature/UButtonFeature.vue";
 import { throttle } from "lodash-es";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import DomainMixin from "@selldone/components-vue/mixin/domain/DomainMixin.ts";
 
 export default {
   name: "BShopHomeSelect",
-  mixins: [],
+  mixins: [DomainMixin],
   components: { UButtonFeature },
   props: {
     shop: {
@@ -306,6 +447,14 @@ export default {
       type: Object,
     },
     clearable: {
+      default: false,
+      type: Boolean,
+    },
+    modern: {
+      default: false,
+      type: Boolean,
+    },
+    readOnly: {
       default: false,
       type: Boolean,
     },
@@ -322,6 +471,42 @@ export default {
   }),
 
   computed: {
+    modernOptions() {
+      return [
+        { value: 'shop', title: this.$t('global.commons.store'), src: this.GetDomainHomeIcon('shop') },
+        { value: 'avocado', title: this.$t('global.commons.avocado'), src: this.GetDomainHomeIcon('avocado'), route: 'BPageShopChannelAvocado', disabled: !this.shop.avocado?.enable, disabledHelp: this.$t('domains_modern.home.avocado_disabled') },
+        { value: 'hyper', title: this.$t('global.commons.hyper'), src: this.GetDomainHomeIcon('hyper'), route: 'BPageShopChannelHyper', disabled: !this.shop.hyper?.enable, disabledHelp: this.$t('domains_modern.home.hyper_disabled') },
+        { value: 'community', title: this.$t('global.commons.community'), src: this.GetDomainHomeIcon('community'), route: 'BPageShopCommunityTopics', disabled: !this.shop.community?.enable, disabledHelp: this.$t('domains_modern.home.community_disabled') },
+        { value: 'blog', title: this.$t('global.commons.blog'), src: this.GetDomainHomeIcon('blog'), route: 'BPageShopBlogsList' },
+        { value: 'map', title: this.$t('global.commons.map'), src: this.GetDomainHomeIcon('map'), route: 'BPageShopChannelMap' },
+        { value: 'landing', title: this.$t('global.commons.landing_page'), src: this.GetDomainHomeIcon('1'), route: 'BPageShopPagesLandings', disabled: !this.pages.length, disabledHelp: this.$t('domains_modern.home.landing_disabled') },
+        { value: 'static', title: this.$t('global.commons.static_page'), src: this.GetDomainHomeIcon('/'), route: 'BPageShopPagesStatic' },
+      ];
+    },
+    selectedModernType() {
+      return this.static_page_mode ? 'static' : this.landing_page_mode ? 'landing' : this.home_page || (this.clearable ? null : 'shop');
+    },
+    modernPreviewHome() {
+      return this.home_page || (this.domain ? this.shop.home : null) || 'shop';
+    },
+    modernPreviewType() {
+      if (('' + this.modernPreviewHome).startsWith('/')) return 'static';
+      return ['shop', 'avocado', 'hyper', 'community', 'blog', 'map'].includes(this.modernPreviewHome) ? this.modernPreviewHome : 'landing';
+    },
+    modernPreviewName() {
+      return this.GetDomainHomeName(this.modernPreviewHome);
+    },
+    modernPreviewIcon() {
+      return this.GetDomainHomeIcon(this.modernPreviewHome);
+    },
+    modernPreviewTitle() {
+      if (this.modernPreviewType === 'landing') return this.pages.find(page => '' + page.id === '' + this.modernPreviewHome)?.title || this.modernPreviewName;
+      if (this.modernPreviewType === 'static') return this.modernPreviewHome;
+      return this.shop.title || this.shop.name;
+    },
+    modernPreviewBlockIcon() {
+      return this.modernPreviewType === 'blog' ? 'article' : this.modernPreviewType === 'community' ? 'forum' : this.modernPreviewType === 'map' ? 'place' : this.modernPreviewType === 'static' ? 'code' : 'inventory_2';
+    },
     landing_page_mode() {
       return (
         this.home_page &&
@@ -343,7 +528,7 @@ export default {
     }
 
     if (this.domain) {
-      this.home_page = this.domain.home;
+      this.home_page = this.modern && this.domain.primary ? this.shop.home : this.domain.home;
     } else {
       this.home_page = this.shop.home;
     }
@@ -353,6 +538,11 @@ export default {
     this.fetchPages();
   },
   methods: {
+    selectModernHome(option) {
+      if (option.disabled || this.busy_set || this.readOnly) return;
+      this.home_page = option.value === 'landing' ? this.pages[0].id : option.value === 'static' ? '/' : option.value;
+      this.setHomePage();
+    },
     fetchPages() {
       this.busy_fetch = true;
 
@@ -376,6 +566,7 @@ export default {
         });
     },
     setHomePage: throttle(function () {
+      if (this.readOnly) return;
       if (this.old_page === this.home_page) return;
       this.old_page = this.home_page;
 
@@ -383,6 +574,7 @@ export default {
     }, 1000),
 
     setHomePageNow() {
+      if (this.readOnly) return;
       this.busy_set = true;
 
       axios
@@ -412,7 +604,7 @@ export default {
               this.shop.home = data.home;
             }
 
-            NotificationService.showSuccessAlert(null, "Home page successfully set up.");
+            NotificationService.showSuccessAlert(null, this.modern ? this.$t('domains_modern.home.saved') : "Home page successfully set up.");
           } else NotificationService.showErrorAlert(null, data.error_msg);
         })
         .catch((error) => {
@@ -426,4 +618,313 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-shop-home-select-modern {
+  font-family: inherit;
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 13px;
+  line-height: 21px;
+
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, .85fr);
+    gap: 32px;
+    padding-bottom: 25px;
+  }
+
+  &__controls,
+  &__preview {
+    min-width: 0;
+  }
+
+  &__domain-help {
+    margin-bottom: 16px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  &__options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    margin: 12px 0 22px;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 46px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 10px;
+    background: rgb(var(--v-theme-surface));
+
+    &.is-selected {
+      border-color: rgb(var(--v-theme-primary));
+      box-shadow: inset 0 0 0 .3px rgb(var(--v-theme-primary));
+      background: var(--sd-modern-inset);
+    }
+  }
+
+  &__choice-wrap {
+    display: flex;
+    flex: 1;
+    align-self: stretch;
+    min-width: 0;
+  }
+
+  &__choice {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    padding: 9px 11px;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: start;
+
+    > img {
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    &:disabled {
+      opacity: .45;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 2px;
+    }
+  }
+
+  &__choice-dot {
+    display: inline-block;
+    flex: 0 0 13px;
+    width: 13px;
+    height: 13px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 50%;
+    margin-inline-start: auto;
+  }
+
+  &__choice[aria-pressed="true"] &__choice-dot {
+    border: 4px solid rgb(var(--v-theme-primary));
+  }
+
+  &__settings.sd-modern-icon-button {
+    --sd-modern-icon-button-size: 32px;
+    margin-inline-end: 5px;
+
+    :deep(.v-icon) {
+      font-size: 16px;
+    }
+  }
+
+  &__field {
+    margin: 0 0 7px;
+
+    :deep(.v-field__input),
+    :deep(input),
+    :deep(.v-select__selection) {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 21px;
+    }
+
+    :deep(.v-label) {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    :deep(.v-messages) {
+      font-size: 11px;
+      line-height: 18px;
+    }
+
+    :deep(.v-select__selection) {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      white-space: normal;
+    }
+  }
+
+  &__manage {
+    margin: 4px 0 0;
+  }
+
+  &__path :deep(input) {
+    direction: ltr;
+    text-align: start;
+  }
+
+  &__manage-button.sd-modern-button {
+    padding-inline: 0;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  &__inherit-help,
+  &__preview-help {
+    margin: 7px 0 0;
+    font-size: 11px;
+    line-height: 18px;
+    color: var(--sd-modern-muted);
+  }
+
+  &__reset {
+    margin-top: 18px;
+  }
+
+  &__preview {
+    padding-inline-start: 30px;
+    border-inline-start: 1px solid var(--sd-modern-border);
+  }
+
+  &__browser {
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 12px;
+    background: rgb(var(--v-theme-surface));
+  }
+
+  &__address {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--sd-modern-border);
+    background: var(--sd-modern-inset);
+    color: var(--sd-modern-muted);
+    font-size: 10px;
+    line-height: 16px;
+
+    > bdi {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  &__page {
+    padding: 18px;
+    min-height: 230px;
+  }
+
+  &__preview-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 23px;
+    font-size: 11px;
+    line-height: 18px;
+
+    > img {
+      flex-shrink: 0;
+    }
+  }
+
+  &__hero {
+    padding: 20px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background: var(--sd-modern-inset);
+
+    > strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 27px;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  &__preview-caption {
+    font-size: 11px;
+    line-height: 18px;
+    color: var(--sd-modern-muted);
+  }
+
+  &__placeholder-line {
+    display: block;
+    height: 5px;
+    width: 68%;
+    margin: 8px 0;
+    border-radius: 3px;
+    background: rgba(var(--v-theme-on-surface), .12);
+  }
+
+  &__preview-cta {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-on-primary));
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 19px;
+  }
+
+  &__preview-blocks {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+
+    > span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      aspect-ratio: 1.3;
+      border-radius: 7px;
+      background: var(--sd-modern-inset);
+      color: var(--sd-modern-muted);
+    }
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 16px;
+    border-top: 1px solid var(--sd-modern-border);
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 18px;
+  }
+
+  @media (max-width: 850px) {
+    &__layout { gap: 22px; }
+    &__preview { padding-inline-start: 22px; }
+  }
+
+  @media (max-width: 650px) {
+    &__layout { grid-template-columns: minmax(0, 1fr); }
+    &__preview { border-inline-start: 0; border-top: 1px solid var(--sd-modern-border); padding: 22px 0 0; }
+    &__choice { padding-inline: 9px; }
+  }
+
+  @media (max-width: 599px), (pointer: coarse) {
+    &__settings.sd-modern-icon-button { --sd-modern-icon-button-size: 44px; margin-inline-end: 0; }
+    &__field :deep(.v-field__input), &__field :deep(input), &__field :deep(.v-select__selection) { font-size: 16px; }
+    &__options { grid-template-columns: minmax(0, 1fr); }
+    &__choice { min-height: 44px; }
+  }
+}
+</style>

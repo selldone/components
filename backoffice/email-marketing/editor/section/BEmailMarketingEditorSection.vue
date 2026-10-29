@@ -13,21 +13,52 @@
   -->
 <template>
   <v-navigation-drawer
+    v-if="!modern || dialog_show"
     v-model="dialog_show"
+    :class="{ 'b-email-marketing-editor-section--modern': modern }"
     :scrim="false"
     :width="
-      $vuetify.display.xlAndUp
+      modern
+        ? Math.min(570, $vuetify.display.width)
+        : $vuetify.display.xlAndUp
         ? 560
         : $vuetify.display.lgAndUp
           ? 420
           : undefined
     "
-    location="right"
+    :location="modern ? 'end' : 'right'"
     temporary
-    theme="dark"
+    :theme="modern ? undefined : 'dark'"
   >
-    <v-card v-if="dialog_options" class="text-start" color="#1e1e1e" flat>
-      <v-card-actions>
+    <v-card
+      v-if="dialog_options"
+      class="text-start"
+      :class="{ 'sd-modern-widget b-email-marketing-editor-section__card': modern }"
+      :color="modern ? undefined : '#1e1e1e'"
+      flat
+    >
+      <header v-if="modern" class="b-email-marketing-editor-section__header">
+        <h2 class="sd-modern-title-text">{{ $t('email_builder.workspace.options_title') }}</h2>
+        <v-tooltip
+          location="top"
+          :open-on-focus="true"
+          :persistent="false"
+          content-class="sd-modern-tooltip text-start"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              class="sd-modern-icon-button"
+              icon
+              variant="text"
+              :aria-label="$t('global.actions.close')"
+              @click="dialog_show = false"
+            ><v-icon size="18" aria-hidden="true">close</v-icon></v-btn>
+          </template>
+          {{ $t('global.actions.close') }}
+        </v-tooltip>
+      </header>
+      <v-card-actions v-else>
         <div class="widget-buttons">
           <v-btn size="x-large" variant="text" @click="dialog_show = false">
             <v-icon start>close</v-icon>
@@ -36,18 +67,19 @@
         </div>
       </v-card-actions>
 
-      <v-card-text>
+      <v-card-text :class="{ 'b-email-marketing-editor-section__body': modern }">
         <b-email-marketing-editor-section-row
           v-for="(option, index) in dialog_options"
           :key="index"
           :loaded-fonts="loadedFonts"
+          :modern="modern"
           :option="option"
           :shop="shop"
           :upload-url="uploadUrl"
           @blur="$emit('blur')"
         ></b-email-marketing-editor-section-row>
 
-        <div class="min-height-20vh"></div>
+        <div v-if="!modern" class="min-height-20vh"></div>
       </v-card-text>
     </v-card>
   </v-navigation-drawer>
@@ -64,6 +96,7 @@ export default defineComponent({
   },
 
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       type: Object,
       require: true,
@@ -114,4 +147,36 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-email-marketing-editor-section--modern {
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+
+  .b-email-marketing-editor-section__card {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 21px;
+  }
+
+  .b-email-marketing-editor-section__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px;
+    border-block-end: 1px solid var(--sd-modern-border);
+
+    h2 { margin: 0; font-size: 18px; font-weight: 500; line-height: 27px; }
+  }
+
+  .b-email-marketing-editor-section__body {
+    padding: 24px;
+    font: inherit;
+  }
+}
+</style>

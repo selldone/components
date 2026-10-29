@@ -15,192 +15,147 @@
 <template>
   <v-card
     :color="!hasClose ? 'transparent' : undefined"
-    class="text-start"
+    class="text-start b-lottery-add"
+    :class="{ 'b-lottery-add--preview': appearancePreview }"
     flat
   >
-    <v-card-title>
-      <v-icon class="me-1">emoji_events</v-icon>
-      {{
-        lottery ? $t("lottery_edit.title_edit") : $t("lottery_edit.title_add")
-      }}
+    <v-card-title class="b-lottery-add__heading">
+      <div class="b-lottery-add__title">
+        <v-icon class="me-1">emoji_events</v-icon>
+        {{
+          lottery ? $t("lottery_edit.title_edit") : $t("lottery_edit.title_add")
+        }}
+      </div>
+      <p class="b-lottery-add__intro">
+        {{ $t("shop_lotteries.modern.editor_intro") }}
+      </p>
     </v-card-title>
 
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ General ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
     <v-card-text class="text-start position-relative">
-      <v-form ref="form" lazy-validation>
-        <div class="widget-box mb-5">
+      <v-form
+        ref="form"
+        lazy-validation
+        class="b-lottery-add__form"
+        :class="{ 'b-lottery-add__form--preview': appearancePreview }"
+      >
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
-            :title="$t('lottery_edit.general_config')"
+            class="sd-modern-incentive-group__header"
+            :title="$t('lottery_edit.design_prize')"
             icon="tune"
           ></u-widget-header>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">{{
+            $t("lottery_edit.design_prize_subtitle")
+          }}</v-list-subheader>
+          <div class="sd-modern-incentive-fields">
+            <v-text-field
+              class="sd-modern-incentive-field sd-modern-incentive-fields__full"
+              v-model="title"
+              :counter="64"
+              :hint="$t('lottery_edit.title_input_hint')"
+              :label="$t('lottery_edit.title_input')"
+              :rules="[GlobalRules.required(), GlobalRules.counter(64)]"
+              messages=" "
+              variant="underlined"
+            >
+              <template v-slot:append-inner>
+                <b-translation-button-lottery
+                  v-if="lottery?.id"
+                  :label="$t('lottery_edit.title_input')"
+                  :lottery="lottery"
+                  :shop="shop"
+                  translation-key="title"
+                ></b-translation-button-lottery>
+              </template>
 
-          <v-list-subheader
-            >{{ $t("lottery_edit.config.subtitle") }}
-          </v-list-subheader>
+              <template v-slot:message>
+                <u-smart-suggestion
+                  v-if="!lottery?.id || !title"
+                  :samples="$tm('suggestions.lottery.title')"
+                  class="mb-4"
+                  @select="(v) => (title = v)"
+                ></u-smart-suggestion>
+              </template>
+            </v-text-field>
+            <v-text-field
+              class="sd-modern-incentive-field sd-modern-incentive-fields__full"
+              v-model="description"
+              :counter="256"
+              :hint="$t('lottery_edit.description_input_hint')"
+              :label="$t('lottery_edit.description_input')"
+              :rules="[GlobalRules.required(), GlobalRules.counter(256)]"
+              messages=" "
+              variant="underlined"
+            >
+              <template v-slot:append-inner>
+                <b-translation-button-lottery
+                  v-if="lottery?.id"
+                  :label="$t('lottery_edit.description_input')"
+                  :lottery="lottery"
+                  :shop="shop"
+                  translation-key="description"
+                ></b-translation-button-lottery>
+              </template>
 
-          <v-text-field
-            v-model="title"
-            :counter="64"
-            :hint="$t('lottery_edit.title_input_hint')"
-            :label="$t('lottery_edit.title_input')"
-            :rules="[GlobalRules.required(), GlobalRules.counter(64)]"
-            messages=" "
-            variant="underlined"
-          >
-            <template v-slot:append-inner>
-              <b-translation-button-lottery
-                v-if="lottery?.id"
-                :label="$t('lottery_edit.title_input')"
-                :lottery="lottery"
-                :shop="shop"
-                translation-key="title"
-              ></b-translation-button-lottery>
-            </template>
-
-            <template v-slot:message>
-              <u-smart-suggestion
-                v-if="!lottery?.id || !title"
-                :samples="$tm('suggestions.lottery.title')"
-                class="mb-4"
-                @select="(v) => (title = v)"
-              ></u-smart-suggestion>
-            </template>
-          </v-text-field>
-          <v-text-field
-            v-model="description"
-            :counter="256"
-            :hint="$t('lottery_edit.description_input_hint')"
-            :label="$t('lottery_edit.description_input')"
-            :rules="[GlobalRules.required(), GlobalRules.counter(256)]"
-            messages=" "
-            variant="underlined"
-          >
-            <template v-slot:append-inner>
-              <b-translation-button-lottery
-                v-if="lottery?.id"
-                :label="$t('lottery_edit.description_input')"
-                :lottery="lottery"
-                :shop="shop"
-                translation-key="description"
-              ></b-translation-button-lottery>
-            </template>
-
-            <template v-slot:message>
-              <u-smart-suggestion
-                v-if="!lottery?.id || !description"
-                :samples="$tm('suggestions.lottery.description')"
-                class="mb-4"
-                @select="(v) => (description = v)"
-              ></u-smart-suggestion>
-            </template>
-          </v-text-field>
-
-          <u-number-input
-            v-model="quantity"
-            :label="$t('lottery_edit.quantity')"
-            :messages="$t('lottery_edit.quantity_message')"
-            :min="1"
-            variant="underlined"
-          ></u-number-input>
-
-          <u-smart-switch
-            v-model="enable"
-            :false-title="$t('global.commons.disable')"
-            :hint="$t('lottery_edit.enable_message')"
-            :true-title="$t('global.commons.enable')"
-            class="mt-5"
-            false-gray
-          ></u-smart-switch>
+              <template v-slot:message>
+                <u-smart-suggestion
+                  v-if="!lottery?.id || !description"
+                  :samples="$tm('suggestions.lottery.description')"
+                  class="mb-4"
+                  @select="(v) => (description = v)"
+                ></u-smart-suggestion>
+              </template>
+            </v-text-field>
+            <v-file-input
+              class="sd-modern-incentive-field sd-modern-incentive-fields__full"
+              v-model="selected_file"
+              :label="$t('lottery_edit.image')"
+              :loading="busy_upload"
+              :messages="$t('lottery_edit.image_placeholder')"
+              accept="image/*"
+              color="primary"
+              prepend-icon=""
+              prepend-inner-icon="attach_file"
+              variant="underlined"
+            >
+              <template v-slot:append-inner>
+                <v-avatar v-if="image" class="hover-scale" size="28">
+                  <img :src="getShopImagePath(image)" />
+                </v-avatar>
+              </template>
+            </v-file-input>
+            <u-color-selector
+              class="sd-modern-incentive-fields__full"
+              v-model="color"
+              :title="$t('lottery_edit.hover_color')"
+            ></u-color-selector>
+          </div>
         </div>
-
-        <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Design ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-
-        <div class="widget-box mb-5">
+        <b-lottery-prize-preview
+          v-if="appearancePreview"
+          class="b-lottery-add__preview"
+          :title="title"
+          :description="description"
+          :image="image"
+          :color="color"
+          :selected-file="selected_file"
+        ></b-lottery-prize-preview>
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
-            :title="$t('lottery_edit.design_style')"
-            icon="architecture"
-          ></u-widget-header>
-
-          <v-list-subheader>
-            {{ $t("lottery_edit.design.subtitle") }}
-          </v-list-subheader>
-
-          <v-file-input
-            v-model="selected_file"
-            :label="$t('lottery_edit.image')"
-            :loading="busy_upload"
-            :messages="$t('lottery_edit.image_placeholder')"
-            accept="image/*"
-            color="primary"
-            prepend-icon=""
-            prepend-inner-icon="attach_file"
-            variant="underlined"
-          >
-            <template v-slot:append-inner>
-              <v-avatar v-if="image" class="hover-scale" size="28">
-                <img :src="getShopImagePath(image)" />
-              </v-avatar>
-            </template>
-          </v-file-input>
-
-          <u-color-selector
-            v-model="color"
-            :title="$t('lottery_edit.color')"
-          ></u-color-selector>
-        </div>
-
-        <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Constraints ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-
-        <div class="widget-box mb-5">
-          <u-widget-header
-            :title="$t('lottery_edit.condition')"
-            icon="border_outer"
-          ></u-widget-header>
-
-          <v-list-subheader>
-            {{ $t("lottery_edit.constraints.subtitle") }}
-          </v-list-subheader>
-
-          <u-number-input
-            v-model="chance"
-            :label="$t('lottery_edit.chance')"
-            :max="100"
-            :messages="$t('lottery_edit.chance_message')"
-            :min="1"
-            :rounded="false"
-            suffix=" %"
-            variant="underlined"
-          ></u-number-input>
-
-          <u-smart-switch
-            v-model="free_for_first"
-            :false-description="$t('lottery_edit.not_free_for_first_message')"
-            :false-title="$t('global.commons.disable')"
-            :label="$t('lottery_edit.free_for_first')"
-            :true-description="$t('lottery_edit.free_for_first_message')"
-            :true-title="$t('global.commons.enable')"
-            class="my-7"
-          ></u-smart-switch>
-
-          <b-club-select v-model="clubs" multiple no-club></b-club-select>
-        </div>
-
-        <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Prize ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-
-        <div class="widget-box mb-5">
-          <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('lottery_edit.prize.title')"
             icon="emoji_events"
           ></u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("lottery_edit.prize.subtitle") }}
           </v-list-subheader>
 
           <v-btn-toggle
             v-model="tab"
-            class="rounded-toggles mx-auto mb-3"
+            class="rounded-toggles mx-auto mb-3 b-lottery-add__modes"
             mandatory
             rounded
             selected-class="blue-flat"
@@ -228,9 +183,10 @@
           </v-btn-toggle>
 
           <v-expand-transition>
-            <div style="min-height: 200px">
-              <div v-if="tab === 'amount'">
+            <div class="b-lottery-add__reward" style="min-height: 200px">
+              <div v-if="tab === 'amount'" class="sd-modern-incentive-fields">
                 <u-currency-input
+                  class="sd-modern-incentive-field"
                   v-model="currency"
                   :disabled="lottery !== null"
                   :messages="$t('lottery_edit.currency_message')"
@@ -241,6 +197,7 @@
                 </u-currency-input>
 
                 <u-price-input
+                  class="sd-modern-incentive-field"
                   v-model="amount"
                   :currency="currency"
                   :hint="$t('lottery_edit.amount_hint')"
@@ -250,8 +207,9 @@
                 />
               </div>
 
-              <div v-if="tab === 'discount'">
+              <div v-if="tab === 'discount'" class="sd-modern-incentive-fields">
                 <u-currency-input
+                  class="sd-modern-incentive-field sd-modern-incentive-fields__full"
                   v-model="currency"
                   :disabled="lottery !== null"
                   :messages="$t('lottery_edit.currency_message')"
@@ -262,6 +220,7 @@
                 </u-currency-input>
 
                 <u-number-input
+                  class="sd-modern-incentive-field"
                   v-model="discount"
                   :label="$t('lottery_edit.discount')"
                   :max="100"
@@ -273,6 +232,7 @@
                 ></u-number-input>
 
                 <u-price-input
+                  class="sd-modern-incentive-field"
                   v-model="discount_limit"
                   :currency="currency"
                   :hint="$t('lottery_edit.discount_limit_hint')"
@@ -283,8 +243,9 @@
                 />
               </div>
 
-              <div v-if="tab === 'product'">
+              <div v-if="tab === 'product'" class="sd-modern-incentive-fields">
                 <b-products-select-box
+                  class="sd-modern-incentive-fields__full"
                   v-model="product_id"
                   v-model:variant-id="variant_id"
                   :label="$t('lottery_edit.product_input.label')"
@@ -296,14 +257,83 @@
                 ></b-products-select-box>
               </div>
 
-              <div v-if="tab === 'gift_card'" class="py-5">
+              <div
+                v-if="tab === 'gift_card'"
+                class="py-5 b-lottery-add__gift-card sd-modern-incentive-fields"
+              >
                 <b-giftcard-type-input
+                  class="sd-modern-incentive-field sd-modern-incentive-fields__full b-lottery-add__gift-type"
                   v-model="card_type_id"
                   :shop="shop"
                 ></b-giftcard-type-input>
               </div>
             </div>
           </v-expand-transition>
+        </div>
+        <div class="widget-box mb-5 sd-modern-incentive-group">
+          <u-widget-header
+            class="sd-modern-incentive-group__header"
+            :title="$t('lottery_edit.condition')"
+            icon="border_outer"
+          ></u-widget-header>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">{{
+            $t("lottery_edit.constraints.subtitle")
+          }}</v-list-subheader>
+          <div class="sd-modern-incentive-fields">
+            <u-number-input
+              class="sd-modern-incentive-field"
+              v-model="chance"
+              :label="$t('lottery_edit.chance')"
+              :max="100"
+              :messages="$t('lottery_edit.chance_message')"
+              :min="0"
+              :rounded="false"
+              variant="underlined"
+            ></u-number-input>
+            <u-smart-switch
+              v-model="free_for_first"
+              :false-description="$t('lottery_edit.not_free_for_first_message')"
+              :false-title="$t('global.commons.disable')"
+              :label="$t('lottery_edit.free_for_first')"
+              :true-description="$t('lottery_edit.free_for_first_message')"
+              :true-title="$t('global.commons.enable')"
+              class="sd-modern-incentive-fields__full my-7 b-lottery-add__switch"
+            ></u-smart-switch>
+            <b-club-select
+              v-model="clubs"
+              class="sd-modern-incentive-fields__full"
+              multiple
+              no-club
+            ></b-club-select>
+          </div>
+        </div>
+        <div class="widget-box mb-5 sd-modern-incentive-group">
+          <u-widget-header
+            class="sd-modern-incentive-group__header"
+            :title="$t('lottery_edit.stock_title')"
+            icon="inventory_2"
+          ></u-widget-header>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">{{
+            $t("lottery_edit.stock_subtitle")
+          }}</v-list-subheader>
+          <div class="sd-modern-incentive-fields">
+            <u-number-input
+              class="sd-modern-incentive-field"
+              v-model="quantity"
+              :label="$t('lottery_edit.quantity')"
+              :messages="$t('lottery_edit.quantity_message')"
+              :min="1"
+              variant="underlined"
+            ></u-number-input>
+            <u-smart-switch
+              v-model="enable"
+              :false-title="$t('global.commons.disable')"
+              :hint="$t('lottery_edit.enable_message')"
+              :true-title="$t('global.commons.enable')"
+              class="sd-modern-incentive-fields__full mt-5 b-lottery-add__switch"
+              false-gray
+            ></u-smart-switch>
+          </div>
         </div>
       </v-form>
 
@@ -312,7 +342,7 @@
         fill-h
       ></BShopLicenseBlockOverlay>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions class="b-lottery-add__actions">
       <div class="widget-buttons">
         <v-btn
           v-if="hasClose"
@@ -368,6 +398,7 @@ import BClubSelect from "../../club/select/BClubSelect.vue";
 import USmartSwitch from "../../../ui/smart/switch/USmartSwitch.vue";
 import BTranslationButtonLottery from "../../translation/button/lottery/BTranslationButtonLottery.vue";
 import USmartSuggestion from "../../../ui/smart/suggestion/USmartSuggestion.vue";
+import BLotteryPrizePreview from "./BLotteryPrizePreview.vue";
 import { Club } from "@selldone/core-js";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
@@ -376,6 +407,7 @@ export default {
   name: "BLotteryAdd",
   mixins: [],
   components: {
+    BLotteryPrizePreview,
     USmartSuggestion,
     BTranslationButtonLottery,
     USmartSwitch,
@@ -389,6 +421,10 @@ export default {
     UNumberInput,
   },
   props: {
+    appearancePreview: {
+      type: Boolean,
+      default: false,
+    },
     lottery: {
       required: false,
       type: Object,
@@ -653,4 +689,216 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-lottery-add__intro {
+  display: none;
+}
+
+.sd-modern-lottery-editor {
+  padding: 28px 20px;
+
+  &.b-lottery-add--preview {
+    .b-lottery-add__heading,
+    .b-lottery-add__actions {
+      width: min(1040px, 100%);
+    }
+
+    .b-lottery-add__form--preview {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      align-items: start;
+      gap: 24px;
+      width: min(1040px, 100%);
+      margin-inline: auto;
+
+      > .sd-modern-incentive-group {
+        grid-column: 1;
+        margin-block-end: 0 !important;
+      }
+    }
+
+    .b-lottery-add__preview {
+      position: sticky;
+      top: 0;
+      grid-column: 2;
+      grid-row: 1 / span 4;
+      align-self: start;
+      padding-block-start: 28px;
+    }
+
+    .b-lottery-add__actions {
+      margin-block-start: 24px;
+
+      .widget-buttons {
+        max-width: none;
+      }
+    }
+  }
+
+  .b-lottery-add__heading {
+    width: min(760px, 100%);
+    margin: 0 auto 24px;
+    padding: 0;
+    white-space: normal;
+  }
+
+  .b-lottery-add__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    > .v-icon {
+      width: 18px;
+      height: 18px;
+      margin: 0 !important;
+      color: var(--sd-modern-muted);
+      font-size: 18px;
+    }
+  }
+
+  .b-lottery-add__intro {
+    display: block;
+    margin: 6px 0 0;
+    color: var(--sd-modern-muted);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.75;
+  }
+
+  .b-lottery-add__switch {
+    margin-block: 0 !important;
+  }
+
+  .b-lottery-add__modes {
+    height: auto;
+    min-height: 0 !important;
+    max-width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+    margin: 18px 0 24px !important;
+    padding: 8px 0;
+    overflow: visible;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+
+    > .v-btn {
+      min-width: 0;
+      min-height: 40px;
+      height: auto;
+      padding: 8px 11px;
+      border: 1px solid var(--sd-modern-border);
+      border-radius: 10px !important;
+      background: transparent;
+      color: rgb(var(--v-theme-on-surface));
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 18px;
+      letter-spacing: 0;
+      text-transform: none;
+
+      :deep(.v-btn__content) {
+        font: inherit;
+        white-space: normal;
+      }
+
+      > :deep(.v-btn__content > .v-icon) {
+        font-size: 16px;
+        color: inherit !important;
+      }
+    }
+
+    > .v-btn.blue-flat {
+      background: rgb(var(--v-theme-surface)) !important;
+      color: rgb(var(--v-theme-on-surface)) !important;
+      box-shadow: var(
+        --sd-modern-selected-shadow,
+        0 3px 10px rgba(var(--v-theme-on-surface), 0.13)
+      );
+
+      :deep(.v-btn__overlay) {
+        opacity: 0;
+      }
+    }
+  }
+
+  .b-lottery-add__reward {
+    min-height: 0 !important;
+  }
+
+  .b-lottery-add__gift-card {
+    padding-block: 0 !important;
+  }
+
+  .b-lottery-add__gift-type :deep(.v-select__selection > .small) {
+    font-size: 14px;
+    line-height: 24px;
+
+    > b {
+      font-weight: 400;
+    }
+  }
+
+  .b-lottery-add__actions {
+    width: min(760px, 100%);
+    margin-inline: auto;
+
+    .widget-buttons {
+      width: 100%;
+      flex-direction: row;
+      gap: 12px;
+      padding: 0;
+
+      > .v-btn {
+        margin: 0;
+      }
+
+      :deep(.v-icon) {
+        font-size: 16px;
+      }
+    }
+  }
+
+  @media (max-width: 760px) {
+    padding: 20px 12px;
+
+    .sd-modern-incentive-fields {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    &.b-lottery-add--preview {
+      .b-lottery-add__form--preview {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .b-lottery-add__preview {
+        position: static;
+        padding-block-start: 0;
+      }
+    }
+  }
+
+  @media (max-width: 680px), (pointer: coarse) {
+    .b-lottery-add__gift-type :deep(.v-select__selection > .small) {
+      font-size: 16px;
+    }
+
+    .b-lottery-add__modes > .v-btn {
+      min-height: 44px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .b-lottery-add__modes > .v-btn {
+      flex: 1 1 calc(50% - 8px);
+    }
+  }
+}
+</style>

@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-sheet>
+  <v-sheet :class="{ 'b-product-add-studio--modern sd-modern-canvas text-start': modern }">
     <v-row align="center" class="body-title" no-gutters>
       <a class="pointer-pointer text-primary" @click="finish()">
         <v-icon class="me-1" size="small">view_module</v-icon>
@@ -42,13 +42,14 @@
     <div v-if="tab_mode === TAB_PRODUCT">
       <!-- --------------------- Select Product Type --------------------- -->
 
-      <div v-if="!type" class="max-width-container-1280px mx-auto">
+      <div v-if="!type" class="max-width-container-1280px mx-auto" :class="{ 'sd-modern-widget b-product-add-studio__type': modern }">
         <!-- ██████████████████████ Select type ██████████████████████ -->
 
         <u-widget-header
           :title="$t('global.commons.product_type')"
           icon="workspaces"
-          icon-color="#333"
+          :icon-color="modern ? undefined : '#333'"
+          :class="{ 'sd-modern-form-header': modern }"
         ></u-widget-header>
         <v-list-subheader>
           {{ $t("add_product.select_type.title") }}
@@ -64,10 +65,10 @@
       </div>
 
       <div v-else>
-        <v-container v-if="tab_product === 1">
+        <v-container v-if="tab_product === 1" :class="{ 'sd-modern-form b-product-add-studio__form': modern }">
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Marketplace Settings ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-          <div v-if="is_marketplace" class="widget-box mb-5 mt-5">
+          <div v-if="is_marketplace" class="widget-box mb-5 mt-5" :class="{ 'sd-modern-widget': modern }">
             <u-widget-header
               :title="$t('global.commons.vendor')"
               icon="storefront"
@@ -148,6 +149,8 @@
                   $t('add_product.edit_info.marketplace.single_vendor_title')
                 "
                 class="my-3"
+                :class="{ 'sd-modern-smart-select': modern }"
+                :border="modern || undefined"
                 @change="selected_vendor_id = null"
               ></u-smart-switch>
 
@@ -171,7 +174,7 @@
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ General ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-          <div class="widget-box mb-5">
+          <div class="widget-box mb-5" :class="{ 'sd-modern-widget': modern }">
             <u-widget-header
               :title="$t('global.commons.info')"
               icon="info"
@@ -211,7 +214,7 @@
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-          <div class="widget-box mb-5">
+          <div class="widget-box mb-5" :class="{ 'sd-modern-widget': modern }">
             <u-widget-header
               :title="$t('global.commons.price')"
               icon="monetization_on"
@@ -239,12 +242,13 @@
             />
           </div>
 
-          <s-widget-buttons auto-fixed-position>
+          <s-widget-buttons auto-fixed-position :class="{ 'sd-modern-form-actions': modern }">
             <v-btn
               :disabled="!can_add"
               :loading="busy_add"
               color="primary"
-              size="x-large"
+              :size="modern ? 'default' : 'x-large'"
+              :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
               variant="elevated"
               @click="addProduct()"
             >
@@ -260,9 +264,10 @@
           <b-product-edit-images v-if="product" :product="product" for-studio>
           </b-product-edit-images>
 
-          <s-widget-buttons auto-fixed-position>
+          <s-widget-buttons auto-fixed-position :class="{ 'sd-modern-form-actions': modern }">
             <v-btn
-              size="x-large"
+              :size="modern ? 'default' : 'x-large'"
+              :class="{ 'sd-modern-button': modern }"
               variant="text"
               @click="
                 () => {
@@ -276,7 +281,8 @@
             </v-btn>
             <v-btn
               color="primary"
-              size="x-large"
+              :size="modern ? 'default' : 'x-large'"
+              :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
               variant="elevated"
               @click="finish()"
             >
@@ -297,10 +303,11 @@
             for-studio
           />
 
-          <s-widget-buttons auto-fixed-position>
+          <s-widget-buttons auto-fixed-position :class="{ 'sd-modern-form-actions': modern }">
             <v-btn
               color="primary"
-              size="x-large"
+              :size="modern ? 'default' : 'x-large'"
+              :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
               variant="elevated"
               @click="finish()"
             >
@@ -356,6 +363,7 @@ export default {
   },
   emits: ["add", "finish"],
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
     },
@@ -548,4 +556,24 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-product-add-studio--modern {
+  padding: 24px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  > .body-title { max-width: 1040px; margin: 0 auto 24px; font-family: inherit; font-size: 18px; font-weight: 500; line-height: 27px; }
+  .b-product-add-studio__type { max-width: 1040px; padding: 24px; }
+  .b-product-add-studio__form { max-width: 760px; padding: 0; }
+  .sd-modern-widget { --background: rgb(var(--v-theme-surface)); padding: 24px; }
+  .sd-modern-widget > :deep(.s--widget-header h2) { font-family: inherit; font-size: 17px; font-weight: 500; line-height: 25px; }
+  .sd-modern-widget > :deep(.s--widget-header .--icon) { font-size: 20px !important; }
+  .sd-modern-widget > .v-list-subheader { font-size: 12px; font-weight: 400; line-height: 19px; color: var(--sd-modern-muted); }
+
+  @media (max-width: 599px) {
+    padding: 20px 12px;
+    .sd-modern-widget, .b-product-add-studio__type { padding: 20px 16px; }
+    > .body-title { font-size: 16px; line-height: 24px; }
+  }
+}
+</style>

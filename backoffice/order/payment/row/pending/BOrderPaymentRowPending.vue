@@ -15,9 +15,9 @@
 <template>
   <tr
     :class="{
-      'bg-amber': transaction.status === 'RequireAction',
-      'bg-cyan text-white': transaction.status === 'Processing',
-      'bg-red text-white': transaction.status === 'Canceled',
+      'bg-amber': !modern && transaction.status === 'RequireAction',
+      'bg-cyan text-white': !modern && transaction.status === 'Processing',
+      'bg-red text-white': !modern && transaction.status === 'Canceled',
     }"
     class="text-start no-inv"
   >
@@ -65,7 +65,7 @@
             @click="showFullscreen"
           ></v-img>
         </div>
-        <v-alert v-else border="bottom" color="red"
+        <v-alert v-else :class="{ 'sd-modern-notice': modern }" :border="modern ? undefined : 'bottom'" :color="modern ? undefined : 'red'"
           >{{
             $t(
               "process_center.payment_widget.payment_receipt_not_uploaded_error",
@@ -79,15 +79,18 @@
         </p>
 
         <v-btn
+          v-if="!readonly"
           :class="{
             disabled:
               transaction.status === TransactionStatus.RequireAction.code,
+            'sd-modern-button sd-modern-button--compact sd-modern-button--inline': modern,
           }"
           class="my-3"
-          color="#fff"
+          :color="modern ? 'primary' : '#fff'"
+          :variant="modern ? 'text' : undefined"
           rounded
           size="large"
-          @click="$emit('show-confirm-payment-dir', transaction)"
+          @click="!readonly && $emit('show-confirm-payment-dir', transaction)"
         >
           <v-icon
             v-if="transaction.status === TransactionStatus.Processing.code"
@@ -113,15 +116,16 @@
       <br />
       {{ $t("global.commons.last_status") }}: {{ transaction.status }}
     </td>
-    <td class="text-center">
+    <td :class="modern ? 'text-start' : 'text-center'">
       <v-btn
-        v-if="transaction.unique_id"
+        v-if="!readonly && transaction.unique_id"
         :loading="busyCheck"
-        class="mx-2"
+        :class="modern ? 'sd-modern-button sd-modern-button--compact sd-modern-button--inline' : 'mx-2'"
+        :color="modern ? 'primary' : undefined"
         size="small"
-        variant="flat"
+        :variant="modern ? 'text' : 'flat'"
         @click="
-          $emit('check:payment', {
+          !readonly && $emit('check:payment', {
             gateway_code: transaction.gateway_code,
             unique_id: transaction.unique_id,
             gateway_name: transaction.name,
@@ -149,10 +153,12 @@ export default {
   name: "BOrderPaymentRowPending",
   mixins: [DateMixin,ImageMixin],
   props: {
+    readonly: Boolean,
     transaction: {
       require: true,
     },
     busyCheck: {},
+    modern: { type: Boolean, default: false },
   },
   data: () => ({
     TransactionStatus: TransactionStatus,

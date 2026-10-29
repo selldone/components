@@ -16,9 +16,12 @@
   <component
     :is="modern ? 'section' : 'div'"
     class="b-dashboard-sessions text-start"
-    :class="{ 'sd-modern-widget b-dashboard-sessions--modern': modern }"
+    :class="{
+      'sd-modern-widget b-dashboard-sessions--modern': modern,
+      'b-dashboard-sessions--report': report,
+    }"
   >
-    <header v-if="modern" class="sd-modern-header">
+    <header v-if="modern && !report" class="sd-modern-header">
       <div class="sd-modern-title">
         <span class="sd-modern-icon sd-modern-icon--plain" aria-hidden="true">
           <v-icon :icon="summary ? 'devices' : 'public'" size="20" />
@@ -67,7 +70,8 @@
       </div>
     </header>
     <b-sessions-map
-      :modern="modern"
+      :modern="modern || report"
+      :report="report"
       :full-details="fullDetails"
       :summary="summary"
       :shop="shop"
@@ -87,6 +91,7 @@ export default {
   },
   props: {
     modern: Boolean,
+    report: Boolean,
     summary: Boolean,
     shop: {
       required: true,
@@ -136,5 +141,10 @@ export default {
   :deep(.b-sessions-map .apexcharts-legend-text) {
     color: rgb(var(--v-theme-on-surface)) !important;
   }
+}
+
+.b-dashboard-sessions--report.sd-modern-widget {
+  padding: 22px;
+  font-size: 13px;
 }
 </style>

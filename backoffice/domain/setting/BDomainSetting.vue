@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <v-card class="text-start" rounded="0">
+  <v-card class="text-start" :class="{ 'b-domain-setting--modern': modern }" rounded="0">
     <v-card-title class="d-flex align-center">
       <v-avatar
         class="avatar-gradient -thin -shop me-2"
@@ -32,8 +32,9 @@
     </v-card-title>
 
     <v-card-text>
+      <div v-if="modern && domain.externally_hosted" class="sd-modern-notice b-domain-setting__notice"><v-icon size="18">open_in_new</v-icon><span>{{ $t("admin_shop.dashboard.info.add_dialog.hosting.external_note") }}</span></div>
       <v-alert
-        v-if="domain.externally_hosted"
+        v-if="!modern && domain.externally_hosted"
         class="mb-5"
         color="deep-purple"
         icon="open_in_new"
@@ -43,68 +44,75 @@
       </v-alert>
 
       <!-- ████████████████████████ SSL ████████████████████████ -->
-      <div v-if="!domain.externally_hosted" class="widget-box mb-5">
+      <div v-if="!domain.externally_hosted" ref="sslSection" :class="modern ? 'sd-modern-widget b-domain-setting__section' : 'widget-box mb-5'">
         <u-widget-header
           :add-loading="busy_check_ssl"
           :add-text="!!domain.ssl"
-          add-caption="Check SSL"
+          :add-caption="modern ? $t('domains_modern.setting.check_ssl') : 'Check SSL'"
           add-icon="published_with_changes"
           icon="https"
           title="SSL/TLS"
+          :class="{ 'sd-modern-form-header': modern }"
           @click:add="checkSSL()"
         ></u-widget-header>
         <v-list-subheader
-          >Advanced domain setting offers a flexible and customizable way to
+          ><template v-if="modern">{{ $t('domains_modern.setting.ssl_help') }}</template><template v-else>Advanced domain setting offers a flexible and customizable way to
           issue and manage certificates and SSL.
+          </template>
         </v-list-subheader>
 
         <u-smart-switch
           v-model="https"
-          false-description="Your website will be accessible via both HTTP and HTTPS. While HTTP is a less secure option, it can be considered if you are experiencing SSL-related issues."
+          :false-description="modern ? $t('domains_modern.setting.http_description') : 'Your website will be accessible via both HTTP and HTTPS. While HTTP is a less secure option, it can be considered if you are experiencing SSL-related issues.'"
           false-icon="http"
-          false-title="Allow HTTP traffic"
-          hint="Redirect traffic from HTTP to HTTPS automatically in the application layer. Also, we recommend you enable force HTTP to HTTPS in your CDN."
-          label="HTTPS Force Redirect"
-          true-description="When attempting to redirect HTTP requests to HTTPS, it is crucial to ensure that you have a valid SSL certificate."
+          :false-title="modern ? $t('domains_modern.setting.allow_http') : 'Allow HTTP traffic'"
+          :hint="modern ? $t('domains_modern.setting.redirect_help') : 'Redirect traffic from HTTP to HTTPS automatically in the application layer. Also, we recommend you enable force HTTP to HTTPS in your CDN.'"
+          :label="modern ? $t('domains_modern.setting.redirect_title') : 'HTTPS Force Redirect'"
+          :true-description="modern ? $t('domains_modern.setting.https_description') : 'When attempting to redirect HTTP requests to HTTPS, it is crucial to ensure that you have a valid SSL certificate.'"
           true-icon="https"
-          true-title="Force redirect HTTP to HTTPS"
+          :true-title="modern ? $t('domains_modern.setting.force_https') : 'Force redirect HTTP to HTTPS'"
         >
         </u-smart-switch>
       </div>
 
       <!-- ████████████████████████ Resource Customization ████████████████████████ -->
-      <div class="widget-box mb-5">
+      <div :class="modern ? 'sd-modern-widget b-domain-setting__section' : 'widget-box mb-5'">
         <u-widget-header
           icon="ballot"
-          title="Resource Customization"
+          :title="modern ? $t('domains_modern.setting.resources') : 'Resource Customization'"
+          :class="{ 'sd-modern-form-header': modern }"
         ></u-widget-header>
         <v-list-subheader>
-          You can restrict the available languages and currencies for this
+          <template v-if="modern">{{ $t('domains_modern.setting.resources_help') }}</template><template v-else>You can restrict the available languages and currencies for this
           domain. By default, all languages and currencies are accessible. If
           you select specific currencies, only the associated payment will be
-          displayed to customers.
+          displayed to customers.</template>
         </v-list-subheader>
 
         <u-language-input
+          ref="languagesInput"
           :available-languages="available_languages"
           v-model="languages"
           multiple
-          label="Available Languages"
+          :label="modern ? $t('domains_modern.setting.languages') : 'Available Languages'"
+          :class="{ 'sd-modern-underlined-field': modern }"
           max-width="null"
           clearable
           chips
-          placeholder="*.* All languages are available"
+          :placeholder="modern ? $t('domains_modern.list.all_languages') : '*.* All languages are available'"
           persistent-placeholder
         ></u-language-input>
 
         <u-currency-input
+          ref="currenciesInput"
           :active-currencies="shop.currencies"
           v-model="currencies"
           chips
           clearable
           multiple
-          label="Available Currencies"
-          placeholder="*.* All currencies are available"
+          :label="modern ? $t('domains_modern.setting.currencies') : 'Available Currencies'"
+          :class="{ 'sd-modern-underlined-field': modern }"
+          :placeholder="modern ? $t('domains_modern.list.all_currencies') : '*.* All currencies are available'"
           persistent-placeholder
         ></u-currency-input>
       </div>
@@ -112,22 +120,24 @@
       <!-- ████████████████████████ Certificate ████████████████████████ -->
       <div
         v-if="!domain.externally_hosted && certificate"
-        class="widget-box mb-5"
+        :class="modern ? 'sd-modern-widget b-domain-setting__section' : 'widget-box mb-5'"
       >
         <u-widget-header
           icon="workspace_premium"
-          title="Certificate"
+          :title="modern ? $t('domains_modern.setting.certificate') : 'Certificate'"
+          :class="{ 'sd-modern-form-header': modern }"
         ></u-widget-header>
         <v-list-subheader
-          >The details of the SSL certificate issued by Selldone are visible.
+          ><template v-if="modern">{{ $t('domains_modern.setting.certificate_help') }}</template><template v-else>The details of the SSL certificate issued by Selldone are visible.</template>
         </v-list-subheader>
 
         <div class="d-flex align-center mb-3">
-          <span class="font-weight-black"
+          <span :class="modern ? 'b-domain-setting__certificate-name' : 'font-weight-black'"
             >{{ certificate["Name"] }} - {{ certificate["Key Type"] }}</span
           >
+          <span v-if="modern" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="is_valid ? 'bg-success' : 'bg-warning'" />{{ $t(is_valid ? 'domains_modern.setting.valid' : 'domains_modern.list.expired') }}</span>
           <v-chip
-            v-if="is_valid"
+            v-if="!modern && is_valid"
             class="mx-2"
             color="success"
             variant="flat"
@@ -138,7 +148,7 @@
             Valid
           </v-chip>
           <v-chip
-            v-else
+            v-else-if="!modern"
             class="mx-2"
             color="red"
             variant="flat"
@@ -150,15 +160,15 @@
           </v-chip>
         </div>
 
-        <u-text-value-box label="Serial Number" vb50>
+        <u-text-value-box :label="modern ? $t('domains_modern.setting.serial') : 'Serial Number'" vb50>
           {{ certificate["Serial Number"] }}
         </u-text-value-box>
 
-        <u-text-value-box label="Domains" vb50>
+        <u-text-value-box :label="modern ? $t('commons.domains') : 'Domains'" vb50>
           {{ certificate["Domains"] }}
         </u-text-value-box>
 
-        <u-text-value-box label="Expiry Date" vb50>
+        <u-text-value-box :label="modern ? $t('domains_modern.setting.expiry') : 'Expiry Date'" vb50>
           {{ getLocalDateString(certificate["Expiry Date"]) }} -
           {{ getFromNowString(certificate["Expiry Date"]) }}
         </u-text-value-box>
@@ -168,8 +178,8 @@
     </v-card-text>
 
     <v-card-actions>
-      <div class="widget-buttons">
-        <v-btn size="x-large" variant="text" @click="close">
+      <div class="widget-buttons" :class="{ 'b-domain-setting__actions': modern }">
+        <v-btn :size="modern ? undefined : 'x-large'" :class="{ 'sd-modern-button': modern }" variant="text" @click="close">
           <v-icon start>close</v-icon>
           {{ $t("global.actions.close") }}
         </v-btn>
@@ -177,7 +187,8 @@
         <v-btn
           :loading="busy_save"
           color="primary"
-          size="x-large"
+          :size="modern ? undefined : 'x-large'"
+          :class="{ 'sd-modern-button': modern }"
           variant="elevated"
           @click="save"
         >
@@ -206,6 +217,7 @@ export default {
 
   components: { UCurrencyInput, ULanguageInput, USmartSwitch, UTextValueBox },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -251,6 +263,13 @@ export default {
   },
 
   methods: {
+    focusSection(section) {
+      if (!this.modern || !['languages', 'currencies', 'ssl'].includes(section)) return;
+      const reference = section === 'ssl' ? this.$refs.sslSection : this.$refs[`${section}Input`];
+      const element = reference?.$el || reference;
+      element?.scrollIntoView({ block: 'center' });
+      element?.querySelector('input:not([type="hidden"]), button')?.focus({ preventScroll: true });
+    },
     close() {
       this.$emit("click:close");
     },
@@ -327,4 +346,22 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-domain-setting--modern {
+  background: color-mix(in srgb, rgb(var(--v-theme-background)) 96%, rgb(var(--v-theme-on-background)));
+  :deep(.v-card-title) { font-size: 18px; font-weight: 500; line-height: 26px; padding: 22px 25px; }
+  > .v-card-text { width: min(960px, 100%); margin-inline: auto; padding: 24px 25px; }
+  .b-domain-setting__section { padding: 25px; margin-block-end: 20px; border-radius: 18px; }
+  .b-domain-setting__section > .v-list-subheader { padding: 0; min-height: 0; font-size: 13px; line-height: 21px; color: var(--sd-modern-muted); margin-block: 7px 20px; }
+  .b-domain-setting__section :deep(.u-smart-select) { font-size: 13px; }
+  .b-domain-setting__certificate-name { font-size: 13px; font-weight: 500; }
+  .b-domain-setting__notice { display: flex; align-items: flex-start; gap: 10px; margin-block-end: 20px; font-size: 13px; line-height: 21px; }
+  .b-domain-setting__actions { display: flex; justify-content: flex-end; gap: 10px; width: min(910px, 100%); margin: 0 auto; }
+  .b-domain-setting__actions .v-btn { flex: 0 1 auto; height: 38px; font-size: 12px; line-height: 18px; border-radius: 10px; padding-inline: 16px; }
+  @media (max-width: 600px) {
+    > .v-card-text { padding: 18px 14px; }
+    .b-domain-setting__section { padding: 20px 15px; }
+    .b-domain-setting__actions .v-btn { min-height: 44px; }
+  }
+}
+</style>

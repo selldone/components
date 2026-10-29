@@ -14,6 +14,7 @@
 
 <template>
   <delivery-timeline
+    :readonly="readonly"
     :deliver-at="transportationOrder.deliver_at"
     :delivery-service="delivery_service"
     :history="transportationOrder.history"
@@ -41,6 +42,7 @@ export default {
   emits: ["refresh-service"],
   inject: ["$shop"],
   props: {
+    readonly: Boolean,
     transportationOrder: { required: true },
     deliveryInfo: {},
   },

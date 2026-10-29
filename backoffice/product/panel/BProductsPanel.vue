@@ -14,7 +14,8 @@
 
 <template>
   <div
-    class="overflow-hidden"
+    class="b-products-panel text-start"
+    :class="modern ? 'b-products-panel--modern sd-modern-content' : 'overflow-hidden'"
     @dragleave="
       (e) => {
         show_drop ? undefined : dragleave(e);
@@ -34,6 +35,7 @@
       v-model:showNotes="show_notes"
       v-model:showVendors="show_vendors"
       v-model:tableMode="table_mode"
+      :modern="modern"
       :shop="shop"
       :vendor="vendor"
       @click:addProduct="add_product_dialog = true"
@@ -46,7 +48,8 @@
             class="tnt"
             rounded
             size="small"
-            title="Collapse"
+            :title="modern ? undefined : 'Collapse'"
+            :aria-label="modern ? $t('product_panel.workspace.expand_import') : undefined"
             variant="text"
             @click.stop="importing_collapse = false"
           >
@@ -60,10 +63,11 @@
               >{{ $t("global.commons.images") }} |
               {{ numeralFormat(images_que, "0.[0] a") }}</span
             >
-            Importing...
+            {{ modern ? $t('product_panel.workspace.importing') : 'Importing...' }}
             <v-icon :class="{ 'rotate-180': !importing_collapse }" end
               >expand_more
             </v-icon>
+            <v-tooltip v-if="modern" activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="$t('product_panel.workspace.expand_import')" :open-on-focus="true" />
           </v-btn>
         </v-slide-y-transition>
       </template>
@@ -80,13 +84,16 @@
           <v-btn
             class="absolute-top-end"
             icon
-            title="Collapse"
+            :title="modern ? undefined : 'Collapse'"
+            :aria-label="modern ? $t('product_panel.workspace.collapse_import') : undefined"
+            :class="{ 'sd-modern-icon-button': modern }"
             variant="text"
             @click="importing_collapse = true"
           >
             <v-icon :class="{ 'rotate-180': !importing_collapse }"
               >expand_more
             </v-icon>
+            <v-tooltip v-if="modern" activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="$t('product_panel.workspace.collapse_import')" :open-on-focus="true" />
           </v-btn>
         </b-shop-products-import-processing>
       </div>
@@ -96,6 +103,7 @@
 
     <b-products-list
         v-if="table_mode"
+        :modern="modern"
         ref="products_list"
         :show-deletes="show_deletes"
         :show-notes="show_notes"
@@ -108,6 +116,7 @@
 
     <b-products-window
         v-else
+      :modern="modern"
       ref="products_list"
       :shop="shop"
       :show-deletes="show_deletes"
@@ -115,10 +124,10 @@
       :show-vendors="show_vendors"
       :vendor="vendor"
       :add-product-button="CAN_ADD_PRODUCT"
-      class="mb-5 fadeIn"
+      :class="modern ? 'b-products-panel__window' : 'mb-5 fadeIn'"
       draggable
       multi-select-products
-      style="min-height: 680px"
+      :style="modern ? undefined : { minHeight: '680px' }"
       with-category-translations
       @select="
         (product) =>
@@ -136,10 +145,30 @@
       @click:ai-add="showAIAddDialog()"
     >
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅ Import Product Button ▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+      <template v-if="modern" #breadcrumb-append>
+        <div v-if="CAN_ADD_PRODUCT || CAN_ADD_CATEGORY" class="b-products-panel__creation-actions sd-modern-actions">
+          <v-btn
+            v-if="CAN_ADD_PRODUCT"
+            class="sd-modern-button sd-modern-button--small sd-modern-button--primary"
+            color="primary"
+            variant="flat"
+            prepend-icon="library_add"
+            @click="add_product_dialog = true"
+          >{{ $t('product_panel.workspace.add_product') }}</v-btn>
+          <v-btn
+            v-if="CAN_ADD_CATEGORY"
+            class="sd-modern-button sd-modern-button--small"
+            color="surface"
+            variant="flat"
+            prepend-icon="create_new_folder"
+            @click="dialog_add_category = true"
+          >{{ $t('product_panel.workspace.add_category') }}</v-btn>
+        </div>
+      </template>
       <template v-if="CAN_ADD_PRODUCT" v-slot:append-products>
-        <v-col key="importer" class="p-2" cols="12" lg="3" md="4" sm="6" xl="3">
+        <v-col key="importer" :class="modern ? 'b-products-panel__import-tile' : 'p-2'" cols="12" lg="3" md="4" sm="6" xl="3">
           <div
-            class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+            :class="modern ? 'b-products-panel__import-content sd-modern-widget' : 'dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative'"
           >
             <div>
 
@@ -159,7 +188,7 @@
                     ? 'VendorProducts_Importer'
                     : 'BPageShopProductsImporter',
                 }"
-                class="tnt m-1"
+                :class="modern ? 'sd-modern-button sd-modern-button--small sd-modern-button--primary' : 'tnt m-1'"
                 color="primary"
                 exact
                 size="small"
@@ -176,7 +205,7 @@
               <div>
                 <hr />
                 <v-btn
-                  class="tnt m-1"
+                  :class="modern ? 'sd-modern-button sd-modern-button--small' : 'tnt m-1'"
                   color="primary"
                   size="small"
                   variant="text"
@@ -214,6 +243,7 @@
 
     <b-product-importer-sample-dialog
       v-model="dialog_sample"
+      :modern="modern"
     ></b-product-importer-sample-dialog>
 
     <!-- ███████████████████████ Dialog > Add product by AI ███████████████████████ -->
@@ -222,8 +252,8 @@
       fullscreen
       transition="dialog-bottom-transition"
     >
-      <v-card v-if="ai_dialog_pre" color="#516ad6" dark rounded="0">
-        <v-card-title class="d-flex align-center">
+      <v-card v-if="ai_dialog_pre" :color="modern ? undefined : '#516ad6'" :dark="!modern" rounded="0" :class="{ 'b-products-panel__creation sd-modern-canvas text-start': modern }">
+        <v-card-title class="d-flex align-center" :class="{ 'b-products-panel__creation-title': modern }">
           <v-icon class="me-2">auto_fix_high</v-icon>
           {{ $t("product_panel.ai.title") }}
 
@@ -242,21 +272,25 @@
           <v-spacer></v-spacer>
 
           <v-btn
-            color="#FFF"
+            :color="modern ? undefined : '#FFF'"
+            :class="{ 'sd-modern-icon-button': modern }"
+            :aria-label="$t('global.actions.close')"
             icon
             size="x-large"
             variant="text"
             @click="ai_dialog = false"
           >
             <v-icon>close</v-icon>
+            <v-tooltip v-if="modern" activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="$t('global.actions.close')" :open-on-focus="true" />
           </v-btn>
         </v-card-title>
-        <v-card-text>
+        <v-card-text :class="{ 'b-products-panel__creation-content': modern }">
           <b-product-add-ai
             :category="parent_folders"
             :shop="shop"
             :vendor="vendor"
-            dark
+            :dark="!modern"
+            :modern="modern"
             @product-add="
               (product) => $refs.products_list?.onAddOrUpdateProduct(product)
             "
@@ -302,6 +336,7 @@
     <!-- ███████████████████████ Dialog > Add product Normal ███████████████████████ -->
     <b-products-panel-add-product
       v-model="add_product_dialog"
+      :modern="modern"
       @add="
         (p) => {
           $refs.products_list?.onAddOrUpdateProduct(p);
@@ -359,13 +394,14 @@
       fullscreen
       transition="dialog-bottom-transition"
     >
-      <v-card color="#FFF">
-        <v-card-text>
+      <v-card :color="modern ? undefined : '#FFF'" :class="{ 'b-products-panel__creation sd-modern-canvas text-start': modern }">
+        <v-card-text :class="{ 'b-products-panel__creation-content': modern }">
           <b-product-add-studio
             :shop="shop"
             :vendor="vendor"
             class="fadeIn"
-            dark
+            :dark="!modern"
+            :modern="modern"
             @add="(p) => $refs.products_list?.onAddOrUpdateProduct(p)"
             @finish="add_product_studio_dialog = false"
           >
@@ -430,6 +466,7 @@ export default {
   },
 
   props: {
+    modern: Boolean,
     shop: {
       required: true,
     },
@@ -888,4 +925,50 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-products-panel--modern {
+  width: calc(100% - 48px);
+  max-width: 1400px;
+  margin-block: 27px 25px;
+  overflow: visible;
+
+  .b-products-panel__window { min-height: 0; }
+  .b-products-panel__creation-actions { flex: 0 1 auto; gap: 8px; }
+  .b-products-panel__import-tile { min-width: 0; }
+  .b-products-panel__import-content {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 13px;
+    text-align: center;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 12px;
+  }
+  .b-products-panel__import-content > div { min-width: 0; width: 100%; }
+  .b-products-panel__import-content h3 { font-size: 14px; font-weight: 500; line-height: 20px; margin-block-end: 10px; }
+  .b-products-panel__import-content small { font-size: 11px; line-height: 18px; color: var(--sd-modern-muted); }
+  .b-products-panel__import-content .sd-modern-button { margin-block: 8px; }
+  .b-products-panel__import-content hr { margin-block: 14px 4px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
+}
+
+.b-products-panel__creation {
+  .b-products-panel__creation-title { padding: 24px; gap: 8px; font-size: 20px; font-weight: 500; line-height: 28px; flex-wrap: wrap; }
+  .b-products-panel__creation-content { width: min(1040px, 100%); margin-inline: auto; padding: 24px; }
+}
+
+@media (max-width: 760px) {
+  .b-products-panel--modern { width: calc(100% - 26px); margin-block: 22px; }
+  .b-products-panel__creation .b-products-panel__creation-content { padding: 16px; }
+}
+
+@media (max-width: 600px) {
+  .b-products-panel--modern .b-products-panel__creation-actions {
+    flex: 1 0 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    > .v-btn { min-width: 0; padding-inline: 8px; }
+    :deep(.v-btn__content) { white-space: normal; }
+  }
+}
+</style>

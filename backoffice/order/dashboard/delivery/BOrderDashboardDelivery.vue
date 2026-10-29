@@ -14,11 +14,12 @@
 
 <template>
   <div
-    :class="{ '-activated': in_this_step }"
-    class="widget shadow my-3 mx-1 mx-md-3"
+    :class="modern ? 'sd-modern-widget b-order-delivery-modern' : { '-activated': in_this_step, 'widget shadow my-3 mx-1 mx-md-3': true }"
+    class="text-start"
     v-bind="$attrs"
   >
     <u-widget-header
+      :class="{ 'sd-modern-form-header b-order-delivery-modern__header': modern }"
       :title="
         is_pickup
           ? $t('global.commons.pickup')
@@ -34,19 +35,31 @@
           width="24"
         />
       </template>
+      <template v-if="modern && (basket.delivery_state === PhysicalOrderStates.CheckQueue.code || basket.delivery_state === PhysicalOrderStates.OrderConfirm.code)" #append-actions>
+        <span class="b-order-delivery-modern__stage">{{ $t('process_center.modern.delivery_pending') }}</span>
+      </template>
     </u-widget-header>
 
-    <v-list-subheader></v-list-subheader>
+    <p v-if="modern" class="sd-modern-subtitle b-order-delivery-modern__subtitle">
+      <span>{{ $t('process_center.modern.delivery_subtitle') }}</span>
+      <v-tooltip v-if="!is_pickup" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true" :open-on-click="true">
+        <template #activator="{ props }">
+          <v-btn v-bind="props" icon="info_outline" variant="text" class="sd-modern-icon-button sd-modern-info-button b-order-delivery-modern__help" :aria-label="$t('process_center.modern.delivery_help')"></v-btn>
+        </template>
+        {{ $tm('order_delivery.checklist').join(' ') }}
+      </v-tooltip>
+    </p>
+    <v-list-subheader v-else></v-list-subheader>
 
-    <div class="text-start">
-      <div v-if="has_eta_date && delivery_info.date">
+    <div class="text-start" :class="{ 'b-order-delivery-modern__body': modern }">
+      <div v-if="!modern && has_eta_date && delivery_info.date">
         <div>
           {{
             is_pickup
               ? `${$t("global.commons.pickup")} · ${$t(
                   "global.commons.time",
                 )}`
-              : "The customer chooses a time to receive their order."
+              : modern ? $t('process_center.modern.requested_time') : "The customer chooses a time to receive their order."
           }}
         </div>
         <div class="inline-block">
@@ -69,12 +82,26 @@
 
       <!-- Send by delivery person or nothing! -->
 
+      <div :class="{ 'b-order-delivery-modern__shipping': modern }">
+      <header v-if="modern" class="b-order-delivery-modern__shipping-heading">
+        <h3 class="d-flex align-center ga-1">
+          {{ $t('process_center.preparing.delivery_type') }}
+          <v-tooltip v-if="!is_pickup" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true" :open-on-click="true">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" icon="info_outline" variant="text" class="sd-modern-icon-button sd-modern-info-button b-order-delivery-modern__help" :aria-label="$t('process_center.modern.shipping_method_help_title')"></v-btn>
+            </template>
+            {{ $t('process_center.modern.shipping_method_help') }}
+          </v-tooltip>
+        </h3>
+        <span v-if="transportation?.title">{{ transportation.title }}</span>
+      </header>
+      <div :class="{ 'b-order-delivery-modern__courier': modern }">
       <template v-if="!is_pickup">
         <h3>
-          <v-icon class="me-1" color="black">looks_one</v-icon>
-          {{ $t("order_delivery.option_deliver_by_courier") }}
+          <v-icon class="me-1" :color="modern ? undefined : 'black'">{{ modern ? 'local_shipping' : 'looks_one' }}</v-icon>
+          {{ $t(modern ? 'process_center.modern.courier_title' : 'order_delivery.option_deliver_by_courier') }}
         </h3>
-        <p class="my-2 text-muted" v-html="$t('order_delivery.message')"></p>
+        <p class="my-2 text-muted" v-html="$t(modern ? 'process_center.modern.courier_subtitle' : 'order_delivery.message')"></p>
       </template>
       <p
         v-else
@@ -94,12 +121,13 @@
       ></u-dense-circles-users>
 
       <v-btn
-        :class="{ disabled: !isActive }"
-        :color="in_this_step ? 'primary' : '#000'"
+        :class="{ disabled: !isActive, 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && in_this_step && !isDeliveryActionDisabled && !in_send_que }"
+        :disabled="modern ? isDeliveryActionDisabled : undefined"
+        :color="modern ? in_this_step && !isDeliveryActionDisabled && !in_send_que ? 'primary' : undefined : in_this_step ? 'primary' : '#000'"
         :loading="busy_sentOrder"
-        :size="in_this_step && !in_send_que ? 'x-large' : undefined"
+        :size="(modern ? in_this_step && !isDeliveryActionDisabled && !in_send_que : in_this_step && !in_send_que) ? 'x-large' : undefined"
         :variant="
-          in_this_step && !in_send_que
+          modern ? in_this_step && !isDeliveryActionDisabled && !in_send_que ? 'flat' : 'outlined' : in_this_step && !in_send_que
             ? 'elevated'
             : in_send_que
               ? 'flat'
@@ -109,8 +137,9 @@
         rounded
         @click="sentOrder"
       >
-        <v-icon v-if="checked" start>check</v-icon>
-        <v-icon v-else-if="in_this_step && !in_send_que" class="blink-me" start
+        <v-icon v-if="modern" start>{{ is_pickup ? 'storefront' : 'local_shipping' }}</v-icon>
+        <v-icon v-else-if="checked" start>check</v-icon>
+        <v-icon v-else-if="in_this_step && !in_send_que" :class="{ 'blink-me': !modern }" start
           >fiber_manual_record
         </v-icon>
 
@@ -118,31 +147,32 @@
           {{
             is_pickup
               ? $t("order_delivery.pickup_ready_action")
-              : $t("order_delivery.courier_action")
+              : $t(modern ? 'process_center.modern.courier_action' : 'order_delivery.courier_action')
           }}
-          <div class="small mt-1">
+          <div v-if="!modern" class="small mt-1">
             {{
               is_pickup
                 ? $t("order_delivery.pickup_ready_action_subtitle")
-                : $t("order_delivery.courier_action_subtitle")
+                : $t(modern ? 'process_center.modern.courier_subtitle' : 'order_delivery.courier_action_subtitle')
             }}
           </div>
         </div>
       </v-btn>
+      </div>
 
       <div class="dashed-hr my-3 mx-n5"></div>
 
       <!-- Send by delivery service -->
 
-      <div v-if="!noService && transportation_services?.length && !is_pickup">
-        <template v-if="!IS_VENDOR_PANEL">
+      <div v-if="!isRolePanel && !noService && transportation_services?.length && !is_pickup" :class="{ 'b-order-delivery-modern__services': modern }">
+        <div v-if="!IS_VENDOR_PANEL" :class="{ 'b-order-delivery-modern__queue': modern }">
           <h3 class="mt-5">
-            <v-icon class="me-1" color="black">looks_two</v-icon>
-            {{ $t("order_delivery.option_add_to_que") }}
+            <v-icon class="me-1" :color="modern ? undefined : 'black'">{{ modern ? 'playlist_add' : 'looks_two' }}</v-icon>
+            {{ $t(modern ? 'process_center.modern.queue_title' : 'order_delivery.option_add_to_que') }}
           </h3>
           <p
             class="my-2 text-muted"
-            v-html="$t('order_delivery.message_add_to_service')"
+            v-html="$t(modern ? 'process_center.modern.queue_help' : 'order_delivery.message_add_to_service')"
           ></p>
 
           <s-dense-images-circles
@@ -161,17 +191,18 @@
 
           <v-row align="center" no-gutters>
             <v-btn
-              :class="{ disabled: !canAddToDeliveryQue || !isActive }"
-              :size="in_this_step ? 'x-large' : undefined"
+              :class="{ disabled: !canAddToDeliveryQue || !isActive, 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && in_this_step && canAddToDeliveryQue && !isDeliveryActionDisabled && !in_send_que }"
+              :disabled="modern ? !canAddToDeliveryQue || isDeliveryActionDisabled : undefined"
+              :size="(modern ? in_this_step && canAddToDeliveryQue && !isDeliveryActionDisabled && !in_send_que : in_this_step) ? 'x-large' : undefined"
               :variant="
-                in_this_step && !in_send_que
+                modern ? in_this_step && canAddToDeliveryQue && !isDeliveryActionDisabled && !in_send_que ? 'flat' : 'outlined' : in_this_step && !in_send_que
                   ? 'elevated'
                   : in_send_que
                     ? 'flat'
                     : 'outlined'
               "
               class="tnt text-start"
-              color="primary"
+              :color="modern ? in_this_step && canAddToDeliveryQue && !isDeliveryActionDisabled && !in_send_que ? 'primary' : undefined : 'primary'"
               min-width="230"
               rounded
               @click="
@@ -188,11 +219,11 @@
                     : $t("order_delivery.add_to_delivery_que_action")
                 }}
 
-                <div class="small mt-1">
+                <div v-if="!modern" class="small mt-1">
                   {{
                     in_send_que
                       ? "Order is in the delivery queue."
-                      : "Add the order to the delivery queue for batch shipping."
+                      : modern ? $t('process_center.modern.queue_help') : "Add the order to the delivery queue for batch shipping."
                   }}
                 </div>
               </div>
@@ -201,18 +232,20 @@
           </v-row>
 
           <div class="dashed-hr my-3 mx-n5"></div>
-        </template>
+        </div>
 
         <!-- ========================================= Delivery Service ========================================= -->
 
-        <template v-if="in_this_step && transportation_services?.length">
+        <div v-if="in_this_step && transportation_services?.length" :class="{ 'b-order-delivery-modern__instant': modern }">
           <h3 class="mt-5">
-            <v-icon class="me-1" color="black">looks_3</v-icon>
-            {{ $t("order_delivery.option_instant_shipping") }}
+            <v-icon class="me-1" :color="modern ? undefined : 'black'">{{ modern ? 'bolt' : 'looks_3' }}</v-icon>
+            {{ $t(modern ? 'process_center.modern.instant_title' : 'order_delivery.option_instant_shipping') }}
           </h3>
+          <p v-if="modern" class="sd-modern-subtitle">{{ $t('process_center.modern.instant_help') }}</p>
           <div class="d-flex">
             <v-spacer></v-spacer>
             <v-select
+              :class="{ 'b-order-delivery-modern__service-select': modern }"
               v-model="selected_transportation_service"
               v-intersect.quiet="autoSelectService(false)"
               :items="transportation_services"
@@ -223,7 +256,7 @@
               return-object
               rounded
               style="max-width: 230px"
-              variant="solo"
+              :variant="modern ? 'underlined' : 'solo'"
             >
               <template v-slot:selection="{ item }">
                 <v-img
@@ -257,6 +290,8 @@
             <div v-if="transportation && selected_transportation_service">
               <b-transportation-service-labels
                 :key="selected_transportation_service?.id"
+                :modern="modern"
+                :prominent-action="in_this_step && !isDeliveryActionDisabled"
                 :auto-calculate-rates="in_this_step"
                 :baskets="baskets"
                 :transportation-service="selected_transportation_service"
@@ -277,49 +312,72 @@
               </b-transportation-service-labels>
             </div>
           </v-expand-transition>
-        </template>
+        </div>
+      </div>
       </div>
 
-      <ul v-if="!is_pickup" class="tips mt-4">
+      <ul v-if="!modern && !is_pickup" class="tips mt-4">
         <li v-for="item in $tm('order_delivery.checklist')" :key="item">
           {{ item }}
         </li>
       </ul>
 
-      <v-row no-gutters>
+      <v-row no-gutters :class="{ 'b-order-delivery-modern__details': modern }">
         <!-- ========================================= BILLING ========================================= -->
 
         <v-col
           v-if="billing"
-          class="p-2 border-end-grater-md"
+          :class="modern ? 'b-order-delivery-modern__billing' : 'p-2 border-end-grater-md'"
           cols="12"
           md="4"
           sm="6"
         >
+          <p v-if="modern" class="sd-modern-list-header b-order-delivery-modern__group-title">{{ $t('process_center.modern.bill_summary') }}</p>
           <s-order-bill-card
+            :class="{ 'b-order-delivery-modern__bill-card': modern }"
             :basket="basket"
             :billing="display_billing"
-          ></s-order-bill-card>
+          >
+            <template v-if="modern" #billing-header>
+              <h3 class="sd-modern-list-header b-order-delivery-modern__billing-heading">{{ $t('process_center.payment_widget.billing_details') }}</h3>
+            </template>
+          </s-order-bill-card>
+          <v-btn
+            v-if="modern && !IS_VENDOR_PANEL && !isRolePanel"
+            :href="window.API.GET_ORDERS_PDF(shop.id, basket.id, OrderExportPdfType.RECEIPT, 'pdf')"
+            class="sd-modern-button sd-modern-button--compact sd-modern-button--inline b-order-delivery-modern__receipt"
+            color="primary"
+            variant="text"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <v-icon start>download</v-icon>
+            {{ $t('process_center.modern.download_receipt') }}
+            <v-icon end>north_east</v-icon>
+          </v-btn>
         </v-col>
 
-        <v-col :md="billing ? 4 : 6" class="p-2" cols="12" sm="6">
+        <v-col :md="billing ? 4 : 6" :class="modern ? 'b-order-delivery-modern__destination' : 'p-2'" cols="12" sm="6">
           <!-- ========================================= ADDRESS ========================================= -->
 
+          <h3 v-if="modern" class="sd-modern-list-header b-order-delivery-modern__group-title">{{ is_pickup ? pickup_address_title : $t('process_center.modern.destination_title') }}</h3>
+
           <s-order-receiver-info-card
+            :class="{ 'b-order-delivery-modern__receiver-card': modern, 'b-order-delivery-modern__receiver-card--pickup': modern && is_pickup }"
             :receiver-info="receiver_info"
             :hide-avatar="is_pickup"
-            :title="is_pickup ? pickup_address_title : null"
+            :title="is_pickup ? pickup_address_title : modern ? $t('process_center.modern.destination_title') : null"
             :user-id="is_pickup ? null : buyer ? buyer.id : basket.user_id"
           >
-            <template v-slot:append-buttons>
+            <template v-if="!modern" v-slot:append-buttons>
               <v-btn
-                v-if="!is_pickup"
+                v-if="!isRolePanel && !is_pickup"
                 :loading="busy_edit"
                 class="ms-1 rounded-lg"
                 color="primary"
                 variant="text"
                 @click="
-                  $emit('show-edit-address', (busy) => (busy_edit = busy))
+                  editAddress()
                 "
               >
                 <v-icon class="me-1" size="small">edit</v-icon>
@@ -330,12 +388,14 @@
 
           <!-- ========================================= RECEIVER ========================================= -->
 
-          <p class="font-weight-bold mb-2 mt-5">
+          <div :class="{ 'b-order-delivery-modern__contact': modern }">
+          <p :class="modern ? 'b-order-delivery-modern__contact-title' : 'font-weight-bold mb-2 mt-5'">
             {{ $t("order_delivery.receiver") }}
           </p>
 
-          <p class="mb-1">
+          <p class="mb-1" :class="{ 'b-order-delivery-modern__contact-name': modern }">
             <small
+              v-if="!modern"
               >{{ $t("global.basket_order_info_summery.receiver") }} :
             </small>
             {{
@@ -345,17 +405,48 @@
             }}
           </p>
 
-          <p v-if="receiver_contact.phone" class="mb-1">
-            <small>{{ $t("global.basket_order_info_summery.phone") }} : </small>
-            <span v-copy>{{ receiver_contact.phone }}</span>
+          <div v-if="modern && ((!isRolePanel && !is_pickup) || receiver_contact.phone)" class="b-order-delivery-modern__contact-actions" role="group" :aria-label="$t('order_delivery.receiver')">
+            <v-btn
+              v-if="!isRolePanel && !is_pickup"
+              :loading="busy_edit"
+              class="sd-modern-button sd-modern-button--compact sd-modern-button--inline"
+              color="primary"
+              variant="text"
+              @click="editAddress()"
+            >
+              <v-icon start size="18">edit</v-icon>
+              {{ $t('global.actions.edit_address') }}
+            </v-btn>
+            <div v-if="receiver_contact.phone" class="b-order-delivery-modern__contact-links">
+              <v-tooltip location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true">
+                <template #activator="{ props }">
+                  <v-btn v-bind="props" :href="`tel:${receiver_contact.phone}`" icon variant="text" class="sd-modern-icon-button" :aria-label="$t('process_center.modern.receiver_call')"><v-icon size="18" aria-hidden="true">phone</v-icon></v-btn>
+                </template>
+                {{ $t('process_center.modern.receiver_call') }}
+              </v-tooltip>
+              <v-tooltip location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true">
+                <template #activator="{ props }">
+                  <v-btn v-bind="props" icon variant="text" class="sd-modern-icon-button" :aria-label="$t('process_center.modern.receiver_phone_copy')" @click.stop="copyToClipboard(receiver_contact.phone)"><v-icon size="18" aria-hidden="true">content_copy</v-icon></v-btn>
+                </template>
+                {{ $t('process_center.modern.receiver_phone_copy') }}
+              </v-tooltip>
+              <u-button-whatsapp :shop="shop" :user="receiver_contact" modern></u-button-whatsapp>
+            </div>
+          </div>
+
+          <p v-if="receiver_contact.phone" class="mb-1" :class="{ 'b-order-delivery-modern__contact-phone': modern }">
+            <small v-if="!modern">{{ $t("global.basket_order_info_summery.phone") }} : </small>
+            <span v-if="modern">{{ receiver_contact.phone }}</span>
+            <span v-else v-copy>{{ receiver_contact.phone }}</span>
             <u-button-whatsapp
+              v-if="!modern"
               :shop="shop"
               :user="receiver_contact"
               class="ms-2"
             ></u-button-whatsapp>
           </p>
 
-          <p class="mb-1">
+          <p class="mb-1" :class="{ 'b-order-delivery-modern__contact-date': modern }">
             <small
               >{{ $t("global.basket_order_info_summery.reserved_date") }} :
             </small>
@@ -363,15 +454,49 @@
               getFromNowString(basket.reserved_at)
             }}</span>
           </p>
+          </div>
         </v-col>
         <!-- ========================================= MAP ========================================= -->
 
         <v-col
           :md="billing ? 4 : 6"
           :sm="billing ? 12 : 6"
-          class="p-2"
+          :class="modern ? 'b-order-delivery-modern__location' : 'p-2'"
           cols="12"
         >
+          <div v-if="modern" class="b-order-delivery-modern__requested">
+            <h3 class="sd-modern-list-header b-order-delivery-modern__group-title">
+              {{ is_pickup ? `${$t('global.commons.pickup')} · ${$t('global.commons.time')}` : $t('process_center.modern.requested_time') }}
+              <v-tooltip v-if="!is_pickup" location="top" content-class="sd-modern-tooltip text-start" :open-on-click="true">
+                <template #activator="{ props }">
+                  <v-btn v-bind="props" icon="info_outline" variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="$t('process_center.modern.requested_time_help')"></v-btn>
+                </template>
+                {{ $t('process_center.modern.requested_time_help') }}
+              </v-tooltip>
+            </h3>
+            <div v-if="has_eta_date && delivery_info?.date" class="b-order-delivery-modern__eta">
+              <div>{{ has_eta_time ? getLocalTimeString(delivery_info.date) : getLocalDateString(delivery_info.date) }}</div>
+              <small>{{ getFromNowString(delivery_info.date) }}</small>
+            </div>
+            <template v-if="delivery_info?.custom">
+              <div v-if="has_eta_weekday && days?.length" class="b-order-delivery-modern__preferences">
+                <small>{{ $t('global.commons.days') }}: </small>
+                <v-chip v-for="item in days" :key="item.value" size="x-small" variant="text">
+                  <v-icon v-if="item.today" color="green" size="12" start>circle</v-icon>
+                  {{ $t(item.name) }}
+                </v-chip>
+              </div>
+              <div v-if="has_eta_timeframe && time_spans?.length" class="b-order-delivery-modern__preferences">
+                <small>{{ $t('global.commons.time') }}: </small>
+                <v-chip v-for="item in time_spans" :key="item.value" size="x-small" variant="text">
+                  <img :src="item.icon" class="me-1" width="14" />
+                  {{ $t(item.name) }}
+                </v-chip>
+              </div>
+            </template>
+            <p v-if="!has_requested_time" class="b-order-delivery-modern__empty">{{ $t(is_pickup ? 'process_center.modern.requested_pickup_time_empty' : 'process_center.modern.requested_time_empty') }}</p>
+          </div>
+          <p v-if="modern" class="sd-modern-list-header b-order-delivery-modern__group-title">{{ $t('process_center.modern.delivery_location') }}</p>
           <template v-if="receiver_info.location">
             <u-map-view
               v-if="$vuetify.display.smAndUp"
@@ -381,19 +506,20 @@
               :zoom="15"
               class="overflow-hidden rounded-18px border"
               show-user-location
-              style="width: 100%; aspect-ratio: 1; max-height: 420px"
+              :style="modern ? 'width: 100%; aspect-ratio: 1; max-height: 180px' : 'width: 100%; aspect-ratio: 1; max-height: 420px'"
             />
             <u-map-image
               v-else
               :location="receiver_info.location"
-              aspect-ratio="1"
+              :aspect-ratio="modern ? 16 / 9 : 1"
               class="overflow-hidden rounded-18px border"
               size="100%"
             >
             </u-map-image>
           </template>
+          <p v-else-if="modern" class="b-order-delivery-modern__empty">{{ $t('process_center.modern.delivery_location_missing') }}</p>
 
-          <div v-if="!is_pickup" class="d-flex align-center py-1 small">
+          <div v-if="!is_pickup && (!modern || (delivery_info?.distance !== undefined && delivery_info?.distance !== null))" :class="{ 'b-order-delivery-modern__distance': modern }" class="d-flex align-center py-1 small">
             <v-icon>warehouse</v-icon>
             <div
               style="height: 2px; background-color: #111"
@@ -416,15 +542,21 @@
           </div>
 
           <!-- =================== Preferences >  Preferred Delivery Time =================== -->
-          <div v-if="delivery_info && delivery_info.custom">
+          <div v-if="!modern && delivery_info && delivery_info.custom">
             <p class="font-weight-bold mb-2 mt-5">
               {{
                 is_pickup
                   ? `${$t("global.commons.pickup")} · ${$t(
                       "global.commons.time",
                     )}`
-                  : $t("order_delivery.preferred_delivery_time")
+                  : $t(modern ? 'process_center.modern.requested_time' : 'order_delivery.preferred_delivery_time')
               }}
+              <v-tooltip v-if="modern && !is_pickup" location="top" content-class="sd-modern-tooltip text-start" :open-on-click="true">
+                <template #activator="{ props }">
+                  <v-btn v-bind="props" icon="info_outline" variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="$t('process_center.modern.requested_time_help')"></v-btn>
+                </template>
+                {{ $t('process_center.modern.requested_time_help') }}
+              </v-tooltip>
             </p>
 
             <div v-if="has_eta_weekday && days" class="py-2">
@@ -479,7 +611,7 @@
       <v-expansion-panels
         v-if="delivery_info && !is_pickup"
         v-model="track_expanded"
-        class="my-3 max-width-field-large mx-auto"
+        :class="modern ? 'b-order-delivery-modern__tracking' : 'my-3 max-width-field-large mx-auto'"
       >
         <v-expansion-panel elevation="0">
           <v-expansion-panel-title>
@@ -491,11 +623,12 @@
                 >check</v-icon
               >
               <v-icon v-else class="me-1">add_box</v-icon>
-              {{ $t("order_delivery.tracking.title") }}
+              {{ $t(modern ? 'process_center.modern.tracking_title' : 'order_delivery.tracking.title') }}
             </span>
 
             <v-spacer></v-spacer>
 
+            <span v-if="modern" class="b-order-delivery-modern__track-context">{{ $t('process_center.modern.tracking_visible') }}</span>
             <b class="flex-grow-0 border-start ps-2">
               {{ delivery_info.tracking_code }}</b
             >
@@ -505,47 +638,52 @@
               {{ $t("order_delivery.tracking.message") }}
             </p>
 
+            <div :class="{ 'b-order-delivery-modern__tracking-fields': modern }">
             <v-text-field
+              :class="{ 'sd-modern-underlined-field': modern }"
               v-model="tracking_code"
-              :readonly="!active_track"
+              :readonly="isRolePanel || !active_track"
               :label="$t('order_delivery.tracking.code')"
               append-inner-icon="location_searching"
               flat
-              variant="solo-filled"
+              :variant="modern ? 'underlined' : 'solo-filled'"
               :placeholder="
                 active_track
                   ? 'Enter code. e.g. ABC 100...'
-                  : 'Empty... Can not edit after delivery!'
+                  : modern ? $t('process_center.modern.tracking_locked') : 'Empty... Can not edit after delivery!'
               "
               :persistent-placeholder="!active_track"
             />
 
             <v-text-field
+              :class="{ 'sd-modern-underlined-field': modern }"
               v-model="tracking_url"
-              :readonly="!active_track"
+              :readonly="isRolePanel || !active_track"
               :label="$t('order_delivery.tracking.url')"
               append-inner-icon="link"
               flat
-              variant="solo-filled"
+              :variant="modern ? 'underlined' : 'solo-filled'"
               :rules="[GlobalRules.url()]"
               :placeholder="
                 active_track
                   ? 'Enter full address here. e.g. https://track...'
-                  : 'Empty... Can not edit after delivery!'
+                  : modern ? $t('process_center.modern.tracking_locked') : 'Empty... Can not edit after delivery!'
               "
               :persistent-placeholder="!active_track"
             />
 
-            <div v-if="active_track" class="widget-buttons">
+            <div v-if="!isRolePanel && active_track" class="widget-buttons">
               <v-btn
+                :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
                 :loading="busy_set_tracking"
                 color="primary"
-                size="x-large"
+                :size="modern ? undefined : 'x-large'"
                 @click="setTracking"
               >
                 <v-icon start>save</v-icon>
                 {{ $t("global.actions.save") }}
               </v-btn>
+            </div>
             </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -555,17 +693,20 @@
 
       <v-row
         v-if="transportation_order && !is_pickup"
+        :class="{ 'b-order-delivery-modern__timeline': modern }"
         align="center"
         class="my-0"
       >
         <v-col class="d-flex justify-center" cols="12" order-sm="2" sm="6">
           <div
-            class="d-flex flex-column align-center border rounded-18px overflow-hidden"
+            class="d-flex flex-column align-center"
+            :class="modern ? 'b-order-delivery-modern__courier-card' : 'border rounded-18px overflow-hidden'"
           >
             <template v-if="qrcode_value">
               <a
                 :href="qrcode_value"
-                class="widget-hover d-inline-block position-relative rounded-lg ma-1 mt-3 overflow-hidden"
+                class="widget-hover d-inline-block position-relative rounded-lg overflow-hidden"
+                :class="modern ? 'b-order-delivery-modern__qr-link' : 'ma-1 mt-3'"
                 style="line-height: 0"
                 target="_blank"
               >
@@ -599,12 +740,16 @@
                 </v-avatar>
                 <v-tooltip
                   activator="parent"
-                  content-class="text-start"
-                  max-width="320"
+                  :content-class="modern ? 'sd-modern-tooltip text-start' : 'text-start'"
+                  :location="modern ? 'top' : undefined"
+                  :max-width="modern ? undefined : 320"
                 >
+                  <template v-if="modern">{{ $t('process_center.modern.courier_qr_help') }}</template>
+                  <template v-else>
                   Your courier can scan this QR code to get order information
                   and take action. Also you can track the order by scanning this
                   QR. <b>[Do not share it with customer]</b>
+                  </template>
                 </v-tooltip>
               </a>
 
@@ -615,7 +760,8 @@
             </template>
 
             <v-btn
-              v-if="transportation_order.person"
+              v-if="!isRolePanel && transportation_order.person"
+              :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
               :to="
                 IS_VENDOR_PANEL
                   ? {}
@@ -636,7 +782,8 @@
               {{ $t("order_delivery.manage_couriers") }}
             </v-btn>
             <v-btn
-              v-else-if="transportation_order.service"
+              v-else-if="!isRolePanel && transportation_order.service"
+              :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
               :to="
                 IS_VENDOR_PANEL
                   ? {
@@ -667,11 +814,12 @@
 
             <v-btn
               v-if="qrcode_value"
+              :class="{ 'sd-modern-button sd-modern-button--compact b-order-delivery-modern__qr-copy': modern }"
               class="tnt"
               @click="copyToClipboard(qrcode_value)"
             >
               <v-icon start>content_copy</v-icon>
-              Send the QR link to the courier.
+              {{ modern ? $t('process_center.modern.courier_qr_copy') : 'Send the QR link to the courier.' }}
             </v-btn>
           </div>
         </v-col>
@@ -681,6 +829,7 @@
             :delivery-info="delivery_info"
             :shop="shop"
             :transportation-order="transportation_order"
+            :readonly="isRolePanel"
             @refresh-service="refreshDeliveryServiceOrder"
           >
           </delivery-timeline-transportation-order>
@@ -691,6 +840,7 @@
       <!-- Step 5 : Delivery to the customer > Confirmed by the customer or the transportation system -->
       <div
         v-if="basket.delivery_state === PhysicalOrderStates.SentOrder.code"
+        :class="{ 'b-order-delivery-modern__sent': modern }"
         class="pb-3"
       >
         <p
@@ -701,10 +851,13 @@
 
         <div class="rounded-btns m-2">
           <v-btn
+            :class="{ 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && is_current_receipt_step && !busy_toCustomer }"
+            :disabled="isRolePanel && (!is_current_receipt_step || busy_toCustomer)"
+            :size="modern && is_current_receipt_step && !busy_toCustomer ? 'x-large' : undefined"
             class="m-1"
-            color="primary"
+            :color="modern ? is_current_receipt_step && !busy_toCustomer ? 'primary' : undefined : 'primary'"
             rounded
-            variant="flat"
+            :variant="modern && !(is_current_receipt_step && !busy_toCustomer) ? 'outlined' : 'flat'"
             @click.stop="
               accept_action = false;
               dialog_received_by_customer = true;
@@ -716,15 +869,18 @@
                 ? `${$t("global.commons.pickup")} · ${$t(
                     "global.actions.confirm",
                   )}`
-                : $t("order_delivery.manual.action_received")
+                : $t(modern ? 'process_center.modern.confirm_delivered' : 'order_delivery.manual.action_received')
             }}
           </v-btn>
 
           <v-btn
+            v-if="!isRolePanel"
+            :class="{ 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && is_current_receipt_step && !busy_return }"
+            :size="modern && is_current_receipt_step && !busy_return ? 'x-large' : undefined"
             class="ma-1"
             color="#E64A19"
             rounded
-            variant="flat"
+            :variant="modern && !(is_current_receipt_step && !busy_return) ? 'outlined' : 'flat'"
             @click.stop="
               accept_action = false;
               dialog_returned_by_customer = true;
@@ -734,7 +890,7 @@
             {{
               is_pickup
                 ? $t("global.commons.return")
-                : $t("order_delivery.manual.action_returned")
+                : $t(modern ? 'process_center.modern.delivery_return' : 'order_delivery.manual.action_returned')
             }}
           </v-btn>
         </div>
@@ -752,12 +908,12 @@
 
       <v-alert
         v-if="basket.delivery_state === PhysicalOrderStates.ToCustomer.code"
-        class="mt-2"
+        :class="modern ? 'sd-modern-notice b-order-delivery-modern__completed' : 'mt-2'"
         density="compact"
         icon="check"
         rounded="xl"
-        type="success"
-        variant="tonal"
+        :type="modern ? undefined : 'success'"
+        :variant="modern ? 'flat' : 'tonal'"
       >
         <b>
           <span v-if="is_pickup">
@@ -792,7 +948,7 @@
       max-width="98vw"
       width="640"
     >
-      <v-card class="text-start" rounded="t-xl">
+      <v-card class="text-start" :class="{ 'b-order-delivery-dialog-modern': modern }" rounded="t-xl">
         <v-card-title class="text-wrap">
           <v-icon class="me-2">assignment_turned_in</v-icon>
 
@@ -831,7 +987,8 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
-              size="x-large"
+              :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
+              :size="modern ? undefined : 'x-large'"
               variant="text"
               @click="dialog_received_by_customer = false"
             >
@@ -840,11 +997,12 @@
             </v-btn>
 
             <v-btn
-              :class="{ disabled: !accept_action }"
+              :class="{ disabled: !accept_action, 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && is_current_receipt_step && accept_action && !busy_toCustomer }"
+              :disabled="isRolePanel && (!is_current_receipt_step || !accept_action || busy_toCustomer)"
               :loading="busy_toCustomer"
-              color="primary"
-              size="x-large"
-              variant="elevated"
+              :color="modern ? is_current_receipt_step && accept_action && !busy_toCustomer ? 'primary' : undefined : 'primary'"
+              :size="!modern || (is_current_receipt_step && accept_action && !busy_toCustomer) ? 'x-large' : undefined"
+              :variant="modern ? is_current_receipt_step && accept_action && !busy_toCustomer ? 'flat' : 'outlined' : 'elevated'"
               @click="toCustomer()"
               prepend-icon="where_to_vote"
             >
@@ -862,12 +1020,13 @@
     <!-- █████████████████████████ Dialog Delivery > Failed █████████████████████████ -->
 
     <v-bottom-sheet
+      v-if="!isRolePanel"
       v-model="dialog_returned_by_customer"
       content-class="rounded-t-xl"
       max-width="98vw"
       width="640"
     >
-      <v-card class="text-start" rounded="t-xl">
+      <v-card class="text-start" :class="{ 'b-order-delivery-dialog-modern': modern }" rounded="t-xl">
         <v-card-title class="text-wrap">
           <v-icon class="me-2">assignment_return</v-icon>
           {{
@@ -892,7 +1051,8 @@
         <v-card-actions>
           <div class="widget-buttons">
             <v-btn
-              size="x-large"
+              :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
+              :size="modern ? undefined : 'x-large'"
               variant="text"
               @click="dialog_returned_by_customer = false"
             >
@@ -901,11 +1061,11 @@
             </v-btn>
 
             <v-btn
-              :class="{ disabled: !accept_action }"
+              :class="{ disabled: !accept_action, 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && is_current_receipt_step && accept_action && !busy_return }"
               :loading="busy_return"
               color="red-darken-1"
-              size="x-large"
-              variant="flat"
+              :size="!modern || (is_current_receipt_step && accept_action && !busy_return) ? 'x-large' : undefined"
+              :variant="modern && !(is_current_receipt_step && accept_action && !busy_return) ? 'outlined' : 'flat'"
               @click="returnDelivery()"
             >
               <v-icon class="me-1">airline_stops</v-icon>
@@ -947,6 +1107,7 @@ import BTransportationServiceLabels from "@selldone/components-vue/backoffice/tr
 import { BEventBusMixin } from "../../../../utils/events/BEventBusMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
+import { OrderExportPdfType } from "@selldone/core-js/enums/order/OrderExportPdfType.ts";
 
 export default {
   name: "BOrderDashboardDelivery",
@@ -975,6 +1136,7 @@ export default {
     "show-edit-address",
   ],
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       require: true,
       type: Object,
@@ -995,6 +1157,7 @@ export default {
   data: function () {
     return {
       PhysicalOrderStates: Basket.PhysicalOrderStates,
+      OrderExportPdfType,
 
       dialog_received_by_customer: false,
 
@@ -1081,6 +1244,14 @@ export default {
         this.basket.delivery_state ===
         Basket.PhysicalOrderStates.PreparingOrder.code
       );
+    },
+    isDeliveryActionDisabled() {
+      return this.busy_sentOrder || !this.isActive || !!this.basket.reject ||
+        ![Basket.Status.Payed.code, Basket.Status.COD.code].includes(this.basket.status);
+    },
+    is_current_receipt_step() {
+      return this.basket.delivery_state === Basket.PhysicalOrderStates.SentOrder.code &&
+        !this.basket.reject && [Basket.Status.Payed.code, Basket.Status.COD.code].includes(this.basket.status);
     },
     canAddToDeliveryQue() {
       return (
@@ -1240,6 +1411,11 @@ export default {
     has_eta_time() {
       return [ETA.date_time.code].includes(this.transportation?.eta);
     },
+    has_requested_time() {
+      return !!((this.has_eta_date && this.delivery_info?.date) ||
+        (this.delivery_info?.custom && ((this.has_eta_weekday && this.days?.length) ||
+          (this.has_eta_timeframe && this.time_spans?.length))));
+    },
 
     distance_unit() {
       return ShopOptionsHelper.GetDistanceUnit(this.shop);
@@ -1254,18 +1430,20 @@ export default {
 
   methods: {
     sentOrder() {
+      if ((this.modern || this.isRolePanel) && this.isDeliveryActionDisabled) return;
       this.busy_sentOrder = true;
 
       this.$emit("confirm-send", {
         callback: () => {
           this.busy_sentOrder = false;
           // Remove from delivery service que:
-          this.onDeleteLogisticSendingOrderQue(this.basket);
+          if (!this.isRolePanel) this.onDeleteLogisticSendingOrderQue(this.basket);
         },
       });
     },
 
     toCustomer() {
+      if (this.isRolePanel && (!this.is_current_receipt_step || !this.accept_action || this.busy_toCustomer)) return;
       this.busy_toCustomer = true;
 
       this.$emit("confirm-received", {
@@ -1276,6 +1454,8 @@ export default {
       });
     },
     returnDelivery() {
+      // Role delivery supports handoff and verified receipt, not shop operations.
+      if (this.isRolePanel) return;
       this.busy_return = true;
 
       this.$emit("returned-delivery", {
@@ -1287,10 +1467,12 @@ export default {
     },
 
     refreshDeliveryServiceOrder(callback) {
+      if (this.isRolePanel) return;
       this.$emit("refresh-delivery-order", { callback });
     },
 
     setTracking() {
+      if (this.isRolePanel) return;
       this.busy_set_tracking = true;
       this.$emit("set-tracking", {
         tracking_code: this.tracking_code,
@@ -1304,8 +1486,14 @@ export default {
       });
     },
 
+    editAddress() {
+      if (this.isRolePanel) return;
+      this.$emit('show-edit-address', (busy) => (this.busy_edit = busy));
+    },
+
     autoSelectService(force) {
       if (
+        this.isRolePanel ||
         (this.selected_transportation_service && !force) ||
         !this.in_this_step ||
         !this.transportation_services?.length
@@ -1326,4 +1514,126 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-order-delivery-modern {
+  --order-delivery-inset: 20px;
+  &.sd-modern-widget { padding: 20px var(--order-delivery-inset); margin-block-end: 18px; border-radius: 16px; font-family: inherit; font-size: 13px; line-height: 1.5; }
+
+  &.disabled { opacity: 1 !important; }
+  &__header { margin-block-end: 0; }
+  &__header :deep(h2) { font-family: inherit; font-size: 18px; font-weight: 500; line-height: 24px; }
+  &__stage { align-self: center; margin-inline-start: auto; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; }
+  &__subtitle { display: flex; align-items: center; gap: 4px; margin: 4px 0 20px; font-size: 12px; line-height: 18px; }
+  &__help { pointer-events: auto; }
+  &__body { display: flex; flex-direction: column; }
+  &__details { order: -2; display: grid; grid-template-columns: minmax(0, 1.1fr) repeat(2, minmax(0, 1fr)); gap: 26px; margin: 0; }
+  &__details > div { width: auto; max-width: none; padding: 0; min-width: 0; overflow-wrap: anywhere; }
+  &__destination { order: -2; }
+  &__location { order: -1; }
+  &__location, &__billing { border-inline-start: 1px solid var(--sd-modern-border); padding-inline-start: 22px !important; }
+  &__group-title { display: flex; align-items: center; gap: 6px; min-height: 32px; margin: 0 0 12px; }
+  &__details :deep(p:not(.sd-modern-list-header)) { font-size: 12px; line-height: 20px; }
+  &__details :deep(.s--value-dashed) { font-size: 12px; line-height: 18px; }
+  &__receiver-card :deep(> p > small), &__bill-card :deep(.s--value-dashed > small), &__contact small, &__eta > small, &__preferences > small { font-size: 12px; font-weight: 400; }
+  &__details :deep(.font-weight-bold), &__billing :deep(b) { font-weight: 500 !important; }
+  &__billing :deep(.text-success) { color: inherit !important; font-size: 13px !important; font-weight: 500 !important; }
+  &__receiver-card { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 7px 10px; align-items: start; }
+  &__receiver-card :deep(> p) { grid-column: 2; margin: 0 !important; }
+  &__receiver-card :deep(> p:first-child) { display: none; }
+  &__receiver-card :deep(> div.text-center) { grid-column: 1; grid-row: 1 / span 3; text-align: start !important; }
+  &__receiver-card :deep(.v-avatar) { width: 34px !important; height: 34px !important; margin: 0 !important; }
+  &__receiver-card :deep(> .v-btn) { grid-column: 2; justify-self: start; margin-inline: 0 !important; }
+  &__receiver-card--pickup { grid-template-columns: minmax(0, 1fr); }
+  &__receiver-card--pickup :deep(> p) { grid-column: 1; }
+  &__contact { display: grid; gap: 6px; margin-block-start: 16px; }
+  &__contact > p { margin: 0 !important; }
+  &__contact > p.b-order-delivery-modern__contact-title, &__contact > p.b-order-delivery-modern__contact-name { font-size: 13px; line-height: 20px; font-weight: 500; }
+  &__contact-phone { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  &__contact-actions { --sd-modern-icon-button-size: 32px; display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-block: 3px 0; }
+  &__contact-links { display: flex; align-items: center; gap: 9px; }
+  &__contact-date { color: var(--sd-modern-muted); }
+  &__bill-card :deep(> b:first-child) { display: none !important; }
+  &__bill-card :deep(.s--value-dashed) { padding-block: 4px; gap: 12px; }
+  &__billing-heading { border-block-start: 1px solid var(--sd-modern-border); padding-block-start: 14px; margin: 14px 0 8px; }
+  &__receipt { margin-block-start: 12px; }
+  &__distance { margin-block-start: 4px; color: var(--sd-modern-muted); }
+  &__distance > div { height: 1px !important; background: var(--sd-modern-border) !important; }
+  &__distance b { font-weight: 400; }
+  &__distance > .v-icon { font-size: 16px; }
+  &__eta { font-size: 12px; line-height: 20px; }
+  &__eta > small { color: var(--sd-modern-muted); }
+  &__requested { margin-block-end: 16px; padding-block-end: 16px; border-block-end: 1px solid var(--sd-modern-border); }
+  &__empty { margin: 7px 0 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 20px; }
+  &__preferences { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-block-start: 6px; }
+  &__preferences :deep(.v-chip) { background: transparent !important; color: inherit !important; }
+  &__preferences :deep(.v-chip__underlay) { display: none; }
+  &__shipping, &__tracking, &__timeline, &__sent { margin-inline: calc(-1 * var(--order-delivery-inset)); padding-inline: var(--order-delivery-inset); border-block-start: 1px solid var(--sd-modern-border); }
+  &__shipping { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: 20px 24px; padding-block: 20px; margin-block-start: 20px; }
+  &__shipping-heading { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  &__shipping-heading > span { color: var(--sd-modern-muted); font-size: 12px; }
+  &__shipping > .dashed-hr, &__queue > .dashed-hr { display: none; }
+  &__services { display: contents; }
+  &__courier, &__queue { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+  &__courier > .v-btn, &__queue > .v-row { margin-block-start: auto; }
+  &__queue > .v-row { width: 100%; }
+  // Keep disabled flat-button overlays from darkening the quiet neutral surface.
+  &__courier > .v-btn--disabled :deep(.v-btn__overlay),
+  &__queue > .v-row > .v-btn--disabled :deep(.v-btn__overlay) { opacity: 0; }
+  &__instant { min-width: 0; }
+  &__shipping h3 { margin: 0 !important; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; }
+  &__shipping h3 > .v-icon { color: var(--sd-modern-muted); font-size: 19px; }
+  &__shipping p { margin-block: 6px 12px !important; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; }
+  &__shipping .v-btn { min-width: 0 !important; }
+  &__instant { grid-column: 1 / -1; border-block-start: 1px solid var(--sd-modern-border); padding-block-start: 20px; }
+  &__tracking { width: auto; margin-block: 0; border-radius: 0; }
+  &__tracking :deep(.v-expansion-panel) { background: transparent; }
+  &__tracking :deep(.v-expansion-panel-title) { min-height: 0; padding: 17px 0; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; }
+  &__tracking:last-child { margin-block-end: -20px; }
+  &__tracking :deep(.v-expansion-panel-text__wrapper) { padding: 0 0 16px; font-size: 12px; line-height: 18px; }
+  &__tracking :deep(.v-field__input), &__service-select :deep(.v-field__input) { font-family: inherit; font-size: 13px; line-height: 20px; }
+  &__tracking :deep(.v-label) { font-family: inherit; font-size: 12px; }
+  &__track-context { margin-inline: 8px; color: var(--sd-modern-muted); font-size: 12px; font-weight: 400; }
+  &__tracking-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) auto; align-items: start; gap: 18px; }
+  &__tracking-fields > .widget-buttons { justify-content: flex-end; margin: 16px 0 0; }
+  &__tracking-fields > .widget-buttons > .v-btn { margin: 0; }
+  &__timeline { margin-block: 0 !important; padding-block: 20px; font-size: 12px; }
+  &__timeline > div { padding: 0; }
+  &__courier-card { max-width: 100%; padding: 16px; gap: 8px; border: 1px solid var(--sd-modern-border); border-radius: 12px; }
+  &__qr-link { max-width: 100%; margin: 0; }
+  &__qr-link :deep(canvas), &__qr-link :deep(img) { max-width: 100%; height: auto; }
+  &__courier-card > .v-list-subheader { min-height: 0; padding: 0; font-family: inherit; font-size: 13px; line-height: 20px; }
+  &__courier-card > .v-btn { max-width: 100%; }
+  &__qr-copy { white-space: normal; }
+  &__qr-copy :deep(.v-btn__content) { white-space: normal; overflow-wrap: anywhere; }
+  &__sent { padding-block-start: 18px; border-block-start: 1px solid var(--sd-modern-border); font-size: 12px; line-height: 18px; }
+  &__sent > p { margin-block: 0 12px; }
+  &__completed { padding: 12px; margin-block-start: 18px; background: var(--sd-modern-inset); color: rgb(var(--v-theme-on-surface)); font-size: 12px; line-height: 18px; }
+  &__completed b { font-weight: 500; }
+
+  @media (max-width: 900px) {
+    &__details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    &__billing { grid-column: 1 / -1; padding-inline-start: 0 !important; padding-block-start: 18px !important; border-inline-start: 0; border-block-start: 1px solid var(--sd-modern-border); }
+  }
+  @media (max-width: 600px) {
+    --order-delivery-inset: 13px;
+    &.sd-modern-widget { padding-block: 17px; }
+    &__details, &__shipping { grid-template-columns: 1fr; gap: 18px; }
+    &__location { padding-block-start: 18px !important; padding-inline-start: 0 !important; border-inline-start: 0; border-block-start: 1px solid var(--sd-modern-border); }
+    &__tracking-fields { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    &__tracking-fields > .widget-buttons { margin-block-start: 0; }
+    &__tracking :deep(.v-expansion-panel-title) { padding-block: 16px; }
+    &__tracking:last-child { margin-block-end: -17px; }
+    &__stage { margin-inline-start: 0; }
+    &__tracking :deep(.v-field__input), &__service-select :deep(.v-field__input) { font-size: 16px; }
+  }
+}
+
+.b-order-delivery-dialog-modern {
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+  :deep(.v-card-title) { font-family: inherit; font-size: 18px; font-weight: 500; line-height: 24px; }
+  :deep(.v-card-text) { font-size: 13px; line-height: 20px; }
+  :deep(.widget-buttons) { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; padding: 0 12px 12px; }
+}
+</style>

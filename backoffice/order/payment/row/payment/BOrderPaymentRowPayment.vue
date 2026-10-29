@@ -79,8 +79,8 @@
         </div>
 
         <!-- Require Capture -->
-        <div v-if="is_require_capture" class="widget-buttons">
-          <v-btn color="#673AB7" size="x-large" @click="dialog_capture = true">
+        <div v-if="!readonly && is_require_capture" class="widget-buttons">
+          <v-btn :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--inline': modern }" :color="modern ? 'primary' : '#673AB7'" :variant="modern ? 'text' : undefined" size="x-large" @click="dialog_capture = true">
             <v-icon class="me-1">done_all</v-icon>
             <div class="d-flex flex-column">
               <div>
@@ -98,7 +98,7 @@
         </div>
       </td>
 
-      <td class="text-center">
+      <td :class="modern ? 'text-start' : 'text-center'">
         <div v-if="payment.risk >= 0">
           <small class="d-block"
             >{{ $t("process_center.payment_widget.risk") }}
@@ -134,11 +134,13 @@
           v-if="payment.track_id && payment.track_id.startsWith('http')"
           :href="payment.track_id"
           class="ma-1 tnt"
-          color="#673AB7"
+          :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--inline': modern }"
+          :color="modern ? 'primary' : '#673AB7'"
+          :variant="modern ? 'text' : undefined"
           size="x-small"
           target="_blank"
           @click.stop=""
-          append-icon="launch"
+          :append-icon="modern ? 'north_east' : 'launch'"
         >
           Receipt URL
         </v-btn>
@@ -146,7 +148,9 @@
         <u-smart-menu
           v-if="action_items?.length"
           :items="action_items"
-          class="ms-1 float-end"
+          :modern="modern"
+          :title="modern ? $t('process_center.modern.payment_actions') : undefined"
+          :class="modern ? 'ms-2' : 'ms-1 float-end'"
         ></u-smart-menu>
       </td>
     </template>
@@ -165,8 +169,8 @@
         }}</span>
 
         <!-- Require Capture -->
-        <div v-if="is_require_capture" class="widget-buttons">
-          <v-btn color="#673AB7" size="x-large" @click="dialog_capture = true">
+        <div v-if="!readonly && is_require_capture" class="widget-buttons">
+          <v-btn :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--inline': modern }" :color="modern ? 'primary' : '#673AB7'" :variant="modern ? 'text' : undefined" size="x-large" @click="dialog_capture = true">
             <v-icon class="me-1">done_all</v-icon>
             <div class="d-flex flex-column">
               <div>
@@ -183,7 +187,7 @@
           </v-btn>
         </div>
       </td>
-      <td class="text-center">
+      <td :class="modern ? 'text-start' : 'text-center'">
         <div
           v-if="payment.fee"
           :title="`${gateway?.name} transaction fee.`"
@@ -213,12 +217,14 @@
           v-if="payment.track_id && payment.track_id.startsWith('http')"
           :href="payment.track_id"
           class="ma-1 tnt"
-          color="#673AB7"
+          :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--inline': modern }"
+          :color="modern ? 'primary' : '#673AB7'"
+          :variant="modern ? 'text' : undefined"
           size="x-small"
           target="_blank"
-          title="See payment receipt on the payment service provider."
+          :title="modern ? undefined : 'See payment receipt on the payment service provider.'"
           @click.stop=""
-          append-icon="launch"
+          :append-icon="modern ? 'north_east' : 'launch'"
         >
           Receipt URL
         </v-btn>
@@ -226,7 +232,9 @@
         <u-smart-menu
           v-if="action_items?.length"
           :items="action_items"
-          class="ms-1 float-end"
+          :modern="modern"
+          :title="modern ? $t('process_center.modern.payment_actions') : undefined"
+          :class="modern ? 'ms-2' : 'ms-1 float-end'"
         ></u-smart-menu>
       </td>
     </template>
@@ -279,7 +287,7 @@
   <!-- █████████████████████████ Dialog > Confirm Cash Payment (For bill only) █████████████████████████ -->
 
   <v-dialog
-    v-if="is_require_capture"
+    v-if="!readonly && is_require_capture"
     v-model="dialog_capture"
     fullscreen
     scrollable
@@ -431,6 +439,7 @@ export default {
   },
   emits: ["payment-captured"],
   props: {
+    readonly: Boolean,
     payment: {
       require: true,
     },
@@ -443,6 +452,7 @@ export default {
       type: Boolean,
     },
     flexMode: { default: false, type: Boolean },
+    modern: { type: Boolean, default: false },
   },
 
   data: function () {
@@ -473,15 +483,15 @@ export default {
     },
 
     has_refund_action() {
-      return this.gateway?.actions?.includes("refund");
+      return !this.readonly && this.gateway?.actions?.includes("refund");
     },
 
     has_delivery_action() {
-      return this.gateway?.actions?.includes("delivery");
+      return !this.readonly && this.gateway?.actions?.includes("delivery");
     },
 
     action_items() {
-      if (this.IS_VENDOR_PANEL) return [];
+      if (this.readonly || this.IS_VENDOR_PANEL) return [];
 
       const out = [];
 
@@ -527,6 +537,7 @@ export default {
 
   methods: {
     capturePayment() {
+      if (this.readonly) return;
       this.busy_capture = true;
 
       axios

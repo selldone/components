@@ -31,7 +31,7 @@
             ? 'outlined'
             : 'underlined'
     "
-    class="v-input-auto-height"
+    class="v-input-auto-height b-account-input"
     item-title="account_number"
     item-value="account_number"
     :placeholder="$t('global.placeholders.select_wallet')"
@@ -178,7 +178,7 @@ import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts
 
 export default {
   name: "BAccountInput",
-  mixins: [CurrencyMixin,AccountMixin],
+  mixins: [CurrencyMixin, AccountMixin],
   components: { UCurrencyIcon },
   emits: ["update:modelValue", "update:busy"],
   props: {
@@ -265,4 +265,18 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+/* Rich wallet values need their full content height, including wrapped details. */
+.b-account-input.sd-modern-underlined-field {
+  :deep(.v-field--variant-underlined div.v-field__input) {
+    height: auto;
+    min-height: var(--sd-modern-field-height);
+  }
+
+  :deep(.v-select__selection) {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+}
+</style>

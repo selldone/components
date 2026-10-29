@@ -18,6 +18,8 @@
     :class="{
       'b-sessions-map--summary': summary,
       'b-sessions-map--modern': modern,
+      'b-sessions-map--report': report,
+      'b-sessions-map--audience': modern && audience,
     }"
   >
     <template v-if="summary">
@@ -29,7 +31,7 @@
       <template v-if="timeSeries">
         <div class="b-sessions-map__summary-total">
           <span class="sd-modern-eyebrow">{{
-            $t("shop_session_widget.total_sessions")
+            activityLabel || $t("shop_session_widget.total_sessions")
           }}</span>
           <strong>{{ numeralFormat(total_sessions_map, "0,0.[0]a") }}</strong>
         </div>
@@ -71,19 +73,32 @@
     </template>
     <template v-else-if="modern">
       <u-loading-ellipsis
-        v-if="busy && !timeSeries"
+        v-if="busy && !timeSeries && !report"
         class="ma-auto"
         style="min-height: 260px"
       />
-      <template v-if="timeSeries">
-        <div class="b-sessions-map__overview">
-          <div>
+      <template v-if="timeSeries || report">
+        <div v-if="!audience || !externalFeed" class="b-sessions-map__overview">
+          <div v-if="report" class="sd-modern-title">
+            <v-icon class="sd-modern-icon--plain" size="20" aria-hidden="true"
+              >public</v-icon
+            >
+            <div>
+              <h2 class="sd-modern-title-text">
+                {{ $t("shop_session_widget.modern.title") }}
+              </h2>
+              <p class="sd-modern-subtitle">
+                {{ $t("shop_session_widget.modern.subtitle") }}
+              </p>
+            </div>
+          </div>
+          <div v-else-if="!audience">
             <span class="sd-modern-label">{{
-              $t("shop_session_widget.total_sessions")
+              activityLabel || $t("shop_session_widget.total_sessions")
             }}</span>
             <strong>{{ numeralFormat(total_sessions_map, "0,0.[0]a") }}</strong>
           </div>
-          <div>
+          <div v-if="!report && !audience">
             <span class="sd-modern-label">{{
               $t("global.commons.countries")
             }}</span>
@@ -91,10 +106,15 @@
           </div>
           <div v-if="!externalFeed" class="b-sessions-map__report-controls">
             <u-time-span-selector
+              :menu-class="report ? 'sd-modern-select-menu' : undefined"
               :date-range="report_selector_range"
               :max-days="90"
               variant="text"
-              button-class="sd-modern-button sd-modern-button--secondary"
+              :button-class="
+                report
+                  ? 'sd-modern-button sd-modern-button--inline sd-modern-button--secondary'
+                  : 'sd-modern-button sd-modern-button--secondary'
+              "
               @select="selectReportPeriod"
             />
             <span class="b-sessions-map__report-dates">
@@ -109,10 +129,67 @@
             />
           </div>
         </div>
-        <div class="b-sessions-map__geography" :class="{ disabled: busy }">
+        <div
+          v-if="report && fetch_error"
+          class="sd-modern-notice b-sessions-map__error"
+          role="alert"
+        >
+          <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+          <span>{{ $t("shop_session_widget.modern.load_error") }}</span>
+          <v-btn
+            class="sd-modern-button sd-modern-button--inline"
+            variant="text"
+            @click="fetchShopSessions(offset, days)"
+            >{{ $t("global.actions.refresh") }}</v-btn
+          >
+        </div>
+        <u-loading-ellipsis
+          v-if="report && busy && !timeSeries"
+          style="min-height: 260px"
+          class="ma-auto"
+        />
+        <div
+          v-if="timeSeries"
+          class="b-sessions-map__geography"
+          :class="{ disabled: busy }"
+        >
           <section class="b-sessions-map__map-panel">
             <header class="b-sessions-map__section-header">
-              <h3 class="sd-modern-eyebrow">
+              <div
+                v-if="report || audience"
+                class="b-sessions-map__geographic-total"
+              >
+                <span class="sd-modern-label"
+                  >{{ activityLabel || $t("shop_session_widget.modern.geographic_sessions") }}
+                  <v-btn
+                    v-if="!activityLabel"
+                    class="sd-modern-icon-button sd-modern-info-button"
+                    icon
+                    variant="text"
+                    :aria-label="
+                      $t('shop_session_widget.modern.geographic_help')
+                    "
+                  >
+                    <v-icon size="14">info_outline</v-icon>
+                    <v-tooltip
+                      activator="parent"
+                      location="top"
+                      open-on-click
+                      open-on-focus
+                      interactive
+                      :max-width="audience ? undefined : 360"
+                      content-class="sd-modern-tooltip text-start"
+                      >{{
+                        $t("shop_session_widget.modern.geographic_help")
+                      }}</v-tooltip
+                    >
+                  </v-btn>
+                </span>
+                <strong>{{
+                  numeralFormat(total_sessions_map, "0,0.[0]a")
+                }}</strong>
+              </div>
+              <h3 v-else class="sd-modern-eyebrow">
                 {{ $t("admin_shop.dashboard.modern.session_geography") }}
               </h3>
               <u-smart-toggle
@@ -149,12 +226,13 @@
               :default-country-fill-color="modern_map_colors.empty"
               has-tooltip
               class="b-sessions-map__world"
+              @click="(report || audience) && selectCountryFromMap($event)"
             >
               <template v-slot="{ country }">
                 <slot :country="country" />
                 <div v-if="country" class="text-start">
                   <p class="mb-1">
-                    {{ $t("global.commons.sessions") }}:
+                    {{ activityLabel || $t("global.commons.sessions") }}:
                     <strong>{{
                       numeralFormat(getCountrySessions(country), "0,0.[0]a")
                     }}</strong>
@@ -225,19 +303,97 @@
                 </template>
               </v-slider>
             </div>
+            <div
+              v-if="report && !service_countries"
+              class="b-sessions-map__map-key"
+              aria-hidden="true"
+            >
+              <span>{{ $t("shop_session_widget.modern.fewer") }}</span
+              ><span
+                class="b-sessions-map__map-scale"
+                :style="{
+                  '--session-map-low': modern_map_colors.low,
+                  '--session-map-high': h_color,
+                }"
+              /><span>{{
+                activityLabel || $t("shop_session_widget.modern.more_sessions")
+              }}</span>
+            </div>
+            <div
+              v-if="report || audience"
+              class="b-sessions-map__selection"
+              role="status"
+              aria-live="polite"
+            >
+              <template v-if="selected_country">
+                <span class="b-sessions-map__identity"
+                  ><flag :iso="selected_country" :squared="false" />{{
+                    getCountryName(selected_country)
+                  }}</span
+                >
+                <time-series-inline-chart
+                  v-if="fullDetails"
+                  :colors="['#1976D2']"
+                  :days="days"
+                  :height="24"
+                  :keys="[selected_country]"
+                  :offset_day="offset"
+                  :time-series="timeSeries"
+                  :value-titles="[getCountryName(selected_country)]"
+                  class="b-sessions-map__selection-trend"
+                  dir="ltr"
+                  flat-color
+                  type="line"
+                />
+                <span class="b-sessions-map__count">{{
+                  numeralFormat(
+                    getCountrySessions(selected_country),
+                    "0,0.[0]a",
+                  )
+                }}</span>
+                <v-btn
+                  class="sd-modern-icon-button"
+                  icon
+                  variant="text"
+                  :aria-label="$t('shop_session_widget.modern.clear_country')"
+                  @click="selected_country = null"
+                >
+                  <v-icon size="16">close</v-icon>
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                    open-on-focus
+                    content-class="sd-modern-tooltip text-start"
+                    >{{
+                      $t("shop_session_widget.modern.clear_country")
+                    }}</v-tooltip
+                  >
+                </v-btn>
+              </template>
+              <span v-else class="sd-modern-label">{{
+                $t(activityLabel ? "shop_session_widget.modern.select_country_activity" : "shop_session_widget.modern.select_country")
+              }}</span>
+            </div>
           </section>
           <section class="b-sessions-map__country-panel">
             <header class="b-sessions-map__section-header">
               <h3 class="sd-modern-eyebrow">
                 {{ $t("admin_shop.dashboard.modern.session_top_countries") }}
               </h3>
-              <span class="sd-modern-label">{{
+              <span v-if="audience" class="sd-modern-label">
+                {{ numeralFormat(countries_count, "0,0") }}
+                {{ $t("global.commons.countries") }}
+              </span>
+              <span v-else class="sd-modern-label">{{
                 $t("admin_shop.dashboard.modern.session_period")
               }}</span>
             </header>
             <div
               class="b-sessions-map__country-head"
-              :class="{ 'b-sessions-map__country-head--compact': !fullDetails }"
+              :class="{
+                'b-sessions-map__country-head--compact': !fullDetails,
+                'sd-modern-list-header': report || audience || !!activityLabel,
+              }"
               aria-hidden="true"
             >
               <span>{{ $t("global.commons.country") }}</span>
@@ -245,19 +401,34 @@
                 $t("admin_shop.dashboard.modern.session_daily_trend")
               }}</span>
               <span>{{ $t("admin_shop.dashboard.modern.session_share") }}</span>
-              <span>{{ $t("global.commons.sessions") }}</span>
+              <span>{{ activityLabel || $t("global.commons.sessions") }}</span>
             </div>
-            <div
+            <component
+              :is="report || audience ? 'button' : 'div'"
               v-for="item in top_countries"
               :key="item[0]"
               class="b-sessions-map__country"
-              :class="{ 'b-sessions-map__country--compact': !fullDetails }"
+              :class="{
+                'b-sessions-map__country--compact': !fullDetails,
+                'sd-modern-clickable-item': report || audience,
+              }"
+              :type="report || audience ? 'button' : undefined"
+              :aria-pressed="
+                report || audience ? selected_country === item[0] : undefined
+              "
+              @click="(report || audience) && selectCountry(item[0])"
             >
               <div class="b-sessions-map__identity">
                 <flag v-if="item[0]" :iso="item[0]" :squared="false" />
-                <span class="b-sessions-map__country-name">{{
-                  getCountryName(item[0])
-                }}</span>
+                <span class="b-sessions-map__country-name">
+                  {{ getCountryName(item[0]) }}
+                  <small
+                    v-if="audience"
+                    class="b-sessions-map__country-code"
+                    dir="ltr"
+                    >{{ item[0] }}</small
+                  >
+                </span>
               </div>
               <time-series-inline-chart
                 v-if="fullDetails"
@@ -283,21 +454,56 @@
               <strong class="b-sessions-map__count">{{
                 numeralFormat(item[1], "0,0.[0]a")
               }}</strong>
-            </div>
+            </component>
             <p v-if="!top_countries.length" class="sd-modern-empty-state">
               {{ $t("global.commons.no_data") }}
+            </p>
+            <p v-if="report" class="b-sessions-map__scope">
+              {{ $t("shop_session_widget.modern.period_scope") }}
             </p>
           </section>
         </div>
         <section
+          v-if="timeSeries"
           class="b-sessions-map__device-section"
           :class="{ disabled: busy }"
         >
           <header class="b-sessions-map__section-header">
-            <h3 class="sd-modern-eyebrow">
+            <h3
+              :class="
+                report ? 'b-sessions-map__device-title' : 'sd-modern-eyebrow'
+              "
+            >
               {{ $t("admin_shop.dashboard.modern.session_devices") }}
+              <v-btn
+                v-if="report && !activityLabel"
+                class="sd-modern-icon-button sd-modern-info-button"
+                icon
+                variant="text"
+                :aria-label="$t('shop_session_widget.modern.devices_help')"
+              >
+                <v-icon size="14">info_outline</v-icon>
+                <v-tooltip
+                  activator="parent"
+                  location="top"
+                  open-on-click
+                  open-on-focus
+                  interactive
+                  :max-width="audience ? undefined : 360"
+                  content-class="sd-modern-tooltip text-start"
+                  >{{
+                    $t("shop_session_widget.modern.devices_help")
+                  }}</v-tooltip
+                >
+              </v-btn>
             </h3>
-            <span class="sd-modern-label">{{
+            <span v-if="report" class="sd-modern-label"
+              >{{ activityLabel || $t("shop_session_widget.modern.device_sessions") }}
+              <span class="b-sessions-map__count">{{
+                numeralFormat(total_sessions_keys, "0,0.[0]a")
+              }}</span></span
+            >
+            <span v-else class="sd-modern-label">{{
               $t("admin_shop.dashboard.modern.session_period")
             }}</span>
           </header>
@@ -307,6 +513,8 @@
                 class="b-sessions-map__country-head"
                 :class="{
                   'b-sessions-map__country-head--compact': !fullDetails,
+                  'sd-modern-list-header':
+                    report || audience || !!activityLabel,
                 }"
                 aria-hidden="true"
               >
@@ -319,7 +527,9 @@
                 <span>{{
                   $t("admin_shop.dashboard.modern.session_share")
                 }}</span>
-                <span>{{ $t("global.commons.sessions") }}</span>
+                <span>{{
+                  activityLabel || $t("global.commons.sessions")
+                }}</span>
               </div>
               <div
                 v-for="type in types"
@@ -362,6 +572,7 @@
                 }}</strong>
               </div>
             </div>
+            <slot name="device-composition" :desktop="desktop" :mobile="mobile" :tablet="tablet">
             <b-session-devices-pie
               :desktop="desktop"
               :full-details="fullDetails"
@@ -370,9 +581,16 @@
               :tick-amount="2"
               modern
               small
-              type="polarArea"
+              :type="
+                audience
+                  ? 'polarArea'
+                  : report || activityLabel
+                    ? 'donut'
+                    : 'polarArea'
+              "
               class="b-sessions-map__device-composition"
             />
+            </slot>
           </div>
         </section>
       </template>
@@ -703,7 +921,10 @@ export default {
   },
   props: {
     modern: Boolean,
+    audience: Boolean,
+    report: Boolean,
     summary: Boolean,
+    activityLabel: String,
     shop: {
       required: false,
       type: Object,
@@ -730,6 +951,7 @@ export default {
   },
   data: () => ({
     busy: false,
+    fetch_error: false,
     types: Analytics.DeviceType,
 
     timeSeries: null,
@@ -746,6 +968,7 @@ export default {
     custom_selected_day: -1,
 
     play: false,
+    selected_country: null,
   }),
 
   computed: {
@@ -792,8 +1015,10 @@ export default {
       const onSurface =
         colors["on-surface"] || (theme.current.dark ? "#f1f2f6" : "#24272e");
       return {
-        low: mix(surface, onSurface, 0.045).hex(),
-        empty: mix(surface, onSurface, 0.035).hex(),
+        low: this.activityLabel
+          ? mix(surface, this.h_color, 0.22).hex()
+          : mix(surface, onSurface, 0.045).hex(),
+        empty: mix(surface, onSurface, this.activityLabel ? 0.12 : 0.035).hex(),
         stroke: mix(surface, onSurface, 0.12).hex(),
       };
     },
@@ -869,16 +1094,9 @@ export default {
     map_data() {
       if (!this.timeSeries) return {};
 
-      const sum_array =
-        this.timeSeries.getTotalAllKeys(/*[
-        "uid",
-        "mobile",
-        "desktop",
-        "tablet",
-        "shop_id",
-        "created_at",
-        "updated_at"
-      ]*/);
+      const sum_array = this.timeSeries.getTotalAllKeys(
+        this.report || this.audience || this.activityLabel ? ["id", "pc"] : [],
+      );
 
       sum_array.base = 0;
 
@@ -899,21 +1117,46 @@ export default {
   },
 
   watch: {
+    externalTimeSeries(series) {
+      if (this.externalFeed) this.syncExternalTimeSeries(series);
+    },
     play(play) {
-      if (play) this.startAnimate();
-      else this.stopAnimate();
+      if (play) {
+        if (this.report || this.audience || this.activityLabel)
+          this.service_countries = false;
+        this.startAnimate();
+      } else this.stopAnimate();
     },
   },
   created() {
     CountriesResourceHelper.FetchCountries(this);
 
-    if (this.externalFeed) this.timeSeries = this.externalTimeSeries;
+    if (this.externalFeed) this.syncExternalTimeSeries(this.externalTimeSeries);
     else if (this.modern && !this.summary) this.fetchShopSessions(0, 29);
   },
   beforeUnmount() {
     this.stopAnimate();
   },
   methods: {
+    syncExternalTimeSeries(series) {
+      this.stopAnimate();
+      this.play = false;
+      this.timeSeries = series;
+      this.offset = series?.offset ?? 0;
+      this.days = series?.days ?? 30;
+      this.custom_selected_day = -1;
+      this.selected_country = null;
+      this.service_countries = false;
+    },
+    selectCountry(country) {
+      if (typeof country !== "string" || !/^[a-z]{2}$/i.test(country)) return;
+      this.selected_country =
+        this.selected_country === country ? null : country;
+    },
+    selectCountryFromMap(event) {
+      const path = event.target?.closest?.("path.land");
+      if (path) this.selectCountry(path.id);
+    },
     calendarDayNumber(value) {
       if (value == null) return null;
       const date = DateConverter.convertToLocalTime(value);
@@ -942,8 +1185,10 @@ export default {
 
       this.interval = setInterval(() => {
         ++this.custom_selected_day;
-        if (this.custom_selected_day >= this.timeSeries.days)
-          this.custom_selected_day = 0;
+        // Report windows include both calendar boundaries.
+        const lastDay =
+          this.timeSeries.days + (this.report || this.audience ? 1 : 0);
+        if (this.custom_selected_day >= lastDay) this.custom_selected_day = 0;
       }, 250);
     },
     stopAnimate() {
@@ -953,6 +1198,12 @@ export default {
     },
 
     getCountrySessions(country) {
+      if (
+        (this.report || this.audience || this.activityLabel) &&
+        !this.service_countries &&
+        this.ma_data_selected_day
+      )
+        return this.ma_data_selected_day[country] || 0;
       return this.map_data[country] ? this.map_data[country] : 0;
     },
 
@@ -960,6 +1211,7 @@ export default {
       const exactRange = this.modern && !this.summary;
       const request = ++this.session_request;
       this.busy = true;
+      this.fetch_error = false;
       this.offset = offset;
       this.days = days;
       if (exactRange) {
@@ -999,6 +1251,10 @@ export default {
               offset,
               days,
             );
+        })
+        .catch((error) => {
+          if (!this.report) throw error;
+          if (request === this.session_request) this.fetch_error = true;
         })
         .finally(() => {
           if (!exactRange || request === this.session_request)
@@ -1359,6 +1615,169 @@ export default {
   }
 }
 
+.b-sessions-map--report.b-sessions-map--modern {
+  font-size: 13px;
+
+  .b-sessions-map__overview {
+    align-items: flex-start;
+    gap: 14px;
+    margin-block-end: 18px;
+  }
+
+  .sd-modern-title-text {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  .sd-modern-subtitle {
+    margin-block-start: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .b-sessions-map__geography {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 27px;
+  }
+
+  .b-sessions-map__geographic-total {
+    .sd-modern-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    strong {
+      display: block;
+      font-size: 23px;
+      font-weight: 600;
+      line-height: 30px;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .b-sessions-map__world {
+    height: 270px;
+  }
+
+  .b-sessions-map__country {
+    width: 100%;
+    min-height: 44px;
+    padding-inline: 8px;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-block-end: 1px solid var(--sd-modern-border);
+    border-radius: 0;
+    font-family: inherit;
+    font-weight: 400;
+    text-align: start;
+
+    &[aria-pressed="true"] {
+      background: var(--sd-modern-inset);
+      border-radius: 7px;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: -2px;
+    }
+  }
+
+  .b-sessions-map__country-head {
+    padding-inline: 8px;
+  }
+
+  .b-sessions-map__scope {
+    margin: 12px 8px 0;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  .b-sessions-map__map-key {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-block-start: 12px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+  }
+
+  .b-sessions-map__map-scale {
+    width: 64px;
+    height: 5px;
+    background: linear-gradient(
+      90deg,
+      var(--session-map-low),
+      var(--session-map-high)
+    );
+    border-radius: 3px;
+  }
+
+  .b-sessions-map__selection {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 50px;
+    margin-block-start: 15px;
+    padding-block: 12px;
+    border-block-start: 1px solid var(--sd-modern-border);
+    font-size: 12px;
+
+    > .b-sessions-map__identity {
+      flex: 1 1 120px;
+    }
+  }
+
+  .b-sessions-map__selection-trend {
+    width: 80px;
+    max-width: 100%;
+    flex: 0 1 80px;
+  }
+
+  .b-sessions-map__device-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .b-sessions-map__device-row {
+    min-height: 44px;
+  }
+
+  .b-sessions-map__device-layout {
+    grid-template-columns: minmax(0, 1.8fr) minmax(220px, 1fr);
+  }
+
+  .b-sessions-map__device-composition {
+    min-width: 0;
+  }
+
+  .b-sessions-map__error {
+    margin-block-end: 18px;
+  }
+
+  @media (max-width: 900px) {
+    .b-sessions-map__geography {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .b-sessions-map__device-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}
+
 .b-sessions-map--modern.b-sessions-map--summary {
   .b-sessions-map__summary-total strong {
     font-weight: 500;
@@ -1366,6 +1785,198 @@ export default {
 
   .b-sessions-map__device dd strong {
     font-weight: 400;
+  }
+}
+
+// The audience composition shares the native map and charts with the report view.
+.b-sessions-map--modern.b-sessions-map--audience {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: 22px 26px;
+  align-items: stretch;
+  font-size: 12px;
+
+  .b-sessions-map__overview {
+    grid-column: 1 / -1;
+    order: -1;
+    margin: 0;
+  }
+
+  .b-sessions-map__geography {
+    display: contents;
+  }
+
+  .b-sessions-map__map-panel {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  .b-sessions-map__device-section {
+    grid-column: 2;
+    order: 1;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+
+  .b-sessions-map__country-panel {
+    grid-column: 1 / -1;
+    order: 2;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    padding-block-start: 17px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+
+  .b-sessions-map__country-panel > header,
+  .b-sessions-map__country-panel > .sd-modern-empty-state {
+    grid-column: 1 / -1;
+  }
+
+  .b-sessions-map__country-panel > .b-sessions-map__country-head {
+    display: none;
+  }
+
+  .b-sessions-map__device-layout {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 9px;
+  }
+
+  .b-sessions-map__device-composition {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .b-sessions-map__geographic-total .sd-modern-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+  }
+
+  .b-sessions-map__geographic-total strong {
+    display: block;
+    margin-block-start: 3px;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 29px;
+    letter-spacing: -0.3px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .b-sessions-map__section-header .sd-modern-eyebrow {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 15px;
+    letter-spacing: 0.65px;
+  }
+
+  .b-sessions-map__country {
+    width: 100%;
+    min-height: 40px;
+    padding: 7px 0;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+    text-align: start;
+  }
+
+  .b-sessions-map__country[aria-pressed="true"] {
+    background: var(--sd-modern-inset);
+  }
+
+  .b-sessions-map__country:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+
+  .b-sessions-map__country-code {
+    display: block;
+    color: var(--sd-modern-muted);
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 15px;
+  }
+
+  .b-sessions-map__country,
+  .b-sessions-map__device-row {
+    grid-template-columns: minmax(0, 1fr) 58px 42px 44px;
+    gap: 7px;
+  }
+
+  .b-sessions-map__device-row,
+  .b-sessions-map__count {
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+  }
+
+  .b-sessions-map__share {
+    font-size: 10px;
+    line-height: 15px;
+  }
+
+  .b-sessions-map__selection {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    min-height: 44px;
+    margin-block-start: 12px;
+    padding-block-start: 10px;
+    border-block-start: 1px solid var(--sd-modern-border);
+    font-size: 11px;
+  }
+
+  .b-sessions-map__selection > .b-sessions-map__identity {
+    flex: 1 1 100px;
+  }
+
+  .b-sessions-map__selection-trend {
+    width: 70px;
+    flex: 0 1 70px;
+  }
+
+  @media (max-width: 800px) {
+    grid-template-columns: minmax(0, 1fr);
+
+    .b-sessions-map__map-panel,
+    .b-sessions-map__device-section,
+    .b-sessions-map__country-panel {
+      grid-column: 1;
+    }
+
+    .b-sessions-map__country-panel {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .b-sessions-map__device-composition {
+      max-width: 320px;
+      margin-inline: auto;
+    }
+
+    .b-sessions-map__country-head,
+    .b-sessions-map__device-row {
+      grid-template-columns: minmax(0, 1fr) 58px 42px 44px;
+    }
+  }
+
+  @media (max-width: 600px), (pointer: coarse) {
+    .b-sessions-map__country,
+    .b-sessions-map__device-row {
+      min-height: 44px;
+    }
   }
 }
 </style>

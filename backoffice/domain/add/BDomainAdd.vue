@@ -16,20 +16,915 @@
   <v-card
     :variant="inline ? 'text' : 'flat'"
     class="position-relative text-start"
+    :class="{ 'sd-modern-widget': modern, 'b-domain-add-modern': modern }"
   >
     <u-loading-progress v-if="busy_add"></u-loading-progress>
-    <v-card-title v-if="!inline">
+    <template v-if="modern">
+      <header class="b-domain-add-modern__header">
+        <div>
+          <h2>{{ $t("domains_modern.connection.title") }}</h2>
+          <p>
+            {{
+              $t(
+                inDomainEditMode
+                  ? "domains_modern.connection.editSubtitle"
+                  : "domains_modern.connection.addSubtitle",
+              )
+            }}
+          </p>
+        </div>
+        <v-tooltip
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          open-on-focus
+        >
+          <template #activator="{ props }"
+            ><v-btn
+              v-bind="props"
+              icon
+              variant="text"
+              class="sd-modern-icon-button"
+              :aria-label="$t('global.actions.close')"
+              @click="close()"
+              ><v-icon>close</v-icon></v-btn
+            ></template
+          >
+          {{ $t("global.actions.close") }}
+        </v-tooltip>
+      </header>
+
+      <v-card-text class="b-domain-add-modern__body thin-scroll">
+        <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Address, visitor access and sign-in ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
+        <section class="b-domain-add-modern__section">
+          <div class="b-domain-add-modern__heading">
+            <v-icon aria-hidden="true">language</v-icon>
+            <div>
+              <h3>{{ $t("domains_modern.connection.addressAccess") }}</h3>
+              <p>{{ $t("domains_modern.connection.addressHint") }}</p>
+            </div>
+            <v-tooltip
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              open-on-focus
+              open-on-click
+            >
+              <template #activator="{ props }"
+                ><v-btn
+                  v-bind="props"
+                  icon
+                  variant="text"
+                  class="sd-modern-icon-button sd-modern-info-button"
+                  :aria-label="$t('domains_modern.connection.addressHelp')"
+                  ><v-icon>info_outline</v-icon></v-btn
+                ></template
+              >
+              {{ $t("domains_modern.connection.addressHelp") }}
+            </v-tooltip>
+          </div>
+          <div
+            class="b-domain-add-modern__identity-grid"
+            :class="{ 'b-domain-add-modern__identity-grid--single': !inDomainEditMode }"
+          >
+            <div>
+              <template v-if="inDomainEditMode">
+                <span class="b-domain-add-modern__label">{{
+                  $t("domains_modern.connection.domain")
+                }}</span>
+                <div class="b-domain-add-modern__address" dir="ltr">
+                  <span>https://</span><bdi>{{ input_domain }}</bdi>
+                  <v-tooltip
+                    location="top"
+                    content-class="sd-modern-tooltip text-start"
+                    open-on-focus
+                    open-on-click
+                  >
+                    <template #activator="{ props }"
+                      ><v-btn
+                        v-bind="props"
+                        icon
+                        variant="text"
+                        class="sd-modern-icon-button"
+                        :aria-label="$t('domains_modern.connection.domainLock')"
+                        ><v-icon>lock_outline</v-icon></v-btn
+                      ></template
+                    >
+                    {{ $t("domains_modern.connection.domainLock") }}
+                  </v-tooltip>
+                </div>
+              </template>
+              <v-locale-provider v-else :rtl="false">
+                <v-text-field
+                  v-model="input_domain"
+                  :label="$t('domains_modern.connection.domain')"
+                  :rules="[GlobalRules.required()]"
+                  class="english-field sd-modern-underlined-field b-domain-add-modern__input"
+                  variant="underlined"
+                  persistent-placeholder
+                  placeholder="store.example.com"
+                  :disabled="busy_add"
+                  :messages="' '"
+                  @keydown.enter="is_valid_domain && setShopDomain()"
+                >
+                  <template #prepend-inner
+                    ><span class="b-domain-add-modern__prefix" dir="ltr"
+                      >https://</span
+                    ></template
+                  >
+                  <template #message
+                    ><span class="b-domain-add-modern__message"
+                      ><v-icon
+                        v-if="input_domain"
+                        :color="is_valid_domain ? 'success' : 'warning'"
+                        size="14"
+                        aria-hidden="true"
+                        >{{ is_valid_domain ? "check" : "error_outline" }}</v-icon
+                      >{{
+                        $t(
+                          !input_domain
+                            ? "domains_modern.add.example"
+                            : !is_valid_domain
+                              ? "domains_modern.add.invalid"
+                              : is_wild_card
+                                ? "domains_modern.add.wildcard"
+                                : is_subdomain
+                                  ? "domains_modern.add.subdomain"
+                                  : "domains_modern.add.root_domain",
+                        )
+                      }}</span
+                    ></template
+                  >
+                </v-text-field>
+              </v-locale-provider>
+              <div v-if="inDomainEditMode" class="b-domain-add-modern__meta">
+                <v-icon size="12" aria-hidden="true">{{
+                  is_wild_card ? "emergency" : "link"
+                }}</v-icon
+                >{{
+                  $t(
+                    is_wild_card
+                      ? "domains_modern.connection.wildcard"
+                      : "domains_modern.connection.fixedDomain",
+                  )
+                }}
+              </div>
+              <div
+                v-if="inDomainEditMode && !busy_fetch_domain_data"
+                class="b-domain-add-modern__callback"
+              >
+                <v-icon aria-hidden="true">login</v-icon>
+                <div>
+                  <span>{{ $t("domains_modern.connection.callback") }}</span
+                  ><bdi v-if="domain_client" dir="ltr">{{ domain_client.redirect }}</bdi
+                  ><v-btn
+                    v-else
+                    variant="text"
+                    color="primary"
+                    class="sd-modern-button sd-modern-button--small sd-modern-button--inline"
+                    :loading="busy_add_client"
+                    @click.stop="createClientSecret(domain.id)"
+                    >{{ $t("domains_modern.connection.createClient") }}</v-btn
+                  >
+                </div>
+                <v-tooltip
+                  location="top"
+                  content-class="sd-modern-tooltip text-start"
+                  open-on-focus
+                  open-on-click
+                >
+                  <template #activator="{ props }"
+                    ><v-btn
+                      v-bind="props"
+                      icon
+                      variant="text"
+                      class="sd-modern-icon-button sd-modern-info-button"
+                      :aria-label="
+                        $t(
+                          domain_client
+                            ? 'domains_modern.connection.callbackHelp'
+                            : 'domains_modern.connection.createHelp',
+                        )
+                      "
+                      ><v-icon>info_outline</v-icon></v-btn
+                    ></template
+                  >
+                  {{
+                    $t(
+                      domain_client
+                        ? "domains_modern.connection.callbackHelp"
+                        : "domains_modern.connection.createHelp",
+                    )
+                  }}
+                </v-tooltip>
+                <v-tooltip
+                  v-if="domain_client"
+                  location="top"
+                  content-class="sd-modern-tooltip text-start"
+                  open-on-focus
+                >
+                  <template #activator="{ props }"
+                    ><v-btn
+                      v-bind="props"
+                      icon
+                      variant="text"
+                      class="sd-modern-icon-button"
+                      :aria-label="$t('domains_modern.connection.copy')"
+                      @click="copyToClipboard(domain_client.redirect)"
+                      ><v-icon>content_copy</v-icon></v-btn
+                    ></template
+                  >{{ $t("domains_modern.connection.copy") }}
+                </v-tooltip>
+              </div>
+              <u-loading-ellipsis v-if="inDomainEditMode && busy_fetch_domain_data" />
+              <p v-if="domain.approved" class="b-domain-add-modern__approved">
+                <v-icon size="14" color="success" aria-hidden="true">check</v-icon
+                >{{ $t("domains_modern.list.verified") }}
+              </p>
+            </div>
+            <div v-if="inDomainEditMode">
+              <span class="b-domain-add-modern__label">{{
+                $t("domains_modern.connection.access")
+              }}</span>
+              <u-smart-switch
+                v-model="domain_enable"
+                :true-title="$t('domains_modern.connection.active')"
+                :false-title="$t('domains_modern.connection.inactive')"
+                true-icon="check"
+                false-icon="close"
+                :disabled="busy_update"
+                accessible
+                border
+                class="sd-modern-smart-select"
+              />
+            </div>
+          </div>
+        </section>
+
+        <template v-if="is_valid_domain">
+          <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Storefront hosting and connection method ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
+          <section class="b-domain-add-modern__section">
+            <div class="b-domain-add-modern__heading">
+              <v-icon aria-hidden="true">storefront</v-icon>
+              <div>
+                <h3>{{ $t("domains_modern.connection.hosting") }}</h3>
+                <p>{{ $t("domains_modern.connection.hostingHint") }}</p>
+              </div>
+              <v-tooltip
+                location="top"
+                content-class="sd-modern-tooltip text-start"
+                open-on-focus
+                open-on-click
+              >
+                <template #activator="{ props }"
+                  ><v-btn
+                    v-bind="props"
+                    icon
+                    variant="text"
+                    class="sd-modern-icon-button sd-modern-info-button"
+                    :aria-label="$t('domains_modern.connection.hostingHelp')"
+                    ><v-icon>info_outline</v-icon></v-btn
+                  ></template
+                >{{ $t("domains_modern.connection.hostingHelp") }}
+              </v-tooltip>
+            </div>
+            <u-smart-select
+              v-model="hosting_mode"
+              :items="modern_hosting_options"
+              :readonly="inDomainEditMode"
+              :disabled="busy_add"
+              border
+              accessible
+              force-show-all
+              class="sd-modern-smart-select"
+              item-description="description"
+              item-icon="icon"
+              item-text="title"
+              item-value="code"
+            />
+            <div v-if="inDomainEditMode" class="b-domain-add-modern__meta">
+              <v-icon size="12" aria-hidden="true">lock_outline</v-icon
+              >{{ $t("domains_modern.connection.fixedHosting") }}
+            </div>
+            <div v-if="inDomainEditMode" class="b-domain-add-modern__ssl">
+              <v-icon aria-hidden="true">{{
+                externally_hosted ? "open_in_new" : "verified_user"
+              }}</v-icon>
+              <div>
+                {{
+                  $t(
+                    externally_hosted
+                      ? "domains_modern.connection.sslExternal"
+                      : domain.ssl_proxy
+                        ? "domains_modern.connection.sslSecure"
+                        : "domains_modern.connection.sslOwn",
+                  )
+                }}
+                <p>
+                  {{
+                    $t(
+                      externally_hosted
+                        ? "domains_modern.connection.sslExternalHint"
+                        : domain.ssl_proxy
+                          ? "domains_modern.connection.sslSecureHint"
+                          : "domains_modern.connection.sslOwnHint",
+                    )
+                  }}
+                </p>
+              </div>
+            </div>
+            <div
+              v-if="externally_hosted"
+              class="sd-modern-notice b-domain-add-modern__notice"
+              role="status"
+            >
+              {{ $t("domains_modern.connection.externalNote") }}
+            </div>
+            <template v-if="!externally_hosted && (!inDomainEditMode || error_dns)">
+              <div class="b-domain-add-modern__setup">
+                <h3>{{ $t("domains_modern.connection.sslTitle") }}</h3>
+                <p>{{ $t("domains_modern.connection.sslHint") }}</p>
+                <u-smart-switch
+                  v-if="has_ssl_proxy"
+                  :model-value="!show_ssl_ips"
+                  @update:model-value="show_ssl_ips = !$event"
+                  :true-title="$t('domains_modern.connection.direct')"
+                  :true-description="$t('domains_modern.connection.directDesc')"
+                  true-icon="cloud_done"
+                  :false-title="$t('domains_modern.connection.secure')"
+                  :false-description="$t('domains_modern.connection.secureDesc')"
+                  false-icon="cloud"
+                  :disabled="busy_add"
+                  border
+                  accessible
+                  class="sd-modern-smart-select"
+                />
+                <p v-if="inDomainEditMode">
+                  {{ $t("domains_modern.connection.saveAccessHint") }}
+                </p>
+                <u-pods-panel class="b-domain-add-modern__pods">
+                  <u-pod-node
+                    :image="getShopImagePath(shop.icon, 64)"
+                    :title="$t('domains_modern.connection.domain')"
+                  /><u-pod-wire backward forward />
+                  <template v-if="show_ssl_ips"
+                    ><u-pod-node
+                      dashed
+                      icon="dns"
+                      :title="$t('global.commons.optional') + ' CDN'" /><u-pod-wire
+                      backward
+                      forward /><u-pod-node
+                      icon="cloud"
+                      icon-color="primary"
+                      title="SSL + CDN" /><u-pod-wire backward forward
+                  /></template>
+                  <template v-else
+                    ><u-pod-node icon="dns" icon-color="primary" title="CDN" /><u-pod-wire
+                      backward
+                      forward
+                  /></template>
+                  <u-pod-node is-selldone-icon title="Selldone" />
+                </u-pods-panel>
+              </div>
+              <h3>{{ $t("domains_modern.connection.requiredRecords") }}</h3>
+              <p>{{ $t("domains_modern.connection.requiredRecordsHint") }}</p>
+              <div
+                v-for="item in SelldoneShopsHostIPs.filter((x) =>
+                  show_ssl_ips
+                    ? custom_ips_ssl_proxy?.includes(x)
+                    : !custom_ips_ssl_proxy?.includes(x),
+                )"
+                :key="item"
+                class="b-domain-add-modern__record-block"
+              >
+                <span class="b-domain-add-modern__label">A</span
+                ><u-text-copy-box
+                  :value="domain_verification_title"
+                  :message="$t('domains_modern.connection.host')"
+                  icon="content_copy"
+                  color="surface"
+                  :border="false"
+                  :copy-label="$t('domains_modern.connection.copy')"
+                  full-width
+                  small
+                  text-start
+                /><u-text-copy-box
+                  :value="item"
+                  :message="$t('domains_modern.connection.recordValue')"
+                  icon="content_copy"
+                  color="surface"
+                  :border="false"
+                  :copy-label="$t('domains_modern.connection.copy')"
+                  full-width
+                  small
+                  text-start
+                />
+              </div>
+              <template v-if="is_subdomain && !show_ssl_ips">
+                <p>{{ $t("domains_modern.connection.cnameAlternative") }}</p>
+                <div
+                  v-for="item in SelldoneShopsHostCNAMEs"
+                  :key="item"
+                  class="b-domain-add-modern__record-block"
+                >
+                  <span class="b-domain-add-modern__label">CNAME</span
+                  ><u-text-copy-box
+                    :value="domain_verification_title"
+                    :message="$t('domains_modern.connection.host')"
+                    icon="content_copy"
+                    color="surface"
+                    :border="false"
+                    :copy-label="$t('domains_modern.connection.copy')"
+                    full-width
+                    small
+                    text-start
+                  /><u-text-copy-box
+                    :value="item"
+                    :message="$t('domains_modern.connection.recordValue')"
+                    icon="content_copy"
+                    color="surface"
+                    :border="false"
+                    :copy-label="$t('domains_modern.connection.copy')"
+                    full-width
+                    small
+                    text-start
+                  />
+                </div>
+              </template>
+            </template>
+          </section>
+
+          <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Ownership verification ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
+          <section
+            v-if="!inDomainEditMode || error_dns"
+            class="b-domain-add-modern__section"
+          >
+            <div class="b-domain-add-modern__heading">
+              <v-icon aria-hidden="true">verified_user</v-icon>
+              <div>
+                <h3>{{ $t("domains_modern.connection.verification") }}</h3>
+                <p>{{ $t("domains_modern.connection.verificationHint") }}</p>
+              </div>
+              <v-tooltip
+                location="top"
+                content-class="sd-modern-tooltip text-start"
+                open-on-focus
+                open-on-click
+              >
+                <template #activator="{ props }"
+                  ><v-btn
+                    v-bind="props"
+                    icon
+                    variant="text"
+                    class="sd-modern-icon-button sd-modern-info-button"
+                    :aria-label="$t('domains_modern.connection.verifyHelp')"
+                    ><v-icon>info_outline</v-icon></v-btn
+                  ></template
+                >{{ $t("domains_modern.connection.verifyHelp") }}
+              </v-tooltip>
+            </div>
+            <u-smart-select
+              v-if="externally_hosted"
+              v-model="verification_method"
+              :items="verification_options"
+              :disabled="busy_add"
+              border
+              accessible
+              force-show-all
+              class="sd-modern-smart-select"
+              item-description="description"
+              item-icon="icon"
+              item-text="title"
+              item-value="code"
+            />
+            <div
+              v-if="!externally_hosted || verification_method === 'txt'"
+              class="b-domain-add-modern__record-block"
+            >
+              <span class="b-domain-add-modern__label">TXT</span
+              ><u-text-copy-box
+                :value="domain_verification_txt_title"
+                :message="$t('domains_modern.connection.host')"
+                icon="content_copy"
+                color="surface"
+                :border="false"
+                :copy-label="$t('domains_modern.connection.copy')"
+                full-width
+                small
+                text-start
+              /><u-text-copy-box
+                :value="domain_verification_code"
+                :message="$t('domains_modern.connection.verificationValue')"
+                icon="content_copy"
+                color="surface"
+                :border="false"
+                :copy-label="$t('domains_modern.connection.copy')"
+                full-width
+                small
+                text-start
+              />
+            </div>
+            <div v-else class="b-domain-add-modern__record-block">
+              <u-text-copy-box
+                :value="domain_verification_meta_tag"
+                :message="$t('admin_shop.dashboard.info.add_dialog.ownership.meta_code')"
+                icon="content_copy"
+                color="surface"
+                :border="false"
+                :copy-label="$t('domains_modern.connection.copy')"
+                full-width
+                small
+                text-start
+              /><u-text-copy-box
+                :value="domain_verification_url"
+                :message="$t('admin_shop.dashboard.info.add_dialog.ownership.meta_url')"
+                icon="content_copy"
+                color="surface"
+                :border="false"
+                :copy-label="$t('domains_modern.connection.copy')"
+                full-width
+                small
+                text-start
+              />
+            </div>
+            <div
+              v-if="externally_hosted && domain_error_msg"
+              class="sd-modern-notice b-domain-add-modern__notice"
+              role="alert"
+            >
+              <v-icon color="warning" size="18" aria-hidden="true">error_outline</v-icon
+              >{{ domain_error_msg }}
+            </div>
+          </section>
+
+          <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Detected DNS records ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
+          <section
+            v-if="inDomainEditMode && !externally_hosted"
+            class="b-domain-add-modern__section"
+          >
+            <div class="b-domain-add-modern__dns-heading">
+              <div class="b-domain-add-modern__heading">
+                <v-icon aria-hidden="true">dns</v-icon>
+                <div>
+                  <h3>{{ $t("domains_modern.connection.dns") }}</h3>
+                  <p>{{ $t("domains_modern.connection.dnsHint") }}</p>
+                </div>
+                <v-tooltip
+                  location="top"
+                  content-class="sd-modern-tooltip text-start"
+                  open-on-focus
+                  open-on-click
+                  ><template #activator="{ props }"
+                    ><v-btn
+                      v-bind="props"
+                      icon
+                      variant="text"
+                      class="sd-modern-icon-button sd-modern-info-button"
+                      :aria-label="$t('domains_modern.connection.dnsHelp')"
+                      ><v-icon>info_outline</v-icon></v-btn
+                    ></template
+                  >{{ $t("domains_modern.connection.dnsHelp") }}</v-tooltip
+                >
+              </div>
+              <v-btn
+                variant="text"
+                class="sd-modern-button sd-modern-button--small"
+                :loading="busy_fetch_domain_data"
+                @click="fetchNameServers()"
+                ><v-icon start aria-hidden="true">refresh</v-icon
+                >{{ $t("domains_modern.connection.refresh") }}</v-btn
+              >
+            </div>
+            <div
+              v-if="error_dns"
+              class="sd-modern-notice b-domain-add-modern__notice"
+              role="alert"
+            >
+              <v-icon color="warning" size="18" aria-hidden="true">error_outline</v-icon>
+              <div>
+                {{ $t("domains_modern.connection.dnsError") }}
+                <div v-html="domain_error_msg"></div>
+              </div>
+            </div>
+            <v-table
+              v-if="dns?.length"
+              class="sd-modern-table b-domain-add-modern__dns-table"
+            >
+              <thead>
+                <tr>
+                  <th>{{ $t("domains_modern.connection.type") }}</th>
+                  <th>{{ $t("domains_modern.connection.value") }}</th>
+                  <th>{{ $t("domains_modern.connection.status") }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in dns_a" :key="'a' + index">
+                  <td>A</td>
+                  <td>
+                    <div class="b-domain-add-modern__dns-value">
+                      <bdi dir="ltr">{{ item.ip }}</bdi
+                      ><v-tooltip
+                        location="top"
+                        content-class="sd-modern-tooltip text-start"
+                        open-on-focus
+                        ><template #activator="{ props }"
+                          ><v-btn
+                            v-bind="props"
+                            icon
+                            variant="text"
+                            class="sd-modern-icon-button"
+                            :aria-label="$t('domains_modern.connection.copy')"
+                            @click="copyToClipboard(item.ip)"
+                            ><v-icon>content_copy</v-icon></v-btn
+                          ></template
+                        >{{ $t("domains_modern.connection.copy") }}</v-tooltip
+                      >
+                    </div>
+                  </td>
+                  <td>
+                    <span class="b-domain-add-modern__dns-status"
+                      ><v-icon
+                        :color="
+                          SelldoneShopsHostIPs.includes(item.ip)
+                            ? 'success'
+                            : cdn || domain.approved
+                              ? 'primary'
+                              : 'warning'
+                        "
+                        size="14"
+                        aria-hidden="true"
+                        >{{
+                          SelldoneShopsHostIPs.includes(item.ip) || cdn || domain.approved
+                            ? "check"
+                            : "warning_amber"
+                        }}</v-icon
+                      ><span v-if="SelldoneShopsHostIPs.includes(item.ip)">{{
+                        $t("admin_shop.dashboard.info.add_dialog.correct")
+                      }}</span
+                      ><span v-else-if="cdn || domain.approved">CDN</span
+                      ><span
+                        v-else
+                        v-html="
+                          $t('admin_shop.dashboard.info.add_dialog.set_ip_alert', {
+                            ip: SelldoneShopsHostIPs[0],
+                          })
+                        "
+                      ></span
+                    ></span>
+                  </td>
+                </tr>
+                <tr v-for="(item, index) in dns_cname" :key="'cname' + index">
+                  <td>CNAME</td>
+                  <td>
+                    <bdi dir="ltr">{{ item.target }}</bdi>
+                  </td>
+                  <td>
+                    <span class="b-domain-add-modern__dns-status"
+                      ><v-icon
+                        :color="
+                          SelldoneShopsHostCNAMEs.includes(item.target)
+                            ? 'success'
+                            : 'warning'
+                        "
+                        size="14"
+                        aria-hidden="true"
+                        >{{
+                          SelldoneShopsHostCNAMEs.includes(item.target)
+                            ? "check"
+                            : "warning_amber"
+                        }}</v-icon
+                      ><span v-if="SelldoneShopsHostCNAMEs.includes(item.target)">{{
+                        $t("admin_shop.dashboard.info.add_dialog.correct")
+                      }}</span
+                      ><span
+                        v-else
+                        v-html="
+                          $t('admin_shop.dashboard.info.add_dialog.set_message', {
+                            cname: SelldoneShopsHostCNAMEs[0],
+                          })
+                        "
+                      ></span
+                    ></span>
+                  </td>
+                </tr>
+                <tr v-for="(item, index) in dns_ns" :key="'ns' + index">
+                  <td>NS</td>
+                  <td>
+                    <bdi dir="ltr">{{ item.target }}</bdi>
+                  </td>
+                  <td>
+                    <v-icon
+                      color="primary"
+                      size="14"
+                      :aria-label="$t('domains_modern.connection.dns')"
+                      >check</v-icon
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+            <p
+              v-else-if="!busy_fetch_domain_data"
+              class="b-domain-add-modern__empty"
+              role="status"
+            >
+              {{ $t("domains_modern.connection.dnsEmpty") }}
+            </p>
+            <u-loading-ellipsis v-if="busy_fetch_domain_data" />
+            <div class="sd-modern-notice b-domain-add-modern__notice">
+              {{
+                $t(
+                  domain.ssl_proxy
+                    ? "domains_modern.connection.secureDnsNote"
+                    : "domains_modern.connection.dnsNote",
+                )
+              }}
+            </div>
+          </section>
+          <section
+            v-if="show_dns && !externally_hosted"
+            class="b-domain-add-modern__section"
+          >
+            <h3>{{ $t("domains_modern.connection.dns") }}</h3>
+            <div
+              v-if="domain_error_msg"
+              class="sd-modern-notice b-domain-add-modern__notice"
+              role="alert"
+            >
+              <v-icon color="warning" size="18" aria-hidden="true">error_outline</v-icon>
+              <div v-html="domain_error_msg"></div>
+            </div>
+            <p>{{ $t("domains_modern.connection.propagation") }}</p>
+            <v-table class="sd-modern-table b-domain-add-modern__dns-table"
+              ><thead>
+                <tr>
+                  <th>{{ $t("domains_modern.connection.host") }}</th>
+                  <th>{{ $t("domains_modern.connection.type") }}</th>
+                  <th>{{ $t("domains_modern.connection.recordValue") }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in last_dns" :key="item.name">
+                  <td>
+                    <bdi dir="ltr">{{ item.host }}</bdi>
+                  </td>
+                  <td>{{ item.type }}</td>
+                  <td>
+                    <bdi dir="ltr">{{ item.target || item.txt || item.ip }}</bdi
+                    ><v-icon
+                      v-if="anyMatch(item)"
+                      color="success"
+                      size="14"
+                      aria-hidden="true"
+                      >check</v-icon
+                    >
+                  </td>
+                </tr>
+              </tbody></v-table
+            >
+          </section>
+
+          <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Provider setup and migration guidance ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
+          <details
+            v-if="!externally_hosted && !show_ssl_ips"
+            class="b-domain-add-modern__guidance"
+          >
+            <summary>{{ $t("domains_modern.connection.cloudflare") }}</summary>
+            <p>{{ $t("domains_modern.connection.cloudflareHelp") }}</p>
+            <v-select
+              v-model="provider"
+              :items="providers"
+              item-value="code"
+              :return-object="false"
+              :label="$t('domains_modern.connection.provider')"
+              variant="underlined"
+              class="sd-modern-underlined-field b-domain-add-modern__provider"
+              ><template #selection="{ item }"
+                ><img :src="item.raw.icon" alt="" width="20" height="20" class="me-2" />{{
+                  item.raw.title
+                }}</template
+              ><template #item="{ item, props }"
+                ><v-list-item v-bind="props" :title="item.title" class="text-start"
+                  ><template #prepend
+                    ><img
+                      :src="item.raw.icon"
+                      alt=""
+                      width="20"
+                      height="20"
+                      class="me-2" /></template></v-list-item></template
+            ></v-select>
+            <template v-if="provider === 'cloudflare'">
+              <div class="b-domain-add-modern__guide-actions">
+                <v-btn
+                  v-for="(key, index) in ['dnsGuide', 'sslGuide', 'migration']"
+                  :key="key"
+                  variant="text"
+                  class="sd-modern-button sd-modern-button--small"
+                  :aria-pressed="sample_tab === index + 1"
+                  @click="sample_tab = index + 1"
+                  >{{ $t("domains_modern.connection." + key) }}</v-btn
+                >
+              </div>
+              <div class="b-domain-add-modern__guide-content">
+                <p>
+                  {{
+                    $t(
+                      "domains_modern.connection." +
+                        (sample_tab === 1
+                          ? "dnsGuideBody"
+                          : sample_tab === 2
+                            ? "sslGuideBody"
+                            : "migrationBody"),
+                    )
+                  }}
+                </p>
+                <v-img
+                  v-if="sample_tab === 1"
+                  :aspect-ratio="3.29"
+                  :src="require('../assets/cloudflare-dns.png')"
+                  :alt="$t('domains_modern.connection.dnsGuide')"
+                />
+                <v-img
+                  v-if="sample_tab === 2"
+                  :aspect-ratio="1.47"
+                  :src="require('../assets/cloudflare-ssl.png')"
+                  :alt="$t('domains_modern.connection.sslGuide')"
+                />
+                <div v-if="sample_tab === 3">
+                  <h3>{{ $t("domains_modern.connection.migrationQuestion") }}</h3>
+                  <p>{{ $t("domains_modern.connection.migrationReady") }}</p>
+                  <p>{{ $t("domains_modern.connection.migrationOldHost") }}</p>
+                  <p>{{ $t("domains_modern.connection.migration503") }}</p>
+                </div>
+              </div>
+            </template>
+          </details>
+        </template>
+      </v-card-text>
+      <v-card-actions class="b-domain-add-modern__footer">
+        <div class="b-domain-add-modern__actions">
+          <v-btn
+            v-if="!inline"
+            variant="text"
+            class="sd-modern-button sd-modern-button--small"
+            @click="close()"
+            >{{ $t("global.actions.close") }}</v-btn
+          >
+          <v-btn
+            v-if="inDomainEditMode"
+            class="sd-modern-button sd-modern-button--small sd-modern-button--primary"
+            color="primary"
+            variant="flat"
+            :loading="busy_update"
+            @click="updateShopDomain('enable', input_domain, domain_enable)"
+            ><v-icon start aria-hidden="true">save</v-icon
+            >{{ $t("global.actions.update") }}</v-btn
+          >
+          <v-btn
+            v-else
+            class="sd-modern-button sd-modern-button--small sd-modern-button--primary"
+            color="primary"
+            variant="flat"
+            :disabled="!is_valid_domain"
+            :loading="busy_add"
+            @click="setShopDomain()"
+            ><v-icon start aria-hidden="true">add</v-icon
+            >{{ $t("domains_modern.connection.connect") }}</v-btn
+          >
+        </div>
+      </v-card-actions>
+    </template>
+    <template v-else>
+    <v-card-title v-if="!inline && !modern">
       <v-icon class="me-1" color="#333"
         >{{ inDomainEditMode ? "public" : "travel_explore" }}
       </v-icon>
       {{ $t("admin_shop.dashboard.info.add_dialog.title") }}
     </v-card-title>
+    <v-card-title v-if="!inline && modern" class="b-domain-add-modern__title">
+      <h2>{{ $t(inDomainEditMode ? 'domains_modern.add.edit_title' : 'domains_modern.add.title') }}</h2>
+      <v-tooltip location="top" content-class="sd-modern-tooltip text-start" open-on-focus>
+        <template #activator="{ props }">
+          <v-btn v-bind="props" icon variant="text" class="sd-modern-icon-button"
+                 :aria-label="$t('global.actions.close')" @click="close()"><v-icon>close</v-icon></v-btn>
+        </template>
+        {{ $t('global.actions.close') }}
+      </v-tooltip>
+    </v-card-title>
+    <div v-if="modern" class="b-domain-add-modern__subtitle">
+      <span>{{ $t('domains_modern.add.subtitle') }}</span>
+      <v-tooltip location="top" content-class="sd-modern-tooltip text-start" open-on-focus open-on-click>
+        <template #activator="{ props }">
+          <v-btn v-bind="props" icon variant="text" class="sd-modern-icon-button sd-modern-info-button"
+                 :aria-label="$t('domains_modern.add.help_label')"><v-icon>info_outline</v-icon></v-btn>
+        </template>
+        {{ $t('domains_modern.add.help') }}
+      </v-tooltip>
+    </div>
 
     <v-card-text class="position-relative thin-scroll">
-      <div class="text-black">
+      <div :class="{ 'text-black': !modern }">
         <v-expand-transition>
-          <div class="widget-box -large mb-5">
-            <u-widget-header icon="looks_one" title="Domain">
+          <div :class="modern ? 'b-domain-add-modern__section b-domain-add-modern__identity' : 'widget-box -large mb-5'">
+            <u-widget-header v-if="!modern" icon="looks_one" title="Domain">
               <template v-if="is_valid_domain" v-slot:append-title>
                 <v-icon class="ms-1" color="success">check_circle</v-icon>
               </template>
@@ -45,18 +940,21 @@
                     'admin_shop.dashboard.info.add_dialog.input_domain_message',
                   )
                 "
-                :label="$t('admin_shop.dashboard.info.add_dialog.input_domain')"
+                :label="modern ? $t('domains_modern.add.domain_label') : $t('admin_shop.dashboard.info.add_dialog.input_domain')"
                 :rules="[GlobalRules.required()]"
-                class="english-field strong-field"
-                color="green"
+                :class="modern ? 'english-field sd-modern-underlined-field b-domain-add-modern__input' : 'english-field strong-field'"
+                :color="modern ? 'primary' : 'green'"
                 placeholder="your-shop-domain.com"
-                single-line
+                :single-line="!modern"
+                :persistent-placeholder="modern"
                 variant="underlined"
                 @keydown.enter="setShopDomain()"
                 messages=" "
               >
                 <template v-slot:prepend-inner>
+                  <span v-if="modern" class="b-domain-add-modern__prefix" dir="ltr">https://</span>
                   <b
+                    v-else
                     class="me-2 pt-2 text-success small text-no-wrap"
                     dir="ltr"
                     @click="show_ssl_message = !show_ssl_message"
@@ -69,7 +967,13 @@
                 </template>
 
                 <template v-slot:message>
-                  <v-slide-x-reverse-transition group leave-absolute>
+                  <span v-if="modern" class="b-domain-add-modern__message">
+                    <v-icon v-if="input_domain" :color="is_valid_domain ? 'success' : 'warning'" size="14" aria-hidden="true">
+                      {{ is_valid_domain ? 'check' : 'error_outline' }}
+                    </v-icon>
+                    {{ $t(!input_domain ? 'domains_modern.add.example' : !is_valid_domain ? 'domains_modern.add.invalid' : is_wild_card ? 'domains_modern.add.wildcard' : is_subdomain ? 'domains_modern.add.subdomain' : 'domains_modern.add.root_domain') }}
+                  </span>
+                  <v-slide-x-reverse-transition v-else group leave-absolute>
                     <v-chip
                       v-if="is_wild_card"
                       key="1"
@@ -123,10 +1027,10 @@
             <v-alert
               v-if="!externally_hosted"
               :model-value="show_ssl_message"
-              class="small font-weight-bold"
+              :class="modern ? 'sd-modern-notice' : 'small font-weight-bold'"
               density="compact"
               text
-              type="success"
+              :type="modern ? undefined : 'success'"
             >
               {{ $t("admin_shop.dashboard.info.add_dialog.ssl_message") }}
             </v-alert>
@@ -200,7 +1104,7 @@
 
         <v-expand-transition>
           <div v-if="is_valid_domain">
-            <div class="widget-box -large mb-5">
+            <div :class="modern ? 'b-domain-add-modern__section' : 'widget-box -large mb-5'">
               <h2 class=" ">
                 <v-icon class="me-1">looks_two</v-icon>
                 {{ $t("admin_shop.dashboard.info.add_dialog.hosting.title") }}
@@ -379,7 +1283,7 @@
 
             <div
               v-if="!inDomainEditMode || error_dns"
-              class="widget-box -large mb-5"
+              :class="modern ? 'b-domain-add-modern__section' : 'widget-box -large mb-5'"
             >
               <h2 class=" ">
                 <v-icon class="me-1">looks_3</v-icon>
@@ -638,7 +1542,7 @@
         <v-expand-transition>
           <div
             v-if="inDomainEditMode && !externally_hosted"
-            class="widget-box -large mb-5 min-height-20vh"
+            :class="modern ? 'b-domain-add-modern__section' : 'widget-box -large mb-5 min-height-20vh'"
           >
             <u-widget-header icon="dns" title="DNS records"></u-widget-header>
             <v-list-subheader v-if="domain"
@@ -750,7 +1654,7 @@
 
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Click Add > DNS Records ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
         <v-expand-transition>
-          <div v-if="show_dns" class="widget-box -large mb-5" dir="ltr">
+          <div v-if="show_dns" :class="modern ? 'b-domain-add-modern__section' : 'widget-box -large mb-5'" dir="ltr">
             <u-widget-header icon="dns" title="DNS records"></u-widget-header>
 
             <div v-if="domain_error_msg" class="mt-4 typo-body">
@@ -800,11 +1704,11 @@
     </v-card-text>
 
     <v-card-actions>
-      <div class="widget-buttons">
+      <div :class="modern ? 'b-domain-add-modern__actions' : 'widget-buttons'">
         <!-- Action > Delete -->
 
         <!-- Action > Close -->
-        <v-btn v-if="!inline" size="x-large" variant="text" @click="close()">
+        <v-btn v-if="!inline" :class="{ 'sd-modern-button': modern }" size="x-large" variant="text" @click="close()">
           <v-icon start>close</v-icon>
           {{ $t("global.actions.close") }}
         </v-btn>
@@ -813,6 +1717,7 @@
 
         <v-btn
           v-if="inDomainEditMode"
+          :class="{ 'sd-modern-button': modern }"
           :loading="busy_update"
           color="primary"
           size="x-large"
@@ -827,7 +1732,7 @@
 
         <v-btn
           v-else
-          :class="{ disabled: !is_valid_domain }"
+          :class="{ disabled: !is_valid_domain, 'sd-modern-button': modern }"
           :loading="busy_add"
           color="primary"
           size="x-large"
@@ -835,11 +1740,12 @@
           @click="setShopDomain()"
         >
           <v-icon start> add_box</v-icon>
-          {{ $t("global.actions.add") }}
+          {{ $t(modern ? 'domains_modern.list.add' : 'global.actions.add') }}
         </v-btn>
       </div>
     </v-card-actions>
 
+    </template>
     <BShopLicenseBlockOverlay
       v-if="
         (inDomainEditMode && !can_edit_domain(domain)) ||
@@ -878,6 +1784,10 @@ export default {
     BShopLicenseBlockOverlay,
   },
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     shop: {
       required: true,
       type: Object,
@@ -976,6 +1886,13 @@ export default {
   }),
 
   computed: {
+    modern_hosting_options() {
+      return this.hosting_options.map((option) => ({
+        ...option,
+        title: option.code === "external" ? "domains_modern.connection.external" : "domains_modern.connection.hosted",
+        description: option.code === "external" ? "domains_modern.connection.externalDesc" : "domains_modern.connection.hostedDesc",
+      }));
+    },
     hosting_mode: {
       get() {
         return this.externally_hosted ? "external" : "selldone";
@@ -1364,5 +2281,414 @@ export default {
 .external-domain-alert--warning .external-domain-alert__icon {
   background: rgba(var(--v-theme-warning), 0.16);
   color: rgb(var(--v-theme-on-surface));
+}
+
+.b-domain-add-modern.v-card {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding: 24px;
+  border: 1px solid var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+  border-radius: 20px !important;
+  color: rgb(var(--v-theme-on-surface));
+  background: rgb(var(--v-theme-surface));
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+}
+.b-domain-add-modern__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--sd-modern-border);
+}
+.b-domain-add-modern__header > div {
+  min-width: 0;
+}
+.b-domain-add-modern h2 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 26px;
+}
+.b-domain-add-modern h3 {
+  margin: 0;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 23px;
+}
+.b-domain-add-modern p {
+  margin: 5px 0 0;
+  color: var(--sd-modern-muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 19px;
+}
+.b-domain-add-modern.v-card > .b-domain-add-modern__body.v-card-text {
+  padding: 0;
+  font: inherit;
+  letter-spacing: 0;
+}
+.b-domain-add-modern__section {
+  padding-top: 22px;
+}
+.b-domain-add-modern__section + .b-domain-add-modern__section {
+  margin-top: 22px;
+  border-top: 1px solid var(--sd-modern-border);
+}
+.b-domain-add-modern__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 16px;
+}
+.b-domain-add-modern__heading > .v-icon {
+  flex: none;
+  margin-top: 4px;
+  color: var(--sd-modern-muted);
+  font-size: 16px;
+}
+.b-domain-add-modern__heading > div {
+  flex: 1;
+  min-width: 0;
+}
+.b-domain-add-modern__heading > .sd-modern-info-button {
+  margin-top: 20px;
+}
+.b-domain-add-modern__identity-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.b-domain-add-modern__identity-grid--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+.b-domain-add-modern__label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--sd-modern-muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 17px;
+}
+.b-domain-add-modern__address {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 43px;
+  border-bottom: 1px solid var(--sd-modern-border);
+}
+.b-domain-add-modern__address > span,
+.b-domain-add-modern__prefix {
+  color: var(--sd-modern-muted);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 19px;
+}
+.b-domain-add-modern__address bdi {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+.b-domain-add-modern__input :deep(.v-field__input) {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+.b-domain-add-modern__message {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 11px;
+  line-height: 17px;
+}
+.b-domain-add-modern__meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  color: var(--sd-modern-muted);
+  font-size: 11px;
+  line-height: 17px;
+}
+.b-domain-add-modern__callback {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 18px;
+  color: var(--sd-modern-muted);
+  font-size: 11px;
+  line-height: 17px;
+}
+.b-domain-add-modern__callback > .v-icon {
+  margin-top: 2px;
+  font-size: 14px;
+}
+.b-domain-add-modern__callback > div {
+  flex: 1;
+  min-width: 0;
+}
+.b-domain-add-modern__callback bdi {
+  display: block;
+  overflow-wrap: anywhere;
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 12px;
+  line-height: 19px;
+}
+.b-domain-add-modern__approved {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+}
+.b-domain-add-modern__ssl {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding-top: 16px;
+  font-size: 12px;
+  line-height: 19px;
+}
+.b-domain-add-modern__ssl > .v-icon {
+  margin-top: 2px;
+  color: var(--sd-modern-muted);
+  font-size: 16px;
+}
+.b-domain-add-modern__ssl p {
+  margin-top: 2px;
+  font-size: 11px;
+  line-height: 17px;
+}
+.b-domain-add-modern__setup {
+  padding-top: 18px;
+}
+.b-domain-add-modern__setup .sd-modern-smart-select {
+  margin-top: 14px;
+}
+.b-domain-add-modern__pods {
+  overflow-x: auto;
+  margin-block: 16px;
+}
+.b-domain-add-modern__record-block {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid var(--sd-modern-border);
+  border-radius: 12px;
+}
+.b-domain-add-modern__record-block :deep(.s--value-copy-box) {
+  margin-top: 8px;
+}
+.b-domain-add-modern__record-block :deep(.link-box) {
+  min-height: 40px;
+  background: transparent !important;
+  border: 0;
+  border-radius: 0;
+}
+.b-domain-add-modern__record-block :deep(.-link) {
+  min-width: 0;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 19px;
+  overflow-wrap: anywhere;
+}
+.b-domain-add-modern__record-block :deep(.-link .small) {
+  font-size: 11px;
+  line-height: 17px;
+}
+.b-domain-add-modern__record-block :deep(.-btn.v-btn) {
+  flex: none;
+  width: 32px;
+  min-width: 32px;
+  height: 32px !important;
+  min-height: 32px !important;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--sd-modern-border);
+  border-radius: 8px;
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+  box-shadow: none;
+}
+.b-domain-add-modern__record-block :deep(.-btn .v-icon) {
+  font-size: 16px;
+}
+.b-domain-add-modern__dns-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.b-domain-add-modern__dns-heading .b-domain-add-modern__heading {
+  flex: 1;
+  margin: 0;
+}
+.b-domain-add-modern__dns-table {
+  margin-top: 16px;
+  background: transparent;
+}
+.b-domain-add-modern__dns-table :deep(table) {
+  width: 100%;
+  table-layout: fixed;
+}
+.b-domain-add-modern__dns-table :deep(th:first-child) {
+  width: 12%;
+}
+.b-domain-add-modern__dns-table :deep(th:nth-child(2)) {
+  width: 50%;
+}
+.b-domain-add-modern__dns-table :deep(th:last-child) {
+  width: 38%;
+}
+.b-domain-add-modern__dns-table :deep(tbody td) {
+  padding: 9px 8px;
+  height: auto;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 19px;
+}
+.b-domain-add-modern__dns-table :deep(thead th) {
+  padding: 0 8px 10px;
+  height: auto;
+}
+.b-domain-add-modern__dns-value {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.b-domain-add-modern__dns-value bdi {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.b-domain-add-modern__dns-status {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 17px;
+}
+.b-domain-add-modern__dns-status > .v-icon {
+  flex: none;
+  margin-top: 1px;
+}
+.b-domain-add-modern__empty {
+  padding-block: 18px;
+}
+.b-domain-add-modern__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 12px;
+  font-size: 12px;
+  line-height: 19px;
+}
+.b-domain-add-modern__notice > .v-icon {
+  flex: none;
+  margin-top: 1px;
+}
+.b-domain-add-modern__guidance {
+  margin-top: 16px;
+  color: var(--sd-modern-muted);
+  font-size: 12px;
+  line-height: 19px;
+}
+.b-domain-add-modern__guidance summary {
+  min-height: 28px;
+}
+.b-domain-add-modern__provider {
+  max-width: 260px;
+  margin-top: 12px;
+}
+.b-domain-add-modern__guide-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.b-domain-add-modern__guide-content {
+  margin-top: 12px;
+  color: rgb(var(--v-theme-on-surface));
+}
+.b-domain-add-modern__guide-content .v-img {
+  margin-top: 14px;
+}
+.b-domain-add-modern__footer.v-card-actions {
+  margin-top: 24px;
+  padding: 20px 0 0;
+  border-top: 1px solid var(--sd-modern-border);
+}
+.b-domain-add-modern__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+.b-domain-add-modern__actions .sd-modern-button {
+  border-radius: 10px;
+}
+.b-domain-add-modern :deep(.sd-modern-button--small) {
+  padding: 8px 13px;
+  line-height: 18px;
+}
+.b-domain-add-modern :deep(.sd-modern-button--small .v-icon) {
+  font-size: 16px;
+}
+@media (max-width: 600px) {
+  .b-domain-add-modern.v-card {
+    padding: 20px 15px;
+    border-radius: 16px !important;
+  }
+  .b-domain-add-modern__identity-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .b-domain-add-modern__heading > .sd-modern-info-button {
+    margin-top: 0;
+  }
+  .b-domain-add-modern__input :deep(.v-field__input) {
+    font-size: 16px;
+  }
+  .b-domain-add-modern__dns-heading {
+    flex-wrap: wrap;
+  }
+  .b-domain-add-modern__dns-table :deep(th:first-child) {
+    width: 16%;
+  }
+  .b-domain-add-modern__dns-table :deep(th:nth-child(2)) {
+    width: 50%;
+  }
+  .b-domain-add-modern__dns-table :deep(th:last-child) {
+    width: 34%;
+  }
+  .b-domain-add-modern__dns-table :deep(td),
+  .b-domain-add-modern__dns-table :deep(th) {
+    padding-inline: 4px;
+  }
+  .b-domain-add-modern__dns-value {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .b-domain-add-modern__record-block :deep(.-btn.v-btn) {
+    width: 44px;
+    min-width: 44px;
+    height: 44px !important;
+    min-height: 44px !important;
+  }
 }
 </style>

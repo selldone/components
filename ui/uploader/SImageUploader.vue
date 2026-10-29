@@ -14,7 +14,7 @@
 
 <template>
   <div
-    :class="{ 's-image-uploader--thumbnail text-start': thumbnail }"
+    :class="{ 's-image-uploader--thumbnail text-start': thumbnail, 's-image-uploader--modern': modern }"
     @focusin="thumbnail && (focused = true)"
     @focusout="thumbnail && (focused = false)"
   >
@@ -168,9 +168,11 @@
         <v-btn
           v-if="clearable && last_image && !disabled"
           class="ms-1"
-          color="red"
+          :class="{ 'sd-modern-icon-button s-image-uploader__compact-action': modern }"
+          :color="modern ? undefined : 'red'"
           icon
-          title="Clear image"
+          :title="modern ? undefined : 'Clear image'"
+          :aria-label="modern ? removeLabel || $t('global.actions.remove_image') : undefined"
           variant="text"
           @click.stop="
             () => {
@@ -179,7 +181,8 @@
             }
           "
         >
-          <v-icon>close</v-icon>
+          <v-icon :size="modern ? 16 : undefined">close</v-icon>
+          <v-tooltip v-if="modern" activator="parent" :text="removeLabel || $t('global.actions.remove_image')" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start" />
         </v-btn>
 
         <slot
@@ -194,15 +197,18 @@
         >
           <v-btn
             class="ms-1"
+            :class="{ 'sd-modern-icon-button s-image-uploader__compact-action': modern }"
             icon
-            title="Edit image"
+            :title="modern ? undefined : 'Edit image'"
+            :aria-label="modern ? editLabel || $t('global.actions.edit') : undefined"
             variant="text"
             @click="
               force_edit = !force_edit;
               last_image = null;
             "
           >
-            <v-icon>edit</v-icon>
+            <v-icon :size="modern ? 16 : undefined">edit</v-icon>
+            <v-tooltip v-if="modern" activator="parent" :text="editLabel || $t('global.actions.edit')" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start" />
           </v-btn>
         </slot>
       </template>
@@ -364,6 +370,7 @@ export default {
       default: false,
     },
     thumbnail: { type: Boolean, default: false },
+    modern: { type: Boolean, default: false },
     chooseLabel: String,
     editLabel: String,
     removeLabel: String,
@@ -791,6 +798,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.s-image-uploader--modern .s-image-uploader__compact-action {
+  --sd-modern-icon-button-size: 32px;
+}
+
+@media (max-width: 640px), (pointer: coarse) {
+  .s-image-uploader--modern .s-image-uploader__compact-action {
+    --sd-modern-icon-button-size: 44px;
+  }
+}
+
 .s-image-uploader--thumbnail {
   position: relative;
   min-width: 0;

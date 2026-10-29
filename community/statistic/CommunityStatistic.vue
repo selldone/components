@@ -15,13 +15,19 @@
 <template>
   <div>
     <community-statistic-view
-      v-if="timeseries"
+      v-if="modern || timeseries"
       :community="community"
       :timeSeries="timeseries"
       :title="$t('community.community.statistics')"
+      :modern="modern"
+      :loading="busy"
+      :load-error="load_error"
       is-community
-    ></community-statistic-view>
-    <u-loading-progress v-if="busy"></u-loading-progress>
+      @retry="fetchCommunity"
+    >
+      <template v-if="$slots.aside" #aside><slot name="aside" /></template>
+    </community-statistic-view>
+    <u-loading-progress v-if="busy && !modern"></u-loading-progress>
   </div>
 </template>
 
@@ -31,12 +37,12 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import CommunityStatisticView from "../../community/statistics/CommunityStatisticView.vue";
 import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 
-
 export default {
   name: "CommunityStatistic",
   mixins: [],
   components: { CommunityStatisticView },
   props: {
+    modern: { type: Boolean, default: false },
     community: { required: true, type: Object },
     timeSeries: {
       require: true,
@@ -52,6 +58,8 @@ export default {
       days: 7,
 
       busy: false,
+      load_error: false,
+      fetch_id: 0,
     };
   },
 
@@ -59,6 +67,9 @@ export default {
     if (!this.timeSeries) {
       this.fetchCommunity();
     }
+  },
+  beforeUnmount() {
+    this.fetch_id++;
   },
 
   computed: {
@@ -77,8 +88,11 @@ export default {
     },
 
     fetchCommunity() {
+      const fetch_id = ++this.fetch_id;
+      const community_id = this.community.id;
       this.busy = true;
-      axios
+      this.load_error = false;
+      return axios
         .get(window.CAPI.GET_COMMUNITY_DATA(this.community.id), {
           params: {
             offset: this.offset,
@@ -86,28 +100,37 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (fetch_id !== this.fetch_id || community_id !== this.community.id)
+            return;
           if (!data.error) {
             // Statistics:
-            if (data.data)
+            if (Array.isArray(data.data)) {
               this.community_timeseries = new TimeSeries(
                 data.data,
                 "Community Data",
                 this.offset,
                 this.days,
               );
-
-            // Register fetch callback (Use to refresh by change time span)
-            this.community_timeseries.fetch = this.fetchCallback;
+              // Register fetch callback (Use to refresh by change time span)
+              this.community_timeseries.fetch = this.fetchCallback;
+            } else {
+              this.community_timeseries = null;
+              this.load_error = true;
+            }
           } else {
+            this.load_error = true;
             NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
+          if (fetch_id !== this.fetch_id || community_id !== this.community.id)
+            return;
+          this.load_error = true;
           NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
-          this.busy = false;
+          if (fetch_id === this.fetch_id) this.busy = false;
         });
     },
   },

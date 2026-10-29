@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--mentionable-input">
+  <div class="s--mentionable-input" :class="{ 's--mentionable-input--modern': modern }">
     <v-avatar class="me-2 mt-2" color="#fafafa" size="2.4em">
       <v-img :src="getUserAvatar(USER_ID())"></v-img>
     </v-avatar>
@@ -35,8 +35,16 @@
     ></u-text-html-input>
 
     <v-menu :close-on-content-click="false" location="top" max-width="420">
-      <template v-slot:activator="{ props }">
-        <v-btn icon v-bind="props" variant="text">
+      <template v-slot:activator="{ props: menuProps }">
+        <v-tooltip v-if="modern" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn v-bind="mergeProps(menuProps, tooltipProps)" icon variant="text" class="sd-modern-icon-button" :aria-label="$t('global.actions.add_emoji')">
+              <v-icon size="18" aria-hidden="true">sentiment_satisfied_alt</v-icon>
+            </v-btn>
+          </template>
+          {{ $t('global.actions.add_emoji') }}
+        </v-tooltip>
+        <v-btn v-else icon v-bind="menuProps" variant="text">
           <v-icon>sentiment_satisfied_alt</v-icon>
         </v-btn>
       </template>
@@ -55,6 +63,7 @@ import Tribute from "tributejs";
 import UTextHtmlInput from "../html-input/UTextHtmlInput.vue";
 import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
+import { mergeProps } from "vue";
 
 export default {
   name: "UTextMentionInput",
@@ -75,6 +84,7 @@ export default {
     shopId: {},
     mentions: {},
     placeholder: {},
+    modern: Boolean,
   },
 
   data() {
@@ -212,6 +222,7 @@ export default {
   },
 
   methods: {
+    mergeProps,
     selectEmoji(emoji) {
       this.$refs.area.$el.insertAtCaret(emoji.i);
       this.$emit("update:modelValue", this.$refs.area.$el.innerHTML);
@@ -312,6 +323,48 @@ export default {
 
   .menu-highlighted {
     font-weight: bold;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.s--mentionable-input--modern {
+  --sd-modern-icon-button-size: 32px;
+  align-items: flex-start;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 21px;
+
+  :deep(.s--html-input) {
+    min-width: 0;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 21px;
+  }
+  :deep(.s--html-input:empty::before) {
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 21px;
+    opacity: 1;
+  }
+  :deep(.s--html-input::after) {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+    opacity: 1;
+  }
+  .sd-modern-icon-button {
+    margin-block-start: 8px;
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    --sd-modern-icon-button-size: 44px;
+    :deep(.s--html-input), :deep(.s--html-input:empty::before) {
+      font-size: 16px;
+      line-height: 24px;
+    }
   }
 }
 </style>

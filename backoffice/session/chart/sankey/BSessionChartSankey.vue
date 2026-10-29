@@ -27,14 +27,20 @@
 <script lang="ts">
 import UChartSankey from "../../../../ui/chart/sankey/UChartSankey.vue";
 import { Brands } from "@selldone/core-js/enums/social/Brands.ts";
+import { useId } from "vue";
 
 export default {
   name: "BSessionChartSankey",
   components: { UChartSankey },
+  setup: () => ({ gradientId: `session-sankey-${useId()}` }),
 
   props: {
     modern: Boolean,
     color: String,
+    colors: {
+      type: Array,
+      default: () => [],
+    },
     Social: {},
     direct: {},
     search: {},
@@ -61,6 +67,12 @@ export default {
 
         config.sankey().nodeDraggableY(true);
         if (this.color) config.sankey().nodeColor(this.color);
+        // Native gradients blend node colors; palette mode uses safe, instance-local IDs.
+        config.sankey().linkKey((d, index, source, target) =>
+          this.colors.length
+            ? `${this.gradientId}-${index}`
+            : `${source}-${target}`,
+        );
         // .nodeDraggableX(true)
       },
     };
@@ -70,6 +82,12 @@ export default {
   watch: {
     color() {
       this.refreshChart();
+    },
+    colors: {
+      deep: true,
+      handler() {
+        this.refreshChart();
+      },
     },
     Social() {
       this.refreshChart();
@@ -188,6 +206,12 @@ export default {
             target: network,
             value: this.socialDetails[network],
           });
+        });
+      }
+
+      if (this.colors.length) {
+        this.chartData.nodes.forEach((node, index) => {
+          node.color = this.colors[index % this.colors.length];
         });
       }
     },

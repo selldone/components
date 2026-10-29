@@ -270,6 +270,7 @@ export default {
   data: () => ({
     clicked: false,
     in_loading: false,
+    removeNavigationHook: null,
   }),
 
   computed: {
@@ -322,6 +323,16 @@ export default {
     $route() {
       this.in_loading = false;
     },
+  },
+
+  mounted() {
+    // Aborted and duplicated navigation do not trigger the $route watcher.
+    this.removeNavigationHook = this.$router?.afterEach(() => {
+      this.in_loading = false;
+    });
+  },
+  beforeUnmount() {
+    this.removeNavigationHook?.();
   },
 
   methods: {

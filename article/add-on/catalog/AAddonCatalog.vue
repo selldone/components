@@ -14,8 +14,9 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    v-intersect:onec="onChange"
+    v-intersect.once="onIntersect"
     :data="json_data"
+    :class="{ 'a-article-addon--editable': editable }"
     class="flip-book"
     contenteditable="false"
     spellcheck="false"
@@ -28,10 +29,11 @@
       @click:edit="showEdit()"
     >
       <v-btn
-        class="text-body-2 border-end pe-2 text-capitalize"
+        class="a-article-addon-tools__value"
         variant="text"
+        :aria-label="$t('global.commons.max_height')"
         @click="showEdit('size')"
-        >{{ $t("global.commons.max_height") }}: <b>{{ max_height }}</b></v-btn
+        ><v-icon size="16">height</v-icon>{{ max_height }}<v-icon size="12">arrow_drop_down</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip">{{ $t('global.commons.max_height') }}</v-tooltip></v-btn
       >
     </a-addon-toolbar>
 
@@ -50,6 +52,7 @@ import UFlipbook from "./flipbook/UFlipbook.vue";
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { defineComponent } from "vue";
 import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
+import { articleAddonContext } from "../toolbar/article-addon-context";
 
 export default defineComponent({
   name: "AAddonCatalog",
@@ -124,6 +127,7 @@ export default defineComponent({
     this.element = this.$el;
   },
   methods: {
+    onIntersect(isIntersecting) { if (isIntersecting) this.onChange(); },
     onChange() {
       this.show = false;
       this.time = new Date();
@@ -135,15 +139,21 @@ export default defineComponent({
     },
 
     showEdit(tab = null) {
-      if (!this.editable) return;
+      if (!this.editable || !articleAddonContext(this.element)) return;
       this.ShowFlipBookGlobalDialog(
-        this.muted_pack,
+        { ...this.muted_pack, pages: [...this.muted_pack.pages] },
         (val) => {
+          const context = this.editable && articleAddonContext(this.element);
+          if (!context) return;
           this.muted_pack = val;
           this.onChange();
+          this.$nextTick(() => context.core.triggerInput());
         },
         () => {
-          this.$el.remove();
+          const context = this.editable && articleAddonContext(this.element);
+          if (!context) return;
+          context.element.remove();
+          context.core.triggerInput();
         },
         tab,
         this.masterId,

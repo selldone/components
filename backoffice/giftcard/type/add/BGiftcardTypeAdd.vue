@@ -21,68 +21,78 @@
       <v-form ref="form" lazy-validation>
         <!-- ---------------------- General ---------------------- -->
 
-        <div class="widget-box mb-5">
-          <u-widget-header :title="$t('global.commons.finance')" icon="tune">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
+          <u-widget-header
+            class="sd-modern-incentive-group__header"
+            :title="$t('global.commons.finance')"
+            icon="tune"
+          >
           </u-widget-header>
 
-          <v-list-subheader
+          <v-list-subheader class="sd-modern-incentive-group__subtitle"
             >Here, configure the gift card's initial balance and validation
             period.
           </v-list-subheader>
 
-          <u-currency-input
-            v-model="currency"
-            :disabled="editGiftCardType !== null"
-            :label="$t('gift_card_type_edit.currency_input')"
-            :messages="$t('gift_card_type_edit.currency_input_message')"
-            :return-object="false"
-            variant="underlined"
-            :active-currencies="shop.currencies"
-          />
+          <div class="sd-modern-incentive-fields">
+            <u-currency-input
+              class="sd-modern-incentive-field"
+              v-model="currency"
+              :disabled="editGiftCardType !== null"
+              :label="$t('gift_card_type_edit.currency_input')"
+              :messages="$t('gift_card_type_edit.currency_input_message')"
+              :return-object="false"
+              variant="underlined"
+              :active-currencies="shop.currencies"
+            />
 
-          <u-price-input
-            v-model="amount"
-            :decimal="currencyObject.floats"
-            :disabled="editGiftCardType !== null"
-            :hint="$t('gift_card_type_edit.charge_input_hint')"
-            :label="`${$t(
-              'gift_card_type_edit.charge_input',
-            )} ${getCurrencyName(currency)}`"
-            :suffix="getCurrencyName(currency)"
-            class="strong-field"
-            required
-            variant="underlined"
-          />
+            <u-price-input
+              v-model="amount"
+              :decimal="currencyObject.floats"
+              :disabled="editGiftCardType !== null"
+              :hint="$t('gift_card_type_edit.charge_input_hint')"
+              :label="`${$t(
+                'gift_card_type_edit.charge_input',
+              )} ${getCurrencyName(currency)}`"
+              :suffix="getCurrencyName(currency)"
+              class="strong-field sd-modern-incentive-field"
+              required
+              variant="underlined"
+            />
 
-          <u-number-input
-            v-model="life"
-            :disabled="editGiftCardType !== null"
-            :label="`${$t('gift_card_type_edit.lifetime_input')}*`"
-            :max="1000"
-            :messages="$t('gift_card_type_edit.lifetime_input_message')"
-            :min="1"
-            variant="underlined"
-          />
+            <u-number-input
+              class="sd-modern-incentive-field sd-modern-incentive-fields__full"
+              v-model="life"
+              :disabled="editGiftCardType !== null"
+              :label="`${$t('gift_card_type_edit.lifetime_input')}*`"
+              :max="1000"
+              :messages="$t('gift_card_type_edit.lifetime_input_message')"
+              :min="1"
+              variant="underlined"
+            />
+          </div>
         </div>
 
         <!-- ---------------------- Design ---------------------- -->
 
         <div
           :class="{ disabled: !amount || !currency }"
-          class="widget-box mb-5"
+          class="widget-box mb-5 sd-modern-incentive-group"
         >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.design_config')"
             icon="architecture"
           >
           </u-widget-header>
 
-          <v-list-subheader
+          <v-list-subheader class="sd-modern-incentive-group__subtitle"
             >Define a title and color for your cart, which will be displayed
             publicly.
           </v-list-subheader>
 
           <v-text-field
+            class="sd-modern-incentive-field sd-modern-incentive-fields__full"
             v-model="title"
             :label="`${$t('gift_card_type_edit.title_input')}*`"
             :rules="[GlobalRules.required()]"
@@ -103,13 +113,14 @@
               <u-smart-suggestion
                 v-if="!editGiftCardType?.id || !title"
                 :samples="$tm('suggestions.gift_card_type.title')"
-                class="mb-4"
+                class="mb-4 sd-modern-incentive-fields__full"
                 @select="(v) => (title = v)"
               ></u-smart-suggestion>
             </template>
           </v-text-field>
 
           <v-text-field
+            class="sd-modern-incentive-field"
             v-model="color"
             :counter="7"
             :label="`${$t('gift_card_type_edit.color_input')}*`"
@@ -126,6 +137,7 @@
           </v-text-field>
 
           <s-image-uploader
+            class="sd-modern-incentive-fields__full"
             v-if="editGiftCardType"
             :image="getShopImagePath(editGiftCardType.bg)"
             :label="$t('gift_card_type_edit.card_image_input')"
@@ -152,13 +164,14 @@
               enable: true,
               cvv: 'XXX',
             }"
-            class="my-3"
+            class="my-3 sd-modern-incentive-fields__full"
           />
         </div>
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :to="{ name: 'BPageShopClassificationClusters' }"
             add-caption="Management"
             add-icon="settings"
@@ -167,11 +180,12 @@
             title="Cluster"
           ></u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             By associating this gift card type with a cluster, you can easily
             manage it alongside other resources in a single location.
           </v-list-subheader>
           <b-cluster-input
+            class="sd-modern-incentive-field sd-modern-incentive-fields__full"
             v-model="cluster_id"
             :return-object="false"
             clearable
@@ -208,7 +222,11 @@
           size="x-large"
           variant="elevated"
           @click="editGiftType(editGiftCardType)"
-          v-ctrl.s="()=>{editGiftType(editGiftCardType)}"
+          v-ctrl.s="
+            () => {
+              editGiftType(editGiftCardType);
+            }
+          "
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -222,7 +240,11 @@
           size="x-large"
           variant="elevated"
           @click="createGiftType"
-          v-ctrl.s="()=>{createGiftType()}"
+          v-ctrl.s="
+            () => {
+              createGiftType();
+            }
+          "
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

@@ -13,7 +13,8 @@
   -->
 
 <template>
-  <div :class="{ dark: dark }" class="overflow-x-auto">
+  <b-shop-checkout-flow-diagram v-if="modern" class="b-checkout-mode-pods text-start" :steps="modernSteps" emphasis="login" />
+  <div v-else :class="{ dark: dark }" class="overflow-x-auto">
     <v-row
       :style="{ minWidth: 5 * 110 + 'px' }"
       align="center"
@@ -47,9 +48,13 @@
 </template>
 
 <script lang="ts">
+import BShopCheckoutFlowDiagram from '../flow-diagram/BShopCheckoutFlowDiagram.vue';
+
 export default {
   name: "BShopOptionsCheckoutModePods",
+  components: { BShopCheckoutFlowDiagram },
   props: {
+    modern: { type: Boolean, default: false },
     shop: { required: false },
     mode: {},
 
@@ -60,6 +65,18 @@ export default {
   },
 
   computed: {
+    modernSteps() {
+      return this.modernItems.map(item => ({ id: item.icon, icon: item.icon, title: item.title, caption: item.optional ? this.$t('shop_configuration.flow_modern.checkout.optional') : undefined }));
+    },
+    modernItems() {
+      return this.items.map(item => ({
+        ...item,
+        title: item.icon === 'person_outline' ? this.$t('shop_configuration.flow_modern.checkout.guest')
+          : item.icon === 'add_shopping_cart' ? this.$t('shop_configuration.flow_modern.checkout.add_to_cart')
+            : item.icon === 'login' ? this.$t('shop_configuration.flow_modern.checkout.sign_in') : item.title,
+        optional: this.login_free && item.icon === 'login',
+      }));
+    },
     on_checkout() {
       return this.mode === "on-checkout";
     },

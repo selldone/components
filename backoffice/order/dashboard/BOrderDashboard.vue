@@ -13,8 +13,72 @@
   -->
 
 <template>
-  <div v-bind="$attrs">
-    <v-toolbar class="text-start" color="transparent" flat>
+  <div v-bind="$attrs" :class="{ 'b-order-dashboard--modern text-start': modern, 'b-order-dashboard--workspace': modern && order_view_mode === 'workspace' }">
+    <header v-if="modern" class="sd-modern-content sd-modern-header b-order-dashboard__heading">
+      <div class="b-order-dashboard__identity">
+        <div class="sd-modern-eyebrow b-order-dashboard__breadcrumb">
+          <router-link :to="IS_VENDOR_PANEL ? {} : { name: root_baskets_name }">
+            <img :src="getProductTypeImage(type)" alt="" width="16" height="16" />
+            {{ order_type }}
+          </router-link>
+          <span>/</span>
+          <span>{{ order_code }}</span>
+          <template v-if="basket.subscription_id">
+            <span>/</span>
+            <router-link :to="IS_VENDOR_PANEL ? {} : { name: ProductType.SUBSCRIPTION.order_page, params: { basket_id: basket.subscription_id } }">
+              <img :src="ProductType.SUBSCRIPTION.image" alt="" width="16" height="16" />
+              SN-{{ basket.subscription_id }}
+            </router-link>
+          </template>
+        </div>
+        <div class="b-order-dashboard__title-row">
+          <h1 class="sd-modern-title-text">{{ $t("process_center.modern.overview") }}</h1>
+          <span class="sd-modern-status sd-modern-status--plain">
+            <span class="sd-modern-status__dot" :style="{ backgroundColor: getStatusColor(basket.status) }" />
+            {{ getStatusString(basket.status) }}
+          </span>
+        </div>
+        <p class="sd-modern-subtitle">{{ $t(type === ProductType.VIRTUAL.code ? "process_center.modern.virtual_overview_subtitle" : "process_center.modern.overview_subtitle") }}</p>
+      </div>
+      <div class="b-order-dashboard__header-actions">
+      <v-btn-toggle
+        :model-value="order_view_mode"
+        mandatory
+        selected-class="b-order-dashboard__view-mode--active"
+        class="b-order-dashboard__view-modes"
+        role="group"
+        :aria-label="$t('process_center.modern.display_mode')"
+        @update:model-value="setOrderViewMode"
+      >
+        <v-tooltip v-for="mode in ['refined', 'workspace']" :key="mode" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              :value="mode"
+              :icon="mode === 'refined' ? 'view_agenda' : 'view_column'"
+              :aria-label="$t('process_center.modern.view_' + mode)"
+              :aria-pressed="order_view_mode === mode"
+              class="sd-modern-icon-button"
+              variant="text"
+            ></v-btn>
+          </template>
+          {{ $t('process_center.modern.view_' + mode) }} · {{ $t('process_center.modern.view_' + mode + '_description') }}
+        </v-tooltip>
+      </v-btn-toggle>
+      <v-btn
+        v-if="!isHyper && basket.delivery_state !== PhysicalOrderStates.ToCustomer.code && (isCOD || isPayed || isReserved)"
+        class="sd-modern-button sd-modern-button--compact sd-modern-button--inline b-order-dashboard__cancel"
+        variant="text"
+        color="error"
+        @click="dialog_reject = true"
+      >
+        <v-icon size="16" class="me-2">gavel</v-icon>
+        <u-count-down v-if="!!basket.reject_at" :end="endOfRejectPeriod" class="me-2" />
+        {{ $t("process_order_page_dashboard.cancel_order_action") }}
+      </v-btn>
+      </div>
+    </header>
+    <v-toolbar v-else class="text-start" color="transparent" flat>
       <v-toolbar-title class="body-title">
         <router-link
           :to="IS_VENDOR_PANEL ? {} : { name: root_baskets_name }"
@@ -105,10 +169,11 @@
       </p>
     </template>
 
-    <v-container :class="{ disabled: rejected }" class="px-0">
+    <v-container :class="{ disabled: rejected, 'sd-modern-content': modern }" class="px-0">
       <b-order-dashboard-withdraw-notice
         v-if="basket?.withdraw"
         :basket="basket"
+        :modern="modern"
       />
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Delivery > State ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -117,6 +182,7 @@
         :basket="basket"
         :is-avocado="isAvocado"
         :is-fulfillment="isFulfillment"
+        :modern="modern"
         :offset="inFirstCheckState ? 0 : 1"
         class="mx-auto"
       />
@@ -130,6 +196,8 @@
         v-if="basket && !IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
         :order="basket"
         :shop="shop"
+        :modern="modern"
+        :view-mode="order_view_mode"
         cod-enable
         @fetch-order="$emit('fetch-order')"
       ></b-order-dashboard-payment>
@@ -150,6 +218,7 @@
       >
         <b-order-dashboard-cart
           :basket="basket"
+          :modern="modern"
           :class="{ disabled: !is_active_OrderBasketListWidget }"
           :is-fulfillment="isFulfillment"
           :readonly="isHyper"
@@ -430,6 +499,10 @@ export default {
   },
   emits: ["fetch-order"],
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     shop: {
       require: true,
       type: Object,
@@ -472,6 +545,7 @@ export default {
       busy_update_state: false,
       busy_reject_order: false,
       busy_delete_reject: false,
+      order_view_mode: "refined",
     };
   },
   computed: {
@@ -627,8 +701,26 @@ export default {
   created() {
     this.reject_reason = this.basket.reject;
   },
+  mounted() {
+    if (!this.modern) return;
+    try {
+      const saved = localStorage.getItem("selldone.backoffice.order-dashboard.view-mode");
+      if (saved === "refined" || saved === "workspace") this.order_view_mode = saved;
+    } catch {
+      // The default layout remains usable when browser storage is unavailable.
+    }
+  },
   unmounted() {},
   methods: {
+    setOrderViewMode(mode) {
+      if (!this.modern || (mode !== "refined" && mode !== "workspace")) return;
+      this.order_view_mode = mode;
+      try {
+        localStorage.setItem("selldone.backoffice.order-dashboard.view-mode", mode);
+      } catch {
+        // A storage restriction must not prevent changing the current layout.
+      }
+    },
     //―――――――――――――――― Order ▶ Update basket status ――――――――――――――――
 
     updateState(
@@ -1105,4 +1197,53 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-order-dashboard--modern {
+  padding: 26px 22px 28px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+
+  > .v-container { max-width: none; padding: 0 !important; margin-block: 0; }
+  .b-order-dashboard__heading { margin-block-end: 22px; }
+  .b-order-dashboard__identity { min-width: 0; }
+  .b-order-dashboard__breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-block-end: 5px;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 15px;
+    letter-spacing: .65px;
+    > a { display: inline-flex; align-items: center; gap: 5px; color: inherit; text-decoration: none; }
+    > a:hover { color: rgb(var(--v-theme-primary)); }
+  }
+  .b-order-dashboard__title-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .sd-modern-title-text { font-family: inherit; font-size: 20px; font-weight: 500; line-height: 26px; letter-spacing: -.3px; }
+  .sd-modern-subtitle { margin-block: 5px 0; font-size: 12px; font-weight: 400; line-height: 18px; }
+  .b-order-dashboard__cancel { font-size: 12px; padding-inline: 8px; }
+  .b-order-dashboard__header-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+  .b-order-dashboard__view-modes { height: auto; padding: 4px; gap: 4px; overflow: visible; border-radius: 11px; background: var(--sd-modern-inset); }
+  .b-order-dashboard__view-modes .sd-modern-icon-button.v-btn {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    &.b-order-dashboard__view-mode--active {
+      position: relative;
+      z-index: 1;
+      background: rgb(var(--v-theme-surface));
+      border-color: var(--sd-modern-border);
+      box-shadow: var(--sd-modern-selected-shadow);
+      :deep(.v-btn__overlay) { opacity: 0; }
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: 20px 10px;
+    .b-order-dashboard__header-actions { width: 100%; justify-content: space-between; }
+    .b-order-dashboard__cancel { min-height: 44px; }
+  }
+}
+</style>

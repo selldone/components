@@ -42,10 +42,12 @@
           :color="color"
           :min-height="small ? 24 : 64"
           :size="small ? 'small' : undefined"
+          :aria-label="copyLabel"
           class="-btn"
           @click.stop="copyToClipboard(value)"
         >
           <v-icon>{{ icon }}</v-icon>
+          <v-tooltip v-if="copyLabel" activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-focus>{{ copyLabel }}</v-tooltip>
         </v-btn>
       </div>
 
@@ -91,6 +93,7 @@ export default {
     value: {},
     hideValue:Boolean,
     message: {},
+    copyLabel: { type: String, default: null },
     icon: { default: "fa:fas fa-copy" },
     image: {},
     color: { default: "primary" },

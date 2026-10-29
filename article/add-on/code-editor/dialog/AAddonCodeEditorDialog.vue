@@ -123,10 +123,7 @@ export default {
   },
 
   mounted() {
-    EventBus.$on(
-      EventName.ARTICLE_CODE_EDITOR_SHOW,
-
-      ({ code, language, callback, deleteCallback, masterId }) => {
+    this._openAddonDialog = ({ code, language, callback, deleteCallback, masterId }) => {
         // Check master ID (For prevent duplicated open dialog - in the page builder)
         if (this.masterId !== masterId) {
           return;
@@ -139,11 +136,11 @@ export default {
         this.deleteCallback = deleteCallback;
 
         this.showDialog();
-      },
-    );
+      };
+    EventBus.$on(EventName.ARTICLE_CODE_EDITOR_SHOW, this._openAddonDialog);
   },
   beforeUnmount() {
-    EventBus.$off(EventName.ARTICLE_CODE_EDITOR_SHOW);
+    EventBus.$off(EventName.ARTICLE_CODE_EDITOR_SHOW, this._openAddonDialog);
   },
 
   methods: {

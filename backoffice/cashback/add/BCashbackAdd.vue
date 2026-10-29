@@ -18,14 +18,15 @@
       <v-form ref="form" lazy-validation>
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ General ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.general_config')"
             icon="tune"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("cashback_edit.config.subtitle") }}
           </v-list-subheader>
 
@@ -38,11 +39,12 @@
             :min="0"
             :step="1"
             append-icon="fa:fas fa-percentage"
-            class="strong-field"
+            class="strong-field sd-modern-incentive-field"
             variant="underlined"
           />
 
           <u-smart-toggle
+            class="sd-modern-incentive-fields__full"
             v-model="boosted"
             :false-title="$t('cashback_edit.boosted_input.false_title')"
             :true-title="$t('cashback_edit.boosted_input.true_title')"
@@ -53,30 +55,33 @@
             color="#D32F2F"
           ></u-smart-toggle>
 
-          <u-currency-input
-            v-model="currency"
-            :disabled="cashback !== null"
-            :label="$t('global.commons.currency')"
-            :messages="$t('cashback_edit.currency_input.message')"
-            :return-object="false"
-            variant="underlined"
-            :active-currencies="shop.currencies"
-          >
-          </u-currency-input>
+          <div class="sd-modern-incentive-fields">
+            <u-currency-input
+              class="sd-modern-incentive-field"
+              v-model="currency"
+              :disabled="cashback !== null"
+              :label="$t('global.commons.currency')"
+              :messages="$t('cashback_edit.currency_input.message')"
+              :return-object="false"
+              variant="underlined"
+              :active-currencies="shop.currencies"
+            >
+            </u-currency-input>
 
-          <u-price-input
-            v-model="limit"
-            :decimal="currencyObject.floats"
-            :hint="$t('cashback_edit.limit_input.hint')"
-            :label="$t('cashback_edit.limit_input.title')"
-            :messages="
-              limit === 0 ? $t('cashback_edit.limit_input.zero_message') : ''
-            "
-            :suffix="getCurrencyName(currency)"
-            class="strong-field"
-            required
-            variant="underlined"
-          />
+            <u-price-input
+              v-model="limit"
+              :decimal="currencyObject.floats"
+              :hint="$t('cashback_edit.limit_input.hint')"
+              :label="$t('cashback_edit.limit_input.title')"
+              :messages="
+                limit === 0 ? $t('cashback_edit.limit_input.zero_message') : ''
+              "
+              :suffix="getCurrencyName(currency)"
+              class="strong-field sd-modern-incentive-field"
+              required
+              variant="underlined"
+            />
+          </div>
 
           <u-smart-switch
             v-model="enable"
@@ -84,66 +89,80 @@
             :true-title="$t('global.commons.enable')"
             :true-description="$t('cashback_edit.enable_input.true_msg')"
             :false-description="$t('cashback_edit.enable_input.false_msg')"
-            class="mt-5"
+            class="mt-5 sd-modern-incentive-fields__full"
             false-gray
           ></u-smart-switch>
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Duration ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !percent }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('cashback_edit.duration.title')"
             icon="schedule"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("cashback_edit.duration.subtitle") }}
           </v-list-subheader>
 
-          <u-date-input
-            v-model="start"
-            :label="$t('cashback_edit.start_input.title')"
-            :placeholder="$t('cashback_edit.start_input.placeholder')"
-            clearable
-            color="#C2185B"
-            return-utc
-            variant="underlined"
-          ></u-date-input>
+          <div class="sd-modern-incentive-fields">
+            <u-date-input
+              class="sd-modern-incentive-field"
+              v-model="start"
+              :label="$t('cashback_edit.start_input.title')"
+              :placeholder="$t('cashback_edit.start_input.placeholder')"
+              clearable
+              color="#C2185B"
+              return-utc
+              variant="underlined"
+            ></u-date-input>
 
-          <u-date-input
-            v-model="end"
-            :disabled="!start"
-            :label="$t('cashback_edit.end_input.title')"
-            :placeholder="$t('cashback_edit.end_input.placeholder')"
-            :min="start"
-            clearable
-            color="#C2185B"
-            return-utc
-            variant="underlined"
-          ></u-date-input>
+            <u-date-input
+              class="sd-modern-incentive-field"
+              v-model="end"
+              :disabled="!start"
+              :label="$t('cashback_edit.end_input.title')"
+              :placeholder="$t('cashback_edit.end_input.placeholder')"
+              :min="start"
+              clearable
+              color="#C2185B"
+              return-utc
+              variant="underlined"
+            ></u-date-input>
 
-          <u-time-progress-bar
-            :created-time="created_at"
-            :end-time="end"
-            :start-time="start"
-          ></u-time-progress-bar>
+            <u-time-progress-bar
+              class="sd-modern-incentive-fields__full"
+              :created-time="created_at"
+              :end-time="end"
+              :start-time="start"
+            ></u-time-progress-bar>
+          </div>
         </div>
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Design ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !percent }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.design_config')"
             icon="architecture"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("cashback_edit.design.subtitle") }}
           </v-list-subheader>
 
           <v-text-field
+            class="sd-modern-incentive-field sd-modern-incentive-fields__full"
             v-model="title"
             :counter="48"
             :label="$t('cashback_edit.title_input.title') + '*'"
@@ -165,12 +184,13 @@
               <u-smart-suggestion
                 v-if="!cashback?.id || !title"
                 :samples="$tm('suggestions.cashback.title')"
-                class="mb-4"
+                class="mb-4 sd-modern-incentive-fields__full"
                 @select="(v) => (title = v)"
               ></u-smart-suggestion>
             </template>
           </v-text-field>
           <v-text-field
+            class="sd-modern-incentive-field sd-modern-incentive-fields__full"
             v-model="description"
             :counter="128"
             :label="$t('cashback_edit.description_input.title')"
@@ -191,7 +211,7 @@
               <u-smart-suggestion
                 v-if="!cashback?.id || !description"
                 :samples="$tm('suggestions.cashback.description')"
-                class="mb-4"
+                class="mb-4 sd-modern-incentive-fields__full"
                 @select="(v) => (description = v)"
               ></u-smart-suggestion>
             </template>
@@ -200,14 +220,18 @@
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Constraints ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !percent }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.constraints_config')"
             icon="border_outer"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("cashback_edit.constraints.subtitle") }}
           </v-list-subheader>
 
@@ -218,7 +242,7 @@
             :false-title="$t('cashback_edit.qualify_input.false_title')"
             :true-description="$t('cashback_edit.qualify_input.true_msg')"
             :true-title="$t('cashback_edit.qualify_input.true_title')"
-            class="my-3"
+            class="my-3 sd-modern-incentive-fields__full"
           >
           </u-smart-switch>
 
@@ -227,6 +251,7 @@
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Min Purchase ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
               <u-price-input
+                class="sd-modern-incentive-field"
                 v-model="min_purchase"
                 :decimal="currencyObject.floats"
                 :hint="$t('cashback_edit.min_purchase_input.hint')"
@@ -253,7 +278,7 @@
                 :true-title="
                   $t('cashback_edit.only_first_buy_input.true_title')
                 "
-                class="my-3"
+                class="my-3 sd-modern-incentive-fields__full"
               >
               </u-smart-switch>
             </div>
@@ -262,17 +287,22 @@
 
         <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Clubs ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
-        <div :class="{ disabled: !percent }" class="widget-box mb-5">
+        <div
+          :class="{ disabled: !percent }"
+          class="widget-box mb-5 sd-modern-incentive-group"
+        >
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :title="$t('global.commons.clubs_config')"
             icon="groups"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("cashback_edit.club.subtitle") }}
           </v-list-subheader>
           <b-club-constraint
+            class="sd-modern-incentive-fields__full"
             v-model:bronze-club="bronze_club"
             v-model:diamond-club="diamond_club"
             v-model:gold-club="gold_club"
@@ -284,8 +314,9 @@
         </div>
 
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ 🆑 Cluster ━━━━━━━━━━━━━━━━━━━━━━━━ -->
-        <div class="widget-box mb-5">
+        <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
+            class="sd-modern-incentive-group__header"
             :add-caption="$t('global.commons.management')"
             :title="$t('global.commons.cluster')"
             :to="{ name: 'BPageShopClassificationClusters' }"
@@ -294,10 +325,11 @@
             icon="workspaces"
           ></u-widget-header>
 
-          <v-list-subheader>
+          <v-list-subheader class="sd-modern-incentive-group__subtitle">
             {{ $t("cashback_edit.cluster.subtitle") }}
           </v-list-subheader>
           <b-cluster-input
+            class="sd-modern-incentive-field sd-modern-incentive-fields__full"
             v-model="cluster_id"
             :return-object="false"
             clearable
@@ -328,7 +360,11 @@
           size="x-large"
           variant="elevated"
           @click="editCashback()"
-          v-ctrl.s="()=>{editCashback()}"
+          v-ctrl.s="
+            () => {
+              editCashback();
+            }
+          "
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save") }}
@@ -341,7 +377,11 @@
           size="x-large"
           variant="elevated"
           @click="createCashback()"
-          v-ctrl.s="()=>{createCashback()}"
+          v-ctrl.s="
+            () => {
+              createCashback();
+            }
+          "
         >
           <v-icon start>add</v-icon>
           {{ $t("global.actions.create") }}

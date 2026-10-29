@@ -13,7 +13,13 @@
   -->
 
 <template>
-  <div class="text-start" >
+  <div
+    class="s--smart-toggle text-start"
+    :class="{
+      's--smart-toggle--checked': modelValue,
+      's--smart-toggle--accessible': accessible,
+    }"
+  >
     <h3 v-if="label" class="my-2">
       <v-icon v-if="labelIcon" :color="labelIconColor" class="me-1 flex-grow-0"
         >{{ labelIcon }}
@@ -23,9 +29,21 @@
     <v-list-subheader v-if="hint">{{ hint }}</v-list-subheader>
 
     <div
-      :class="{ disabled: disabled, pp: !readonly && !loading, pen: loading,border:border }"
+      :class="{
+        disabled: disabled,
+        pp: !readonly && !loading,
+        pen: loading,
+        border: border,
+      }"
       class="pa-2 usn rounded-card"
+      :role="accessible ? 'switch' : undefined"
+      :aria-checked="accessible ? !!modelValue : undefined"
+      :aria-disabled="accessible ? disabled || readonly || loading : undefined"
+      :tabindex="
+        accessible ? (disabled || readonly || loading ? -1 : 0) : undefined
+      "
       @click="toggle"
+      @keydown="onKeydown"
     >
       <div class="d-flex align-center mnh">
         <!-- ------- Toggle ------- -->
@@ -40,6 +58,7 @@
           >
             <!-- Toggle Icon -->
             <v-icon
+              class="s--smart-toggle__indicator"
               :color="falseGray && !modelValue ? '#666' : color"
               size="24"
             >
@@ -67,7 +86,7 @@
               >lock
             </v-icon>
           </b>
-          <slot name="title" ></slot>
+          <slot name="title"></slot>
           <div v-if="description" class="op-0-7 small">
             <span v-html="description"></span>
           </div>
@@ -88,6 +107,7 @@ export default {
   emits: ["update:modelValue", "change"],
   props: {
     modelValue: {},
+    accessible: { type: Boolean, default: false },
 
     label: {},
     hint: {},
@@ -130,7 +150,7 @@ export default {
 
     labelIcon: {},
     labelIconColor: {},
-    border:Boolean,
+    border: Boolean,
   },
   computed: {
     icon() {
@@ -159,7 +179,8 @@ export default {
 
   methods: {
     toggle() {
-      if (this.readonly) return;
+      if (this.readonly || (this.accessible && (this.disabled || this.loading)))
+        return;
       const val = !this.modelValue;
       this.$emit("update:modelValue", val);
 
@@ -167,8 +188,18 @@ export default {
         this.$emit("change", val);
       });
     },
+    onKeydown(event: KeyboardEvent) {
+      if (!this.accessible || !["Enter", " "].includes(event.key)) return;
+      event.preventDefault();
+      this.toggle();
+    },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.s--smart-toggle--accessible > [role="switch"]:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+}
+</style>

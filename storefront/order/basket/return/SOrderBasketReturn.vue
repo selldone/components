@@ -15,7 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ List > Return Requests ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-  <div>
+  <div :class="{ 's-order-return--modern': modern }">
     <div
       v-for="item in itemsHasReturnRequest"
       :key="item.id"
@@ -139,6 +139,7 @@
             :class="{ disabled: !getImagePath(item.return_request) }"
             :href="getImagePath(item.return_request)"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <circle-image
               v-if="getImagePath(item.return_request)"
@@ -160,6 +161,7 @@
                   ? $t("global.basket_return_request_view.download_image")
                   : $t("global.not_exist")
               }}
+              <v-icon v-if="modern && getImagePath(item.return_request)" size="14" class="ms-1" aria-hidden="true">north_east</v-icon>
             </p>
           </a>
         </div>
@@ -169,6 +171,7 @@
             :class="{ disabled: !getVideoPath(item.return_request) }"
             :href="getVideoPath(item.return_request)"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <v-img
               :height="48"
@@ -182,6 +185,7 @@
                   ? $t("global.basket_return_request_view.download_film")
                   : $t("global.not_exist")
               }}
+              <v-icon v-if="modern && getVideoPath(item.return_request)" size="14" class="ms-1" aria-hidden="true">north_east</v-icon>
             </p>
           </a>
         </div>
@@ -190,6 +194,7 @@
             :class="{ disabled: !getVoicePath(item.return_request) }"
             :href="getVoicePath(item.return_request)"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <v-img
               :height="48"
@@ -203,19 +208,21 @@
                   ? $t("global.basket_return_request_view.download_voice")
                   : $t("global.not_exist")
               }}
+              <v-icon v-if="modern && getVoicePath(item.return_request)" size="14" class="ms-1" aria-hidden="true">north_east</v-icon>
             </p>
           </a>
         </div>
       </div>
 
-      <div v-if="isAdmin || isRolePanel" class="admin">
+      <div v-if="canManage" class="admin">
         <div class="widget-buttons">
           <v-btn
-            :class="{ disabled: item.return_request.state === 'Accepted' }"
+            :disabled="!!busy_item || item.return_request.state === 'Accepted'"
+            :class="{ 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && item.return_request.state !== 'Accepted' }"
             :loading="busy_item === 'Accepted' + item.id"
-            color="#388E3C"
-            size="x-large"
-            variant="flat"
+            :color="modern ? item.return_request.state !== 'Accepted' ? 'primary' : undefined : '#388E3C'"
+            :size="modern && item.return_request.state === 'Accepted' ? undefined : 'x-large'"
+            :variant="modern && item.return_request.state === 'Accepted' ? 'outlined' : 'flat'"
             @click="updateReturnState(item, 'Accepted')"
           >
             <v-icon start>check</v-icon>
@@ -223,11 +230,12 @@
           </v-btn>
 
           <v-btn
-            :class="{ disabled: item.return_request.state === 'Rejected' }"
+            :disabled="!!busy_item || item.return_request.state === 'Rejected'"
+            :class="{ 'sd-modern-button': modern }"
             :loading="busy_item === 'Rejected' + item.id"
-            color="#D32F2F"
-            size="x-large"
-            variant="flat"
+            :color="modern ? undefined : '#D32F2F'"
+            :size="modern ? undefined : 'x-large'"
+            :variant="modern ? 'outlined' : 'flat'"
             @click="updateReturnState(item, 'Rejected')"
           >
             <v-icon start>close</v-icon>
@@ -253,6 +261,7 @@ import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.
 import { BasketItemReturn } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
+import { ShopRoles } from "@selldone/core-js/enums/staff/ShopRoles";
 
 export default {
   name: "SOrderBasketReturn",
@@ -262,8 +271,10 @@ export default {
     VariantItemViewMicro,
     CircleImage,
   },
+  emits: ['busy', 'updated'],
 
   props: {
+    modern: { type: Boolean, default: false },
     basket: {
       required: true,
       type: Object,
@@ -287,9 +298,15 @@ export default {
   data: function () {
     return {
       busy_item: null,
+      request_version: 0,
     };
   },
   computed: {
+    canManage() {
+      return this.isRolePanel
+        ? this.role?.level === ShopRoles.PhysicalOrdersSupport.code && this.role.accepted === true
+        : this.isAdmin;
+    },
     itemsHasReturnRequest() {
       if (!this.basket || !this.basket.items) return null;
       return this.basket.items.filter((item) => {
@@ -300,6 +317,9 @@ export default {
 
   watch: {},
   created() {},
+  beforeUnmount() {
+    this.request_version++;
+  },
 
   methods: {
     isSelectedBasketItemReturn(item) {
@@ -340,10 +360,16 @@ export default {
     },
 
     updateReturnState(item, state) {
+      // A role may only decide a return belonging to the currently displayed basket.
+      if (!this.canManage || this.busy_item || !['Accepted', 'Rejected'].includes(state) ||
+        !this.basket?.items?.includes(item) || !item.return_request || item.return_request.state === state) return;
+      const basket = this.basket, roleId = this.role?.id;
+      const requestVersion = ++this.request_version;
       this.busy_item = state + item.id;
+      this.$emit('busy', true);
 
       let url = null;
-      if (this.isAdmin) {
+      if (!this.isRolePanel && this.isAdmin) {
         url = window.API.POST_UPDATE_RETURN_REQUEST_STATE(
           this.$route.params.shop_id,
           this.$route.params.basket_id,
@@ -357,12 +383,13 @@ export default {
         );
       }
 
-      axios
+      return axios
         .post(url, {
           state: state,
           item_id: item.id, // Use by role controller (server)
         })
         .then(({ data }) => {
+          if (requestVersion !== this.request_version || basket !== this.basket || !this.basket.items.includes(item) || (this.isRolePanel && (roleId !== this.role?.id || !this.canManage))) return;
           if (data.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
           } else {
@@ -373,13 +400,17 @@ export default {
               ),
             );
             item.return_request = data.return_request;
+            this.$emit('updated', item);
           }
         })
         .catch((error) => {
-          NotificationService.showLaravelError(error);
+          if (requestVersion === this.request_version && basket === this.basket && this.basket.items.includes(item) && (!this.isRolePanel || (roleId === this.role?.id && this.canManage)))
+            NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (requestVersion !== this.request_version) return;
           this.busy_item = null;
+          this.$emit('busy', false);
         });
     },
   },
@@ -490,6 +521,29 @@ export default {
     color: black;
     border-radius: 16px;
     padding: 6px 22px;
+  }
+}
+
+.s-order-return--modern {
+  .return-request-frame {
+    margin: 0 0 20px;
+    padding-block: 14px;
+    border-block-end: 1px solid var(--sd-modern-border);
+    border-radius: 0;
+    background: transparent;
+    color: rgb(var(--v-theme-on-surface));
+    overflow-wrap: anywhere;
+    &.selected-item { background: var(--sd-modern-inset); }
+    &:after { display: none; }
+    > .float-end { float: none !important; text-align: start !important; padding: 0 0 14px !important; font-size: 11px; color: var(--sd-modern-muted); h1 { font-size: 13px; font-weight: 500; line-height: 20px; color: rgb(var(--v-theme-on-surface)); margin: 0; } }
+    .frame-container { padding: 0; }
+    .title-bar { .image { float: inline-start; margin: 0 12px 8px 0; } b { font-size: 12px; font-weight: 500; } }
+    small, .text-muted { color: var(--sd-modern-muted) !important; font-size: 11px; }
+    a { color: rgb(var(--v-theme-primary)); font-size: 11px; }
+    .attachment-container { flex-wrap: wrap; gap: 12px; border: 0; background: var(--sd-modern-inset); padding: 14px 8px; margin: 16px 0; }
+    .admin { padding: 0; > p { color: var(--sd-modern-muted); font-size: 11px; line-height: 1.6; } }
+    .widget-buttons { display: flex; flex-wrap: wrap; gap: 10px; > .v-btn { flex: 1 1 160px; } }
+    .state-badge { background: none; color: inherit; padding: 0; border-radius: 0; font-size: 11px; }
   }
 }
 </style>

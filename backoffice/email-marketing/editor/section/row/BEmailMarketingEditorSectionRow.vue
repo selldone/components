@@ -13,9 +13,31 @@
   -->
 
 <template>
-  <div>
+  <div :class="{ 'b-email-editor-option--modern text-start': modern }">
+    <section
+      v-if="option.type === 'section' && modern"
+      class="b-email-editor-option__group"
+    >
+      <header class="b-email-editor-option__heading">
+        <v-icon v-if="option.icon" size="18" aria-hidden="true">{{ option.icon }}</v-icon>
+        <div>
+          <h3>{{ option.title }}</h3>
+          <p v-if="option.description">{{ option.description }}</p>
+        </div>
+      </header>
+      <b-email-section-editor-row-self
+        v-for="(child, i) in option.children"
+        :key="i"
+        :loaded-fonts="loadedFonts"
+        :option="child"
+        :shop="shop"
+        :upload-url="uploadUrl"
+        modern
+        @blur="onUpdate()"
+      />
+    </section>
     <s-setting-group
-      v-if="option.type === 'section'"
+      v-else-if="option.type === 'section'"
       :icon="option.icon"
       :subtitle="option.description"
       :title="option.title"
@@ -39,6 +61,23 @@
     >
     </s-setting-color>
 
+    <div v-else-if="option.type === 'align' && modern" class="b-email-editor-option__alignment">
+      <span>{{ option.label }}</span>
+      <v-btn-toggle
+        v-model="option.object[option.key]"
+        class="b-email-editor-option__align-options"
+        :aria-label="option.label"
+        variant="text"
+      >
+        <v-btn
+          v-for="alignment in ['left', 'center', 'right']"
+          :key="alignment"
+          :value="alignment"
+          :prepend-icon="`format_align_${alignment}`"
+          class="sd-modern-button sd-modern-button--small"
+        >{{ $t(`email_builder.workspace.align_${alignment}`) }}</v-btn>
+      </v-btn-toggle>
+    </div>
     <s-setting-toggle
       v-else-if="option.type === 'align'"
       v-model="option.object[option.key]"
@@ -63,6 +102,20 @@
       >{{ $t("global.placeholders.select_products") }}
     </b-products-select-box>
 
+    <v-text-field
+      v-else-if="option.type === 'text' && modern"
+      v-model="option.object[option.key]"
+      :counter="option.counter"
+      :messages="option.messages"
+      :placeholder="option.placeholder"
+      :rules="option.rules"
+      :label="option.label || option.key"
+      class="sd-modern-underlined-field"
+      variant="underlined"
+      density="compact"
+      hide-details="auto"
+      @blur="onUpdate()"
+    />
     <s-setting-text-input
       v-else-if="option.type === 'text'"
       v-model="option.object[option.key]"
@@ -81,10 +134,11 @@
         :disabled="!uploadUrl"
         :image="option.object[option.key]"
         :label="option.label ? option.label : key"
+        :modern="modern"
         :server="uploadUrl"
         auto-compact
         clearable
-        dark
+        :dark="!modern"
         @onClear="
           option.object[option.key] = null;
           onUpdate();
@@ -97,7 +151,11 @@
         "
       >
       </s-image-uploader>
-      <v-alert v-if="!uploadUrl" color="red" density="compact" type="error"
+      <div v-if="!uploadUrl && modern" class="sd-modern-notice b-email-editor-option__upload-note" role="status">
+        <v-icon size="17" aria-hidden="true">info_outline</v-icon>
+        <span>{{ $t('email_builder.workspace.save_before_upload') }}</span>
+      </div>
+      <v-alert v-else-if="!uploadUrl" color="red" density="compact" type="error"
         >Save the mail to be able upload images.
       </v-alert>
     </div>
@@ -107,6 +165,7 @@
       :label="option.label ? option.label : key"
       :model-value="JSON.stringify(option.object[option.key])"
       :placeholder="option.placeholder"
+      :class="{ 'sd-modern-underlined-field': modern }"
       variant="underlined"
       @blur="onUpdate()"
       @update:model-value="
@@ -121,6 +180,7 @@
       :items="option.enums"
       :label="option.label ? option.label : key"
       :placeholder="option.placeholder"
+      :class="{ 'sd-modern-underlined-field': modern }"
       variant="underlined"
       @update:model-value="onUpdate()"
     >
@@ -133,6 +193,9 @@
       :true-description="option.messages"
       :true-icon="option.true_icon"
       :true-title="option.label ? option.label : key"
+      :accessible="modern"
+      :border="modern"
+      :class="{ 'sd-modern-smart-select': modern }"
       class="my-3"
       false-gray
       @change="onUpdate()"
@@ -141,10 +204,11 @@
 
     <div v-else-if="option.type === 'delete'" class="widget-buttons">
       <v-btn
-        color="red"
-        prepend-icon="close"
-        size="x-large"
-        variant="flat"
+        :class="{ 'sd-modern-button sd-modern-button--danger': modern }"
+        :color="modern ? 'error' : 'red'"
+        :prepend-icon="modern ? 'delete' : 'close'"
+        :size="modern ? undefined : 'x-large'"
+        :variant="modern ? 'elevated' : 'flat'"
         @click="
           () => {
             if (option.callback) {
@@ -163,10 +227,11 @@
         :items="fonts"
         :label="option.label ? option.label : key"
         :placeholder="option.placeholder"
+        :class="{ 'sd-modern-underlined-field': modern }"
         append-icon="font_download"
         variant="underlined"
-        @blur="onSelectFont"
-        @keydown.enter="onSelectFont"
+        @blur="onSelectFont(modern ? option.object[option.key] : $event)"
+        @keydown.enter="onSelectFont(modern ? option.object[option.key] : $event)"
       >
         <template v-slot:item="{ item, props }">
           <v-list-item
@@ -181,17 +246,20 @@
         <div v-for="font in loadedFonts" :key="font" class="row-font">
           <b :style="{ fontFamily: font }">
             <v-icon class="me-1" size="small">font_download</v-icon>
-            {{ font }} - Sample message to ...</b
+            {{ font }} - {{ modern ? $t('email_builder.workspace.font_sample') : 'Sample message to ...' }}</b
           >
         </div>
 
         <div class="text-end">
           <v-btn
             class="my-2 tnt"
+            :class="{ 'sd-modern-button': modern }"
             href="https://fonts.google.com"
             target="_blank"
+            rel="noopener noreferrer"
             variant="text"
-            >Find fonts here
+            >{{ modern ? $t('email_builder.workspace.find_fonts') : 'Find fonts here' }}
+            <v-icon v-if="modern" size="15" class="ms-2" aria-hidden="true">north_east</v-icon>
           </v-btn>
         </div>
       </div>
@@ -225,6 +293,7 @@ export default defineComponent({
     BEmailSectionEditorRowSelf: defineAsyncComponent(() => import('./BEmailMarketingEditorSectionRow.vue'))
   },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       type: Object,
       required: true,
@@ -281,4 +350,64 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-email-editor-option--modern {
+  min-width: 0;
+  color: rgb(var(--v-theme-on-surface));
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 21px;
+
+  + .b-email-editor-option--modern { margin-block-start: 21px; }
+
+  .b-email-editor-option__heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-block-end: 18px;
+
+    > .v-icon { margin-block-start: 2px; color: var(--sd-modern-muted); }
+    > div { min-width: 0; }
+    h3 { margin: 0; font-size: 14px; font-weight: 500; line-height: 22px; }
+    p { margin-block: 5px 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 20px; overflow-wrap: anywhere; }
+  }
+
+  .b-email-editor-option__group > .b-email-editor-option--modern + .b-email-editor-option--modern { margin-block-start: 18px; }
+
+  .b-email-editor-option__alignment {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .b-email-editor-option__align-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    height: auto;
+    padding: 4px;
+    overflow: visible;
+
+    :deep(.v-btn) { border-radius: 8px !important; }
+    :deep(.v-btn--active) { background: rgb(var(--v-theme-surface)); box-shadow: var(--sd-modern-selected-shadow); }
+    :deep(.v-btn--active .v-btn__overlay) { opacity: 0; }
+  }
+
+  .b-email-editor-option__upload-note { margin-block-start: 14px; text-align: start; }
+
+  :deep(.v-field__input), :deep(.v-label) { font-family: inherit; font-size: 13px; line-height: 20px; }
+  :deep(.v-messages), :deep(.v-counter) { font-size: 11px; line-height: 18px; }
+  :deep(.s--setting-color) { padding-inline: 0; }
+  :deep(.s--setting-color .-label) { min-width: 0; font: inherit; }
+  :deep(.s--setting-color .v-list-item__prepend) { min-width: 0; white-space: normal; }
+  :deep(.row-font) { margin-block: 10px; overflow-wrap: anywhere; }
+  :deep(.row-font b) { font-size: 13px; font-weight: 400; line-height: 21px; }
+
+  @media (max-width: 600px), (pointer: coarse) {
+    .b-email-editor-option__align-options :deep(.v-btn) { min-height: 44px; }
+  }
+}
+</style>

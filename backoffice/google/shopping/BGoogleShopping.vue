@@ -13,85 +13,137 @@
   -->
 
 <template>
-  <div class="widget-box">
-    <u-widget-header
-      :src="require('../../../assets/trademark/google-shopping.png')"
-      :title="$t('channel_google.shopping.title')"
+  <section
+    class="sd-modern-widget b-google-shopping text-start"
+    aria-labelledby="google-shopping-title"
+  >
+    <header class="sd-modern-title b-google-shopping__heading">
+      <img
+        :src="require('../../../assets/trademark/google-shopping.png')"
+        alt=""
+        width="23"
+        height="23"
+      />
+      <div>
+        <h2 id="google-shopping-title" class="sd-modern-title-text">
+          {{ $t("channel_google.modern.shopping") }}
+        </h2>
+        <p class="sd-modern-subtitle">
+          {{ $t("channel_google.modern.shoppingIntro") }}
+        </p>
+      </div>
+    </header>
+
+    <div
+      class="b-google-shopping__flow"
+      role="img"
+      :aria-label="$t('channel_google.modern.flow')"
     >
-    </u-widget-header>
-
-    <v-list-subheader>
-      {{ $t("channel_google.shopping.subtitle") }}
-    </v-list-subheader>
-
-    <u-pods-panel>
-      <u-pod-node :title="shop.title">
-        <v-avatar class="avatar-gradient -thin -shop mb-1" size="24">
-          <v-img :src="getShopImagePath(shop.icon, 96)" />
-        </v-avatar>
-      </u-pod-node>
-
-      <u-pod-wire forward></u-pod-wire>
-      <u-pod-node
-        :image="require('../../../assets/trademark/google-shopping.png')"
-        title="Google"
+      <div class="b-google-shopping__node">
+        <v-avatar v-if="shop.icon" class="hover-scale-small" size="24"
+          ><v-img :src="getShopImagePath(shop.icon, 96)" alt=""
+        /></v-avatar>
+        <v-icon v-else size="23" aria-hidden="true">storefront</v-icon>
+        <div>
+          <div class="b-google-shopping__node-title">{{ shop.title }}</div>
+          <div class="b-google-shopping__node-subtitle">
+            {{ $t("channel_google.modern.published") }}
+          </div>
+        </div>
+      </div>
+      <span class="b-google-shopping__wire" aria-hidden="true"
+        ><v-icon size="16">{{
+          $vuetify.locale.isRtl ? "arrow_back" : "arrow_forward"
+        }}</v-icon></span
       >
-      </u-pod-node>
-    </u-pods-panel>
+      <div class="b-google-shopping__node">
+        <img
+          :src="require('../../../assets/trademark/google-shopping.png')"
+          alt=""
+          width="24"
+          height="24"
+        />
+        <div>
+          <div class="b-google-shopping__node-title">
+            {{ $t("channel_google.modern.merchant") }}
+          </div>
+          <div class="b-google-shopping__node-subtitle">
+            {{ $t("channel_google.modern.shopping") }}
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <v-list-subheader>
-      {{ $t("channel_google.shopping.tips") }}
-    </v-list-subheader>
-
-    <template v-if="total_products > count_in_page">
-      <v-list-subheader>
-        <v-icon>warning_amber</v-icon>
-        You have over 1,000 products, and since Facebook's feed does not support
-        pagination, you'll need to manually add these URLs.
-      </v-list-subheader>
-
-      <u-text-copy-box
-        v-for="item in pages"
-        :key="item"
-        :value="`${google_products_feed}?page=${item}`"
-        small-width-mode
-        :image="require('../../../assets/icons/link.svg')"
-        :message="$t('channel_google.shopping.link_message')"
-      >
-      </u-text-copy-box>
-    </template>
-
-    <u-text-copy-box
-      v-else
-      :image="require('../../../assets/icons/link.svg')"
-      :value="google_products_feed"
-      :message="$t('channel_google.shopping.link_message')"
-      small-width-mode
+    <div class="sd-modern-list-header">
+      {{ $t("channel_google.modern.feedLabel") }}
+    </div>
+    <div
+      v-if="total_products > count_in_page"
+      class="sd-modern-notice b-google-shopping__notice"
     >
-    </u-text-copy-box>
+      <v-icon color="warning" size="16" aria-hidden="true"
+        >warning_amber</v-icon
+      >
+      <span>{{ $t("channel_google.modern.multipleHint") }}</span>
+    </div>
+    <div
+      v-for="(feed, index) in feedUrls"
+      :key="feed"
+      class="b-google-shopping__feed"
+    >
+      <p v-if="feedUrls.length > 1" class="b-google-shopping__page">
+        {{ $t("channel_google.modern.feedPage") }} {{ $n(index + 1) }}
+      </p>
+      <div class="b-google-shopping__feed-row">
+        <code class="b-google-shopping__url" dir="ltr">{{ feed }}</code>
+        <v-tooltip
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          open-on-focus
+        >
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              class="sd-modern-icon-button"
+              variant="text"
+              icon
+              :aria-label="$t('channel_google.modern.feedCopy')"
+              @click="copyToClipboard(feed)"
+            >
+              <v-icon aria-hidden="true">content_copy</v-icon>
+            </v-btn>
+          </template>
+          {{ $t("channel_google.modern.feedCopy") }}
+        </v-tooltip>
+      </div>
+    </div>
+    <p class="b-google-shopping__hint">
+      {{ $t("channel_google.modern.feedHint") }}
+    </p>
 
-    <v-list-subheader>
-      You can change the feed language by appending '<code>?language=xx</code>' to the feed URL — replace <b>xx</b> with the desired language code (e.g., `fr`, `en`, `de`).
-    </v-list-subheader>
-  </div>
+    <details class="b-google-shopping__help">
+      <summary>
+        {{ $t("channel_google.modern.feedLanguage")
+        }}<v-icon size="15" aria-hidden="true">expand_more</v-icon>
+      </summary>
+      <p>
+        {{ $t("channel_google.modern.languageHelp") }}
+        <code dir="ltr">?language=en</code>,
+        <code dir="ltr">?language=fr</code>,
+        <code dir="ltr">?language=de</code>.
+        {{ $t("channel_google.modern.pagedHelp") }}
+        <code dir="ltr">&amp;language=en</code>.
+      </p>
+    </details>
+  </section>
 </template>
 
 <script lang="ts">
-import UTextCopyBox from "../../../ui/text/copy-box/UTextCopyBox.vue";
-import UPodsPanel from "@selldone/components-vue/ui/pod/panel/UPodsPanel.vue";
-import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";
-import UPodWire from "@selldone/components-vue/ui/pod/wire/UPodWire.vue";
-import {ShopURLs} from "@selldone/core-js/helper";
+import { ShopURLs } from "@selldone/core-js/helper";
 
 export default {
   name: "BGoogleShopping",
-  components: {
-    UPodWire,
-    UPodNode,
-    UPodsPanel,
-    UTextCopyBox,
-  },
-  inject: ["$shop", "$timeSeriesShopData"],
+  inject: ["$timeSeriesShopData"],
 
   props: {
     shop: {
@@ -101,11 +153,16 @@ export default {
   },
   data: () => ({
     count_in_page: 1000,
-
   }),
   computed: {
     google_products_feed() {
       return `${ShopURLs.MainShopUrl(this.shop)}/rss/google`;
+    },
+
+    feedUrls() {
+      return this.total_products > this.count_in_page
+        ? this.pages.map((page) => `${this.google_products_feed}?page=${page}`)
+        : [this.google_products_feed];
     },
 
     pages() {
@@ -129,13 +186,204 @@ export default {
       );
     },
   },
-
-  watch: {},
-
-  created() {},
-
-  methods: {},
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-google-shopping {
+  padding: 26px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 21px;
+
+  &__heading {
+    gap: 11px;
+  }
+  &__heading > img {
+    flex: 0 0 23px;
+    margin-block-start: 2px;
+    object-fit: contain;
+  }
+  &__heading .sd-modern-title-text {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 25px;
+    letter-spacing: -0.15px;
+  }
+  &__heading .sd-modern-subtitle {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 21px;
+  }
+  &__flow {
+    display: flex;
+    align-items: center;
+    margin-block: 25px;
+  }
+  &__node {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 62px;
+    padding: 13px 15px;
+    background: rgb(var(--v-theme-surface));
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 12px;
+  }
+  &__node > .v-icon {
+    color: var(--sd-modern-muted);
+  }
+  &__node > img {
+    flex: 0 0 24px;
+    object-fit: contain;
+  }
+  &__node-title {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+    overflow-wrap: anywhere;
+  }
+  &__node-subtitle {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+  }
+  &__wire {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 24px;
+    padding-inline: 8px;
+    color: var(--sd-modern-muted);
+  }
+  &__wire::before {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--sd-modern-border);
+  }
+  &__notice {
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    gap: 9px;
+    margin-block: 15px;
+    padding: 13px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+  &__notice > .v-icon {
+    margin-block-start: 2px;
+  }
+  &__feed {
+    margin-block-start: 9px;
+  }
+  &__page {
+    margin: 12px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 18px;
+  }
+  &__feed-row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+  }
+  &__url {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 10px;
+    background: var(--sd-modern-inset);
+    color: rgb(var(--v-theme-on-surface));
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: start;
+    overflow-wrap: anywhere;
+  }
+  &__hint {
+    margin: 9px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 19px;
+  }
+  &__help {
+    margin-block-start: 16px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 20px;
+  }
+  &__help summary {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: fit-content;
+    min-height: 32px;
+    list-style: none;
+    color: rgb(var(--v-theme-on-surface));
+    cursor: pointer;
+  }
+  &__help summary::-webkit-details-marker {
+    display: none;
+  }
+  &__help[open] summary > .v-icon {
+    transform: rotate(180deg);
+  }
+  &__help p {
+    margin: 8px 0 0;
+  }
+  &__help code {
+    color: rgb(var(--v-theme-on-surface));
+    font-family: inherit;
+    font-size: 12px;
+    unicode-bidi: isolate;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 650px) {
+    padding: 21px;
+    &__node {
+      padding: 11px;
+    }
+    &__node-subtitle {
+      display: none;
+    }
+  }
+  @media (max-width: 480px) {
+    &__flow {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    &__wire {
+      flex: auto;
+      min-height: 27px;
+      padding-inline: 23px;
+    }
+    &__wire::before {
+      flex: 0 0 1px;
+      height: 24px;
+    }
+    &__wire > .v-icon {
+      transform: rotate(90deg);
+      margin-inline-start: -8px;
+      margin-block-start: 16px;
+    }
+    &__wire > .v-icon:dir(rtl) {
+      transform: rotate(-90deg);
+    }
+  }
+  @media (max-width: 599px), (pointer: coarse) {
+    &__help summary {
+      min-height: 44px;
+    }
+  }
+}
+</style>

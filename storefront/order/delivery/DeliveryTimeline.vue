@@ -120,6 +120,7 @@
         <span class="dashed-flex-space"></span>
 
         <v-btn
+          v-if="!readonly"
           :loading="busy"
           color="primary"
           size="small"
@@ -321,6 +322,7 @@ export default {
   components: { SShippingRate },
   emits: ["click:refresh-service"],
   props: {
+    readonly: Boolean,
     sendAt: {},
     returnAt: {},
     paymentAt: {},

@@ -13,8 +13,24 @@
   -->
 
 <template>
-  <div class="s--shop-delivery-state container px-1 px-sm-3">
-    <div :class="{ rtl: $vuetify.locale.isRtl }" class="arrows mx-0 mx-sm-2">
+  <div class="s--shop-delivery-state container px-1 px-sm-3" :class="{ 's--shop-delivery-state--modern text-start': modern }">
+    <ol v-if="modern" class="sd-modern-widget b-order-delivery-state__steps" :aria-label="$t('process_center.modern.progress')">
+      <li
+        v-for="stage in modernStages"
+        :key="stage.code"
+        :class="{ 'is-current': stage.current, 'is-complete': stage.complete }"
+        :aria-current="stage.current ? 'step' : undefined"
+      >
+        <span class="b-order-delivery-state__node" aria-hidden="true"><v-icon size="14">{{ stage.complete ? 'check' : stage.icon }}</v-icon></span>
+        <span class="b-order-delivery-state__caption">
+          <span class="b-order-delivery-state__title">{{ stage.title }}</span>
+          <small v-if="stage.code === 'CheckQueue' && basket.reserved_at">{{ getLocalTimeString(basket.reserved_at, false) }}</small>
+          <small v-else-if="stage.code === 'ToCustomer' && basket.delivery_at">{{ getLocalTimeString(basket.delivery_at, false) }}</small>
+          <small v-else-if="stage.caption">{{ $t(stage.caption) }}</small>
+        </span>
+      </li>
+    </ol>
+    <div v-else :class="{ rtl: $vuetify.locale.isRtl }" class="arrows mx-0 mx-sm-2">
       <ul>
         <!-- CheckQueue -->
         <li
@@ -200,15 +216,16 @@
     </div>
 
     <!-- Rejected -->
-    <div v-if="rejected" class="py-3">
+    <div v-if="rejected" class="py-3" :class="{ 'sd-modern-notice b-order-delivery-state__rejected': modern }">
       <h2 class="text-uppercase">
-        <i class="fas fa-warning" />
+        <v-icon v-if="modern" size="20" class="me-2">warning</v-icon>
+        <i v-else class="fas fa-warning" />
         {{ $t("global.basket_delivery_state.rejected") }}
       </h2>
 
       <template v-if="basket.reject_at && !canceled">
-        <small class="text-white"
-          ><i class="fas fa-stopwatch"></i> Time to cancel:
+        <small :class="modern ? 'b-order-delivery-state__countdown' : 'text-white'"
+          ><v-icon v-if="modern" size="14" class="me-1">schedule</v-icon><i v-else class="fas fa-stopwatch"></i> {{ modern ? $t('process_center.modern.cancel_countdown') : 'Time to cancel:' }}
         </small>
         <u-count-down :end="endOfRejectPeriod" class="me-2 p-0"></u-count-down>
       </template>
@@ -230,6 +247,10 @@ export default {
   mixins: [DateMixin],
   components: { UCountDown },
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     basket: {
       required: true,
       type: Object,
@@ -252,6 +273,23 @@ export default {
     },
   },
   computed: {
+    modernStages() {
+      const isVirtual = this.basket.type === ProductType.VIRTUAL.code;
+      const stages = {
+        CheckQueue: { step: 1, icon: "shopping_basket" },
+        OrderConfirm: { step: 2, icon: "check" , caption: "process_center.modern.stage_confirmation" },
+        PreparingOrder: { step: 3, icon: "inventory_2", caption: isVirtual ? "process_center.modern.virtual_stage_preparation" : "process_center.modern.stage_preparation" },
+        SentOrder: { step: 4, icon: "local_shipping", caption: "process_center.modern.stage_delivery" },
+        ToCustomer: { step: 5, icon: "done_all", caption: isVirtual ? "process_center.modern.virtual_stage_completion" : "process_center.modern.stage_delivered" },
+      };
+      return this.list.map((code) => ({
+        ...stages[code],
+        code,
+        title: this.$t(`global.basket_delivery_state.step_${stages[code].step}`),
+        current: this.delivery_step === this.getStepIndex(code),
+        complete: this.delivery_step > this.getStepIndex(code),
+      }));
+    },
     CheckQueue() {
       return (
         this.isAvocado ||
@@ -381,6 +419,77 @@ export default {
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */
 .s--shop-delivery-state {
+}
+
+.s--shop-delivery-state--modern {
+  padding: 0 !important;
+  width: 100%;
+  max-width: none !important;
+  font-family: inherit;
+
+  .b-order-delivery-state__steps {
+    display: flex;
+    align-items: stretch;
+    list-style: none;
+    gap: 12px;
+    margin: 0 0 22px;
+    padding: 17px 16px;
+    border-radius: 14px;
+  }
+  .b-order-delivery-state__steps > li {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+  .b-order-delivery-state__node {
+    display: inline-flex;
+    flex: 0 0 28px;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 50%;
+    background: rgb(var(--v-theme-surface));
+  }
+  .b-order-delivery-state__caption { min-width: 0; }
+  .b-order-delivery-state__title { display: block; }
+  .b-order-delivery-state__caption > small { display: block; margin-top: 2px; font-size: 11px; font-weight: 400; line-height: 16px; text-wrap: balance; overflow-wrap: anywhere; }
+  .is-current { color: rgb(var(--v-theme-on-surface)) !important; }
+  .is-current .b-order-delivery-state__title { font-weight: 500; }
+  .is-current .b-order-delivery-state__node,
+  .is-complete .b-order-delivery-state__node {
+    color: rgb(var(--v-theme-surface));
+    border-color: rgb(var(--v-theme-on-surface));
+    background: rgb(var(--v-theme-on-surface));
+  }
+  .b-order-delivery-state__rejected {
+    display: block;
+    margin-bottom: 18px;
+    h2 { font-size: 18px; font-weight: 500; line-height: 24px; }
+    p { margin: 8px 0 0; }
+  }
+  .b-order-delivery-state__countdown { color: rgb(var(--v-theme-on-surface)); }
+
+  @media (max-width: 850px) {
+    .b-order-delivery-state__steps { gap: 14px 10px; flex-wrap: wrap; padding: 14px; }
+    .b-order-delivery-state__steps > li { flex: 1 1 26%; align-items: flex-start; }
+    .b-order-delivery-state__steps > li.is-current { flex-basis: 100%; }
+  }
+
+  @media (max-width: 600px) {
+    .b-order-delivery-state__steps > li { flex-basis: 44%; }
+  }
+
+  @media (max-width: 400px) {
+    .b-order-delivery-state__steps > li { flex-basis: 100%; }
+  }
 }
 
 /*

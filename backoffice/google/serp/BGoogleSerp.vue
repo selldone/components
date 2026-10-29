@@ -15,18 +15,25 @@
 <template>
   <!-- --------------------------------- Google Search Console Connect --------------------------- -->
 
-  <div v-if="search_console_available" class="widget-box">
+  <div
+    v-if="search_console_available"
+    :class="modern ? 'b-google-serp text-start' : 'widget-box'"
+  >
     <u-widget-header
+      v-if="!modern"
       :src="require('../../../assets/icons/seo.svg')"
       :title="$t('channel_google.serp.title')"
     >
     </u-widget-header>
 
-    <v-list-subheader>
+    <v-list-subheader v-if="!modern">
       {{ $t("channel_google.serp.subtitle") }}
     </v-list-subheader>
 
-    <b-google-serp-connect :shop="shop"></b-google-serp-connect>
+    <b-google-serp-connect
+      :shop="shop"
+      :modern="modern"
+    ></b-google-serp-connect>
   </div>
 </template>
 
@@ -40,6 +47,7 @@ export default {
     BGoogleSerpConnect,
   },
   props: {
+    modern: Boolean,
     shop: {
       required: true,
       type: Object,

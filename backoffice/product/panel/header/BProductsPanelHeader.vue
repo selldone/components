@@ -14,17 +14,99 @@
 
 <template>
   <!-- ███████████████████████████ Toolbar ███████████████████████████ -->
-  <v-toolbar extended extension-height="10" v-bind="SUB_TOOLBAR_CONFIG">
-    <template v-slot:extension>
+  <v-toolbar
+    v-bind="modern ? {} : SUB_TOOLBAR_CONFIG"
+    :extended="!modern"
+    :extension-height="modern ? 0 : 10"
+    :height="modern ? 'auto' : undefined"
+    class="b-products-panel-header text-start"
+    :class="{ 'b-products-panel-header--modern sd-modern-header': modern }"
+  >
+    <template v-if="!modern" v-slot:extension>
       <div style="height: 10px"></div>
     </template>
 
-    <div class="body-title px-2">
-      <v-btn color="#000" icon variant="text">
+    <div v-if="modern" class="b-products-panel-header__heading sd-modern-title">
+      <v-icon class="b-products-panel-header__purpose" aria-hidden="true">inventory_2</v-icon>
+      <div>
+        <h1 class="sd-modern-title-text">{{ $t('global.commons.products') }}</h1>
+        <p class="sd-modern-subtitle">{{ $t('product_panel.workspace.subtitle') }}</p>
+      </div>
+    </div>
+
+    <div v-if="modern" class="b-products-panel-header__actions sd-modern-actions">
+      <v-btn
+        v-if="tableMode && CAN_ADD_PRODUCT"
+        class="sd-modern-button sd-modern-button--small sd-modern-button--primary"
+        color="primary"
+        variant="flat"
+        prepend-icon="library_add"
+        @click="$emit('click:addProduct')"
+      >{{ $t('product_panel.workspace.add_product') }}</v-btn>
+      <v-btn
+        v-if="tableMode && CAN_ADD_CATEGORY"
+        class="sd-modern-button sd-modern-button--small"
+        color="surface"
+        variant="flat"
+        prepend-icon="create_new_folder"
+        @click="$emit('click:addCategory')"
+      >{{ $t('product_panel.workspace.add_category') }}</v-btn>
+      <v-btn
+        :to="{ name: IS_VENDOR_PANEL ? 'VendorProducts_Importer' : 'BPageShopProductsImporter' }"
+        class="sd-modern-button sd-modern-button--small"
+        color="surface"
+        variant="flat"
+        prepend-icon="file_upload"
+      >{{ $t('admin_shop.products.menu_import') }}</v-btn>
+      <v-btn
+        :to="{ name: IS_VENDOR_PANEL ? 'VendorProducts_Exporter' : 'BPageShopProductsExporter' }"
+        class="sd-modern-button sd-modern-button--small"
+        color="surface"
+        variant="flat"
+        prepend-icon="file_download"
+      >{{ $t('admin_shop.products.menu_export') }}</v-btn>
+      <v-btn
+        v-if="!IS_VENDOR_PANEL && service_google_sheet"
+        :href="`https://docs.google.com/spreadsheets/d/${service_google_sheet.products_sheet_id}`"
+        class="sd-modern-button sd-modern-button--small b-products-panel-header__sheet"
+        color="surface"
+        variant="flat"
+        target="_blank"
+        rel="noopener noreferrer"
+        :aria-label="$t('admin_shop.products.google_sheet.tooltip')"
+      >
+        <img src="../../../../assets/trademark/google-drive.svg" width="16" height="16" class="me-2" alt="" />
+        {{ $t('admin_shop.products.google_sheet.action') }}
+        <v-icon end size="small">north_east</v-icon>
+        <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="$t('admin_shop.products.google_sheet.tooltip')" :open-on-focus="true" />
+      </v-btn>
+    </div>
+
+    <div :class="modern ? 'b-products-panel-header__menu' : 'body-title px-2'">
+      <v-btn
+        :color="modern ? undefined : '#000'"
+        :class="{ 'sd-modern-icon-button': modern }"
+        :aria-label="$t('product_panel.workspace.tools')"
+        icon
+        variant="text"
+      >
         <v-icon>more_vert</v-icon>
+        <v-tooltip
+          v-if="modern"
+          activator="parent"
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          :text="$t('product_panel.workspace.tools')"
+          :open-on-focus="true"
+        />
 
         <v-menu activator="parent">
-          <v-list class="text-start pa-0" slim rounded="lg">
+          <v-list
+            class="text-start pa-0"
+            :class="{ 'b-products-panel-header__popover': modern }"
+            slim
+            rounded="lg"
+          >
             <v-list-item
               :to="{
                 name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -134,7 +216,7 @@
 
             <v-divider class="my-2" thickness="2" opacity="1"></v-divider>
 
-            <div class="text-center px-1 d-flex flex-column align-center">
+            <div class="text-center px-1 d-flex flex-column align-center" :class="{ 'b-products-panel-header__toggles': modern }">
               <div v-for="(toggle, index) in toggles" :key="index">
                 <v-icon class="me-2">{{ toggle.icon }}</v-icon>
                 <v-btn-toggle
@@ -194,11 +276,12 @@
     </div>
 
     <v-chip
-      v-if="!IS_VENDOR_PANEL && service_google_sheet"
+      v-if="!modern && !IS_VENDOR_PANEL && service_google_sheet"
       :href="`https://docs.google.com/spreadsheets/d/${service_google_sheet.products_sheet_id}`"
       class="mx-2"
       color="primary"
       target="_blank"
+      rel="noopener noreferrer"
       :title="$t('admin_shop.products.google_sheet.tooltip')"
       variant="flat"
     >
@@ -210,16 +293,16 @@
       <span class="d-none d-sm-inline small ms-2">{{
         $t("admin_shop.products.google_sheet.action")
       }}</span>
-      <v-icon class="mx-1 d-none d-sm-inline" size="small">open_in_new</v-icon>
+      <v-icon class="mx-1 d-none d-sm-inline" size="small">north_east</v-icon>
     </v-chip>
 
 
-    <v-spacer />
-    <slot name="center"></slot>
-    <v-spacer />
+    <v-spacer v-if="!modern" />
+    <div :class="{ 'b-products-panel-header__queue': modern }"><slot name="center"></slot></div>
+    <v-spacer v-if="!modern" />
 
     <u-button-circle
-      v-if="CAN_ADD_PRODUCT"
+      v-if="!modern && CAN_ADD_PRODUCT"
       key="it1"
       :src="require('../../../../assets/icons/product-outline.svg')"
       :tooltip="'✚' + $t('global.commons.product')"
@@ -229,7 +312,7 @@
     >
     </u-button-circle>
     <u-button-circle
-      v-if="CAN_ADD_CATEGORY"
+      v-if="!modern && CAN_ADD_CATEGORY"
       key="it2"
       :src="require('../../../../assets/icons/category-outline.svg')"
       :tooltip="'✚' + $t('global.commons.category')"
@@ -361,6 +444,7 @@ export default {
     "update:tableMode",
   ],
   props: {
+    modern: Boolean,
     showDeletes: Boolean,
     showVendors: Boolean,
     showNotes: Boolean,
@@ -530,4 +614,67 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-products-panel-header--modern {
+  overflow: visible;
+  background: transparent !important;
+  margin-block-end: 23px;
+
+  :deep(.v-toolbar__content) {
+    height: auto !important;
+    min-height: 58px;
+    overflow: visible;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 8px;
+    row-gap: 16px;
+  }
+
+  .b-products-panel-header__heading {
+    flex: 1 1 250px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .b-products-panel-header__purpose { font-size: 26px; }
+  .sd-modern-title-text { font-size: 25px; font-weight: 500; line-height: 31.25px; letter-spacing: -.55px; }
+  .sd-modern-subtitle { margin-block: 5px 0; font-size: 12px; font-weight: 400; line-height: 18px; }
+  .b-products-panel-header__actions { gap: 8px; }
+  .b-products-panel-header__menu { display: flex; flex: 0 0 auto; }
+  .b-products-panel-header__queue { flex: 1 0 100%; }
+  .b-products-panel-header__queue:empty { display: none; }
+}
+
+.b-products-panel-header__popover {
+  width: min(440px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  color: rgb(var(--v-theme-on-surface));
+  background: rgb(var(--v-theme-surface));
+
+  :deep(.v-list-item-title) { font-size: 13px; font-weight: 500; line-height: 20px; }
+  :deep(.v-list-item-subtitle) { font-size: 12px; line-height: 18px; white-space: normal; }
+}
+
+.b-products-panel-header__toggles {
+  align-items: stretch !important;
+  padding: 8px 12px 12px !important;
+
+  > div { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  :deep(.v-btn-toggle) { flex: 1; height: auto; min-width: 0; padding-block: 4px; gap: 4px; }
+  :deep(.v-btn) { flex: 1 1 0; width: auto !important; max-width: none !important; min-width: 0; min-height: 52px; padding: 8px; font-size: 12px; letter-spacing: 0; }
+  :deep(.v-btn__content) { white-space: normal; }
+  :deep(.v-btn small) { font-size: 11px; font-weight: 400; }
+}
+
+@media (max-width: 600px) {
+  .b-products-panel-header--modern {
+    .b-products-panel-header__heading { order: 1; flex: 1 1 calc(100% - 52px); min-width: 0; }
+    .b-products-panel-header__menu { order: 2; }
+    .b-products-panel-header__sheet { grid-column: 1 / -1; }
+    .b-products-panel-header__actions { order: 3; flex: 1 0 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .b-products-panel-header__actions > .v-btn { min-width: 0; padding-inline: 8px; }
+    .b-products-panel-header__actions :deep(.v-btn__content) { white-space: normal; }
+    .sd-modern-title-text { font-size: 22px; line-height: 28px; }
+  }
+}
+</style>

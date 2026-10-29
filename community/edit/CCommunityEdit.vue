@@ -13,9 +13,24 @@
   -->
 
 <template>
-  <v-container :class="{ 'pointer-event-none': community && !access.admin }">
+  <v-container
+    class="text-start"
+    :class="{
+      'pointer-event-none': community && !access?.admin,
+      'c-community-editor sd-modern-form sd-modern-widget': modern,
+    }"
+    :inert="modern && !can_edit"
+  >
+    <div
+      v-if="modern && community?.penalty"
+      class="sd-modern-notice"
+      role="alert"
+    >
+      <v-icon icon="error_outline" color="error" size="18" aria-hidden="true" />
+      <p>{{ $t("community.commons.rules_violation") }}</p>
+    </div>
     <v-alert
-      v-if="community && community.penalty"
+      v-if="!modern && community && community.penalty"
       border="start"
       color="red"
       type="error"
@@ -24,47 +39,94 @@
     </v-alert>
 
     <!-- General -->
-    <div class="widget-box mb-5">
+    <div :class="modern ? 'c-community-editor__group' : 'widget-box mb-5'">
       <u-widget-header
-        :title="$t('global.commons.general_config')"
+        :title="
+          $t(
+            modern
+              ? 'community.community.modern.identity'
+              : 'global.commons.general_config',
+          )
+        "
+        :class="{ 'sd-modern-form-header': modern }"
         icon="tune"
       ></u-widget-header>
 
-      <v-list-subheader
+      <v-list-subheader v-if="!modern"
         >Assign a name to your community and provide a brief description
         outlining its purpose and value.
       </v-list-subheader>
-      <v-text-field
-        v-model="name"
-        :append-inner-icon="lock ? 'lock' : 'lock_open'"
-        :counter="64"
-        :error-messages="name_error"
-        :label="$t('community.community.name')"
-        :loading="busy_name"
-        :messages="$t('community.community.name_msg')"
-        :placeholder="$t('community.community.name_plc')"
-        :readonly="lock"
-        @click:append-inner="lock = !lock"
-        @update:model-value="checkName"
-        variant="underlined"
-      >
-        <template v-slot:append-inner>
-          <v-icon v-if="valid_name === name" color="success">check</v-icon>
-        </template>
-      </v-text-field>
+      <p v-else class="c-community-editor__help">
+        {{ $t("community.community.modern.identity_help") }}
+      </p>
+      <div :class="{ 'sd-modern-form-grid': modern }">
+        <v-text-field
+          v-model="name"
+          :append-inner-icon="modern ? undefined : lock ? 'lock' : 'lock_open'"
+          :class="{ 'sd-modern-underlined-field': modern }"
+          :counter="64"
+          :error-messages="name_error"
+          :label="$t('community.community.name')"
+          :loading="busy_name"
+          :messages="$t('community.community.name_msg')"
+          :placeholder="$t('community.community.name_plc')"
+          :readonly="lock"
+          :maxlength="modern ? 64 : undefined"
+          @click:append-inner="!modern && (lock = !lock)"
+          @update:model-value="checkName"
+          variant="underlined"
+        >
+          <template v-slot:append-inner>
+            <v-icon v-if="valid_name === name" color="success">check</v-icon>
+            <v-btn
+              v-if="modern"
+              class="sd-modern-input-action"
+              icon
+              variant="text"
+              :aria-label="
+                $t(
+                  lock
+                    ? 'community.community.modern.unlock_name'
+                    : 'community.community.modern.lock_name',
+                )
+              "
+              @click.stop="lock = !lock"
+            >
+              <v-icon :icon="lock ? 'lock' : 'lock_open'" size="16" />
+              <v-tooltip
+                activator="parent"
+                location="top"
+                open-on-focus
+                content-class="sd-modern-tooltip text-start"
+                >{{
+                  $t(
+                    lock
+                      ? "community.community.modern.unlock_name"
+                      : "community.community.modern.lock_name",
+                  )
+                }}</v-tooltip
+              >
+            </v-btn>
+          </template>
+        </v-text-field>
 
-      <v-text-field
-        v-model="title"
-        :counter="128"
-        :label="$t('community.community.title')"
-        :messages="$t('community.community.title_msg')"
-        :placeholder="$t('community.community.title_plc')"
-        variant="underlined"
-      ></v-text-field>
+        <v-text-field
+          v-model="title"
+          :class="{ 'sd-modern-underlined-field': modern }"
+          :counter="128"
+          :maxlength="modern ? 128 : undefined"
+          :label="$t('community.community.title')"
+          :messages="$t('community.community.title_msg')"
+          :placeholder="$t('community.community.title_plc')"
+          variant="underlined"
+        ></v-text-field>
+      </div>
 
       <v-text-field
         v-model="desc"
+        :class="{ 'sd-modern-underlined-field': modern }"
         :counter="256"
+        :maxlength="modern ? 256 : undefined"
         :label="$t('community.community.desc')"
         :messages="$t('community.community.desc_msg')"
         :placeholder="$t('community.community.desc_plc')"
@@ -73,15 +135,25 @@
     </div>
 
     <!-- image -->
-    <div class="widget-box mb-5">
+    <div
+      :class="
+        modern
+          ? 'sd-modern-form-group c-community-editor__group'
+          : 'widget-box mb-5'
+      "
+    >
       <u-widget-header
         :title="$t('global.commons.image')"
+        :class="{ 'sd-modern-form-header': modern }"
         icon="image"
       ></u-widget-header>
 
-      <v-list-subheader>
+      <v-list-subheader v-if="!modern">
         You can upload and modify the logo of your community here.
       </v-list-subheader>
+      <p v-else class="c-community-editor__help">
+        {{ $t("community.community.modern.logo_help") }}
+      </p>
       <div class="text-center">
         <c-image-input
           v-model="image_file"
@@ -96,39 +168,85 @@
     </div>
 
     <!-- SEO -->
-    <div class="widget-box mb-5">
+    <div
+      :class="
+        modern
+          ? 'sd-modern-form-group c-community-editor__group'
+          : 'widget-box mb-5'
+      "
+    >
       <u-widget-header
         :title="$t('global.commons.seo')"
+        :class="{ 'sd-modern-form-header': modern }"
         icon="track_changes"
       ></u-widget-header>
 
-      <v-list-subheader>
+      <v-list-subheader v-if="!modern">
         This is the default SEO configuration for your community. Please note
         that SEO settings can also be adjusted at the topic and category level.
       </v-list-subheader>
+      <p v-else class="c-community-editor__help">
+        {{ $t("community.community.modern.seo_help") }}
+      </p>
 
       <u-smart-toggle
         v-model="nofollow"
+        :readonly="modern && busy"
+        :role="modern ? 'switch' : undefined"
+        :tabindex="modern ? 0 : undefined"
+        :aria-checked="modern ? nofollow : undefined"
+        :aria-label="
+          modern ? $t('community.community.modern.nofollow_links') : undefined
+        "
+        @keydown.space.prevent="modern && !busy && (nofollow = !nofollow)"
+        @keydown.enter.prevent="modern && !busy && (nofollow = !nofollow)"
         :true-description="$t('community.commons.nofollow_msg')"
         false-gray
-        false-title="Follow links"
-        true-title="No follow links"
+        :false-title="
+          modern
+            ? $t('community.community.modern.follow_links')
+            : 'Follow links'
+        "
+        :true-title="
+          modern
+            ? $t('community.community.modern.nofollow_links')
+            : 'No follow links'
+        "
       ></u-smart-toggle>
     </div>
 
     <!-- Cross Community -->
-    <div class="widget-box mb-5">
+    <div
+      :class="
+        modern
+          ? 'sd-modern-form-group c-community-editor__group'
+          : 'widget-box mb-5'
+      "
+    >
       <u-widget-header
         :title="$t('community.commons.cross_community')"
+        :class="{ 'sd-modern-form-header': modern }"
         icon="leak_add"
       ></u-widget-header>
 
-      <v-list-subheader
+      <v-list-subheader v-if="!modern"
         >Can other communities embed your topics?
       </v-list-subheader>
+      <p v-else class="c-community-editor__help">
+        {{ $t("community.community.modern.cross_help") }}
+      </p>
 
       <u-smart-toggle
         v-model="cross"
+        :readonly="modern && busy"
+        :role="modern ? 'switch' : undefined"
+        :tabindex="modern ? 0 : undefined"
+        :aria-checked="modern ? cross : undefined"
+        :aria-label="
+          modern ? $t('community.commons.cross_community') : undefined
+        "
+        @keydown.space.prevent="modern && !busy && (cross = !cross)"
+        @keydown.enter.prevent="modern && !busy && (cross = !cross)"
         :true-description="$t('community.commons.crossable_msg')"
         :true-title="$t('community.commons.crossable')"
         false-gray
@@ -136,72 +254,140 @@
     </div>
 
     <!-- Access -->
-    <div class="widget-box mb-5">
+    <div
+      :class="
+        modern
+          ? 'sd-modern-form-group c-community-editor__group'
+          : 'widget-box mb-5'
+      "
+    >
       <u-widget-header
-        :title="$t('global.commons.access')"
+        :title="
+          $t(
+            modern
+              ? 'community.community.modern.topic_creation'
+              : 'global.commons.access',
+          )
+        "
+        :class="{ 'sd-modern-form-header': modern }"
         icon="private_connectivity"
       ></u-widget-header>
 
-      <v-list-subheader
+      <v-list-subheader v-if="!modern"
         >Define the access level and status of your community here. The
         structure of the community follows this hierarchy: Your Community >
         Categories > Topics > Posts.
       </v-list-subheader>
+      <p v-else class="c-community-editor__help">
+        {{ $t("community.community.modern.topic_help") }}
+      </p>
 
       <u-smart-select
         v-model="stage"
-        :items="Object.values(CommunityStageLevel)"
+        :readonly="modern && busy"
+        :items="stage_items"
+        :accessible="modern"
         class="mb-5"
         item-description="description"
         item-icon="icon"
         item-text="name"
         item-value="code"
-        label="Who can create topics by default?"
+        :label="
+          modern
+            ? $t('community.community.modern.topic_audience')
+            : 'Who can create topics by default?'
+        "
       ></u-smart-select>
 
       <u-smart-toggle
         v-model="enable"
+        :readonly="modern && busy"
+        :role="modern ? 'switch' : undefined"
+        :tabindex="modern ? 0 : undefined"
+        :aria-checked="modern ? enable : undefined"
+        :aria-label="
+          modern ? $t('community.community.modern.availability') : undefined
+        "
+        @keydown.space.prevent="modern && !busy && (enable = !enable)"
+        @keydown.enter.prevent="modern && !busy && (enable = !enable)"
         :false-title="$t('global.commons.disable')"
         :true-description="$t('community.community.enable_msg')"
         :true-title="$t('global.commons.enable')"
         false-gray
         false-icon="public_off"
-        label="Is your community available?"
+        :label="
+          modern
+            ? $t('community.community.modern.availability')
+            : 'Is your community available?'
+        "
         true-icon="public"
       ></u-smart-toggle>
     </div>
 
     <!-- Access -->
-    <div class="widget-box mb-5">
+    <div
+      :class="
+        modern
+          ? 'sd-modern-form-group c-community-editor__group'
+          : 'widget-box mb-5'
+      "
+    >
       <u-widget-header
         icon="attach_file"
-        title="File Attachment"
+        :title="
+          modern
+            ? $t('community.community.modern.attachments')
+            : 'File Attachment'
+        "
+        :class="{ 'sd-modern-form-header': modern }"
       ></u-widget-header>
 
-      <v-list-subheader>
+      <v-list-subheader v-if="!modern">
         You can add the attachment option in your community. Your customers can
         attach up to 3 files, each 8MB, in their posts.
       </v-list-subheader>
+      <p v-else class="c-community-editor__help">
+        {{ $t("community.community.modern.attachments_help") }}
+      </p>
 
       <u-smart-select
         v-model="attachment"
-        :items="Object.values(CommunityAttachmentAccess)"
+        :readonly="modern && busy"
+        :items="attachment_items"
+        :accessible="modern"
         class="my-5"
         item-description="description"
         item-icon="icon"
         item-text="name"
         item-value="code"
-        label="Who can attach files?"
+        :label="
+          modern
+            ? $t('community.community.modern.attachment_audience')
+            : 'Who can attach files?'
+        "
       ></u-smart-select>
 
       <v-combobox
         v-model="mims"
+        :class="{ 'sd-modern-underlined-field': modern }"
         chips
         closable-chips
-        label="Allowed file types"
-        messages="Leave it empty means all file types are accepted."
+        :label="
+          modern
+            ? $t('community.community.modern.allowed_types')
+            : 'Allowed file types'
+        "
+        :messages="
+          modern
+            ? $t('community.community.modern.allowed_types_help')
+            : 'Leave it empty means all file types are accepted.'
+        "
         multiple
-        placeholder="Enter value and press enter. ex: zip"
+        :placeholder="
+          modern
+            ? $t('community.community.modern.allowed_types_placeholder')
+            : 'Enter value and press enter. ex: zip'
+        "
         variant="underlined"
       >
         <template v-slot:chip="{ item, props }">
@@ -219,30 +405,45 @@
     </div>
 
     <!-- Rule -->
-    <div class="widget-box mb-5">
+    <div
+      :class="
+        modern
+          ? 'sd-modern-form-group c-community-editor__group'
+          : 'widget-box mb-5'
+      "
+    >
       <u-widget-header
         :title="$t('global.commons.rules')"
+        :class="{ 'sd-modern-form-header': modern }"
         icon="settings_accessibility"
       ></u-widget-header>
 
-      <v-list-subheader
+      <v-list-subheader v-if="!modern"
         >Draft a concise set of guidelines for your community.
       </v-list-subheader>
+      <p v-else class="c-community-editor__help">
+        {{ $t("community.community.modern.rules_help") }}
+      </p>
 
       <v-textarea
         v-model="rule"
         :placeholder="$t('community.community.rule_plc')"
         :rows="4"
         class="m-0"
+        :class="{ 'sd-modern-underlined-field': modern }"
         variant="underlined"
       >
       </v-textarea>
     </div>
 
-    <s-widget-buttons auto-fixed-position>
+    <s-widget-buttons
+      auto-fixed-position
+      :class="{ 'sd-modern-form-actions c-community-editor__actions': modern }"
+    >
       <v-btn
         v-if="hasClose"
-        size="x-large"
+        :size="modern ? undefined : 'x-large'"
+        :class="{ 'sd-modern-button': modern }"
         variant="text"
         @click="$emit('close')"
       >
@@ -251,16 +452,23 @@
       </v-btn>
 
       <v-btn
-        v-if="!community || access.admin"
+        v-if="can_edit"
         :disabled="!name || !title || !desc"
         :loading="busy"
         color="primary"
-        size="x-large"
+        :size="modern ? undefined : 'x-large'"
+        :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
         variant="elevated"
         @click="saveCommunity"
-        prepend-icon="save"
+        :prepend-icon="modern && !community ? 'add' : 'save'"
       >
-        {{ $t("global.actions.save_changes") }}
+        {{
+          $t(
+            modern && !community
+              ? "community.community.modern.create_action"
+              : "global.actions.save_changes",
+          )
+        }}
       </v-btn>
     </s-widget-buttons>
   </v-container>
@@ -276,7 +484,7 @@ import { throttle } from "lodash-es";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
 import SWidgetButtons from "../../ui/widget/buttons/SWidgetButtons.vue";
 import { Community, FileHelper } from "@selldone/core-js";
-
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 
 export default {
   name: "CCommunityEdit",
@@ -284,6 +492,7 @@ export default {
   components: { SWidgetButtons, USmartSelect, USmartToggle, CImageInput },
 
   props: {
+    modern: { type: Boolean, default: false },
     shop: {}, // optional for shops.
     community: {}, // In the add if be null.
     hasClose: { default: false, type: Boolean },
@@ -331,6 +540,36 @@ export default {
     },
     access() {
       return this.community && this.community.access;
+    },
+    can_edit() {
+      return (
+        (!this.community || !!this.access?.admin) &&
+        (!this.modern ||
+          !this.shop ||
+          this.writeShopAccess(ShopPermissionRegions.COMMUNITY.code))
+      );
+    },
+    stage_items() {
+      return Object.values(this.CommunityStageLevel).map((item) =>
+        this.modern
+          ? {
+              ...item,
+              name: `community.community.modern.audience_${item.code.toLowerCase()}`,
+              description: `community.community.modern.topic_${item.code.toLowerCase()}`,
+            }
+          : item,
+      );
+    },
+    attachment_items() {
+      return Object.values(this.CommunityAttachmentAccess).map((item) =>
+        this.modern
+          ? {
+              ...item,
+              name: `community.community.modern.audience_${item.code.toLowerCase()}`,
+              description: `community.community.modern.attachment_${item.code.toLowerCase()}`,
+            }
+          : item,
+      );
     },
   },
 
@@ -386,6 +625,7 @@ export default {
     //――――――――――――――――――――――― New category ―――――――――――――――――――――――
 
     saveCommunity() {
+      if (this.busy || !this.can_edit) return;
       this.busy = true;
 
       const formData = new FormData();
@@ -449,4 +689,32 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.c-community-editor {
+  font-size: 13px;
+  line-height: 20px;
+  &__group {
+    min-width: 0;
+  }
+  &__help {
+    margin-block: 0 18px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 18px;
+  }
+  &__actions {
+    margin-block-start: 24px;
+    padding-block-start: 20px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  :deep(.sd-modern-form-header h2) {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    letter-spacing: -0.15px;
+  }
+  :deep(.sd-modern-form-header .--icon) {
+    font-size: 19px !important;
+  }
+}
+</style>

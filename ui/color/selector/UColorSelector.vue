@@ -25,6 +25,7 @@
 
     <v-btn
       :size="size"
+      :aria-label="dialogTitle || title || $t('global.commons.color')"
       class="mx-auto"
       color="#9d9d9d33"
       icon

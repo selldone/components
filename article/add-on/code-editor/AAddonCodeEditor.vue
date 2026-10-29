@@ -14,7 +14,7 @@
 
 <template>
   <div
-    :class="{ '-dark': dark }"
+    :class="{ '-dark': dark, 'a-article-addon--editable': editable }"
     :data="json_data"
     class="code-editor editor-window"
     spellcheck="false"
@@ -47,11 +47,12 @@
         </v-btn>
       </v-btn-toggle>
       <v-spacer></v-spacer>
-      <v-btn class="mx-1" icon variant="text" @click="dark = !dark">
+      <v-btn class="mx-1" :class="{ 'sd-modern-icon-button': editable }" icon variant="text" :aria-label="$t('global.article.inline_tools.code_theme')" @click="dark = !dark">
         <v-slide-y-reverse-transition leave-absolute>
           <v-icon v-if="dark" key="1" color="blue">dark_mode</v-icon>
           <v-icon v-else key="2" color="amber">light_mode</v-icon>
         </v-slide-y-reverse-transition>
+        <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip">{{ $t('global.article.inline_tools.code_theme') }}</v-tooltip>
       </v-btn>
     </div>
 
@@ -82,6 +83,7 @@ import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import { articleAddonContext } from "../toolbar/article-addon-context";
 
 export default {
   name: "AAddonCodeEditor",
@@ -182,21 +184,28 @@ export default {
     },
 
     showEdit() {
+      if (!this.editable || !articleAddonContext(this.element)) return;
       if (!this.selected_lang) {
         NotificationService.showErrorAlert(null, "Please select a language to edit code!");
         return;
       }
-      if (!this.editable) return;
+      const selectedLanguage = this.selected_lang;
       this.ShowCodeEditorGlobalDialog(
         this.codes[this.selected_lang],
         this.selected_lang,
         (code) => {
-          this.codes[this.selected_lang] = code;
+          const context = this.editable && articleAddonContext(this.element);
+          if (!context) return;
+          this.codes[selectedLanguage] = code;
           this.time = new Date(); //Force update data!
           this.$forceUpdate();
+          this.$nextTick(() => context.core.triggerInput());
         },
         () => {
-          this.$el.remove();
+          const context = this.editable && articleAddonContext(this.element);
+          if (!context) return;
+          context.element.remove();
+          context.core.triggerInput();
         },
         this.masterId,
       );

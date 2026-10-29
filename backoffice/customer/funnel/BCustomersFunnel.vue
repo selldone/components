@@ -20,8 +20,9 @@
       :segments="shop_segments"
       :shop="shop"
       :types="filter_types"
+      :read-only="readOnly"
       modern
-      @update:model-value="(val) => $emit('update:modelValue', val)"
+      @update:model-value="(val) => { if (!readOnly) $emit('update:modelValue', val); }"
     />
 
     <section
@@ -145,7 +146,8 @@
         :segments="shop_segments"
         :shop="shop"
         :types="filter_types"
-        @update:model-value="(val) => $emit('update:modelValue', val)"
+        :read-only="readOnly"
+        @update:model-value="(val) => { if (!readOnly) $emit('update:modelValue', val); }"
       ></b-customers-filter-design>
     </div>
   </v-row>
@@ -169,6 +171,7 @@ export default {
   },
 
   props: {
+    readOnly: { type: Boolean, default: false },
     modern: {
       type: Boolean,
       default: false,
@@ -269,13 +272,13 @@ export default {
   created() {
     this.subLabels = [this.$t("global.commons.users")];
 
-    if (this.permanentFilters) {
+    if (!this.readOnly && this.permanentFilters) {
       this.permanentFilters.reverse().forEach((item) => {
         this.DeleteItemByID(this.modelValue, item.key, "key");
         this.modelValue.unshift(item);
       });
     }
-    this.$emit("update:modelValue", this.modelValue);
+    if (!this.readOnly) this.$emit("update:modelValue", this.modelValue);
     this.refreshFunnel();
 
     this.fetchSegments();

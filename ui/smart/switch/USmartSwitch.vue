@@ -14,6 +14,7 @@
 
 <template>
   <u-smart-select
+    :accessible="accessible"
     :border="border"
     :class="{ 'v-theme--dark': dark }"
     :clearable="clearable"
@@ -59,6 +60,7 @@ export default {
     trueIcon: {},
     falseIcon: {},
     forceShowAll: { default: true, type: Boolean },
+    accessible: { default: false, type: Boolean },
     disabled: { default: false, type: Boolean },
     falseGray: { default: false, type: Boolean },
     border: { default: false, type: Boolean },

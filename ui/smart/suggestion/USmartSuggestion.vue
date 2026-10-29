@@ -15,7 +15,8 @@
 <template>
   <div
     v-if="Array.isArray(samples) && samples?.length"
-    :class="{ 'u-smart-suggestion u-smart-suggestion--modern': modern }"
+    class="u-smart-suggestion"
+    :class="{ 'u-smart-suggestion--modern': modern }"
   >
     <template v-if="modern">
       <v-btn
@@ -43,13 +44,15 @@
       </v-btn>
       <v-menu
         v-model="menu"
+        width="320"
         max-width="min(320px, calc(100vw - 32px))"
         :max-height="320"
+        :offset="6"
       >
         <template #activator="{ props }">
           <v-btn
             v-bind="props"
-            class="sd-modern-icon-button u-smart-suggestion__more"
+            class="u-smart-suggestion__more"
             variant="text"
             icon
             :aria-label="moreLabel"
@@ -58,6 +61,7 @@
             <v-tooltip
               activator="parent"
               :text="moreLabel"
+              :disabled="menu"
               location="top"
               content-class="sd-modern-tooltip text-start"
               :open-on-hover="true"
@@ -67,13 +71,14 @@
           </v-btn>
         </template>
         <v-list
-          class="u-smart-suggestion__menu text-start"
+          class="u-smart-suggestion__choices u-smart-suggestion__menu text-start"
           density="compact"
           :lines="is_object ? 'two' : 'one'"
         >
           <v-list-item
             v-for="n in samples_processed"
             :key="is_object ? n[valueKey] : n"
+            rounded="lg"
             @click="
               $emit('select', is_object ? n[valueKey] : n);
               menu = false;
@@ -93,12 +98,21 @@
       <v-slide-group show-arrows>
         <v-slide-group-item key="o">
           <v-btn
-            size="small"
-            title="View list of suggestions."
-            variant="plain"
+            class="u-smart-suggestion__more"
+            :aria-label="moreLabel"
+            icon
+            variant="text"
             @click="showDialog"
           >
-            <v-icon :size="18">pin_invoke</v-icon>
+            <v-icon icon="more_horiz" size="16" aria-hidden="true" />
+            <v-tooltip
+              activator="parent"
+              :text="moreLabel"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              :open-on-focus="true"
+              :persistent="false"
+            />
           </v-btn>
         </v-slide-group-item>
         <v-slide-group-item
@@ -107,7 +121,8 @@
         >
           <v-btn
             :title="is_object ? n[titleKey] : n"
-            class="tnt"
+            :aria-label="is_object ? n[titleKey] : n"
+            class="tnt u-smart-suggestion__sample"
             size="small"
             variant="plain"
             @click="$emit('select', is_object ? n[valueKey] : n)"
@@ -126,22 +141,22 @@
         scrollable
         transition="dialog-bottom-transition"
       >
-        <v-card>
+        <v-card class="text-start">
           <v-card-text class="py-16">
             <v-list
-              class="max-widget-width mx-auto text-start border-between-vertical overflow-visible"
+              class="u-smart-suggestion__choices max-widget-width mx-auto text-start overflow-visible"
               lines="two"
             >
               <v-list-item
                 v-for="n in samples_processed"
                 :key="is_object ? n[valueKey] : n"
-                class="row-hover"
+                rounded="lg"
                 @click="
                   $emit('select', is_object ? n[valueKey] : n);
                   closeDialog();
                 "
               >
-                <v-list-item-title class="typo-body text-wrap">
+                <v-list-item-title class="text-wrap">
                   {{ is_object ? n[titleKey] : n }}
                 </v-list-item-title>
                 <v-list-item-subtitle v-if="is_object">
@@ -241,18 +256,14 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.u-smart-suggestion--modern {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 14px;
-
+.u-smart-suggestion {
   .u-smart-suggestion__sample.v-btn {
     min-width: 0;
     min-height: 26px;
     height: auto;
-    padding: 3px 0;
-    border-radius: 0;
+    padding: 3px 8px;
+    border: 0;
+    border-radius: 999px;
     font-family: inherit;
     font-size: 11px;
     font-weight: 400;
@@ -260,7 +271,9 @@ export default defineComponent({
     letter-spacing: 0;
     text-indent: 0;
     text-transform: none;
-    color: var(--sd-modern-muted);
+    color: rgba(var(--v-theme-on-surface), 0.62);
+    background: rgba(var(--v-theme-on-surface), 0.045);
+    box-shadow: none;
     opacity: 1;
 
     :deep(.v-btn__content) {
@@ -268,40 +281,98 @@ export default defineComponent({
       letter-spacing: inherit;
       white-space: normal;
       text-align: start;
+      opacity: 1;
     }
   }
   .u-smart-suggestion__sample:hover {
-    color: rgb(var(--v-theme-on-surface));
-    text-decoration: underline;
+    color: rgba(var(--v-theme-on-surface), 0.78);
+    background: rgba(var(--v-theme-on-surface), 0.075);
   }
-  .u-smart-suggestion__more {
-    --sd-modern-icon-button-size: 32px;
+  .u-smart-suggestion__more.v-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+    color: rgba(var(--v-theme-on-surface), 0.62);
+  }
+  .u-smart-suggestion__more.v-btn:focus-visible,
+  .u-smart-suggestion__sample.v-btn:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
   }
 }
-.u-smart-suggestion__menu {
+.u-smart-suggestion--modern {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+.u-smart-suggestion:not(.u-smart-suggestion--modern) {
+  .u-smart-suggestion__sample,
+  .u-smart-suggestion__more {
+    margin-inline-end: 6px;
+  }
+}
+.u-smart-suggestion__choices {
+  padding: 6px;
+  color: rgba(var(--v-theme-on-surface), 0.72);
   font-family: inherit;
   font-size: 13px;
+  font-weight: 400;
   line-height: 20px;
+  letter-spacing: 0;
 
+  :deep(.v-list-item) {
+    min-height: 40px;
+    padding: 9px 12px;
+  }
+  :deep(.v-list-item:focus-visible) {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: -2px;
+  }
   :deep(.v-list-item-title) {
     font: inherit;
+    white-space: normal;
+    hyphens: none;
     overflow-wrap: anywhere;
   }
   :deep(.v-list-item-subtitle) {
+    color: rgba(var(--v-theme-on-surface), 0.62);
     font-size: 11px;
     line-height: 17px;
+    letter-spacing: 0;
+    white-space: normal;
+    hyphens: none;
     overflow-wrap: anywhere;
+    -webkit-line-clamp: unset;
+    opacity: 1;
   }
 }
+.u-smart-suggestion__menu.v-list {
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+  border-radius: 12px;
+  background: rgb(var(--v-theme-surface));
+  box-shadow: 0 6px 20px rgba(var(--v-theme-on-surface), 0.09);
+  scrollbar-width: thin;
+}
 @media (max-width: 600px), (pointer: coarse) {
-  .u-smart-suggestion--modern {
+  .u-smart-suggestion {
     .u-smart-suggestion__sample.v-btn {
       min-width: 44px;
       min-height: 44px;
     }
-    .u-smart-suggestion__more {
-      --sd-modern-icon-button-size: 44px;
+    .u-smart-suggestion__more.v-btn {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
     }
+  }
+  .u-smart-suggestion__choices :deep(.v-list-item) {
+    min-height: 44px;
   }
 }
 </style>

@@ -16,12 +16,14 @@
   <!-- ------------------- Products List ------------------- -->
   <div
     :style="{ 'overflow-hidden': inDragState }"
+    :class="{ 'b-products-window--modern sd-modern-widget text-start': modern }"
     class="s--backoffice-products-management-view"
     v-bind="$attrs"
     @contextmenu="showMenu($event, null, null)"
   >
     <!-- ⬬⬬⬬⬬ Breadcrumbs ⬬⬬⬬⬬ -->
 
+    <div v-if="!modern" class="b-products-window__location">
     <u-breadcrumb
       v-intersect="
         (isIntersecting, entries, observer) => {
@@ -31,6 +33,7 @@
       :hierarchy-items="hierarchy_items"
       :replace="dialogMode"
     />
+    </div>
 
     <!-- ██████████████████ Clone Product ██████████████████ -->
     <v-slide-y-transition hide-on-leave>
@@ -148,6 +151,7 @@
         v-model:only-available="only_available"
         :loading="busy_fetch"
         class="w-100"
+        :class="{ 'b-products-window__sort sd-modern-list-toolbar': modern }"
         has-search
         @update:search="
           (val) => {
@@ -159,13 +163,22 @@
       >
         <v-btn
           icon
-          title="Change view mode"
+          :title="modern ? undefined : 'Change view mode'"
+          :aria-label="modern ? $t('products_select.modern.change_view') : undefined"
+          :class="{ 'sd-modern-icon-button b-products-window__view-button': modern }"
           variant="text"
           @click="toggleViewMode"
         >
           <v-icon>{{ mini ? "folder" : "view_comfy" }}</v-icon>
+          <v-tooltip
+            v-if="modern"
+            activator="parent"
+            content-class="sd-modern-tooltip text-start"
+            location="top"
+          >{{ $t('products_select.modern.change_view') }}</v-tooltip>
         </v-btn>
 
+        <div v-if="modern" class="b-products-window__toolbar-break"></div>
         <v-spacer></v-spacer>
 
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Filter by Status & Types ▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
@@ -174,9 +187,11 @@
           v-model="filters"
           :shop="shop"
           class="min-width-200"
+          :class="{ 'b-products-window__inventory-filter': modern }"
+          :modern="modern"
           dense
           flat
-          variant="solo"
+          :variant="modern ? 'plain' : 'solo'"
           @change="onFilterChange"
         >
         </b-inventory-filter>
@@ -187,12 +202,13 @@
           v-model="vendor_filter"
           :shop="shop"
           class="max-w-300 min-width-200"
+          :class="{ 'b-products-window__vendor-filter': modern }"
           dense
           flat
           hide-details
           clearable
           prepend-inner-icon="storefront"
-          variant="solo"
+          :variant="modern ? 'plain' : 'solo'"
           @change="fetchData()"
         ></b-vendor-input>
       </s-products-sort-view>
@@ -207,7 +223,7 @@
       clearable
       hide-details
       prepend-inner-icon="storefront"
-      solo
+      :variant="modern ? 'plain' : 'solo'"
       @change="fetchData()"
     ></b-vendor-input>
 
@@ -287,6 +303,16 @@
         </div>
       </u-fade-scroll>
     </v-expand-transition>
+
+    <div v-if="modern" ref="breadcrumb_location" class="b-products-window__location">
+      <u-breadcrumb
+        v-intersect="(isIntersecting) => { fixed = !isIntersecting; }"
+        :hierarchy-items="hierarchy_items"
+        :replace="dialogMode"
+        class="b-products-window__breadcrumbs"
+      />
+      <slot name="breadcrumb-append"></slot>
+    </div>
 
     <!-- ██████████████████ List ██████████████████ -->
 
@@ -494,6 +520,7 @@
         >
           <v-pagination
             v-model="folder_page"
+            :class="{ 'sd-modern-pagination': modern }"
             :length="folder_pages_count"
             rounded
           ></v-pagination>
@@ -640,9 +667,14 @@
           v-show="product_pages_count > 1"
           key="pagination-products"
           cols="12"
+          :class="{ 'sd-modern-table-footer': modern }"
         >
+          <span v-if="modern" class="sd-modern-muted">
+            {{ products_count }} {{ $t('global.commons.products') }}
+          </span>
           <v-pagination
             v-model="product_page"
+            :class="{ 'sd-modern-pagination': modern }"
             :length="product_pages_count"
             rounded
             :disabled="busy_fetch"
@@ -658,15 +690,17 @@
             (!busy_fetch || products.length)
           "
         >
+          <div key="catalog-tools" class="b-products-window__tools">
           <!-- ⬬⬬⬬ Force new line in mini mode ⬬⬬⬬ -->
 
-          <v-col v-if="mini" key="spacer" cols="12"></v-col>
+          <v-col v-if="mini && !modern" key="spacer" cols="12"></v-col>
 
           <!-- ⬬⬬⬬ Add button ⬬⬬⬬ -->
 
           <v-col
             key="add-new-product-buttons"
             class="p-2 d-flex flex-column"
+            :class="{ 'b-products-window__creation-stack': modern }"
             cols="12"
             lg="3"
             md="4"
@@ -677,33 +711,52 @@
               :caption="$t('add_product.title_new')"
               :fillHeight="false"
               class="flex-grow-1 elevation-1"
+              :class="{ 'b-products-window__create b-products-window__create--primary': modern }"
+              :color="modern ? 'rgb(var(--v-theme-primary))' : undefined"
+              :hover-color="modern ? 'rgb(var(--v-theme-primary))' : undefined"
+              :role="modern ? 'button' : undefined"
+              :tabindex="modern ? 0 : undefined"
               icon="library_add"
               message="⌘Ctrl + P"
               min-height="100px"
               small
               @click="$emit('click:add')"
+              @keydown.enter="modern && $emit('click:add')"
+              @keydown.space.prevent="modern && $emit('click:add')"
             ></u-button-add>
             <u-button-add
               :caption="$t('add_product.title_new')"
               :fillHeight="false"
               class="mt-1 flex-grow-1 elevation-1"
+              :class="{ 'b-products-window__create': modern }"
+              :color="modern ? 'rgb(var(--v-theme-surface))' : undefined"
+              :hover-color="modern ? 'rgba(var(--v-theme-on-surface), 0.025)' : undefined"
+              :role="modern ? 'button' : undefined"
+              :tabindex="modern ? 0 : undefined"
               icon="flash_on"
-              message="Fast Mode"
+              :message="modern ? $t('products_select.modern.fast_mode') : 'Fast Mode'"
               min-height="100px"
               small
               @click="$emit('click:fast-add')"
+              @keydown.enter="modern && $emit('click:fast-add')"
+              @keydown.space.prevent="modern && $emit('click:fast-add')"
             ></u-button-add>
             <u-button-add
               :caption="$t('products_select.ai.title')"
               :fillHeight="false"
               class="mt-1 flex-grow-1 elevation-1"
-              color="#516ad6"
-              hover-color="#667eea"
+              :class="{ 'b-products-window__create': modern }"
+              :color="modern ? 'rgb(var(--v-theme-surface))' : '#516ad6'"
+              :hover-color="modern ? 'rgba(var(--v-theme-on-surface), 0.025)' : '#667eea'"
+              :role="modern ? 'button' : undefined"
+              :tabindex="modern ? 0 : undefined"
               icon="auto_fix_high"
               message="⌘Ctrl + X"
               min-height="100px"
               small
               @click="$emit('click:ai-add')"
+              @keydown.enter="modern && $emit('click:ai-add')"
+              @keydown.space.prevent="modern && $emit('click:ai-add')"
             ></u-button-add>
           </v-col>
 
@@ -720,6 +773,7 @@
             "
             key="root-filters"
             class="p-2 d-flex flex-column"
+            :class="{ 'b-products-window__filter-tile': modern }"
             cols="12"
             lg="3"
             md="4"
@@ -727,7 +781,7 @@
             xl="3"
           >
             <div
-              class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+              :class="modern ? 'sd-modern-widget b-products-window__feature' : 'dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative'"
             >
               <div>
                 <h3 v-if="current_filter">
@@ -737,14 +791,14 @@
 
                   {{
                     parent_folders
-                      ? "This category has a filter."
+                      ? modern ? $t('products_select.modern.category_has_filter', { category: parent_folders.title }) : "This category has a filter."
                       : $t("products_select.filter_box.has_root_filter_message")
                   }}
                 </h3>
                 <h3 v-else>
                   {{
                     parent_folders
-                      ? "No filters have been defined!"
+                      ? modern ? $t('products_select.modern.category_no_filter', { category: parent_folders.title }) : "No filters have been defined!"
                       : $t("products_select.filter_box.no_root_filter_message")
                   }}
                 </h3>
@@ -765,6 +819,7 @@
 
                 <v-btn
                   class="tnt ma-1"
+                  :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
                   color="primary"
                   size="small"
                   @click="dialog_root_filter = true"
@@ -773,7 +828,7 @@
 
                   {{
                     parent_folders
-                      ? `Edit ${parent_folders.title.limitWords(1)} Filter`
+                      ? modern ? $t('products_select.modern.edit_category_filter', { category: parent_folders.title.limitWords(1) }) : `Edit ${parent_folders.title.limitWords(1)} Filter`
                       : $t("products_select.filter_box.edit_action")
                   }}
                 </v-btn>
@@ -781,6 +836,7 @@
                   v-if="current_filter"
                   :loading="busy_clear_root_filter"
                   class="tnt ma-1"
+                  :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
                   size="small"
                   variant="outlined"
                   @click="showClearRootFiltersDialog(parent_folders)"
@@ -789,7 +845,7 @@
 
                   {{
                     parent_folders
-                      ? "Clear Category Filter"
+                      ? modern ? $t('products_select.modern.clear_category_filter', { category: parent_folders.title.limitWords(1) }) : "Clear Category Filter"
                       : $t("products_select.filter_box.clear_action")
                   }}
                 </v-btn>
@@ -805,6 +861,7 @@
             "
             key="engine"
             class="p-2 d-flex flex-column"
+            :class="{ 'b-products-window__engine-tile': modern }"
             cols="12"
             lg="3"
             md="4"
@@ -812,7 +869,7 @@
             xl="3"
           >
             <div
-              class="dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative"
+              :class="modern ? 'sd-modern-widget b-products-window__feature' : 'dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative'"
             >
               <div>
                 <h3>{{ $t("products_select.engine.title") }}</h3>
@@ -851,6 +908,7 @@
 
                 <v-btn
                   class="tnt ma-1"
+                  :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
                   color="primary"
                   size="small"
                   @click="dialog_root_engine = true"
@@ -868,6 +926,7 @@
               </div>
             </div>
           </v-col>
+          </div>
         </template>
       </v-fade-transition>
     </v-row>
@@ -1765,7 +1824,7 @@
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card class="text-start">
+    <v-card class="text-start" :class="{ 'sd-modern-canvas b-products-window__editor': modern }">
       <v-card-title>
         <v-avatar class="avatar-gradient -thin -shop me-2" size="38">
           <img :src="getShopImagePath(shop.icon)" />
@@ -1789,6 +1848,8 @@
       </v-card-title>
       <v-card-text>
         <b-category-filter-editor
+          :modern="modern"
+          @cancel="dialog_root_filter = false"
           :category="
             parent_folders
               ? parent_folders
@@ -1808,7 +1869,7 @@
           "
         />
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="!modern">
         <div class="widget-buttons">
           <v-btn
             size="x-large"
@@ -1831,7 +1892,7 @@
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card class="text-start">
+    <v-card class="text-start" :class="{ 'sd-modern-canvas b-products-window__editor': modern }">
       <v-card-title>
         <v-avatar class="avatar-gradient -thin -shop me-2" size="38">
           <img :src="getShopImagePath(shop.icon)" />
@@ -1855,6 +1916,8 @@
       </v-card-title>
       <v-card-text>
         <b-category-engine-editor
+          :modern="modern"
+          @cancel="dialog_root_engine = false"
           :category="
             parent_folders
               ? parent_folders
@@ -1881,7 +1944,7 @@
           "
         />
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="!modern">
         <div class="widget-buttons">
           <v-btn
             size="x-large"
@@ -1994,6 +2057,10 @@ export default {
     BProductWindowProductLarge,
   },
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     shop: {
       required: true,
     },
@@ -2432,7 +2499,11 @@ export default {
     },
     current_dir_id() {
       this.$nextTick(() => {
-        ScrollHelper.scrollToElement("#sort_tools", 0, "smooth");
+        ScrollHelper.scrollToElement(
+          this.modern ? (this.$refs.breadcrumb_location as HTMLElement) : "#sort_tools",
+          this.modern ? 10 : 0,
+          "smooth",
+        );
       });
     },
   },
@@ -3400,3 +3471,192 @@ export default {
 </script>
 
 <style lang="scss" scoped src="./style.scss"></style>
+
+<style lang="scss" scoped>
+.b-products-window__location,
+.b-products-window__tools {
+  display: contents;
+}
+
+.b-products-window--modern {
+  padding: 15px 17px 0;
+  border: 0;
+  border-radius: 17px;
+  font-size: 13px;
+  line-height: 1.5;
+
+  .b-products-window__location {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-block: 10px 13px;
+  }
+
+  .b-products-window__breadcrumbs {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+    :deep(.v-breadcrumbs) { padding: 0; min-height: 36px; font-size: 12px; line-height: 18px; }
+  }
+
+  .b-products-window__sort {
+    min-height: 0;
+    overflow: visible;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-block: 11px 13px;
+    margin-block-end: 0;
+    border-block-end: 1px solid var(--sd-modern-border);
+
+    :deep(> .v-spacer) { display: none; }
+    :deep(> div:has(> .v-btn-toggle)) { order: 2; flex: 1; }
+    :deep(> .v-btn:first-child) { order: 1; }
+    :deep(> .show-on-small-900) { order: 2; margin-inline-end: auto; }
+    :deep(> .v-btn:not(.b-products-window__view-button)) {
+      height: 36px !important;
+      min-height: 36px;
+      padding-inline: 6px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+    :deep(> .v-btn .v-icon) { font-size: 18px !important; margin-block: 0 !important; }
+    :deep(.v-btn-toggle) { height: 36px; gap: 5px; }
+    :deep(.v-btn-toggle > .v-btn) {
+      height: 36px !important;
+      min-height: 36px;
+      border-radius: 7px;
+      padding: 7px 8px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 15px;
+      letter-spacing: 0;
+    }
+    :deep(.v-btn-toggle > .dark-flat) {
+      color: rgb(var(--v-theme-on-surface)) !important;
+      background: var(--sd-modern-canvas-color) !important;
+    }
+    :deep(.search-box) {
+      order: 9;
+      flex: 0 1 220px;
+      margin: 0 !important;
+      margin-inline-start: auto !important;
+      min-width: 150px !important;
+      max-width: 280px;
+    }
+    :deep(.search-box .v-field) { background: transparent; box-shadow: none; }
+    :deep(.search-box .v-field__input) {
+      font-family: inherit;
+      font-size: 12px;
+      line-height: 20px;
+    }
+    :deep(.search-box .v-field__prepend-inner .v-icon) { font-size: 18px; }
+  }
+
+  .b-products-window__view-button { order: 3; }
+  .b-products-window__toolbar-break { order: 6; flex-basis: 100%; }
+  .b-products-window__inventory-filter { order: 7; flex: 0 1 230px; }
+  .b-products-window__vendor-filter { order: 8; flex: 0 1 230px; }
+
+  // Extend the lower canvas through the workspace inset without changing legacy row flow.
+  .b-products-window__tools {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    flex: 0 0 calc(100% + 26px);
+    width: calc(100% + 26px);
+    margin-inline: -13px;
+    margin-block-start: 18px;
+    padding-block-start: 18px;
+    background: var(--sd-modern-canvas-color);
+    align-items: stretch;
+
+    > :deep([class*="v-col-"]) {
+      width: auto;
+      max-width: none;
+      min-width: 0;
+      flex: none;
+      padding: 0 !important;
+    }
+  }
+
+  .b-products-window__creation-stack {
+    display: grid !important;
+    grid-template-rows: repeat(3, minmax(100px, 1fr));
+    gap: 5px;
+  }
+
+  .b-products-window__create {
+    margin: 0 !important;
+    min-height: 100px;
+    height: auto !important;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    color: rgb(var(--v-theme-on-surface));
+
+    :deep(.sprite) { display: none; }
+    :deep(.center-content) {
+      position: static;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      min-height: 100px;
+      padding: 13px;
+      margin: 0;
+      transform: none;
+    }
+    :deep(.-title.small) { font-size: 12px !important; font-weight: 500; line-height: 18px; }
+    :deep(.-message) { font-size: 11px; font-weight: 400; line-height: 16px; opacity: .75; }
+    :deep(.v-icon) { color: rgb(var(--v-theme-primary)); }
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  }
+
+  .b-products-window__create--primary {
+    border-color: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-on-primary));
+    :deep(.v-icon) { color: inherit; }
+  }
+
+  .b-products-window__feature {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px 13px;
+    border-radius: 12px;
+    text-align: center;
+
+    > div { min-width: 0; width: 100%; }
+    h3 { font-family: inherit; font-size: 14px; font-weight: 500; line-height: 20px; margin-block-end: 10px; }
+    small { font-family: inherit; font-size: 11px; font-weight: 400; line-height: 18px; color: var(--sd-modern-muted); }
+    .sd-modern-button { margin: 4px !important; }
+  }
+
+  @media (max-width: 1199px) {
+    .b-products-window__tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 599px) {
+    .b-products-window__tools { grid-template-columns: minmax(0, 1fr); }
+    .b-products-window__sort :deep(.search-box) { flex: 1 1 180px; max-width: none; }
+    .b-products-window__inventory-filter { flex: 1 1 180px; }
+    .b-products-window__feature { min-height: 270px; padding-block: 25px; }
+  }
+  @media (max-width: 599px), (pointer: coarse) {
+    .b-products-window__sort :deep(.v-input .v-field__input),
+    .b-products-window__sort :deep(.v-select .v-field__input > input) { font-size: 16px; min-height: 44px; }
+  }
+}
+
+.b-products-window__editor {
+  > .v-card-title { padding: 22px 24px; font-size: 18px; font-weight: 500; }
+  > .v-card-text { padding: 0 24px 24px; }
+}
+</style>

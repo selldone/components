@@ -13,33 +13,40 @@
   -->
 
 <template>
-  <u-fade-scroll
-    v-bind="$attrs"
-    drag-scroll
-    show-arrow
-    stick-class="min-width-250"
-  >
-    <div class="d-flex px-3 py-10">
-      <v-card
-        v-for="(item, i) in items"
-        :key="item.title"
-        width="250"
-        min-width="250"
-        min-height="250"
-        variant="flat"
-        rounded="xl"
-        class="me-2"
-        @click="select(item, i)"
-        v-track:click="`Onboarding ● Tour ● ${item.title}`"
-      >
-        <v-img :src="item.image" rounded="xl" class="ma-1" height="150"></v-img>
+  <slot name="activator" :open="openTour">
+    <u-fade-scroll
+      v-bind="$attrs"
+      drag-scroll
+      show-arrow
+      stick-class="min-width-250"
+    >
+      <div class="d-flex px-3 py-10">
+        <v-card
+          v-for="(item, i) in items"
+          :key="item.title"
+          width="250"
+          min-width="250"
+          min-height="250"
+          variant="flat"
+          rounded="xl"
+          class="me-2"
+          @click="select(item, i)"
+          v-track:click="`Onboarding ● Tour ● ${item.title}`"
+        >
+          <v-img
+            :src="item.image"
+            rounded="xl"
+            class="ma-1"
+            height="150"
+          ></v-img>
 
-        <v-card-title class="text-subtitle-2 text-wrap">
-          {{ item.title }}
-        </v-card-title>
-      </v-card>
-    </div>
-  </u-fade-scroll>
+          <v-card-title class="text-subtitle-2 text-wrap">
+            {{ item.title }}
+          </v-card-title>
+        </v-card>
+      </div>
+    </u-fade-scroll>
+  </slot>
   <!-- ███████████████████████ Dialog > Withdraw ███████████████████████ -->
   <v-dialog
     v-model="dialog"
@@ -47,12 +54,12 @@
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card class="text-start">
-      <v-card-text>
+    <v-card class="text-start" :class="{ 's--onboarding-tour-dialog': modern }">
+      <v-card-text :class="{ 's--onboarding-tour-dialog__content': modern }">
         <v-carousel
           v-model="index"
           show-arrows="hover"
-          height="100%"
+          :height="modern ? 'min(62vh, 680px)' : '100%'"
           hide-delimiters
         >
           <v-carousel-item
@@ -65,16 +72,24 @@
         </v-carousel>
 
         <v-sheet
-          style="
-            position: absolute;
-            bottom: 88px;
-            left: 8px;
-            right: 8px;
-            backdrop-filter: blur(8px);
+          :style="
+            modern
+              ? undefined
+              : {
+                  position: 'absolute',
+                  bottom: '88px',
+                  left: '8px',
+                  right: '8px',
+                  backdropFilter: 'blur(8px)',
+                }
           "
-          class="pa-3 mx-auto typo-body"
+          :class="
+            modern
+              ? 's--onboarding-tour-dialog__caption'
+              : 'pa-3 mx-auto typo-body'
+          "
           rounded="sm"
-          color="#ffffffdd"
+          :color="modern ? undefined : '#ffffffdd'"
           max-width="800"
           border
         >
@@ -83,11 +98,13 @@
 
           <div v-if="items[index].action" class="py-2 text-end">
             <v-btn
-              class="tnt"
-              size="large"
-              append-icon="open_in_new"
+              :class="modern ? 'sd-modern-button' : 'tnt'"
+              :size="modern ? undefined : 'large'"
+              :variant="modern ? 'text' : undefined"
+              :append-icon="modern ? 'north_east' : 'open_in_new'"
               :href="items[index].action.href"
               target="_blank"
+              rel="noopener"
               v-track:click="
                 `Onboarding ● Tour ● ${items[index].title} ● Action`
               "
@@ -98,8 +115,13 @@
         </v-sheet>
       </v-card-text>
       <v-card-actions>
-        <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="dialog = false">
+        <div :class="modern ? 'sd-modern-actions' : 'widget-buttons'">
+          <v-btn
+            :size="modern ? undefined : 'x-large'"
+            :class="{ 'sd-modern-button': modern }"
+            variant="text"
+            @click="dialog = false"
+          >
             <v-icon start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
@@ -116,6 +138,7 @@ export default {
   name: "BShopOnboardingTour",
   components: { UFadeScroll },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -174,6 +197,9 @@ export default {
   watch: {},
 
   methods: {
+    openTour() {
+      this.select(this.items[0], 0);
+    },
     select(item, index) {
       this.index = index;
       this.selected_item = item;
@@ -186,6 +212,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.s--onboarding-tour-dialog {
+  font-family: inherit;
+  &__content {
+    padding: 20px;
+  }
+  &__caption {
+    margin: 16px auto 0;
+    padding: 16px;
+    width: min(100%, 800px);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgb(var(--v-theme-on-surface));
+    background: var(--sd-modern-inset);
+    border-color: var(--sd-modern-border);
+    > b {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

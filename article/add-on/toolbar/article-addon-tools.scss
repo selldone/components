@@ -1,0 +1,112 @@
+// Shared custom-block chrome; the four add-ons opt in only while editable.
+.a-article-addon--editable {
+  position: relative;
+  min-width: 0;
+  margin-block: 54px 32px;
+  padding: 20px;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+  border-radius: 12px;
+
+  .a-article-addon-tools {
+    --addon-tools-bg: light-dark(#25252b, #37353f);
+    --addon-tools-ink: light-dark(#f7f7f9, #f9f9fb);
+    --addon-tools-border: light-dark(#4c4b55, #625f6d);
+    --addon-tools-hover: light-dark(#3b3a43, #4b4856);
+    font-family: inherit;
+    line-height: 18px;
+  }
+
+  .a-article-addon-tools__launcher.v-btn {
+    position: absolute;
+    inset-inline-start: -32px;
+    top: 12px;
+    width: 28px;
+    min-width: 28px;
+    height: 32px;
+    padding: 0;
+    color: rgba(var(--v-theme-on-surface), 0.65);
+    border-radius: 7px;
+  }
+
+  .a-article-addon-tools__bar {
+    position: absolute;
+    bottom: calc(100% - 2px);
+    inset-inline-start: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: max-content;
+    max-width: 100%;
+    padding: 5px;
+    border: 1px solid var(--addon-tools-border);
+    border-radius: 9px;
+    background: var(--addon-tools-bg);
+    color: var(--addon-tools-ink);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  &:hover > .a-article-addon-tools .a-article-addon-tools__bar,
+  &:focus-within > .a-article-addon-tools .a-article-addon-tools__bar,
+  > .a-article-addon-tools.-pinned .a-article-addon-tools__bar {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .a-article-addon-tools__title { font-size: 11px; font-weight: 500; line-height: 18px; margin-inline: 2px 5px; }
+  .a-article-addon-tools__grip { flex-shrink: 0; margin-inline: 3px 0; opacity: 0.75; }
+  .a-article-addon-tools__separator { width: 1px; height: 20px; background: var(--addon-tools-border); margin-inline: 2px; }
+
+  .a-article-addon-tools__button.v-btn,
+  .a-article-addon-tools__value.v-btn {
+    min-height: 32px;
+    height: 32px;
+    min-width: 32px;
+    padding: 5px 9px;
+    color: inherit;
+    background: transparent;
+    border: 1px solid var(--addon-tools-border);
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0;
+    text-transform: none;
+
+    .v-btn__content { font: inherit; gap: 7px; }
+    .v-icon { color: inherit; font-size: 16px; width: 16px; height: 16px; }
+    &:hover { background: var(--addon-tools-hover); }
+  }
+  .a-article-addon-tools__button.v-btn { width: 32px; padding: 0; }
+}
+
+.a-article-addon-tools__menu {
+  min-width: 200px;
+  .v-list-item-title { font-family: inherit; font-size: 13px; font-weight: 400; line-height: 20px; }
+}
+
+@media (max-width: 680px), (pointer: coarse) {
+  .a-article-addon--editable {
+    margin-block-start: 30px;
+    padding: 18px;
+    > .a-article-addon-tools .a-article-addon-tools__bar {
+      position: relative;
+      inset: auto;
+      width: auto;
+      max-width: none;
+      margin: -13px -13px 18px;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .a-article-addon-tools__launcher.v-btn { display: none; }
+    .a-article-addon-tools__button.v-btn,
+    .a-article-addon-tools__value.v-btn { height: 44px; min-height: 44px; }
+    .a-article-addon-tools__button.v-btn { width: 44px; min-width: 44px; }
+  }
+}
