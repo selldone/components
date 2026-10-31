@@ -102,114 +102,7 @@
     />
     </div>
 
-    <!-- ██████████████████ Clone Product ██████████████████ -->
-    <v-slide-y-transition hide-on-leave>
-      <u-drop
-        v-if="current_dragged_product"
-        :class="{
-          'drop-safe': inDragState,
-
-          'now-drop-enter': dragOverClone,
-        }"
-        class="clone-area shadow-small"
-        @dragenter="onDropEnterDuplicate()"
-        @dragleave="onDropLeaveDuplicate()"
-        @drop="(data) => handleDropInDuplicate(data)"
-      >
-        <u-button-circle
-          :tooltip="$t('global.actions.copy')"
-          class="center"
-          color="#fff"
-          icon="fa:fas fa-copy"
-        />
-      </u-drop>
-    </v-slide-y-transition>
-
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
-
-    <!-- ██████████████████ Top Helper Container ██████████████████ -->
-    <v-slide-y-transition hide-on-leave>
-      <u-drop
-        v-if="
-          current_dragged_product ||
-          current_dragged_folder ||
-          held_folders.length ||
-          held_items.length
-        "
-        :class="{ focus: dragOverHolder, 'fixed slideInDown': fixed }"
-        class="top-drop-container"
-        @dragenter="show_spirit_container ? undefined : onDropEnterHolder()"
-        @dragleave="show_spirit_container ? undefined : onDropLeaveHolder()"
-        @drop="(data) => handleDropInHolder(data)"
-      >
-        <!-- Holder zone -->
-
-        <!-- ⬬⬬⬬⬬ ▓▓▓▓▓▓▓▓▓ HOLDER > Folders ▓▓▓▓▓▓▓▓▓ ⬬⬬⬬⬬ -->
-
-        <div
-          v-for="category in held_folders"
-          :key="'f' + category.id"
-          class="item"
-        >
-          <u-drag
-            :drag-image-html="
-              $t('products_select.move_category', {
-                category: category.title.limitWords(2),
-              })
-            "
-            :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
-            :draggable="draggable"
-            :transfer-data="{ category: category }"
-            drag-image-color="#FFA000"
-            @drag="onDragStart({ category: category }, true, ...arguments)"
-            @dragend="onDragEnd"
-          >
-            <circle-image
-              v-if="category.icon"
-              :size="60"
-              :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
-              class="hover-scale-tiny folder"
-            />
-            <circle-image
-              v-else
-              :size="60"
-              class="hover-scale-tiny"
-              icon="fa:fas fa-shapes"
-            />
-          </u-drag>
-        </div>
-
-        <!-- ⬬⬬⬬⬬ ▓▓▓▓▓▓▓▓▓ HOLDER > Products ▓▓▓▓▓▓▓▓▓ ⬬⬬⬬⬬ -->
-
-        <div v-for="product in held_items" :key="'p' + product.id" class="item">
-          <u-drag
-            :drag-image-html="
-              $t('products_select.move_product', {
-                category: product.title.limitWords(2),
-              })
-            "
-            :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
-            :draggable="draggable"
-            :transfer-data="{ product: product }"
-            @drag="onDragStart({ product: product }, true, ...arguments)"
-            @dragend="onDragEnd"
-          >
-            <circle-image
-              v-if="product.icon"
-              :size="60"
-              :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
-              class="hover-scale-tiny"
-            />
-            <circle-image
-              v-else
-              :size="60"
-              class="hover-scale-tiny"
-              icon="fa:fas fa-box"
-            />
-          </u-drag>
-        </div>
-      </u-drop>
-    </v-slide-y-transition>
 
     <!-- ██████████████████ Sort tools ██████████████████ -->
     <v-row no-gutters id="sort_tools">
@@ -382,6 +275,105 @@
       <slot name="breadcrumb-append"></slot>
     </div>
 
+    <!-- ██████████████████ Top Helper Container ██████████████████ -->
+    <v-slide-y-transition hide-on-leave>
+      <div
+        v-if="current_dragged_product || current_dragged_folder || held_folders.length || held_items.length"
+        :class="{ 'b-products-window__holder-transition': modern }"
+      >
+        <u-drop
+          :class="[
+            modern ? 'b-products-window__holder' : 'top-drop-container',
+            { focus: dragOverHolder, 'fixed slideInDown': !modern && fixed, 'drop-safe': modern && inDragState },
+          ]"
+          :role="modern ? 'region' : undefined"
+          :aria-label="modern ? $t('products_select.modern.holder.title') : undefined"
+          @dragenter="show_spirit_container ? undefined : onDropEnterHolder()"
+          @dragleave="show_spirit_container ? undefined : onDropLeaveHolder()"
+          @drop="(data) => handleDropInHolder(data)"
+        >
+          <header v-if="modern" class="b-products-window__holder-header">
+            <v-icon size="18" aria-hidden="true">inbox</v-icon>
+            <div>
+              <div class="b-products-window__holder-heading">
+                <h2>{{ $t('products_select.modern.holder.title') }}</h2>
+                <span class="b-products-window__holder-count" role="status" aria-live="polite">{{ $t('products_select.modern.holder.count', { count: $n(held_folders.length + held_items.length) }) }}</span>
+              </div>
+              <p>{{ $t('products_select.modern.holder.instruction') }}</p>
+            </div>
+          </header>
+
+          <div :class="{ 'b-products-window__held-items': modern }" :style="modern ? undefined : { display: 'contents' }" :role="modern ? 'list' : undefined">
+            <!-- ⬬⬬⬬⬬ ▓▓▓▓▓▓▓▓▓ HOLDER > Folders ▓▓▓▓▓▓▓▓▓ ⬬⬬⬬⬬ -->
+            <div v-for="category in held_folders" :key="'f' + category.id" :class="modern ? 'b-products-window__held-item' : 'item'" :role="modern ? 'listitem' : undefined">
+              <u-drag
+                :drag-image-html="$t('products_select.move_category', { category: category.title.limitWords(2) })"
+                :drag-image-src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
+                :draggable="draggable"
+                :transfer-data="{ category: category }"
+                :class="{ 'b-products-window__held-identity': modern }"
+                :tabindex="modern ? 0 : undefined"
+                :aria-label="modern ? $t('products_select.modern.holder.drag_item', { name: category.title }) : undefined"
+                drag-image-color="#FFA000"
+                @drag="onDragStart({ category: category }, true, ...arguments)"
+                @dragend="onDragEnd"
+              >
+                <circle-image v-if="category.icon" :size="modern ? 44 : 60" :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)" class="hover-scale-tiny folder" />
+                <circle-image v-else :size="modern ? 44 : 60" class="hover-scale-tiny" :icon="modern ? 'folder' : 'fa:fas fa-shapes'" />
+                <template v-if="modern">
+                  <span class="b-products-window__held-name">{{ category.title }}</span>
+                  <span class="b-products-window__held-kind">{{ $t('global.commons.category') }}</span>
+                  <v-tooltip activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">{{ $t('products_select.modern.holder.drag_item', { name: category.title }) }}</v-tooltip>
+                </template>
+              </u-drag>
+            </div>
+
+            <!-- ⬬⬬⬬⬬ ▓▓▓▓▓▓▓▓▓ HOLDER > Products ▓▓▓▓▓▓▓▓▓ ⬬⬬⬬⬬ -->
+            <div v-for="product in held_items" :key="'p' + product.id" :class="modern ? 'b-products-window__held-item' : 'item'" :role="modern ? 'listitem' : undefined">
+              <u-drag
+                :drag-image-html="$t('products_select.move_product', { category: product.title.limitWords(2) })"
+                :drag-image-src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)"
+                :draggable="draggable"
+                :transfer-data="{ product: product }"
+                :class="{ 'b-products-window__held-identity': modern }"
+                :tabindex="modern ? 0 : undefined"
+                :aria-label="modern ? $t('products_select.modern.holder.drag_item', { name: product.title }) : undefined"
+                @drag="onDragStart({ product: product }, true, ...arguments)"
+                @dragend="onDragEnd"
+              >
+                <circle-image v-if="product.icon" :size="modern ? 44 : 60" :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)" class="hover-scale-tiny" />
+                <circle-image v-else :size="modern ? 44 : 60" :src="modern ? ProductType[product.type]?.image : undefined" class="hover-scale-tiny" :icon="modern ? 'inventory_2' : 'fa:fas fa-box'" />
+                <template v-if="modern">
+                  <span class="b-products-window__held-name">{{ product.title }}</span>
+                  <span class="b-products-window__held-kind">{{ $t('global.commons.product') }}</span>
+                  <v-tooltip activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">{{ $t('products_select.modern.holder.drag_item', { name: product.title }) }}</v-tooltip>
+                </template>
+              </u-drag>
+            </div>
+
+            <div v-if="modern && !held_folders.length && !held_items.length" class="b-products-window__holder-empty">
+              <v-icon size="20" aria-hidden="true">move_to_inbox</v-icon>
+              <span>{{ $t('products_select.modern.holder.empty') }}</span>
+            </div>
+          </div>
+          <p v-if="modern" class="b-products-window__holder-note">{{ $t('products_select.modern.holder.note') }}</p>
+        </u-drop>
+
+        <div v-if="modern && show_spirit_container" class="b-products-window__holder-targets">
+          <u-drop
+            v-if="show_spirit_container"
+            class="b-products-window__holder-target"
+            :class="{ 'drop-safe': inDragState, 'now-drop-enter': current_drop_enter_folder && current_drop_enter_folder.id === current_dir_id }"
+            @dragenter="onDropEnter({ id: current_dir_id })"
+            @drop="(data) => handleDropInFolder(data, { id: current_dir_id })"
+          >
+            <v-icon size="18" aria-hidden="true">drive_file_move</v-icon>
+            <span>{{ $t('products_select.modern.holder.move_here', { category: parent_folders?.title || $t('global.store') }) }}</span>
+          </u-drop>
+        </div>
+      </div>
+    </v-slide-y-transition>
+
     <!-- ██████████████████ List ██████████████████ -->
 
     <v-row id="manage-panel" dense>
@@ -394,7 +386,7 @@
         <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Spirit Container ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
         <v-col
-          v-if="show_spirit_container"
+          v-if="show_spirit_container && !modern"
           key="drop-box"
           class="b-products-window__drop-box"
           cols="12"
@@ -1364,6 +1356,16 @@
                     <v-icon v-else>inventory</v-icon>
                   </v-avatar>
                 </template>
+              </v-list-item>
+
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Duplicate Product ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+              <v-list-item @click="cloneProduct(currentProductForMenu.id)">
+                <template v-slot:prepend>
+                  <v-icon size="small">control_point_duplicate</v-icon>
+                </template>
+                <v-list-item-title>
+                  {{ $t('product_panel.workspace.context_menu.duplicate_product') }}
+                </v-list-item-title>
               </v-list-item>
 
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Dashboard ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -2553,7 +2555,6 @@ export default {
     held_items: [],
     held_folders: [],
     dragOverHolder: false,
-    dragOverClone: false,
 
     show_spirit_container: false,
 
@@ -3161,26 +3162,9 @@ export default {
     onDropEnterHolder() {
       this.current_drop_enter_folder = null;
       this.dragOverHolder = true;
-      this.dragOverClone = false;
     },
     onDropLeaveHolder() {
       this.dragOverHolder = false;
-    },
-
-    handleDropInDuplicate(data) {
-      if (data.product) {
-        this.cloneProduct(data.product.id);
-      }
-      this.onDragEnd();
-    },
-
-    onDropEnterDuplicate() {
-      this.current_drop_enter_folder = null;
-      this.dragOverHolder = false;
-      this.dragOverClone = true;
-    },
-    onDropLeaveDuplicate() {
-      this.dragOverClone = false;
     },
 
     cloneProduct(product_id, category_id) {
@@ -3639,7 +3623,6 @@ export default {
       this.current_drop_enter_folder = null;
       this.dragOverHolder = false;
       this.show_spirit_container = false;
-      this.dragOverClone = false;
 
       this.arrange_products_target = null;
       this.arrange_categories_target = null;
@@ -4274,6 +4257,123 @@ export default {
     line-height: inherit;
   }
   .b-products-window__tool-row { margin: 18px 0 0; }
+
+  .b-products-window__holder-transition { display: flow-root; }
+
+  .b-products-window__holder {
+    width: 100%;
+    min-width: 0;
+    margin-block-end: 16px;
+    padding: 16px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 12px;
+    background: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
+
+    &.focus { border-color: rgb(var(--v-theme-primary)); }
+  }
+
+  .b-products-window__holder-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-block-end: 12px;
+
+    > .v-icon { flex-shrink: 0; margin-block-start: 2px; }
+    > div { min-width: 0; }
+    h2 { margin: 0; font-size: 14px; font-weight: 500; line-height: 22px; letter-spacing: normal; }
+    p { margin: 2px 0 0; font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
+  }
+
+  .b-products-window__holder-heading {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    column-gap: 10px;
+  }
+
+  .b-products-window__holder-count,
+  .b-products-window__held-kind,
+  .b-products-window__holder-note {
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+
+  .b-products-window__held-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-block-start: 12px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+
+  .b-products-window__held-item { flex: 0 0 100px; min-width: 0; }
+
+  .b-products-window__held-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 4px;
+    border-radius: 8px;
+    cursor: grab;
+
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
+    &:active { cursor: grabbing; }
+  }
+
+  .b-products-window__held-name {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  .b-products-window__held-kind { margin-block-start: -4px; }
+  .b-products-window__holder-note { margin: 9px 0 0; }
+
+  .b-products-window__holder-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 54px;
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  // Keep the move target outside the holder so its drop cannot also hold the item.
+  .b-products-window__holder-targets { display: flex; flex-wrap: wrap; gap: 8px; margin-block-end: 16px; }
+  .b-products-window__holder-target {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 180px;
+    gap: 8px;
+    min-width: 0;
+    min-height: 38px;
+    padding: 7px 12px;
+    border: 1px dashed var(--sd-modern-border);
+    border-radius: 8px;
+    background: rgb(var(--v-theme-surface));
+    font-size: 12px;
+    line-height: 19px;
+
+    > .v-icon { flex-shrink: 0; }
+    > span { overflow-wrap: anywhere; }
+    &.now-drop-enter { transform: none; border-color: rgb(var(--v-theme-primary)); border-style: solid; }
+  }
+
+  @media (max-width: 599px), (pointer: coarse) {
+    .b-products-window__holder-target { min-height: 44px; }
+  }
 
   #manage-panel .item { transition: none; }
 

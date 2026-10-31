@@ -326,3 +326,119 @@ test("loader ignores stale responses and treats failure as unavailable rather th
   assert.equal(context.community_timeseries.offset, 4);
   assert.equal(context.community_timeseries.days, 30);
 });
+
+test("category and topic reports keep missing data unavailable and retain valid range callbacks", async (suite) => {
+  for (const [entity, relative, fetchMethod, apiMethod] of [
+    [
+      "category",
+      "../category/analytics/CCategoryAnalytics.vue",
+      "fetchCategoryInfo",
+      "GET_COMMUNITY_CATEGORY_DATA",
+    ],
+    [
+      "topic",
+      "../topic/CommunityTopicStatistic.vue",
+      "fetchTopicInfo",
+      "GET_COMMUNITY_TOPIC_DATA",
+    ],
+  ]) {
+    await suite.test(entity, async () => {
+      const source = readComponent(relative);
+      const requests = [],
+        errors = [];
+      class TimeSeries {
+        constructor(raw_data, title, offset, days) {
+          Object.assign(this, { raw_data, title, offset, days });
+        }
+      }
+      const loader = evaluate(
+        source.descriptor.script.content,
+        (path) =>
+          path.includes("timeserie/TimeSeries")
+            ? { TimeSeries }
+            : {
+                default: {
+                  showErrorAlert: (...args) => errors.push(args),
+                  showLaravelError: (...args) => errors.push(args),
+                },
+              },
+        {
+          window: {
+            CAPI: {
+              [apiMethod]: (communityId, id) =>
+                `/communities/${communityId}/${entity}/${id}`,
+            },
+          },
+          axios: {
+            get: (url, options) =>
+              new Promise((resolve) =>
+                requests.push({ url, options, resolve }),
+              ),
+          },
+        },
+      ).default;
+      const context = {
+        ...loader.data(),
+        community: { id: 7 },
+        [entity + "Id"]: 3,
+        $emit() {},
+      };
+      for (const [name, method] of Object.entries(loader.methods))
+        context[name] = method.bind(context);
+      const settle = () => new Promise((resolve) => setImmediate(resolve));
+      const respond = async (data) => {
+        requests.at(-1).resolve({ data: { [entity]: { id: 3 }, data } });
+        await settle();
+        assert.equal(context.busy, false);
+        assert.equal(context[entity].id, 3);
+        assert.deepEqual(
+          errors,
+          [],
+          "Unavailable statistics must not trigger a null-series exception",
+        );
+      };
+
+      context[fetchMethod]();
+      await respond(null);
+      assert.equal(context.timeSeries, null);
+      for (const data of [undefined, {}, "invalid", 0]) {
+        context.timeSeries = new TimeSeries(
+          [{ posts: 99 }],
+          "old report",
+          0,
+          7,
+        );
+        context[fetchMethod]();
+        await respond(data);
+        assert.equal(
+          context.timeSeries,
+          null,
+          "An unavailable response must clear stale report data",
+        );
+      }
+
+      for (const data of [[], [{ posts: 5 }]]) {
+        context[fetchMethod]();
+        await respond(data);
+        assert.equal(context.timeSeries.raw_data, data);
+        assert.equal(context.timeSeries.fetch, context.fetchCallback);
+      }
+      const count = requests.length;
+      context.timeSeries.fetch(3, 30);
+      assert.equal(requests.length, count + 1);
+      assert.deepEqual(
+        JSON.parse(JSON.stringify(requests.at(-1).options.params)),
+        { offset: 3, days: 30 },
+      );
+      await respond([]);
+      assert.equal(context.timeSeries.offset, 3);
+      assert.equal(context.timeSeries.days, 30);
+      context.timeSeries.fetch(3, 30);
+      assert.equal(
+        requests.length,
+        count + 1,
+        "The unchanged range does not refetch",
+      );
+    });
+  }
+});

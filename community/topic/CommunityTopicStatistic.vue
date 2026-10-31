@@ -104,7 +104,7 @@ export default {
           this.topic = data.topic;
           this.data = data.data;
           // Statistics:
-          if (data.data)
+          if (Array.isArray(data.data)) {
             this.timeSeries = new TimeSeries(
               data.data,
               "Topic Data",
@@ -112,8 +112,9 @@ export default {
               this.days,
             );
 
-          // Register fetch callback (Use to refresh by change time span)
-          this.timeSeries.fetch = this.fetchCallback;
+            // Register fetch callback (Use to refresh by change time span)
+            this.timeSeries.fetch = this.fetchCallback;
+          } else this.timeSeries = null;
         })
         .catch((error) => {
           NotificationService.showLaravelError(error);

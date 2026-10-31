@@ -13,7 +13,7 @@ assert.deepEqual(errors, []);
 let now = Date.parse("2026-10-27T08:30:00Z");
 let interval;
 let cleared;
-function evaluate(source) {
+function evaluate(source, require = () => Vue) {
   const exports = {};
   vm.runInNewContext(
     ts.transpileModule(source, {
@@ -21,12 +21,16 @@ function evaluate(source) {
     }).outputText,
     {
       exports,
-      require: () => Vue,
+      require,
       Date: class extends Date {
+        constructor(...args) {
+          super(...(args.length ? args : [now]));
+        }
         static now() {
           return now;
         }
       },
+      window: { $language: { full_locale: "en-US" } },
       setInterval: (callback, delay) => {
         interval = { callback, delay };
         return 17;
@@ -38,7 +42,42 @@ function evaluate(source) {
   );
   return exports;
 }
-const component = evaluate(descriptor.script.content).default;
+const { Calendar } = evaluate(
+  readFileSync(
+    new URL(
+      "../../../../../core-js/enums/language/Calendar.ts",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+);
+const { DateConverter } = evaluate(
+  readFileSync(
+    new URL(
+      "../../../../../core-js/helper/date/DateConverter.ts",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+  (name) => {
+    assert.ok(name.endsWith("/Calendar"));
+    return { Calendar };
+  },
+);
+const DateMixin = evaluate(
+  readFileSync(
+    new URL("../../../../mixin/date/DateMixin.ts", import.meta.url),
+    "utf8",
+  ),
+  (name) => {
+    assert.equal(name, "@selldone/core-js/helper/date/DateConverter");
+    return { DateConverter };
+  },
+).default;
+const component = evaluate(descriptor.script.content, (name) => {
+  assert.equal(name, "@selldone/components-vue/mixin/date/DateMixin");
+  return { default: DateMixin };
+}).default;
 const compiled = compileTemplate({
   source: descriptor.template.content,
   filename: filename.pathname,
@@ -144,7 +183,6 @@ async function presence({
     $vuetify: { display: { xs: mobile } },
     $t: (key) => messages[key.split(".").at(-1)] || key,
     getUserAvatar: (id) => `/test-avatar/${id}`,
-    getFromNowString: () => "a moment ago",
   });
   for (const [name, stub] of Object.entries({
     "v-tooltip": tooltip,
@@ -191,7 +229,7 @@ assert.ok(desktop.html.includes("Test staff, staff@example.test, Staff"));
 assert.ok(desktop.html.includes("Connection 0, ChatGPT, AI agent, Connected"));
 assert.ok(desktop.html.includes("Connected, Recently active"));
 assert.equal((desktop.html.match(/__avatar--recent/g) || []).length, 1);
-assert.ok(desktop.html.includes("Last activity: a moment ago"));
+assert.ok(desktop.html.includes("Last activity: 30 minutes ago"));
 assert.ok(desktop.html.includes("Requests today: 3"));
 assert.ok(desktop.html.includes("No requests yet"));
 assert.equal(desktop.html.includes("Revoked"), false);

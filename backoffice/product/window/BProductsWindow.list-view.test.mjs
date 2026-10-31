@@ -445,14 +445,35 @@ test("normal pages use eight categories locally and the current server product p
   }
 });
 
-test("shared item tracks restart on each native page and retain the preceding drag target", () => {
+test("shared item tracks restart on each native page with the modern move target above the grid", () => {
   const f = fixture();
   f.state.folder_page = 2;
   f.state.product_page = 3;
   f.state.show_spirit_container = true;
   const tree = f.view(),
     columns = nodes(tree, "v-col");
-  assert.equal(columns[0].node.key, "drop-box");
+  assert.equal(columns[0].node.key, "f19");
+  assert.equal(columns.some(({ node }) => node.key === "drop-box"), false);
+
+  const descendants = node => [node, ...(node.children || []).flatMap(descendants)];
+  const elements = descendants(baseParse(descriptor.template.content));
+  const helper = elements.find(node => node.tag === "v-slide-y-transition" && node.loc.source.includes("products_select.modern.holder.title"));
+  const catalog = elements.find(node => node.props?.some(p => p.name === "id" && p.value?.content === "manage-panel"));
+  const presentation = descriptor.template.content.slice(helper.loc.start.offset, catalog.loc.end.offset);
+  const renderPresentation = new Function("Vue", compile(presentation, { mode: "function", prefixIdentifiers: true }).code)({
+    ...Vue, resolveComponent: name => ({ name }), withDirectives: node => node,
+  });
+  f.state.held_items.push(f.state.products[0]);
+  f.state.$n = value => String(value);
+  const rendered = renderPresentation(f.state, []), all = nodes(rendered);
+  const move = nodes(rendered, "u-drop").find(({ node }) => prop(node, "class")?.includes("b-products-window__holder-target"));
+  assert.ok(move, "The held product has a move destination above the item tracks");
+  assert.equal(move.ancestors.some(node => node.type?.name === "v-col"), false);
+  assert.ok(all.findIndex(({ node }) => node === move.node) < all.findIndex(({ node }) => prop(node, "id") === "manage-panel"));
+
+  const legacy = fixture({ modern: false });
+  legacy.state.show_spirit_container = true;
+  assert.equal(nodes(legacy.view(), "v-col")[0].node.key, "drop-box");
   const category = nodes(tree, "b-product-window-category-large")[0];
   const categoryColumn = category.ancestors.findLast(
     (node) => node.type?.name === "v-col",

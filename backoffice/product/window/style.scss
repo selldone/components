@@ -145,42 +145,6 @@
     }
   }
 
-  .clone-area {
-    z-index: 10;
-
-    top: 130px;
-    left: 80px;
-
-    -webkit-transform: translateY(-50%) translateX(-50%);
-    -ms-transform: translateY(-50%) translateX(-50%);
-    transform: translateY(-50%) translateX(-50%);
-
-    position: absolute;
-
-    transition: all 0.42s ease-in-out;
-
-    background-color: #3abf94;
-    border-radius: 50%;
-    width: 86px;
-    height: 86px;
-    border: solid #fff thick;
-
-    .center {
-      position: relative;
-      display: block;
-      top: 50%;
-      -webkit-transform: translateY(-60%);
-      -ms-transform: translateY(-60%);
-      transform: translateY(-60%);
-    }
-
-    &.now-drop-enter {
-      background-color: #00796b;
-      width: 110px;
-      height: 110px;
-    }
-  }
-
   .selected-icon {
     background: #fff;
     margin: 6px;

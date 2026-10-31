@@ -50,26 +50,16 @@
             :open-on-click="true"
             :open-on-focus="true"
             interactive
-            :max-width="360"
             content-class="sd-modern-tooltip text-start"
           >
             <p class="sd-modern-tooltip__body">
-              {{ $t("admin_shop.dashboard.modern.snapshot_day_help") }}
-            </p>
-            <p class="sd-modern-tooltip__body">
               {{
-                $t("admin_shop.dashboard.modern.snapshot_period_help", {
+                $t("admin_shop.dashboard.modern.snapshot_payments_brief", {
                   days: timeSeries.days,
                 })
               }}
             </p>
-            <p class="sd-modern-tooltip__body">
-              {{ $t("admin_shop.dashboard.modern.snapshot_currency_help") }}
-            </p>
-            <p class="sd-modern-tooltip__body">
-              {{ $t("admin_shop.dashboard.modern.snapshot_weekly_help") }}
-            </p></v-tooltip
-          >
+          </v-tooltip>
         </v-btn>
       </p>
 

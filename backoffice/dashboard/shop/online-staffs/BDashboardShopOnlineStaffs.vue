@@ -234,8 +234,11 @@
 </template>
 
 <script lang="ts">
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin";
+
 export default {
   name: "BDashboardShopOnlineStaffs",
+  mixins: [DateMixin],
   emits: ["agents"],
   props: {
     staffs: { type: Array, default: () => [] },

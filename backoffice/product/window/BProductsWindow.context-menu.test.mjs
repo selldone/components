@@ -78,7 +78,7 @@ function rows(node, found = []) {
 const names = { showAssignVendor: "vendor", showChangeStatusProduct: "status", deleteAllSelectedProduct: "deleteAll",
   showNoteProduct: "note", showNoteCategory: "note", deleteProduct: "delete", restoreProduct: "restore", cutProduct: "cut",
   copyProduct: "copy", showSetBulkCategoryProfile: "profiles", showCategoryBulkDiscount: "discount", pastProduct: "paste",
-  handleDropInFolder: "move", selectAllProducts: "select" };
+  handleDropInFolder: "move", selectAllProducts: "select", cloneProduct: "duplicate" };
 function actions(f) {
   return rows(render(f.state, [])).map((row) => {
     const p = row.props;
@@ -95,7 +95,7 @@ function actions(f) {
   });
 }
 const common = ["select", "newCategory", "arrange"];
-const productActions = ["open", "edit", "dashboard", "inventory", "images", "status", "note", "delete", "cut", "copy"];
+const productActions = ["open", "edit", "duplicate", "dashboard", "inventory", "images", "status", "note", "delete", "cut", "copy"];
 for (const modern of [false, true]) test(`semantic context actions preserve ${modern ? "modern" : "legacy"} behavior`, () => {
   const categoryNote = modern ? ["note"] : [];
   const cases = [
@@ -121,6 +121,24 @@ for (const modern of [false, true]) test(`semantic context actions preserve ${mo
     ]),
   ];
   for (const [scenario, expected] of cases) assert.deepEqual(actions(fixture({ modern, ...scenario })).map((a) => a.id), expected, JSON.stringify(scenario));
+});
+
+test("Duplicate product dispatches one native product ID only within the existing writable, active product menu", () => {
+  for (const modern of [false, true]) for (const role of ["Shop", "Marketplace", "Vendor"]) {
+    const f = fixture({ modern, role });
+    const duplicate = actions(f).find(action => action.id === "duplicate");
+    assert.ok(duplicate);
+    assert.deepEqual(duplicate.call, { name: "cloneProduct", args: [f.product.id] });
+    assert.equal(f.state.selected_products.length, 1);
+    assert.notEqual(f.state.selected_products[0], f.product.id, "Unrelated selection must not turn duplication into a bulk action");
+    assert.ok(duplicate.row.children.default().some(node => node.type?.name === "v-list-item-title" && node.children.default().some(child => child.children === "product_panel.workspace.context_menu.duplicate_product")));
+
+    for (const scenario of [
+      { write: false }, { kind: "deleted" }, { target: "Category" }, { target: "Blank" },
+      { target: "SelectedProduct" }, { target: "SelectedProducts" },
+      ...(role === "Vendor" ? [{ vendorProducts: false }] : []),
+    ]) assert.equal(actions(fixture({ modern, role, ...scenario })).some(action => action.id === "duplicate"), false, JSON.stringify({ modern, role, ...scenario }));
+  }
 });
 
 test("category Edit respects modern edit mode and the existing vendor category capability", () => {
