@@ -66,7 +66,7 @@
           <v-btn
             :href="template.href"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
             class="sd-modern-button sd-modern-button--inline"
             color="primary"
             variant="text"
@@ -82,7 +82,7 @@
         <v-btn
           href="https://github.com/selldone/excel"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
           class="sd-modern-button sd-modern-button--inline"
           color="primary"
           variant="text"
@@ -223,10 +223,12 @@ export default {
 <style lang="scss" scoped>
 .s--product-template-dialog {
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
   padding: 22px;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
 
   .sd-modern-header {
     margin-block-end: 18px;
@@ -273,7 +275,7 @@ export default {
     display: inline-block;
     margin-block-start: 5px;
     color: var(--sd-modern-muted);
-    font-size: 12px;
+    font-size: 13px;
   }
   &__footer {
     display: flex;

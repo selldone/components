@@ -14,6 +14,39 @@
 
 <template>
   <div
+    v-if="modern && card && !card.blockchain"
+    class="u-payment-card-modern text-start"
+  >
+    <span class="u-payment-card-modern__logo" aria-hidden="true">
+      <span v-if="image?.startsWith('<svg')" v-html="image" />
+      <img v-else :src="image" alt="" />
+    </span>
+    <div class="u-payment-card-modern__identity">
+      <div class="u-payment-card-modern__title">
+        <span class="u-payment-card-modern__brand">{{
+          card.brand || $t("global.commons.payment_card")
+        }}</span>
+        <bdi dir="ltr" class="u-payment-card-modern__number">{{
+          masked_number
+        }}</bdi>
+      </div>
+      <div
+        v-if="(showCountry && card.country) || card.network"
+        class="u-payment-card-modern__metadata"
+      >
+        <span
+          v-if="showCountry && card.country"
+          class="u-payment-card-modern__country"
+        >
+          <flag :iso="card.country" :squared="false" />
+          <bdi dir="ltr">{{ card.country }}</bdi>
+        </span>
+        <bdi v-if="card.network">{{ card.network }}</bdi>
+      </div>
+    </div>
+  </div>
+  <div
+    v-else
     :class="{
       'd-flex text-start align-center': horizontal,
       'text-center': !horizontal,
@@ -46,7 +79,7 @@
         :height="small ? 20 : 24"
       />
       {{ small ? "" : card.brand }}
-      <span v-if="card.network" > | {{ card.network }}</span>
+      <span v-if="card.network"> | {{ card.network }}</span>
     </v-chip>
 
     <!-- Blockchain -->
@@ -137,6 +170,7 @@ export default {
     return {};
   },
   props: {
+    modern: Boolean,
     method: {}, // String , method code (optional)
     store: {}, // Can be appstore or google play for in app purchases!
     card: {},
@@ -152,6 +186,12 @@ export default {
     currency: {},
   },
   computed: {
+    masked_number() {
+      const last = String(this.card?.card_no ?? "")
+        .replace(/\D/g, "")
+        .slice(-4);
+      return last.length === 4 ? `•••• ${last}` : "••••";
+    },
     currency_obj() {
       return this.GetCurrency(this.currency);
     },
@@ -203,4 +243,78 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.u-payment-card-modern {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  color: rgb(var(--v-theme-on-surface));
+  font-family: inherit;
+
+  &__logo {
+    display: grid;
+    place-items: center;
+    flex: 0 0 56px;
+    height: 42px;
+    border: 1px solid
+      var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+    border-radius: 10px;
+    background: rgb(var(--v-theme-surface));
+    img,
+    > span {
+      display: block;
+      width: 35px;
+      height: 25px;
+      object-fit: contain;
+    }
+    :deep(svg) {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__identity {
+    flex: 1;
+    min-width: 0;
+  }
+  &__title {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 25px;
+    overflow-wrap: anywhere;
+  }
+  &__brand {
+    text-transform: capitalize;
+  }
+  &__number {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  &__metadata {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin-block-start: 4px;
+    color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), 0.66));
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    overflow-wrap: anywhere;
+  }
+  &__country {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    :deep(.fi) {
+      width: 17px;
+      height: 12px;
+      flex-shrink: 0;
+    }
+  }
+}
+</style>

@@ -190,7 +190,14 @@ async function renderNative(view, definition, props, data = {}) {
           const children = Object.values(slots).flatMap((slot) =>
             slot({
               props: {},
-              item: { raw: "Inter" },
+              item: {
+                raw:
+                  name === "VCombobox"
+                    ? Object.assign(new String("Inter"), {
+                        toColor: () => "#777777",
+                      })
+                    : "Inter",
+              },
               element: { type: "SUBSCRIBED", subscribed: true },
               index: 0,
             }),
@@ -362,6 +369,7 @@ assert.equal(
   filterDesign.computed.dragOptions.call(readonlyDesigner).disabled,
   true,
 );
+assert.equal(readonlyDesigner.canMoveItem(1, 0), false);
 filterDesign.created.call({ ...readonlyDesigner, modelValue: null });
 assert.equal(
   readonlyEvents.length,
@@ -417,12 +425,30 @@ assert.equal(
   false,
   "An optional rule cannot cross the fixed first rule.",
 );
+assert.equal(fixedDesigner.canMoveItem(0, 2), false);
+for (const [index, target] of [
+  [-1, 1],
+  [1, -1],
+  [3, 1],
+  [1, 3],
+]) {
+  assert.equal(
+    fixedDesigner.canMoveItem(index, target),
+    false,
+    "Drag destinations outside the current filter list are rejected.",
+  );
+}
 assert.equal(fixedRules[0].subscribed, true);
 fixedDesigner.moveItem(1, 1);
 assert.deepEqual(
   plain(fixedEvents[0][1].map((rule) => rule.type)),
   ["SUBSCRIBED", "LOCATION", "LIMIT"],
   "Optional rules remain reorderable below Subscribed.",
+);
+assert.deepEqual(
+  fixedRules.map((rule) => rule.type),
+  ["SUBSCRIBED", "LIMIT", "LOCATION"],
+  "Reordering emits a new list without mutating the parent draft in place.",
 );
 const fixedView = await renderNative(filterDesignSfc, filterDesign, {
   modern: true,
@@ -433,6 +459,13 @@ const fixedView = await renderNative(filterDesignSfc, filterDesign, {
 });
 const drag = fixedView.records.find((record) => record.name === "draggable");
 assert(drag);
+assert.equal(attr(drag, "item-key"), "type");
+assert.equal(attr(drag, "disabled"), false);
+assert.equal(
+  attr(drag, "handle"),
+  ".b-customers-filter-design-modern__handle",
+  "Modern filters drag only by their dedicated handle, leaving edit actions usable.",
+);
 assert.equal(
   attr(drag, "move")({ draggedContext: { index: 2, futureIndex: 0 } }),
   false,
@@ -445,6 +478,204 @@ assert(
   !fixedView.html.includes('class="b-customers-filter-design-modern__actions"'),
   "The fixed rule has no edit/reorder/delete action group.",
 );
+assert(
+  fixedView.records.some(
+    (record) =>
+      record.name === "VIcon" &&
+      attr(record, "class") ===
+        "b-customers-filter-design-modern__handle--fixed",
+  ),
+  "Subscribed exposes a muted position marker rather than a draggable handle.",
+);
+assert(
+  !fixedView.records.some((record) =>
+    String(attr(record, "class") || "")
+      .split(/\s+/)
+      .includes("b-customers-filter-design-modern__handle"),
+  ),
+  "The mandatory row is excluded from the sortable handle selector.",
+);
+assert.equal(
+  attr(
+    fixedView.records.find((record) => record.name === "BCustomersFilterItem"),
+    "modern",
+  ),
+  true,
+  "Modern filter rows pass their presentation mode to the native item.",
+);
+const draftRules = Object.freeze([
+  Object.freeze({ type: "SUBSCRIBED", subscribed: true }),
+  Object.freeze({ type: "LEVEL", levels: Object.freeze(["BRONZE"]) }),
+]);
+const draftEvents = [];
+const draftDesigner = {
+  ...filterDesign.data(),
+  readOnly: false,
+  modern: true,
+  modelValue: draftRules,
+  permanentFilters: frozenPermanent,
+  types: Customer.Filters,
+  $t: (key) => key,
+  $emit: (...args) => draftEvents.push(args),
+  AddOrUpdateItemByID: evaluate(read("../../../mixin/CoreMixin.ts")).default
+    .methods.AddOrUpdateItemByID,
+};
+for (const [name, method] of Object.entries(filterDesign.methods))
+  draftDesigner[name] = method.bind(draftDesigner);
+draftDesigner.editDialog(draftRules[1]);
+assert.notEqual(draftDesigner.add_item, draftRules[1]);
+assert.notEqual(draftDesigner.add_item.levels, draftRules[1].levels);
+draftDesigner.add_item.levels.push("GOLD");
+draftDesigner.show_add = false;
+assert.deepEqual(draftRules[1].levels, ["BRONZE"]);
+assert.equal(
+  draftEvents.length,
+  0,
+  "Closing an unapplied filter emits no changes.",
+);
+draftDesigner.editDialog(draftRules[1]);
+assert.deepEqual(plain(draftDesigner.add_item.levels), ["BRONZE"]);
+draftDesigner.add_item.levels = ["SILVER"];
+draftDesigner.add();
+const appliedRules = draftEvents.pop();
+assert.equal(appliedRules[0], "update:modelValue");
+assert.notEqual(appliedRules[1], draftRules);
+assert.equal(appliedRules[1][0], draftRules[0]);
+assert.deepEqual(plain(appliedRules[1][1]), {
+  type: "LEVEL",
+  levels: ["SILVER"],
+});
+assert.deepEqual(draftRules[1].levels, ["BRONZE"]);
+assert.equal(draftDesigner.show_add, false);
+assert.equal(draftDesigner.add_item, null);
+draftDesigner.addDialog("LIMIT");
+draftDesigner.add_item.limit = 15;
+draftDesigner.add();
+assert.deepEqual(
+  plain(draftEvents.pop()[1].map((rule) => rule.type)),
+  ["SUBSCRIBED", "LEVEL", "LIMIT"],
+  "Adding a rule appends it to a fresh draft without changing fixed-rule order.",
+);
+assert.equal(draftRules.length, 2);
+assert.equal(
+  draftDesigner.getInputLabel({ title: "Custom field" }, "custom"),
+  "Custom field",
+  "Custom filter definitions retain their supplied field titles.",
+);
+const inputComponents = {
+  date: "UDateInput",
+  boolean: "USmartSwitch",
+  number: "UNumberInput",
+  enum: "VSelect",
+  countries: "SCountrySelect",
+  segments: "VCombobox",
+};
+const sampleInputs = {
+  start: "2026-10-20T00:00:00.000Z",
+  end: "2026-11-05T00:00:00.000Z",
+  levels: ["BRONZE"],
+  subscribed: true,
+  sex: ["MALE"],
+  countries: ["US"],
+  limit: 15,
+  segments: ["VIP"],
+  or: false,
+};
+for (const definition of Object.values(Customer.Filters)) {
+  const dialogView = await renderNative(
+    filterDesignSfc,
+    filterDesign,
+    {
+      modern: true,
+      modelValue: draftRules,
+      types: Customer.Filters,
+      segments: ["VIP"],
+    },
+    {
+      show_add: true,
+      add_type: definition,
+      add_item: { type: definition.type, ...sampleInputs },
+    },
+  );
+  for (const [key, input] of Object.entries(definition.inputs || {})) {
+    const field = dialogView.records.find(
+      (record) =>
+        record.name === inputComponents[input.type] &&
+        attr(record, "label") === `user_funnel.workspace.fields.${key}`,
+    );
+    assert(field, `${definition.type}.${key} keeps its named native control.`);
+    assert.deepEqual(plain(attr(field, "model-value")), sampleInputs[key]);
+    if (input.type === "date") {
+      assert.equal(attr(field, "return-utc"), "");
+      assert.equal(attr(field, "clearable"), "");
+    }
+    if (input.type === "boolean") {
+      assert.equal(attr(field, "accessible"), true);
+      assert.equal(attr(field, "aria-label"), attr(field, "label"));
+    }
+    if (input.type === "enum") {
+      assert.equal(attr(field, "multiple"), input.multiple);
+      assert.equal(attr(field, "item-value"), input.item_value || "code");
+      assert.deepEqual(plain(attr(field, "items")), plain(input.items));
+    }
+    if (input.type === "countries") {
+      assert.equal(attr(field, "item-value"), "alpha2");
+      assert.equal(attr(field, "multiple"), "");
+    }
+    if (input.type === "segments") {
+      const logic = dialogView.records.find(
+        (record) =>
+          record.name === "USmartSwitch" &&
+          attr(record, "label") === "user_funnel.workspace.logic",
+      );
+      assert(logic);
+      assert.equal(attr(logic, "accessible"), true);
+      assert.equal(attr(logic, "aria-label"), "user_funnel.workspace.logic");
+      assert.equal(attr(logic, "model-value"), false);
+      assert.equal(
+        attr(logic, "false-title"),
+        "user_funnel.workspace.all_segments",
+      );
+      assert.equal(
+        attr(logic, "true-title"),
+        "user_funnel.workspace.any_segment",
+      );
+    }
+  }
+  if (!definition.inputs)
+    assert(dialogView.html.includes("user_funnel.workspace.no_options"));
+}
+const customDefinition = {
+  type: "CUSTOM",
+  title: "Custom filter",
+  description: "Custom filter settings",
+  inputs: { custom: { type: "combobox", title: "Custom tags" } },
+};
+const customView = await renderNative(
+  filterDesignSfc,
+  filterDesign,
+  {
+    modern: true,
+    modelValue: draftRules,
+    types: { ...Customer.Filters, CUSTOM: customDefinition },
+    segments: ["VIP"],
+  },
+  {
+    show_add: true,
+    add_type: customDefinition,
+    add_item: { type: "CUSTOM", custom: ["VIP"] },
+  },
+);
+const customField = customView.records.find(
+  (record) =>
+    record.name === "VCombobox" && attr(record, "label") === "Custom tags",
+);
+assert(
+  customField,
+  "Custom combobox filters retain their native input branch.",
+);
+assert.deepEqual(plain(attr(customField, "model-value")), ["VIP"]);
+assert.equal(attr(customField, "multiple"), "");
 fixedDesigner.modern = false;
 fixedDesigner.editDialog(fixedRules[0]);
 assert.equal(
@@ -493,6 +724,158 @@ assert(
   ),
   "Readonly recipients retain report Refresh and Download controls.",
 );
+assert.equal(funnel.props.showFunnel.default, false);
+const funnelReport = (counts) =>
+  Object.freeze(
+    counts.map((count, index) =>
+      Object.freeze({ label: `Stage ${index + 1}`, count }),
+    ),
+  );
+const funnelCases = [
+  { counts: [45, 45, 45], shares: [1, 1, 1], removed: [0, 0, 0] },
+  { counts: [100, 40, 0], shares: [1, 0.4, 0], removed: [0, 60, 40] },
+  { counts: [0, 0], shares: [null, null], removed: [0, 0] },
+  { counts: [null, 0], shares: [null, null], removed: [0, 0] },
+  { counts: [100, null, 20], shares: [1, null, 0.2], removed: [0, 0, 0] },
+  { counts: [100, 120], shares: [1, 1.2], removed: [0, 0] },
+  {
+    counts: [100, -1, NaN, Infinity],
+    shares: [1, null, null, null],
+    removed: [0, 0, 0, 0],
+  },
+];
+for (const { counts, shares, removed } of funnelCases) {
+  const report = funnelReport(counts);
+  const stages = funnel.computed.funnelStages.call({ funnel_date: report });
+  assert.deepEqual(
+    Array.from(stages, (stage) => stage.count),
+    counts,
+    "A recognizable silhouette must not invent or replace server counts.",
+  );
+  assert.deepEqual(
+    Array.from(stages, (stage) => stage.share),
+    shares,
+  );
+  assert.deepEqual(
+    Array.from(stages, (stage) => stage.removed),
+    removed,
+  );
+  assert.deepEqual(
+    Array.from(stages, (stage) => stage.hasCount),
+    counts.map((count) => Number.isFinite(count) && count >= 0),
+  );
+  assert.deepEqual(
+    Array.from(stages, (stage) => stage.label),
+    report.map((stage) => stage.label),
+  );
+  for (const [index, stage] of stages.entries()) {
+    assert(Number.isFinite(stage.top) && Number.isFinite(stage.height));
+    assert(stage.top >= 0 && stage.height >= 0);
+    assert(stage.top + stage.height <= 360);
+    if (index) assert(stage.top > stages[index - 1].top);
+  }
+}
+for (const report of [null, []]) {
+  assert.deepEqual(
+    plain(funnel.computed.funnelStages.call({ funnel_date: report })),
+    [],
+  );
+}
+const manyFunnelStages = funnel.computed.funnelStages.call({
+  funnel_date: funnelReport(Array(100).fill(1)),
+});
+assert(
+  manyFunnelStages.every(
+    (stage) => Number.isFinite(stage.top) && stage.height >= 0,
+  ),
+  "Dense or unexpected reports cannot produce negative SVG rectangle heights.",
+);
+const visualFunnelDefinition = { ...funnel, created() {} };
+const visualFunnelProps = {
+  modern: true,
+  showFunnel: true,
+  readOnly: true,
+  shop: { id: 7 },
+  modelValue: frozenRules,
+};
+for (const counts of [
+  [45, 45, 45],
+  [100, 40, 0],
+  [0, 0],
+  [null, 0],
+]) {
+  const report = funnelReport(counts);
+  const view = await renderNative(
+    funnelSfc,
+    visualFunnelDefinition,
+    visualFunnelProps,
+    {
+      funnel_date: report,
+    },
+  );
+  assert(view.html.includes('class="b-customers-funnel-modern__visual"'));
+  assert.equal(
+    [...view.html.matchAll(/class="b-customers-funnel-modern__visual-step"/g)]
+      .length,
+    counts.length,
+  );
+  assert(view.html.includes('aria-hidden="true"'));
+  assert(!view.html.includes('class="b-customers-funnel-modern__steps"'));
+  const rects = [...view.html.matchAll(/<rect\b[^>]*class="([^"]*)"[^>]*>/g)];
+  assert.equal(rects.length, counts.length);
+  assert.deepEqual(
+    rects.map(([, classes]) => classes.includes("__fill--empty")),
+    counts.map((count) => !(Number.isFinite(count) && count > 0)),
+    "Zero and unavailable counts must not receive a positive-flow fill.",
+  );
+  const displayedCounts = [
+    ...view.html.matchAll(/<strong>([^<]*)<\/strong>/g),
+  ].map(([, value]) => value);
+  assert.deepEqual(
+    displayedCounts,
+    counts.map((count) =>
+      Number.isFinite(count) && count >= 0 ? String(count) : "—",
+    ),
+  );
+  assert(!view.html.includes("NaN") && !view.html.includes("Infinity"));
+  assert(
+    view.records.some(
+      (record) =>
+        record.name === "VBtn" && attr(record, "prepend-icon") === "refresh",
+    ),
+  );
+  assert(
+    view.records.some(
+      (record) =>
+        record.name === "VBtn" && attr(record, "prepend-icon") === "download",
+    ),
+  );
+}
+const compactFunnel = await renderNative(
+  funnelSfc,
+  visualFunnelDefinition,
+  { ...visualFunnelProps, showFunnel: false },
+  { funnel_date: funnelReport([45, 45, 45]) },
+);
+assert(compactFunnel.html.includes('class="b-customers-funnel-modern__steps"'));
+assert(
+  !compactFunnel.html.includes('class="b-customers-funnel-modern__visual"'),
+  "Email's compact audience report stays unchanged unless the caller opts into the funnel.",
+);
+for (const state of [
+  { funnel_date: [] },
+  { funnel_date: null },
+  { funnel_date: funnelReport([45]), funnel_error: true },
+  { funnel_date: funnelReport([45]), busy_refresh: true },
+]) {
+  const view = await renderNative(
+    funnelSfc,
+    visualFunnelDefinition,
+    visualFunnelProps,
+    state,
+  );
+  assert(!view.html.includes('class="b-customers-funnel-modern__visual"'));
+}
 let reportIndex = requests.length;
 funnel.methods.refreshFunnel.call(readonlyFunnel);
 assert.equal(requests[reportIndex].url, "/test/POST_FUNNEL_USERS_COUNT/7");

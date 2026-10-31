@@ -105,6 +105,11 @@ function fixture(props = {}, browser) {
     get: () => busy,
     set(value) { if (busy === value) return; busy = value; component.watch.word_import_busy.call(state, value); },
   });
+  let importDialog = state.word_import_dialog;
+  Object.defineProperty(state, "word_import_dialog", {
+    get: () => importDialog,
+    set(value) { if (importDialog === value) return; importDialog = value; component.watch.word_import_dialog.call(state, value); },
+  });
   Object.defineProperty(state, "canImportWord", { get: () => component.computed.canImportWord.call(state) });
   for (const [key, method] of Object.entries(component.methods)) state[key] = method.bind(state);
   component.created.call(state);
@@ -435,6 +440,7 @@ async function renderEditor(f, props, slots = {}) {
   const app = Vue.createSSRApp({ render: () => Vue.h(reader, props, slots) });
   app.config.globalProperties.$t = (key) => key;
   app.config.globalProperties.numeralFormat = (value, format) => numeral(value).format(format);
+  app.config.globalProperties.getLanguageName = (language) => ({ en: "English", fa: "فارسی" }[language] || language);
   const pass = { render() { return Vue.h("div", this.$attrs, this.$slots.default?.()); } };
   for (const tag of new Set([...descriptor.template.content.matchAll(/<([a-z][\w-]*-[\w-]+)/g)].map(([, name]) => name))) if (!["v-dialog", "v-btn"].includes(tag)) app.component(tag, pass);
   app.component("v-dialog", { props: ["modelValue"], render() { return this.modelValue ? Vue.h("div", { role: "dialog" }, this.$slots.default?.()) : null; } });
@@ -578,4 +584,171 @@ test("real reader template puts the FAQ end slot after article body and excludes
   assert.equal(f.state.purifyBody(), props.body);
   assert.equal(f.requests.length, 0);
   assert.deepEqual(f.events, []);
+});
+
+test("product word count reads inert article text without counting serialized blocks or controls", () => {
+  const dom = new JSDOM("<!doctype html><body><p>Outside the editor</p></body>"), $ = jquery(dom.window);
+  const body = '<p>Hello&nbsp;world.</p><h2>Next heading</h2><p>سلام به شما</p><code-editor>serialized payload ignored</code-editor><div class="medium-insert-buttons">Image menu</div><script>ignored words</script>';
+  const f = fixture({ workspace: true, productWorkspace: true, body }, { window: dom.window, document: dom.window.document, $ });
+  assert.equal(f.component.computed.productWordCount.call(f.state), 7);
+  assert.equal(f.state.body, body);
+  assert.equal(dom.window.document.body.textContent, "Outside the editor");
+  assert.equal(f.requests.length, 0);
+  f.state.body = '<p><img src="/image-in-body.png"></p>';
+  assert.equal(f.component.computed.productWordCount.call(f.state), 0);
+  f.state.productWorkspace = false;
+  assert.equal(f.component.computed.productWordCount.call(f.state), 0);
+});
+
+test("native product editing updates the word count without publishing or serializing the body model", () => {
+  const dom = new JSDOM('<!doctype html><body><div contenteditable="true"><p>Saved text</p></div></body>'), $ = jquery(dom.window);
+  const f = fixture({ workspace: true, productWorkspace: true, body: "<p>Saved text</p>" }, { window: dom.window, document: dom.window.document, $ });
+  const body = dom.window.document.querySelector("[contenteditable]");
+  f.state.$refs.editable_body = body;
+  const count = () => f.component.computed.productWordCount.call(f.state);
+  assert.equal(count(), 2);
+  body.innerHTML = '<p>New words while typing</p><div class="code-editor">Theme copy edit controls</div><div class="image-overlay-canvas">Canvas edit menu</div>';
+  f.component.methods.onEdited.call(f.state);
+  assert.equal(count(), 4);
+  assert.equal(f.state.body, "<p>Saved text</p>");
+  assert.equal(f.events.filter(([name]) => name === "update:body").length, 0);
+  assert.equal(f.requests.length, 0);
+
+  body.innerHTML = "<p><br></p>";
+  f.component.methods.onEdited.call(f.state);
+  assert.equal(count(), 0, "Deleting the live content must not fall back to the saved body");
+  f.state.edit = false;
+  assert.equal(count(), 2, "The reader uses the parent-owned body rather than hidden editable DOM");
+
+  const empty = fixture({ workspace: true, productWorkspace: true, body: "" }, { window: dom.window, document: dom.window.document, $ });
+  empty.state.$refs.editable_body = body;
+  assert.equal(empty.component.computed.productWordCount.call(empty.state), 0);
+  body.innerHTML = "<p>First new words</p>";
+  empty.component.methods.onEdited.call(empty.state);
+  assert.equal(empty.component.computed.productWordCount.call(empty.state), 3);
+  assert.equal(empty.state.body, "");
+  assert.equal(empty.requests.length, 0);
+});
+
+test("leaving a product description closes unconfirmed Word staging and ignores a late conversion", () => {
+  const f = fixture({ workspace: true, productWorkspace: true });
+  f.state.stageWordFile([documentFile()]);
+  assert.equal(f.state.word_import_dialog, true);
+  assert.ok(f.events.some(([name, value]) => name === "workspace-pending" && value === true));
+  f.state.active = false;
+  f.component.watch.active.call(f.state, false);
+  assert.equal(f.state.word_import_dialog, false);
+  assert.equal(f.state.word_import_file, null);
+  assert.equal(f.state.body, "<p>Original body</p>");
+  assert.ok(f.events.some(([name, value]) => name === "workspace-pending" && value === false));
+  f.state.showSelectWord(); f.state.stageWordFile([documentFile()]); f.state.confirmWordImport();
+  assert.equal(f.requests.length, 0);
+
+  f.state.active = true;
+  f.state.stageWordFile([documentFile()]); f.state.confirmWordImport();
+  assert.equal(f.requests.length, 1);
+  f.state.active = false;
+  f.component.watch.active.call(f.state, false);
+  f.requests[0].success({ title: "Late title", body: "<p>Late conversion</p>" }); f.finish(); f.flush();
+  assert.equal(f.state.body, "<p>Original body</p>");
+  assert.equal(f.state.title, "Original title");
+  assert.equal(f.state.word_import_busy, false);
+});
+
+test("product Insert content reuses the native palette and preserves existing rich blocks", () => {
+  const dom = new JSDOM('<!doctype html><body><div id="body" contenteditable="true"><p>Story text</p><code-editor>original serialized block</code-editor><div class="medium-insert-buttons"><button class="medium-insert-buttons-show">+</button><ul class="medium-insert-buttons-addons"><li><button type="button" data-addon="images">Image</button></li><li><button type="button" data-addon="embeds">Embed</button></li></ul></div></div></body>');
+  const $ = jquery(dom.window), body = dom.window.document.querySelector("#body"), originalBlock = body.querySelector("code-editor");
+  const f = fixture({ workspace: true, productWorkspace: true }, { window: dom.window, document: dom.window.document, $ });
+  f.state.$refs.editable_body = body;
+  const calls = [];
+  const insert = {
+    addButtons() {}, moveCaret() {}, positionButtons() {}, showButtons() {},
+    hideButtons() { calls.push("hide-buttons"); },
+    hideAddons() { $(body).find(".medium-insert-buttons-addons").hide(); },
+    toggleAddons() { $(body).find(".medium-insert-buttons-addons").show(); },
+  };
+  $(body).data("plugin_mediumInsert", insert);
+  f.state.showProductInsert();
+  assert.equal(body.querySelector("code-editor"), originalBlock);
+  assert.equal(originalBlock.textContent, "original serialized block");
+  assert.equal(body.querySelectorAll("p").length, 2);
+  assert.equal(body.querySelectorAll(".medium-insert-active").length, 1);
+  assert.equal(dom.window.document.activeElement.dataset.addon, "images");
+  assert.notEqual($(body).find(".medium-insert-buttons-addons").css("display"), "none");
+  f.state.showProductInsert();
+  assert.equal(body.querySelectorAll("p").length, 2, "Repeated opening reuses the trailing empty paragraph");
+  for (const key of ["active", "edit", "productWorkspace"]) {
+    f.state[key] = false; f.state.showProductInsert(); f.state[key] = true;
+  }
+  for (const key of ["onlyView", "noMediumInsert", "word_import_busy"]) {
+    f.state[key] = true; f.state.showProductInsert(); f.state[key] = false;
+  }
+  assert.equal(body.querySelectorAll("p").length, 2);
+  f.state.editor_body = { getExtensionByName: () => ({ hideToolbar() { calls.push("hide-toolbar"); } }) };
+  f.state.hideProductTools();
+  assert.deepEqual(calls, ["hide-buttons", "hide-toolbar"]);
+  assert.equal($(body).find(".medium-insert-buttons-addons").css("display"), "none");
+  assert.equal(f.requests.length, 0);
+  assert.equal(f.state.body, "<p>Original body</p>");
+});
+
+test("product editor renders its title label and live article metadata without changing legacy markup", async () => {
+  const dom = new JSDOM("<!doctype html><body></body>"), $ = jquery(dom.window);
+  const props = { workspace: true, productWorkspace: true, edit: true, noMediumInsert: true, language: "fa", title: "عنوان", body: "<p>سلام به شما</p>" };
+  const f = fixture(props, { window: dom.window, document: dom.window.document, $ });
+  dom.window.document.body.innerHTML = await renderEditor(f, props);
+  const editor = dom.window.document.querySelector(".s-article-editor--product-workspace");
+  assert.ok(editor);
+  const label = editor.querySelector(".s-article-editor__title-label");
+  assert.match(label.textContent, /description_modern.title_label/);
+  assert.equal(editor.querySelector(".s-article-editor__title").getAttribute("aria-labelledby"), label.id);
+  assert.equal(editor.querySelector(".u-article-body-edit").getAttribute("aria-label"), "add_product.description_modern.body_label");
+  assert.ok(editor.querySelector(".s-article-editor__product-meta"));
+  assert.equal(f.component.computed.productWordCount.call(f.state), 3);
+  dom.window.document.body.innerHTML = await renderEditor(f, { ...props, productWorkspace: false });
+  assert.equal(dom.window.document.querySelector(".s-article-editor__title-label"), null);
+  assert.equal(dom.window.document.querySelector(".s-article-editor__product-meta"), null);
+  assert.equal(dom.window.document.querySelector(".u-article-body-edit").hasAttribute("aria-label"), false);
+});
+
+test("empty Product descriptions use their selected language direction while written content and legacy editors keep detection", () => {
+  const f = fixture({ workspace: true, productWorkspace: true });
+  f.state.getLanguageObject = code => ({ dir: ['fa', 'ar'].includes(code) ? 'rtl' : 'ltr' });
+  for (const language of ['fa', 'ar', 'en']) {
+    f.state.language = language;
+    for (const innerText of ['', ' \n\t ', '\u00a0']) {
+      const element = { innerText, style: {} }, linked = { style: {} };
+      f.state.applyDirection(element, '', linked);
+      const direction = language === 'en' ? 'ltr' : 'rtl';
+      assert.equal(element.style.direction, direction, `${language}: ${JSON.stringify(innerText)}`);
+      assert.equal(element.style.textAlign, direction === 'rtl' ? 'right' : 'left');
+      assert.equal(linked.style.direction, direction);
+    }
+  }
+  for (const [language, innerText, expected] of [['fa', 'English description', 'ltr'], ['en', 'توضیح محصول', 'rtl']]) {
+    f.state.language = language;
+    const element = { innerText, style: {} };
+    f.state.applyDirection(element);
+    assert.equal(element.style.direction, expected);
+  }
+  f.state.productWorkspace = false; f.state.language = 'fa';
+  const legacy = { innerText: '', style: {} };
+  f.state.applyDirection(legacy);
+  assert.equal(legacy.style.direction, 'ltr');
+  f.state.productWorkspace = true; delete f.state.getLanguageObject;
+  const withoutLanguageHelper = { innerText: '', style: {} };
+  f.state.applyDirection(withoutLanguageHelper);
+  assert.equal(withoutLanguageHelper.style.direction, 'ltr');
+});
+
+test("changing Product description language refreshes direction without changing the draft or legacy editor", () => {
+  const f = fixture({ workspace: true, productWorkspace: true, language: 'en' });
+  f.state.language = 'fa'; f.component.watch.language.call(f.state);
+  assert.equal(f.directions(), 1);
+  assert.equal(f.state.body, '<p>Original body</p>');
+  assert.equal(f.state.title, 'Original title');
+  assert.equal(f.events.length, 0);
+  f.state.productWorkspace = false;
+  f.state.language = 'ar'; f.component.watch.language.call(f.state);
+  assert.equal(f.directions(), 1);
 });

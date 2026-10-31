@@ -13,8 +13,100 @@
   -->
 
 <template>
-  <v-container class="pt-3 pb-16 my-3 text-start">
-    <v-list class="overflow-visible" lines="3">
+  <v-container
+    class="text-start"
+    :class="modern ? 'b-product-edit-type--modern' : 'pt-3 pb-16 my-3'"
+  >
+    <template v-if="modern">
+      <fieldset
+        class="b-product-edit-type__choices"
+        :aria-label="$t('global.commons.product_type')"
+      >
+        <label
+          v-for="item in available_types"
+          :key="item.code"
+          class="b-product-edit-type__choice sd-modern-clickable-item"
+          :class="{ '-selected': selectedType === item.code, disabled: !item.enable }"
+        >
+          <input
+            type="radio"
+            :name="typeInputName"
+            :value="item.code"
+            :checked="selectedType === item.code"
+            :disabled="!item.enable"
+            @change="$emit('select', item)"
+          />
+          <img :src="item.image" alt="" width="28" height="30" />
+          <span class="b-product-edit-type__copy">
+            <span class="b-product-edit-type__title">{{ $t(item.name) }}</span>
+            <span class="b-product-edit-type__description">{{ $t(item.description) }}</span>
+            <span
+              v-if="item.code === ProductType.SERVICE.code"
+              class="b-product-edit-type__capability"
+            >
+              {{ $t('global.commons.installment') }} / {{ $t('global.commons.split_payment') }}
+            </span>
+            <span
+              v-if="item.code === ProductType.SUBSCRIPTION.code"
+              class="b-product-edit-type__capability"
+            >{{ $t('global.commons.recurring_payment') }}</span>
+          </span>
+        </label>
+      </fieldset>
+
+      <div
+        v-if="showAddSku || (!IS_VENDOR_PANEL && (hasAddDropshipping || hasAddConnectOs))"
+        class="b-product-edit-type__imports"
+      >
+        <h3 class="sd-modern-eyebrow">{{ $t('add_product.flow.existing_product') }}</h3>
+        <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Select Product From Repository ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+        <button
+          v-if="showAddSku"
+          type="button"
+          class="b-product-edit-type__import sd-modern-clickable-item"
+          @click="add_by_sku = !add_by_sku"
+        >
+          <img src="../../../../assets/icons/sku.svg" alt="" width="20" height="20" />
+          <span class="b-product-edit-type__copy">
+            <span class="b-product-edit-type__import-title">{{ $t('product_studio.by_sku.title') }}</span>
+            <span class="b-product-edit-type__description">{{ $t('product_studio.by_sku.subtitle') }}</span>
+          </span>
+          <v-icon size="16" aria-hidden="true">{{ $t('icons.arrow_end') }}</v-icon>
+        </button>
+
+        <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Add By Drop shipping ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+        <button
+          v-if="hasAddDropshipping && !IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
+          type="button"
+          class="b-product-edit-type__import sd-modern-clickable-item"
+          :disabled="!can_reselling"
+          @click="dropshipping = !dropshipping"
+        >
+          <img src="../../../../assets/icons/dropshipping-outline.svg" alt="" width="20" height="20" />
+          <span class="b-product-edit-type__copy">
+            <span class="b-product-edit-type__import-title">{{ $t('global.commons.drop_shipping') }}</span>
+            <span class="b-product-edit-type__description">{{ !can_reselling ? $t('product_studio.your_license_is_not_eligible') : $t('product_studio.drop_shipping.subtitle') }}</span>
+          </span>
+          <v-icon size="16" aria-hidden="true">{{ $t('icons.arrow_end') }}</v-icon>
+        </button>
+
+        <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Connect ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+        <router-link
+          v-if="hasAddConnectOs && !IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
+          :to="{ name: 'BPageShopChannelConnect' }"
+          class="b-product-edit-type__import sd-modern-clickable-item"
+        >
+          <img src="../../../../assets/icons/connect.svg" alt="" width="20" height="20" />
+          <span class="b-product-edit-type__copy">
+            <span class="b-product-edit-type__import-title">Connect OS</span>
+            <span class="b-product-edit-type__description">{{ $t('product_studio.by_connect.subtitle') }}</span>
+          </span>
+          <v-icon size="16" aria-hidden="true">{{ $t('icons.arrow_end') }}</v-icon>
+        </router-link>
+      </div>
+    </template>
+
+    <v-list v-else class="overflow-visible" lines="3">
       <v-list-item
         v-for="item in available_types"
         :key="item.code"
@@ -115,7 +207,7 @@
       <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Select Product From Repository ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
       <v-list-item
-        v-if="hasAddSku"
+        v-if="showAddSku"
         key="sku"
         class="widget-hover -gray-bg widget-button"
         @click="add_by_sku = !add_by_sku"
@@ -220,6 +312,7 @@
     <!-- ██████████████████████ Add by SKU ██████████████████████ -->
 
     <v-dialog
+      v-if="showAddSku"
       v-model="add_by_sku"
       fullscreen
       scrollable
@@ -370,40 +463,40 @@
       v-model="dropshipping"
       fullscreen
       scrollable
+      :theme="USER()?.preferences?.dark ? 'dark' : undefined"
       transition="dialog-bottom-transition"
     >
-      <v-card class="text-start">
-        <v-card-title class="d-flex align-center">
-          <v-avatar class="me-2 avatar-gradient -thin -shop" size="36">
+      <v-card class="b-product-edit-type__dropshipping text-start">
+        <v-card-title class="b-product-edit-type__dropshipping-header">
+          <v-avatar class="avatar-gradient -thin -shop" size="32">
             <v-img :src="getShopImagePath(shop.icon, 128)" />
           </v-avatar>
 
-          <div>
+          <div class="b-product-edit-type__dropshipping-title">
             {{ shop.title }}
-            <div class="text-subtitle-2">
+            <p>
               {{ $t("product_studio.dropshipping_dialog.title") }}
-            </div>
+            </p>
           </div>
+          <v-tooltip content-class="sd-modern-tooltip" location="top">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="sd-modern-icon-button" variant="text" icon="close" :aria-label="$t('global.actions.close')" @click="dropshipping = false" />
+            </template>
+            {{ $t("global.actions.close") }}
+          </v-tooltip>
         </v-card-title>
 
-        <v-card-text>
-          <b-product-add-dropshipping :shop="shop" @back="dropshipping = false">
+        <v-card-text class="sd-modern-canvas b-product-edit-type__dropshipping-content">
+          <b-product-add-dropshipping v-if="dropshipping" :shop="shop" @back="dropshipping = false">
           </b-product-add-dropshipping>
         </v-card-text>
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn size="x-large" variant="text" @click="dropshipping = false">
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
-          </div>
-        </v-card-actions>
       </v-card>
     </v-dialog>
 
     <!-- ██████████████████████ Dialog Add From Repository ██████████████████████ -->
 
     <v-bottom-sheet
+      v-if="showAddSku"
       v-model="dialog_repository"
       content-class="rounded-t-xl"
       max-width="840"
@@ -522,6 +615,7 @@
 </template>
 
 <script lang="ts">
+import { useId } from "vue";
 import OrderTypeMinimalFlow from "../../../product/widgets/OrderTypeMinimalFlow.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
@@ -536,9 +630,16 @@ import { throttle } from "lodash-es";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
+// Temporarily hidden at the owner's request; set true to restore the retained SKU flow.
+const SKU_REPOSITORY_IMPORT_ENABLED = false;
+
 export default {
   name: "BProductEditType",
   mixins: [],
+  emits: ["select"],
+  setup() {
+    return { typeInputName: useId() };
+  },
   components: {
     UCurrencyInput,
     USmartToggle,
@@ -549,6 +650,8 @@ export default {
   },
 
   props: {
+    modern: { type: Boolean, default: false },
+    selectedType: { type: String, default: null },
     shop: {
       required: true,
       type: Object,
@@ -594,6 +697,9 @@ export default {
     };
   },
   computed: {
+    showAddSku() {
+      return SKU_REPOSITORY_IMPORT_ENABLED && this.hasAddSku;
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -711,4 +817,166 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-product-edit-type__dropshipping {
+  --sd-modern-icon-button-size: 32px;
+  letter-spacing: 0;
+  // Text and illustration ink need a lighter dark-theme tone; filled primary actions keep their native blue.
+  &.v-theme--dark {
+    --dropshipping-primary-ink: color-mix(in srgb, rgb(var(--v-theme-primary)) 65%, rgb(var(--v-theme-on-surface)));
+    --dropshipping-art-mix: 65%;
+    :deep(.sd-modern-button.v-btn--variant-text.text-primary) { color: var(--dropshipping-primary-ink) !important; }
+  }
+  &-header { display: flex; align-items: center; gap: 11px; padding: 17px 24px; border-block-end: 1px solid rgba(var(--v-theme-on-surface), .09); }
+  &-title { flex: 1; min-width: 0; font-family: inherit; font-size: 14px; font-weight: 400; line-height: 21px; white-space: normal; overflow-wrap: anywhere; }
+  &-title p { margin: 0; color: rgba(var(--v-theme-on-surface), .66); font-size: 12px; font-weight: 400; line-height: 19px; }
+  &-content { padding: 0 24px !important; letter-spacing: 0; }
+  @media(max-width: 620px) {
+    &-header { padding: 16px; }
+    &-content { padding-inline: 14px !important; }
+  }
+}
+.b-product-edit-type--modern {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  color: rgb(var(--v-theme-on-surface));
+
+  .b-product-edit-type__choices {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+  }
+
+  .b-product-edit-type__choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 68px;
+    padding: 13px 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    text-align: start;
+
+    &.-selected {
+      border-color: rgb(var(--v-theme-primary));
+      background: rgb(var(--v-theme-surface));
+    }
+
+    &.disabled {
+      opacity: .6;
+    }
+
+    > input {
+      flex-shrink: 0;
+      width: 15px;
+      height: 15px;
+      margin: 7px 0 0;
+      accent-color: rgb(var(--v-theme-primary));
+
+      &:focus-visible {
+        outline: 2px solid rgb(var(--v-theme-primary));
+        outline-offset: 4px;
+      }
+    }
+
+    > img {
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+  }
+
+  .b-product-edit-type__copy {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .b-product-edit-type__title {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0;
+  }
+
+  .b-product-edit-type__description {
+    display: block;
+    margin-top: 2px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 19px;
+    letter-spacing: 0;
+  }
+
+  .b-product-edit-type__capability {
+    display: block;
+    margin-top: 4px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 17px;
+
+    &::before {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      margin-inline-end: 5px;
+      border-radius: 50%;
+      background: rgb(var(--v-theme-primary));
+      vertical-align: middle;
+      content: "";
+    }
+  }
+
+  .b-product-edit-type__imports {
+    margin-top: 24px;
+
+    > h3 { margin-bottom: 8px; }
+  }
+
+  .b-product-edit-type__import {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    width: 100%;
+    min-height: 54px;
+    padding: 11px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    text-align: start;
+    text-decoration: none;
+
+    > img { flex-shrink: 0; object-fit: contain; }
+    > .v-icon { color: var(--sd-modern-muted); }
+    &:disabled { opacity: .6; }
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 3px;
+    }
+  }
+
+  .b-product-edit-type__import-title {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0;
+  }
+
+  @media (max-width: 599px) {
+    .b-product-edit-type__choice { padding: 12px; gap: 9px; }
+  }
+}
+</style>

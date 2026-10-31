@@ -15,13 +15,74 @@
 <template>
   <v-bottom-sheet
     :model-value="modelValue"
-    content-class="no-shadow-dialog"
+    :content-class="modern ? 'rounded-t-xl rounded-b-0' : 'no-shadow-dialog'"
+    :aria-label="modern ? $t('product_admin.edit_article.modern.translate_dialog_title') : undefined"
+    :persistent="modern && busy"
     max-width="640"
     scrollable
     width="90%"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <v-card v-if="toLanguage" class="text-start" rounded="t-xl">
+    <v-card
+      v-if="modern && toLanguage"
+      class="b-ai-auto-translate sd-modern-widget rounded-t-xl rounded-b-0 text-start"
+      rounded="t-xl"
+    >
+      <header class="b-ai-auto-translate__header">
+        <v-icon size="20" aria-hidden="true">translate</v-icon>
+        <h2 class="sd-modern-title-text">{{ $t('product_admin.edit_article.modern.translate_dialog_title') }}</h2>
+      </header>
+      <div class="b-ai-auto-translate__body">
+        <p class="b-ai-auto-translate__explanation">
+          {{ $t('product_admin.edit_article.modern.translate_dialog_subtitle', {
+            from: getLanguageObject(fromLanguage).title,
+            to: getLanguageObject(toLanguage).title,
+          }) }}
+        </p>
+        <div class="b-ai-auto-translate__languages" aria-hidden="true">
+          <span>
+            <flag :iso="getLanguageObject(fromLanguage).flag" :squared="false" />
+            {{ getLanguageObject(fromLanguage).title }}
+          </span>
+          <v-icon size="18" class="b-ai-auto-translate__arrow">arrow_forward</v-icon>
+          <span>
+            <flag :iso="getLanguageObject(toLanguage).flag" :squared="false" />
+            {{ getLanguageObject(toLanguage).title }}
+          </span>
+        </div>
+        <u-smart-verify
+          v-model="check"
+          class="b-ai-auto-translate__verify"
+          :true-title="$t('product_admin.edit_article.modern.translate_dialog_confirm')"
+          :disabled="busy"
+          role="checkbox"
+          :aria-label="$t('product_admin.edit_article.modern.translate_dialog_confirm')"
+          :aria-checked="check"
+          :aria-disabled="!!busy"
+          tabindex="0"
+          @keydown.space.prevent="!busy && (check = !check)"
+          @keydown.enter.prevent="!busy && (check = !check)"
+        />
+      </div>
+      <v-card-actions class="b-ai-auto-translate__actions">
+        <v-btn
+          class="sd-modern-button"
+          variant="text"
+          :disabled="busy"
+          @click="$emit('update:modelValue', false)"
+        >{{ $t('global.actions.cancel') }}</v-btn>
+        <v-btn
+          class="sd-modern-button sd-modern-button--primary"
+          color="primary"
+          variant="elevated"
+          :disabled="!check || busy"
+          :loading="busy"
+          prepend-icon="translate"
+          @click="check && !busy && $emit('requestTranslate', toLanguage)"
+        >{{ $t('product_admin.edit_article.modern.translate_dialog_action') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+    <v-card v-else-if="toLanguage" class="text-start" rounded="t-xl">
       <v-card-title>
         <v-icon class="me-1" color="#333">translate</v-icon>
         Auto Translate
@@ -112,6 +173,7 @@ export default {
   components: { USmartVerify },
   emits: ["update:modelValue", "requestTranslate"],
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -127,4 +189,30 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-ai-auto-translate {
+  padding: 24px;
+  font-family: inherit;
+  color: rgb(var(--v-theme-on-surface));
+  .b-ai-auto-translate__header { display: flex; align-items: center; gap: 10px; }
+  .b-ai-auto-translate__header > .v-icon { flex-shrink: 0; color: var(--sd-modern-muted); }
+  .b-ai-auto-translate__header h2 { margin: 0; font-family: inherit; font-size: 20px; font-weight: 500; line-height: 26px; }
+  .b-ai-auto-translate__body { padding-block-start: 18px; }
+  .b-ai-auto-translate__explanation { margin: 0; font-size: var(--sd-modern-font-body, 14px); line-height: 23px; }
+  .b-ai-auto-translate__languages { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding-block: 22px; font-size: var(--sd-modern-font-small, 13px); line-height: 20px; }
+  .b-ai-auto-translate__languages > span { display: inline-flex; align-items: center; gap: 8px; }
+  .b-ai-auto-translate__arrow { color: var(--sd-modern-muted); }
+  .b-ai-auto-translate__verify { font-family: inherit; font-size: var(--sd-modern-font-small, 13px); line-height: 21px; }
+  .b-ai-auto-translate__verify :deep(.ok > b) { font-weight: 400; }
+  .b-ai-auto-translate__verify:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; border-radius: 8px; }
+  .b-ai-auto-translate__actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; padding: 22px 0 0; }
+}
+.v-locale--is-rtl .b-ai-auto-translate__arrow { transform: rotate(180deg); }
+@media (max-width: 600px), (pointer: coarse) {
+  .b-ai-auto-translate {
+    padding: 22px 18px;
+    .b-ai-auto-translate__actions .sd-modern-button { min-height: 44px; }
+    .b-ai-auto-translate__verify :deep(.pp) { min-height: 44px; }
+  }
+}
+</style>

@@ -50,7 +50,7 @@ function fixture(props = {}) {
   const window = { ARTICLE_API: endpoints, VAPI: endpoints, XAPI: endpoints, GAPI: endpoints,
     API: endpoints, ADMIN_API: endpoints, $storefront: { routes: { SHOP_BLOG_PAGE: "ShopBlog" } } };
   vm.runInNewContext(script, {
-    exports, window, console: { warn() {} },
+    exports, window, console: { warn() {}, log() {} },
     $: () => ({ text: () => "Saved body", focus() {}, blur() {}, click() {} }),
     axios: Object.fromEntries(["get", "post", "delete"].map((method) => [method, (...args) => request(method, ...args)])),
     require(name) {
@@ -86,7 +86,7 @@ function fixture(props = {}) {
     getLanguageName: (code) => ({ en: "English", fa: "فارسی" })[code] || code,
     convertUTCStringToLocalTimeString: (value) => value ? `local:${value}` : null,
     convertLocalTimeStringToUTCString: (value) => value ? `utc:${value}` : null,
-    getLocalTimeString: (value) => value || "", getShop: () => null,
+    getLocalTimeString: (value) => value || "", getFromNowString: (value) => `relative:${value}`, getShop: () => null,
     isString: (value) => typeof value === "string", $router: { replace() {}, go() {} },
   };
   for (const [key, method] of Object.entries(component.methods)) state[key] = method.bind(state);
@@ -108,7 +108,7 @@ function faqReader() {
   return { ...scriptExports.default, render: renderExports.render };
 }
 
-async function render(f, slots = {}, reader = null) {
+function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp) {
   const component = { ...f.component, created: undefined, mounted: undefined, beforeUnmount: undefined,
     components: { ...f.component.components, SArticleFaqs: reader || f.component.components.SArticleFaqs,
     SArticleEditor: reader ? {
@@ -117,6 +117,7 @@ async function render(f, slots = {}, reader = null) {
         Vue.h("h2", this.title), Vue.h("div", { "data-saved-body": "true", innerHTML: this.body }),
         this.$slots.end?.({ edit: this.edit })]); },
     } : {
+      methods: { findAllImages() {} },
       render() { return Vue.h("div", this.$attrs, [this.$slots["before-title"]?.(), this.$slots.default?.()]); },
     }, SArticleWorkspaceComments: {
       props: ["active", "articleId", "shopId", "disabled"],
@@ -128,17 +129,22 @@ async function render(f, slots = {}, reader = null) {
     }, SArticleSearchConsole: {
       props: { workspace: Boolean },
       render() { return Vue.h("div", { ...this.$attrs, "data-search-console-workspace": this.workspace }); },
+    }, SArticleWorkspaceFaqs: {
+      props: ["modelValue", "active", "editMode", "disabled"],
+      render() { return Vue.h("div", { ...this.$attrs, "data-workspace-faqs": "true",
+        "data-faqs-active": this.active, "data-faqs-editable": this.editMode && !this.disabled },
+        (this.modelValue || []).map((item) => Vue.h("p", item.question))); },
     } },
     data: () => Object.fromEntries(Object.keys(f.component.data()).map((key) => [key, f.state[key]])),
     render: templateExports.render };
-  const props = Object.fromEntries(Object.keys(f.component.props).map((key) => [key, f.state[key]]));
-  const app = Vue.createSSRApp({ render: () => Vue.h(component, props, slots) });
+  const props = () => Object.fromEntries(Object.keys(f.component.props).map((key) => [key, f.state[key]]));
+  const app = createApp({ render: () => Vue.h(component, { ...props(), ref: "viewer" }, slots) });
   app.provide("$shop", f.state.$shop);
   Object.assign(app.config.globalProperties, {
     $t: (key) => key, USER: f.state.USER, USER_ID: f.state.USER_ID,
     writeShopAccess: () => f.state.permitted, getCurrentLanguage: f.state.getCurrentLanguage,
     getLanguageName: f.state.getLanguageName,
-    getShop: () => null, getUserAvatar: () => "/avatar.png", getLocalTimeString: (value) => value || "",
+    getShop: () => null, getUserAvatar: () => "/avatar.png", getLocalTimeString: (value) => value || "", getFromNowString: f.state.getFromNowString,
     $route: f.state.$route, $vuetify: { display: { smAndDown: false, mdAndUp: true }, locale: { isRtl: false } }, window: f.window,
   });
   const special = new Set(["v-dialog", "v-menu", "v-btn", "v-select"]);
@@ -157,7 +163,11 @@ async function render(f, slots = {}, reader = null) {
     return Vue.h("label", { "data-field": this.label, "data-disabled": this.disabled },
       this.$slots.selection?.({ item: { raw, title: raw.title } }));
   } });
-  return renderToString(app);
+  return app;
+}
+
+async function render(f, slots = {}, reader = null) {
+  return renderToString(renderApp(f, slots, reader));
 }
 
 test("workspace remains opt-in and legacy creation keeps its published default", () => {
@@ -169,6 +179,129 @@ test("workspace remains opt-in and legacy creation keeps its published default",
   assert.equal(f.state.article.published, true);
   assert.equal(f.state.workspace_ready, false);
   assert.equal(f.state.workspace_dirty, false);
+});
+
+test("Product workspace retains article authorization without requiring Blog permission", () => {
+  const product = fixture({ articleType: 'product', permitted: false });
+  product.state.permitted = false;
+  assert.equal(product.state.product_workspace, true);
+  assert.equal(product.state.workspace_can_write, true);
+  assert.deepEqual(product.permissionChecks, []);
+  product.state.can_edit = false;
+  assert.equal(product.state.workspace_can_write, false);
+  const blog = fixture({ permitted: false });
+  blog.state.permitted = false;
+  assert.equal(blog.state.workspace_can_write, false);
+  assert.deepEqual(blog.permissionChecks, ['blog']);
+});
+
+test("new Product descriptions preserve Published defaults and use the current Shop language", () => {
+  const product = fixture({ articleType: 'product' });
+  product.state.prepareCreateNew(); product.flush();
+  assert.equal(product.state.article.published, true);
+  assert.equal(product.state.published_state, true);
+  assert.equal(product.state.article.lang, 'fa');
+  assert.equal(product.state.workspace_ready, true);
+  assert.equal(product.state.hasUnsavedChanges, false);
+  assert.equal(product.state.saveBlocked, false);
+});
+
+test("new Product translations retain the selected language instead of the Shop default", () => {
+  const product = fixture({ articleType: 'product', forceLanguage: 'ar' });
+  product.state.prepareCreateNew(); product.flush();
+  assert.equal(product.state.article.lang, 'ar');
+  assert.equal(product.state.forceLanguage, 'ar');
+  assert.equal(product.state.can_change_article_language, false);
+  assert.equal(product.state.published_state, true);
+});
+
+test("saved Product descriptions honor initial review while creation and explicit editing remain editable", () => {
+  for (const initialRenderState of ['review', 'editing']) {
+    const product = fixture({ articleType: 'product', initialRenderState });
+    product.state.onGetArticlePackData(pack()); product.flush();
+    assert.equal(product.state.render_state, initialRenderState);
+    assert.equal(product.state.hasUnsavedChanges, false);
+    assert.equal(product.state.saveBlocked, false);
+  }
+  const fresh = fixture({ articleType: 'product', initialRenderState: 'review' });
+  fresh.state.prepareCreateNew(); fresh.flush();
+  assert.equal(fresh.state.isNew, true);
+  assert.equal(fresh.state.render_state, 'editing');
+});
+
+test("Product preview preserves the native draft and saves its captured body with the existing callback", async () => {
+  const f = fixture({ articleType: 'product', workspace_ready: true, render_state: 'editing', state: 'changed' });
+  f.state.$refs.editorContainer.state = 'changed';
+  f.state.toggleProductPreview();
+  assert.equal(f.state.in_view_mode, true);
+  assert.equal(f.state.article.body, '<p>Purified body</p>');
+  f.state.$refs.editorContainer.purifyTitle = () => { throw Error('Do not re-read the preview DOM'); };
+  f.state.$refs.editorContainer.purifyBody = () => { throw Error('Do not re-read the preview DOM'); };
+  let advanced = 0;
+  f.state.saveChange(() => advanced++);
+  assert.equal(advanced, 0);
+  assert.equal(f.requests[0].payload.body, '<p>Purified body</p>');
+  assert.equal(f.requests[0].payload.product_id, undefined);
+  f.requests[0].resolve({ data: { id: 12 } }); await settle();
+  assert.equal(advanced, 1);
+  assert.equal(f.state.hasUnsavedChanges, false);
+});
+
+test("Product keeps its empty-body save contract and vendor endpoint", async () => {
+  const f = fixture({ articleType: 'product', productId: 19, workspace_ready: true, render_state: 'editing',
+    $route: { params: { shop_id: 7, vendor_id: 4 }, matched: [{ meta: { vendor: true } }] } });
+  f.state.$route = { params: { shop_id: 7, vendor_id: 4 }, matched: [{ meta: { vendor: true } }] };
+  f.state.$refs.editorContainer.purifyBody = () => '';
+  f.state.saveChange();
+  assert.match(f.requests[0].url, /POST_MY_VENDOR_ADD_EDIT_ARTICLE\/4\/product/);
+  assert.equal(f.requests[0].payload.body, '');
+  assert.equal(f.requests[0].payload.product_id, 19);
+  f.requests[0].resolve({ data: { error: true, error_msg: 'Retry' } }); await settle();
+  assert.equal(f.state.state, 'changed');
+});
+
+test("Product preview never serializes untouched rich blocks", () => {
+  const f = fixture({ articleType: 'product', workspace_ready: true, render_state: 'editing' });
+  const body = '<div data-block="catalog">Untouched stored payload</div>';
+  f.state.article.body = body;
+  const editor = f.state.$refs.editorContainer;
+  editor.state = 'no-change';
+  editor.purifyBody = () => { throw Error('Untouched DOM must not be serialized'); };
+  editor.purifyTitle = () => { throw Error('Untouched title must not be serialized'); };
+  f.state.toggleProductPreview();
+  assert.equal(f.state.in_view_mode, true);
+  assert.equal(f.state.article.body, body);
+  f.state.toggleProductPreview();
+  assert.equal(f.state.in_edit_mode, true);
+  assert.equal(f.state.$refs.editorContainer, editor);
+  assert.equal(f.state.article.body, body);
+});
+
+test("unconfirmed Product settings, import, schema and inactive editors cannot save", () => {
+  for (const pending of ['workspace_setting', 'workspace_schedule', 'workspace_tools', 'workspace_import_pending', 'workspace_schema_pending', 'workspace_faq_pending', 'auto_generate_busy']) {
+    const f = fixture({ articleType: 'product', workspace_ready: true });
+    f.state[pending] = pending === 'workspace_setting' ? 'status' : true;
+    assert.equal(f.state.saveBlocked, true, pending);
+    f.state.saveChange(); assert.equal(f.requests.length, 0, pending);
+  }
+  const inactive = fixture({ articleType: 'product', workspace_ready: true, active: false });
+  inactive.state.saveChange(); inactive.state.autoFixArticle(); inactive.state.deleteArticle(); inactive.state.autoGenerate(); inactive.state.openWorkspaceSchedule();
+  assert.equal(inactive.requests.length, 0);
+  assert.equal(inactive.state.workspace_schedule, false);
+});
+
+test("Product workspace renders the shared editor and three digest disclosures without Blog or author controls", async () => {
+  const f = fixture({ articleType: 'product', showAuthorInfo: false, workspace_ready: true });
+  f.state.article.faqs = [{ question: 'Care?', answer: '<p>Follow the guide.</p>' }];
+  f.state.article.structures = [{ '@type': 'Book', name: 'Guide' }];
+  const html = await render(f);
+  assert.match(html, /s-article-workspace--product/);
+  assert.equal((html.match(/<details /g) || []).length, 3);
+  assert.match(html, /add_product.description_modern.product_story/);
+  assert.doesNotMatch(html, /s-article-workspace__author|s-article-workspace__seo-grid|s-article-workspace__save-state/);
+  assert.match(html, /product-workspace="true"/);
+  assert.equal(f.state.product_faq_digest, 'add_product.description_modern.faq_digest');
+  assert.equal(f.state.product_schema_digest, 'add_product.description_modern.schema_digest');
 });
 
 test("Comments uses an independent persistent workspace surface while legacy callers keep public comments", async () => {
@@ -273,6 +406,55 @@ test("section changes preserve unsaved article, SEO, category and cluster state"
     assert.equal(f.state.category, 14); assert.equal(f.state.cluster_id, 15);
   }
   assert.equal(inspections, 1);
+});
+
+test("Blog Details stays mounted across toggles and SEO while preserving selections and fresh write guards", async () => {
+  const node = (type, text = "") => ({ type, text, props: {}, style: { display: "" }, children: [], parent: null });
+  const renderer = Vue.createRenderer({
+    createElement: node, createText: (text) => node("text", text), createComment: (text) => node("comment", text),
+    insert(child, parent, anchor = null) {
+      if (child.parent) child.parent.children.splice(child.parent.children.indexOf(child), 1);
+      parent.children.splice(anchor ? parent.children.indexOf(anchor) : parent.children.length, 0, child); child.parent = parent;
+    },
+    remove(child) { if (child.parent) child.parent.children.splice(child.parent.children.indexOf(child), 1); child.parent = null; },
+    setText(child, text) { child.text = text; }, setElementText(child, text) { child.text = text; child.children = []; },
+    patchProp(child, key, previous, next) { child.props[key] = next; }, parentNode: (child) => child.parent,
+    nextSibling: (child) => child.parent?.children[child.parent.children.indexOf(child) + 1] || null,
+  });
+  const nodes = (current) => [current, ...current.children.flatMap(nodes)];
+  let mounts = 0, options, search;
+  const Options = Vue.defineComponent({
+    props: ["categoryId", "clusterId", "setCategoryId", "setClusterId", "disabled"],
+    setup(values) {
+      mounts++; options = values; search = Vue.ref("Pending category search");
+      return () => Vue.h("div", { "data-details-options": true, "data-search": search.value,
+        "data-category": values.categoryId, "data-cluster": values.clusterId, "data-disabled": values.disabled });
+    },
+  });
+  const f = fixture({ workspace_ready: true, render_state: "editing" });
+  f.state = Vue.reactive(f.state);
+  const app = renderApp(f, { "extra-header-options": (values) => Vue.h(Options, values) }, null, renderer.createApp);
+  const container = node("root"), root = app.mount(container), viewer = root.$refs.viewer;
+  try {
+    const panel = nodes(container).find((item) => item.props.class === "s-article-workspace__details");
+    const fields = nodes(panel).find((item) => item.props["data-details-options"]);
+    options.setCategoryId(14); options.setClusterId(15);
+    for (const [open, section] of [[true, "edit"], [false, "edit"], [true, "edit"], [true, "seo"], [true, "edit"]]) {
+      viewer.workspace_details = open; f.state.workspaceSection = section;
+      await Vue.nextTick();
+      assert.equal(panel.style.display === "none", !open || section !== "edit");
+      assert.equal(nodes(panel).find((item) => item.props["data-details-options"]), fields);
+      assert.equal(fields.props["data-category"], 14); assert.equal(fields.props["data-cluster"], 15);
+      assert.equal(fields.props["data-search"], "Pending category search");
+      assert.equal(mounts, 1, "Hiding Details retains its existing selector instance");
+    }
+    f.state.permitted = false;
+    await Vue.nextTick();
+    assert.equal(panel.props.inert, true); assert.equal(fields.props["data-disabled"], true);
+    options.setCategoryId(99); options.setClusterId(99);
+    assert.equal(viewer.category, 14); assert.equal(viewer.cluster_id, 15);
+    assert.equal(f.requests.length, 0, "Toggles, tab changes and denied selections never save the article");
+  } finally { app.unmount(); }
 });
 
 test("preview captures the inline editor DOM before hiding it", () => {
@@ -643,6 +825,291 @@ test("Article Analytics owns one localized Search Console heading and opts its n
   assert.doesNotMatch(await render(f), /data-search-console-workspace/);
 });
 
+test("Product Search Console opens only for an active editable saved merchant article and keeps legacy presentation", async () => {
+  const product = fixture({ articleType: 'product', workspace_ready: true });
+  product.state.showGoogleSearch(); product.flush();
+  const html = await render(product);
+  const document = new JSDOM(html).window.document;
+  const report = document.querySelector('.s-article-product__search');
+  assert.ok(report);
+  assert.notEqual(report.style.display, 'none');
+  assert.ok(report.querySelector('[data-search-console-workspace="true"]'));
+  assert.doesNotMatch(report.className, /shadow-paper/);
+
+  for (const blocked of [{ active: false }, { can_edit: false }, { state: 'saving' }, { article: pack(null).article },
+    { $route: { params: { shop_id: 7, vendor_id: 4 }, matched: [{ meta: { vendor: true } }] } }]) {
+    const f = fixture({ articleType: 'product', workspace_ready: true });
+    Object.assign(f.state, blocked);
+    f.state.showGoogleSearch(); f.flush();
+    assert.equal(f.state.show_google_tank, false);
+    assert.equal(f.state.first_load_seo_audit, false);
+  }
+
+  for (const blocked of [{ can_edit: false },
+    { $route: { params: { shop_id: 7, vendor_id: 4 }, matched: [{ meta: { vendor: true } }] } }]) {
+    const f = fixture({ articleType: 'product', first_load_seo_audit: true, show_google_tank: true });
+    Object.assign(f.state, blocked);
+    assert.doesNotMatch(await render(f), /data-search-console-workspace/);
+  }
+
+  const legacy = fixture({ workspace: false, articleType: 'product', first_load_seo_audit: true, show_google_tank: true });
+  const legacyDocument = new JSDOM(await render(legacy)).window.document;
+  const legacyReport = legacyDocument.querySelector('.shadow-paper');
+  assert.ok(legacyReport.querySelector('[data-search-console-workspace="false"]'));
+  assert.notEqual(legacyReport.style.display, 'none');
+});
+
+test("Product section tabs retain the editor and metadata drafts while grouping SEO and schema under SEO", async () => {
+  const f = fixture({ articleType: 'product', productSectionTabs: true, workspace_ready: true, render_state: 'editing', initialRenderState: 'review' });
+  assert.equal(f.component.props.productSectionTabs.default, false);
+  f.state.article.faqs = [{ question: 'Keep this question', answer: '<p>Pending answer.</p>' }];
+  f.state.article.structures = [{ '@type': 'Product', name: 'Pending schema' }];
+  let document = new JSDOM(await render(f)).window.document;
+  const panels = [...document.querySelectorAll('.s-article-product__disclosure')];
+  assert.equal(panels.length, 2);
+  assert.ok(panels.every((panel) => panel.style.display === 'none'));
+  assert.equal(document.querySelector('.s-article-product__faq').style.display, 'none');
+  const rich = '<div data-block="catalog">Untouched rich body</div>';
+  f.state.article.body = rich;
+  f.state.$refs.editorContainer.state = 'changed';
+  f.state.workspaceSection = 'seo'; f.state.syncWorkspaceSection('edit');
+  assert.equal(f.state.product_panels.seo, true, 'The SEO tab immediately exposes its actual fields');
+  assert.equal(f.state.article.body, '<p>Purified body</p>', 'Leaving a changed writing surface captures it once');
+  f.state.article.body = rich;
+  f.state.$refs.editorContainer.purifyBody = () => { throw Error('SEO must not serialize the hidden body'); };
+  f.state.readyWorkspace(); f.flush();
+  assert.equal(f.state.in_edit_mode, true, 'An initial preview setting cannot disable SEO controls');
+  document = new JSDOM(await render(f)).window.document;
+  assert.equal(document.querySelector('.samin-article-widget').style.display, 'none');
+  assert.ok([...document.querySelectorAll('.s-article-product__disclosure')].every((panel) => panel.style.display !== 'none'));
+  assert.equal(document.querySelector('.s-article-product__faq').style.display, 'none');
+  assert.equal(f.state.article.faqs[0].question, 'Keep this question');
+  assert.equal(f.state.article.structures[0].name, 'Pending schema');
+  f.state.saveChange();
+  assert.equal(f.requests[0].payload.body, rich);
+});
+
+test("standalone Product FAQ remains mounted across tabs with independent active state and pending-draft protection", async () => {
+  const f = fixture({ articleType: 'product', productSectionTabs: true, workspaceSection: 'faq', workspace_ready: true, render_state: 'editing' });
+  const faqs = [{ question: 'Keep this draft question', answer: '<p>Preserve <strong>formatting</strong>.</p>' }];
+  f.state.article.faqs = faqs;
+  f.state.workspace_faq_pending = true;
+  for (const workspaceSection of ['faq', 'seo', 'edit', 'faq']) {
+    const previous = f.state.workspaceSection;
+    f.state.workspaceSection = workspaceSection; f.state.syncWorkspaceSection(previous);
+    const document = new JSDOM(await render(f)).window.document;
+    const panel = document.querySelector('section.s-article-product__faq');
+    const editor = panel.querySelector('[data-workspace-faqs]');
+    assert.equal(document.querySelectorAll('[data-workspace-faqs]').length, 1);
+    assert.equal(panel.querySelector('summary'), null, 'The FAQ tab does not add a closed outer disclosure');
+    assert.equal(panel.style.display === 'none', workspaceSection !== 'faq');
+    assert.equal(editor.getAttribute('data-faqs-active'), String(workspaceSection === 'faq'));
+    assert.equal(f.state.article.faqs, faqs, 'Navigation retains the same applied FAQ draft');
+    assert.equal(f.state.workspace_faq_pending, true, 'Hiding the editor cannot discard its unapplied dialog draft');
+    assert.equal(f.state.saveBlocked, true);
+    f.state.saveChange();
+    assert.equal(f.requests.length, 0, 'An unapplied FAQ draft prevents every tab from saving');
+  }
+  f.state.active = false;
+  const inactive = new JSDOM(await render(f)).window.document;
+  assert.equal(inactive.querySelector('[data-workspace-faqs]').getAttribute('data-faqs-active'), 'false');
+  assert.equal(f.state.saveBlocked, true);
+});
+
+test("Product FAQ save preserves the rich article body, schedule and metadata while respecting fresh write guards", () => {
+  const f = fixture({ articleType: 'product', productSectionTabs: true, workspaceSection: 'faq', workspace_ready: true, render_state: 'editing', schedule_at: '2026-11-01T10:00:00Z' });
+  const body = '<div data-block="catalog">Keep this stored article exactly.</div>';
+  const faqs = [{ question: 'FAQ update', answer: '<p>Keep <b>rich</b> text.</p>' }];
+  f.state.article.body = body; f.state.article.faqs = faqs;
+  f.state.article.page_title = 'Pending SEO title'; f.state.isPrivate = true;
+  f.state.$refs.editorContainer.purifyBody = () => { throw Error('FAQ save must not read the hidden body'); };
+  f.state.$refs.editorContainer.purifyTitle = () => { throw Error('FAQ save must not read the hidden title'); };
+  f.state.can_edit = false;
+  f.state.saveChange(); assert.equal(f.requests.length, 0);
+  f.state.can_edit = true;
+  assert.equal(f.state.workspace_save_action, 'global.article.workspace.save_changes');
+  assert.equal(f.state.saveBlocked, false);
+  f.state.saveChange();
+  assert.equal(f.requests.length, 1);
+  assert.equal(f.requests[0].payload.body, body);
+  assert.deepEqual(f.requests[0].payload.faqs, faqs);
+  assert.equal(f.requests[0].payload.page_title, 'Pending SEO title');
+  assert.equal(f.requests[0].payload.private, true);
+  assert.equal(f.requests[0].payload.schedule_at, 'utc:2026-11-01T10:00:00Z');
+});
+
+test("Product AddFull retains its original inline FAQ disclosure and active-panel behavior", async () => {
+  const f = fixture({ articleType: 'product', workspace_ready: true, render_state: 'editing' });
+  f.state.article.faqs = [{ question: 'Existing inline FAQ', answer: '<p>Preserved answer.</p>' }];
+  let document = new JSDOM(await render(f)).window.document;
+  assert.equal(document.querySelectorAll('details.s-article-product__disclosure').length, 3);
+  assert.equal(document.querySelector('.s-article-product__faq'), null);
+  const editor = document.querySelector('[data-workspace-faqs]');
+  assert.equal(editor.closest('details').style.display, '');
+  assert.equal(editor.getAttribute('data-faqs-active'), 'false');
+  f.state.product_panels.faq = true;
+  document = new JSDOM(await render(f)).window.document;
+  assert.equal(document.querySelector('[data-workspace-faqs]').getAttribute('data-faqs-active'), 'true');
+  assert.ok(document.querySelector('[data-workspace-faqs]').closest('details').hasAttribute('open'));
+  assert.equal(f.requests.length, 0);
+});
+
+test("Product SEO exposes an explicit lazy Search Console report and avoids disconnected or hidden audits", async () => {
+  const f = fixture({ articleType: 'product', productSectionTabs: true, workspaceSection: 'seo', workspace_ready: true });
+  let document = new JSDOM(await render(f)).window.document;
+  assert.match(document.querySelector('.s-article-product__search').textContent, /global.article.search_console.connect_message/);
+  assert.doesNotMatch(await render(f), /data-search-console-workspace/);
+  f.state.showGoogleSearch(); f.flush();
+  assert.equal(f.state.show_google_tank, false);
+  for (const configuration of ['search_console', 'search_console_sample']) {
+    f.state.$shop[configuration] = true;
+    assert.match(await render(f), /add_product.description_modern.view_search_report/);
+    assert.doesNotMatch(await render(f), /data-search-console-workspace/);
+    f.state.showGoogleSearch(); f.flush();
+    assert.equal((await render(f)).match(/data-search-console-workspace="true"/g)?.length, 1);
+    for (const blocked of [{ active: false }, { can_edit: false }, { workspaceSection: 'edit' }, { article: pack(null).article },
+      { $route: { params: { shop_id: 7, vendor_id: 4 }, matched: [{ meta: { vendor: true } }] } }]) {
+      const hidden = fixture({ articleType: 'product', productSectionTabs: true, workspaceSection: 'seo', show_google_tank: true, first_load_seo_audit: true });
+      hidden.state.$shop.search_console = true;
+      Object.assign(hidden.state, blocked);
+      assert.doesNotMatch(await render(hidden), /data-search-console-workspace/);
+    }
+    f.state.show_google_tank = false;
+    delete f.state.$shop[configuration];
+  }
+  assert.equal(f.requests.length, 0, 'Rendering and report selection use no real HTTP calls in this fixture');
+});
+
+test("Product publication and visibility menus show direct checked choices and apply only local draft changes", async () => {
+  const f = fixture({ articleType: 'product', workspace_ready: true, render_state: 'editing' });
+  for (const [key, field, options] of [['status', 'published_state', ['global.article.draft', 'global.article.published']],
+    ['visibility', 'isPrivate', ['global.article.public', 'global.article.private']]]) {
+    f.state.openWorkspaceSetting(key);
+    const document = new JSDOM(await render(f)).window.document;
+    const menu = document.querySelector('[role="menu"]');
+    assert.ok(menu);
+    assert.equal(menu.querySelector('[data-field]'), null, 'There is no nested select');
+    const choices = [...menu.querySelectorAll('[role="menuitemradio"]')];
+    assert.deepEqual(choices.slice(0, 2).map((item) => item.getAttribute('title')), options);
+    assert.deepEqual(choices.slice(0, 2).map((item) => item.getAttribute('prepend-icon')), key === 'status' ? ['edit_note', 'rss_feed'] : ['public', 'lock_outline']);
+    assert.equal(choices[0].getAttribute('aria-checked'), 'true');
+    assert.equal(choices[1].getAttribute('aria-checked'), 'false');
+    f.state.selectProductWorkspaceSetting(key, false);
+    assert.equal(f.state.state, 'no-change', 'Selecting the current value keeps the draft clean');
+    f.state.openWorkspaceSetting(key); f.state.selectProductWorkspaceSetting(key, true);
+    assert.equal(f.state[field], true);
+    assert.equal(f.state.state, 'changed');
+    assert.equal(f.state.workspace_setting, null);
+    f.state.state = 'no-change';
+  }
+  f.state.openWorkspaceSetting('language');
+  assert.match(await render(f), /s-article-workspace__setting-actions/, 'The staged language picker remains intact');
+  assert.equal(f.requests.length, 0, 'Choosing metadata does not save or publish it');
+});
+
+test("direct Product choices recheck current scope and permission before changing metadata", () => {
+  for (const change of ['inactive', 'permission', 'busy', 'record', 'generation', 'shop']) {
+    const f = fixture({ articleType: 'product', workspace_ready: true, render_state: 'editing' });
+    f.state.openWorkspaceSetting('visibility');
+    if (change === 'inactive') f.state.active = false;
+    if (change === 'permission') f.state.can_edit = false;
+    if (change === 'busy') f.state.workspace_importing = true;
+    if (change === 'record') f.state.article = pack(99).article;
+    if (change === 'generation') f.state._workspaceGeneration++;
+    if (change === 'shop') f.state.$route.params.shop_id = 99;
+    f.state.selectProductWorkspaceSetting('visibility', true);
+    assert.equal(f.state.isPrivate, false, change);
+    assert.equal(f.state.workspace_setting, null, change);
+    assert.equal(f.requests.length, 0);
+  }
+});
+
+test("Product scheduling keeps publication locked and opens the existing staged schedule dialog from Status", async () => {
+  const scheduled = '2026-11-01T14:00:00+04:00';
+  const f = fixture({ articleType: 'product', workspace_ready: true, render_state: 'editing', schedule_at: scheduled });
+  const status = f.state.workspace_controls.find((control) => control.key === 'status');
+  assert.equal(status.disabled, false);
+  assert.equal(status.value, 'global.article.workspace.scheduled');
+  f.state.openWorkspaceSetting('status');
+  const document = new JSDOM(await render(f)).window.document;
+  const choices = [...document.querySelector('[role="menu"]').querySelectorAll('[role="menuitemradio"]')];
+  assert.equal(choices.length, 3);
+  assert.ok(choices.slice(0, 2).every((item) => item.hasAttribute('disabled') && item.getAttribute('aria-checked') === 'false'));
+  assert.equal(choices[2].getAttribute('aria-checked'), 'true');
+  assert.equal(choices[2].getAttribute('subtitle'), 'add_product.description_modern.status_schedule_hint');
+  f.state.selectProductWorkspaceSetting('status', true);
+  assert.equal(f.state.published_state, false);
+  assert.equal(f.state.schedule_at, scheduled);
+  f.state.openWorkspaceSchedule();
+  assert.equal(f.state.workspace_setting, null);
+  assert.equal(f.state.workspace_schedule, true);
+  assert.equal(f.state.workspace_schedule_value, scheduled);
+  f.state.workspace_schedule_value = null;
+  f.state.applyWorkspaceSchedule();
+  assert.equal(f.state.schedule_at, null);
+  f.state.openWorkspaceSetting('status'); f.state.selectProductWorkspaceSetting('status', true);
+  assert.equal(f.state.published_state, true);
+  assert.equal(f.requests.length, 0);
+});
+
+test("Product scheduled metadata is compact while its tooltip retains exact localized time and timezone", async () => {
+  const scheduled = '2026-11-01T14:00:00+04:00';
+  const f = fixture({ articleType: 'product', schedule_at: scheduled });
+  f.state.getFromNowString = (value) => value === scheduled ? 'in 3 days' : 'unexpected time';
+  const metadata = f.state.workspace_metadata.find((field) => field.key === 'schedule');
+  assert.equal(metadata.value, 'in 3 days');
+  assert.equal(metadata.tooltip, `${scheduled} · ${f.state.workspace_timezone}`);
+  const document = new JSDOM(await render(f)).window.document;
+  assert.equal(document.querySelector('.s-article-workspace__schedule-copy').getAttribute('tabindex'), '0');
+  assert.match(document.querySelector('.s-article-workspace__schedule-copy').textContent, /in 3 days/);
+  assert.equal(f.state.schedule_at, scheduled);
+});
+
+test("Product AI Write explains its editable draft and never saves generated content automatically", async () => {
+  const f = fixture({ articleType: 'product', workspace_ready: true, render_state: 'editing' });
+  const document = new JSDOM(await render(f)).window.document;
+  assert.match(document.querySelector('.s-article-product__ai').textContent, /add_product.description_modern.ai_write_hint/);
+  f.state.autoGenerate();
+  assert.equal(f.requests.length, 1);
+  assert.match(f.requests[0].url, /POST_AI_ARTICLE_AUTO_GENERATE\/7\/12/);
+  assert.equal(f.state.auto_generate_busy, true);
+  f.requests[0].resolve({ data: { title: 'Editable generated title', body: '<p>Editable generated body</p>' } });
+  await settle();
+  assert.equal(f.state.article.body, '<p>Editable generated body</p>');
+  assert.equal(f.state.state, 'changed');
+  assert.equal(f.requests.length, 1, 'Generation does not post an article save');
+});
+
+test("new Product descriptions retain discoverable disabled AI Write with focusable Save-first help", async () => {
+  const f = fixture({ articleType: 'product', workspace_ready: true, render_state: 'editing', article: pack(null).article });
+  const document = new JSDOM(await render(f)).window.document;
+  const action = document.querySelector('.s-article-product__ai-action');
+  assert.ok(action);
+  assert.equal(action.getAttribute('tabindex'), '0');
+  assert.ok(action.querySelector('button.s-article-product__ai').disabled);
+  assert.match(action.textContent, /add_product.description_modern.ai_write/);
+  assert.match(action.textContent, /global.article.workspace.save_first/);
+  f.state.autoGenerate();
+  assert.equal(f.requests.length, 0, 'The native saved-article guard prevents generation');
+});
+
+test("Blog and Product language controls show full names with forced-language precedence and unknown-code fallback", async () => {
+  for (const articleType of ["shop-blog", "product"]) {
+    for (const [lang, forceLanguage, expected] of [["en", null, "English"], ["fa", null, "فارسی"],
+      ["fa", "en", "English"], ["en", "fa", "فارسی"], ["de", null, "German"], ["bi", null, "Bislama"], ["BI", null, "Bislama"],
+      ["en", "bi", "Bislama"], ["!bad", null, "!bad"], ["en", "!bad", "!bad"],
+      ["xx-custom", null, "xx-custom"], ["", null, "global.commons.not_set"]]) {
+      const f = fixture({ articleType, article: pack(12, { lang }).article, forceLanguage });
+      assert.equal(f.state.workspace_controls.find((control) => control.key === "language").value, expected);
+      const document = new JSDOM(await render(f)).window.document;
+      const control = document.querySelector('button.s-article-workspace__command-button[aria-label="global.article.workspace.language"]');
+      assert.ok(control.textContent.includes(expected));
+      assert.equal(f.state.article.lang, lang, "Displaying a full language name preserves the stored language");
+      assert.equal(f.requests.length, 0);
+    }
+  }
+});
+
 test("compact settings stage values until Apply; Cancel and same-value Apply keep the draft clean", () => {
   const f = fixture({ workspace_ready: true, render_state: "editing" });
   for (const [key, value, field] of [["status", true, "published_state"], ["visibility", true, "isPrivate"], ["language", "de", "lang"]]) {
@@ -717,6 +1184,96 @@ test("pending author assignment freezes workspace operations and fresh permissio
   assert.equal(selected, 0);
   f.state.permitted = true; f.state.openWorkspaceWordImport();
   assert.equal(selected, 1);
+});
+
+test("Blog and Product workspaces expose one shared inline Word and Auto-fix control without overflow duplicates", async () => {
+  for (const props of [{}, { articleType: 'product' }, { articleType: 'product', productSectionTabs: true }]) {
+    const f = fixture({ ...props, workspace_ready: true, render_state: 'editing', workspace_tools: true });
+    const document = new JSDOM(await render(f)).window.document;
+    const command = document.querySelector('.s-article-workspace__command');
+    const word = command.querySelector('button[aria-label="global.article.workspace.import_word"]');
+    const autoFix = command.querySelector('button[aria-label="global.article.workspace.auto_fix"]');
+    assert.ok(word.classList.contains('s-article-workspace__command-button'));
+    assert.ok(autoFix.classList.contains('s-article-workspace__command-button'));
+    assert.equal(word.disabled, false);
+    assert.equal(autoFix.disabled, false);
+    assert.match(word.querySelector('img').getAttribute('src'), /extensions\/docx\.svg$/);
+    assert.equal(word.querySelector('img').getAttribute('alt'), '');
+    assert.match(autoFix.textContent, /auto_fix_high/);
+    for (const action of ['import_word', 'auto_fix']) {
+      assert.equal(document.querySelectorAll(`button[aria-label="global.article.workspace.${action}"]`).length, 1);
+      assert.equal(document.querySelector(`[title="global.article.workspace.${action}"]`), null);
+    }
+    assert.ok(document.querySelector('[title="global.article.menu.delete"]'), 'Delete stays available in its existing overflow menu');
+    assert.equal(f.requests.length, 0);
+  }
+});
+
+test("inline article tools keep current write, active, busy, pending-import and empty-body guards", async () => {
+  for (const articleType of ['shop-blog', 'product']) {
+    for (const blocked of ['readonly', 'inactive', 'busy', 'pending', 'empty']) {
+      const f = fixture({ articleType, workspace_ready: true, render_state: 'editing' });
+      if (blocked === 'readonly') f.state.can_edit = false;
+      if (blocked === 'inactive') f.state.active = false;
+      if (blocked === 'busy') f.state.workspace_importing = true;
+      if (blocked === 'pending') f.state.workspace_import_pending = true;
+      if (blocked === 'empty') f.state.article.body = '';
+      const document = new JSDOM(await render(f)).window.document;
+      const command = document.querySelector('.s-article-workspace__command');
+      assert.equal(command.querySelector('button[aria-label="global.article.workspace.import_word"]').disabled, blocked !== 'empty', `${articleType}: ${blocked} Word`);
+      assert.equal(command.querySelector('button[aria-label="global.article.workspace.auto_fix"]').disabled, blocked !== 'pending', `${articleType}: ${blocked} Auto-fix`);
+    }
+  }
+});
+
+test("Product review enters editing before Word selection while current editing and Blog imports stay immediate", () => {
+  for (const articleType of ['product', 'shop-blog']) {
+    for (const render_state of ['review', 'editing']) {
+      const f = fixture({ articleType, workspace_ready: true, render_state, workspace_tools: true });
+      let selected = 0;
+      f.state.$refs.editorContainer.showSelectWord = () => selected++;
+      const body = f.state.article.body;
+      f.state.openWorkspaceWordImport();
+      const deferred = articleType === 'product' && render_state === 'review';
+      assert.equal(selected, deferred ? 0 : 1);
+      assert.equal(f.state.workspace_tools, false);
+      if (articleType === 'product') assert.equal(f.state.in_edit_mode, true);
+      f.flush();
+      assert.equal(selected, 1);
+      assert.equal(f.state.article.body, body);
+      assert.equal(f.state.state, 'no-change');
+      assert.equal(f.requests.length, 0);
+    }
+  }
+});
+
+test("Word selection rejects blocked requests and rechecks deferred Product import context", () => {
+  for (const when of ['before', 'after']) {
+    const blocked = ['permission', 'inactive', 'busy', 'pending', 'loading', 'not-found', 'login',
+      ...(when === 'after' ? ['section', 'review', 'article', 'generation'] : [])];
+    for (const change of blocked) {
+      const f = fixture({ articleType: 'product', workspace_ready: true, render_state: 'review' });
+      let selected = 0;
+      f.state.$refs.editorContainer.showSelectWord = () => selected++;
+      if (when === 'after') f.state.openWorkspaceWordImport();
+      if (change === 'permission') f.state.can_edit = false;
+      if (change === 'inactive') f.state.active = false;
+      if (change === 'busy') f.state.workspace_importing = true;
+      if (change === 'pending') f.state.workspace_import_pending = true;
+      if (change === 'loading') f.state.inLoading = true;
+      if (change === 'not-found') f.state.NOT_FOUND_ARTICLE = true;
+      if (change === 'login') f.state.NEED_LOGIN = true;
+      if (change === 'section') f.state.workspaceSection = 'seo';
+      if (change === 'review') f.state.render_state = 'review';
+      if (change === 'article') f.state.article = pack(99).article;
+      if (change === 'generation') f.state._workspaceGeneration++;
+      if (when === 'before') f.state.openWorkspaceWordImport();
+      f.flush();
+      assert.equal(selected, 0, `${when}: ${change}`);
+      if (when === 'before') assert.equal(f.state.render_state, 'review');
+      assert.equal(f.requests.length, 0);
+    }
+  }
 });
 
 test("selecting the same scheduled instant in another representation does not dirty the draft", () => {

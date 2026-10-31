@@ -1,11 +1,12 @@
 <template>
-  <v-container class="sld-bfb" maxWidth="1900">
+  <v-container class="sld-bfb text-start" :class="{ 'sld-bfb--modern': modern }" :max-width="modern ? 1040 : 1900">
     <div class="sld-bfb__grid">
       <!-- Left: steps -->
       <div class="sld-bfb__left">
         <b-listing-form-builder-slide-list
           :slides="slidesLocal"
           :selected="selectedId"
+          :modern="modern"
           @update:selected="selectedId = $event"
           @add="addSlide"
           @remove="removeSlide"
@@ -16,8 +17,14 @@
 
       <!-- Right: editor -->
       <div class="sld-bfb__right">
+        <div v-if="modern && !selectedSlide" class="sd-modern-widget sd-modern-empty-state">
+          <v-icon aria-hidden="true">view_quilt</v-icon>
+          <h2>{{ $t('shop_listing.form_builder.no_steps') }}</h2>
+          <p>{{ $t('shop_listing.form_builder.select_step') }}</p>
+        </div>
+
         <v-alert
-          v-if="!selectedSlide"
+          v-else-if="!selectedSlide"
           type="info"
           variant="tonal"
           border="start"
@@ -26,13 +33,29 @@
           Select a step to edit.
         </v-alert>
 
-        <b-listing-form-builder-slide-editor
-          v-else
-          :slide="selectedSlide"
-          :step-index="selectedIndex"
-          :total-steps="totalSteps"
-          @update:slide="onUpdateSlide"
-        />
+        <section v-else :class="{ 'sd-modern-widget sld-bfb__workspace': modern }">
+          <header v-if="modern" class="sld-bfb__toolbar">
+            <span>{{ $t('shop_listing.form_builder.step_position', { step: selectedIndex + 1, total: slidesLocal.length }) }}</span>
+            <div class="sd-modern-actions">
+              <v-tooltip v-for="action in stepActions" :key="action.key" location="top" content-class="sd-modern-tooltip">
+                <template #activator="{ props }">
+                  <v-btn v-bind="props" icon variant="text" class="sd-modern-icon-button" :aria-label="action.label" :disabled="action.disabled" @click="runStepAction(action.key)">
+                    <v-icon aria-hidden="true">{{ action.icon }}</v-icon>
+                  </v-btn>
+                </template>
+                {{ action.label }}
+              </v-tooltip>
+            </div>
+          </header>
+          <b-listing-form-builder-slide-editor
+            :key="selectedId"
+            :slide="selectedSlide"
+            :modern="modern"
+            :step-index="selectedIndex"
+            :total-steps="totalSteps"
+            @update:slide="onUpdateSlide"
+          />
+        </section>
       </div>
     </div>
   </v-container>
@@ -61,6 +84,11 @@ export default {
      * DO NOT normalize into a different schema shape.
      */
     modelValue: { type: Array, default: () => [] },
+    modern: { type: Boolean, default: false },
+  },
+
+  provide() {
+    return { listingFormBuilderModern: this.modern };
   },
 
   emits: ["update:modelValue"],
@@ -74,6 +102,14 @@ export default {
   }),
 
   computed: {
+    stepActions(): any[] {
+      return [
+        { key: "up", icon: "arrow_upward", label: this.$t("shop_listing.form_builder.move_up"), disabled: this.selectedIndex === 0 },
+        { key: "down", icon: "arrow_downward", label: this.$t("shop_listing.form_builder.move_down"), disabled: this.selectedIndex >= this.slidesLocal.length - 1 },
+        { key: "duplicate", icon: "content_copy", label: this.$t("shop_listing.form_builder.duplicate"), disabled: false },
+        { key: "remove", icon: "delete_outline", label: this.$t("shop_listing.form_builder.remove"), disabled: false },
+      ];
+    },
     totalSteps(): number {
       return (this.slidesLocal?.length || 0) || 1;
     },
@@ -118,6 +154,12 @@ export default {
   },
 
   methods: {
+    runStepAction(action: string) {
+      if (!this.selectedId) return;
+      if (action === "duplicate") this.duplicateSlide(this.selectedId);
+      else if (action === "remove") this.removeSlide(this.selectedId);
+      else this.moveSlide({ id: this.selectedId, dir: action });
+    },
     signature(v: any): string {
       try {
         return JSON.stringify(v ?? null);
@@ -302,5 +344,64 @@ export default {
 .sld-bfb__left,
 .sld-bfb__right {
   min-width: 0;
+}
+
+.sld-bfb--modern {
+  padding: 0;
+  --sd-modern-border: rgba(var(--v-theme-on-surface), 0.09);
+  --sd-modern-muted: rgba(var(--v-theme-on-surface), 0.66);
+  --sd-modern-inset: rgba(var(--v-theme-on-surface), 0.025);
+  --sd-modern-selected-shadow: 0 2px 8px rgba(var(--v-theme-on-surface), 0.09);
+  font-size: 13px;
+  line-height: 21px;
+
+  .sld-bfb__grid { grid-template-columns: 154px minmax(0, 1fr); gap: 22px; align-items: start; }
+  .sld-bfb__workspace { padding: 25px 26px; }
+  .sld-bfb__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-block-end: 22px; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
+  .sld-bfb__toolbar .sd-modern-actions { gap: 6px; }
+
+  :deep(.sld-bfb-field) { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+  :deep(.sld-bfb-field > .v-card-text) { padding: 0; }
+  :deep(.sld-bfb-field > .v-card-text > .d-flex) { display: none !important; }
+  :deep(.sld-bfb-field > .v-card-text > .v-divider) { display: none; }
+  :deep(.sld-bfb-field .v-alert) { background: var(--sd-modern-inset); border: 0; border-radius: 10px; color: rgb(var(--v-theme-on-surface)); font-size: 12px; line-height: 20px; padding: 14px 16px; }
+  :deep(.sld-bfb-field .v-alert__underlay), :deep(.sld-bfb-field .v-alert__border) { display: none; }
+  :deep(.sld-bfb-field .v-alert__prepend .v-icon) { color: var(--sd-modern-muted); font-size: 18px; }
+  :deep(.sld-bfb-field .v-text-field), :deep(.sld-bfb-field .v-textarea), :deep(.sld-bfb-select .v-text-field), :deep(.sld-bfb-select .v-select) { margin-block-end: 12px; }
+  :deep(.sld-bfb-opt-edit__grid), :deep(.sld-bfb-iie__grid) { grid-template-columns: 1fr; gap: 22px; }
+  :deep(.sld-bfb-iie), :deep(.sld-bfb-faqe) { border: 0; border-radius: 0; background: transparent; }
+  :deep(.sld-bfb-iie > .v-card-title), :deep(.sld-bfb-faqe > .v-card-title), :deep(.sld-bfb-iie > .v-card-text), :deep(.sld-bfb-faqe > .v-card-text) { padding-inline: 0 !important; }
+  :deep(.sld-bfb-iie > .v-divider), :deep(.sld-bfb-faqe > .v-divider) { display: none; }
+  :deep(.sld-bfb-iie__row), :deep(.sld-bfb-faqe__row) { padding: 20px 0; border: 0; border-block-start: 1px solid var(--sd-modern-border); border-radius: 0; background: transparent; }
+  :deep(.sld-bfb-opt) { border: 0; border-block-start: 1px solid var(--sd-modern-border); border-radius: 0; background: transparent; box-shadow: none; }
+  :deep(.sld-bfb-opt__head) { padding: 14px 0; gap: 10px; background: transparent; }
+  :deep(.sld-bfb-opt__title), :deep(.sld-bfb-opt__subtitle) { white-space: normal; overflow-wrap: anywhere; }
+  :deep(.sld-bfb-opt__body) { padding: 18px 0; background: transparent; border-radius: 0; }
+  :deep(.sld-bfb-opt__title), :deep(.sld-bfb-iie .font-weight-black), :deep(.sld-bfb-faqe .font-weight-black), :deep(.sld-bfb-select .font-weight-black), :deep(.sld-bfb-up .font-weight-black) { font-size: 13px; line-height: 21px; font-weight: 500 !important; }
+  :deep(.sld-bfb-up__box) { border-color: var(--sd-modern-border); background: var(--sd-modern-inset); box-shadow: 0 2px 7px rgba(var(--v-theme-on-surface), 0.07); }
+  :deep(.sld-bfb-up__row) { grid-template-columns: 140px minmax(0, 1fr); gap: 18px; }
+  :deep(.sld-bfb-up__meta) { min-width: 0; }
+  :deep(.sld-bfb-up__meta > .small) { font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
+  :deep(.sld-bfb-up__meta > .d-flex) { gap: 12px !important; }
+  :deep(.sld-bfb-select > .v-divider) { margin-block: 24px !important; }
+  :deep(.sld-bfb-select__settings) { display: grid !important; grid-template-columns: 1fr 1fr; gap: 24px !important; align-items: start !important; }
+  :deep(.sld-bfb-select__settings > .s--smart-toggle) { grid-column: 1 / -1; margin-inline-start: 0 !important; }
+  :deep(.sld-bfb-select__settings > .v-select) { max-width: none !important; }
+  :deep(.sld-bfb-select .v-chip) { background: transparent; color: var(--sd-modern-muted); font-size: 11px; }
+  :deep(.sld-bfb-opt__meta) { gap: 8px; }
+  :deep(.sld-bfb-opt__subtitle), :deep(.sld-bfb-select > .small) { color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+
+  @media (max-width: 760px) {
+    .sld-bfb__grid { grid-template-columns: 130px minmax(0, 1fr); gap: 16px; }
+    .sld-bfb__workspace { padding: 23px 20px; }
+  }
+  @media (max-width: 600px) {
+    .sld-bfb__grid { grid-template-columns: 1fr; }
+    .sld-bfb__workspace { padding: 22px 16px; }
+    :deep(.sld-bfb-up__row) { grid-template-columns: 1fr; gap: 14px; }
+    :deep(.sld-bfb-select__settings), :deep(.sld-bfb-fcfg > .sld-bfb-row) { grid-template-columns: 1fr; }
+    :deep(.sld-bfb-opt__head) { display: grid; grid-template-columns: 20px 34px minmax(0, 1fr); }
+    :deep(.sld-bfb-opt__meta) { grid-column: 2 / -1; justify-self: end; }
+  }
 }
 </style>

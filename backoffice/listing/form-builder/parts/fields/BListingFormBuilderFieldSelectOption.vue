@@ -12,8 +12,8 @@
       <div class="sld-bfb-opt-edit__media">
         <b-listing-form-builder-image-uploader
           :model-value="String(optProxy.image || '')"
-          label="Image (optional)"
-          hint="One image per option. Used as the visual for grid/list/chips."
+          :label="$t('shop_listing.form_builder.image_optional')"
+          :hint="$t('shop_listing.form_builder.option_image_hint')"
           @update:modelValue="(v) => patch({ image: String(v || '') })"
         />
       </div>
@@ -22,14 +22,14 @@
       <div class="sld-bfb-opt-edit__fields">
         <v-text-field
           :model-value="String(optProxy.title || '')"
-          label="Title"
+          :label="$t('shop_listing.form_builder.title')"
           variant="underlined"
           @update:modelValue="(v) => patch({ title: String(v || '') })"
         />
 
         <v-textarea
           :model-value="String(optProxy.subtitle || '')"
-          label="Subtitle (optional)"
+          :label="$t('shop_listing.form_builder.subtitle')"
           variant="underlined"
           rows="2"
           auto-grow
@@ -38,9 +38,9 @@
 
         <v-text-field
           :model-value="String(optProxy.value || '')"
-          label="Value"
+          :label="$t('shop_listing.form_builder.value')"
           variant="underlined"
-          hint="Stored value. If empty, the storefront can fall back to title."
+          :hint="$t('shop_listing.form_builder.value_hint')"
           persistent-hint
           @update:modelValue="(v) => patch({ value: String(v || '') })"
         />

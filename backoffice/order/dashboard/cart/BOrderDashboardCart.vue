@@ -14,16 +14,17 @@
 
 <template>
   <div
-    :class="modern ? 'sd-modern-widget b-order-cart-modern' : { '-activated': in_this_step, 'widget shadow my-3 mx-1 mx-md-3': true }"
+    :class="modern ? ['sd-modern-widget b-order-cart-modern', { 'b-order-cart-modern--vendor': modernVendorPanel, 'b-order-cart-modern--pos': isPOS }] : { '-activated': in_this_step, 'widget shadow my-3 mx-1 mx-md-3': true }"
     class="text-start"
   >
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Header ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
     <u-widget-header
-      icon="shopping_basket"
+      :icon="modernVendorPanel ? undefined : 'shopping_basket'"
       :class="{ 'sd-modern-form-header b-order-cart-modern__header': modern }"
-      :title="$t(modern ? 'process_center.modern.basket_title' : 'process_center.basket_items')"
+      :title="$t(modernVendorPanel ? 'vendor_fulfillment.items' : modern ? 'process_center.modern.basket_title' : 'process_center.basket_items')"
     >
+      <template v-if="modernVendorPanel" #icon><b-vendor-order-icon name="shopping-basket" :size="20" class="b-order-cart-modern__vendor-heading-icon" /></template>
       <template v-slot:append-actions>
         <small
           :title="'Checkout date: ' + getLocalTimeString(basket.reserved_at)"
@@ -35,12 +36,12 @@
     </u-widget-header>
 
     <p v-if="modern" class="sd-modern-subtitle b-order-cart-modern__subtitle">
-      <span>{{ $t('process_center.modern.basket_subtitle') }}</span>
+      <span>{{ $t(isModernFulfillment ? 'process_center.modern.fulfillment_basket_subtitle' : modernVendorPanel ? 'vendor_fulfillment.items_subtitle' : isModernHyper ? 'process_center.modern.hyper_basket_subtitle' : isPOS ? 'process_center.modern.pos_basket_subtitle' : isFile ? 'process_center.modern.file_basket_subtitle' : isService ? 'process_center.modern.service_basket_subtitle' : isSubscription ? 'process_center.modern.subscription_basket_subtitle' : 'process_center.modern.basket_subtitle') }}</span>
       <v-tooltip location="top" content-class="sd-modern-tooltip text-start" :open-on-click="true">
         <template #activator="{ props }">
-          <v-btn v-bind="props" icon="info_outline" variant="text" class="sd-modern-icon-button sd-modern-info-button b-order-cart-modern__help" :aria-label="$t('process_center.modern.basket_help')"></v-btn>
+          <v-btn v-bind="props" :icon="modernVendorPanel ? true : 'info_outline'" variant="text" class="sd-modern-icon-button sd-modern-info-button b-order-cart-modern__help" :aria-label="$t(isModernHyper ? 'process_center.modern.hyper_basket_help' : 'process_center.modern.basket_help')"><b-vendor-order-icon v-if="modernVendorPanel" name="info" :size="14" /></v-btn>
         </template>
-        {{ $tm('process_center.basket_list.checklist').join(' ') }}
+        {{ isModernFulfillment ? $t('process_center.modern.fulfillment_basket_help') : isModernHyper ? $t('process_center.modern.hyper_basket_help') : isPOS ? $t('process_center.modern.pos_basket_help') : isFile ? $t('process_center.modern.file_basket_help') : isService ? $t('process_center.modern.service_basket_help') : isSubscription ? $t('process_center.modern.subscription_basket_help') : $tm('process_center.basket_list.checklist').join(' ') }}
       </v-tooltip>
     </p>
     <v-list-subheader v-else class="px-0 text-start">
@@ -57,20 +58,22 @@
       @click="force_show_items = !force_show_items"
     >
       <span :class="modern ? 'b-order-cart-modern__summary-label' : 'absolute-top-end text-muted px-2 small'"
-        ><v-icon
+        ><b-vendor-order-icon v-if="modernVendorPanel" name="chevron-down" :size="15" :class="{ 'rotate-180': force_show_items }" />
+        <v-icon v-else
           :class="{ 'rotate-180': force_show_items }"
           class="mx-1 transition-all-400"
           >expand_more</v-icon
         >
 
-        {{ $t("process_center.basket_list.list_of_items") }}
+        {{ modernVendorPanel ? $t('vendor_fulfillment.items_toggle', { count: items.length }) : $t("process_center.basket_list.list_of_items") }}
       </span>
 
       <b-order-cart-items-circle
+        v-if="!modernVendorPanel || !force_show_items"
         :class="modern ? 'b-order-cart-modern__preview' : 'd-flex overflow-auto pt-5 pb-2'"
         :delivery-state="basket.delivery_state"
         :items="items"
-        :readonly="readonly"
+        :readonly="cartReadonly"
       >
       </b-order-cart-items-circle>
     </component>
@@ -81,10 +84,10 @@
       <div v-show="force_show_items">
         <b-order-cart
           ref="basket_items_list"
-          :checkable="!isActionDisabled && !readonly"
+          :checkable="!isActionDisabled && !cartReadonly"
           :is-role-panel="isRolePanel"
           :items="items"
-          :readonly="readonly"
+          :readonly="cartReadonly"
           :select-all="initial_select_all"
           :shop="shop"
           :basket="basket"
@@ -147,7 +150,7 @@
     <v-expand-transition>
       <div
         v-if="
-          checked &&
+          !isModernHyper && checked &&
           payment &&
           (need_to_refund ||
             ((payment?.refund_amount || payment?.refunds?.length) && !busy))
@@ -327,13 +330,21 @@
     </v-expand-transition>
 
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Seller Actions ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-    <div :class="{ 'b-order-cart-modern__actions': modern }" class="text-start">
+    <div v-if="modern && file_access_state" class="b-order-cart-modern__file-access">
+      <v-icon size="20" aria-hidden="true">cloud_download</v-icon>
+      <div>
+        <p class="b-order-cart-modern__file-access-title">{{ $t(file_access_state === PhysicalOrderStates.ToCustomer.code ? 'process_center.modern.file_access_requested' : 'process_center.modern.file_access_ready') }}</p>
+        <p>{{ $t(file_access_state === PhysicalOrderStates.ToCustomer.code ? 'process_center.modern.file_access_requested_message' : 'process_center.modern.file_access_ready_message') }}</p>
+      </div>
+    </div>
+
+    <div v-if="!isModernHyper && !(modern && isPOS && readonly)" :class="{ 'b-order-cart-modern__actions': modern }" class="text-start">
       <p v-if="modern" class="b-order-cart-modern__guidance">
-        {{ $t('process_center.modern.basket_guidance') }}
+        {{ $t(isModernFulfillment ? 'process_center.modern.fulfillment_basket_guidance' : isFile ? 'process_center.modern.file_basket_guidance' : isService ? 'process_center.modern.service_basket_guidance' : isSubscription ? 'process_center.modern.subscription_basket_guidance' : 'process_center.modern.basket_guidance') }}
       </p>
       <v-btn
         v-if="!readonly"
-        :class="{ disabled: isActionDisabled, 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && in_this_step && !isConfirmDisabled }"
+        :class="{ disabled: isActionDisabled, 'sd-modern-button': modern, 'sd-modern-button--x-large': modern && in_this_step && !isConfirmDisabled, 'sd-modern-button--primary': modernVendorPanel && in_this_step && !isConfirmDisabled }"
         :disabled="modern ? isConfirmDisabled : undefined"
         :color="modern ? in_this_step && !isConfirmDisabled ? 'primary' : undefined : in_this_step ? 'primary' : '#000'"
         :loading="busy"
@@ -343,7 +354,8 @@
         rounded
         @click="orderConfirm"
       >
-        <v-icon v-if="modern" start>{{ basket.delivery_state === PhysicalOrderStates.CheckQueue.code ? 'check' : 'save' }}</v-icon>
+        <b-vendor-order-icon v-if="modernVendorPanel" :name="basket.delivery_state === PhysicalOrderStates.CheckQueue.code ? 'check' : 'save'" :size="in_this_step && !isConfirmDisabled ? 20 : 16" class="me-2" />
+        <v-icon v-else-if="modern" start>{{ basket.delivery_state === PhysicalOrderStates.CheckQueue.code ? 'check' : 'save' }}</v-icon>
         <v-icon v-else-if="checked" start>check</v-icon>
         <v-icon v-else-if="in_this_step" :class="{ 'blink-me': !modern }" start
           >fiber_manual_record
@@ -377,12 +389,14 @@ import { Basket, BasketItem, PriceHelper } from "@selldone/core-js";
 import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import BOrderPaymentActionsRefundButton from "@selldone/components-vue/backoffice/order/payment/actions/refund/button/BOrderPaymentActionsRefundButton.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import BVendorOrderIcon from "../../../process-center/list/icon/BVendorOrderIcon.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import UPodsPanel from "@selldone/components-vue/ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "@selldone/components-vue/ui/pod/node/UPodNode.vue";
 import UPodCut from "@selldone/components-vue/ui/pod/cut/UPodCut.vue";
 import UPodWire from "@selldone/components-vue/ui/pod/wire/UPodWire.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel.ts";
+import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 import BOrderCartItemsCircle from "@selldone/components-vue/backoffice/order/cart/items/circle/BOrderCartItemsCircle.vue";
 
 export default {
@@ -390,6 +404,7 @@ export default {
   mixins: [DateMixin],
   inject: ["$vendor"],
   components: {
+    BVendorOrderIcon,
     BOrderCartItemsCircle,
     UPodWire,
     UPodCut,
@@ -435,6 +450,36 @@ export default {
   },
 
   computed: {
+    isModernFulfillment() {
+      return this.modern && this.isFulfillment;
+    },
+    isModernHyper() {
+      return this.modern && this.basket.type === "HYP" && !this.isFulfillment && !this.isRolePanel && !this.IS_VENDOR_PANEL;
+    },
+    modernVendorPanel() {
+      return this.modern && !!this.IS_VENDOR_PANEL;
+    },
+    cartReadonly() {
+      // Hyper records a purchase; it has no item-confirmation workflow.
+      return this.isModernHyper || this.readonly || (this.isModernFulfillment && (this.busy || !!this.basket.reject || this.basket.status !== Basket.Status.Payed.code)) || (this.modernVendorPanel && (this.busy || !!this.basket.reject || ![Basket.Status.Payed.code, Basket.Status.COD.code].includes(this.basket.status)));
+    },
+    isPOS() {
+      return this.basket.type === "POS";
+    },
+    isSubscription() {
+      return this.basket.type === ProductType.SUBSCRIPTION.code && !this.isFulfillment;
+    },
+    isService() {
+      return this.basket.type === ProductType.SERVICE.code && !this.isFulfillment;
+    },
+    isFile() {
+      return this.basket.type === ProductType.FILE.code && !this.isFulfillment;
+    },
+    file_access_state() {
+      if (!this.isFile || this.basket.status !== Basket.Status.Payed.code || this.basket.reject) return null;
+      return [this.PhysicalOrderStates.PreparingOrder.code, this.PhysicalOrderStates.ToCustomer.code]
+        .includes(this.basket.delivery_state) ? this.basket.delivery_state : null;
+    },
     IS_MARKETPLACE() {
       return this.shop.model === BusinessModel.MARKETPLACE.code;
     },
@@ -488,7 +533,7 @@ export default {
       );
     },
     isConfirmDisabled() {
-      return this.readonly || this.busy || this.isActionDisabled || !!this.basket.reject ||
+      return this.cartReadonly || this.busy || this.isActionDisabled || !!this.basket.reject ||
         ![Basket.Status.Payed.code, Basket.Status.COD.code].includes(this.basket.status);
     },
 
@@ -560,6 +605,9 @@ export default {
       return this.need_to_refund - this.refund_by_giftcards;
     },
   },
+  created() {
+    if (this.modernVendorPanel) this.force_show_items = true;
+  },
   methods: {
     orderConfirm() {
       if (this.modern && this.isConfirmDisabled) return;
@@ -593,6 +641,12 @@ export default {
 .b-order-cart-modern {
   &.sd-modern-widget { padding: 20px; margin-block-end: 18px; border-radius: 16px; font-family: inherit; font-size: 13px; line-height: 1.5; }
   &.disabled { opacity: 1 !important; }
+  &__file-access { display: flex; align-items: flex-start; gap: 11px; margin-block-start: 16px; padding-block: 18px; border-block-start: 1px solid var(--sd-modern-border); font-size: 12px; line-height: 18px; }
+  &__file-access > .v-icon { flex: none; color: var(--sd-modern-muted); }
+  &__file-access > div { min-width: 0; }
+  &__file-access p { margin: 4px 0 0; max-width: 620px; color: var(--sd-modern-muted); overflow-wrap: anywhere; }
+  &__file-access p.b-order-cart-modern__file-access-title { margin: 0; color: rgb(var(--v-theme-on-surface)); font-weight: 500; }
+  &__file-access + &__actions { margin-block-start: 0; }
 
   &__header { margin-block-end: 0; }
   &__header :deep(h2) { font-family: inherit; font-size: 18px; font-weight: 500; line-height: 24px; }
@@ -613,6 +667,10 @@ export default {
   &__actions > .v-btn--disabled :deep(.v-btn__overlay) { opacity: 0; }
   .lottery-prize { color: inherit; background: var(--sd-modern-inset); }
   @media (max-width: 600px) { &.sd-modern-widget { padding: 17px 13px; } &__summary { gap: 8px; } }
+  @media (max-width: 600px) {
+    &--pos :deep(.b-order-cart-table-modern.sd-modern-data-table .v-data-table__tr--mobile > td:has(.b-order-cart-table-modern__product)) { grid-template-columns: minmax(0, 1fr); align-items: stretch; gap: 6px; }
+    &--pos :deep(.b-order-cart-table-modern.sd-modern-data-table .v-data-table__tr--mobile > td:has(.b-order-cart-table-modern__product) > .v-data-table__td-value) { width: 100%; }
+  }
 }
 
 .lottery-prize {
@@ -637,4 +695,14 @@ export default {
     left: calc(-800px + 50%);
   }
 }*/
+.b-order-cart-modern--vendor {
+  .b-order-cart-modern__vendor-heading-icon { margin-inline-end: 10px; color: var(--sd-modern-muted); }
+  .b-order-cart-modern__summary { min-height: 32px; padding: 5px 0; gap: 10px; border: 0; border-radius: 0; background: transparent; }
+  .b-order-cart-modern__summary-label { flex: 0 1 auto; order: 0; justify-content: flex-start; gap: 6px; color: var(--sd-modern-muted); font-size: 12px; line-height: 18px; }
+  .b-order-cart-modern__actions { justify-content: flex-start; gap: 12px; border: 0; padding-block-start: 0; margin-block-start: 18px; }
+  .b-order-cart-modern__guidance { order: 1; flex: 0 1 430px; line-height: 19px; }
+  @media (max-width: 700px) {
+    &.sd-modern-widget { padding: 18px 16px; }
+  }
+}
 </style>

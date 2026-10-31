@@ -370,7 +370,7 @@ export default {
     grid-template-columns: minmax(0, 1fr) 55px 60px;
     align-items: center;
     gap: 10px;
-    padding: 8px;
+    padding: 8px 12px;
     min-height: 44px;
     width: 100%;
     text-align: start;

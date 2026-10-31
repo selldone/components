@@ -1,8 +1,9 @@
 <template>
-  <div class="sld-bfb-layout">
+  <v-select v-if="modern" v-model="modelProxy" :items="layouts" item-title="title" item-value="value" :label="$t('shop_listing.form_builder.layout')" variant="underlined" />
+  <div v-else class="sld-bfb-layout">
     <div class="d-flex align-center mb-2">
       <v-icon class="me-2">view_quilt</v-icon>
-      <div class="font-weight-black">Layout</div>
+      <div class="font-weight-black">{{ $t('shop_listing.form_builder.layout') }}</div>
     </div>
 
     <div class="sld-bfb-layout__grid">
@@ -27,6 +28,7 @@ export default {
 
   props: {
     modelValue: { type: String, default: "split_right" },
+    modern: { type: Boolean, default: false },
   },
 
   emits: ["update:modelValue"],
@@ -43,10 +45,10 @@ export default {
 
     layouts(): any[] {
       return [
-        { value: "split_right", title: "Split (image right)" },
-        { value: "split_left", title: "Split (image left)" },
-        { value: "stacked", title: "Stacked" },
-        { value: "centered", title: "Centered" },
+        { value: "split_right", title: this.$t("shop_listing.form_builder.split_right") },
+        { value: "split_left", title: this.$t("shop_listing.form_builder.split_left") },
+        { value: "stacked", title: this.$t("shop_listing.form_builder.stacked") },
+        { value: "centered", title: this.$t("shop_listing.form_builder.centered") },
       ];
     },
   },

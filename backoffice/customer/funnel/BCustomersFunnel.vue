@@ -22,7 +22,11 @@
       :types="filter_types"
       :read-only="readOnly"
       modern
-      @update:model-value="(val) => { if (!readOnly) $emit('update:modelValue', val); }"
+      @update:model-value="
+        (val) => {
+          if (!readOnly) $emit('update:modelValue', val);
+        }
+      "
     />
 
     <section
@@ -30,7 +34,15 @@
       :aria-busy="busy_refresh"
     >
       <div class="sd-modern-header">
-        <h2 class="sd-modern-eyebrow">{{ $t("global.commons.users") }}</h2>
+        <h2 class="sd-modern-eyebrow">
+          {{
+            $t(
+              showFunnel
+                ? "customers_funnel.chart_title"
+                : "global.commons.users",
+            )
+          }}
+        </h2>
         <div class="sd-modern-actions">
           <v-btn
             class="sd-modern-button"
@@ -62,6 +74,91 @@
           >{{ $t("global.actions.refresh") }}</v-btn
         >
       </div>
+      <figure
+        v-else-if="showFunnel && funnel_date?.length"
+        class="b-customers-funnel-modern__visual"
+      >
+        <!-- The silhouette shows filter order; counts and bars carry the actual sizes. -->
+        <div class="b-customers-funnel-modern__drawing" aria-hidden="true">
+          <svg
+            viewBox="0 0 360 360"
+            preserveAspectRatio="none"
+            focusable="false"
+          >
+            <defs>
+              <clipPath :id="`customer-funnel-${funnelId}`">
+                <path :d="funnelOutline" />
+              </clipPath>
+            </defs>
+            <g :clip-path="`url(#customer-funnel-${funnelId})`">
+              <rect
+                v-for="(stage, index) in funnelStages"
+                :key="index"
+                x="0"
+                :y="stage.top + 2"
+                width="360"
+                :height="stage.height"
+                class="b-customers-funnel-modern__fill"
+                :class="{
+                  'b-customers-funnel-modern__fill--empty':
+                    !stage.hasCount || stage.count === 0,
+                }"
+              />
+            </g>
+            <path
+              :d="funnelOutline"
+              class="b-customers-funnel-modern__outline"
+            />
+          </svg>
+        </div>
+        <ol
+          class="b-customers-funnel-modern__visual-steps"
+          :aria-label="$t('customers_funnel.chart_title')"
+          :style="{
+            gridTemplateRows: `repeat(${funnelStages.length}, minmax(64px, 1fr))`,
+          }"
+        >
+          <li
+            v-for="(stage, index) in funnelStages"
+            :key="index"
+            class="b-customers-funnel-modern__visual-step"
+          >
+            <span class="b-customers-funnel-modern__index">{{
+              $n(index + 1)
+            }}</span>
+            <div class="b-customers-funnel-modern__stage-content">
+              <div class="b-customers-funnel-modern__stage-heading">
+                <span>{{ stage.label }}</span>
+                <strong>{{ stage.hasCount ? $n(stage.count) : "—" }}</strong>
+              </div>
+              <div
+                class="b-customers-funnel-modern__track b-customers-funnel-modern__track--small"
+                aria-hidden="true"
+              >
+                <span
+                  :style="{ width: `${100 * Math.min(stage.share || 0, 1)}%` }"
+                />
+              </div>
+              <div class="b-customers-funnel-modern__stage-meta">
+                <span>{{
+                  stage.share === null
+                    ? "—"
+                    : $t("customers_funnel.share_of_total", {
+                        percent: $n(stage.share, {
+                          style: "percent",
+                          maximumFractionDigits: 1,
+                        }),
+                      })
+                }}</span>
+                <span v-if="stage.removed">−{{ $n(stage.removed) }}</span>
+              </div>
+            </div>
+          </li>
+        </ol>
+        <figcaption class="b-customers-funnel-modern__visual-help">
+          {{ $t("customers_funnel.chart_help") }}
+        </figcaption>
+      </figure>
       <ol
         v-else-if="funnel_date?.length"
         class="b-customers-funnel-modern__steps"
@@ -147,7 +244,11 @@
         :shop="shop"
         :types="filter_types"
         :read-only="readOnly"
-        @update:model-value="(val) => { if (!readOnly) $emit('update:modelValue', val); }"
+        @update:model-value="
+          (val) => {
+            if (!readOnly) $emit('update:modelValue', val);
+          }
+        "
       ></b-customers-filter-design>
     </div>
   </v-row>
@@ -160,6 +261,7 @@ import UChartFunnel from "../../../ui/chart/funnel/UChartFunnel.vue";
 import { Customer, FileHelper } from "@selldone/core-js";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import { useId } from "vue";
 
 export default {
   name: "BCustomersFunnel",
@@ -170,12 +272,17 @@ export default {
     BCustomersFilterDesign,
   },
 
+  setup() {
+    return { funnelId: useId() };
+  },
+
   props: {
     readOnly: { type: Boolean, default: false },
     modern: {
       type: Boolean,
       default: false,
     },
+    showFunnel: { type: Boolean, default: false },
     modelValue: {},
     shop: {
       require: true,
@@ -240,6 +347,31 @@ export default {
     };
   },
   computed: {
+    funnelOutline() {
+      return "M26 0 H334 Q342 0 342 8 C342 130 222 180 222 281 V352 Q222 360 214 360 H146 Q138 360 138 352 V281 C138 180 18 130 18 8 Q18 0 26 0 Z";
+    },
+    funnelStages() {
+      const steps = this.funnel_date || [];
+      const total = steps[0]?.count;
+      return steps.map((step, index) => {
+        const hasCount = Number.isFinite(step.count) && step.count >= 0;
+        const previous = steps[index - 1]?.count;
+        return {
+          ...step,
+          hasCount,
+          share:
+            hasCount && Number.isFinite(total) && total > 0
+              ? step.count / total
+              : null,
+          top: (360 * index) / steps.length,
+          height: Math.max(360 / steps.length - 4, 0),
+          removed:
+            hasCount && Number.isFinite(previous) && previous > step.count
+              ? previous - step.count
+              : 0,
+        };
+      });
+    },
     h() {
       return 150 + this.modelValue.length * 72;
     },
@@ -385,6 +517,97 @@ export default {
 .b-customers-funnel-modern {
   min-width: 0;
 
+  &__visual {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 24px 32px;
+    margin: 0;
+  }
+  &__drawing {
+    position: relative;
+    min-height: 240px;
+
+    > svg {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  &__fill {
+    fill: rgb(var(--v-theme-primary));
+  }
+  &__fill--empty {
+    fill: none;
+    stroke: rgba(var(--v-theme-on-surface), 0.15);
+    stroke-width: 1;
+  }
+  &__outline {
+    fill: none;
+    stroke: rgba(var(--v-theme-on-surface), 0.12);
+    stroke-width: 1;
+  }
+  &__visual-steps {
+    display: grid;
+    min-width: 0;
+    min-height: 240px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  &__visual-step {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    padding-block: 10px;
+    font-size: 13px;
+    line-height: 21px;
+  }
+  &__index {
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  &__stage-content {
+    min-width: 0;
+  }
+  &__stage-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+
+    > span {
+      overflow-wrap: anywhere;
+    }
+    > strong {
+      font-size: 15px;
+      font-weight: 500;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+  &__stage-meta {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-block-start: 6px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 19px;
+    font-variant-numeric: tabular-nums;
+  }
+  &__visual-help {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    line-height: 21px;
+  }
+
   &__report {
     margin-block-start: 28px;
     padding-block-start: 24px;
@@ -433,8 +656,20 @@ export default {
       background: rgb(var(--v-theme-primary));
     }
   }
+  &__track--small {
+    height: 3px;
+    margin-block-start: 9px;
+  }
 
   @media (max-width: 599px) {
+    &__visual {
+      grid-template-columns: minmax(80px, 0.7fr) minmax(0, 1.3fr);
+      gap: 20px 16px;
+    }
+    &__visual-step {
+      grid-template-columns: 14px minmax(0, 1fr);
+      gap: 6px;
+    }
     &__step {
       grid-template-columns: minmax(80px, 1fr) minmax(40px, 1fr) 48px;
       gap: 10px;

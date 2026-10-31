@@ -12,21 +12,40 @@
   - Tread carefully, for you're treading on dreams.
   -->
 <template>
-  <div
+  <component
+    :is="modern ? 'v-tooltip' : 'div'"
     v-if="
       (is2d &&
         filtered_values.length &&
         (!isPercentMode || filtered_values.length > 1)) ||
       isCurrency
     "
-    class="u--hover-container elevation-3"
-    :class="{ 'pt-7': label && !vertical }"
+    :class="
+      modern
+        ? undefined
+        : ['u--hover-container elevation-3', { 'pt-7': label && !vertical }]
+    "
+    :activator="modern ? 'parent' : undefined"
+    :location="modern ? 'top' : undefined"
+    :open-on-focus="modern ? true : undefined"
+    :open-on-click="modern ? false : undefined"
+    :model-value="modern ? tooltip_open : undefined"
+    :activator-props="modern ? { onClick: openTooltip, onKeydown: onTooltipKeydown } : undefined"
+    :content-class="modern ? 'sd-modern-tooltip text-start' : undefined"
+    @update:model-value="modern && (tooltip_open = $event)"
   >
-    <div v-if="!vertical" class="absolute-top-center small op-0-5">
+    <div
+      v-if="!vertical"
+      :class="
+        modern
+          ? 'u-chart-funnel-help__date'
+          : 'absolute-top-center small op-0-5'
+      "
+    >
       {{ label }}
     </div>
 
-    <ul class="u--hover-label">
+    <ul :class="modern ? 'u-chart-funnel-help__values' : 'u--hover-label'">
       <li v-for="(subLabel, j) in filtered_subLabels" :key="j">
         <div v-if="isCurrency" class="d-flex flex-column py-1">
           <div class="mb-1 mx-auto d-flex align-center">
@@ -40,10 +59,12 @@
           </div>
 
           <u-price
-            :amount="filtered_values[j]"
+            v-if="!modern || !actualValue || Number.isFinite(currency_values[j])"
+            :amount="currency_values[j]"
             :currency="subLabel"
             class="body-title"
           ></u-price>
+          <span v-else :aria-label="$t('global.commons.not_available')">—</span>
         </div>
 
         <template v-else>
@@ -84,7 +105,7 @@
         </template>
       </li>
     </ul>
-  </div>
+  </component>
 </template>
 
 <script lang="ts">
@@ -97,6 +118,7 @@ export default defineComponent({
   mixins: [CurrencyMixin],
   components: { UCurrencyIcon },
   props: {
+    modern: Boolean,
     values: {
       type: Array,
       required: true,
@@ -129,7 +151,26 @@ export default defineComponent({
       default: false,
     },
   },
+  data() {
+    return { tooltip_open: false };
+  },
+  methods: {
+    openTooltip(event) {
+      // Focus may already open the tooltip before a synthesized touch click arrives.
+      event.stopPropagation();
+      this.tooltip_open = true;
+    },
+    onTooltipKeydown(event) {
+      if (event.key === 'Escape') this.tooltip_open = false;
+    },
+  },
   computed: {
+    currency_values() {
+      if (!this.modern || !this.actualValue) return this.filtered_values;
+      const indices = this.values[this.index].map((value, index) => ({ value, index }))
+        .filter(({ value }) => !this.filterZeros || value > 0.0001);
+      return indices.map(({ value, index }) => this.actualValue(this.index, index, value));
+    },
     filtered_values() {
       const out = this.values[this.index];
       if (this.filterZeros) {
@@ -150,4 +191,23 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.u-chart-funnel-help__date {
+  margin-block-end: 8px;
+  font-size: inherit;
+}
+.u-chart-funnel-help__values {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.u-chart-funnel-help__values > li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 20px;
+  margin-block: 4px;
+  font-size: inherit;
+}
+</style>

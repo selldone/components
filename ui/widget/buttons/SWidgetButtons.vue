@@ -18,7 +18,7 @@
     v-intersect="
       (isIntersecting, entries) => onIntersect(isIntersecting, entries)
     "
-    class="flex-grow-1"
+    class="s-widget-buttons flex-grow-1"
   >
     <div
       :class="{ '-fixed-bottom': !intersected && !scrollUnder }"
@@ -27,7 +27,7 @@
       <slot></slot>
     </div>
   </div>
-  <div v-else class="widget-buttons">
+  <div v-else class="s-widget-buttons widget-buttons">
     <slot></slot>
   </div>
 </template>

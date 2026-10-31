@@ -13,7 +13,133 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+  <div v-if="modern" class="b-product-info-refined text-start">
+    <section class="sd-modern-widget b-product-info-refined__widget">
+      <header class="sd-modern-header b-product-info-refined__header">
+        <div class="sd-modern-title">
+          <span class="sd-modern-icon sd-modern-icon--plain"><v-icon>inventory_2</v-icon></span>
+          <div>
+            <h2 class="sd-modern-title-text">{{ $t('b_product_dashboard.identity.info_title') }}</h2>
+            <p class="sd-modern-subtitle">{{ $t('b_product_dashboard.identity.info_subtitle') }}</p>
+          </div>
+        </div>
+        <div class="sd-modern-actions b-product-info-refined__utilities">
+          <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t('b_product_dashboard.identity.embed')" @click="showEmbedCode">
+            <v-icon>code</v-icon>
+            <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('b_product_dashboard.identity.embed') }}</v-tooltip>
+          </v-btn>
+          <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t('b_product_dashboard.identity.public_qr')" @click="showBarcode(true, true)">
+            <v-icon>qr_code_2</v-icon>
+            <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('b_product_dashboard.identity.public_qr') }}</v-tooltip>
+          </v-btn>
+        </div>
+      </header>
+
+      <div class="b-product-info-refined__links">
+        <b-product-breadcrumbs :image-size="22" :product="product" :shop="shop" prepend-icon="folder" class="b-product-info-refined__breadcrumb" />
+        <v-btn variant="text" color="primary" class="sd-modern-button sd-modern-button--small" prepend-icon="content_copy" @click.stop="copyToClipboard(product_link)">{{ $t('b_product_dashboard.identity.copy_link') }}</v-btn>
+        <v-btn v-if="product_external_service" :href="product.external" target="_blank" rel="noopener noreferrer" variant="text" color="primary" class="sd-modern-button sd-modern-button--small">
+          <img class="me-2" :src="product_external_service.image" height="14" :alt="$t(product_external_service.name)" />
+          {{ $t(product_external_service.actionText) }}<v-icon end size="16">north_east</v-icon>
+        </v-btn>
+      </div>
+
+      <div class="b-product-info-refined__metadata">
+        <span class="b-product-info-refined__identity"><img :src="getProductTypeImage(product.type)" height="24" :alt="getProductTypeName(product.type)" />{{ getProductTypeName(product.type) }}</span>
+        <span class="b-product-info-refined__identity">
+          <u-avatar-folder :size="24" :border-size="2" :src="product.category ? getShopImagePath(product.category.icon, 64) : undefined" hide-side-icon placeholder-icon="home" />
+          {{ $t('product_admin.dashboard.info.category') }}: {{ product.category ? product.category.title : $t('global.commons.home') }}
+        </span>
+        <span v-if="product.inputs?.length" class="b-product-info-refined__identity"><v-icon size="16">input</v-icon>{{ $t('product_admin.dashboard.info.inputs') }}</span>
+        <span v-if="product.outputs?.length" class="b-product-info-refined__identity"><v-icon size="16">output</v-icon>{{ $t('product_admin.dashboard.info.outputs') }}</span>
+        <span v-if="product.inputs?.length || product.outputs?.length" class="sd-modern-muted">{{ $t('product_admin.dashboard.info.user_data_form') }}</span>
+      </div>
+
+      <div v-if="product.includes?.length" class="b-product-info-refined__included">
+        <span>{{ $t('global.commons.included_in_the_product') }}</span>
+        <v-avatar v-for="include in product.includes" :key="include.id" class="hover-scale" color="transparent" rounded size="32">
+          <img :src="getShopImagePath(include.image)" :alt="include.title" />
+          <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ include.title }}</v-tooltip>
+        </v-avatar>
+      </div>
+
+      <div v-if="product.reselling" class="sd-modern-notice b-product-info-refined__reselling">
+        <span class="b-product-info-refined__identity"><img src="../../../../assets/icons/dropshipping.svg" height="24" width="24" alt="" />{{ $t('global.commons.drop_shipping') }}</span>
+        <span v-if="product.shipping" class="b-product-info-refined__identity">
+          {{ $t('global.commons.shipping_area') }}
+          <flag v-for="country in Object.keys(product.shipping).limit(10)" :key="country" :iso="country" :squared="false" :title="getCountryName(country)" />
+          <span v-if="Object.keys(product.shipping).length > 10">+{{ Object.keys(product.shipping).length - 10 }}</span>
+        </span>
+        <span>{{ $t('b_product_dashboard.identity.reselling_shops') }}: {{ product.reselling_shops }}</span>
+        <span>{{ $t('b_product_dashboard.identity.reselling_count') }}: {{ product.reselling_count }}</span>
+      </div>
+
+      <section class="b-product-info-refined__group">
+        <div class="b-product-info-refined__group-head">
+          <h3>{{ $t('product_admin.dashboard.info.staff_messages') }}</h3>
+          <v-btn variant="text" color="primary" class="sd-modern-button sd-modern-button--small" prepend-icon="post_add" @click="dialog_note = true">{{ $t('product_admin.dashboard.info.add_note') }}</v-btn>
+        </div>
+        <button v-if="note?.length" type="button" class="b-product-info-refined__note" @click="dialog_note = true">
+          <v-avatar size="32"><v-img :src="getUserAvatar(note[note.length - 1].user_id)" /></v-avatar>
+          <span>
+            <span class="b-product-info-refined__note-meta"><strong>{{ note[note.length - 1].user_name }}</strong><time>{{ getFromNowString(note[note.length - 1].date) }} · {{ getLocalDateString(note[note.length - 1].date) }}</time></span>
+            <span class="b-product-info-refined__note-body">{{ note[note.length - 1].body }}</span>
+            <span class="text-primary">{{ $t('b_product_dashboard.identity.note_history') }}</span>
+          </span>
+        </button>
+      </section>
+
+      <section class="b-product-info-refined__group">
+        <div class="b-product-info-refined__group-head">
+          <h3>{{ $t('product_admin.dashboard.info.product_tags') }}</h3>
+          <v-btn variant="text" color="primary" class="sd-modern-button sd-modern-button--small" prepend-icon="label" @click="dialog_tags = true">{{ $t('product_admin.dashboard.info.edit_tags') }}</v-btn>
+        </div>
+        <div class="b-product-info-refined__tags">
+          <span v-if="product.map" class="sd-modern-tag">
+            <flag v-if="product.map.country" :iso="product.map.country" :squared="false" class="me-1" />{{ product.map.title }}
+            <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start"><strong>{{ $t('b_product_dashboard.identity.map_tag') }}</strong><div>{{ MapHelper.GenerateFullAddressFromMapInfo(product.map) }}</div></v-tooltip>
+          </span>
+          <span v-for="tag in product.tags" :key="tag" class="sd-modern-tag">{{ tag }}</span>
+        </div>
+      </section>
+    </section>
+
+    <slot name="before-variants" />
+
+    <section class="sd-modern-widget b-product-info-refined__widget">
+      <header class="sd-modern-header b-product-info-refined__header">
+        <div class="sd-modern-title">
+          <span class="sd-modern-icon sd-modern-icon--plain"><v-icon>{{ product.product_variants?.length ? 'view_in_ar' : 'sell' }}</v-icon></span>
+          <div>
+            <h2 class="sd-modern-title-text">{{ $t(product.product_variants?.length ? 'b_product_dashboard.identity.variants_title' : 'b_product_dashboard.identity.pricing_title') }}</h2>
+            <p class="sd-modern-subtitle">{{ product.product_variants?.length ? $t('b_product_dashboard.identity.variants_subtitle', { count: product.product_variants.length }) : $t('b_product_dashboard.identity.pricing_subtitle') }}</p>
+          </div>
+        </div>
+        <v-btn :to="{ name: IS_VENDOR_PANEL ? 'Vendor_ProductInventoryPage' : 'BPageProductInventory' }" variant="text" color="primary" class="sd-modern-button sd-modern-button--small" append-icon="arrow_forward">{{ $t('b_product_dashboard.identity.manage_inventory') }}</v-btn>
+      </header>
+      <template v-if="product.product_variants?.length">
+        <s-country-select v-if="add_by_dropShipping" v-model="selected_shipping_country" :filter="shipping_countries" class="max-width-field mb-3" dense hide-details item-value="alpha2" solo />
+        <b-product-variants-table modern :missed-variants="missed_variants" :product="product" :profit="add_by_dropShipping" :profit-function="profitCalculate" :shipping-cost="add_by_dropShipping && parent?.shipping ? parent.shipping[selected_shipping_country] : 0" :shop="shop" @select="(variant) => $router.push({ name: IS_VENDOR_PANEL ? 'Vendor_ProductInventoryPage' : 'BPageProductInventory', query: { variant_id: variant.id } })" />
+      </template>
+      <v-table v-else class="sd-modern-table b-product-info-refined__pricing" density="compact">
+        <thead><tr><th>{{ $t('global.commons.Price') }}</th><th>{{ $t('global.commons.commission') }}</th><th>{{ $t('global.commons.Discount') }}</th><th>{{ $t('global.commons.customer_price') }}</th><th>{{ $t('global.commons.In_Stock') }}</th><th>SKU / MPN</th><th>{{ $t('global.commons.actions') }}</th></tr></thead>
+        <tbody><tr>
+          <td :data-label="$t('global.commons.Price')"><u-price :amount="product.price" :currency="product.currency" /></td>
+          <td :data-label="$t('global.commons.commission')"><u-price :amount="product.commission" :currency="product.currency" /></td>
+          <td :data-label="$t('global.commons.Discount')"><u-price :amount="product.discount" :currency="product.currency" /><u-chip-discount :percent="(100 * product.discount) / (product.price + product.commission)" class="ms-2" size="small" :start="product.dis_start" :end="product.dis_end" /><u-time-progress-bar :created-time="product.created_at" :end-time="product.dis_end" :start-time="product.dis_start" small /></td>
+          <td :data-label="$t('global.commons.customer_price')"><u-price :amount="priceProductByCurrency(shop, product, null, product.currency)" :currency="product.currency" /></td>
+          <td :data-label="$t('global.commons.In_Stock')"><span v-if="isPhysical || isVirtual || isService">{{ numeralFormat(product.quantity, '0.[0] a') }}</span><s-files-group v-else-if="isFile" :files="product.files" /><span v-else>—</span></td>
+          <td data-label="SKU / MPN"><div v-if="product.sku">SKU: <span v-copy @click.stop>{{ product.sku }}</span></div><div v-if="product.mpn">MPN: <span v-copy @click.stop>{{ product.mpn }}</span></div></td>
+          <td :data-label="$t('global.commons.actions')"><div class="b-product-info-refined__utilities">
+            <v-btn :disabled="!product.sku" icon variant="text" class="sd-modern-icon-button" :aria-label="$t('b_product_dashboard.identity.sku_barcode')" @click.stop="showBarcode(false, false)"><v-icon>fa:fas fa-barcode</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('b_product_dashboard.identity.sku_barcode') }}</v-tooltip></v-btn>
+            <v-btn :disabled="!product.sku" icon variant="text" class="sd-modern-icon-button" :aria-label="$t('b_product_dashboard.identity.sku_qr')" @click.stop="showBarcode(true, false)"><v-icon>fa:fas fa-qrcode</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('b_product_dashboard.identity.sku_qr') }}</v-tooltip></v-btn>
+          </div></td>
+        </tr></tbody>
+      </v-table>
+    </section>
+  </div>
   <s-widget-box
+    v-else
     :title="`<h5 class='align-items-center pb-1' title='${
       product.title
     }'>    <span class='circle ${
@@ -38,17 +164,6 @@
       >
         <v-btn icon variant="text" @click="showEmbedCode">
           <v-icon color="#111">code</v-icon>
-        </v-btn>
-      </span>
-
-      <!-- ⬬⬬⬬⬬ Download ⬬⬬⬬⬬ -->
-      <span
-        caption="Download"
-        class="sub-caption inline-block -hover me-0 me-sm-3"
-        title="Create a report static page of product (beta)"
-      >
-        <v-btn icon variant="text" @click="downloadProduct()">
-          <v-icon color="#111">html</v-icon>
         </v-btn>
       </span>
 
@@ -557,6 +672,8 @@
       </v-col>
     </v-row>
 
+  </s-widget-box>
+
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Dialog > QR Code ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <b-product-barcode
       v-model="show_barcode"
@@ -603,13 +720,13 @@
       max-width="820"
       scrollable
     >
-      <v-card flat rounded="0">
+      <v-card flat rounded="0" class="text-start">
         <v-card-title class="d-flex align-center">
           <v-avatar v-if="product.icon" class="me-2" rounded size="24">
             <img :src="getShopImagePath(product.icon, 128)" />
           </v-avatar>
 
-          <span>Edit tags | {{ product.title }}</span>
+          <span>{{ $t('product_admin.dashboard.info.edit_tags') }} | {{ product.title }}</span>
         </v-card-title>
         <v-card-text>
           <div class="widget-box my-5">
@@ -631,72 +748,48 @@
 
     <v-dialog
       v-model="show_iframe_code"
-      fullscreen
+      :fullscreen="$vuetify.display.smAndDown"
+      max-width="1000"
+      scrollable
+      :aria-label="$t('b_product_dashboard.embed.title')"
       transition="dialog-bottom-transition"
     >
-      <v-card class="text-start">
-        <v-card-title class="d-flex align-center">
-          <v-avatar v-if="product.icon" class="me-2" size="32">
-            <v-img :src="getShopImagePath(product.icon, 128)"></v-img>
-          </v-avatar>
-          Product Embed Code
-        </v-card-title>
-        <v-card-text>
-          <div
-            class="mx-auto mb-5 border rounded-lg position-relative"
-            style="
-              width: 1720px;
-              max-width: 100%;
-              max-height: calc(100vh - 340px);
-            "
-          >
-            <v-chip
-              label
-              class="position-absolute pen usn"
-              style="top: -10px; left: 20px"
-              variant="flat"
-              color="#eee"
-              size="x-small"
-              >Embed Preview
-            </v-chip>
-            <div class="overflow-auto rounded-lg" style="height: inherit;max-height: inherit" v-html="iframe_code"></div>
+      <v-card class="sd-modern-widget b-product-embed-dialog text-start" :class="{ 'b-product-embed-dialog--fullscreen': $vuetify.display.smAndDown }" :theme="USER()?.preferences?.dark ? 'dark' : 'light'">
+        <header class="b-product-embed-dialog__header">
+          <div class="b-product-embed-dialog__identity">
+            <v-avatar rounded="lg" size="34">
+              <v-img v-if="product.icon" :src="getShopImagePath(product.icon, 128)" :alt="product.title" />
+              <img v-else :src="getProductTypeImage(product.type)" alt="" />
+            </v-avatar>
+            <div><h2>{{ $t('b_product_dashboard.embed.title') }}</h2><p class="sd-modern-muted">{{ $t('b_product_dashboard.embed.subtitle') }}</p></div>
           </div>
-
-          <v-container>
-            <u-text-copy-box
-              :value="iframe_code"
-              messages="To embed the product, simply copy the provided code and paste it into your blog posts or any other HTML pages."
-              small-width-mode
-            >
-            </u-text-copy-box>
-          </v-container>
+          <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t('global.actions.close')" @click="show_iframe_code = false"><v-icon>close</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('global.actions.close') }}</v-tooltip></v-btn>
+        </header>
+        <v-card-text class="b-product-embed-dialog__body">
+          <div class="b-product-embed-dialog__toolbar">
+            <span class="b-product-embed-dialog__preview-label"><v-icon size="16">web_asset</v-icon>{{ $t('b_product_dashboard.embed.preview') }}</span>
+            <div class="b-product-embed-dialog__sizes" role="group" :aria-label="$t('b_product_dashboard.embed.preview_width')">
+              <v-btn variant="text" :aria-pressed="embed_preview === 'desktop'" prepend-icon="desktop_windows" @click="embed_preview = 'desktop'">{{ $t('b_product_dashboard.embed.desktop') }}</v-btn>
+              <v-btn variant="text" :aria-pressed="embed_preview === 'mobile'" prepend-icon="smartphone" @click="embed_preview = 'mobile'">{{ $t('b_product_dashboard.embed.mobile') }}</v-btn>
+            </div>
+          </div>
+          <div class="b-product-embed-dialog__preview-well">
+            <div class="b-product-embed-dialog__preview" :class="{ 'b-product-embed-dialog__preview--mobile': embed_preview === 'mobile' }">
+              <iframe :src="iframe_preview_src" :title="product.title" width="100%" height="640" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>
+          <details open class="b-product-embed-dialog__code">
+            <summary><span><v-icon size="16">code</v-icon>{{ $t('b_product_dashboard.embed.code') }}</span><v-icon size="16">expand_more</v-icon></summary>
+            <p class="sd-modern-muted">{{ $t('b_product_dashboard.embed.help') }}</p>
+            <pre dir="ltr"><code>{{ iframe_code }}</code></pre>
+          </details>
         </v-card-text>
-
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn
-              size="x-large"
-              variant="text"
-              @click="show_iframe_code = false"
-            >
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
-            </v-btn>
-
-            <v-btn
-              color="primary"
-              size="x-large"
-              variant="elevated"
-              @click="copyToClipboard(iframe_code)"
-            >
-              <v-icon class="me-1">file_copy</v-icon>
-              {{ $t("global.actions.copy") }}
-            </v-btn>
-          </div>
+        <v-card-actions class="b-product-embed-dialog__actions">
+          <v-btn variant="text" class="sd-modern-button sd-modern-button--form" @click="show_iframe_code = false">{{ $t('global.actions.close') }}</v-btn>
+          <v-btn color="primary" variant="elevated" class="sd-modern-button sd-modern-button--form sd-modern-button--primary" prepend-icon="content_copy" @click="copyToClipboard(iframe_code)">{{ $t('b_product_dashboard.embed.copy') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </s-widget-box>
 </template>
 
 <script lang="ts">
@@ -709,12 +802,9 @@ import BNoteDialog from "../../../note/dialog/BNoteDialog.vue";
 import BProductTagsInput from "../../../product/tags/input/BProductTagsInput.vue";
 import SFilesGroup from "../../../../ui/file/group/SFilesGroup.vue";
 
-import { saveAs } from "file-saver";
-import HTML_TEMPLATE from "./assets/product-export-template.html?raw";
 import BProductBreadcrumbs from "../../../product/breadcrumbs/BProductBreadcrumbs.vue";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import { ProductEmbedHelper } from "@selldone/core-js/helper/embed/ProductEmbedHelper";
-import UTextCopyBox from "../../../../ui/text/copy-box/UTextCopyBox.vue";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import { MapHelper, ShopURLs } from "@selldone/core-js";
 import { ProductExternal } from "@selldone/components-vue/storefront/product/external/button/ProductExternal.ts";
@@ -730,7 +820,6 @@ export default {
   components: {
     UChipDiscount,
     UAvatarFolder,
-    UTextCopyBox,
     BProductBreadcrumbs,
     SFilesGroup,
     BProductTagsInput,
@@ -748,6 +837,7 @@ export default {
     SWidgetBox,
   },
   props: {
+    modern: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -779,10 +869,20 @@ export default {
     dialog_tags: false,
 
     //---------------------------
-    iframe_code: null,
+    embed_preview: "desktop",
     show_iframe_code: false,
   }),
   computed: {
+    iframe_code() {
+      return ProductEmbedHelper.ProductIframe(this.shop, this.product);
+    },
+    iframe_preview_src() {
+      const url = new URL(ProductEmbedHelper.ProductIframeUrl(this.shop, this.product));
+      const locale = typeof this.$i18n.locale === "string" ? this.$i18n.locale : this.$i18n.locale?.value;
+      if (locale) url.searchParams.set("lang", locale);
+      url.searchParams.set("theme", this.USER()?.preferences?.dark ? "dark" : "light");
+      return url.href;
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -877,75 +977,222 @@ export default {
       return current_product_cost - main_product_cost;
     },
 
-    downloadProduct() {
-      let html = HTML_TEMPLATE;
-
-      function REPLACE(key, value) {
-        html = html.replace(new RegExp("{{" + key + "}}", "g"), value);
-        //console.log(key,value)
-      }
-
-      // Shop:
-      REPLACE("lang", this.shop.language);
-      REPLACE("shop.name", this.shop.name);
-      REPLACE("shop.name", this.shop.name);
-      REPLACE("shop.domain", this.shop.domain);
-      REPLACE("shop_logo", this.getShopImagePath(this.shop.icon, 128));
-
-      // Product:
-      REPLACE("product.title", this.product.title);
-      REPLACE("product.title_en", this.product.title_en);
-      REPLACE("product_link", this.product_link);
-
-      // Product images:
-      let i = 1;
-      this.product.images.limit(5).forEach((image) => {
-        REPLACE("img" + i++, this.getShopImagePath(image.path));
-      });
-      for (let i = this.product.images.length; i <= 6; i++) {
-        REPLACE("img" + i, this.getShopImagePath(this.product.icon));
-      }
-
-      // Articles:
-      let body_articles = "";
-      // Add articles:
-      this.product.articles?.forEach((article) => {
-        body_articles += `<div class="article">
-<div class="article-bar mb-3"><b>${article.lang.toUpperCase()} - ${this.getLanguageName(
-          article.lang,
-        )}</b> ● Create date: <b>${this.getLocalTimeString(
-          article.created_at,
-        )}</b>  ● Last update: <b>${this.getLocalTimeString(
-          article.updated_at,
-        )}</b> </div>
-<h2>${article.title}</h2>
-            <div>${article.body}</div>
-<div class="article-bar mt-3">Total views: <b>${article.views}</b></div>
-<div class="article-bar">Tags: <b>${article.tags.join(", ")}</b></div>
-</div>
-`;
-      });
-
-      REPLACE("articles", body_articles);
-
-      //  body+='<pre>'+JSON.stringify(this.productData, null, 2)+'</pre>';
-
-      const blob = new Blob([html], {
-        type: "text/html;charset=utf-8",
-      });
-
-      saveAs(blob, this.product.id + "_" + this.product.title + ".html");
-    },
-
     showEmbedCode() {
-      this.iframe_code = ProductEmbedHelper.ProductIframe(
-        this.shop,
-        this.product,
-      );
+      this.embed_preview = "desktop";
       this.show_iframe_code = true;
     },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-product-embed-dialog.v-card {
+  padding: 0;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+
+  &.b-product-embed-dialog--fullscreen { border-radius: 0; }
+  .b-product-embed-dialog__header { display: flex; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 24px 20px; }
+  .b-product-embed-dialog__identity { display: flex; align-items: flex-start; gap: 12px; min-width: 0; }
+  .b-product-embed-dialog__identity > .v-avatar { flex-shrink: 0; margin-block-start: 1px; }
+  .b-product-embed-dialog__identity > div { min-width: 0; }
+  h2 { margin: 0; font-size: 18px; font-weight: 500; line-height: 27px; overflow-wrap: anywhere; }
+  .b-product-embed-dialog__header p { margin: 3px 0 0; font-size: 13px; line-height: 20px; }
+  .b-product-embed-dialog__body { padding: 0 24px 20px; min-height: 0; }
+  .b-product-embed-dialog__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-block-end: 12px; }
+  .b-product-embed-dialog__preview-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; }
+  .b-product-embed-dialog__preview-label > .v-icon { color: var(--sd-modern-muted); }
+  .b-product-embed-dialog__sizes { display: inline-flex; align-items: center; gap: 3px; padding: 3px; border-radius: 8px; background: var(--sd-modern-inset); }
+  .b-product-embed-dialog__sizes > .v-btn {
+    min-height: 30px;
+    height: auto;
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--sd-modern-muted);
+  }
+  .b-product-embed-dialog__sizes > .v-btn[aria-pressed="true"] { background: rgb(var(--v-theme-surface)); color: rgb(var(--v-theme-on-surface)); box-shadow: 0 1px 4px rgba(var(--v-theme-on-surface), .08); }
+  .b-product-embed-dialog__sizes :deep(.v-btn__content) { font: inherit; letter-spacing: inherit; }
+  .b-product-embed-dialog__sizes :deep(.v-icon) { font-size: 15px; width: 15px; height: 15px; }
+  .b-product-embed-dialog__preview-well { padding: 14px; background: var(--sd-modern-inset); border: 1px solid var(--sd-modern-border); border-radius: 12px; }
+  .b-product-embed-dialog__preview { width: 100%; max-width: 100%; margin-inline: auto; overflow: hidden; border-radius: 8px; background: rgb(var(--v-theme-surface)); }
+  .b-product-embed-dialog__preview--mobile { max-width: 360px; }
+  .b-product-embed-dialog__preview > iframe { display: block; width: 100%; max-width: 100%; height: 640px; border: 0; }
+  .b-product-embed-dialog__code { margin-block-start: 20px; }
+  .b-product-embed-dialog__code > summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 36px; list-style: none; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .b-product-embed-dialog__code > summary::-webkit-details-marker { display: none; }
+  .b-product-embed-dialog__code > summary > span { display: inline-flex; align-items: center; gap: 8px; }
+  .b-product-embed-dialog__code[open] > summary > .v-icon { transform: rotate(180deg); }
+  .b-product-embed-dialog__code p { max-width: 72ch; margin: 6px 0 10px; font-size: 13px; line-height: 20px; }
+  .b-product-embed-dialog__code pre { margin: 0; padding: 12px 14px; border: 1px solid var(--sd-modern-border); border-radius: 8px; background: var(--sd-modern-inset); color: inherit; text-align: start; white-space: pre-wrap; overflow-wrap: anywhere; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; line-height: 19px; }
+  .b-product-embed-dialog__code code { background: transparent; padding: 0; color: inherit; font: inherit; font-family: "SFMono-Regular", Consolas, monospace !important; }
+  .b-product-embed-dialog__actions { display: flex; flex: 0 0 auto; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; padding: 14px 24px 18px; border-block-start: 1px solid var(--sd-modern-border); }
+}
+
+@media (max-width: 420px) {
+  .b-product-embed-dialog.v-card {
+    .b-product-embed-dialog__header { padding: 16px 14px; gap: 8px; }
+    .b-product-embed-dialog__identity { gap: 9px; }
+    .b-product-embed-dialog__body { padding: 0 12px 16px; }
+    .b-product-embed-dialog__preview-well { padding: 6px; }
+    .b-product-embed-dialog__actions { padding: 12px 14px 14px; }
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .b-product-embed-dialog.v-card {
+    .b-product-embed-dialog__sizes > .v-btn, .b-product-embed-dialog__code > summary { min-height: 44px; }
+  }
+}
+
+.b-product-info-refined {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+
+  &__widget.sd-modern-widget {
+    padding: 22px;
+    border-radius: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  &__header {
+    align-items: flex-start;
+    margin-block-end: 18px;
+    gap: 12px;
+  }
+
+  .sd-modern-title {
+    gap: 10px;
+    flex: 1 1 220px;
+  }
+
+  .sd-modern-title-text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+
+  .sd-modern-subtitle {
+    margin-block-start: 3px;
+    font-size: 12px;
+    line-height: 19px;
+  }
+
+  .sd-modern-icon--plain {
+    width: 18px;
+    height: 22px;
+    flex-basis: 18px;
+    :deep(.v-icon) { font-size: 16px; }
+  }
+
+  &__utilities {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__links, &__metadata, &__included, &__reselling, &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    min-width: 0;
+    font-size: 12px;
+    line-height: 19px;
+  }
+
+  &__metadata, &__included { margin-block-start: 14px; }
+  :deep(.b-product-info-refined__breadcrumb.s--breadcrumb-image) {
+    flex: 0 1 auto;
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+  }
+  :deep(.b-product-info-refined__breadcrumb > .v-breadcrumbs) {
+    padding: 0;
+    margin: 0;
+    min-height: 36px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    line-height: 19px;
+    white-space: normal;
+  }
+  :deep(.b-product-info-refined__breadcrumb .v-breadcrumbs-item) { padding: 0; }
+  :deep(.b-product-info-refined__breadcrumb .v-breadcrumbs-divider) { padding-inline: 8px; }
+  :deep(.b-product-info-refined__breadcrumb > div > .v-btn) {
+    width: auto !important;
+    min-width: 0;
+    min-height: 44px;
+    height: auto;
+    justify-content: flex-start;
+    padding: 7px 0;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 19px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  :deep(.b-product-info-refined__breadcrumb .v-btn__content) { font: inherit; letter-spacing: inherit; }
+  :deep(.b-product-info-refined__breadcrumb .v-icon) { font-size: 16px; width: 16px; height: 16px; }
+  &__identity { display: inline-flex; align-items: center; gap: 7px; }
+  &__identity img { flex-shrink: 0; }
+  &__reselling { margin-block-start: 18px; }
+  &__group { margin-block-start: 22px; }
+  &__group:first-of-type { padding-block-start: 18px; border-top: 1px solid var(--sd-modern-border); }
+  &__group-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-block-end: 12px; }
+  &__group-head h3 { margin: 0; font-size: 14px; line-height: 22px; font-weight: 500; }
+  &__note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-align: start;
+    font: inherit;
+    font-size: 12px;
+    line-height: 19px;
+    width: 100%;
+    cursor: pointer;
+  }
+  &__note > span { min-width: 0; }
+  &__note-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; color: var(--sd-modern-muted); }
+  &__note-meta strong { color: rgb(var(--v-theme-on-surface)); font-weight: 500; }
+  &__note-body { display: block; margin-block: 4px; overflow-wrap: anywhere; }
+  &__tags { gap: 6px; }
+  &__tags .sd-modern-tag { max-width: 100%; overflow-wrap: anywhere; }
+  &__pricing { font-size: 12px; }
+  &__pricing :deep(td) { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 850px) {
+  .b-product-info-refined__pricing {
+    :deep(thead) { display: none; }
+    :deep(tbody), :deep(tr) { display: block; }
+    :deep(tr) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    :deep(td) { display: block; padding: 0; min-height: 0; border: 0; }
+    :deep(td[data-label]::before) { content: attr(data-label); display: block; margin-block-end: 5px; }
+  }
+}
+
+@media (max-width: 560px) {
+  .b-product-info-refined {
+    &__widget.sd-modern-widget { padding: 16px 12px; border-radius: 12px; }
+    .sd-modern-title { flex-basis: 144px; }
+    &__metadata { align-items: flex-start; }
+  }
+}
+</style>

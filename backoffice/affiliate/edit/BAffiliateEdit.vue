@@ -646,7 +646,9 @@
                     size="18"
                     >warning</v-icon
                   >
-                  {{ $t("affiliate_edit.set_users_first_message") }}
+                  <span :class="{ 'sd-modern-notice__content': modern }">{{
+                    $t("affiliate_edit.set_users_first_message")
+                  }}</span>
                 </div>
               </v-expand-transition>
             </div>

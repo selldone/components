@@ -17,7 +17,7 @@ const Basket = {
     ),
   ),
 };
-const ProductType = { PHYSICAL: { code: "PHYSICAL" } };
+const ProductType = Object.fromEntries(["PHYSICAL", "VIRTUAL", "FILE", "SERVICE", "SUBSCRIPTION"].map(code => [code, { code }]));
 const components = new Map();
 const templates = new Map();
 const paths = [
@@ -50,6 +50,9 @@ for (const path of paths) {
   }
   const exports = {};
   const unknownModule = new Proxy({ default: {}, Basket, ProductType,
+    VendorMemberTypes: { VendorMemberRegionCode: { ORDERS: "ORDERS" } },
+    ShopTransportations: { Pickup: { code: "Pickup" }, Post: { code: "Post" } },
+    ETA: Object.fromEntries(["weekday_timeframe", "weekday", "timeframe", "date_time", "date"].map(code => [code, { code }])),
     BusinessModel: { MARKETPLACE: { code: "MARKETPLACE" } },
     PriceHelper: { FixPrecisionForCurrency: (value) => value }, ShopOptionsHelper: {
     GetCheckout: (shop) => shop.checkout,
@@ -129,6 +132,66 @@ assert.equal(row.computed.has_refund_action.call({ ...readonlyRow, readonly: fal
 assert.equal(row.computed.has_delivery_action.call({ ...readonlyRow, readonly: false }), true);
 
 const delivery = components.get("BOrderDashboardDelivery");
+assert.equal(delivery.computed.modernVendorPanel.call({ modern: true, IS_VENDOR_PANEL: true }), true);
+assert.equal(delivery.computed.modernVendorPanel.call({ modern: false, IS_VENDOR_PANEL: true }), false);
+assert.equal(delivery.computed.vendorReadOnly.call({ modernVendorPanel: false }), false);
+for (const context of [
+  { vendor: null }, { vendor: { id: 7 } },
+  { vendor: { id: 7 }, writeVendorAccess: () => false },
+]) assert.equal(delivery.computed.vendorReadOnly.call({ modernVendorPanel: true, ...context }), true);
+const vendor = { id: 7 };
+assert.equal(delivery.computed.vendorReadOnly.call({ modernVendorPanel: true, vendor,
+  writeVendorAccess: (received, region) => { assert.equal(received, vendor); assert.equal(region, "ORDERS"); return true; },
+}), false);
+for (const [state, expected] of [["CheckQueue", false], ["OrderConfirm", false], ["PreparingOrder", true], ["SentOrder", true], ["ToCustomer", true]]) {
+  assert.equal(delivery.computed.vendorDeliveryExpanded.call({ vendor_details_expanded: null, basket: { delivery_state: state } }), expected);
+}
+assert.equal(delivery.computed.vendorDeliveryExpanded.call({ vendor_details_expanded: false, basket: { delivery_state: "PreparingOrder" } }), false);
+assert.equal(delivery.computed.vendorDeliveryExpanded.call({ vendor_details_expanded: true, basket: { delivery_state: "CheckQueue" } }), true);
+for (const overrides of [{ vendorReadOnly: true }, { basket: { status: "Reserved" } }, { basket: { status: "Payed", reject: { reason: "fixture" } } }]) {
+  assert.equal(delivery.computed.vendorProcessingBlocked.call({ modernVendorPanel: true, vendorReadOnly: false, basket: { status: "Payed" }, ...overrides }), true);
+}
+assert.equal(delivery.computed.vendorProcessingBlocked.call({ modernVendorPanel: true, vendorReadOnly: false, basket: { status: "COD" } }), false);
+for (const method of ["sentOrder", "toCustomer", "returnDelivery", "setTracking", "editAddress", "autoSelectService", "refreshDeliveryServiceOrder"]) {
+  const context = { modern: true, modernVendorPanel: true, isRolePanel: false, vendorProcessingBlocked: true,
+    isDeliveryActionDisabled: true, $emit: () => assert.fail("Denied vendor delivery action: " + method),
+  };
+  delivery.methods[method].call(context);
+  assert.equal(context.busy_sentOrder, undefined);
+  assert.equal(context.busy_toCustomer, undefined);
+  assert.equal(context.busy_return, undefined);
+  assert.equal(context.busy_set_tracking, undefined);
+}
+for (const overrides of [
+  { is_current_receipt_step: false, accept_action: true },
+  { is_current_receipt_step: true, accept_action: false },
+  { is_current_receipt_step: true, accept_action: true, busy_toCustomer: true, busy_return: true },
+]) for (const method of ["toCustomer", "returnDelivery"]) {
+  delivery.methods[method].call({ modernVendorPanel: true, vendorProcessingBlocked: false, ...overrides,
+    $emit: () => assert.fail("Unverified vendor receipt/return: " + method),
+  });
+}
+delivery.methods.setTracking.call({ modernVendorPanel: true, vendorProcessingBlocked: false, active_track: false,
+  $emit: () => assert.fail("Delivered tracking must stay readonly"),
+});
+for (const [method, event] of [["sentOrder", "confirm-send"], ["toCustomer", "confirm-received"], ["returnDelivery", "returned-delivery"]]) {
+  const context = { modern: true, modernVendorPanel: true, isRolePanel: false, vendorProcessingBlocked: false,
+    isDeliveryActionDisabled: false, is_current_receipt_step: true, accept_action: true,
+    onDeleteLogisticSendingOrderQue: () => assert.fail("Vendor handoff must not mutate the shop batch queue"),
+    $emit: (actual, { callback }) => { assert.equal(actual, event); callback(); },
+  };
+  delivery.methods[method].call(context);
+  assert.equal(context[{ sentOrder: "busy_sentOrder", toCustomer: "busy_toCustomer", returnDelivery: "busy_return" }[method]], false);
+}
+for (const watch of ["basket.id", "basket.delivery_state"]) {
+  const context = { vendor_details_expanded: true, accept_action: true };
+  delivery.watch[watch].call(context);
+  assert.equal(context.vendor_details_expanded, null);
+  assert.equal(context.accept_action, false);
+}
+const revoked = { accept_action: true, dialog_received_by_customer: true, dialog_returned_by_customer: true };
+delivery.watch.vendorReadOnly.call(revoked, true);
+assert.deepEqual(revoked, { accept_action: false, dialog_received_by_customer: false, dialog_returned_by_customer: false });
 for (const method of ["returnDelivery", "refreshDeliveryServiceOrder", "setTracking", "editAddress", "autoSelectService"]) {
   const context = roleContext();
   delivery.methods[method].call(context);
@@ -158,7 +221,7 @@ delivery.methods.toCustomer.call(received);
 assert.equal(received.busy_toCustomer, false);
 assert.equal(received.dialog_received_by_customer, false);
 
-async function childScreen(name, props) {
+async function childScreen(name, props, globals = {}) {
   const component = components.get(name), code = templates.get(name), exports = {};
   vm.runInNewContext(ts.transpileModule(code, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
@@ -173,6 +236,7 @@ async function childScreen(name, props) {
   locals.BOrderPaymentActionsRefundButton = { render: () => Vue.h("button", { "data-refund-action": "true" }) };
   locals.UNumberInput = { props: ["label"], setup: (props) => () => Vue.h("span", { "data-manual-input": "true" }, props.label) };
   locals.UPrice = { props: ["amount"], setup: (props) => () => Vue.h("output", { "data-amount": props.amount }, String(props.amount)) };
+  locals.BTransportationServiceLabels = { render: () => Vue.h("span", { "data-carrier-booking": "true" }) };
   const app = Vue.createSSRApp({ ...component, mixins: [], components: locals, render: exports.render,
     methods: { ...component.methods, formatCard: (value) => String(value), getLocalDateString: () => "fixture date",
       getFromNowString: () => "fixture elapsed", getLocalTimeString: () => "fixture time",
@@ -183,9 +247,33 @@ async function childScreen(name, props) {
   }
   Object.assign(app.config.globalProperties, {
     $t: (key) => key, $tm: () => [], $route: { params: {}, matched: [] },
+    $store: { getters: { getOrderSendingQue: [] } },
+    GlobalRules: { url: () => () => true },
+    ...globals,
   });
+  app.directive("copy", { getSSRProps: () => ({}) });
+  app.directive("intersect", { getSSRProps: () => ({}) });
   app.provide("$vendor", null);
   return new JSDOM(await renderToString(app)).window.document;
+}
+for (const state of ["CheckQueue", "PreparingOrder", "SentOrder", "ToCustomer"]) for (const canWrite of [true, false]) {
+  const document = await childScreen("BOrderDashboardDelivery", {
+    modern: true, isRolePanel: false, shop: { id: 1 },
+    vendor: { id: 7, warehouse: {}, transportations: [{ type: "Post", title: "Fixture courier", transportation_services: [{ id: 3, delivery_service: { name: "Fixture service", icon: "/fixture/service.svg" } }] }] },
+    basket: { id: 2, status: "Payed", delivery_state: state, reserved_at: "2026-10-29", buyer: { id: 3 },
+      delivery_info: { type: "Post", tracking_code: "TRACK-FIXTURE" }, receiver_info: { name: "Fixture receiver" }, billing: {}, items: [] },
+  }, { $route: { params: { vendor_id: 7 }, matched: [{ meta: { vendor: true } }] }, writeVendorAccess: () => canWrite,
+    $vuetify: { display: { xs: false, smAndUp: true }, locale: { isRtl: false } },
+  });
+  const toggle = document.querySelector(".b-order-delivery-vendor__toggle");
+  assert.ok(toggle, "Vendor delivery has a named disclosure");
+  assert.equal(toggle.getAttribute("aria-expanded"), String(state !== "CheckQueue"));
+  assert.ok(document.body.textContent.includes("vendor_fulfillment.delivery.title"));
+  assert.ok(document.body.textContent.includes("process_center.modern.bill_summary"), "Bill remains available while delivery details collapse");
+  assert.ok(document.body.textContent.includes("Fixture receiver"), "Receiver remains available while delivery details collapse");
+  assert.equal(document.querySelectorAll("[data-carrier-booking]").length, state === "PreparingOrder" && canWrite ? 1 : 0);
+  if (!canWrite || state === "ToCustomer") assert.ok(document.querySelectorAll("[readonly]").length >= 2, "Readonly and completed orders keep both tracking fields readonly");
+  if (state === "CheckQueue") assert.equal(document.querySelector(".b-order-delivery-modern__location").style.display, "none");
 }
 for (const modern of [true, false]) for (const isRolePanel of [true, false]) {
   const document = await childScreen("BOrderDashboardPreparing", {

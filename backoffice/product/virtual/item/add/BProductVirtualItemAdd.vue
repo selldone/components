@@ -233,6 +233,8 @@
             <b-spreadsheet-virtual-items
               v-if="!show_report"
               ref="spreadsheet"
+              :can-select-file="!busy_send"
+              @update:converting="converting_file = $event"
               :product="product"
               class="mb-3"
               @update:valid="(val) => (is_valid = val)"
@@ -316,7 +318,7 @@
       <div v-if="!virtualItem && bulk" class="widget-buttons">
         <v-btn
           v-if="!show_report"
-          :disabled="!is_valid"
+          :disabled="!is_valid || converting_file"
           :loading="busy_send"
           color="primary"
           size="x-large"
@@ -409,6 +411,7 @@ export default {
 
     //-----------------
     is_valid: false,
+    converting_file: false,
 
     progress: 0,
     busy_send: false,
@@ -538,6 +541,7 @@ export default {
     },
 
     addBulk() {
+      if (this.converting_file || this.busy_send || !this.is_valid) return;
       this.busy_send = true;
       this.progress = 0;
 

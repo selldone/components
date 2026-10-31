@@ -20,7 +20,7 @@
 -->
 
 <template>
-  <div class="sld-bfb-onbprev">
+  <div class="sld-bfb-onbprev text-start" :class="{ 'sld-bfb-onbprev--modern': modern }">
     <!-- Header -->
     <div class="sld-bfb-onbprev__header">
       <div class="sld-bfb-onbprev__brand">
@@ -37,11 +37,12 @@
 
       <v-spacer />
 
-      <div class="d-flex align-center" style="gap: 10px">
+      <div class="sld-bfb-onbprev__header-actions d-flex align-center" style="gap: 10px">
         <v-btn
           variant="outlined"
-          rounded="pill"
+          :rounded="modern ? 'lg' : 'pill'"
           class="text-none"
+          :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
           @click="faq_dialog = true"
         >
           {{ questionsTitle }}
@@ -49,11 +50,12 @@
 
         <v-btn
           variant="outlined"
-          rounded="pill"
+          :rounded="modern ? 'lg' : 'pill'"
           class="text-none"
+          :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
           @click="noop"
         >
-          Exit
+          {{ $t('shop_listing.form_builder.exit') }}
         </v-btn>
       </div>
     </div>
@@ -86,7 +88,7 @@
             class="text-none"
             @click="noop"
           >
-            Back
+            {{ $t('global.actions.back') }}
           </v-btn>
         </div>
 
@@ -103,21 +105,19 @@
 
     <!-- FAQ dialog (preview) -->
     <v-dialog v-model="faq_dialog" max-width="860" scrollable>
-      <v-card rounded="xl" class="text-start">
+      <v-card rounded="xl" class="text-start" :class="{ 'sd-modern-widget sld-bfb-onbprev__faq-dialog': modern }">
         <v-toolbar flat>
-          <v-btn icon variant="text" @click="faq_dialog = false">
-            <v-icon>close</v-icon>
-          </v-btn>
+          <v-tooltip location="top" content-class="sd-modern-tooltip"><template #activator="{ props }"><v-btn v-bind="props" icon variant="text" :class="{ 'sd-modern-icon-button': modern }" :aria-label="$t('global.actions.close')" @click="faq_dialog = false"><v-icon aria-hidden="true">close</v-icon></v-btn></template>{{ $t('global.actions.close') }}</v-tooltip>
 
           <v-toolbar-title class="font-weight-black">
-            Questions
+            {{ $t('shop_listing.form_builder.faqs') }}
           </v-toolbar-title>
 
           <v-spacer />
 
           <v-btn variant="text" @click="faq_dialog = false">
             <v-icon start>done</v-icon>
-            Done
+            {{ $t('shop_listing.form_builder.done') }}
           </v-btn>
         </v-toolbar>
 
@@ -125,13 +125,13 @@
 
         <v-card-text class="pt-4">
           <div v-if="!faqsSafe.length" class="text-muted">
-            No FAQs for this step.
+            {{ $t('shop_listing.form_builder.no_questions') }}
           </div>
 
           <v-expansion-panels v-else variant="accordion">
             <v-expansion-panel v-for="f in faqsSafe" :key="String(f._key)">
               <v-expansion-panel-title class="font-weight-bold">
-                {{ f.q || "Question" }}
+                {{ f.q || $t('shop_listing.form_builder.question') }}
               </v-expansion-panel-title>
               <v-expansion-panel-text>
                 <div class="text-body-2" style="white-space: pre-wrap">
@@ -165,6 +165,7 @@ export default {
 
     // Dummy preview value for field slides
     modelValue: { default: null },
+    modern: { type: Boolean, default: false },
   },
 
   data: () => ({
@@ -214,15 +215,15 @@ export default {
     },
 
     nextLabel(): string {
-      if (this.isLast) return "Finish";
-      if (this.isFirst) return "Get started";
-      return "Next";
+      if (this.isLast) return this.$t("global.actions.finish");
+      if (this.isFirst) return this.$t("shop_listing.form_builder.get_started");
+      return this.$t("global.actions.next");
     },
 
     questionsTitle(): string {
       const s: any = (this as any).slide || {};
       const t = String(s.faq_title || "").trim();
-      return t || "Questions?";
+      return t || this.$t("shop_listing.form_builder.questions");
     },
 
     faqsSafe(): any[] {
@@ -315,5 +316,37 @@ export default {
     border-radius: 999px;
     transition: width 0.2s ease-in-out;
   }
+}
+
+.sld-bfb-onbprev--modern {
+  background: rgb(var(--v-theme-surface));
+  border-color: var(--sd-modern-border);
+  border-radius: 15px;
+  .sld-bfb-onbprev__header { background: transparent; border-color: var(--sd-modern-border); padding: 16px 20px; gap: 12px; flex-wrap: wrap; }
+  .sld-bfb-onbprev__header-actions { flex-wrap: wrap; gap: 8px !important; max-width: 100%; min-width: 0; }
+  .sld-bfb-onbprev__header-actions > .v-btn { max-width: 100%; min-width: 0; white-space: normal; height: auto; }
+  .sld-bfb-onbprev__header-actions :deep(.v-btn__content) { white-space: normal; overflow-wrap: anywhere; }
+  .sld-bfb-onbprev__body { background: transparent; min-height: 310px; }
+  .sld-bfb-onbprev__footer { background: transparent; border-color: var(--sd-modern-border); padding: 16px 20px; }
+  .sld-bfb-onbprev__progress { background: var(--sd-modern-border); }
+  .sld-bfb-onbprev__progress-bar { background: rgb(var(--v-theme-primary)); }
+  :deep(.sld-onb-slide) { background: rgb(var(--v-theme-surface)); color: rgb(var(--v-theme-on-surface)); padding: 32px; }
+  :deep(.sld-onb-slide__content) { min-width: 0; }
+  :deep(.sld-onb-slide__content:only-child) { grid-column: 1 / -1; }
+  :deep(.sld-onb-opt) { background: rgb(var(--v-theme-surface)); color: rgb(var(--v-theme-on-surface)); border-color: var(--sd-modern-border); text-align: start; }
+  :deep(.sld-onb-opt:hover), :deep(.sld-onb-opt.-selected) { background: var(--sd-modern-inset); border-color: rgba(var(--v-theme-on-surface), 0.4); }
+  :deep(.sld-onb-map) { border-color: var(--sd-modern-border); background: repeating-linear-gradient(45deg, rgba(var(--v-theme-on-surface), 0.03), rgba(var(--v-theme-on-surface), 0.03) 10px, rgba(var(--v-theme-on-surface), 0.015) 10px, rgba(var(--v-theme-on-surface), 0.015) 20px); }
+  :deep(.sld-onb-map__badge) { background: rgb(var(--v-theme-surface)); color: rgb(var(--v-theme-on-surface)); border-color: var(--sd-modern-border); }
+  :deep(.sld-onb-items__sep) { background: var(--sd-modern-border); }
+  :deep(.sld-onb-title) { font-size: 22px; font-weight: 500; line-height: 30px; }
+  :deep(.sld-onb-subtitle), :deep(.sld-onb-tips) { font-size: 13px; line-height: 21px; }
+  :deep(.sld-onb-slide__inner) { padding: 0; gap: 24px; }
+  @media (max-width: 600px) {
+    :deep(.sld-onb-slide) { padding: 20px; }
+  }
+}
+.sld-bfb-onbprev__faq-dialog {
+  :deep(.v-toolbar) { background: transparent; }
+  :deep(.v-toolbar-title) { font-size: 16px; line-height: 24px; font-weight: 500 !important; }
 }
 </style>

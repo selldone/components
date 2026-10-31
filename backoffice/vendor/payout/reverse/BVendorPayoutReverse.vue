@@ -13,9 +13,31 @@
   -->
 
 <template>
-  <v-card class="text-start" flat>
-    <v-card-title></v-card-title>
-    <v-card-text>
+  <v-card class="text-start" :class="{ 'sd-modern-widget b-vendor-payout-reverse': modern }" flat>
+    <v-card-title :class="{ 'b-vendor-payout-reverse__header': modern }">
+      <template v-if="modern"><h2>{{ $t('global.actions.reverse_fund') }}</h2><v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="$t('global.actions.close')" :disabled="busy" @click="$emit('close')"><v-icon aria-hidden="true">close</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('global.actions.close') }}</v-tooltip></v-btn></template>
+    </v-card-title>
+    <v-card-text :class="{ 'b-vendor-payout-reverse__body': modern }">
+      <template v-if="modern">
+        <p class="b-vendor-payout-reverse__scope">{{ $t('marketplace_payouts.modern.partialScope') }}</p>
+        <b-vendor-box v-if="vendor" :vendor="vendor" modern />
+        <dl class="b-vendor-payout-reverse__totals">
+          <div><dt class="b-vendor-payout-reverse__summary-label">{{ $t('marketplace_payouts.modern.originalAmount') }}</dt><dd><u-price :amount="payment.amount" :currency="currency" /></dd></div>
+          <div><dt class="b-vendor-payout-reverse__summary-label">{{ $t('marketplace_payouts.modern.totalReversed') }}</dt><dd><u-price :amount="-Number(payment.reversal || 0)" :currency="currency" /></dd></div>
+          <div><dt class="b-vendor-payout-reverse__summary-label">{{ $t('marketplace_payouts.modern.remaining') }}</dt><dd><u-price :amount="remains_amount" :currency="currency" /></dd></div>
+        </dl>
+        <p v-if="payment.deleted_at" class="sd-modern-notice" role="status">{{ $t('marketplace_payouts.modern.deletedHelp') }}</p>
+        <p v-else-if="remains_amount <= 0" class="sd-modern-notice" role="status">{{ $t('marketplace_payouts.modern.noRemaining') }}</p>
+        <div class="b-vendor-payout-reverse__fields">
+          <u-currency-input :model-value="currency" :active-currencies="[currency]" :label="$t('global.commons.currency')" :return-object="false" disabled variant="underlined" class="sd-modern-underlined-field" />
+          <u-price-input v-model="amount" :currency="currency" :disabled="busy || !!payment.deleted_at || remains_amount <= 0" :label="$t('global.commons.amount')" :error-messages="Number(amount) > remains_amount ? $t('marketplace_payouts.modern.remainingValue', { amount: `${remains_amount} ${currency}` }) : undefined" :messages="$t('marketplace_payouts.modern.remainingValue', { amount: `${remains_amount} ${currency}` })" variant="underlined" class="sd-modern-underlined-field" />
+        </div>
+        <v-textarea v-model="reason" :disabled="busy || !!payment.deleted_at" :label="$t('marketplace_payouts.modern.reason')" :messages="$t('marketplace_payouts.modern.noteHelp')" :placeholder="$t('marketplace_wallets.payout.note_placeholder')" class="sd-modern-underlined-field" variant="underlined" auto-grow rows="2" persistent-placeholder />
+        <u-smart-suggestion v-if="!payment.deleted_at" :samples="$tm('suggestions.vendor_payment.reverse_fund_reason')" @select="value => reason = value" />
+        <details class="b-vendor-payout-reverse__history"><summary>{{ $t('marketplace_payouts.modern.reversalHistory') }}</summary><b-vendor-payout-history v-if="payment.reversal_detail?.length" :payment="payment" /><p v-else>{{ $t('marketplace_payouts.modern.noReversals') }}</p></details>
+        <details v-if="Object.keys(payment.meta || {}).length" class="b-vendor-payout-reverse__metadata"><summary>{{ $t('global.commons.meta') }}</summary><dl><div v-for="(value, key) in payment.meta" :key="key"><dt class="sd-modern-list-header">{{ getName(key) }}</dt><dd>{{ value }}</dd></div></dl></details>
+      </template>
+      <template v-else>
       <div class="widget-box mb-5">
         <u-widget-header icon="move_up" title="Revers transfer">
         </u-widget-header>
@@ -125,21 +147,24 @@
         >
         </u-smart-suggestion>
       </div>
+      </template>
     </v-card-text>
 
-    <v-card-actions>
-      <div class="widget-buttons">
-        <v-btn size="x-large" variant="text" @click="$emit('close')">
+    <v-card-actions :class="{ 'b-vendor-payout-reverse__footer': modern }">
+      <div :class="modern ? 'b-vendor-payout-reverse__actions' : 'widget-buttons'">
+        <v-btn :size="modern ? undefined : 'x-large'" :class="{ 'sd-modern-button': modern }" :disabled="modern && busy" variant="text" @click="$emit('close')">
           <v-icon start>close</v-icon>
           {{ $t("global.actions.close") }}
         </v-btn>
 
         <v-btn
-          :class="{ disabled: !amount || amount > remains_amount }"
+          v-if="!modern || !payment.deleted_at"
+          :class="{ disabled: !amount || amount > remains_amount, 'sd-modern-button sd-modern-button--danger': modern }"
+          :disabled="modern ? !canReverseModern : undefined"
           :loading="busy"
-          color="red"
-          size="x-large"
-          variant="flat"
+          :color="modern ? 'error' : 'red'"
+          :size="modern ? undefined : 'x-large'"
+          :variant="modern ? 'elevated' : 'flat'"
           @click="reverseTransfer"
         >
           <v-icon class="me-1">remove</v-icon>
@@ -161,12 +186,14 @@ import UPodWire from "../../../../ui/pod/wire/UPodWire.vue";
 import UTextValueBox from "../../../../ui/text/value-box/UTextValueBox.vue";
 import BVendorPayoutHistory from "../../../vendor/payout/history/BVendorPayoutHistory.vue";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
+import BVendorBox from "../../../vendor/box/BVendorBox.vue";
 
 
 export default {
   name: "BVendorPayoutReverse",
   mixins: [],
   components: {
+    BVendorBox,
     USmartSuggestion,
     BVendorPayoutHistory,
 
@@ -179,6 +206,7 @@ export default {
     UPriceInput,
   },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       required: true,
     },
@@ -187,11 +215,15 @@ export default {
   },
   data: () => ({
     busy: false,
+    reverseRequest: null,
 
     amount: 0,
     reason: null,
   }),
   computed: {
+    canReverseModern() {
+      return !!(this.payment?.id && !this.payment.deleted_at && !this.busy && Number.isFinite(Number(this.amount)) && Number(this.amount) > 0 && Number(this.amount) <= this.remains_amount);
+    },
     option() {
       return this.payment.option;
     },
@@ -202,54 +234,112 @@ export default {
       return this.payment.currency;
     },
     remains_amount() {
-      return this.payment.amount - this.payment.reversal;
+      return this.payment.amount - (this.payment.reversal || 0);
     },
   },
 
   watch: {
     payment() {
-      this.assign();
+      this.amount = 0;
+      this.reason = null;
+      if (this.modern) {
+        this.reverseRequest = null;
+        this.busy = false;
+      }
+    },
+    'shop.id'() {
+      if (!this.modern) return;
+      this.reverseRequest = null;
+      this.busy = false;
+      this.amount = 0;
+      this.reason = null;
     },
   },
 
   created() {},
 
+  beforeUnmount() {
+    this.reverseRequest = null;
+  },
+
   methods: {
     //――――――――――――――――――――――― Revers transfer ―――――――――――――――――――――――
     reverseTransfer() {
+      if (this.modern && !this.canReverseModern) return;
+      const modern = this.modern;
+      const payment = this.payment;
+      const paymentId = payment.id;
+      const shopId = this.shop.id;
+      const request = Symbol();
+      if (modern) this.reverseRequest = request;
+      // A completed request must only affect the dialog that submitted it.
+      const isCurrent = () => !modern || (this.modern && this.reverseRequest === request && this.payment === payment && this.payment.id === paymentId && this.shop.id === shopId);
       this.busy = true;
 
-      axios
+      return axios
         .post(
           window.API.POST_SHOP_VENDOR_PAYMENT_REVERSE_TRANSFER(
-            this.shop.id,
-            this.payment.id,
+            shopId,
+            paymentId,
           ),
           {
             currency: this.currency,
-            amount: (this.reverse ? -1 : 1) * this.amount,
+            amount: this.modern ? Number(this.amount) : (this.reverse ? -1 : 1) * this.amount,
             reason: this.reason,
           },
         )
         .then(({ data }) => {
+          if (!isCurrent()) return;
           if (!data.error) {
             Object.assign(this.payment, data.payment); // Update current payment.
             this.$emit("update", data.payment);
+            if (!isCurrent()) return;
             this.$emit("close");
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
+          if (!isCurrent()) return;
           NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
+          if (!isCurrent()) return;
           this.busy = false;
+          if (modern) this.reverseRequest = null;
         });
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-vendor-payout-reverse {
+  --sd-modern-icon-button-size: 33px;
+  padding: 24px;
+  border: 0;
+  border-radius: 18px !important;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+  > .b-vendor-payout-reverse__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; padding: 0; margin-block-end: 18px; white-space: normal; }
+  &__header h2 { margin: 0; font-size: 21px; font-weight: 500; line-height: 29px; }
+  > .b-vendor-payout-reverse__body { padding: 0 !important; font-size: 13px; line-height: 20px; }
+  &__scope { margin: 0 0 20px; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  &__totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 22px 0; }
+  &__summary-label { margin: 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; font-weight: 400; }
+  &__totals dd { margin: 6px 0 0; font-size: 14px; line-height: 21px; font-weight: 500; overflow-wrap: anywhere; }
+  &__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  &__history, &__metadata { margin-block-start: 20px; }
+  &__history summary, &__metadata summary { min-height: 44px; padding-block: 12px; cursor: pointer; }
+  &__history summary:focus-visible, &__metadata summary:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  &__metadata dl { display: grid; gap: 14px; margin: 8px 0 0; }
+  &__metadata dd { margin: 6px 0 0; overflow-wrap: anywhere; }
+  > .b-vendor-payout-reverse__footer { padding: 22px 0 0; }
+  &__actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; width: 100%; }
+}
+@media (max-width: 600px) {
+  .b-vendor-payout-reverse { padding: 19px 15px; &__fields, &__totals { grid-template-columns: minmax(0, 1fr); gap: 14px; } }
+}
+</style>

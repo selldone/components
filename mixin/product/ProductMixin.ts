@@ -22,6 +22,9 @@ import {CurrencyHelper, VendorProduct} from "@selldone/core-js";
 import {ProductType} from "@selldone/core-js/enums/product/ProductType.ts";
 
 const ProductMixin = {
+  inject: {
+    $productEmbedCurrency: { default: null },
+  },
   methods: {
     //―――――――――――――――――――――― Price ――――――――――――――――――――
 
@@ -44,8 +47,9 @@ const ProductMixin = {
       current_extra_pricing = null, // 🌸 Add extra pricing 🌸
     ) {
       //console.log('CalcPriceProductCurrentCurrency',product,variant)
-      const to_currency = CurrencyHelper.GetUserSelectedCurrency(
-        this.$localstorage_base_path(),
+      const to_currency = (
+        this.$productEmbedCurrency ||
+        CurrencyHelper.GetUserSelectedCurrency(this.$localstorage_base_path())
       ).code;
       return this.priceProductByCurrency(
         shop,
@@ -92,8 +96,9 @@ const ProductMixin = {
      * @returns {*}
      */
     getProductDiscountAmount(shop: Shop, product: Product, variant = null) {
-      const to_currency = CurrencyHelper.GetUserSelectedCurrency(
-        this.$localstorage_base_path(),
+      const to_currency = (
+        this.$productEmbedCurrency ||
+        CurrencyHelper.GetUserSelectedCurrency(this.$localstorage_base_path())
       ).code;
       return this.getProductDiscountAmountByCurrency(
         shop,

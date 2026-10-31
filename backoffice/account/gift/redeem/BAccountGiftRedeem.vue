@@ -15,97 +15,169 @@
 <template>
   <v-bottom-sheet
     v-model="apply_gift_dialog"
-    :width="720"
-    content-class="rounded-t-xl"
+    :width="590"
+    :persistent="busy"
+    content-class="rounded-t-xl rounded-b-0"
     max-width="98vw"
+    scrollable
   >
-    <v-card v-if="selectedGift" :color="ThemeColorDeepDark" rounded="t-xl">
-      <v-card-title class="dialog-title">
-        <v-icon class="me-1">card_giftcard</v-icon>
-        {{ $t("get_gift_dialog.title") }}
-      </v-card-title>
-
-      <v-card-text>
-        <template v-if="selectedGift.program">
-          <u-lottie
-            v-if="
-              selectedGift.program.promotion &&
-              selectedGift.program.promotion.endsWith('.json')
-            "
-            :options="{ path: selectedGift.program.promotion, loop: true }"
-            :speed="1"
-            class="mx-auto"
-            height="180px"
-            width="180px"
-          />
-          <v-img
-            v-else
-            :src="
-              selectedGift.program.promotion
-                ? selectedGift.program.promotion
-                : GetGiftProgramType(selectedGift.program.type).image
-            "
-            class="mx-auto mb-5"
-            height="180"
-            width="180"
-          >
-          </v-img>
-
-          <h2 class="mb-2">{{ selectedGift.program.title }}</h2>
-
-          <p class="typo-body">
-            {{ selectedGift.program.description }}
-          </p>
-          <div class="widget-buttons">
-            <v-btn
-              v-if="selectedGift.program.link"
-              :href="selectedGift.program.link"
-              size="x-large"
-              target="_blank"
+    <v-card
+      v-if="selectedGift"
+      class="b-account-gift sd-modern-canvas text-start"
+      rounded="t-xl"
+    >
+      <header class="b-account-gift__header">
+        <v-icon size="24" aria-hidden="true">card_giftcard</v-icon>
+        <div>
+          <h2>{{ $t("shuttle_gifts.receive_title") }}</h2>
+          <p>{{ $t("shuttle_gifts.receive_subtitle") }}</p>
+        </div>
+        <v-tooltip location="top" content-class="sd-modern-tooltip text-start">
+          <template #activator="{ props }">
+            <button
+              v-bind="props"
+              type="button"
+              class="sd-modern-icon-button"
+              :disabled="busy"
+              :aria-label="$t('shuttle_gifts.close')"
+              @click="apply_gift_dialog = false"
             >
-              {{ $t("get_gift_dialog.more") }}
-              <v-icon class="ms-2" size="small">open_in_new</v-icon>
-            </v-btn>
+              <v-icon size="18" aria-hidden="true">close</v-icon>
+            </button>
+          </template>
+          {{ $t("shuttle_gifts.close") }}
+        </v-tooltip>
+      </header>
+      <div class="b-account-gift__body">
+        <section class="b-account-gift__details sd-modern-widget">
+          <div v-if="selectedGift.program" class="b-account-gift__program">
+            <u-lottie
+              v-if="
+                selectedGift.program.promotion &&
+                selectedGift.program.promotion.endsWith('.json')
+              "
+              :options="{ path: selectedGift.program.promotion, loop: true }"
+              :speed="1"
+              class="b-account-gift__promotion"
+              height="100px"
+              width="100px"
+            />
+            <v-img
+              v-else
+              :src="
+                selectedGift.program.promotion
+                  ? selectedGift.program.promotion
+                  : GetGiftProgramType(selectedGift.program.type).image
+              "
+              class="b-account-gift__promotion"
+              :height="selectedGift.program.promotion ? 100 : 65"
+              :width="selectedGift.program.promotion ? 100 : 65"
+            >
+            </v-img>
+
+            <div>
+              <h3>{{ selectedGift.program.title }}</h3>
+              <p v-if="selectedGift.program.description">
+                {{ selectedGift.program.description }}
+              </p>
+              <v-btn
+                v-if="programUrl"
+                :href="programUrl"
+                class="sd-modern-button sd-modern-button--inline sd-modern-button--compact"
+                color="primary"
+                variant="text"
+                target="_blank"
+                rel="noopener noreferrer"
+                append-icon="north_east"
+              >
+                {{ $t("shuttle_gifts.program_more") }}
+              </v-btn>
+            </div>
           </div>
-        </template>
-        <u-price
-          :amount="selectedGift.amount"
-          :currency="selectedGift.currency"
-          :title="$t('get_gift_dialog.amount')"
-          x-large
-        ></u-price>
-
-        <p class="typo-body my-3">
-          {{ selectedGift.message }}
+          <u-price
+            :amount="selectedGift.amount"
+            :currency="selectedGift.currency"
+            class="b-account-gift__amount"
+          ></u-price>
+          <p v-if="selectedGift.message" class="b-account-gift__message">
+            {{ selectedGift.message }}
+          </p>
+          <dl class="b-account-gift__facts">
+            <div>
+              <dt>{{ $t("shuttle_gifts.status") }}</dt>
+              <dd>
+                <span class="sd-modern-status sd-modern-status--plain">
+                  <span
+                    class="sd-modern-status__dot"
+                    :class="{
+                      'sd-modern-status__dot--success':
+                        selectedGift.status === 'Paid',
+                      'sd-modern-status__dot--warning':
+                        selectedGift.status === 'Unpaid',
+                      'sd-modern-status__dot--error':
+                        selectedGift.status === 'Rejected',
+                    }"
+                    aria-hidden="true"
+                  />
+                  {{
+                    GiftStatus[selectedGift.status]
+                      ? $t(GiftStatus[selectedGift.status].title)
+                      : $t("shuttle_gifts.unknown_status")
+                  }}
+                </span>
+              </dd>
+            </div>
+            <div v-if="selectedGift.created_at">
+              <dt>{{ $t("shuttle_gifts.created_at") }}</dt>
+              <dd>{{ getLocalTimeString(selectedGift.created_at) }}</dd>
+            </div>
+            <div v-if="selectedGift.pay_at">
+              <dt>{{ $t("shuttle_gifts.received_at") }}</dt>
+              <dd>{{ getLocalTimeString(selectedGift.pay_at) }}</dd>
+            </div>
+          </dl>
+        </section>
+        <p class="sd-modern-notice b-account-gift__notice" role="status">
+          <v-icon size="17" aria-hidden="true">info_outline</v-icon>
+          <span class="sd-modern-notice__content">{{ $t(statusNotice) }}</span>
         </p>
-
-        <b-account-input
+        <div
           v-if="selectedGift.status === GiftStatus.Unpaid.code"
-          v-model="account_to"
-          :chip="false"
-          :currency="selectedGift.currency"
-          :label="$t('get_gift_dialog.account_to_input')"
-          :messages="$t('get_gift_dialog.account_to_input_message')"
-          class="max-width-field-large mx-auto my-2"
-        ></b-account-input>
-      </v-card-text>
-
-      <v-card-actions>
-        <div class="widget-buttons">
+          class="b-account-gift__fields sd-modern-widget"
+        >
+          <b-account-input
+            v-model="account_to"
+            :chip="false"
+            :disabled="busy"
+            :currency="selectedGift.currency"
+            :label="$t('shuttle_gifts.destination_wallet')"
+            :messages="$t('shuttle_gifts.receive_notice')"
+            class="sd-modern-underlined-field"
+            variant="underlined"
+          ></b-account-input>
+        </div>
+        <footer class="b-account-gift__actions">
+          <v-btn
+            class="sd-modern-button"
+            variant="text"
+            :disabled="busy"
+            @click="apply_gift_dialog = false"
+            >{{ $t("shuttle_gifts.close") }}</v-btn
+          >
           <v-btn
             v-if="selectedGift.status === GiftStatus.Unpaid.code"
-            :class="{ disabled: !account_to }"
+            :disabled="!canReceive"
             :loading="busy"
+            class="sd-modern-button sd-modern-button--primary"
             color="primary"
-            size="x-large"
             variant="elevated"
+            prepend-icon="redeem"
             @click="getGift()"
           >
-            <v-icon start>redeem</v-icon>
-            {{ $t("get_gift_dialog.get_action") }}
+            {{ $t("shuttle_gifts.receive_action") }}
           </v-btn>
-        </div>
-      </v-card-actions>
+        </footer>
+      </div>
     </v-card>
   </v-bottom-sheet>
 </template>
@@ -117,12 +189,12 @@ import ULottie from "@selldone/components-vue/ui/lottie/ULottie.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-import {GiftStProgramTypes} from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes.ts";
-
+import { GiftStProgramTypes } from "@selldone/core-js/enums/wallet/gift/GiftStProgramTypes.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BAccountGiftRedeem",
-  mixins: [TemplateMixin, CurrencyMixin],
+  mixins: [TemplateMixin, CurrencyMixin, DateMixin],
 
   components: { ULottie, BAccountInput },
   emits: ["update:modelValue", "update"],
@@ -139,14 +211,50 @@ export default {
     GiftStatus: GiftStatus,
   }),
 
-  computed: {},
+  computed: {
+    canReceive() {
+      return (
+        !this.busy &&
+        this.apply_gift_dialog &&
+        !!this.selectedGift?.id &&
+        this.selectedGift.status === GiftStatus.Unpaid.code &&
+        !!this.account_to?.account_number &&
+        this.account_to.currency === this.selectedGift.currency
+      );
+    },
+    statusNotice() {
+      const notices = {
+        Unpaid: "awaiting_notice",
+        Paid: "paid_notice",
+        Rejected: "rejected_notice",
+        Canceled: "canceled_notice",
+      };
+      return `shuttle_gifts.${notices[this.selectedGift?.status] || "unknown_status"}`;
+    },
+    programUrl() {
+      const value =
+        this.selectedGift?.program?.url || this.selectedGift?.program?.link;
+      // Program content is untrusted; retain only an actual website destination.
+      if (typeof value !== "string") return null;
+      try {
+        const url = new URL(value, window.location.origin);
+        return ["http:", "https:"].includes(url.protocol) ? url.href : null;
+      } catch {
+        return null;
+      }
+    },
+  },
 
   watch: {
     modelValue(value) {
       this.apply_gift_dialog = value;
     },
     apply_gift_dialog(value) {
+      if (!value) this.account_to = null;
       this.$emit("update:modelValue", value);
+    },
+    "selectedGift.id"() {
+      this.account_to = null;
     },
   },
   created() {
@@ -156,16 +264,15 @@ export default {
     //―――――――――――――――――――――― Gift ――――――――――――――――――――
 
     GetGiftProgramType(type: keyof typeof GiftStProgramTypes) {
-      if (!type) return GiftStProgramTypes.Airdrop;
-      return GiftStProgramTypes[type];
+      return GiftStProgramTypes[type] || GiftStProgramTypes.Airdrop;
     },
 
     getGift() {
-      if (this.busy) return;
+      if (!this.canReceive) return;
 
       let t = this;
       this.busy = true;
-      axios
+      return axios
         .post(window.API.POST_APPLY_GIFT(), {
           account_number: this.account_to.account_number,
           gift_id: this.selectedGift.id,
@@ -174,7 +281,7 @@ export default {
           if (!data.error) {
             NotificationService.showAwardAlert(
               this.$t("get_gift_dialog.notifications.received_success_title"),
-              this.$t("get_gift_dialog.notifications.received_success_title", {
+              this.$t("get_gift_dialog.notifications.received_success", {
                 amount: this.FormatNumberCurrency(
                   data.gift.amount,
                   data.gift.currency,
@@ -190,7 +297,6 @@ export default {
           }
         })
         .catch((error) => {
-          console.error(error);
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
@@ -201,4 +307,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss" src="../gift-form.scss"></style>

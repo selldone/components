@@ -73,7 +73,7 @@
               counter="128"
               :persistent-counter="workspace"
               :label="workspace ? $t('global.article.workspace.url_slug') : 'URL'"
-              :messages="workspace ? $t('global.article.workspace.url_hint') : 'Use a clear and short URL, You can change it without worrying about the link being broken.'"
+              :messages="workspace ? $t(productWorkspace ? 'add_product.description_modern.description_slug_hint' : 'global.article.workspace.url_hint') : 'Use a clear and short URL, You can change it without worrying about the link being broken.'"
               :prepend-inner-icon="workspace ? undefined : 'link'"
               :persistent-placeholder="workspace"
               variant="underlined"
@@ -94,9 +94,9 @@
               counter="128"
               :persistent-counter="workspace"
               :label="workspace ? $t('global.article.workspace.page_title') : 'Page title'"
-              :messages="workspace ? $t('global.article.workspace.page_title_hint') : 'Leave it empty to set the page title the same as the article title.'"
+              :messages="workspace ? $t(productWorkspace ? 'add_product.description_modern.product_page_title_hint' : 'global.article.workspace.page_title_hint') : 'Leave it empty to set the page title the same as the article title.'"
               :prepend-inner-icon="workspace ? undefined : 'arrow_right'"
-              :placeholder="workspace ? article.title : undefined"
+              :placeholder="workspace && !productWorkspace ? article.title : undefined"
               :persistent-placeholder="workspace"
               variant="underlined"
               @update:model-value="workspace && onChange()"
@@ -156,7 +156,7 @@
                   :aria-pressed="coverImage === item"
                   @click="onSelectImage(item)"
                 >
-                  <v-img :src="item" height="56" cover alt="" />
+                  <v-img :src="item" :aspect-ratio="1.618" cover alt="" />
                   <span>{{ $t('global.article.workspace.article_image', { index: index + 1 }) }}</span>
                   <v-icon v-if="coverImage === item" class="s--article-seo-editor__selected" size="16" aria-hidden="true">check_circle</v-icon>
                 </button>
@@ -246,6 +246,7 @@ export default {
       type: Array,
     },
     workspace: { type: Boolean, default: false },
+    productWorkspace: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
   },
 

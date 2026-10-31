@@ -14,8 +14,13 @@
 
 <template>
   <span
-    :class="{ 'd-flex align-center': noLabel, dark: dark }"
-    :title="filter.type"
+    :class="{
+      'd-flex align-center': noLabel,
+      dark: dark,
+      'b-customers-filter-item--modern-clubs':
+        modern && !noLabel && filter.type === 'LEVEL',
+    }"
+    :title="modern && filter.type === 'LEVEL' ? undefined : filter.type"
     class="it"
   >
     <v-icon v-if="icon" class="me-2" size="small">{{ icon }}</v-icon>
@@ -24,17 +29,51 @@
     </span>
 
     <!-- Customer clubs -->
-    <span v-if="filter.type === 'LEVEL' && filter.levels">
-      <img
-        v-for="level in filter.levels"
-        :key="level"
-        :src="getCustomerClubLevel(level).icon"
-        :title="$t(getCustomerClubLevel(level).name)"
-        class="me-1"
-        height="20"
-        width="20"
-        :alt="level"
-      />
+    <span
+      v-if="filter.type === 'LEVEL' && filter.levels"
+      :class="{ 'b-customers-filter-item__clubs': modern }"
+    >
+      <template v-if="modern">
+        <v-tooltip
+          v-for="level in filter.levels"
+          :key="level"
+          location="top"
+          :open-on-focus="true"
+          :open-on-click="true"
+          :persistent="false"
+          content-class="sd-modern-tooltip text-start"
+          :text="$t(getCustomerClubLevel(level).name)"
+        >
+          <template #activator="{ props }">
+            <button
+              v-bind="props"
+              type="button"
+              class="b-customers-filter-item__club"
+              :aria-label="$t(getCustomerClubLevel(level).name)"
+              @click.stop
+            >
+              <img
+                :src="getCustomerClubLevel(level).icon"
+                height="20"
+                width="20"
+                alt=""
+              />
+            </button>
+          </template>
+        </v-tooltip>
+      </template>
+      <template v-else>
+        <img
+          v-for="level in filter.levels"
+          :key="level"
+          :src="getCustomerClubLevel(level).icon"
+          :title="$t(getCustomerClubLevel(level).name)"
+          class="me-1"
+          height="20"
+          width="20"
+          :alt="level"
+        />
+      </template>
     </span>
 
     <!-- Sex -->
@@ -103,6 +142,7 @@ export default {
   mixins: [DateMixin, ClubMixin],
   props: {
     filter: { required: true },
+    modern: { default: false, type: Boolean },
     readOnly: { default: false, type: Boolean },
     dark: { default: false, type: Boolean },
     noLabel: { default: false, type: Boolean },
@@ -134,6 +174,56 @@ export default {
 <style lang="scss" scoped>
 .it {
   user-select: none;
+}
+
+.b-customers-filter-item--modern-clubs {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  row-gap: 5px;
+  min-width: 0;
+
+  > .b-customers-filter-item__clubs {
+    grid-column: 1 / -1;
+  }
+}
+
+.b-customers-filter-item__clubs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+}
+
+.b-customers-filter-item__club {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  color: inherit;
+  background: transparent;
+  cursor: help;
+
+  &:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+
+  > img {
+    display: block;
+    object-fit: contain;
+  }
+
+  @media (max-width: 599px), (pointer: coarse) {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+  }
 }
 
 .dark {

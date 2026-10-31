@@ -13,7 +13,21 @@
   -->
 
 <template>
-  <div class="widget-box">
+  <component
+    :is="modern ? 'details' : 'div'"
+    :class="modern ? 'b-product-edit-features__panel sd-modern-widget sd-modern-disclosure b-product-cons-input--modern text-start' : 'widget-box'"
+  >
+    <summary v-if="modern" class="sd-modern-disclosure__summary b-product-edit-features__summary">
+      <b-product-edit-info-icon name="ThumbsDown" :size="18" />
+      <span class="sd-modern-disclosure__copy b-product-edit-features__summary-copy">
+        <span class="b-product-edit-features__summary-title">{{ $t('add_product.rating_pros_cons.cons_title') }}</span>
+        <span class="b-product-edit-features__digest">{{ consDigest }}</span>
+      </span>
+      <span class="b-product-edit-features__count">{{ cons_list.length }} / 5</span>
+      <b-product-edit-info-icon name="ChevronDown" :size="16" class="sd-modern-disclosure__chevron b-product-edit-features__chevron" />
+    </summary>
+    <div :class="{ 'b-product-edit-features__panel-content': modern }">
+    <template v-if="!modern">
     <h2 class="d-flex align-center justify-space-between">
       <span>
         <v-icon class="me-1">sentiment_very_dissatisfied</v-icon
@@ -29,8 +43,29 @@
     <v-list-subheader
       >{{ $t("add_product.rating_pros_cons.cons_message") }}
     </v-list-subheader>
+    </template>
+    <p v-else class="b-product-edit-features__intro">{{ $t('add_product.features_modern.cons_intro') }}</p>
 
-    <v-row class="mt-2" no-gutters>
+    <div v-if="modern" class="b-product-cons-input__rows">
+      <div v-for="item in cons_list" :key="item.name" class="b-product-cons-input__row">
+        <div class="b-product-cons-input__copy">
+          <span class="b-product-cons-input__name">{{ item.name }}</span>
+          <span class="b-product-cons-input__value">{{ item.value }}</span>
+        </div>
+        <div class="b-product-cons-input__row-actions">
+          <v-btn class="sd-modern-icon-button" variant="text" icon :disabled="modernReadOnly || busy_delete_cons === item" :aria-label="$t('global.actions.edit') + ' · ' + item.name" @click="showEdit(item)">
+            <b-product-edit-info-icon name="SquarePen" :size="16" />
+            <v-tooltip activator="parent" :text="$t('global.actions.edit') + ' · ' + item.name" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true" :persistent="false" />
+          </v-btn>
+          <v-btn class="sd-modern-icon-button" variant="text" icon :disabled="modernReadOnly" :loading="busy_delete_cons === item" :aria-label="$t('global.actions.delete') + ' · ' + item.name" @click="deleteCons(item)">
+            <b-product-edit-info-icon name="Trash2" :size="16" />
+            <v-tooltip activator="parent" :text="$t('global.actions.delete') + ' · ' + item.name" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true" :persistent="false" />
+          </v-btn>
+        </div>
+      </div>
+    </div>
+
+    <v-row v-else class="mt-2" no-gutters>
       <v-chip
         v-for="item in cons_list"
         :key="item.name"
@@ -64,18 +99,23 @@
     </v-row>
 
 
+    <div :class="{ 'b-product-cons-input__fields': modern }">
     <v-text-field
       v-model="cons_name"
       :counter="32"
-      :disabled="cons_list.length >= 5"
-      :label="$t('add_product.rating_pros_cons.cons_input_title')"
+      :disabled="cons_list.length >= 5 || modernReadOnly"
+      :label="$t(modern ? 'add_product.features_modern.feature_title' : 'add_product.rating_pros_cons.cons_input_title')"
       messages=" "
-      placeholder="Disadvantages name.."
+      :placeholder="modern ? undefined : 'Disadvantages name..'"
+      :class="{ 'sd-modern-underlined-field': modern }"
       required
       variant="underlined"
     >
       <template v-slot:message>
         <u-smart-suggestion
+          v-if="!modernReadOnly"
+          :modern="modern"
+          :preview-count="modern ? 2 : undefined"
           :samples="$tm('suggestions.product.cons_name')"
           class="mb-4"
           @select="
@@ -89,15 +129,19 @@
     <v-text-field
       v-model="cons_value"
       :counter="128"
-      :disabled="cons_list.length >= 5"
-      :label="$t('add_product.rating_pros_cons.cons_input_value')"
+      :disabled="cons_list.length >= 5 || modernReadOnly"
+      :label="$t(modern ? 'add_product.features_modern.feature_detail' : 'add_product.rating_pros_cons.cons_input_value')"
       messages=" "
-      placeholder="Disadvantages value.."
+      :placeholder="modern ? undefined : 'Disadvantages value..'"
+      :class="{ 'sd-modern-underlined-field': modern }"
       required
       variant="underlined"
     >
       <template v-slot:message>
         <u-smart-suggestion
+          v-if="!modernReadOnly"
+          :modern="modern"
+          :preview-count="modern ? 2 : undefined"
           :samples="$tm('suggestions.product.cons_value')"
           class="mb-4"
           @select="
@@ -108,77 +152,89 @@
         ></u-smart-suggestion>
       </template>
     </v-text-field>
+    </div>
 
-    <div class="text-end">
+    <div :class="modern ? 'b-product-cons-input__add-actions' : 'text-end'">
+      <span v-if="modern" class="b-product-cons-input__help">{{ $t(cons_list.length >= 5 ? 'add_product.features_modern.full' : 'add_product.features_modern.pair_limit') }}</span>
       <v-btn
-        :class="{
-          disabled:
+        :class="[{
+          disabled: !modern && (
             !cons_name ||
             cons_name.length > 32 ||
             !cons_value ||
-            cons_value.length > 128,
-        }"
+            cons_value.length > 128),
+        }, modern ? 'sd-modern-button' : 'm-2 tnt']"
         :loading="busy_cons"
-        class="m-2 tnt"
-        color="#D32F2F"
-        variant="elevated"
+        :disabled="modern ? !canAddCons : undefined"
+        :color="modern ? undefined : '#D32F2F'"
+        :variant="modern ? 'outlined' : 'elevated'"
         @click="addCons"
       >
-        <v-icon start>add</v-icon>
-        {{ $t("global.actions.add") }}
+        <template v-if="modern" #prepend><b-product-edit-info-icon name="Plus" :size="16" /></template>
+        <v-icon v-if="!modern" start>add</v-icon>
+        {{ $t(modern ? 'add_product.features_modern.add_con' : 'global.actions.add') }}
       </v-btn>
     </div>
 
     <!-- ██████████████████████ Dialog ██████████████████████ -->
 
-    <v-bottom-sheet v-model="edit_dialog" max-width="640" scrollable>
-      <v-card class="rounded-t-xl">
-        <v-card-title class="d-flex align-center">
-          <v-icon class="me-1" color="#111">edit_note</v-icon>
-          Edit |
-          <b class="mx-1">{{ selected_item?.name }}</b></v-card-title
+    <v-bottom-sheet v-model="edit_dialog" :max-width="modern ? 520 : 640" scrollable>
+      <v-card :class="modern ? 'b-product-cons-input__dialog sd-modern-widget text-start' : 'rounded-t-xl'">
+        <v-card-title :class="modern ? 'b-product-cons-input__dialog-title' : 'd-flex align-center'">
+          <b-product-edit-info-icon v-if="modern" name="SquarePen" :size="18" />
+          <v-icon v-else class="me-1" color="#111">edit_note</v-icon>
+          <span v-if="modern">{{ $t('add_product.features_modern.edit_feature') }}</span>
+          <template v-else>Edit | <b class="mx-1">{{ selected_item?.name }}</b></template></v-card-title
         >
         <v-card-text>
           <div class="max-widget-width">
             <v-text-field
               v-model="input_name"
-              label="Name"
+              :label="modern ? $t('add_product.features_modern.feature_title') : 'Name'"
+              :disabled="modernReadOnly"
+              :class="{ 'sd-modern-underlined-field': modern }"
               variant="underlined"
             ></v-text-field>
             <v-text-field
               v-model="input_value"
-              label="Value"
+              :label="modern ? $t('add_product.features_modern.feature_detail') : 'Value'"
+              :disabled="modernReadOnly"
+              :class="{ 'sd-modern-underlined-field': modern }"
               variant="underlined"
             ></v-text-field>
           </div>
         </v-card-text>
 
         <v-card-actions>
-          <div class="widget-buttons pt-8">
-            <v-btn size="x-large" variant="text" @click="edit_dialog = false">
-              <v-icon start>close</v-icon>
-              {{ $t("global.actions.close") }}
+          <div :class="modern ? 'b-product-cons-input__dialog-actions' : 'widget-buttons pt-8'">
+            <v-btn :class="{ 'sd-modern-button': modern }" :size="modern ? undefined : 'x-large'" :variant="modern ? 'outlined' : 'text'" @click="edit_dialog = false">
+              <v-icon v-if="!modern" start>close</v-icon>
+              {{ $t(modern ? 'global.actions.cancel' : 'global.actions.close') }}
             </v-btn>
             <v-btn
-              :disabled="!input_name || !input_value"
+              :disabled="!input_name || !input_value || modernReadOnly"
               :loading="busy_update"
               color="primary"
-              size="x-large"
+              :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
+              :size="modern ? undefined : 'x-large'"
               variant="elevated"
               @click="updateValue()"
             >
-              <v-icon start>save</v-icon>
+              <template v-if="modern" #prepend><b-product-edit-info-icon name="Save" :size="16" /></template>
+              <v-icon v-if="!modern" start>save</v-icon>
               {{ $t("global.actions.save") }}
             </v-btn>
           </div>
         </v-card-actions>
       </v-card>
     </v-bottom-sheet>
-  </div>
+    </div>
+  </component>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import BProductEditInfoIcon from "../../edit/info/BProductEditInfoIcon.vue";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
@@ -186,8 +242,10 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 export default defineComponent({
   name: "BProductConsInput",
   mixins: [],
-  components: { USmartSuggestion },
+  components: { USmartSuggestion, BProductEditInfoIcon },
   props: {
+    modern: { type: Boolean, default: false },
+    readOnly: { type: Boolean, default: false },
     product: {
       type: Object,
       required: true,
@@ -209,7 +267,19 @@ export default defineComponent({
     busy_update: false,
   }),
 
-  computed: {},
+  computed: {
+    modernReadOnly() {
+      return this.modern && this.readOnly;
+    },
+    consDigest() {
+      return this.cons_list.map((item) => item.name).join(' · ') || this.$t('add_product.features_modern.empty');
+    },
+    canAddCons() {
+      return !this.modernReadOnly && !this.busy_cons && this.cons_list.length < 5 &&
+        !!this.cons_name && this.cons_name.length <= 32 &&
+        !!this.cons_value && this.cons_value.length <= 128;
+    },
+  },
 
   created() {
     this.createConsList();
@@ -217,6 +287,7 @@ export default defineComponent({
 
   methods: {
     showEdit(item) {
+      if (this.modernReadOnly) return;
       const { name, value } = item;
       this.selected_item = item;
       this.input_name = name;
@@ -239,6 +310,7 @@ export default defineComponent({
     },
 
     addCons() {
+      if (this.modern && !this.canAddCons) return;
       this.busy_cons = true;
 
       axios
@@ -279,6 +351,7 @@ export default defineComponent({
     },
 
     deleteCons(item) {
+      if (this.modernReadOnly) return;
       this.busy_delete_cons = item;
 
       axios
@@ -320,6 +393,7 @@ export default defineComponent({
     },
 
     updateValue() {
+      if (this.modern && (this.modernReadOnly || !this.input_name || !this.input_value)) return;
       this.busy_update = true;
 
       const url = this.IS_VENDOR_PANEL
@@ -365,4 +439,49 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-product-cons-input--modern {
+  .b-product-cons-input__row { display: flex; align-items: flex-start; gap: 14px; min-width: 0; padding: 15px 10px; }
+  .b-product-cons-input__row + .b-product-cons-input__row { border-block-start: 1px solid var(--sd-modern-border); }
+  .b-product-cons-input__copy { display: grid; gap: 4px; flex: 1; min-width: 0; overflow-wrap: anywhere; unicode-bidi: plaintext; }
+  .b-product-cons-input__name { font-size: 13px; font-weight: 500; line-height: 20px; }
+  .b-product-cons-input__value { color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  .b-product-cons-input__row-actions { display: flex; align-items: center; flex-shrink: 0; gap: 8px; }
+  .b-product-cons-input__fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); align-items: start; gap: 18px; margin-block-start: 10px; }
+  .b-product-cons-input__fields > .v-input { min-width: 0; }
+  .b-product-cons-input__fields :deep(.v-input__details) { padding-inline: 0; }
+  .b-product-cons-input__fields :deep(.u-smart-suggestion) { margin-block-end: 0 !important; }
+  .b-product-cons-input__add-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-block-start: 17px; }
+  .b-product-cons-input__add-actions > .v-btn { flex-shrink: 0; }
+  .b-product-cons-input__help { color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  @media (max-width: 800px) {
+    .b-product-cons-input__fields { grid-template-columns: minmax(0, 1fr); gap: 5px; }
+  }
+  @media (max-width: 660px) {
+    .b-product-cons-input__row { gap: 10px; padding-block: 14px; }
+    .b-product-cons-input__row-actions { gap: 6px; }
+    .b-product-cons-input__add-actions { flex-wrap: wrap; align-items: flex-start; }
+    .b-product-cons-input__help { flex-basis: 100%; }
+    .b-product-cons-input__add-actions > .v-btn { margin-inline-start: auto; }
+  }
+}
+
+.b-product-cons-input__dialog {
+  box-sizing: border-box;
+  padding: 23px;
+  border-radius: 18px 18px 0 0;
+  color: rgb(var(--v-theme-on-surface));
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 21px;
+
+  :deep(.sd-modern-underlined-field .v-field),
+  :deep(.sd-modern-underlined-field .v-field__input),
+  :deep(.sd-modern-underlined-field .v-input__details) { box-sizing: border-box; }
+  .b-product-cons-input__dialog-title { display: flex; align-items: center; gap: 10px; padding: 0; font: inherit; font-size: 18px; font-weight: 500; line-height: 26px; white-space: normal; }
+  .v-card-text { padding: 14px 0 0; }
+  .v-card-text .v-input + .v-input { margin-block-start: 14px; }
+  .v-card-actions { padding: 0; }
+  .b-product-cons-input__dialog-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 9px; width: 100%; padding-block-start: 25px; }
+}
+</style>

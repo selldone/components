@@ -41,7 +41,7 @@
       <b-product-service-manage :product="product"></b-product-service-manage>
     </template>
 
-    <s-widget-buttons auto-fixed-position class="my-5">
+    <s-widget-buttons v-if="!externalActionButtons" auto-fixed-position class="my-5">
       <v-btn
         :loading="busy"
         color="primary"
@@ -69,6 +69,10 @@ export default {
   name: "BProductEditOutputs",
   components: { SWidgetButtons, BProductServiceManage, SFormBuilder },
   props: {
+    externalActionButtons: {
+      type: Boolean,
+      default: false,
+    },
     product: {
       required: true,
       type: Object,

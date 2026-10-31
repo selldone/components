@@ -1,15 +1,19 @@
 <template>
-  <div class="sld-bfb-fcfg">
-    <v-text-field v-model="nameProxy" label="Field key (name)" variant="outlined" density="comfortable" />
-    <v-text-field v-model="titleProxy" label="Label" variant="outlined" density="comfortable" />
-    <v-text-field v-model="placeholderProxy" label="Placeholder" variant="outlined" density="comfortable" />
-    <v-switch v-model="requiredProxy" label="Required" inset />
+  <div class="sld-bfb-fcfg" :class="{ 'sd-modern-underlined-field': listingFormBuilderModern }">
+    <v-text-field v-model="nameProxy" :label="$t('shop_listing.form_builder.field_key')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
+    <v-text-field v-model="titleProxy" :label="$t('shop_listing.form_builder.label')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
+    <v-text-field v-model="placeholderProxy" :label="$t('shop_listing.form_builder.placeholder')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
+    <u-smart-toggle v-if="listingFormBuilderModern" v-model="requiredProxy" accessible border false-gray class="sd-modern-smart-select" :true-title="$t('shop_listing.form_builder.required')" :false-title="$t('shop_listing.form_builder.optional')" />
+    <v-switch v-else v-model="requiredProxy" :label="$t('shop_listing.form_builder.required')" inset />
   </div>
 </template>
 
 <script lang="ts">
+import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 export default {
   name: "BListingFormBuilderFieldText",
+  components: { USmartToggle },
+  inject: { listingFormBuilderModern: { default: false } },
   props: { modelValue: { type: Object, required: true } },
   emits: ["update:modelValue"],
 
@@ -61,5 +65,7 @@ export default {
 .sld-bfb-fcfg {
   display: grid;
   gap: 10px;
+  min-width: 0;
 }
+.sld-bfb-fcfg.sd-modern-underlined-field { gap: 26px; }
 </style>

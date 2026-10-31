@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="s--product-variants">
+  <div class="s--product-variants" :class="{ 's--product-variants--embed': embedMode }">
     <!-- █████████████████████ 💡 Product Variants █████████████████████ -->
     <template v-if="hasVariants">
       <template v-if="variants_mode === ShopThemeVariantsMode.select.value">
@@ -61,7 +61,7 @@
         >
           <!-- Variant title -->
 
-          <div class="my-2">
+          <div class="my-2 s-product-variants__caption">
             <v-icon class="me-1" color="#111" size="small"
               >{{ GetVariantIconByCode(it.code, $product) }}
             </v-icon>
@@ -75,12 +75,18 @@
             }}</span>
           </div>
 
-          <v-row no-gutters>
-            <div
+          <v-row no-gutters class="s-product-variants__options">
+            <component
+              :is="embedMode ? 'button' : 'div'"
               v-for="selection in getVariantsValuesOf(it.code)"
               :key="selection"
+              :type="embedMode ? 'button' : undefined"
+              :aria-label="embedMode ? it.code === 'color' ? GetNameOfColor(selection) : selection?.removeVariantAsset() || selection : undefined"
+              :aria-pressed="embedMode ? selectionValues.some((s) => s.code === it.code && s.value === selection) : undefined"
               :class="{
                 '-color': it.code === 'color',
+                '-asset': embedMode && it.code !== 'color' && !!selection?.match(/\{(.+?)\}/),
+                '-image': embedMode && it.code === 'color' && image_mode,
                 selected: selectionValues.some(
                   (s) => s.code === it.code && s.value === selection,
                 ),
@@ -121,9 +127,9 @@
                   </v-img>
                 </template>
                 <template v-else>
-                  <u-color-circle :color="selection"></u-color-circle>
+                  <u-color-circle :color="selection" :size="embedMode ? 20 : 24"></u-color-circle>
 
-                  <span style="font-size: 70%">{{
+                  <span class="s-product-variants__color-name" style="font-size: 70%">{{
                     GetNameOfColor(selection)
                   }}</span>
                 </template>
@@ -143,9 +149,12 @@
                   :value="selection"
                   background
                 ></u-variant-asset-image>
-                <span>{{ selection?.removeVariantAsset() }}</span>
+                <span class="s-product-variants__value">{{ selection?.removeVariantAsset() }}</span>
               </span>
-            </div>
+              <v-tooltip v-if="embedMode && (it.code === 'color' || !!selection?.match(/\{(.+?)\}/))" activator="parent" location="top">
+                {{ it.code === 'color' ? GetNameOfColor(selection) : selection?.removeVariantAsset() || selection }}
+              </v-tooltip>
+            </component>
           </v-row>
         </div>
       </div>
@@ -178,6 +187,7 @@ export default {
   },
   inject: ["$shop", "$product"],
   props: {
+    embedMode: { type: Boolean, default: false },
     filter: {},
 
     currentVariant: {},
@@ -422,6 +432,32 @@ export default {
         bottom: 3px;
       }
     }
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.s--product-variants--embed {
+  .s-product-variants__caption { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px; margin-block: 0 7px !important; font-size: 12px; line-height: 19px; }
+  .s-product-variants__caption > .v-icon { font-size: 15px; color: var(--embed-muted) !important; }
+  .s-product-variants__caption b { font-weight: 500; }
+  .s-product-variants__caption > span { color: var(--embed-muted); }
+  .s-product-variants__options { gap: 6px; margin-block-end: 13px; }
+  .var-sel { min-width: 0; min-height: 32px; max-width: 100%; margin: 0; padding: 5px 11px; border: 1px solid var(--embed-line); border-radius: 7px; background: rgb(var(--v-theme-surface)); color: rgb(var(--v-theme-on-surface)); font: inherit; font-size: 12px; line-height: 19px; transition: none; }
+  .var-sel.selected { background: color-mix(in srgb, rgb(var(--v-theme-surface)) 96%, rgb(var(--v-theme-on-surface))); border-color: rgb(var(--v-theme-primary)); box-shadow: 0 0 0 1px rgb(var(--v-theme-primary)); color: inherit; transform: none; }
+  .var-sel:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  .var-sel.-color { width: 32px; height: 32px; min-width: 32px; max-width: 32px; padding: 3px; justify-content: center; }
+  .var-sel.-color .s-product-variants__color-name { display: none; }
+  .var-sel.-asset, .var-sel.-image { width: 39px; height: 39px; min-width: 39px; max-width: 39px; padding: 3px; }
+  .var-sel.-asset .s-product-variants__value { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .var-sel.-asset :deep(img.background) { inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); border: 0; border-radius: 3px; object-fit: cover; opacity: 1; }
+  .var-sel :deep(.s--color-circle) { background: rgb(var(--v-theme-surface)); border-color: var(--embed-line); }
+  .var-sel.not::after { border-color: rgb(var(--v-theme-on-surface)); pointer-events: none; }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .s--product-variants--embed {
+    .var-sel { min-height: 44px; font-size: 13px; }
+    .var-sel.-color, .var-sel.-asset, .var-sel.-image { width: 44px; height: 44px; min-width: 44px; max-width: 44px; }
   }
 }
 </style>

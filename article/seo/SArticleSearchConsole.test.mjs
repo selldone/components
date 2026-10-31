@@ -146,13 +146,15 @@ test("empty reports have a clear state, while a populated dimension retains char
   assert.match(html, /global.article.search_console.empty_dimension/);
 });
 
-test("Retry performs the original read without displaying a previous report while busy or unavailable", async () => {
+test("same-scope refresh keeps the chart and table mounted without inserting loading text, while failures show unavailable", async () => {
   const f = fixture(); f.state.fetch(); f.requests[0].resolve(report()); await settle();
   f.state.fetch();
   assert.equal(f.requests[1].url, f.requests[0].url);
   let html = await render(f);
-  assert.match(html, /global.article.search_console.loading/);
-  assert.doesNotMatch(html, /data-chart="performance"/);
+  assert.doesNotMatch(html, /s-article-search-console__loading/);
+  assert.match(html, /data-chart="performance"/);
+  assert.match(html, /s-article-search-console__table/);
+  assert.match(html, /delivery guide/);
   f.requests[1].resolve({ error: true, error_msg: "Search service temporarily unavailable" }); await settle();
   html = await render(f);
   assert.match(html, /Search service temporarily unavailable/);
@@ -185,6 +187,9 @@ test("resource switches, overlapping reads and teardown ignore stale reports wit
   f.state.article = { id: 13 }; f.component.watch.audit_scope.call(f.state);
   assert.equal(f.requests[2].url, "/shop/7/article/13/audit");
   assert.equal(f.state.has_data, false, "The prior article's data is cleared before the next read");
+  const pending = await render(f);
+  assert.match(pending, /global.article.search_console.loading/);
+  assert.doesNotMatch(pending, /data-chart="performance"|delivery guide/);
   f.requests[1].resolve(report()); await settle();
   assert.equal(f.state.busy, true);
   assert.equal(f.state.has_data, false);

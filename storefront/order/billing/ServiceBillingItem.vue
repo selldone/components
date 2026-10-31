@@ -13,8 +13,84 @@
   -->
 
 <template>
-  <div class="text-start">
-    <div class="d-flex align-items-center pp" @click="expand = !expand">
+  <div class="text-start" :class="{ 's-service-billing-item-modern': modern }">
+    <button
+      v-if="modern"
+      type="button"
+      class="s-service-billing-item-modern__summary"
+      :aria-expanded="expand"
+      @click="expand = !expand"
+    >
+      <img
+        :src="getProductImage(product.id, IMAGE_SIZE_SMALL)"
+        alt=""
+        class="s-service-billing-item-modern__image"
+      />
+      <span class="s-service-billing-item-modern__identity">
+        <span class="s-service-billing-item-modern__name"
+          >{{ product.title
+          }}<span v-if="type" class="s-service-billing-item-modern__type">{{
+            $t(type.title)
+          }}</span></span
+        >
+        <span
+          v-if="product.title_en"
+          class="s-service-billing-item-modern__secondary"
+          >{{ product.title_en }}</span
+        >
+        <span class="s-service-billing-item-modern__facts">
+          <u-price
+            v-if="
+              service_item &&
+              service_item.price !== null &&
+              service_item.price !== undefined
+            "
+            :amount="service_item.price"
+            :currency="service_item.currency"
+            class="s-service-billing-item-modern__price"
+          />
+          <span v-else class="s-service-billing-item-modern__unpriced"
+            ><v-icon size="14" aria-hidden="true">hourglass_top</v-icon
+            >{{ $t("process_center.modern.service_not_priced") }}</span
+          >
+          <span v-if="start_at" class="s-service-billing-item-modern__date"
+            ><v-icon size="14" aria-hidden="true">login</v-icon
+            >{{ getLocalDateString(start_at) }}</span
+          >
+          <span v-if="end_at" class="s-service-billing-item-modern__date"
+            ><v-icon size="14" aria-hidden="true">logout</v-icon
+            >{{ getLocalDateString(end_at) }}</span
+          >
+          <span
+            v-for="(task, index) in tasks"
+            :key="index"
+            class="s-service-billing-item-modern__task"
+          >
+            <v-icon size="14" aria-hidden="true">task_alt</v-icon
+            ><span>{{ task.title }}</span
+            ><v-progress-circular
+              :model-value="task.progress"
+              :size="16"
+              :width="2"
+              color="primary"
+              aria-hidden="true"
+            /><span>{{ task.progress }}%</span>
+          </span>
+        </span>
+      </span>
+      <v-icon size="18" :class="{ 'rotate-180': expand }" aria-hidden="true"
+        >expand_more</v-icon
+      >
+      <v-tooltip
+        v-if="type"
+        activator="parent"
+        location="top"
+        :open-on-focus="true"
+        content-class="sd-modern-tooltip text-start"
+        >{{ $t(type.desc) }}</v-tooltip
+      >
+    </button>
+    <div v-else class="d-flex align-items-center pp" @click="expand = !expand">
       <v-img
         :src="getProductImage(product.id, IMAGE_SIZE_SMALL)"
         class="rounded-18px flex-grow-0"
@@ -111,20 +187,77 @@
 
       <v-icon :class="{ 'rotate-180': expand }">expand_more</v-icon>
     </div>
+    <div
+      v-if="modern && !viewOnlyProgress /*Admin Panel Only!*/"
+      class="s-service-billing-item-modern__product-action"
+    >
+      <v-btn
+        variant="text"
+        color="primary"
+        class="sd-modern-button sd-modern-button--inline"
+        target="_blank"
+        rel="noopener noreferrer"
+        :to="{
+          name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+            ? 'Vendor_ProductDashboard'
+            : 'BPageProductDashboard',
+          params: { product_id: product.id },
+        }"
+      >
+        {{ $t("process_center.modern.service_product_admin")
+        }}<v-icon end size="16" aria-hidden="true">north_east</v-icon>
+      </v-btn>
+    </div>
 
     <v-expand-transition>
-      <div v-if="expand">
-        <v-list-subheader></v-list-subheader>
+      <div
+        v-if="expand"
+        :class="{ 's-service-billing-item-modern__body': modern }"
+      >
+        <v-list-subheader v-if="!modern"></v-list-subheader>
         <!-- ----------------------- Tasks ----------------------- -->
         <div
           v-if="has_tasks"
-          :class="{ 'border-bottom': editing }"
-          class="widget-box -large mb-5"
+          :class="
+            modern
+              ? 's-service-billing-item-modern__section'
+              : { 'border-bottom': editing, 'widget-box -large mb-5': true }
+          "
         >
-          <u-widget-header :title="$t('service_bill.task.title')" icon="rule">
+          <div
+            v-if="modern"
+            class="s-service-billing-item-modern__section-header"
+          >
+            <h3>
+              <v-icon size="18" aria-hidden="true">rule</v-icon
+              >{{ $t("service_bill.task.title") }}
+            </h3>
+            <span
+              v-if="viewOnlyProgress"
+              class="s-service-billing-item-modern__locked"
+              ><v-icon size="13" aria-hidden="true">lock</v-icon
+              >{{
+                $t("process_center.modern.service_task_progress_locked")
+              }}</span
+            >
+          </div>
+          <u-widget-header
+            v-else
+            :title="$t('service_bill.task.title')"
+            icon="rule"
+          >
           </u-widget-header>
 
-          <v-list-subheader>
+          <p v-if="modern" class="s-service-billing-item-modern__section-copy">
+            {{
+              $t(
+                editing
+                  ? "process_center.modern.service_tasks_subtitle"
+                  : "process_center.modern.service_tasks_progress_subtitle",
+              )
+            }}
+          </p>
+          <v-list-subheader v-else>
             {{ $t("service_bill.task.message") }}
           </v-list-subheader>
 
@@ -132,38 +265,90 @@
             v-model="tasks"
             :editable="editing"
             :view-only-progress="viewOnlyProgress"
+            :modern="modern"
             @change="updateTasks"
           />
         </div>
         <!-- ----------------------- Date ----------------------- -->
         <div
           v-if="has_reserve"
-          :class="{ 'border-bottom': editing }"
-          class="widget-box -large mb-5"
+          :class="
+            modern
+              ? 's-service-billing-item-modern__section'
+              : { 'border-bottom': editing, 'widget-box -large mb-5': true }
+          "
         >
+          <div
+            v-if="modern"
+            class="s-service-billing-item-modern__section-header"
+          >
+            <h3>
+              <v-icon size="18" aria-hidden="true">event_available</v-icon
+              >{{ $t("global.service.appointment.title") }}
+            </h3>
+            <v-tooltip
+              location="top"
+              :open-on-focus="true"
+              :open-on-click="true"
+              content-class="sd-modern-tooltip text-start"
+              ><template #activator="{ props }"
+                ><v-btn
+                  v-bind="props"
+                  icon="info_outline"
+                  variant="text"
+                  class="sd-modern-icon-button sd-modern-info-button"
+                  :aria-label="
+                    $t('global.service.appointment.title')
+                  " /></template
+              >{{
+                $t("process_center.modern.service_appointment_help")
+              }}</v-tooltip
+            >
+          </div>
           <u-widget-header
+            v-else
             :title="$t('global.service.appointment.title')"
             icon="event_available"
           >
           </u-widget-header>
 
           <u-date-input
+            v-if="!modern || editing"
             v-model="reserved_at"
             :jump-minute="15"
             :min="new Date().toISOString()"
-            class="max-width-field mx-auto mb-3"
-            color="#2196f3"
-            label="Appointment"
+            :class="
+              modern
+                ? 'sd-modern-underlined-field s-service-billing-item-modern__field'
+                : 'max-width-field mx-auto mb-3'
+            "
+            :color="modern ? 'primary' : '#2196f3'"
+            :label="
+              modern
+                ? $t('process_center.modern.service_appointment_label')
+                : 'Appointment'
+            "
+            :rounded="!modern"
             return-utc
-            rounded
           >
           </u-date-input>
+          <p v-else class="s-service-billing-item-modern__record">
+            {{
+              reserved_at
+                ? getLocalTimeString(reserved_at, false)
+                : $t("global.commons.not_selected")
+            }}
+          </p>
 
           <u-time-week-picker
             v-model="preferences.days"
             :pointed-time-utc="reserved_at"
             :restrictions="outputs.days"
-            class="my-2 max-width-field-large mx-auto"
+            :class="
+              modern
+                ? 's-service-billing-item-modern__availability'
+                : 'my-2 max-width-field-large mx-auto'
+            "
             dis-color="#ddd"
           ></u-time-week-picker>
         </div>
@@ -171,10 +356,48 @@
         <!-- ----------------------- Booking ----------------------- -->
         <div
           v-if="has_booking"
-          :class="{ 'border-bottom': editing }"
-          class="widget-box -large mb-5"
+          :class="
+            modern
+              ? 's-service-billing-item-modern__section'
+              : { 'border-bottom': editing, 'widget-box -large mb-5': true }
+          "
         >
+          <div
+            v-if="modern"
+            class="s-service-billing-item-modern__section-header"
+          >
+            <h3>
+              <v-icon size="18" aria-hidden="true">date_range</v-icon
+              >{{ $t("service_bill.booking.title")
+              }}<v-tooltip
+                location="top"
+                :open-on-focus="true"
+                :open-on-click="true"
+                content-class="sd-modern-tooltip text-start"
+                ><template #activator="{ props }"
+                  ><v-btn
+                    v-bind="props"
+                    icon="info_outline"
+                    variant="text"
+                    class="sd-modern-icon-button sd-modern-info-button"
+                    :aria-label="$t('service_bill.booking.title')" /></template
+                >{{
+                  $t("process_center.modern.service_booking_help")
+                }}</v-tooltip
+              >
+            </h3>
+            <v-btn
+              v-if="editing"
+              variant="text"
+              color="primary"
+              class="sd-modern-button sd-modern-button--inline"
+              @click="show_cal = !show_cal"
+              ><v-icon start size="16" aria-hidden="true">calendar_today</v-icon
+              >{{ $t("service_bill.booking.show_calendar") }}</v-btn
+            >
+          </div>
           <u-widget-header
+            v-else
             :add-caption="
               editing ? $t('service_bill.booking.show_calendar') : undefined
             "
@@ -185,11 +408,96 @@
             @click:add="show_cal = !show_cal"
           >
           </u-widget-header>
-          <v-list-subheader>
+          <v-list-subheader v-if="!modern">
             {{ $t("service_bill.booking.message") }}
           </v-list-subheader>
 
+          <div v-if="modern" class="s-service-billing-item-modern__booking">
+            <div>
+              <span class="sd-modern-eyebrow">{{
+                $t("process_center.modern.service_checkin_label")
+              }}</span>
+              <strong>{{
+                start_at
+                  ? getLocalDateString(start_at)
+                  : $t("global.commons.not_selected")
+              }}</strong>
+              <span v-if="outputs.checkin"
+                ><bdi
+                  >{{ String(outputs.checkin.HH).padStart(2, "0") }}:{{
+                    String(outputs.checkin.mm).padStart(2, "0")
+                  }}</bdi
+                ></span
+              >
+              <small v-if="preferences.dates?.[0]">{{
+                $t("process_center.modern.service_buyer_requested", {
+                  date: getLocalDateString(preferences.dates[0]),
+                })
+              }}</small>
+              <small v-else>{{
+                $t("process_center.modern.service_buyer_not_selected")
+              }}</small>
+              <v-btn
+                v-if="
+                  editing &&
+                  preferences.dates?.[0] &&
+                  getLocalDateString(start_at) !==
+                    getLocalDateString(preferences.dates[0])
+                "
+                variant="text"
+                color="primary"
+                class="sd-modern-button sd-modern-button--inline"
+                @click="start_at = preferences.dates[0]"
+                ><v-icon start size="16" aria-hidden="true">restore</v-icon
+                >{{ $t("process_center.modern.service_use_buyer_date") }}</v-btn
+              >
+            </div>
+            <div>
+              <span class="sd-modern-eyebrow">{{
+                $t("process_center.modern.service_checkout_label")
+              }}</span>
+              <strong>{{
+                end_at
+                  ? getLocalDateString(end_at)
+                  : $t("global.commons.not_selected")
+              }}</strong>
+              <span v-if="outputs.checkout"
+                ><bdi
+                  >{{ String(outputs.checkout.HH).padStart(2, "0") }}:{{
+                    String(outputs.checkout.mm).padStart(2, "0")
+                  }}</bdi
+                ></span
+              >
+              <small v-if="preferences.dates?.[1]">{{
+                $t("process_center.modern.service_buyer_requested", {
+                  date: getLocalDateString(preferences.dates[1]),
+                })
+              }}</small>
+              <small v-else>{{
+                $t("process_center.modern.service_buyer_not_selected")
+              }}</small>
+              <v-btn
+                v-if="
+                  editing &&
+                  preferences.dates?.[1] &&
+                  getLocalDateString(end_at) !==
+                    getLocalDateString(preferences.dates[1])
+                "
+                variant="text"
+                color="primary"
+                class="sd-modern-button sd-modern-button--inline"
+                @click="end_at = preferences.dates[1]"
+                ><v-icon start size="16" aria-hidden="true">restore</v-icon
+                >{{ $t("process_center.modern.service_use_buyer_date") }}</v-btn
+              >
+            </div>
+            <div class="s-service-billing-item-modern__days">
+              <strong>{{ Math.round(diff_days) }}</strong
+              ><span>{{ $t("global.commons.days") }}</span>
+            </div>
+          </div>
           <div
+            v-else
             class="text-subtitle-2 d-flex text-center border-between checks justify-center"
           >
             <!-- Checkin Date -->
@@ -325,36 +633,60 @@
           </div>
 
           <template v-if="editing">
-            <p>
-              {{ $t("service_bill.booking.change_days_question") }}
+            <p
+              :class="{ 's-service-billing-item-modern__change-dates': modern }"
+            >
+              <template v-if="!modern">{{
+                $t("service_bill.booking.change_days_question")
+              }}</template>
 
               <v-btn
                 color="primary"
                 variant="text"
+                :class="{ 'sd-modern-button sd-modern-button--inline': modern }"
                 @click="change_dates = !change_dates"
               >
                 <v-icon class="me-1" size="small"
                   >published_with_changes
                 </v-icon>
-                {{ $t("global.actions.click_here") }}
+                {{
+                  $t(
+                    modern
+                      ? "process_center.modern.service_change_dates"
+                      : "global.actions.click_here",
+                  )
+                }}
               </v-btn>
             </p>
 
             <v-expand-transition>
-              <v-container v-if="change_dates">
+              <v-container
+                v-if="change_dates"
+                :class="{
+                  's-service-billing-item-modern__date-inputs': modern,
+                }"
+              >
                 <v-row class="m-0">
                   <v-col cols="12" sm="6">
                     <u-date-input
                       v-model="start_at"
                       :min="new Date().toISOString()"
-                      class="max-width-field mx-auto border rounded-lg pa-3 bg-white widget-hover"
-                      color="#2196f3"
+                      :class="
+                        modern
+                          ? 'sd-modern-underlined-field'
+                          : 'max-width-field mx-auto border rounded-lg pa-3 bg-white widget-hover'
+                      "
+                      :color="modern ? 'primary' : '#2196f3'"
                       format="YYYY-MM-DD"
-                      label="Check-in"
+                      :label="
+                        modern
+                          ? $t('process_center.modern.service_checkin_label')
+                          : 'Check-in'
+                      "
                       return-utc
-                      rounded
+                      :rounded="!modern"
                       type="date"
-                      variant="plain"
+                      :variant="modern ? 'underlined' : 'plain'"
                     >
                     </u-date-input>
                   </v-col>
@@ -362,14 +694,22 @@
                     <u-date-input
                       v-model="end_at"
                       :min="start_at"
-                      class="max-width-field mx-auto border rounded-lg pa-3 bg-white widget-hover"
-                      color="#2196f3"
+                      :class="
+                        modern
+                          ? 'sd-modern-underlined-field'
+                          : 'max-width-field mx-auto border rounded-lg pa-3 bg-white widget-hover'
+                      "
+                      :color="modern ? 'primary' : '#2196f3'"
                       format="YYYY-MM-DD"
-                      label="Check-out"
+                      :label="
+                        modern
+                          ? $t('process_center.modern.service_checkout_label')
+                          : 'Check-out'
+                      "
                       return-utc
-                      rounded
+                      :rounded="!modern"
                       type="date"
-                      variant="plain"
+                      :variant="modern ? 'underlined' : 'plain'"
                     >
                     </u-date-input>
                   </v-col>
@@ -379,7 +719,11 @@
 
             <v-bottom-sheet
               v-model="show_cal"
-              content-class="rounded-t-xl"
+              :content-class="
+                modern
+                  ? 'rounded-t-xl s-service-billing-calendar-modern text-start'
+                  : 'rounded-t-xl'
+              "
               max-width="840"
             >
               <v-card class="rounded-t-xl" rounded="0">
@@ -396,18 +740,23 @@
                     class="my-3"
                     view-mode="month"
                     width="100%"
-                    title="Booking Calendar"
+                    :title="
+                      modern
+                        ? $t('process_center.modern.service_calendar_title')
+                        : 'Booking Calendar'
+                    "
                   ></v-date-picker>
                 </v-card-text>
                 <v-card-actions>
                   <div class="widget-buttons">
                     <v-btn
-                      size="x-large"
+                      :size="modern ? undefined : 'x-large'"
                       variant="text"
+                      :class="{ 'sd-modern-button': modern }"
                       @click="show_cal = false"
                     >
                       <v-icon start>close</v-icon>
-                      Close
+                      {{ modern ? $t("global.actions.close") : "Close" }}
                     </v-btn>
                   </div>
                 </v-card-actions>
@@ -418,101 +767,261 @@
         <!-- ----------------------- Subscription duration ----------------------- -->
         <div
           v-if="has_subscription"
-          :class="{ 'border-bottom': editing }"
-          class="widget-box -large mb-5"
+          :class="
+            modern
+              ? 's-service-billing-item-modern__section'
+              : { 'border-bottom': editing, 'widget-box -large mb-5': true }
+          "
         >
+          <div
+            v-if="modern"
+            class="s-service-billing-item-modern__section-header"
+          >
+            <h3>
+              <v-icon size="18" aria-hidden="true">extension</v-icon
+              >{{ $t("service_bill.subscription.title") }}
+            </h3>
+            <v-tooltip
+              location="top"
+              :open-on-focus="true"
+              :open-on-click="true"
+              content-class="sd-modern-tooltip text-start"
+              ><template #activator="{ props }"
+                ><v-btn
+                  v-bind="props"
+                  icon="info_outline"
+                  variant="text"
+                  class="sd-modern-icon-button sd-modern-info-button"
+                  :aria-label="
+                    $t('service_bill.subscription.title')
+                  " /></template
+              >{{
+                $t("process_center.modern.service_duration_help")
+              }}</v-tooltip
+            >
+          </div>
           <u-widget-header
+            v-else
             :title="$t('service_bill.subscription.title')"
             icon="extension"
           >
           </u-widget-header>
-          <v-list-subheader>
+          <v-list-subheader v-if="!modern">
             {{ $t("service_bill.subscription.message") }}
           </v-list-subheader>
 
           <u-number-input
+            v-if="!modern || editing"
             v-model="subscription"
             :decimal="0"
             :label="$t('service_bill.subscription.duration')"
             :min="0"
             :suffix="$t('global.commons.days')"
-            class="max-width-field mx-auto"
-            filled
+            :class="
+              modern
+                ? 'sd-modern-underlined-field s-service-billing-item-modern__field'
+                : 'max-width-field mx-auto'
+            "
+            :filled="!modern"
+            :variant="modern ? 'underlined' : undefined"
             placeholder="Ex. 90 days"
-            rounded
+            :rounded="!modern"
           >
           </u-number-input>
+          <p v-else class="s-service-billing-item-modern__record">
+            {{ subscription }} {{ $t("global.commons.days") }}
+          </p>
         </div>
 
         <!-- ----------------------- Charge ----------------------- -->
         <div
           v-if="has_charge"
-          :class="{ 'border-bottom': editing }"
-          class="widget-box -large mb-5"
+          :class="
+            modern
+              ? 's-service-billing-item-modern__section'
+              : { 'border-bottom': editing, 'widget-box -large mb-5': true }
+          "
         >
+          <div
+            v-if="modern"
+            class="s-service-billing-item-modern__section-header"
+          >
+            <h3>
+              <v-icon size="18" aria-hidden="true">generating_tokens</v-icon
+              >{{ $t("service_bill.charge.title") }}
+            </h3>
+            <v-tooltip
+              location="top"
+              :open-on-focus="true"
+              :open-on-click="true"
+              content-class="sd-modern-tooltip text-start"
+              ><template #activator="{ props }"
+                ><v-btn
+                  v-bind="props"
+                  icon="info_outline"
+                  variant="text"
+                  class="sd-modern-icon-button sd-modern-info-button"
+                  :aria-label="$t('service_bill.charge.title')" /></template
+              >{{ $t("process_center.modern.service_charge_help") }}</v-tooltip
+            >
+          </div>
           <u-widget-header
+            v-else
             :title="$t('service_bill.charge.title')"
             icon="generating_tokens"
           >
           </u-widget-header>
-          <v-list-subheader>
+          <v-list-subheader v-if="!modern">
             {{ $t("service_bill.charge.message") }}
           </v-list-subheader>
 
           <u-number-input
+            v-if="!modern || editing"
             v-model="charge"
             :decimal="0"
             :label="$t('service_bill.subscription.charge')"
             :min="0"
             :suffix="$t('global.commons.units')"
-            class="max-width-field mx-auto"
-            filled
+            :class="
+              modern
+                ? 'sd-modern-underlined-field s-service-billing-item-modern__field'
+                : 'max-width-field mx-auto'
+            "
+            :filled="!modern"
+            :variant="modern ? 'underlined' : undefined"
             placeholder="Ex. 2000 units"
-            rounded
+            :rounded="!modern"
           >
           </u-number-input>
+          <p v-else class="s-service-billing-item-modern__record">
+            {{ charge }} {{ $t("global.commons.units") }}
+          </p>
         </div>
 
         <!-- ----------------------- Set Price ----------------------- -->
 
-        <div v-if="editing" class="widget-box -large mb-5">
+        <div
+          v-if="editing"
+          :class="
+            modern
+              ? 's-service-billing-item-modern__pricing'
+              : 'widget-box -large mb-5'
+          "
+        >
           <u-widget-header
+            v-if="!modern"
             :title="$t('service_bill.pricing.title')"
             icon="price_change"
           >
           </u-widget-header>
-          <v-list-subheader>
+          <v-list-subheader v-if="!modern">
             {{ $t("service_bill.pricing.message") }}
           </v-list-subheader>
 
-          <u-price-input
-            v-model="price"
-            :currency="currency"
-            :disabled="!currency"
-            :label="$t('add_product.pricing.price_input')"
-            :rules="[GlobalRules.required()]"
-            class="max-width-field mx-auto my-2 strong-field"
-            placeholder="0.00"
-            variant="solo"
-            rounded="xl"
-            required
+          <div
+            :class="{ 's-service-billing-item-modern__price-field': modern }"
           >
-            <template v-slot:append-inner>
-              <v-icon
-                v-if="!price || price <= 0"
-                color="red"
-                class="blink-me ms-2"
-                >warning
-              </v-icon>
-            </template>
-          </u-price-input>
+            <div
+              v-if="modern"
+              class="s-service-billing-item-modern__price-label"
+            >
+              <span>{{ $t("process_center.modern.service_price_label") }}</span>
+              <v-tooltip
+                location="top"
+                :open-on-focus="true"
+                :open-on-click="true"
+                content-class="sd-modern-tooltip text-start"
+                ><template #activator="{ props }"
+                  ><v-btn
+                    v-bind="props"
+                    icon="info_outline"
+                    variant="text"
+                    class="sd-modern-icon-button sd-modern-info-button"
+                    :aria-label="
+                      $t('process_center.modern.service_price_label')
+                    " /></template
+                >{{
+                  $t("process_center.modern.service_pricing_help")
+                }}</v-tooltip
+              >
+            </div>
+            <u-price-input
+              v-model="price"
+              :currency="currency"
+              :disabled="!currency"
+              :label="
+                $t(
+                  modern
+                    ? 'process_center.modern.service_price_label'
+                    : 'add_product.pricing.price_input',
+                )
+              "
+              :rules="[GlobalRules.required()]"
+              :class="
+                modern
+                  ? 'sd-modern-underlined-field'
+                  : 'max-width-field mx-auto my-2 strong-field'
+              "
+              placeholder="0.00"
+              :variant="modern ? 'underlined' : 'solo'"
+              :rounded="modern ? false : 'xl'"
+              required
+            >
+              <template v-slot:append-inner>
+                <v-icon
+                  v-if="
+                    modern
+                      ? price === null || price === undefined
+                      : !price || price <= 0
+                  "
+                  color="red"
+                  class="blink-me ms-2"
+                  >warning
+                </v-icon>
+              </template>
+            </u-price-input>
+          </div>
 
-          <s-widget-buttons>
+          <s-widget-buttons
+            :class="{ 's-service-billing-item-modern__save': modern }"
+          >
             <v-btn
-              :color="service_item ? 'primary' : 'success'"
+              :color="
+                modern
+                  ? isCurrentPricing
+                    ? 'primary'
+                    : undefined
+                  : service_item
+                    ? 'primary'
+                    : 'success'
+              "
               :loading="busy_set"
-              :size="!service_item ? 'large' : 'x-large'"
-              :variant="!!service_item ? 'elevated' : 'outlined'"
+              :size="
+                modern
+                  ? isCurrentPricing
+                    ? 'x-large'
+                    : undefined
+                  : !service_item
+                    ? 'large'
+                    : 'x-large'
+              "
+              :variant="
+                modern
+                  ? isCurrentPricing
+                    ? 'elevated'
+                    : 'outlined'
+                  : !!service_item
+                    ? 'elevated'
+                    : 'outlined'
+              "
+              :class="
+                modern
+                  ? [
+                      'sd-modern-button',
+                      { 'sd-modern-button--x-large': isCurrentPricing },
+                    ]
+                  : undefined
+              "
               @click="setServiceItem"
             >
               <v-icon class="me-1"
@@ -537,15 +1046,15 @@ import UTimeWeekPicker from "../../../ui/time/week-picker/UTimeWeekPicker.vue";
 import { ServiceTypes } from "@selldone/core-js/enums/product/ServiceTypes";
 import UPriceInput from "../../../ui/price/input/UPriceInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
+import { Basket } from "@selldone/core-js";
 
 import { throttle } from "lodash-es";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
-
 export default {
   name: "ServiceBillingItem",
-  mixins: [DateMixin ],
+  mixins: [DateMixin],
 
   components: {
     SWidgetButtons,
@@ -557,6 +1066,7 @@ export default {
   },
   inject: ["$shop"],
   props: {
+    modern: { type: Boolean, default: false },
     basket: {
       require: true,
       type: Object,
@@ -620,6 +1130,16 @@ export default {
   },
 
   computed: {
+    isCurrentPricing() {
+      return (
+        this.modern &&
+        !this.busy_set &&
+        !this.basket.reject &&
+        !this.service_item?.id &&
+        this.basket.status === Basket.Status.Reserved.code &&
+        this.basket.delivery_state === Basket.ServiceOrderStates.CheckQueue.code
+      );
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -744,7 +1264,9 @@ export default {
 
             NotificationService.showSuccessAlert(
               null,
-              "Your service order billing has been saved.",
+              this.modern
+                ? this.$t("process_center.modern.service_item_saved")
+                : "Your service order billing has been saved.",
             );
             this.expand = false;
           } else {
@@ -806,6 +1328,294 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.s-service-billing-item-modern {
+  border: 1px solid var(--sd-modern-border);
+  border-radius: 10px;
+  color: rgb(var(--v-theme-on-surface));
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 18px;
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--sd-modern-inset);
+    color: inherit;
+    font: inherit;
+    text-align: start;
+
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 2px;
+    }
+    > .v-icon {
+      flex: none;
+      color: var(--sd-modern-muted);
+    }
+  }
+  &__image {
+    width: 48px;
+    height: 48px;
+    flex: none;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 10px;
+    object-fit: cover;
+    background: rgb(var(--v-theme-surface));
+  }
+  &__identity {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  &__name {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  &__type {
+    padding: 1px 6px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 4px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+    font-weight: 400;
+  }
+  &__secondary {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+    overflow-wrap: anywhere;
+  }
+  &__facts {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px 17px;
+    font-size: 12px;
+    line-height: 18px;
+  }
+  &__price {
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 500;
+  }
+  &__date,
+  &__unpriced,
+  &__task {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+  }
+  &__task {
+    min-width: 0;
+    font-variant-numeric: tabular-nums;
+    > span:first-of-type {
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  &__product-action {
+    padding: 2px 14px 0;
+  }
+  &__body {
+    padding: 0 18px 18px;
+  }
+  &__section {
+    padding-block: 20px;
+    border-block-end: 1px solid var(--sd-modern-border);
+  }
+  &__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-block-end: 12px;
+  }
+  &__section-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 500;
+    > .v-icon {
+      color: var(--sd-modern-muted);
+    }
+  }
+  &__section-copy {
+    margin: -6px 0 14px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 18px;
+  }
+  &__locked {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+  }
+  &__field {
+    max-width: 320px;
+    margin-block: 8px;
+  }
+  &__field :deep(.v-field__input),
+  &__date-inputs :deep(.v-field__input) {
+    font-size: 13px;
+    line-height: 20px;
+  }
+  &__record {
+    margin: 0;
+    font-size: 13px;
+    line-height: 20px;
+  }
+  &__availability {
+    max-width: 580px;
+    margin-block-start: 14px;
+  }
+  &__booking {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 20px;
+  }
+  &__booking > div {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 5px;
+  }
+  &__booking strong {
+    font-size: 14px;
+    line-height: 21px;
+    font-weight: 500;
+  }
+  &__booking small {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+  }
+  &__booking .sd-modern-eyebrow {
+    font-size: 10px;
+    line-height: 16px;
+  }
+  &__booking .s-service-billing-item-modern__days {
+    justify-content: center;
+    align-items: center;
+    min-width: 62px;
+    padding-inline-start: 20px;
+    border-inline-start: 1px solid var(--sd-modern-border);
+    strong {
+      font-size: 24px;
+      line-height: 30px;
+    }
+    > span {
+      color: var(--sd-modern-muted);
+      font-size: 11px;
+      line-height: 17px;
+    }
+  }
+  &__change-dates {
+    margin: 12px 0 0;
+  }
+  &__date-inputs {
+    padding: 8px 0 0;
+    :deep(.v-col) {
+      padding: 8px 12px 0 0;
+    }
+  }
+  &__pricing {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    padding-block-start: 20px;
+  }
+  &__price-field {
+    width: 280px;
+    max-width: 100%;
+  }
+  &__price-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 500;
+  }
+  &__price-field :deep(.v-field__input) {
+    font-size: 16px;
+    line-height: 24px;
+  }
+  &__save {
+    flex: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    :deep(.v-btn) {
+      min-width: 0;
+      font-weight: 500;
+    }
+  }
+
+  @media (max-width: 600px) {
+    &__summary {
+      gap: 10px;
+      padding: 12px;
+    }
+    &__image {
+      width: 40px;
+      height: 40px;
+    }
+    &__body {
+      padding: 0 12px 16px;
+    }
+    &__facts {
+      gap: 5px 12px;
+    }
+    &__task > span:first-of-type {
+      max-width: 110px;
+    }
+    &__booking {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    &__booking .s-service-billing-item-modern__days {
+      flex-direction: row;
+      justify-content: start;
+      padding-inline-start: 0;
+      border-inline-start: 0;
+    }
+    &__field :deep(.v-field__input),
+    &__date-inputs :deep(.v-field__input) {
+      font-size: 16px;
+    }
+    &__date-inputs :deep(.v-col) {
+      padding-inline-end: 0;
+    }
+  }
+}
+
 @media only screen and (max-width: 600px) {
   .checks {
     font-size: 10px !important;

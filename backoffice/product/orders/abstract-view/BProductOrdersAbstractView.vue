@@ -13,42 +13,75 @@
   -->
 
 <template>
-  <s-widget-box
-    :color="ThemeColorDark"
-    :sub-title="$t('product_admin.dashboard.orders.title_small')"
-    :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-amber mr-sm' style='font-size: 6px;'></span>  ${$t(
-      'product_admin.dashboard.orders.title',
-    )} </h5>`"
-    dark
-    icon="ring_volume"
+  <component
+    :is="modern ? 'section' : 's-widget-box'"
+    :class="{
+      'b-product-analytics b-product-orders-modern sd-modern-widget text-start':
+        modern,
+    }"
+    :color="modern ? undefined : ThemeColorDark"
+    :sub-title="
+      modern ? undefined : $t('product_admin.dashboard.orders.title_small')
+    "
+    :title="
+      modern
+        ? undefined
+        : `<h5 class='align-items-center pb-1'>    <span class='circle bg-amber mr-sm' style='font-size: 6px;'></span>  ${$t(
+            'product_admin.dashboard.orders.title',
+          )} </h5>`
+    "
+    :dark="!modern"
+    :icon="modern ? undefined : 'ring_volume'"
     icon_color="#fff"
   >
-    <template v-slot:actions>
-      <h2 class="text-h3 font-weight-black">
-        {{ numeralFormat(totalPendingOrders, "0,0.[0] a") }}
-      </h2>
-    </template>
+    <header v-if="modern" class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"
+          ><v-icon size="18" aria-hidden="true">shopping_bag</v-icon></span
+        >
+        <div>
+          <h2 class="sd-modern-title-text">
+            {{ $t("b_product_dashboard.analytics.orders_title") }}
+          </h2>
+          <p class="sd-modern-subtitle">
+            {{ $t("b_product_dashboard.analytics.queue_scope") }}
+          </p>
+        </div>
+      </div>
+      <v-btn
+        :to="{ name: 'BPageProductOrders' }"
+        variant="text"
+        class="sd-modern-button sd-modern-button--small"
+        >{{ $t("global.commons.orders")
+        }}<v-icon size="16" class="ms-1">arrow_forward</v-icon></v-btn
+      >
+    </header>
+    <h2
+      :class="
+        modern ? 'b-product-orders-modern__value' : 'text-h3 font-weight-black'
+      "
+    >
+      {{ numeralFormat(totalPendingOrders, "0,0.[0] a") }}
+    </h2>
 
     <div class="my-2 small">
       {{ $t("product_admin.dashboard.orders.physical_orders_title") }}
     </div>
 
-    <orders-que :order-que="orderQue" :type="product.type" dark></orders-que>
+    <orders-que
+      :order-que="orderQue"
+      :type="product.type"
+      :dark="!modern"
+      :modern="modern"
+    ></orders-que>
 
     <v-spacer></v-spacer>
-    <div class="my-2 small">
+    <component :is="modern ? 'button' : 'div'" :type="modern ? 'button' : undefined" class="my-2 small" :class="{ 'b-product-orders-modern__period': modern }" :aria-label="modern ? periodFulfillmentScope : undefined" @click="periodScopeOpen = true" @keydown.esc="periodScopeOpen = false">
       {{
-        isFile
-          ? $t("product_admin.dashboard.orders.downloads_count_in_period", {
-              start: getLocalDateString(timeSeries.startDate),
-              end: getLocalDateString(timeSeries.endDate),
-            })
-          : $t("product_admin.dashboard.orders.send_count_in_period", {
-              start: getLocalDateString(timeSeries.startDate),
-              end: getLocalDateString(timeSeries.endDate),
-            })
+        modern ? $t(isFile ? "b_product_dashboard.analytics.period_downloads" : "b_product_dashboard.analytics.period_shipments") + " · " + compactPeriod : periodFulfillmentScope
       }}
-    </div>
+      <v-tooltip v-if="modern" v-model="periodScopeOpen" activator="parent" location="top" open-on-focus :open-on-click="false" content-class="sd-modern-tooltip text-start">{{ periodFulfillmentScope }}</v-tooltip>
+    </component>
 
     <time-series-inline-chart
       :colors="[productType.color]"
@@ -61,12 +94,13 @@
           : $t('global.delivery_state.to_customer')) + ' : ',
       ]"
       class="w-100 pointer-pointer"
-      dark
-      glow
+      :dark="!modern"
+      :glow="!modern"
+      :flat-color="modern"
       start-zero-category-bug
       type="bar"
     ></time-series-inline-chart>
-  </s-widget-box>
+  </component>
 </template>
 
 <script lang="ts">
@@ -79,10 +113,11 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BProductOrdersAbstractView",
-  mixins: [TemplateMixin,DateMixin],
+  mixins: [TemplateMixin, DateMixin],
 
   components: { TimeSeriesInlineChart, OrdersQue, SWidgetBox },
   props: {
+    modern: Boolean,
     product: {
       required: true,
       type: Object,
@@ -98,10 +133,30 @@ export default {
     },
   },
 
-  data: () => ({      ProductType: ProductType,
-  }),
+  data: () => ({ ProductType: ProductType, periodScopeOpen: false }),
 
   computed: {
+    compactPeriod() {
+      try {
+        const start = new Date(this.timeSeries.startDate);
+        const end = new Date(this.timeSeries.endDate);
+        const locale = window.$language?.full_locale;
+        const calendar = window.$language?.calendar.calendar;
+        const years = new Intl.DateTimeFormat(locale, { calendar, year: "numeric" });
+        return new Intl.DateTimeFormat(locale, {
+          calendar, month: "short", day: "numeric",
+          ...(years.format(start) !== years.format(end) ? { year: "numeric" } : {}),
+        }).formatRange(start, end);
+      } catch {
+        return this.getLocalDateString(this.timeSeries.startDate) + " – " + this.getLocalDateString(this.timeSeries.endDate);
+      }
+    },
+    periodFulfillmentScope() {
+      return this.$t(this.isFile ? "product_admin.dashboard.orders.downloads_count_in_period" : "product_admin.dashboard.orders.send_count_in_period", {
+        start: this.getLocalDateString(this.timeSeries.startDate),
+        end: this.getLocalDateString(this.timeSeries.endDate),
+      });
+    },
     productType() {
       return ProductType[this.product.type];
     },
@@ -120,4 +175,33 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.b-product-orders-modern {
+  &__period {
+    display: inline-flex;
+    white-space: nowrap;
+    cursor: help;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  }
+  &__value {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 36px;
+  }
+  .small {
+    font-size: 12px;
+    line-height: 19px;
+    color: var(--sd-modern-muted);
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    &__period { min-height: 44px; }
+  }
+}
+</style>

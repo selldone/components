@@ -5,7 +5,7 @@
         <div class="sld-bfb-up__box">
           <u-loading-progress v-if="busy" />
 
-          <img v-if="valueSafe" :src="getShopImagePath(valueSafe)" class="sld-bfb-up__img" alt="uploaded" />
+          <img v-if="valueSafe" :src="getShopImagePath(valueSafe)" class="sld-bfb-up__img" :alt="labelSafe" />
           <div v-else class="sld-bfb-up__empty">
             <v-icon size="38" class="text-muted">image</v-icon>
           </div>
@@ -19,14 +19,14 @@
         </div>
 
         <div class="mt-3 d-flex flex-wrap gap-2">
-          <v-btn size="small" variant="outlined" :disabled="busy" @click="pickFile">
+          <v-btn size="small" variant="outlined" :class="{ 'sd-modern-button': listingFormBuilderModern }" :disabled="busy" @click="pickFile">
             <v-icon start>upload</v-icon>
-            Upload image
+            {{ $t('shop_listing.form_builder.upload_image') }}
           </v-btn>
 
           <v-btn v-if="valueSafe" size="small" variant="text" :disabled="busy" @click="clear">
             <v-icon start>delete</v-icon>
-            Remove
+            {{ $t('shop_listing.form_builder.remove') }}
           </v-btn>
         </div>
 
@@ -48,7 +48,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 export default {
   name: "BListingFormBuilderImageUploader",
 
-  inject: ["$shop"],
+  inject: { $shop: { from: "$shop" }, listingFormBuilderModern: { default: false } },
 
   props: {
     modelValue: { type: String, default: null },
@@ -100,7 +100,7 @@ export default {
 
       if (!file) return;
       if (!(this as any).shopId) {
-        NotificationService.showErrorAlert(null, "Shop is not available.");
+        NotificationService.showErrorAlert(null, this.$t("shop_listing.form_builder.shop_unavailable"));
         return;
       }
 
@@ -119,18 +119,18 @@ export default {
         );
 
         if (data?.error) {
-          NotificationService.showErrorAlert(null, data.error_msg || "Upload failed.");
+          NotificationService.showErrorAlert(null, data.error_msg || this.$t("shop_listing.form_builder.upload_failed"));
           return;
         }
 
         const saved = String(data?.path || data?.url || "").trim();
         if (!saved) {
-          NotificationService.showErrorAlert(null, "Invalid upload response.");
+          NotificationService.showErrorAlert(null, this.$t("shop_listing.form_builder.upload_invalid"));
           return;
         }
 
         (this as any).$emit("update:modelValue", saved);
-        NotificationService.showSuccessAlert(null, "Image uploaded.");
+        NotificationService.showSuccessAlert(null, this.$t("shop_listing.form_builder.image_uploaded"));
       } catch (err: any) {
         NotificationService.showLaravelError(err);
       } finally {

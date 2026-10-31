@@ -13,20 +13,21 @@
   -->
 
 <template>
-  <v-expansion-panels v-if="driver">
-    <v-expansion-panel elevation="0" rounded="xl">
-      <v-expansion-panel-title>
-        <v-icon class="me-2">settings</v-icon>
-        More options
-      </v-expansion-panel-title>
-
-      <v-expansion-panel-text>
-        <b-map-driver-mapbox-options
-          v-if="driver === MapProviders.Mapbox.code"
-        ></b-map-driver-mapbox-options>
-      </v-expansion-panel-text>
-    </v-expansion-panel>
-  </v-expansion-panels>
+  <details v-if="driver" class="b-map-driver-options text-start">
+    <summary>
+      <v-icon size="16" aria-hidden="true">tune</v-icon
+      ><span>{{ $t("map_channel.more_options") }}</span
+      ><v-icon
+        size="16"
+        class="b-map-driver-options__chevron"
+        aria-hidden="true"
+        >expand_more</v-icon
+      >
+    </summary>
+    <div class="b-map-driver-options__body">
+      <b-map-driver-mapbox-options v-if="driver === MapProviders.Mapbox.code" />
+    </div>
+  </details>
 </template>
 
 <script lang="ts">
@@ -47,4 +48,45 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-map-driver-options {
+  > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    list-style: none;
+    font-size: 13px;
+    line-height: 20px;
+    cursor: pointer;
+  }
+  > summary::-webkit-details-marker {
+    display: none;
+  }
+  > summary:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  &__chevron {
+    margin-inline-start: 5px;
+    transition: transform 0.15s;
+  }
+  &[open] > summary .b-map-driver-options__chevron {
+    transform: rotate(180deg);
+  }
+  &__body {
+    padding-top: 18px;
+  }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .b-map-driver-options > summary {
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .b-map-driver-options__chevron {
+    transition: none;
+  }
+}
+</style>

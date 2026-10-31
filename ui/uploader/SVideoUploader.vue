@@ -109,13 +109,19 @@
             :maxFileSize="maxFileSize"
             :name="paramName"
             :server="server_credential"
+            :disabled="disabled"
             check-validity="true"
             class="pointer-pointer fadeIn filepond-style"
             credits="false"
-            label-idle="Upload video file"
+            :label-idle="idleLabel || 'Upload video file'"
             style="min-height: 84px"
             @error="handleFilePondError"
             @processfile="handleProcessFile"
+            @addfilestart="refreshActivity"
+            @addfile="refreshActivity"
+            @removefile="refreshActivity"
+            @processfilestart="refreshActivity"
+            @processfileabort="refreshActivity"
           />
 
           <p class="small file-size-limit">
@@ -153,8 +159,9 @@ export default {
   components: {
     FilePond: FilePondLoader.loadFilePondComponent(),
   },
-  emits: ["response", "new-path", "new-url", "onClear", "new-item"],
+  emits: ["response", "new-path", "new-url", "onClear", "new-item", "activity"],
   props: {
+    idleLabel: String,
     label: {
       required: false,
       type: String,
@@ -288,12 +295,20 @@ export default {
   beforeUnmount() {},
 
   methods: {
+    refreshActivity() {
+      this.$nextTick(() => {
+        const pending = this.$refs.pond?.getFiles?.().some(file => [1, 3, 7, 9].includes(file.status));
+        this.$emit('activity', !!pending);
+      });
+    },
     handleFilePondError(error) {
+      this.refreshActivity();
       NotificationService.showErrorAlert(null, error.body);
       //  console.error('handleFilePondError',error)
     },
 
     handleProcessFile: function (error, file) {
+      this.refreshActivity();
       if (!error) {
         let response = JSON.parse(file.serverId);
         this.$emit("response", response);

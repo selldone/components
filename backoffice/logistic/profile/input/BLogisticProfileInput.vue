@@ -14,11 +14,12 @@
 
 <template>
   <v-autocomplete
+    :class="{ 'b-logistic-profile-input--modern text-start': modern }"
     v-model:menu="menu"
     v-model:search="search"
     :customFilter="() => true"
     :items="profiles"
-    :label="$t(type.title)"
+    :label="label || $t(type.title)"
     :loading="busy || loading"
     :model-value="modelValue"
     :return-object="false"
@@ -26,7 +27,9 @@
     clearable
     item-title="name"
     item-value="id"
-    messages=" "
+    :messages="modern ? undefined : ' '"
+    :hide-details="modern ? true : undefined"
+    :menu-props="modern ? { contentClass: 'b-logistic-profile-input__menu text-start' } : undefined"
     @update:model-value="(val) => $emit('update:modelValue', val)"
     @click:clear="
       $nextTick(() => {
@@ -40,7 +43,7 @@
     </template>
     <template v-slot:message>
       <div
-        v-if="live_value?.info && Array.isArray(live_value.info.languages)"
+        v-if="!modern && live_value?.info && Array.isArray(live_value.info.languages)"
         class="small"
       >
         <v-chip
@@ -55,9 +58,10 @@
     </template>
 
     <template v-slot:item="{ item, props }">
-      <v-list-item :title="item.raw.name" class="text-start" v-bind="props">
+      <v-list-item :title="item.raw.name" class="text-start" :class="{ 'b-logistic-profile-input__option': modern }" :dir="modern ? $attrs.dir : undefined" v-bind="props">
+        <p v-if="modern && Array.isArray(item.raw.info?.languages)" class="b-logistic-profile-input__languages">{{ item.raw.info.languages.map(lng => getLanguageName(lng)).join(' · ') }}</p>
         <div
-          v-if="item.raw.info && Array.isArray(item.raw.info.languages)"
+          v-else-if="!modern && item.raw.info && Array.isArray(item.raw.info.languages)"
           class="my-1"
         >
           <v-chip
@@ -84,6 +88,8 @@ export default {
   components: {},
   emits: ["update:modelValue", "click:clear"],
   props: {
+    modern: { type: Boolean, default: false },
+    label: { type: String, default: undefined },
     shop: {
       require: true,
       type: Object,
@@ -114,6 +120,8 @@ export default {
 
       search: "",
       menu: false,
+      request_id: 0,
+      disposed: false,
     };
   },
 
@@ -158,14 +166,24 @@ export default {
       this.search = null;
       this.getProfiles();
     },
+    'shop.id'() { if (this.modern) this.getProfiles(); },
+    '$route.params.vendor_id'() { if (this.modern) this.getProfiles(); },
+    modelValue(value) { if (this.modern && value && !this.live_value) this.getProfiles(); },
   },
 
   created() {
     this.getProfiles();
   },
+  beforeUnmount() {
+    this.disposed = true;
+    this.request_id++;
+  },
 
   methods: {
     getProfiles() {
+      if (this.disposed) return;
+      const request = ++this.request_id, shopId = this.shop.id, type = this.type.value, vendorId = this.$route.params.vendor_id;
+      const current = () => !this.disposed && request === this.request_id && this.shop.id === shopId && this.type.value === type && this.$route.params.vendor_id === vendorId;
       this.busy = true;
 
       const params = {
@@ -177,6 +195,7 @@ export default {
       };
 
       const handleSuccessResponse = ({ profiles, total }) => {
+        if (!current()) return;
         this.profiles = profiles;
         this.total = total;
       };
@@ -195,14 +214,29 @@ export default {
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
-          NotificationService.showLaravelError(error);
+          if (current()) NotificationService.showLaravelError(error);
         })
         .finally(() => {
-          this.busy = false;
+          if (current()) this.busy = false;
         });
     },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-logistic-profile-input--modern {
+  min-width: 0;
+  &[dir="rtl"] { direction: rtl; }
+  :deep(.v-field__input) { min-width: 0; font-family: inherit; font-size: 14px; font-weight: 400; line-height: 22px; }
+  :deep(.v-field-label) { font-family: inherit; font-size: 12px; font-weight: 400; line-height: 19px; }
+  @media (max-width: 600px), (pointer: coarse) {
+    :deep(.v-field__input) { font-size: 16px; }
+  }
+}
+.b-logistic-profile-input__option {
+  &[dir="rtl"] { direction: rtl; }
+  :deep(.v-list-item-title) { font-family: inherit; font-size: 14px; font-weight: 400; line-height: 22px; white-space: normal; overflow-wrap: anywhere; }
+  .b-logistic-profile-input__languages { margin: 3px 0 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+}
+</style>

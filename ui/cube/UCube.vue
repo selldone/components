@@ -13,7 +13,32 @@
   -->
 
 <template>
-  <div class="scene text-center">
+  <div v-if="modern" ref="preview" class="u-cube-modern">
+    <svg
+      :viewBox="`0 0 ${previewWidth} 180`"
+      role="img"
+      :aria-label="
+        $t('add_product.shipping_modern.preview_accessibility', {
+          width: formatted(x),
+          length: formatted(y),
+          height: formatted(z),
+          unit,
+        })
+      "
+      :class="{ 'u-cube-modern--empty': !validDimensions }"
+    >
+      <polygon :points="modernGeometry.front" class="u-cube-modern__front" />
+      <polygon :points="modernGeometry.side" class="u-cube-modern__side" />
+      <polygon :points="modernGeometry.top" class="u-cube-modern__top" />
+      <g v-for="axis in modernGeometry.axes" :key="axis.name">
+        <path :d="axis.path" />
+        <text :x="axis.x" :y="axis.y">
+          {{ $t("add_product.shipping_modern." + axis.name + "_short") }}
+        </text>
+      </g>
+    </svg>
+  </div>
+  <div v-else class="scene text-center">
     <canvas ref="canvas" />
   </div>
 </template>
@@ -23,6 +48,8 @@ export default {
   name: "UCube",
 
   props: {
+    modern: { type: Boolean, default: false },
+    unit: { type: String, default: "" },
     size: {
       required: false,
       type: Number,
@@ -56,6 +83,57 @@ export default {
     },
   },
   computed: {
+    validDimensions() {
+      return [this.x, this.y, this.z].every(
+        (value) => Number.isFinite(Number(value)) && Number(value) > 0,
+      );
+    },
+    modernGeometry() {
+      const [width, length, height] = this.validDimensions
+        ? [Number(this.x), Number(this.y), Number(this.z)]
+        : [50, 50, 50];
+      const scale = Math.min(
+        (this.previewWidth - 55) / (width + length),
+        102 / height,
+        1.3,
+      );
+      const w = width * scale * 0.8,
+        l = length * scale * 0.8,
+        h = height * scale * 0.8;
+      const cx = (this.previewWidth + w - l) / 2,
+        cy = 124;
+      const p = {
+        a: [cx, cy],
+        b: [cx - w, cy - w * 0.35],
+        c: [cx + l, cy - l * 0.35],
+        d: [cx, cy - h],
+        e: [cx - w, cy - w * 0.35 - h],
+        f: [cx + l, cy - l * 0.35 - h],
+        g: [cx - w + l, cy - (w + l) * 0.35 - h],
+      };
+      const points = (names) =>
+        names.map((name) => p[name].join(",")).join(" ");
+      const edges = [
+        { name: "width", a: [p.b[0], p.b[1] + 13], b: [p.a[0], p.a[1] + 13] },
+        {
+          name: "length",
+          a: [p.a[0] + 4, p.a[1] + 13],
+          b: [p.c[0] + 4, p.c[1] + 13],
+        },
+        { name: "height", a: [p.c[0] + 13, p.c[1]], b: [p.f[0] + 13, p.f[1]] },
+      ];
+      return {
+        front: points(["a", "b", "e", "d"]),
+        side: points(["a", "c", "f", "d"]),
+        top: points(["d", "e", "g", "f"]),
+        axes: edges.map((axis) => ({
+          name: axis.name,
+          path: `M${axis.a} L${axis.b}`,
+          x: (axis.a[0] + axis.b[0]) / 2 + (axis.name === "height" ? 8 : 0),
+          y: (axis.a[1] + axis.b[1]) / 2 + (axis.name === "height" ? 4 : 13),
+        })),
+      };
+    },
     scale() {
       let scale = (0.4 * this.size) / Math.max(this.x, this.y, this.z);
       return scale > 1 ? 1 : scale;
@@ -81,10 +159,19 @@ export default {
   data() {
     return {
       ctx: null,
+      previewWidth: 190,
+      previewObserver: null,
     };
   },
 
   mounted() {
+    if (this.modern) {
+      this.previewObserver = new ResizeObserver((entries) => {
+        this.previewWidth = Math.max(130, entries[0].contentRect.width);
+      });
+      this.previewObserver.observe(this.$refs.preview);
+      return;
+    }
     // Set up our canvas
     let canvas = this.$refs.canvas;
     canvas.width = this.size;
@@ -93,7 +180,16 @@ export default {
 
     this.draw();
   },
+  beforeUnmount() {
+    this.previewObserver?.disconnect();
+  },
   methods: {
+    formatted(value) {
+      return Number(value).toLocaleString(
+        this.$vuetify?.locale?.isRtl ? "fa-IR" : "en-US",
+        { maximumFractionDigits: 3 },
+      );
+    },
     // Animation function
 
     draw() {
@@ -191,5 +287,46 @@ export default {
   padding: 0;
   // background: white;
   overflow: visible;
+}
+.u-cube-modern {
+  min-width: 0;
+  width: 100%;
+  svg {
+    display: block;
+    width: 100%;
+    height: 180px;
+    overflow: visible;
+  }
+  polygon {
+    stroke: var(--sd-modern-muted);
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+    fill: var(--sd-modern-inset);
+  }
+  &__side {
+    fill: color-mix(
+      in srgb,
+      rgb(var(--v-theme-on-surface)) 9%,
+      rgb(var(--v-theme-surface))
+    );
+  }
+  &__top {
+    fill: rgb(var(--v-theme-surface));
+  }
+  path {
+    stroke: var(--sd-modern-border);
+    stroke-width: 1;
+    fill: none;
+  }
+  text {
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 400;
+    fill: var(--sd-modern-muted);
+    text-anchor: middle;
+  }
+  &--empty {
+    opacity: 0.5;
+  }
 }
 </style>

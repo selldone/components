@@ -121,13 +121,19 @@ const parent = load("./BOrderTimeline.vue", http, notifications);
 assert.equal(parent.props.modern.default, false);
 assert.equal(context(parent).useModernTimeline, false);
 assert.equal(context(parent, { modern: true }).useModernTimeline, true);
-assert.equal(context(parent, { modern: true, $route: route(true) }).useModernTimeline, false);
+assert.equal(context(parent, { modern: true, $route: route(true) }).useModernTimeline, true);
 assert.equal(context(parent, { modern: true, orderType: "pos" }).timelineOrderType, "pos");
 assert.equal(context(parent, { modern: true, orderType: "pos" }).base_url, "/fixture/shops/7/orders/physical/25/timeline", "Presentation type must not change the native endpoint flags");
 for (const [flag, type] of [["isPhysical", "physical"], ["isVirtual", "virtual"], ["isFile", "file"], ["isService", "service"], ["isPos", "pos"], ["isDropShopping", "dropshipping"], ["isAvocado", "avocado"], ["isHyper", "hyper"]]) {
   assert.equal(context(parent, { isPhysical: false, [flag]: true }).base_url, `/fixture/shops/7/orders/${type}/25/timeline`);
 }
 assert.equal(context(parent, { $route: route(true) }).base_url, "/fixture/vendors/9/orders/physical/25/timeline");
+for (const [flag, type] of [["isPhysical", "physical"], ["isVirtual", "virtual"], ["isFile", "file"], ["isService", "service"]]) {
+  for (const modern of [false, true]) {
+    const vendor = context(parent, { modern, isPhysical: false, [flag]: true, $route: route(true), order: { id: 90, basket_id: 1046 } });
+    assert.equal(vendor.base_url, `/fixture/vendors/9/orders/${type}/90/timeline`, "The parent basket ID is never a vendor-order API ID");
+  }
+}
 assert.equal(context(parent, { message: "😊".repeat(1024) }).noteLength, 1024);
 assert.equal(context(parent, { message: "😊".repeat(1025) }).noteLength, 1025);
 
@@ -186,10 +192,37 @@ assert.equal(preview.url, "/fixture/shops/7/orders/25/email/email-payment");asse
 preview.resolve("<main>Current template fixture</main>");await tick();assert.equal(state.email_html, "<main>Current template fixture</main>");assert.equal(state.busy_email, false);
 state.showEmailView(mail);http.calls.at(-1).reject(new Error("Fixture preview failed"));await tick();
 assert.equal(state.show_email, false);assert.equal(state.busy_email, false);
-const vendorState = context(parent, { modern: true, $route: route(true) });
+const vendorState = context(parent, { modern: true, $route: route(true), order: { id: 90, basket_id: 1046, type: "PHYSICAL" } });
 vendorState.showEmailView(mail);const vendorPreview = http.calls.at(-1);
-assert.equal(vendorPreview.url, "/fixture/vendors/9/orders/25/email/email-payment");vendorPreview.resolve("<main>Vendor fixture</main>");await tick();
+assert.equal(vendorPreview.url, "/fixture/vendors/9/orders/90/email/email-payment");
+assert.deepEqual(plain(vendorPreview.payload), { params: { timeline_id: 12 } });
+vendorPreview.resolve("<main>Vendor fixture</main>");await tick();
 const beforeVendorResend = http.calls.length;vendorState.resendEmail(mail);assert.equal(http.calls.length, beforeVendorResend);
+const vendorUrl = "/fixture/vendors/9/orders/physical/90/timeline";
+vendorState.fetchTimeline();
+assert.equal(http.calls.at(-1).url, vendorUrl);
+http.calls.at(-1).resolve({ timelines: [] });await tick();
+vendorState.message = "Vendor fixture note";vendorState.mentions = { users: [42] };
+vendorState.addNewNote();
+assert.equal(http.calls.at(-1).url, vendorUrl);
+assert.deepEqual(plain(http.calls.at(-1).payload), { message: "Vendor fixture note", mentions: { users: [42] } });
+const vendorNote = { id: 73, type: "note", data: { message: "Vendor fixture note" }, pin: false };
+http.calls.at(-1).resolve({ timeline: vendorNote });await tick();
+vendorNote.data.message = "Edited vendor fixture";vendorState.editNote(vendorNote);
+assert.equal(http.calls.at(-1).url, `${vendorUrl}/73`);
+assert.deepEqual(plain(http.calls.at(-1).payload), { message: "Edited vendor fixture", pin: false });
+http.calls.at(-1).resolve({ timeline: vendorNote });await tick();
+vendorState.togglePinItem(vendorNote);
+assert.equal(http.calls.at(-1).url, `${vendorUrl}/73`);
+assert.equal(http.calls.at(-1).payload.pin, true);
+http.calls.at(-1).resolve({ timeline: vendorNote });await tick();
+const beforeVendorDelete = http.calls.length;
+vendorState.showDeleteNoteDialog(vendorNote);
+assert.equal(http.calls.length, beforeVendorDelete, "Vendor note deletion retains its confirmation");
+notifications.confirmations.at(-1).at(-1)();
+assert.equal(http.calls.at(-1).method, "delete");assert.equal(http.calls.at(-1).url, `${vendorUrl}/73`);
+http.calls.at(-1).resolve({ id: 73 });await tick();
+assert.equal(vendorState.timelines.length, 0);
 const beforeResend = http.calls.length;state.resendEmail(mail);assert.equal(http.calls.length, beforeResend);
 notifications.confirmations.at(-1).at(-1)();const resend = http.calls.at(-1);
 assert.equal(resend.method, "post");assert.equal(resend.url, "/fixture/shops/7/timeline/12/resend");assert.equal(resend.payload, undefined);
@@ -266,7 +299,7 @@ assert.equal(legacyAdd.props.size, "x-large");assert.equal(legacyAdd.props.varia
 const mountedVendor = await mount(parent, { shop: { id: 7 }, order: { id: 25 }, vendor: { id: 9 }, modern: true, isPhysical: true }, {
   components: { ...Object.fromEntries(Object.keys(parent.components).map(name => [name, passthrough])), BOrderTimelineGrouped: groupedStub },
 }, { globals: { $route: route(true) } });
-assert.equal(groupedProps, undefined);assert.equal(mountedVendor.state.useModernTimeline, false);mountedVendor.app.unmount();
+assert.equal(groupedProps.order.id, 25);assert.equal(mountedVendor.state.useModernTimeline, true);mountedVendor.app.unmount();
 
 const eventComponent = load("./BOrderTimelineEvent.vue", http, notifications);
 const groupedComponent = load("./BOrderTimelineGrouped.vue", http, notifications);
@@ -369,6 +402,29 @@ for (const payment of [{}, { amount: null }, { amount: "" }, { amount: "invalid"
 const otherReference = await mountedEvent(record(44, "payment", { payment: { amount: 4, currency: "USD", message: "Basket-999" } }));
 assert(text(otherReference.host.root).includes("Basket-999"));
 assert.equal(flatten(otherReference.host.root).some(node => node.type === "button" && node.props["aria-label"] === "order_timeline.modern.recorded_reference"), false);otherReference.app.unmount();
+const vendorOrder = { id: 90, basket_id: 1046, type: "PHYSICAL" };
+const vendorHeader = await mount(groupedComponent, { shop: { id: 7 }, order: vendorOrder, orderType: "physical", timelines: [], getTitle }, {}, { globals: { $route: route(true) } });
+const headerText = text(flatten(vendorHeader.host.root).find(node => String(node.props.class).includes("b-order-timeline-grouped__context")));
+assert(headerText.includes("SM-1046"));assert(headerText.includes("VND-90"));assert(!headerText.includes("SM-90"));
+vendorHeader.app.unmount();
+for (const reference of ["Vendor Order-90", "Vendor Order-91", "Basket-90", "Basket-1046"]) {
+  const view = await mount(eventComponent, { shop: { id: 7 }, order: vendorOrder, orderType: "physical", getTitle,
+    item: record(47, "payment", { payment: { amount: -25, currency: "USD", message: reference } }) }, {}, { globals: { $route: route(true) } });
+  const readable = flatten(view.host.root).find(node => node.type === "button" && node.props["aria-label"] === "order_timeline.modern.recorded_reference");
+  assert.equal(!!readable, reference === "Vendor Order-90", "Only the exact current vendor reference is resolved");
+  if (readable) assert(text(readable).includes("VND-90"));
+  assert(text(view.host.root).includes(reference), "The original saved reference remains available");
+  assert.equal(flatten(view.host.root).find(node => node.type === "price").props.amount, -25);
+  view.app.unmount();
+}
+for (const resend of [undefined, "2026-10-28T20:00:00Z"]) {
+  const view = await mount(eventComponent, { shop: { id: 7 }, order: vendorOrder, orderType: "physical", getTitle,
+    item: record(48, "email-payment", { can_resend: true, resend }) }, {}, { globals: { $route: route(true) } });
+  assert.equal(!!action(view.host.root, "global.actions.resend"), false, "Vendor email resend remains unavailable");
+  assert(action(view.host.root, "order_timeline.modern.preview_email"), "Native vendor email preview stays available");
+  if (resend) assert(text(view.host.root).includes("order_timeline.modern.resent_at"), "A recorded resend time remains readable");
+  view.app.unmount();
+}
 const address = { address: "Fixture address", location: { lat: 1, lng: 2 } };
 const addressView = await mountedEvent(record(45, "edit-receiver-info", { old: address }));
 assert(text(addressView.host.root).includes("Fixture address"));

@@ -23,6 +23,9 @@
       'border-purple': !modern && isSucceeded && isTestPayment,
       '-activated': !modern && in_this_step,
       'sd-modern-widget b-order-payment--modern text-start': modern,
+      'b-order-payment--pos': modern && isPOS,
+      'b-order-payment--avocado': modern && isAvocado,
+      'b-order-payment--hyper': modern && isHyper,
       'b-order-payment--workspace': modern && viewMode === 'workspace',
       'widget shadow my-3 mx-1 mx-md-3 overflow-hidden pb-0': !modern,
     }"
@@ -40,7 +43,7 @@
       <template v-if="modern" v-slot:title>
         <span class="b-order-payment__title-stack">
           <span class="sd-modern-title-text">{{ $t('process_center.payment_widget.title') }}</span>
-          <span class="sd-modern-subtitle">{{ $t('process_center.modern.payment_subtitle') }}</span>
+          <span class="sd-modern-subtitle">{{ $t(isModernFulfillment ? 'process_center.modern.fulfillment_payment_subtitle' : isHyper ? 'process_center.modern.hyper_payment_subtitle' : isAvocado ? 'process_center.modern.avocado_payment_subtitle' : isPOS ? 'process_center.modern.pos_payment_subtitle' : 'process_center.modern.payment_subtitle') }}</span>
         </span>
       </template>
       <template v-slot:actions>
@@ -129,17 +132,19 @@
     <div class="text-start mt-2" :class="{ 'b-order-payment__context': modern }">
       <div v-if="modern" class="b-order-payment__summary">
         <div>
-          <span class="sd-modern-eyebrow">{{ $t('process_center.payment_widget.total_order_price_before_tax') }}</span>
+          <span class="sd-modern-eyebrow">{{ $t(isModernFulfillment ? 'process_center.modern.fulfillment_merchandise' : 'process_center.payment_widget.total_order_price_before_tax') }}</span>
           <u-price class="b-order-payment__amount" :amount="order.price" :currency="order.currency" />
         </div>
         <div class="b-order-payment__statuses" role="status">
-          <span v-if="isRequireAction" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-warning" />{{ $t('process_center.payment_widget.waiting_for_pay') }}</span>
-          <span v-if="isProcessing" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-info" />{{ $t('process_center.payment_widget.processing_payment') }}</span>
-          <span v-if="is_require_capture" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-warning" />{{ $t('process_center.payment_widget.require_capture') }}</span>
-          <span v-if="isCanceled" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-error" />{{ $t('process_center.payment_widget.processing_cancel') }}</span>
-          <span v-if="isSucceeded" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-success" />{{ $t('process_center.payment_widget.paid') }}</span>
-          <span v-if="isCOD" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-warning" />{{ $t('global.commons.cod') }}</span>
-          <span v-if="payment" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="payment.livemode ? 'bg-success' : 'bg-warning'" />{{ payment.livemode ? $t('shop_gateway.transactions.live_mode') : $t('shop_gateway.transactions.test_mode') }}</span>
+          <span v-if="isAvocadoQuote && order.status === 'Reserved' && !isRequireAction && !isProcessing && !isCanceled" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot sd-modern-status__dot--warning" />{{ $t('process_center.modern.avocado_awaiting_payment') }}</span>
+          <span v-if="isRequireAction" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot sd-modern-status__dot--warning" />{{ $t('process_center.payment_widget.waiting_for_pay') }}</span>
+          <span v-if="isProcessing" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot bg-info no-inv" />{{ $t('process_center.payment_widget.processing_payment') }}</span>
+          <span v-if="is_require_capture" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot sd-modern-status__dot--warning" />{{ $t('process_center.payment_widget.require_capture') }}</span>
+          <span v-if="isCanceled" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot sd-modern-status__dot--error" />{{ $t('process_center.payment_widget.processing_cancel') }}</span>
+          <span v-if="isModernFulfillment && order.status === 'Canceled'" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot sd-modern-status__dot--error" />{{ $t('global.basket_status.canceled') }}</span>
+          <span v-if="isSucceeded" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot sd-modern-status__dot--success" />{{ $t('process_center.payment_widget.paid') }}</span>
+          <span v-if="isCOD" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot sd-modern-status__dot--warning" />{{ $t('global.commons.cod') }}</span>
+          <span v-if="payment" class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="payment.livemode ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--warning'" />{{ payment.livemode ? $t('shop_gateway.transactions.live_mode') : $t('shop_gateway.transactions.test_mode') }}</span>
           <span v-if="order.subscription_id" class="sd-modern-status sd-modern-status--plain"><v-icon size="16">shopping_bag</v-icon>SN-{{ order.subscription_id }}</span>
         </div>
       </div>
@@ -268,7 +273,7 @@
               </p>
             </span>
             <v-btn
-              v-if="modern && order.customer_id && !isRolePanel && !IS_VENDOR_PANEL"
+              v-if="modern && order.customer_id && !isRolePanel && !IS_VENDOR_PANEL && !isModernFulfillment"
               :to="{ name: 'BPageCustomerDashboard', params: { customer_id: order.customer_id } }"
               target="_blank"
               rel="noopener noreferrer"
@@ -373,7 +378,7 @@
               </p>
             </span>
             <v-btn
-              v-if="modern && order.customer_id && !isRolePanel && !IS_VENDOR_PANEL"
+              v-if="modern && order.customer_id && !isRolePanel && !IS_VENDOR_PANEL && !isModernFulfillment"
               :to="{ name: 'BPageCustomerDashboard', params: { customer_id: order.customer_id } }"
               target="_blank"
               rel="noopener noreferrer"
@@ -624,7 +629,7 @@
           </p>
           <div class="text-center">
             <span v-if="modern" class="sd-modern-status sd-modern-status--plain b-order-payment__gateway-status" tabindex="0">
-              <span class="sd-modern-status__dot" :class="gateway.enable ? 'bg-success' : 'bg-error'" aria-hidden="true" />
+              <span class="sd-modern-status__dot" :class="gateway.enable ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--error'" aria-hidden="true" />
               {{ gateway.cod ? $t('global.commons.cod') : gateway.cash ? $t('global.commons.cash') : gateway.dir ? $t('global.commons.dir_payment') : $t('global.commons.online') }}
               <v-tooltip activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">{{ $t(gateway.enable ? 'process_center.modern.gateway_enabled' : 'process_center.modern.gateway_disabled') }}</v-tooltip>
             </span>
@@ -678,7 +683,7 @@
 
           <!-- ━━━━━━━━━━ 🎗️ Subscription Status ━━━━━━━━━━ -->
           <div
-            v-if="isSubscribed"
+            v-if="isSubscribed && !modern"
             :title="
               next_payment_date
                 ? `The next payment ~ ${getLocalDateString(
@@ -705,7 +710,7 @@
             >
           </div>
 
-          <div v-if="isUnsubscribed" class="text-center">
+          <div v-if="isUnsubscribed && !modern" class="text-center">
             <v-chip class="mt-1" color="#ddd" size="small" variant="flat">
               <v-icon size="small" start>credit_card_off</v-icon>
               Unsubscribed
@@ -714,8 +719,16 @@
 
           <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
           </template>
+          <template v-else-if="modern && isPOS">
+            <small class="font-weight-bold">{{ $t('process_center.modern.recorded_payment') }}</small>
+            <div class="b-order-payment__recorded-payment">
+              <u-currency-icon :currency="payment.currency" flag-only small />
+              <u-price :amount="payment.amount" :currency="payment.currency" />
+              <bdi>{{ payment.currency }}</bdi>
+            </div>
+          </template>
           <div v-if="modern" class="b-order-payment__risk">
-            <u-payment-risk-indicator v-if="payment.risk !== null && payment.risk !== undefined" :risk="payment.risk" small />
+            <u-payment-risk-indicator v-if="payment.risk !== null && payment.risk !== undefined" :risk="payment.risk" class="no-inv" small />
             <span v-else aria-hidden="true">—</span>
             <div>
               <span class="sd-modern-eyebrow b-order-payment__risk-label">
@@ -766,9 +779,21 @@
           ></u-map-countries-single>
         </v-col>
       </v-row>
-      <div v-if="modern" class="sd-modern-notice b-order-payment__review">
+      <div v-if="modern && has_payment_currency_mismatch" class="sd-modern-notice b-order-payment__currency-notice" role="status">
+        <v-icon size="17" aria-hidden="true">info_outline</v-icon>
+        <p>{{ $t('process_center.modern.payment_currency_mismatch') }}</p>
+        <v-btn class="sd-modern-icon-button sd-modern-info-button" icon variant="text" :aria-label="$t('process_center.modern.payment_currency_mismatch')">
+          <v-icon size="14" aria-hidden="true">help_outline</v-icon>
+          <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.payment_currency_mismatch_help', { orderCurrency: GetUserSelectedCurrencyName(order.currency, false) }) }}</v-tooltip>
+        </v-btn>
+      </div>
+      <div v-if="modern && isAvocadoQuote" class="b-order-payment__quote-status" role="status">
+        <v-icon size="17" aria-hidden="true">pending_actions</v-icon>
+        <p>{{ $t('process_center.modern.avocado_payment_empty') }}</p>
+      </div>
+      <div v-else-if="modern" class="sd-modern-notice b-order-payment__review">
         <v-icon size="17" aria-hidden="true">checklist</v-icon>
-        <p>{{ $t(isVirtual ? 'process_center.modern.virtual_payment_review' : 'process_center.modern.payment_review') }}</p>
+        <p>{{ $t(isModernFulfillment ? 'process_center.modern.fulfillment_payment_help' : isHyper ? 'process_center.modern.hyper_payment_review' : isAvocado ? 'process_center.modern.avocado_payment_review' : isPOS ? 'process_center.modern.pos_payment_review' : isFile ? 'process_center.modern.file_payment_review' : isVirtual ? 'process_center.modern.virtual_payment_review' : isService ? 'process_center.modern.service_payment_review' : 'process_center.modern.payment_review') }}</p>
       </div>
     </div>
 
@@ -789,6 +814,8 @@
         :order="order"
         :shop="shop"
         :modern="modern"
+        :is-fulfillment="isModernFulfillment"
+        :bill-display="modern && isSubscription ? 'none' : 'inline'"
         :class="{ 'b-order-payment-table--workspace': modern && viewMode === 'workspace' }"
         style="border-radius: unset"
         @fetch-order="$emit('fetch-order')"
@@ -800,7 +827,7 @@
         <v-col class="p-2" cols="12" sm="3">
           <p class="font-weight-bold text-muted small my-1">
             {{
-              $t("process_center.payment_widget.total_order_price_before_tax")
+              $t(isModernFulfillment ? 'process_center.modern.fulfillment_merchandise' : "process_center.payment_widget.total_order_price_before_tax")
             }}
           </p>
           <u-price :amount="order.price" :currency="order.currency"></u-price>
@@ -816,10 +843,10 @@
 
         <v-col cols="12" sm="6" :class="{ 'b-order-payment__flow': modern }">
           <div v-if="modern" class="b-order-payment__flow-heading">
-            <h3>{{ $t('process_center.modern.payment_flow') }}</h3>
-            <v-btn class="sd-modern-icon-button sd-modern-info-button" icon variant="text" :aria-label="$t('process_center.modern.payment_flow')">
+            <h3>{{ $t(isModernFulfillment || has_payment_currency_mismatch || isAvocadoQuote ? 'process_center.modern.order_composition' : 'process_center.modern.payment_flow') }}</h3>
+            <v-btn class="sd-modern-icon-button sd-modern-info-button" icon variant="text" :aria-label="$t(isModernFulfillment || has_payment_currency_mismatch || isAvocadoQuote ? 'process_center.modern.order_composition' : 'process_center.modern.payment_flow')">
               <v-icon size="14" aria-hidden="true">info_outline</v-icon>
-              <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.payment_flow_help') }}</v-tooltip>
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t(isModernFulfillment ? 'process_center.modern.fulfillment_payment_help' : isAvocadoQuote ? 'process_center.modern.avocado_quote_flow_help' : has_payment_currency_mismatch ? 'process_center.modern.order_composition_help' : 'process_center.modern.payment_flow_help') }}</v-tooltip>
             </v-btn>
             <span class="b-order-payment__currency"><u-currency-icon :currency="order.currency" flag small /><bdi>{{ order.currency }}</bdi></span>
           </div>
@@ -828,7 +855,7 @@
             :generator="modern ? modern_sankey_generator : undefined"
             :data="payment_sankey_chart_data"
             :class="{ 'b-order-payment__sankey': modern }"
-            :style="modern ? undefined : { height: '100px', fontSize: '11px' }"
+            :style="modern ? { height: payment_sankey_height + 'px' } : { height: '100px', fontSize: '11px' }"
           >
           </u-chart-sankey>
           <details v-if="modern" class="b-order-payment__flow-values">
@@ -836,7 +863,7 @@
             <table class="sd-modern-table">
               <thead><tr><th scope="col">{{ $t('global.commons.title') }}</th><th scope="col">{{ $t('global.commons.amount') }}</th></tr></thead>
               <tbody>
-                <template v-for="node in payment_sankey_chart_data.nodes" :key="node.name">
+                <template v-for="node in payment_sankey_chart_data.valueNodes || payment_sankey_chart_data.nodes" :key="node.name">
                   <tr v-if="node.amount != null"><th scope="row">{{ node.name }}</th><td><bdi>{{ formatSankeyAmount(node.amount) }}</bdi></td></tr>
                 </template>
               </tbody>
@@ -845,6 +872,26 @@
           <p v-if="modern" class="sd-modern-subtitle b-order-payment__flow-help">{{ $t('process_center.modern.payment_flow_drag') }}</p>
         </v-col>
       </v-row>
+
+      <section v-if="modern && isSubscription" class="b-order-payment__recurring" :aria-label="$t('process_center.modern.subscription_recurring_title')">
+        <header class="b-order-payment__recurring-heading">
+          <h3><v-icon size="18" aria-hidden="true">receipt_long</v-icon>{{ $t('process_center.modern.subscription_recurring_title') }}</h3>
+          <v-btn v-if="!isRolePanel && !IS_VENDOR_PANEL" :to="{ name: 'BPageOrderSubscriptionBills' }" variant="text" color="primary" class="sd-modern-button sd-modern-button--inline">
+            {{ $t('process_center.modern.subscription_view_bills') }}<v-icon end size="16" aria-hidden="true">chevron_right</v-icon>
+          </v-btn>
+        </header>
+        <b-order-payment-table
+          v-if="bills?.length"
+          :cod-enable="codEnable"
+          :is-role-panel="isRolePanel"
+          :order="order"
+          :shop="shop"
+          modern
+          bill-display="only"
+          @fetch-order="$emit('fetch-order')"
+        />
+        <p v-else class="sd-modern-subtitle">{{ $t('process_center.modern.subscription_no_bills') }}</p>
+      </section>
     </div>
   </div>
 
@@ -1018,6 +1065,7 @@ export default {
       default: false,
     },
     isRolePanel: Boolean,
+    isFulfillment: Boolean,
     modern: { type: Boolean, default: false },
     viewMode: {
       type: String,
@@ -1058,6 +1106,9 @@ export default {
   },
 
   computed: {
+    isModernFulfillment() {
+      return this.modern && this.isFulfillment;
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -1085,8 +1136,19 @@ export default {
     isAvocado() {
       return this.order.type === "AVO";
     },
+    isAvocadoQuote() {
+      return this.modern && this.isAvocado && !this.isPayed && !this.payment &&
+        !this.bills?.some(bill => bill.payment) && !this.gift_cards?.length;
+    },
+    delivery_price_in_total() {
+      if (this.modern && this.isAvocado && !this.order.delivery) return 0;
+      return this.order.delivery_price > 0 ? this.order.delivery_price : 0;
+    },
     isPOS() {
       return this.order.type === "POS";
+    },
+    isHyper() {
+      return this.order.type === "HYP";
     },
 
     //------------------------------------------------------------------------
@@ -1267,7 +1329,19 @@ export default {
       return this.getCustomerClubLevel(this.club_order.club.level);
     },
 
+    has_payment_currency_mismatch() {
+      const payments = [
+        this.payment,
+        ...(this.bills || []).flatMap((bill) => [bill.payment, ...(bill.gift_cards || [])]),
+      ];
+      return [...payments, ...(this.gift_cards || [])].some(
+        (record) => record?.currency && record.currency !== this.order.currency,
+      );
+    },
+
     total_payed() {
+      // A native-currency sum cannot combine records from different currencies.
+      if (this.has_payment_currency_mismatch) return null;
       let out = 0;
 
       // 🟡 💶 Payment of bills:
@@ -1289,6 +1363,25 @@ export default {
       return out;
     },
 
+    payment_sankey_height() {
+      const { nodes } = this.payment_sankey_data;
+      const links = this.payment_sankey_data.links.filter((link) => !!link.value);
+      const sources = new Set(links.map((link) => link.source));
+      const targets = new Set(links.map((link) => link.target));
+      // Unpaid orders fan in; paid orders fan out. Count the busier outer column.
+      const branches = Math.max(
+        1,
+        nodes.filter((node) => sources.has(node.name) && !targets.has(node.name))
+          .length,
+        nodes.filter((node) => targets.has(node.name) && !sources.has(node.name))
+          .length,
+      );
+      return (
+        Math.min(420, 120 + (branches - 1) * 32) +
+        (this.$vuetify.display.xs ? 24 : 0)
+      );
+    },
+
     payment_sankey_chart_data() {
       const data = this.payment_sankey_data;
       if (!this.modern) return data;
@@ -1296,7 +1389,8 @@ export default {
       const label = (key) => this.$t(`global.commons.${key}`);
       const colors = {
         [label("order")]: "#85828b",
-        [label("items")]: "#85828b",
+        [label("items")]: this.isAvocadoQuote ? "#268754" : "#85828b",
+        [label("delivery")]: this.isAvocadoQuote ? "#ba8b3f" : undefined,
         [label("payment")]: "#6b62bb",
         [label("you")]: "#268754",
         [label("tax")]: "#ba8b3f",
@@ -1311,7 +1405,7 @@ export default {
         [label("items")]: Math.max(
           0,
           this.order.price + this.order.discount -
-          (this.order.delivery_price > 0 ? this.order.delivery_price : 0),
+          this.delivery_price_in_total,
         ),
         [label("payment")]: this.total_payed,
         [label("you")]: data.links.find((link) => link.target === label("you"))?.value,
@@ -1324,24 +1418,58 @@ export default {
         [label("club")]: Math.abs(this.club_amount),
         [label("lottery")]: Math.abs(this.lottery_amount),
         [label("cross_sell")]: Math.abs(this.total_cross_sells_discount),
+        [label("offer")]: Math.abs(this.total_offers),
         [label("incentives")]:
           Math.abs(this.items_discount) + Math.abs(this.discount_code_amount) +
           Math.abs(this.coupon_amount) + Math.abs(this.club_amount) +
           Math.abs(this.lottery_amount) + Math.abs(this.total_cross_sells_discount),
       };
+      const order = label("order");
+      if (this.isHyper && data.nodes.some(node => node.name === order && node.amount == null)) {
+        // Include every semantic root branch once, without D3's layout-only floor.
+        amounts[order] = data.links
+          .filter(link => link.source === order || link.target === order)
+          .reduce((sum, link) => sum + amounts[link.source === order ? link.target : link.source], 0);
+      }
       const nodes = data.nodes.map((node) => ({
         ...node,
         color: colors[node.name] || node.color,
-        amount: amounts[node.name],
+        amount: node.amount ?? amounts[node.name],
       }));
       const links = data.links.map((link) => {
         const color = nodes.find((node) => node.name === link.target)?.color;
         return { ...link, sourceColor: color, targetColor: color };
       });
-      return { ...data, padding: 0, nodes, links };
+      const incentives = label("incentives");
+      const incentiveSource = this.has_payment_currency_mismatch && this.$vuetify.display.xs
+        ? links.find((link) => link.target === incentives)?.source
+        : null;
+      // Give D3 the target size before its data watcher reads the old DOM height.
+      return {
+        ...data,
+        padding: 0,
+        size: { height: this.payment_sankey_height - 44 },
+        valueNodes: nodes,
+        // Two columns keep the narrow composition legible; exact values retain the subtotal.
+        nodes: incentiveSource ? nodes.filter((node) => node.name !== incentives) : nodes,
+        links: incentiveSource
+          ? links.filter((link) => link.target !== incentives).map((link) =>
+              link.source === incentives ? { ...link, source: incentiveSource } : link,
+            )
+          : links,
+      };
     },
 
     payment_sankey_data() {
+      if (this.isModernFulfillment) {
+        // Wholesale merchandise is recorded independently from discount and shipping.
+        const items = this.$t('global.commons.items');
+        const fulfillment = this.$t('process_center.modern.fulfillment_flow');
+        return {
+          nodes: [{ name: items, amount: this.order.price, color: '#85828b' }, { name: fulfillment, amount: this.order.price, color: '#85828b' }],
+          links: [{ source: items, target: fulfillment, value: this.order.price || 0.001 }],
+        };
+      }
       const total_incentives =
         Math.abs(this.items_discount) +
         Math.abs(this.discount_code_amount) +
@@ -1359,7 +1487,7 @@ export default {
       let items_total_price =
         this.order.price +
         this.order.discount -
-        (this.order.delivery_price > 0 ? this.order.delivery_price : 0);
+        this.delivery_price_in_total;
       if (items_total_price < 0) items_total_price = 0;
 
       const _ORDER = this.$t("global.commons.order");
@@ -1376,6 +1504,60 @@ export default {
       const _LOTTERY = this.$t("global.commons.lottery");
       const _CROSS_SELL = this.$t("global.commons.cross_sell");
       const _YOU = this.$t("global.commons.you");
+
+      if (this.isAvocadoQuote) {
+        // A quote explains order composition without implying a recorded payment.
+        const amounts = [
+          { name: _ITEMS, amount: items_total_price, color: "#268754" },
+          ...(this.delivery_price_in_total ? [{ name: _DELIVERY, amount: this.delivery_price_in_total, color: "#ba8b3f" }] : []),
+          ...(!this.order.tax_included && this.tax ? [{ name: _TAX, amount: this.tax, color: "#ba8b3f" }] : []),
+          ...(this.tax_shipping ? [{ name: _SHIPPING_TAX, amount: this.tax_shipping, color: "#ba8b3f" }] : []),
+        ];
+        return {
+          nodes: [{ name: _ORDER, amount: this.final_price, color: "#85828b" }, ...amounts],
+          links: amounts.map(node => ({ source: _ORDER, target: node.name, value: node.amount || 0.001 })),
+        };
+      }
+
+      if (this.has_payment_currency_mismatch) {
+        // Explain recorded order amounts without inventing an FX or settlement flow.
+        const source = this.order.delivery_price > 0 ? _ORDER : _ITEMS;
+        const total = this.$t("process_center.modern.flow_order_total");
+        const discounts = [
+          [_ITEMS_DISCOUNT, this.items_discount, "#13a4be"],
+          [_DISCOUNT_CODE, this.discount_code_amount, "#9b0909"],
+          [_COUPON, this.coupon_amount, "#c2185b"],
+          [_CLUB, this.club_amount, "#651fff"],
+          [_LOTTERY, this.lottery_amount, "#651683"],
+          [_CROSS_SELL, this.total_cross_sells_discount, "#cc4f0d"],
+          [this.$t("global.commons.offer"), this.total_offers, "#b36f28"],
+        ].filter(([, amount]) => !!amount);
+        const incentives = discounts.reduce((sum, [, amount]) => sum + Math.abs(amount), 0);
+        const out = {
+          nodes: [
+            { name: source, color: "#85828b", amount: this.order.price + this.order.discount },
+            { name: total, color: "#268754", amount: this.final_price },
+          ],
+          links: [{ source, target: total, value: this.order.price }],
+        };
+        if (incentives) {
+          out.nodes.push({ name: _INCENTIVES, color: "#7953b5", amount: incentives });
+          out.links.push({ source, target: _INCENTIVES, value: incentives });
+          discounts.forEach(([name, amount, color]) => {
+            out.nodes.push({ name, color, amount: Math.abs(amount) });
+            out.links.push({ source: _INCENTIVES, target: name, value: Math.abs(amount) });
+          });
+        }
+        [
+          [_TAX, this.order.tax_included ? 0 : this.tax],
+          [_SHIPPING_TAX, this.tax_shipping],
+        ].forEach(([name, amount]) => {
+          if (!amount) return;
+          out.nodes.push({ name, color: "#ba8b3f", amount });
+          out.links.push({ source: name, target: total, value: amount });
+        });
+        return out;
+      }
 
       if (!this.total_payed) {
         // No payment yet!
@@ -1843,7 +2025,7 @@ export default {
     //――――――――――――――――――――――― COD > Confirm payment ―――――――――――――――――――――――
 
     confirmCODPaymentCompleted(gateway_code) {
-      if (this.isRolePanel) return;
+      if (this.isRolePanel || (this.modern && this.isHyper)) return;
       this.busy_pay = true;
 
       axios
@@ -1916,6 +2098,11 @@ export default {
   .b-order-payment__summary .sd-modern-eyebrow { font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: .65px; }
   .b-order-payment__amount { display: block; margin-block-start: 3px; font-size: 24px; line-height: 31px; font-weight: 500; letter-spacing: -.5px; }
   .b-order-payment__amount :deep(.small) { font-size: 14px !important; font-weight: 500; }
+  &.b-order-payment--pos .b-order-payment__amount,
+  &.b-order-payment--hyper .b-order-payment__amount,
+  &.b-order-payment--avocado .b-order-payment__amount { font-size: 26px; line-height: 32px; }
+  .b-order-payment__quote-status { display: flex; align-items: center; gap: 8px; padding-block-end: 18px; color: var(--sd-modern-muted); font-size: 12px; line-height: 18px; }
+  .b-order-payment__quote-status > p { margin: 0; }
   .b-order-payment__statuses { display: flex; flex-direction: column; gap: 4px; }
   .b-order-payment__statuses .sd-modern-status { font-size: 12px; line-height: 18px; }
   .b-order-payment__identities { margin: 0; padding-block: 13px; border-block: 1px solid var(--sd-modern-border); }
@@ -1957,6 +2144,13 @@ export default {
   .b-order-payment__risk-label { display: inline-flex; align-items: center; gap: 4px; margin: 0; }
   .b-order-payment__risk-label .sd-modern-info-button { margin-block: -8px; }
   .b-order-payment__risk p { margin: 2px 0 0; font-size: 11px; font-weight: 400; line-height: 17px; color: var(--sd-modern-muted); }
+  // Preserve the native map colors only; its label and flag retain their own Smart invert paths.
+  .smart-invert .s--card-window-content & .b-order-payment__country-fact :deep(.vue-world-map) { filter: invert(1); }
+  .b-order-payment__recorded-payment { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px; font-size: 13px; line-height: 20px; }
+  .b-order-payment__recorded-payment > bdi { font-size: 11px; color: var(--sd-modern-muted); }
+  .b-order-payment__currency-notice { align-items: center; gap: 9px; margin-block: 0 16px; font-size: 12px; line-height: 18px; }
+  .b-order-payment__currency-notice > p { flex: 1; margin: 0; }
+  .b-order-payment__currency-notice > .v-icon { flex: none; }
   .b-order-payment__ledger { margin-block-start: 2px; }
   .b-order-payment__footer { margin: 0; border-block-start: 1px solid var(--sd-modern-border); display: flex; flex-wrap: wrap; }
   .b-order-payment__footer > div:not(.b-order-payment__flow) { flex: 0 1 25%; padding: 17px 9px !important; font-size: 13px; font-weight: 400; }
@@ -1968,7 +2162,11 @@ export default {
   .b-order-payment__flow-heading h3 { margin: 0; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; }
   .b-order-payment__flow-heading > .b-order-payment__currency { margin-inline-start: auto; }
   .b-order-payment__flow-help { margin-block: 8px 0; font-size: 11px; font-weight: 400; line-height: 17px; }
-  .b-order-payment__sankey { height: 250px; padding: 15px 10px 29px; font-family: inherit; font-size: 11px; }
+  .b-order-payment__sankey { padding: 15px 10px 29px; font-family: inherit; font-size: 11px; }
+  .b-order-payment__recurring { padding-block: 20px; border-block-start: 1px solid var(--sd-modern-border); min-width: 0; }
+  .b-order-payment__recurring-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-block-end: 12px; }
+  .b-order-payment__recurring-heading h3 { display: flex; align-items: center; gap: 7px; margin: 0; font-size: 13px; line-height: 20px; font-weight: 500; }
+  .b-order-payment__recurring-heading h3 > .v-icon { color: var(--sd-modern-muted); }
   .b-order-payment__sankey :deep(svg.d2b-chart) { overflow: visible; }
   .b-order-payment__sankey :deep(text) { fill: rgb(var(--v-theme-on-surface)); font-family: inherit; font-size: 11px; font-weight: 400; }
   .b-order-payment__sankey :deep(.d2b-sankey-node-value) { opacity: .7; direction: ltr; unicode-bidi: isolate; }
@@ -1977,6 +2175,10 @@ export default {
   .b-order-payment__sankey :deep(.d2b-sankey-link rect) { opacity: .24; transition: opacity .15s; }
   .b-order-payment__sankey :deep(.d2b-sankey-link:hover path),
   .b-order-payment__sankey :deep(.d2b-sankey-link:hover rect) { opacity: .55; }
+  // Counter-invert chart ink without changing the theme-aware node labels.
+  .smart-invert .s--card-window-content & .b-order-payment__sankey :deep(.d2b-sankey-nodes rect),
+  .smart-invert .s--card-window-content & .b-order-payment__sankey :deep(.d2b-sankey-link path),
+  .smart-invert .s--card-window-content & .b-order-payment__sankey :deep(.d2b-sankey-link rect) { filter: invert(1); }
   .b-order-payment__flow-values { display: none; font-size: 11px; line-height: 17px; }
   .b-order-payment__flow-values summary { display: list-item; min-height: 44px; padding-block: 12px; color: rgb(var(--v-theme-primary)); cursor: pointer; }
   .b-order-payment__flow-values table { width: 100%; border-collapse: collapse; }
@@ -1992,7 +2194,7 @@ export default {
     .b-order-payment__sankey :deep(.d2b-sankey-link path),
     .b-order-payment__sankey :deep(.d2b-sankey-link rect) { transition: none; }
   }
-  @media (max-width: 580px) { .b-order-payment__sankey { height: 285px; padding-inline: 8px; } }
+  @media (max-width: 580px) { .b-order-payment__sankey { padding-inline: 8px; } }
 
   @media (min-width: 681px) and (max-width: 1100px) {
     .b-order-payment__facts > div { flex-basis: 30%; }
@@ -2025,6 +2227,7 @@ export default {
       .b-order-payment__ledger { display: contents; }
       .b-order-payment__ledger > :deep(.b-order-payment-table--modern) { grid-column: 1; grid-row: 2; min-width: 0; align-self: start; }
       .b-order-payment__footer { grid-column: 1 / -1; grid-row: 3; margin-block-start: 16px; }
+      .b-order-payment__recurring { grid-column: 1 / -1; grid-row: 4; }
       .b-order-payment__identities { gap: 15px; }
       .b-order-payment__identities > div { flex-basis: 100%; max-width: 100%; }
       .b-order-payment__identity { padding-inline-end: 0; }

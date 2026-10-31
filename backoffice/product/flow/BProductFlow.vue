@@ -13,46 +13,58 @@
   -->
 
 <template>
-  <s-widget-box
-    :title="`<h5 class='align-items-center pb-1'>⚡ ${$t('product_flow.title')}</h5>`"
-    class="b--product-flow"
-    :sub-title="$t('product_flow.subtitle')"
+  <component
+    :is="modern ? 'section' : 's-widget-box'"
+    :title="modern ? undefined : `<h5 class='align-items-center pb-1'>⚡ ${$t('product_flow.title')}</h5>`"
+    class="b--product-flow text-start"
+    :class="{ 'sd-modern-widget b--product-flow--modern': modern }"
+    :sub-title="modern ? undefined : $t('product_flow.subtitle')"
   >
-    <v-list :lines="3" class="border-between-vertical" rounded="xl">
+    <header v-if="modern" class="sd-modern-header">
+      <div class="sd-modern-title">
+        <v-icon class="sd-modern-icon sd-modern-icon--plain" aria-hidden="true">account_tree</v-icon>
+        <div>
+          <h2 class="sd-modern-title-text">{{ $t('product_flow.title') }}</h2>
+          <p class="sd-modern-subtitle">{{ $t('b_product_dashboard.flow.subtitle') }}</p>
+        </div>
+      </div>
+    </header>
+    <v-list :lines="3" class="border-between-vertical b-product-flow__checks" :rounded="modern ? false : 'xl'">
       <!-- --------------- Connect --------------- -->
-      <b-product-flow-row-connect></b-product-flow-row-connect>
+      <b-product-flow-row-connect :modern="modern"></b-product-flow-row-connect>
 
       <!-- --------------- Product Health --------------- -->
-      <b-product-flow-row-health></b-product-flow-row-health>
+      <b-product-flow-row-health :modern="modern"></b-product-flow-row-health>
 
       <!-- ⬬⬬⬬⬬ Error > Marketplace ⬬⬬⬬⬬ -->
-      <b-product-flow-errors-vendor></b-product-flow-errors-vendor>
+      <b-product-flow-errors-vendor :modern="modern"></b-product-flow-errors-vendor>
 
       <!-- ⬬⬬⬬⬬ Error > File Empty ⬬⬬⬬⬬ -->
-      <b-product-flow-errors-file></b-product-flow-errors-file>
+      <b-product-flow-errors-file :modern="modern"></b-product-flow-errors-file>
 
       <!-- --------------- Pricing --------------- -->
-      <b-product-flow-row-pricing></b-product-flow-row-pricing>
+      <b-product-flow-row-pricing :modern="modern"></b-product-flow-row-pricing>
 
       <!-- ⬬⬬⬬⬬ Error > File Empty ⬬⬬⬬⬬ -->
-      <b-product-flow-errors-subscription></b-product-flow-errors-subscription>
+      <b-product-flow-errors-subscription :modern="modern"></b-product-flow-errors-subscription>
 
       <!-- --------------- Selling location restriction --------------- -->
-      <b-product-flow-row-location></b-product-flow-row-location>
+      <b-product-flow-row-location :modern="modern"></b-product-flow-row-location>
 
       <!-- ⬬⬬⬬⬬ Error > Location restriction ⬬⬬⬬⬬ -->
-      <b-product-flow-errors-location></b-product-flow-errors-location>
+      <b-product-flow-errors-location :modern="modern"></b-product-flow-errors-location>
 
       <!-- --------------- Tax --------------- -->
-      <b-product-flow-row-tax></b-product-flow-row-tax>
+      <b-product-flow-row-tax :modern="modern"></b-product-flow-row-tax>
 
       <!-- --------------- Vendor --------------- -->
-      <b-product-flow-row-vendor></b-product-flow-row-vendor>
+      <b-product-flow-row-vendor :modern="modern"></b-product-flow-row-vendor>
     </v-list>
 
     <!-- --------------- Pods --------------- -->
 
-    <u-pods-panel color="#ddd">
+    <b-product-flow-diagram v-if="modern" :steps="flowSteps" />
+    <u-pods-panel v-else color="#ddd">
       <u-pod-node
         icon="add_shopping_cart"
         :title="$t('global.commons.purchase')"
@@ -148,10 +160,11 @@
         ></u-pod-node>
       </template>
     </u-pods-panel>
-  </s-widget-box>
+  </component>
 </template>
 
 <script lang="ts">
+import BProductFlowDiagram from "./BProductFlowDiagram.vue";
 import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
@@ -175,6 +188,7 @@ export default {
   name: "FlowProduct",
   mixins: [ProductMixin],
   components: {
+    BProductFlowDiagram,
     BProductFlowErrorsSubscription,
     BProductFlowErrorsLocation,
     BProductFlowErrorsFile,
@@ -192,7 +206,7 @@ export default {
   },
   inject: ["$shop", "$product"],
 
-  props: {},
+  props: { modern: { type: Boolean, default: false } },
 
   data: function () {
     return {
@@ -201,6 +215,37 @@ export default {
   },
 
   computed: {
+    flowSteps() {
+      const step = (id, title, icon, image = undefined) => ({
+        id, title: this.$t(title), icon, image,
+        help: this.$t(`b_product_dashboard.flow.help.${id}`),
+      });
+      const steps = [
+        step("purchase", "global.commons.purchase", "add_shopping_cart"),
+        step("cart", "global.actions.add_to_cart", "inventory", this.$product.icon ? this.getShopImagePath(this.$product.icon, 64) : undefined),
+      ];
+      if (this.isMarketplace) steps.push(step("vendor", "global.commons.vendor", "storefront"));
+      steps.push(step("pricing", "global.commons.pricing", "monetization_on"));
+      if (this.has_valuation) steps.push(step("valuation", "global.commons.valuation", "tune", require("../../../assets/icons/valuation.svg")));
+      steps.push(
+        step("incentives", "global.commons.incentives", "local_offer"),
+        step("tax", "global.commons.tax", "balance", require("../../../assets/icons/tax-3d.svg")),
+        step("checkout", "global.commons.checkout", "shopping_bag"),
+      );
+      if (this.isService) steps.push(step("confirmation", "global.commons.confirmation", "assignment_turned_in"));
+      steps.push(
+        step("payment", "global.commons.payment", "credit_score"),
+        step("fulfillment", "global.commons.fulfillment", "inventory_2", this.getProductTypeImage(this.$product.type)),
+      );
+      if (this.isSubscription) steps.push(step("recurring", "global.commons.recurring_payment", "repeat"));
+      if (this.isSubscription && this.ribbon_link_type) {
+        steps.push({ ...step("linked", "global.commons.order", "shopping_bag", this.ribbon_link_type.image), title: "+ " + this.$t("global.commons.order") });
+      }
+      if (this.connect) {
+        steps.push({ ...step("connect", "global.commons.connect", "cable", this.getShopImagePath(this.connect.icon)), title: this.connect.name, backward: true });
+      }
+      return steps;
+    },
     isMarketplace() {
       return this.$shop.model === BusinessModel.MARKETPLACE.code;
     },
@@ -243,7 +288,7 @@ export default {
 
 <style lang="scss" scoped>
 .b--product-flow {
-  ::v-deep(.v-list) {
+  :deep(.v-list) {
     .v-list-item .v-list-item__prepend .v-icon {
       opacity: 1 !important;
     }
@@ -251,6 +296,43 @@ export default {
     .v-list-item-subtitle {
       --v-medium-emphasis-opacity: 1;
     }
+  }
+}
+
+.b--product-flow--modern {
+  padding: 22px;
+  border-radius: 15px;
+  font-size: 14px;
+  line-height: 22px;
+
+  .sd-modern-header { margin-bottom: 18px; }
+  .sd-modern-title { align-items: flex-start; }
+  .sd-modern-title-text { font-size: 16px; line-height: 24px; font-weight: 500; }
+  .sd-modern-subtitle { font-size: 12px; line-height: 19px; margin-top: 3px; }
+  .sd-modern-icon--plain { font-size: 16px; margin-top: 3px; }
+
+  :deep(.b-product-flow__checks) { padding: 0; background: transparent; border-radius: 0; }
+  :deep(.b-product-flow__checks > .v-row) { margin: 0; align-items: center; gap: 8px; }
+  :deep(.v-list-item) { min-height: 0; padding: 12px 0; flex: 1 1 300px; }
+  :deep(.v-list-item__prepend) { align-self: start; margin-top: 2px; }
+  :deep(.v-list-item__prepend > .v-icon) { font-size: 20px; margin-inline-end: 14px; }
+  :deep(.v-list-item__prepend > .v-avatar) { width: 28px; height: 28px; margin-inline-end: 12px; }
+  :deep(.v-list-item-title) { font-size: 14px; line-height: 22px; font-weight: 500; white-space: normal; }
+  :deep(.v-list-item-subtitle) { font-size: 12px; line-height: 19px; white-space: normal; -webkit-line-clamp: unset; }
+  :deep(.v-list-item-subtitle .sd-modern-status__dot) {
+    display: inline-block; vertical-align: middle; margin-inline-end: 6px;
+  }
+  :deep(.v-row > .text-end) { flex: 0 1 auto !important; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  :deep(.b-product-flow__alert) { background: var(--sd-modern-inset); border-radius: 10px; padding: 4px 12px; }
+  :deep(.b-product-flow__alert .v-list-item__prepend > .v-icon) { color: rgb(var(--v-theme-error)); animation: none; }
+  :deep(.b-product-flow__location) { background: var(--sd-modern-inset); color: rgb(var(--v-theme-on-surface)); }
+}
+@media (max-width: 600px) {
+  .b--product-flow--modern {
+    padding: 16px 12px;
+    border-radius: 12px;
+    :deep(.v-row > .text-end) { justify-content: flex-start; width: 100%; padding-inline-start: 40px; }
+    :deep(.v-list-item) { flex-basis: 100%; }
   }
 }
 </style>

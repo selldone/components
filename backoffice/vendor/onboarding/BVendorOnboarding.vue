@@ -15,7 +15,99 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ██████████████████████ Vendor request form ██████████████████████ -->
 
-  <v-card v-bind="$attrs" class="text-start">
+  <v-card v-if="modernReview" v-bind="$attrs" class="sd-modern-canvas b-vendor-onboarding-modern text-start">
+    <v-card-title class="b-vendor-onboarding-modern__header">
+      <div>
+        <h2>{{ company.name || modelValue?.user?.name || $t('marketplace_requests.modern.review.title') }}</h2>
+        <div class="b-vendor-onboarding-modern__subtitle">
+          <span>{{ $t('marketplace_requests.modern.review.title') }}</span>
+          <span class="sd-modern-status sd-modern-status--plain" role="status">
+            <span class="sd-modern-status__dot" :class="'sd-modern-status__dot--' + (reviewStatus === 'accepted' ? 'success' : reviewStatus === 'rejected' ? 'error' : 'warning')"></span>
+            {{ $t('marketplace_requests.modern.review.' + reviewStatus) }}
+          </span>
+          <button v-if="modelValue?.created_at" type="button" class="b-vendor-onboarding-modern__created" :aria-label="$t('marketplace_requests.modern.review.created') + ': ' + getLocalTimeString(modelValue.created_at)">
+            {{ getFromNowString(modelValue.created_at) }}
+            <v-tooltip activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">{{ $t('marketplace_requests.modern.review.created') }}: {{ getLocalTimeString(modelValue.created_at) }}</v-tooltip>
+          </button>
+        </div>
+      </div>
+      <v-btn class="sd-modern-icon-button" variant="text" icon :disabled="busy_accept !== null" :aria-label="$t('global.actions.close')" @click="close">
+        <v-icon size="16" aria-hidden="true">close</v-icon>
+        <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('global.actions.close') }}</v-tooltip>
+      </v-btn>
+    </v-card-title>
+    <v-card-text class="b-vendor-onboarding-modern__body">
+      <div class="b-vendor-onboarding-modern__layout">
+        <nav class="sd-modern-section-nav b-vendor-onboarding-modern__nav" :aria-label="$t('marketplace_requests.modern.review.title')">
+          <button v-for="tab in reviewSections" :key="tab.value" type="button" class="sd-modern-section-nav__item" :class="{ 'sd-modern-section-nav__item--active': step === tab.value }" :aria-current="step === tab.value ? 'location' : undefined" @click="setReviewStep(tab.value)">
+            <v-icon size="15" aria-hidden="true">{{ tab.icon }}</v-icon><span>{{ $t('marketplace_requests.modern.review.' + tab.key) }}</span>
+          </button>
+        </nav>
+        <section ref="reviewContent" class="b-vendor-onboarding-modern__content" :aria-label="$t('marketplace_requests.modern.review.' + reviewSection.key)">
+          <h3>{{ $t('marketplace_requests.modern.review.' + reviewSection.key) }}</h3>
+          <p class="b-vendor-onboarding-modern__intro">{{ $t('marketplace_requests.modern.review.' + reviewSection.key + 'Intro') }}</p>
+          <div v-if="step < 5" class="sd-modern-widget b-vendor-onboarding-modern__widget">
+            <dl class="b-vendor-onboarding-modern__fields">
+              <div v-for="field in reviewFields" :key="field.key" :class="{ 'b-vendor-onboarding-modern__full': field.full }">
+                <dt>{{ $t('marketplace_requests.modern.review.' + field.label) }}</dt>
+                <dd :class="{ 'b-vendor-onboarding-modern__missing': !hasReviewValue(field.value) }">
+                  <template v-if="hasReviewValue(field.value)"><flag v-if="field.key === 'country'" :iso="field.value" :squared="false" class="me-2" /><bdi>{{ field.key === 'country' ? getCountryName(field.value) || field.value : field.value }}</bdi></template>
+                  <span v-else>{{ $t('marketplace_requests.modern.review.missing') }}</span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div v-else-if="step === 5" class="sd-modern-widget b-vendor-onboarding-modern__widget">
+            <ul v-if="reviewDocuments.length" class="b-vendor-onboarding-modern__documents">
+              <li v-for="(doc, index) in reviewDocuments" :key="doc.type + '-' + index">
+                <div class="b-vendor-onboarding-modern__document-heading">
+                  <div><h4>{{ documentTitle(doc) }}</h4><p v-if="doc.name" class="b-vendor-onboarding-modern__document-name">{{ doc.name }}</p></div>
+                  <v-btn v-if="doc.type === 'Embed'" class="sd-modern-button sd-modern-button--inline" color="primary" variant="text" :disabled="!doc.code" @click="showEmbedForm(doc)">{{ $t('marketplace_requests.modern.review.openDocument') }}</v-btn>
+                  <v-btn v-else-if="doc.type === 'Link'" class="sd-modern-button sd-modern-button--inline" color="primary" variant="text" :href="doc.link" :disabled="!doc.link" target="_blank" rel="noopener noreferrer">{{ $t('marketplace_requests.modern.review.openLink') }}<v-icon size="16" end aria-hidden="true">north_east</v-icon></v-btn>
+                </div>
+                <div v-if="doc.guide || getType(doc)?.description" class="b-vendor-onboarding-modern__guide" v-html="doc.guide ? (['Embed', 'Link'].includes(doc.type) ? doc.guide : smartConvert(doc.guide)) : $t(getType(doc).description)"></div>
+                <template v-if="!['Embed', 'Link'].includes(doc.type)">
+                  <div v-for="attachment in attachments?.filter(a => a.type === doc.type)" :key="attachment.id" class="b-vendor-onboarding-modern__file">
+                    <v-avatar :image="FileHelper.GetFileIcon(attachment.name || '')" size="30" rounded class="hover-scale-small" />
+                    <div class="b-vendor-onboarding-modern__file-body">
+                      <div class="b-vendor-onboarding-modern__filename" dir="auto">{{ attachment.name || $t('marketplace_requests.modern.review.missing') }}</div>
+                      <div class="b-vendor-onboarding-modern__file-meta"><bdi :aria-label="$t('marketplace_requests.modern.review.fileType')">{{ fileExtension(attachment.name) }}</bdi><span>·</span><span :aria-label="$t('marketplace_requests.modern.review.fileSize')">{{ numeralFormat(attachment.size, '0.[0] ib') }}</span></div>
+                      <p v-if="attachment.note" class="b-vendor-onboarding-modern__file-note" dir="auto">{{ attachment.note }}</p>
+                    </div>
+                    <v-btn v-if="modelValue?.id && attachment.id" class="sd-modern-icon-button" variant="text" icon :href="getDownloadLink(attachment)" target="_blank" rel="noopener noreferrer" :aria-label="$t('marketplace_requests.modern.review.download') + ': ' + (attachment.name || documentTitle(doc))" @click.stop>
+                      <v-icon size="16" aria-hidden="true">download</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('marketplace_requests.modern.review.download') }}</v-tooltip>
+                    </v-btn>
+                  </div>
+                  <p v-if="!attachments?.some(a => a.type === doc.type)" class="b-vendor-onboarding-modern__missing-file">{{ $t('marketplace_requests.modern.review.missingDocument') }}</p>
+                </template>
+              </li>
+            </ul>
+            <p v-else class="b-vendor-onboarding-modern__missing-file">{{ $t('marketplace_requests.modern.review.emptyDocuments') }}</p>
+          </div>
+          <div v-else class="sd-modern-widget b-vendor-onboarding-modern__widget">
+            <p class="sd-modern-notice"><v-icon size="17" aria-hidden="true">{{ reviewStatus === 'pending' ? 'schedule' : 'info_outline' }}</v-icon><span>{{ $t('marketplace_requests.modern.review.' + (reviewStatus === 'pending' ? 'pendingHelp' : 'reconsider')) }}</span></p>
+            <div class="b-vendor-onboarding-modern__choices" role="group" :aria-label="$t('marketplace_requests.modern.review.decision')">
+              <u-smart-verify :model-value="accept" class="b-vendor-onboarding-modern__choice" color="primary" false-gray :disabled="busy_accept !== null" :true-title="$t('marketplace_requests.modern.review.accept')" :true-description="$t('marketplace_requests.modern.review.acceptHint')" role="checkbox" :aria-checked="accept" :tabindex="busy_accept !== null ? -1 : 0" @update:model-value="setDecision(true, $event)" @keydown.enter.prevent="setDecision(true, !accept)" @keydown.space.prevent="setDecision(true, !accept)" />
+              <u-smart-verify :model-value="reject" class="b-vendor-onboarding-modern__choice" color="error" false-gray :disabled="busy_accept !== null" :true-title="$t('marketplace_requests.modern.review.reject')" :true-description="$t('marketplace_requests.modern.review.rejectHint')" role="checkbox" :aria-checked="reject" :tabindex="busy_accept !== null ? -1 : 0" @update:model-value="setDecision(false, $event)" @keydown.enter.prevent="setDecision(false, !reject)" @keydown.space.prevent="setDecision(false, !reject)" />
+            </div>
+            <p v-if="accept || reject" class="sd-modern-notice"><v-icon size="17" aria-hidden="true">info_outline</v-icon><span>{{ $t('marketplace_requests.modern.review.' + (accept ? 'acceptWarning' : 'rejectWarning')) }}</span></p>
+            <p class="b-vendor-onboarding-modern__decision-help">{{ $t('marketplace_requests.modern.review.decisionHelp') }}</p>
+            <div v-if="reviewDecisionDate" class="b-vendor-onboarding-modern__decision-date"><v-icon size="17" aria-hidden="true">event_available</v-icon><div><span>{{ $t('marketplace_requests.modern.review.currentDecision') }} · {{ $t('marketplace_requests.modern.review.' + reviewStatus) }}</span><time :datetime="reviewDecisionDate">{{ getFromNowString(reviewDecisionDate) }} · {{ getLocalTimeString(reviewDecisionDate) }}</time></div></div>
+          </div>
+        </section>
+      </div>
+    </v-card-text>
+    <v-card-actions class="b-vendor-onboarding-modern__footer">
+      <span class="b-vendor-onboarding-modern__readonly" :class="{ 'b-vendor-onboarding-modern__readonly--hidden': step === 100 }" :aria-hidden="step === 100">{{ $t('marketplace_requests.modern.review.readonly') }}</span>
+      <div class="b-vendor-onboarding-modern__actions">
+        <v-btn class="sd-modern-button" variant="outlined" :disabled="busy_accept !== null" @click="close">{{ $t('global.actions.close') }}</v-btn>
+        <v-btn v-if="step !== 100" class="sd-modern-button sd-modern-button--primary" color="primary" variant="elevated" prepend-icon="rate_review" @click="setReviewStep(100)">{{ $t('marketplace_requests.modern.review.decision') }}</v-btn>
+        <v-btn v-else-if="accept" class="sd-modern-button sd-modern-button--primary" color="primary" variant="elevated" prepend-icon="check" :disabled="busy_accept !== null" :loading="busy_accept === 'true'" @click="acceptRequest(true)">{{ $t('marketplace_requests.modern.review.acceptAction') }}</v-btn>
+        <v-btn v-else-if="reject" class="sd-modern-button" color="error" variant="outlined" prepend-icon="close" :disabled="busy_accept !== null" :loading="busy_accept === 'false'" @click="acceptRequest(false)">{{ $t('marketplace_requests.modern.review.rejectAction') }}</v-btn>
+      </div>
+    </v-card-actions>
+  </v-card>
+  <v-card v-else v-bind="$attrs" class="text-start">
     <v-card-title class="d-flex align-center">
       <v-icon class="me-1">add_business</v-icon>
       {{
@@ -708,7 +800,7 @@ export default {
     SCountrySelect,
     USmartVerify,
   },
-  emits: ["update:modelValue", "update"],
+  emits: ["update:modelValue", "update", "updated", "close"],
   props: {
     shop: {
       required: true,
@@ -716,6 +808,7 @@ export default {
     },
     modelValue: {},
     adminMode: { type: Boolean, default: false },
+    modern: { type: Boolean, default: false },
   },
   data: () => ({
     FileHelper: FileHelper,
@@ -737,12 +830,53 @@ export default {
     accept: false,
     reject: false,
     busy_accept: null,
+    decisionRequestId: 0,
 
     selected_embed: null,
     dialog_embed: false,
   }),
 
   computed: {
+    modernReview() { return this.modern && this.adminMode; },
+    reviewStatus() { return this.modelValue?.accepted_at ? 'accepted' : this.modelValue?.rejected_at ? 'rejected' : 'pending'; },
+    reviewDecisionDate() { return this.modelValue?.accepted_at || this.modelValue?.rejected_at || null; },
+    reviewSections() {
+      return [
+        { value: 1, key: 'company', icon: 'business' },
+        { value: 2, key: 'person', icon: 'person_outline' },
+        { value: 3, key: 'merchandise', icon: 'inventory_2' },
+        { value: 4, key: 'payout', icon: 'account_balance' },
+        { value: 5, key: 'documents', icon: 'description' },
+        { value: 100, key: 'decision', icon: 'fact_check' },
+      ];
+    },
+    reviewSection() { return this.reviewSections.find(tab => tab.value === this.step) || this.reviewSections[0]; },
+    reviewFields() {
+      const group = this.step === 1 ? this.company : this.step === 2 ? this.personal : this.step === 3 ? this.product : this.bank;
+      const fields = this.step === 1
+        ? [['name', 'companyName', true], ['address', 'address', true], ['postal_code', 'postal'], ['phone', 'phone'], ['email', 'email'], ['web', 'web']]
+        : this.step === 2
+          ? [['name', 'personName', true], ['country', 'country', true]]
+          : this.step === 3
+            ? [['description', 'description', true]]
+            : [['name', 'bankName', true], ['account_name', 'accountName'], ['account_number', 'accountNumber'], ['routing_number', 'routing'], ['iban', 'iban'], ['swift', 'swift'], ['branch_address', 'branch', true]];
+      return fields.map(([key, label, full]) => ({ key, label, full, value: group[key] }));
+    },
+    reviewDocuments() {
+      // Embed/link configurations may repeat; keep attachments after a configuration is removed.
+      const documents = [], types = new Set();
+      for (const doc of this.marketplace?.documents || []) {
+        if (['Embed', 'Link'].includes(doc.type) || !types.has(doc.type)) documents.push(doc);
+        types.add(doc.type);
+      }
+      for (const attachment of this.attachments || []) {
+        if (!types.has(attachment.type)) {
+          documents.push({ type: attachment.type });
+          types.add(attachment.type);
+        }
+      }
+      return documents;
+    },
     valid_company() {
       return !!(
         this.company.address &&
@@ -809,6 +943,14 @@ export default {
     modelValue() {
       this.assign();
     },
+    'shop.id'() { if (this.modernReview) this.assign(); },
+    modernReview() {
+      this.decisionRequestId++;
+      this.busy_accept = null;
+      this.accept = false;
+      this.reject = false;
+      if (this.modernReview) this.assign();
+    },
   },
 
   created() {
@@ -819,14 +961,40 @@ export default {
       this.fetchRequest();
     }
   },
+  beforeUnmount() { this.decisionRequestId++; },
 
   methods: {
+    hasReviewValue(value) { return value !== null && value !== undefined && value !== ''; },
+    documentTitle(document) { return document.title || this.$t(this.getType(document)?.title || 'marketplace_requests.modern.review.document'); },
+    fileExtension(name) { return /\.([^.]+)$/.exec(name || '')?.[1]?.toUpperCase() || this.$t('marketplace_requests.modern.review.missing'); },
+    setReviewStep(value) {
+      if (!this.reviewSections.some(tab => tab.value === value)) return;
+      this.step = value;
+      if (this.$refs?.reviewContent) this.$refs.reviewContent.scrollTop = 0;
+    },
+    setDecision(accepted, checked) {
+      if (!this.modernReview || this.step !== 100 || this.busy_accept !== null) return;
+      this.accept = accepted && checked;
+      this.reject = !accepted && checked;
+    },
     assign() {
+      this.decisionRequestId++;
       if (this.modelValue) {
         this.company = Object.assign({}, this.modelValue.company);
         this.personal = Object.assign({}, this.modelValue.personal);
         this.product = Object.assign({}, this.modelValue.product);
         this.bank = Object.assign({}, this.modelValue.bank);
+      } else if (this.modernReview) {
+        this.company = {};
+        this.personal = {};
+        this.product = {};
+        this.bank = {};
+      }
+      if (this.modernReview) {
+        this.step = 1;
+        this.busy_accept = null;
+        this.dialog_embed = false;
+        this.selected_embed = null;
       }
       this.reject = false;
       this.accept = false;
@@ -943,6 +1111,10 @@ export default {
     },
 
     close() {
+      if (this.modernReview) {
+        this.accept = false;
+        this.reject = false;
+      }
       this.$emit("close");
     },
 
@@ -993,9 +1165,23 @@ export default {
 
     //▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Admin Mode ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
     acceptRequest(accept) {
+      const modernRequest = this.modern;
+      if (modernRequest && (
+        !this.adminMode || !this.modelValue?.id || this.busy_accept !== null || this.step !== 100 ||
+        typeof accept !== 'boolean' || (accept ? !this.accept || this.reject : !this.reject || this.accept)
+      )) return;
+      const requestId = ++this.decisionRequestId;
+      const shopId = this.shop.id;
+      const request = this.modelValue;
+      const requestIdValue = request.id;
+      const wasPending = !request.accepted_at && !request.rejected_at;
+      const current = () => !modernRequest || (
+        requestId === this.decisionRequestId && this.modernReview && this.shop.id === shopId &&
+        this.modelValue === request && this.modelValue?.id === requestIdValue
+      );
       this.busy_accept = "" + accept;
 
-      axios
+      return axios
         .post(
           window.API.POST_SHOP_VENDOR_REQUESTS_ACCEPT(
             this.shop.id,
@@ -1006,13 +1192,15 @@ export default {
           },
         )
         .then(({ data }) => {
+          if (!current()) return;
           if (!data.error) {
             Object.assign(this.modelValue, data.vendor_request);
             this.$emit("update", data.vendor_request);
+            if (modernRequest) this.$emit("updated", this.modelValue);
             this.close();
 
-            // Update teh notification count:
-            if (this.shop?.vendors?.waiting_count) {
+            // Only the first review removes a pending application from the modern badge.
+            if (this.shop?.vendors?.waiting_count && (!modernRequest || wasPending)) {
               this.shop.vendors.waiting_count--;
             }
           } else {
@@ -1020,9 +1208,11 @@ export default {
           }
         })
         .catch((error) => {
+          if (!current()) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (!current()) return;
           this.busy_accept = null;
         });
     },
@@ -1041,3 +1231,99 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.b-vendor-onboarding-modern {
+  &.v-card { display: flex; flex-direction: column; height: 100dvh; max-height: 100dvh; padding: 0; border-radius: 0 !important; font-family: inherit; font-size: 14px; line-height: 23px; overflow: hidden; }
+  &__header { display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; gap: 16px; padding: 22px 24px 18px; background: rgb(var(--v-theme-surface)); border-block-end: 1px solid var(--sd-modern-border); white-space: normal;
+    > div { min-width: 0; }
+    h2 { margin: 0; font-family: inherit; font-size: 21px; font-weight: 600; line-height: 29px; overflow-wrap: anywhere; }
+  }
+  &__subtitle { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; margin-block-start: 4px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px;
+    .sd-modern-status { font-size: 12px; line-height: 19px; }
+  }
+  &__created { padding: 0; color: inherit; font-family: inherit; font-size: inherit; line-height: inherit; text-align: start; }
+  &__body { flex: 1 1 auto; min-height: 0; padding: 28px 24px 30px !important; overflow: hidden !important; }
+  &__layout { display: grid; grid-template-columns: 174px minmax(0, 1fr); height: 100%; min-height: 0; gap: 30px; }
+  &__nav { display: flex; flex-direction: column; align-self: start; max-height: 100%; min-height: 0; overflow-y: auto; gap: 6px; padding: 6px 4px 10px;
+    .sd-modern-section-nav__item { display: flex; align-items: center; justify-content: flex-start; gap: 9px; min-height: 43px; flex-shrink: 0; padding: 11px 12px; border-radius: 9px; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 20px; text-align: start; white-space: normal;
+      > span { min-width: 0; overflow-wrap: anywhere; }
+    }
+  }
+  &__content { width: 100%; max-width: 760px; height: 100%; min-width: 0; min-height: 0; margin-inline: auto; padding: 6px 4px 24px; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable;
+    > h3 { margin: 0; font-family: inherit; font-size: 23px; font-weight: 600; line-height: 31px; letter-spacing: -.4px; }
+  }
+  &__intro { margin: 5px 0 17px; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
+  &__widget { padding: 26px; border-radius: 17px; min-width: 0; }
+  &__fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 21px 24px; margin: 0;
+    > div { min-width: 0; }
+    dt { margin: 0 0 5px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+    dd { margin: 0; min-height: 23px; font-size: 14px; line-height: 23px; white-space: pre-line; overflow-wrap: anywhere; }
+  }
+  &__full { grid-column: 1/-1; }
+  &__missing { color: var(--sd-modern-muted); }
+  &__documents { list-style: none; padding: 0; margin: 0;
+    > li { padding-block: 16px; border-block-end: 1px solid var(--sd-modern-border); }
+    > li:first-child { padding-block-start: 0; }
+    > li:last-child { padding-block-end: 0; border: 0; }
+  }
+  &__document-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    > div { min-width: 0; }
+    h4 { margin: 0; font-family: inherit; font-size: 14px; font-weight: 500; line-height: 23px; overflow-wrap: anywhere; }
+    > .v-btn { flex-shrink: 0; }
+  }
+  &__document-name, &__guide { margin: 4px 0 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; overflow-wrap: anywhere;
+    :deep(p:last-child) { margin-block-end: 0; }
+  }
+  &__file { display: flex; align-items: flex-start; gap: 10px; margin-block-start: 15px;
+    > .v-avatar { flex-shrink: 0; margin-block-start: 2px; }
+    > .v-btn { flex-shrink: 0; margin-inline-start: auto; }
+  }
+  &__file-body { min-width: 0; }
+  &__filename { font-size: 13px; line-height: 21px; overflow-wrap: anywhere; }
+  &__file-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-block-start: 3px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  &__file-note { margin: 5px 0 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; overflow-wrap: anywhere; }
+  &__missing-file { margin: 12px 0 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
+  &__choices { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-block: 18px; }
+  &__choice { min-width: 0; min-height: 100px; padding: 13px; border: 1px solid var(--sd-modern-border); border-radius: 12px;
+    &.s--smart-verify--checked { border-color: rgb(var(--v-theme-primary)); box-shadow: 0 3px 10px rgba(var(--v-theme-on-surface), .07); }
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+    :deep(.p-2) { padding: 0 !important; }
+    :deep(b) { font-size: 14px; font-weight: 500; line-height: 22px; }
+    :deep(.small) { font-size: 13px; line-height: 21px; }
+    :deep(.v-avatar) { width: 24px !important; height: 24px !important; min-width: 24px !important; }
+  }
+  &__decision-help { margin: 12px 0 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
+  &__decision-date { display: flex; align-items: flex-start; gap: 10px; margin-block-start: 16px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px;
+    > .v-icon { margin-block-start: 2px; }
+    time { display: block; margin-block-start: 3px; }
+  }
+  .sd-modern-notice { align-items: flex-start; gap: 10px; margin: 0 0 17px; font-size: 13px; line-height: 21px;
+    > .v-icon { margin-block-start: 2px; }
+  }
+  &__footer { display: flex; align-items: center; flex-wrap: wrap; flex-shrink: 0; gap: 12px; padding: 16px 24px; background: rgb(var(--v-theme-surface)); border-block-start: 1px solid var(--sd-modern-border); }
+  &__readonly { color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  &__readonly--hidden { visibility: hidden; }
+  &__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-inline-start: auto; }
+  .sd-modern-icon-button { --sd-modern-icon-button-size: 33px; }
+  @media (max-width: 850px) {
+    &__header { padding: 18px 15px 16px; }
+    &__body { padding: 12px 11px 16px !important; }
+    &__layout { display: flex; flex-direction: column; gap: 14px; }
+    &__nav { width: 100%; flex: 0 0 auto; max-height: 35dvh; flex-direction: row; flex-wrap: wrap; gap: 6px; padding-block: 6px;
+      .sd-modern-section-nav__item { max-width: 100%; min-height: 44px; padding: 8px; gap: 6px; > span { overflow-wrap: normal; } }
+    }
+    &__content { flex: 1 1 auto; height: auto; padding-block-start: 4px; > h3 { font-size: 22px; line-height: 30px; } }
+    &__widget { padding: 18px 16px; }
+    &__footer { padding: 14px 15px; }
+    &__readonly { width: 100%; }
+    .sd-modern-icon-button { --sd-modern-icon-button-size: 44px; }
+  }
+  @media (max-width: 440px) {
+    &__fields, &__choices { grid-template-columns: minmax(0, 1fr); }
+    &__document-heading { flex-wrap: wrap; gap: 8px; }
+  }
+  @media (pointer: coarse) { .sd-modern-icon-button { --sd-modern-icon-button-size: 44px; } &__nav .sd-modern-section-nav__item { min-height: 44px; } }
+  @media (prefers-reduced-motion: reduce) { &__choice :deep(.interactive-zoom-in) { animation: none !important; } }
+}
+</style>

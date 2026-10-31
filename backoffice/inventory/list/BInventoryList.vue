@@ -15,17 +15,19 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
     v-bind="$attrs"
-    class="b-inventory-list text-start"
-    :class="{ 'b-inventory-list--modern': modern }"
+    class="b-inventory-list s-table-loading text-start"
+    :class="{ 'b-inventory-list--modern': modern, 'b-inventory-list--wholesale': wholesaleLayout }"
+    :aria-busy="busy_fetch"
     @dragover="dragover"
   >
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
     <!---------------------------- Filter ----------------------->
 
-    <v-row no-gutters :class="{ 'b-inventory-list__toolbar': modern }">
+    <v-row no-gutters :class="{ 'b-inventory-list__toolbar': modern, 'sd-modern-list-toolbar': wholesaleLayout }">
       <v-btn :icon="!modern" :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--quiet': modern }" variant="text" @click="showBulkPrice">
-        <b-inventory-list-icon v-if="modern" name="wand-sparkles" />
+        <v-icon v-if="wholesaleLayout" start size="18" aria-hidden="true">auto_fix_high</v-icon>
+        <b-inventory-list-icon v-else-if="modern" name="wand-sparkles" />
         <v-icon v-else size="small">auto_fix_high</v-icon>
         <template v-if="modern">{{ $t('inventory_list.bulk_price_short') }}</template>
 
@@ -39,7 +41,8 @@
       </v-btn>
 
       <v-btn :icon="!modern" :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--quiet': modern }" variant="text" @click="showBulkDiscount">
-        <b-inventory-list-icon v-if="modern" name="tag" />
+        <v-icon v-if="wholesaleLayout" start size="18" aria-hidden="true">local_offer</v-icon>
+        <b-inventory-list-icon v-else-if="modern" name="tag" />
         <v-icon v-else size="small">local_offer</v-icon>
         <template v-if="modern">{{ $t('inventory_list.bulk_discount_short') }}</template>
         <v-tooltip
@@ -51,9 +54,10 @@
         ></v-tooltip>
       </v-btn>
 
-      <v-divider class="my-0 mx-2" vertical></v-divider>
+      <v-divider v-if="!wholesaleLayout" class="my-0 mx-2" vertical></v-divider>
 
-      <v-btn :icon="!modern" :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--quiet': modern }" variant="text" @click="toggleGroup()">
+      <v-select v-if="wholesaleLayout" v-model="group_mode" :items="groupItems" class="b-inventory-list__group-select" variant="plain" hide-details single-line :aria-label="$t('inventory_list.grouped')" :menu-props="{contentClass:'sd-modern-select-menu text-start'}" />
+      <v-btn v-else :icon="!modern" :class="{ 'sd-modern-button sd-modern-button--compact sd-modern-button--quiet': modern }" variant="text" @click="toggleGroup()">
         <b-inventory-list-icon v-if="modern" name="layers-2" />
         <v-icon v-else
           >{{
@@ -110,26 +114,49 @@
         single-line
       >
         <template v-if="modern" v-slot:prepend-inner>
-          <b-inventory-list-icon name="search" />
+          <v-icon v-if="wholesaleLayout" size="18" aria-hidden="true">search</v-icon>
+          <b-inventory-list-icon v-else name="search" />
         </template>
         <template v-if="modern" v-slot:append-inner>
           <v-btn
             class="b-inventory-list__scan"
+            :class="{ 'sd-modern-icon-button': wholesaleLayout }"
             icon
             variant="text"
             :aria-label="$t('inventory_list.scan_product')"
             @click.stop="$refs.inventory_search.showQRScanner()"
           >
-            <b-inventory-list-icon name="scan-line" />
+            <v-icon v-if="wholesaleLayout" size="16" aria-hidden="true">qr_code_scanner</v-icon>
+            <b-inventory-list-icon v-else name="scan-line" />
             <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('inventory_list.scan_product') }}</v-tooltip>
           </v-btn>
         </template>
       </s-storefront-search-box>
+      <v-select v-if="wholesaleLayout" v-model="flatSort" :items="sortItems" class="b-inventory-list__flat-sort" variant="plain" hide-details single-line :aria-label="$t('global.commons.sort_by')" :menu-props="{contentClass:'sd-modern-select-menu text-start'}" />
+      <v-tooltip v-if="wholesaleLayout" location="top" content-class="sd-modern-tooltip text-start">
+        <template #activator="{props}"><v-btn v-bind="props" icon variant="text" class="sd-modern-icon-button b-inventory-list__reverse" :aria-label="$t('inventory_list.modern.reverse_sort')" @click="reverseSort"><v-icon size="16" aria-hidden="true">{{ sortBy[0]?.order === 'desc' ? 'south' : 'north' }}</v-icon></v-btn></template>
+        {{ $t('inventory_list.modern.reverse_sort') }}
+      </v-tooltip>
     </v-row>
+    <div v-if="wholesaleLayout" class="b-inventory-list__scope">
+      <span>{{ $t('inventory_list.modern.display_currency', { currency: displayCurrency().code }) }}</span>
+      <v-tooltip location="top" content-class="sd-modern-tooltip text-start" open-on-click :persistent="false">
+        <template #activator="{props}"><v-btn v-bind="props" icon variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="$t('inventory_list.modern.display_currency_help')"><v-icon size="13">info_outline</v-icon></v-btn></template>
+        {{ $t('inventory_list.modern.display_currency_help') }}
+      </v-tooltip>
+      <v-tooltip location="top" content-class="sd-modern-tooltip text-start" open-on-click :persistent="false">
+        <template #activator="{props}"><v-btn v-bind="props" icon variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="$t('inventory_list.modern.bulk_scope_help')"><v-icon size="13">info_outline</v-icon></v-btn></template>
+        {{ $t('inventory_list.modern.bulk_scope_help') }}
+      </v-tooltip>
+      <v-btn :to="{name:'InventoryImporter'}" class="sd-modern-button sd-modern-button--inline b-inventory-list__import" variant="text"><v-icon start size="16">upload_file</v-icon>{{ $t('inventory_list.modern.import_file') }}</v-btn>
+    </div>
 
     <!---------------------------- List ----------------------->
     <v-data-table-server
       :mobile="isMobile"
+      :hide-default-header="wholesaleLayout && isMobile"
+      :disable-sort="wholesaleLayout"
+      :loading="busy_fetch"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -160,7 +187,7 @@
       hide-default-footer
       item-value="key"
     >
-      <template v-if="modern" v-slot:header.sku="{ toggleSort, isSorted }">
+      <template v-if="modern && !wholesaleLayout" v-slot:header.sku="{ toggleSort, isSorted }">
         <span class="b-inventory-list__sort-pair">
           <button v-for="key in ['sku', 'mpn']" :key="key" type="button" class="b-inventory-list__sort"
             :aria-label="`${$t('global.commons.sort_by')} ${$t(`inventory_list.table.${key}`)}`"
@@ -170,7 +197,7 @@
           </button>
         </span>
       </template>
-      <template v-if="modern" v-slot:header.status="{ toggleSort, isSorted }">
+      <template v-if="modern && !wholesaleLayout" v-slot:header.status="{ toggleSort, isSorted }">
         <span class="b-inventory-list__sort-pair">
           <button v-for="key in ['status', 'original']" :key="key" type="button" class="b-inventory-list__sort"
             :aria-label="`${$t('global.commons.sort_by')} ${$t(`inventory_list.table.${key}`)}`"
@@ -185,7 +212,13 @@
       </template>
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="modern && !busy_fetch" class="sd-modern-empty-state">
+        <div v-if="fetch_error && !busy_fetch" class="sd-modern-empty-state" role="alert">
+          <v-icon size="28">cloud_off</v-icon>
+          <h3>{{ $t('inventory_list.modern.load_error') }}</h3>
+          <p>{{ $t('inventory_list.modern.load_error_help') }}</p>
+          <v-btn class="sd-modern-button" variant="text" @click="onRefresh">{{ $t('global.actions.retry') }}</v-btn>
+        </div>
+        <div v-else-if="modern && !busy_fetch" class="sd-modern-empty-state">
           <v-icon size="28">{{ search || filters.length ? 'search_off' : 'shelves' }}</v-icon>
           <h3>{{ $t('global.commons.no_data') }}</h3>
           <p>{{ $t('inventory_list.subtitle') }}</p>
@@ -252,7 +285,7 @@
       <template v-slot:item.title="{ item }">
         <div v-if="modern" class="b-inventory-list__product">
           <router-link :to="{ name: 'BPageProductDashboard', params: { product_id: item.id } }" :aria-label="item.title" class="b-inventory-list__product-link">
-            <v-avatar :size="isMobile ? 40 : 44" rounded="lg" class="b-inventory-list__avatar hover-scale-small">
+            <v-avatar :size="wholesaleLayout ? 38 : isMobile ? 40 : 44" rounded="lg" class="b-inventory-list__avatar hover-scale-small">
               <v-img :src="getShopImagePath(item.icon, IMAGE_SIZE_SMALL) || getProductTypeImage(item.type)" :alt="item.title" cover>
                 <template v-slot:error><v-img :src="getProductTypeImage(item.type)" :alt="item.title" /></template>
               </v-img>
@@ -260,8 +293,10 @@
             <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('inventory_list.open_product') }}</v-tooltip>
           </router-link>
           <div class="b-inventory-list__product-copy">
-            <div class="b-inventory-list__product-name">{{ item.title }}</div>
+            <router-link v-if="wholesaleLayout" class="b-inventory-list__product-name" :to="{name:'BPageProductDashboard',params:{product_id:item.id}}">{{ item.title }}</router-link>
+            <div v-else class="b-inventory-list__product-name">{{ item.title }}</div>
             <div v-if="item.title_en" class="b-inventory-list__secondary">{{ item.title_en }}</div>
+            <button v-if="wholesaleLayout" v-copy type="button" class="b-inventory-list__copy b-inventory-list__secondary" :aria-label="$t('global.actions.copy') + ' ' + item.code" @click.stop><bdi>{{ item.code }}</bdi></button>
             <variant-item-view-micro v-if="item.variant" :product-variant="item.variant" />
           </div>
         </div>
@@ -310,9 +345,11 @@
 
       <template v-slot:item.sku="{ item }">
         <div v-if="modern" class="b-inventory-list__identifiers" dir="ltr">
-          <span v-if="item.sku" v-copy class="b-inventory-list__identifier">{{ item.sku }}</span>
+          <button v-if="wholesaleLayout && item.sku" v-copy type="button" class="b-inventory-list__copy b-inventory-list__identifier" @click.stop><bdi>{{ item.sku }}</bdi></button>
+          <span v-else-if="item.sku" v-copy class="b-inventory-list__identifier">{{ item.sku }}</span>
           <span v-else class="b-inventory-list__secondary">—</span>
-          <span v-if="item.mpn" v-copy class="b-inventory-list__identifier b-inventory-list__secondary">{{ item.mpn }}</span>
+          <button v-if="wholesaleLayout && item.mpn" v-copy type="button" class="b-inventory-list__copy b-inventory-list__identifier b-inventory-list__secondary" @click.stop><bdi>{{ item.mpn }}</bdi></button>
+          <span v-else-if="item.mpn" v-copy class="b-inventory-list__identifier b-inventory-list__secondary">{{ item.mpn }}</span>
         </div>
         <div v-else>
           <span v-copy :class="modern ? 'b-inventory-list__identifier' : 'min-width-50 text-subtitle-2 py-2'" dir="ltr">{{
@@ -336,11 +373,11 @@
       <template v-slot:item.status="{ item }">
         <div v-if="modern" class="b-inventory-list__status-stack">
         <span class="b-inventory-list__status">
-          <span v-if="!item.disabled" class="sd-modern-status__dot" :style="{ backgroundColor: item.status === 'Open' ? 'rgb(var(--v-theme-success))' : 'rgb(var(--v-theme-on-surface))' }"></span>
+          <span class="sd-modern-status__dot" :class="'sd-modern-status__dot--' + statusTone(item)"></span>
           {{ $t(item.disabled ? 'inventory_list.table.close_state' : ProductStatus[item.status].name) }}
         </span>
         <span v-if="item.original" class="b-inventory-list__original">
-          <v-icon size="13" color="success" aria-hidden="true">check</v-icon>
+          <v-icon size="13" color="success" class="no-inv" aria-hidden="true">check</v-icon>
           {{ $t('inventory_list.table.original') }}
         </span>
         </div>
@@ -362,11 +399,11 @@
         >
           {{ item.quantity }}
           <span
-            v-if="item.add ? item.number !== 0 : item.quantity !== item.number"
+            v-if="isChanged(item)"
           >
             <i class="fas fa-caret-right mx-2" />
             <span class="highlight-value">{{
-              item.add ? item.quantity + item.number : item.number
+              stockTarget(item)
             }}</span>
           </span>
         </div>
@@ -426,9 +463,11 @@
         </div>
         <!-- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
-        <div v-else-if="item.type === ProductType.PHYSICAL.code" :class="modern ? 'b-inventory-list__quantity-editor' : 'p-2'">
+        <div v-else-if="canEditStock(item)" :class="modern ? 'b-inventory-list__quantity-editor' : 'p-2'">
           <u-number-input
             v-model="item.number"
+            @update:model-value="delete stock_errors[item.key]"
+            :disabled="!!stock_busy[item.key] || busy_fetch"
             :min="item.add ? -1000 : 0"
             :background-color="modern ? 'transparent' : '#fafafa'"
             :class="modern ? 'b-inventory-list__quantity-field' : 'max-width-field inline-block vertical-align-middle center-input strong-field min-width-300'"
@@ -444,6 +483,8 @@
             <template v-slot:prepend-inner>
               <v-btn-toggle
                 v-model="item.add"
+                @update:model-value="delete stock_errors[item.key]"
+                :disabled="!!stock_busy[item.key] || busy_fetch"
                 :class="modern ? 'b-inventory-list__quantity-mode' : 'vertical-align-middle pa-1 bg-white'"
                 density="compact"
                 mandatory
@@ -454,10 +495,10 @@
                 :role="modern ? 'group' : undefined"
                 :aria-label="modern ? `${$t('inventory_list.table.edit')} · ${item.title}` : undefined"
               >
-                <v-btn :value="true" :aria-pressed="modern ? item.add === true : undefined" :variant="modern ? 'text' : undefined" :selected-class="modern ? undefined : 'green-flat'" size="small">
+                <v-btn :value="true" :disabled="!!stock_busy[item.key] || busy_fetch" :aria-pressed="modern ? item.add === true : undefined" :variant="modern ? 'text' : undefined" :selected-class="modern ? undefined : 'green-flat'" size="small">
                   {{ $t("global.actions.add") }}
                 </v-btn>
-                <v-btn :value="false" :aria-pressed="modern ? item.add === false : undefined" :variant="modern ? 'text' : undefined" :selected-class="modern ? undefined : 'blue-flat'" size="small">
+                <v-btn :value="false" :disabled="!!stock_busy[item.key] || busy_fetch" :aria-pressed="modern ? item.add === false : undefined" :variant="modern ? 'text' : undefined" :selected-class="modern ? undefined : 'blue-flat'" size="small">
                   {{ $t("global.actions.set") }}
                 </v-btn>
               </v-btn-toggle>
@@ -470,18 +511,23 @@
                     ? item.number === 0
                     : item.number === item.quantity,
                 }]"
-                :disabled="modern ? !isChanged(item) : undefined"
+                :disabled="!isChanged(item) || !!stock_busy[item.key] || busy_fetch"
                 :color="modern ? (isChanged(item) ? 'primary' : undefined) : isChanged(item) ? '#000' : '#999'"
-                :loading="busy_count === item.key"
+                :loading="!!stock_busy[item.key]"
                 :variant="modern ? (isChanged(item) ? 'elevated' : 'text') : isChanged(item) ? 'elevated' : 'plain'"
                 rounded="lg"
                 :min-height="modern ? (isMobile ? 44 : 32) : $vuetify.display.xs ? 36 : 52"
                 @click.stop="updateProductQuantity(item)"
               >
-                {{ $t("global.actions.save") }}
+                <v-icon v-if="wholesaleLayout" start size="14" aria-hidden="true">save</v-icon>
+                {{ $t(stock_errors[item.key] ? 'global.actions.retry' : 'global.actions.save') }}
               </v-btn>
             </template>
           </u-number-input>
+          <div v-if="modern" class="b-inventory-list__stock-feedback" role="status">
+            <template v-if="stock_errors[item.key]"><v-icon size="13" color="error" class="no-inv">error_outline</v-icon>{{ $t('inventory_list.modern.quantity_save_error') }}</template>
+            <template v-else-if="!validStock(item)"><v-icon size="13" color="error" class="no-inv">error_outline</v-icon>{{ $t('inventory_list.modern.quantity_invalid') }}</template>
+          </div>
         </div>
         <div v-else>
           <small>{{ $t("inventory_list.cant_set_here") }}</small>
@@ -490,7 +536,8 @@
 
       <template v-slot:bottom>
         <div :class="{ 'sd-modern-table-footer b-inventory-list__footer': modern }">
-          <span v-if="modern" class="b-inventory-list__secondary">{{ $t('global.commons.total') }}: {{ totalItems }}</span>
+          <span v-if="wholesaleLayout" class="b-inventory-list__secondary">{{ $t('inventory_list.modern.product_count', {count: busy_fetch || fetch_error ? '—' : totalItems}) }} · {{ $t('inventory_list.modern.row_count', {count: busy_fetch || fetch_error ? '—' : items.length}) }}</span>
+          <span v-else-if="modern" class="b-inventory-list__secondary">{{ $t('global.commons.total') }}: {{ totalItems }}</span>
           <v-pagination v-model="page" :length="pageCount" :class="{ 'sd-modern-pagination': modern }" :total-visible="modern ? 5 : undefined" rounded />
         </div>
       </template>
@@ -519,23 +566,36 @@
     v-model="show_price_dialog"
     fullscreen
     scrollable
+    :persistent="wholesaleLayout && busy_save_price"
     transition="dialog-bottom-transition"
   >
-    <v-card v-if="item_clone && show_price_dialog_pre" class="text-start" :class="{ 'sd-modern-canvas b-inventory-list__price-dialog': modern }">
+    <v-card v-if="item_clone && show_price_dialog_pre" class="text-start" :class="{ 'sd-modern-canvas b-inventory-list__price-dialog': modern, 'b-inventory-list__price-dialog--wholesale': wholesaleLayout }">
       <v-card-title class="d-flex align-center">
         <u-avatar-folder
-          class="me-2"
-          :size="48"
-          elevated
+          :class="{ 'me-2': !wholesaleLayout }"
+          :size="wholesaleLayout ? 38 : 48"
+          :elevated="!wholesaleLayout"
           side-icon="shelves"
           placeholder-icon="inventory"
           :src="getShopImagePath(selected_item.icon, IMAGE_SIZE_SMALL)"
           is-gray
-          border-size="8"
+          :border-size="wholesaleLayout ? 0 : 8"
         >
         </u-avatar-folder>
 
-        <div class="flex-grow-1 overflow-hidden">
+        <div v-if="wholesaleLayout" class="b-inventory-list__price-identity">
+          <h2>{{ $t('add_product.pricing.modern.dialog_title') }}</h2>
+          <div class="b-inventory-list__price-context">
+            <span>{{ selected_item?.product?.title }}</span>
+            <span aria-hidden="true">·</span>
+            <bdi>{{ selected_item.code }}</bdi>
+            <variant-item-view-micro
+              v-if="selected_item.variant"
+              :product-variant="selected_item.variant"
+            />
+          </div>
+        </div>
+        <div v-else class="flex-grow-1 overflow-hidden">
           {{ selected_item?.product?.title }}
 
           <div class="small single-line">
@@ -547,11 +607,13 @@
           class="ms-2"
           :class="{ 'sd-modern-icon-button': modern }"
           :aria-label="$t('global.actions.close')"
+          :disabled="wholesaleLayout && busy_save_price"
           icon
           @click="show_price_dialog = false"
           variant="text"
         >
           <v-icon>close</v-icon>
+          <v-tooltip v-if="modern" activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('global.actions.close') }}</v-tooltip>
         </v-btn>
       </v-card-title>
 
@@ -559,6 +621,8 @@
         <b-product-edit-price
           ref="price_edit"
           :customObject="item_clone"
+          :product="instanceProduct"
+          :variant="selected_item?.variant"
           :instance-object="selected_item"
           :instance-original-product="instanceProduct"
           :instance-product-id="selected_item.id"
@@ -566,8 +630,8 @@
           :instance-variant-pricing="variant_pricing"
           :is-marketplace="is_marketplace"
           :shop="shop"
-          class="mt-4"
-          :class="{ 'sd-modern-form': modern }"
+          :modern="wholesaleLayout"
+          :class="{ 'mt-4': !wholesaleLayout, 'sd-modern-form': modern }"
           external-action-buttons
           instance-mode
           light
@@ -575,9 +639,31 @@
           @update:instance="onUpdatePrice"
         >
         </b-product-edit-price>
+        <div v-if="wholesaleLayout" class="b-inventory-list__price-consequence"><v-icon size="18" color="warning" class="no-inv" aria-hidden="true">info_outline</v-icon><span>{{ $t('inventory_list.modern.reseller_price_consequence') }}</span></div>
       </v-card-text>
       <v-card-actions :class="{ 'sd-modern-form-actions': modern }">
-        <div class="widget-buttons">
+        <div v-if="wholesaleLayout" class="b-inventory-list__price-actions">
+          <v-btn
+            class="sd-modern-button"
+            variant="outlined"
+            :disabled="busy_save_price"
+            @click="show_price_dialog = false"
+          >
+            {{ $t('global.actions.cancel') }}
+          </v-btn>
+          <v-btn
+            class="sd-modern-button sd-modern-button--primary"
+            color="primary"
+            variant="elevated"
+            :loading="busy_save_price"
+            :disabled="busy_save_price"
+            @click="savePrice"
+          >
+            <v-icon start size="18" aria-hidden="true">save</v-icon>
+            {{ $t('global.actions.save') }}
+          </v-btn>
+        </div>
+        <div v-else class="widget-buttons">
           <v-btn
             :size="modern ? undefined : 'x-large'"
             :class="{ 'sd-modern-button': modern }"
@@ -595,10 +681,7 @@
             :size="modern ? undefined : 'x-large'"
             :class="{ 'sd-modern-button': modern }"
             variant="elevated"
-            @click="
-              $refs.price_edit.setProductPrice();
-              busy_save_price = true;
-            "
+            @click="savePrice"
           >
             <v-icon start>save</v-icon>
             {{ $t("global.actions.save") }}
@@ -612,6 +695,7 @@
   <b-inventory-bulk-price
     v-model="show_bulk_price"
     :shop="shop"
+    :modern="modern"
     @update="onRefresh"
   >
   </b-inventory-bulk-price>
@@ -619,6 +703,7 @@
   <b-inventory-bulk-discount
     v-model="show_bulk_discount"
     :shop="shop"
+    :modern="modern"
     @update="onRefresh"
   >
   </b-inventory-bulk-discount>
@@ -642,6 +727,7 @@ import BInventoryListGroupHeader from "../../inventory/list/group-header/BInvent
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
 import UPriceInvalid from "@selldone/components-vue/ui/price/invalid/UPriceInvalid.vue";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import { CurrencyHelper } from "@selldone/core-js/helper/currency/CurrencyHelper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -682,8 +768,11 @@ export default {
       tab: "list",
 
       busy_fetch: false,
-
-      busy_count: false,
+      fetch_error: false,
+      fetch_id: 0,
+      lifecycle_id: 0,
+      stock_busy: {},
+      stock_errors: {},
 
       products: [],
 
@@ -730,8 +819,26 @@ export default {
   },
 
   computed: {
+    wholesaleLayout() {
+      return this.modern && this.onlyDropshipping;
+    },
+    groupItems() {
+      return [
+        {title:this.$t('inventory_list.group_auto'), value:'auto'},
+        {title:this.$t('inventory_list.grouped'), value:true},
+        {title:this.$t('inventory_list.expanded'), value:false},
+      ];
+    },
+    flatSort: {
+      get() { return this.sortBy[0]?.key ?? null; },
+      set(key) { this.sortBy = [{key, order:this.sortBy[0]?.order || 'desc'}]; },
+    },
+    sortItems() {
+      return [{title:this.$t('inventory_list.modern.sort_default'),value:null},
+        ...['title','id','sku','mpn','status','original','quantity','price'].map(key=>({title:this.$t(key === 'price' ? 'global.commons.price' : 'inventory_list.table.' + ({title:'product',id:'code',quantity:'in_stock'}[key] || key)),value:key}))];
+    },
     isMobile() {
-      return this.modern
+      return this.wholesaleLayout ? this.$vuetify.display.width <= 800 : this.modern
         ? this.$vuetify.display.width < 1200
         : this.$vuetify.display.xs;
     },
@@ -767,7 +874,7 @@ export default {
 
     headers() {
       if (this.modern) {
-        const columns = [
+        let columns = [
           { title: this.$t('inventory_list.table.product'), value: 'title', align: 'start', sortable: true },
           { title: this.$t('inventory_list.table.code'), value: 'id', align: 'start', sortable: true },
           { title: `${this.$t('inventory_list.table.sku')} / ${this.$t('inventory_list.table.mpn')}`, value: 'sku', align: 'start', sortable: true },
@@ -777,7 +884,11 @@ export default {
           { title: this.$t('inventory_list.table.edit'), value: 'change', align: 'end', sortable: false },
         ];
         // Keep native mobile sorting for the secondary values without repeating their body cells.
-        if (this.isMobile) columns.splice(columns.length - 1, 0,
+        if (this.wholesaleLayout) {
+          const widths = {title:'28%',sku:'12%',status:'12%',quantity:'8%',price:'12%',change:'28%'};
+          columns = columns.filter(column=>column.value !== 'id').map(column=>({...column,width:widths[column.value],sortable:false}));
+        }
+        if (this.isMobile && !this.wholesaleLayout) columns.splice(columns.length - 1, 0,
           { title: this.$t('inventory_list.table.mpn'), value: 'mpn', sortable: true, cellProps: { class: 'b-inventory-list__merged-cell' } },
           { title: this.$t('inventory_list.table.original'), value: 'original', sortable: true, cellProps: { class: 'b-inventory-list__merged-cell' } },
         );
@@ -905,6 +1016,21 @@ export default {
   },
 
   watch: {
+    'shop.id'() {
+      this.lifecycle_id++;
+      this.fetch_id++;
+      this.products = [];
+      this.items = [];
+      this.totalItems = 0;
+      this.stock_busy = {};
+      this.stock_errors = {};
+      this.selected_item = null;
+      this.show_price_dialog = false;
+      this.show_bulk_price = false;
+      this.show_bulk_discount = false;
+      this.page = 1;
+      this.fetchData(1, this.sortBy[0]?.key, this.sortBy[0]?.order === 'desc');
+    },
     // Pagination:
     options: {
       handler() {
@@ -916,6 +1042,7 @@ export default {
 
     products() {
       if (!this.products) return [];
+      const previous = new Map(this.items.map(item=>[item.key,item]));
       let out = [];
       this.products.forEach((product) => {
         let product_variants = product.product_variants;
@@ -1013,41 +1140,72 @@ export default {
           });
         }
       });
-      this.items = out;
+      // Preserve edits in other rows when one saved row refreshes the server list.
+      this.items = out.map(item=>{
+        const draft = previous.get(item.key);
+        return draft ? {...item, number:draft.number, add:draft.add} : item;
+      });
     },
   },
   created() {},
+  beforeUnmount() {
+    this.fetch_id++;
+    this.lifecycle_id++;
+  },
   methods: {
+    displayCurrency() {
+      return CurrencyHelper.GetUserSelectedCurrency(this.$localstorage_base_path());
+    },
+    reverseSort() {
+      this.sortBy = [{key:this.flatSort,order:this.sortBy[0]?.order === 'desc' ? 'asc' : 'desc'}];
+    },
+    statusTone(item) {
+      if(item.disabled || ['Close','Rejected'].includes(item.status)) return 'error';
+      if(item.status === 'Pending') return 'warning';
+      return item.status === 'Open' ? 'success' : 'neutral';
+    },
+    canEditStock(item) {
+      return item.type === ProductType.PHYSICAL.code && !item.product?.parent_id && !this.is_marketplace;
+    },
+    stockTarget(item) {
+      return item.add ? Number(item.quantity) + Number(item.number) : Number(item.number);
+    },
+    validStock(item) {
+      return item.number !== null && String(item.number).trim() !== '' && Number.isInteger(Number(item.number)) && (item.add ? Number(item.number) >= -1000 : Number(item.number) >= 0) && this.stockTarget(item) >= 0;
+    },
     onSearch(event) {
       this.search_type = event.search_type;
       this.search = event.search;
       this.page = 1;
-      this.fetchData(1);
+      this.fetchData(1, this.sortBy[0]?.key, this.sortBy[0]?.order === "desc");
     },
 
     onClear() {
       this.search_type = null;
       this.search = null;
-      this.fetchData(1);
+      this.page = 1;
+      this.fetchData(1, this.sortBy[0]?.key, this.sortBy[0]?.order === "desc");
     },
 
     onRefresh() {
-      const { sortBy, page, itemsPerPage } = this.options;
-      this.fetchData(page, sortBy[0]?.key, sortBy[0]?.order === "desc");
+      return this.fetchData(this.page, this.sortBy[0]?.key, this.sortBy[0]?.order === "desc");
     },
     //================================= Product Filter ===================================
 
     updateProductQuantity(item) {
-      this.busy_count = item.key;
+      if (!this.shop?.id || this.stock_busy[item.key] || !this.isChanged(item)) return;
+      const shopId = this.shop.id;
+      const lifecycleId = this.lifecycle_id;
+      const key = item.key;
+      const quantity = this.stockTarget(item);
+      const isCurrent = () => this.shop?.id === shopId && this.lifecycle_id === lifecycleId;
+      this.stock_busy[key] = true;
+      delete this.stock_errors[key];
 
-      let quantity = item.add
-        ? parseInt(item.quantity) + parseInt(item.number)
-        : parseInt(item.number);
-
-      axios
+      return axios
         .post(
           window.API.POST_PRODUCT_QUANTITY(
-            this.$route.params.shop_id,
+            shopId,
             item.product_id,
             item.variant ? item.variant.id : null,
           ),
@@ -1056,37 +1214,53 @@ export default {
           },
         )
         .then((response) => {
+          if (!isCurrent()) return;
           if (!response.data.error) {
             NotificationService.showSuccessAlert(
               null,
               this.$t("inventory_list.notifications.save_success"),
             );
-            item.quantity = response.data.quantity;
-
-            if (item.add) item.number = 0;
-            //item.add = true;
-            this.$forceUpdate(); // Update vue component!
+            const current = this.items.find(row => row.key === key);
+            if (current) {
+              current.quantity = response.data.quantity;
+              current.number = current.add ? 0 : response.data.quantity;
+              if (current.variant) current.variant.quantity = response.data.quantity;
+              else current.product.quantity = response.data.quantity;
+            }
+            // Refresh aggregate stock and server ordering without dropping other row drafts.
+            this.onRefresh();
           } else {
+            this.stock_errors[key] = true;
             NotificationService.showErrorAlert(null, response.data.error_msg);
           }
         })
         .catch((error) => {
+          if (!isCurrent()) return;
+          this.stock_errors[key] = true;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
-          this.busy_count = null;
+          if (isCurrent()) delete this.stock_busy[key];
         });
     },
     onFilterChange() {
       this.page = 1;
-      this.fetchData(1);
+      this.fetchData(1, this.sortBy[0]?.key, this.sortBy[0]?.order === "desc");
     },
 
     fetchData(page = 1, sortBy = null, sortDesc = true) {
+      const shopId = this.shop?.id;
+      const fetchId = ++this.fetch_id;
+      if (!shopId) {
+        this.busy_fetch = false;
+        return;
+      }
+      const isCurrent = () => this.shop?.id === shopId && this.fetch_id === fetchId;
       this.busy_fetch = true;
+      this.fetch_error = false;
 
-      axios
-        .get(window.API.GET_ALL_MY_PRODUCTS(this.$route.params.shop_id), {
+      return axios
+        .get(window.API.GET_ALL_MY_PRODUCTS(shopId), {
           params: {
             statuses: this.filters?.filter((x) => !!ProductStatus[x]),
             types: this.filters?.filter((x) => !!ProductType[x]),
@@ -1124,12 +1298,24 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (!isCurrent()) return;
+          if (data.error) {
+            this.products = [];
+            this.fetch_error = true;
+            NotificationService.showErrorAlert(null, data.error_msg);
+            return;
+          }
           this.products = data.products;
           this.totalItems = data.total;
         })
-        .catch((error) => {})
+        .catch((error) => {
+          if (!isCurrent()) return;
+          this.products = [];
+          this.fetch_error = true;
+          NotificationService.showLaravelError(error);
+        })
         .finally(() => {
-          this.busy_fetch = false;
+          if (isCurrent()) this.busy_fetch = false;
         });
     },
 
@@ -1143,15 +1329,27 @@ export default {
 
       this.busy_save_price = false;
       this.show_price_dialog_pre = false;
+      const lifecycleId = this.lifecycle_id;
       this.$nextTick(() => {
+        if (this.lifecycle_id !== lifecycleId) return;
         this.show_price_dialog_pre = true;
         this.show_price_dialog = true;
       });
     },
 
+    async savePrice() {
+      if (this.busy_save_price || !this.$refs.price_edit) return;
+      const lifecycleId = this.lifecycle_id;
+      this.busy_save_price = true;
+      try {
+        await this.$refs.price_edit.setProductPrice();
+      } finally {
+        if (this.lifecycle_id === lifecycleId) this.busy_save_price = false;
+      }
+    },
+
     onUpdatePrice() {
-      const { sortBy, page, itemsPerPage } = this.options;
-      this.fetchData(page, sortBy[0]?.key, sortBy[0]?.order === "desc");
+      this.onRefresh();
       this.show_price_dialog = false;
       this.busy_save_price = false;
     },
@@ -1228,7 +1426,7 @@ export default {
     },
 
     isChanged(item) {
-      return !(item.add ? item.number === 0 : item.number === item.quantity);
+      return this.canEditStock(item) && this.validStock(item) && this.stockTarget(item) !== Number(item.quantity);
     },
   },
 };
@@ -1439,6 +1637,159 @@ export default {
 .search-inline {
   display: inline-block;
   margin-right: 16px;
+}
+
+.b-inventory-list--wholesale {
+  font-size: 13px;
+  line-height: 20px;
+
+  .b-inventory-list__toolbar {
+    gap: 8px;
+    padding: 14px 18px;
+    > .v-spacer { flex-basis: 0; }
+    > .sd-modern-button { padding-inline: 8px; font-size: 13px; font-weight: 400; }
+  }
+  .b-inventory-list__group-select { flex: 0 1 126px; min-width: 100px; }
+  .b-inventory-list__search { flex: 1 1 194px; min-width: 170px; order: 1; }
+  .b-inventory-list__filter { flex: 0 1 142px; min-width: 125px; order: 2; }
+  .b-inventory-list__flat-sort { flex: 0 1 125px; min-width: 110px; order: 3; }
+  .b-inventory-list__reverse { order: 4; }
+  .b-inventory-list__group-select,
+  .b-inventory-list__flat-sort,
+  .b-inventory-list__filter,
+  .b-inventory-list__search {
+    :deep(.v-field__input) { min-height: 36px; padding-block: 0; font-size: 13px; line-height: 20px; }
+    :deep(.v-field__input > input) { min-height: 36px; height: 36px; }
+    :deep(.v-field__prepend-inner),
+    :deep(.v-field__append-inner) { align-items: center; padding-block: 0; }
+    :deep(.v-label) { font-size: 13px; line-height: 20px; }
+  }
+  .b-inventory-list__scan { min-width: 32px; width: 32px; height: 32px; }
+  .b-inventory-list__scope {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 18px;
+    border-block-end: 1px solid var(--sd-modern-border);
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+  }
+  .b-inventory-list__import { margin-inline-start: auto; }
+  .b-inventory-list__table {
+    min-height: 0;
+    :deep(.v-table__wrapper) { overflow: visible; }
+    :deep(.v-table__wrapper > table) { table-layout: fixed; width: 100%; }
+    :deep(.v-table__wrapper > table > tbody > tr > td) { padding: 15px 8px; font-size: 13px; line-height: 20px; }
+    :deep(.v-table__wrapper > table > thead > tr > th) { padding-inline: 8px; }
+    :deep(.v-table__wrapper > table > tbody > tr > td:first-child),
+    :deep(.v-table__wrapper > table > thead > tr > th:first-child) { padding-inline-start: 18px; }
+    :deep(.v-table__wrapper > table > tbody > tr > td:last-child),
+    :deep(.v-table__wrapper > table > thead > tr > th:last-child) { padding-inline-end: 18px; }
+  }
+  .b-inventory-list__product { align-items: flex-start; min-width: 0; max-width: none; }
+  .b-inventory-list__product-name { color: inherit; font-size: 13px; font-weight: 500; line-height: 20px; text-decoration: none; }
+  a.b-inventory-list__product-name:hover { color: rgb(var(--v-theme-primary)); }
+  a.b-inventory-list__product-name:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  .b-inventory-list__secondary { font-size: 11px; line-height: 17px; }
+  .b-inventory-list__copy { display: block; max-width: 100%; padding: 0; border: 0; background: transparent; text-align: start; letter-spacing: normal; text-transform: none; overflow-wrap: anywhere; }
+  .b-inventory-list__copy:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; border-radius: 2px; }
+  .b-inventory-list__identifiers { align-items: flex-start; }
+  .b-inventory-list__status { font-size: 12px; line-height: 18px; white-space: normal; text-align: start; }
+  .b-inventory-list__stock { min-width: 0; font-size: 15px; font-weight: 500; line-height: 22px; }
+  .b-inventory-list__stock > span { display: block; color: rgb(var(--v-theme-primary)); font-size: 11px; font-weight: 400; line-height: 17px; white-space: nowrap; }
+  .b-inventory-list__stock > span > i { margin-inline: 3px !important; }
+  .b-inventory-list__price {
+    min-height: 36px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+    :deep(.u--price),
+    :deep(.u--price .small) { font-size: 14px !important; font-weight: 500; }
+  }
+  .b-inventory-list__quantity-editor { width: 100%; min-width: 0; }
+  .b-inventory-list__quantity-field {
+    width: 100%;
+    min-width: 0;
+    :deep(.v-field__input) { min-height: 36px; height: 36px; font-size: 13px; line-height: 20px; }
+  }
+  .b-inventory-list__quantity-mode {
+    height: 34px;
+    > .v-btn { min-width: 28px; height: 28px; padding-inline: 6px; font-size: 11px; font-weight: 400; }
+    > .b-inventory-list__quantity-mode-selected :deep(.v-btn__overlay) { opacity: 0 !important; }
+  }
+  .b-inventory-list__save { min-width: 62px; min-height: 32px; padding-inline: 6px; font-size: 12px; font-weight: 400; white-space: nowrap; }
+  .b-inventory-list__save :deep(.v-btn__content) { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .b-inventory-list__save :deep(.v-icon--start) { margin-inline: 0; }
+  .b-inventory-list__stock-feedback { display: flex; align-items: flex-start; gap: 5px; min-height: 17px; margin-block-start: 4px; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; text-align: start; }
+  .b-inventory-list__stock-feedback > .v-icon { flex-shrink: 0; margin-block-start: 2px; }
+  .b-inventory-list__footer { gap: 8px; padding: 14px 18px; }
+
+  @media (max-width: 1080px) {
+    .b-inventory-list__toolbar > .v-spacer { flex-basis: 100%; height: 0; }
+    .b-inventory-list__search { flex-grow: 1; }
+  }
+  @media (max-width: 800px) {
+    .b-inventory-list__toolbar { padding: 12px 14px; }
+    .b-inventory-list__group-select { flex-grow: 1; }
+    .b-inventory-list__search { flex-basis: 100%; }
+    .b-inventory-list__filter { flex: 1 1 calc((100% - 60px) / 2); min-width: 0; }
+    .b-inventory-list__flat-sort { flex: 1 1 calc((100% - 60px) / 2); min-width: 0; }
+    .b-inventory-list__scope { padding-inline: 14px; }
+    .b-inventory-list__table {
+      :deep(.v-data-table__tr--mobile) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 15px 18px; padding: 18px 14px; border-block-end: 1px solid var(--sd-modern-border); }
+      :deep(.v-table__wrapper > table > tbody > .v-data-table__tr--mobile > td) { display: block; width: auto !important; min-height: 0; padding: 0 !important; border: 0; text-align: start !important; }
+      :deep(.v-data-table__tr--mobile > td:first-child),
+      :deep(.v-data-table__tr--mobile > td:last-child),
+      :deep(.v-data-table__tr--mobile > td:has(.b-inventory-list__product)) { grid-column: 1 / -1; }
+      :deep(.v-data-table__tr--mobile > td > .v-data-table__td-title) { display: block; margin-block-end: 5px; text-align: start; }
+      :deep(.v-data-table__tr--mobile > td:first-child > .v-data-table__td-title) { display: none; }
+      :deep(.v-data-table__tr--mobile > td > .v-data-table__td-value) { display: block; width: 100%; text-align: start; }
+      :deep(.v-data-table__tr--mobile > td.b-inventory-list__branch-cell) { display: none; }
+      :deep(.v-data-table__tr--mobile.b-inventory-list__child > td::before),
+      :deep(.v-data-table__tr--mobile.b-inventory-list__child > td::after) { display: none !important; }
+    }
+    .b-inventory-list__stock { text-align: start; }
+    .b-inventory-list__price { width: auto; justify-content: flex-start; }
+    .b-inventory-list__footer { flex-wrap: wrap; padding-inline: 14px; }
+  }
+  @media (max-width: 799px), (pointer: coarse) {
+    .b-inventory-list__quantity-mode { height: 50px; }
+    .b-inventory-list__quantity-mode > .v-btn { min-width: 44px; height: 44px; }
+    .b-inventory-list__save,
+    .b-inventory-list__price { min-height: 44px; min-width: 44px; }
+    .b-inventory-list__save { min-width: 68px; height: 44px; }
+    .b-inventory-list__scan { width: 44px; height: 44px; min-width: 44px; }
+    .b-inventory-list__quantity-field :deep(.v-field__input),
+    .b-inventory-list__group-select :deep(.v-field__input),
+    .b-inventory-list__flat-sort :deep(.v-field__input),
+    .b-inventory-list__filter :deep(.v-field__input),
+    .b-inventory-list__search :deep(.v-field__input) { min-height: 44px; height: 44px; font-size: 16px; }
+  }
+}
+
+.b-inventory-list__price-dialog {
+  > .v-card-title { font-weight: 500; line-height: 26px; }
+}
+
+.b-inventory-list__price-dialog--wholesale {
+  font-size: 14px;
+  line-height: 22px;
+
+  > .v-card-title { gap: 12px; padding: 18px 24px; white-space: normal; }
+  > .v-card-text { padding: 24px; }
+  > .v-card-actions { padding: 16px 24px; }
+
+  .b-inventory-list__price-identity { flex: 1; min-width: 0; }
+  .b-inventory-list__price-identity h2 { margin: 0; font-size: 20px; font-weight: 500; line-height: 27px; }
+  .b-inventory-list__price-context { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-block-start: 3px; color: var(--sd-modern-muted); font-size: 12px; font-weight: 400; line-height: 19px; overflow-wrap: anywhere; }
+  .b-inventory-list__price-context :deep(.product-variant-card-micro) { flex-wrap: wrap; padding: 0; font-size: inherit; font-weight: inherit; }
+  .b-inventory-list__price-context :deep(.card-badge-info) { color: inherit; font-size: inherit; font-weight: inherit; }
+  .b-inventory-list__price-consequence { display: flex; align-items: flex-start; gap: 8px; max-width: 760px; margin: 18px auto 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  .b-inventory-list__price-consequence > .v-icon { flex-shrink: 0; margin-block-start: 2px; }
+  .b-inventory-list__price-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; width: 100%; max-width: 760px; margin-inline: auto; }
+  .b-inventory-list__price-actions > .sd-modern-button { flex: 0 1 auto; margin: 0; font-size: 13px; font-weight: 500; line-height: 20px; }
 }
 
 .price-btn {

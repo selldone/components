@@ -13,23 +13,58 @@
   -->
 
 <template>
-  <v-menu>
+  <v-menu
+    :content-class="modern ? 'rounded-lg sd-modern-menu text-start' : undefined"
+    :min-width="modern ? 220 : undefined"
+    :max-width="modern ? 'calc(100vw - 24px)' : undefined"
+  >
     <template v-slot:activator="{ props }">
-      <v-btn class="px-2" v-bind="props" variant="outlined">
+      <v-btn
+        v-if="modern"
+        v-bind="props"
+        icon
+        variant="text"
+        class="sd-modern-icon-button"
+        :aria-label="$t('transportation_orders.provider_tools')"
+        @click.stop
+      >
+        <v-icon size="18" aria-hidden="true">more_horiz</v-icon>
+        <v-tooltip
+          activator="parent"
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          :open-on-focus="true"
+          :persistent="false"
+          >{{ $t("transportation_orders.provider_tools") }}</v-tooltip
+        >
+      </v-btn>
+      <v-btn v-else class="px-2" v-bind="props" variant="outlined">
         Fulfilled
 
         <v-divider class="mx-2" vertical></v-divider>
         <v-icon size="small">expand_more</v-icon>
       </v-btn>
     </template>
-    <v-list class="text-start">
+    <v-list
+      class="text-start"
+      :class="{
+        'sd-modern-menu__list delivery-service-fulfilled-button__list': modern,
+      }"
+      :density="modern ? 'compact' : undefined"
+    >
       <v-list-item
         v-if="hasRefresh"
         prepend-icon="refresh"
         @click="$emit('refresh')"
       >
         <v-list-item-title
-          >{{ $t("global.actions.refresh") }}
+          >{{
+            $t(
+              modern
+                ? "transportation_orders.refresh_provider"
+                : "global.actions.refresh",
+            )
+          }}
         </v-list-item-title>
       </v-list-item>
 
@@ -38,8 +73,12 @@
         :href="transportationOrder.label"
         prepend-icon="download"
         target="_blank"
+        :rel="modern ? 'noopener noreferrer' : undefined"
+        :append-icon="modern ? 'north_east' : undefined"
       >
-        <v-list-item-title>Download label</v-list-item-title>
+        <v-list-item-title>{{
+          modern ? $t("transportation_orders.download_label") : "Download label"
+        }}</v-list-item-title>
       </v-list-item>
 
       <v-list-item
@@ -47,17 +86,27 @@
         :href="transportationOrder.qr_code"
         prepend-icon="qr_code_scanner"
         target="_blank"
+        :rel="modern ? 'noopener noreferrer' : undefined"
+        :append-icon="modern ? 'north_east' : undefined"
       >
-        <v-list-item-title>QR Code</v-list-item-title>
+        <v-list-item-title>{{
+          modern ? $t("transportation_orders.qr_code") : "QR Code"
+        }}</v-list-item-title>
       </v-list-item>
 
       <v-list-item
         v-if="deliveryService.url"
         :href="deliveryService.url"
-        prepend-icon="open_in_new"
+        :prepend-icon="modern ? 'open_in_browser' : 'open_in_new'"
         target="_blank"
+        :rel="modern ? 'noopener noreferrer' : undefined"
+        :append-icon="modern ? 'north_east' : undefined"
       >
-        <v-list-item-title>View & manage order</v-list-item-title>
+        <v-list-item-title>{{
+          modern
+            ? $t("transportation_orders.manage_provider_order")
+            : "View & manage order"
+        }}</v-list-item-title>
       </v-list-item>
 
       <v-list-item
@@ -65,8 +114,16 @@
         :href="transportationOrder.track"
         prepend-icon="gps_fixed"
         target="_blank"
+        :rel="modern ? 'noopener noreferrer' : undefined"
+        :append-icon="modern ? 'north_east' : undefined"
       >
-        <v-list-item-title>{{ $t("global.actions.track") }}</v-list-item-title>
+        <v-list-item-title>{{
+          $t(
+            modern
+              ? "transportation_orders.tracking_link"
+              : "global.actions.track",
+          )
+        }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -76,6 +133,7 @@
 export default {
   name: "DeliveryServiceFulfilledButton",
   props: {
+    modern: Boolean,
     deliveryService: { type: Object, required: true },
     transportationOrder: { required: true },
     hasRefresh: { type: Boolean, default: false },
@@ -83,4 +141,25 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.delivery-service-fulfilled-button__list {
+  :deep(.v-list-item-title) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  :deep(.v-list-item__prepend .v-icon) {
+    font-size: 18px;
+  }
+
+  :deep(.v-list-item__append .v-icon) {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .delivery-service-fulfilled-button__list :deep(.v-list-item) {
+    min-height: 44px;
+  }
+}
+</style>

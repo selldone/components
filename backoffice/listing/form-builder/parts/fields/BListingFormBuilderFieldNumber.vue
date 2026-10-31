@@ -1,19 +1,23 @@
 <template>
-  <div class="sld-bfb-fcfg">
-    <v-text-field v-model="nameProxy" label="Field key (name)" variant="outlined" density="comfortable" />
-    <v-text-field v-model="titleProxy" label="Label" variant="outlined" density="comfortable" />
+  <div class="sld-bfb-fcfg" :class="{ 'sd-modern-underlined-field': listingFormBuilderModern }">
+    <v-text-field v-model="nameProxy" :label="$t('shop_listing.form_builder.field_key')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
+    <v-text-field v-model="titleProxy" :label="$t('shop_listing.form_builder.label')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
     <div class="sld-bfb-row">
-      <v-text-field v-model="minProxy" type="number" label="Min" variant="outlined" density="comfortable" />
-      <v-text-field v-model="maxProxy" type="number" label="Max" variant="outlined" density="comfortable" />
-      <v-text-field v-model="stepProxy" type="number" label="Step" variant="outlined" density="comfortable" />
+      <v-text-field v-model="minProxy" type="number" :label="$t('shop_listing.form_builder.min')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
+      <v-text-field v-model="maxProxy" type="number" :label="$t('shop_listing.form_builder.max')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
+      <v-text-field v-model="stepProxy" type="number" :label="$t('shop_listing.form_builder.increment')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
     </div>
-    <v-switch v-model="requiredProxy" label="Required" inset />
+    <u-smart-toggle v-if="listingFormBuilderModern" v-model="requiredProxy" accessible border false-gray class="sd-modern-smart-select" :true-title="$t('shop_listing.form_builder.required')" :false-title="$t('shop_listing.form_builder.optional')" />
+    <v-switch v-else v-model="requiredProxy" :label="$t('shop_listing.form_builder.required')" inset />
   </div>
 </template>
 
 <script lang="ts">
+import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 export default {
   name: "BListingFormBuilderFieldNumber",
+  components: { USmartToggle },
+  inject: { listingFormBuilderModern: { default: false } },
   props: { modelValue: { type: Object, required: true } },
   emits: ["update:modelValue"],
 
@@ -85,14 +89,17 @@ export default {
 .sld-bfb-fcfg {
   display: grid;
   gap: 10px;
+  min-width: 0;
 }
 .sld-bfb-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+  min-width: 0;
 
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
   }
 }
+.sld-bfb-fcfg.sd-modern-underlined-field { gap: 26px; }
 </style>

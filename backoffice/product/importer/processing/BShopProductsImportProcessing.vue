@@ -13,18 +13,53 @@
   -->
 
 <template>
-  <div v-if="importing || images_que" class="widget-box mb-5">
-    <p class="font-weight-black mt-2 text-uppercase">
-      <i class="fas fa-cog fa-spin me-1"></i>
-      {{ $t("product_import_processing.title") }}
-    </p>
-    <u-loading-progress color="blue" stream></u-loading-progress>
+  <div
+    v-if="importing || images_que"
+    class="b-shop-products-import-processing text-start"
+    :class="
+      modern
+        ? 'b-shop-products-import-processing--modern sd-modern-widget'
+        : 'widget-box mb-5'
+    "
+  >
+    <div v-if="modern" class="b-shop-products-import-processing__identity">
+      <b-shop-products-import-processing-icon
+        name="refresh"
+        :size="18"
+        class="b-shop-products-import-processing__refresh"
+      />
+      <div class="b-shop-products-import-processing__copy" role="status">
+        <p
+          class="b-shop-products-import-processing__status sd-modern-status sd-modern-status--plain"
+        >
+          <span
+            class="sd-modern-status__dot sd-modern-status__dot--warning"
+            aria-hidden="true"
+          />
+          {{ $t("product_import_processing.refined_title") }}
+        </p>
+        <p class="b-shop-products-import-processing__subtitle">
+          {{ $t("product_import_processing.refined_subtitle") }}
+        </p>
+      </div>
+    </div>
+    <template v-else>
+      <p class="font-weight-black mt-2 text-uppercase">
+        <i class="fas fa-cog fa-spin me-1"></i>
+        {{ $t("product_import_processing.title") }}
+      </p>
+      <u-loading-progress color="blue" stream></u-loading-progress>
 
-    <v-list-subheader>
-      {{ $t("product_import_processing.message") }}
-    </v-list-subheader>
+      <v-list-subheader>
+        {{ $t("product_import_processing.message") }}
+      </v-list-subheader>
+    </template>
 
-    <div class="widget-buttons">
+    <div
+      :class="
+        modern ? 'b-shop-products-import-processing__queues' : 'widget-buttons'
+      "
+    >
       <v-btn
         v-if="importing"
         :to="{
@@ -32,16 +67,46 @@
             ? 'VendorProductsImportQuePage'
             : 'BPageShopProductsProductsQue',
         }"
-        size="x-large"
-        variant="flat"
+        :size="modern ? undefined : 'x-large'"
+        :variant="modern ? 'text' : 'flat'"
+        :class="{
+          'b-shop-products-import-processing__queue sd-modern-button sd-modern-button--inline':
+            modern,
+        }"
+        :aria-label="
+          modern
+            ? $t('product_import_processing.products_queue') + ': ' + importing
+            : undefined
+        "
       >
-        <v-icon class="me-2">fa:fas fa-box</v-icon>
-        <div class="d-flex flex-column">
-          <div class="small">{{ $t("admin_shop.products.view_que_list") }}</div>
-          <div>
-            {{ $t("global.commons.products") }} | <b>{{ importing }}</b>
+        <template v-if="modern">
+          <b-shop-products-import-processing-icon name="package" />
+          <span>{{ $t("global.commons.products") }}</span>
+          <strong>{{ importing }}</strong>
+          <b-shop-products-import-processing-icon
+            class="b-shop-products-import-processing__chevron"
+            name="chevron-right"
+            :size="14"
+          />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+            :text="$t('product_import_processing.products_queue')"
+            :open-on-focus="true"
+          />
+        </template>
+        <template v-else>
+          <v-icon class="me-2">fa:fas fa-box</v-icon>
+          <div class="d-flex flex-column">
+            <div class="small">
+              {{ $t("admin_shop.products.view_que_list") }}
+            </div>
+            <div>
+              {{ $t("global.commons.products") }} | <b>{{ importing }}</b>
+            </div>
           </div>
-        </div>
+        </template>
       </v-btn>
       <v-btn
         v-if="images_que"
@@ -50,30 +115,74 @@
             ? 'VendorProductsImageImportQuePage'
             : 'BPageShopProductsImagesQue',
         }"
-        size="x-large"
-        variant="flat"
+        :size="modern ? undefined : 'x-large'"
+        :variant="modern ? 'text' : 'flat'"
+        :class="{
+          'b-shop-products-import-processing__queue sd-modern-button sd-modern-button--inline':
+            modern,
+        }"
+        :aria-label="
+          modern
+            ? $t('product_import_processing.images_queue') + ': ' + images_que
+            : undefined
+        "
       >
-        <v-icon class="me-2">fa:fas fa-image</v-icon>
-        <div class="d-flex flex-column">
-          <div class="small">{{ $t("admin_shop.products.view_que_list") }}</div>
-          <div>
-            {{ $t("global.commons.images") }} | <b>{{ images_que }}</b>
+        <template v-if="modern">
+          <b-shop-products-import-processing-icon name="image" />
+          <span>{{ $t("global.commons.images") }}</span>
+          <strong>{{ images_que }}</strong>
+          <b-shop-products-import-processing-icon
+            class="b-shop-products-import-processing__chevron"
+            name="chevron-right"
+            :size="14"
+          />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+            :text="$t('product_import_processing.images_queue')"
+            :open-on-focus="true"
+          />
+        </template>
+        <template v-else>
+          <v-icon class="me-2">fa:fas fa-image</v-icon>
+          <div class="d-flex flex-column">
+            <div class="small">
+              {{ $t("admin_shop.products.view_que_list") }}
+            </div>
+            <div>
+              {{ $t("global.commons.images") }} | <b>{{ images_que }}</b>
+            </div>
           </div>
-        </div>
+        </template>
       </v-btn>
     </div>
 
-    <slot></slot>
+    <template v-if="modern">
+      <div
+        v-if="$slots.default"
+        class="b-shop-products-import-processing__actions"
+      >
+        <slot />
+      </div>
+    </template>
+    <slot v-else />
   </div>
 </template>
 
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import BShopProductsImportProcessingIcon from "./BShopProductsImportProcessingIcon.vue";
 
 export default {
   name: "BShopProductsImportProcessing",
+  components: { BShopProductsImportProcessingIcon },
 
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     shop: {
       required: true,
     },
@@ -140,4 +249,113 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-shop-products-import-processing--modern {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: none;
+  min-height: 64px;
+  margin-block-end: 20px;
+  padding: 10px 12px;
+  padding-inline-start: 16px;
+  border-radius: 12px;
+  box-shadow: none;
+  font-family: inherit;
+
+  .b-shop-products-import-processing__identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .b-shop-products-import-processing__refresh {
+    color: var(--sd-modern-muted);
+  }
+
+  .b-shop-products-import-processing__copy {
+    min-width: 0;
+  }
+
+  .b-shop-products-import-processing__status {
+    display: flex;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+
+  .b-shop-products-import-processing__subtitle {
+    margin: 0;
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .b-shop-products-import-processing__queues {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .b-shop-products-import-processing__queue {
+    min-width: 0;
+    color: rgb(var(--v-theme-on-surface));
+    font-family: inherit;
+    font-weight: 400;
+    line-height: 20px;
+
+    :deep(> .v-btn__content) {
+      gap: 6px;
+    }
+
+    strong {
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .b-shop-products-import-processing__actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+  }
+
+  &:dir(rtl) .b-shop-products-import-processing__chevron,
+  .v-locale--is-rtl & .b-shop-products-import-processing__chevron {
+    transform: scaleX(-1);
+  }
+
+  @media (max-width: 600px) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 8px;
+    padding: 10px 12px;
+
+    .b-shop-products-import-processing__identity {
+      grid-column: 1;
+    }
+
+    .b-shop-products-import-processing__queues {
+      grid-column: 1;
+      grid-row: 2;
+      gap: 8px;
+    }
+
+    .b-shop-products-import-processing__actions {
+      grid-column: 2;
+      grid-row: 1 / 3;
+    }
+
+    .b-shop-products-import-processing__chevron {
+      display: none;
+    }
+  }
+}
+</style>

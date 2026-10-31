@@ -85,12 +85,23 @@ export default {
     const modifiers = binding.modifiers ? Object.keys(binding.modifiers) : [];
     if (modifiers.length > 0) {
       const hintElement = document.createElement('small');
-      hintElement.className = 'x-small';
-      hintElement.textContent = `Ctrl + ${modifiers.join(', ').toUpperCase()}`;
-      hintElement.style.position = 'absolute';
-      hintElement.style.top = '4px';
-      hintElement.style.right = '8px';
-      el.style.position = 'relative'; // Ensure the parent has a position for absolute children
+      const shortcut = `Ctrl + ${modifiers.join(', ').toUpperCase()}`;
+      if (binding.modifiers.s && el.tagName === 'BUTTON' && el.classList.contains('v-btn')) {
+        hintElement.className = 'sd-modern-save-shortcut__hint';
+        hintElement.setAttribute('aria-hidden', 'true');
+        const keys = document.createElement('bdi');
+        keys.dir = 'ltr';
+        keys.textContent = shortcut;
+        hintElement.appendChild(keys);
+        if (!el.hasAttribute('aria-keyshortcuts')) el.setAttribute('aria-keyshortcuts', 'Control+s');
+      } else {
+        hintElement.className = 'x-small';
+        hintElement.textContent = shortcut;
+        hintElement.style.position = 'absolute';
+        hintElement.style.top = '4px';
+        hintElement.style.right = '8px';
+        el.style.position = 'relative'; // Ensure the parent has a position for absolute children
+      }
 
       el.appendChild(hintElement);
     }

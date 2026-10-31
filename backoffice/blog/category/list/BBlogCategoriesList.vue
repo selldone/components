@@ -14,7 +14,7 @@
 
 <template>
   <div
-    class="b-blog-categories-list text-start"
+    class="b-blog-categories-list s-table-loading text-start"
     :class="{ 'b-blog-categories-list--modern': modern }"
     :aria-busy="busy_fetch"
   >
@@ -158,8 +158,8 @@
               v-if="item.icon"
               class="hover-scale force-top"
               :src="getShopImagePath(item.icon, 128)"
-              width="44"
-              height="48"
+              width="100%"
+              height="100%"
               cover
               alt="" /><v-icon v-else icon="folder_open" size="20"
           /></span>
@@ -1318,11 +1318,11 @@ export default {
     }
     > thead > tr > th:first-child,
     > tbody > tr > td:first-child {
-      padding-inline-start: 0 !important;
+      padding-inline-start: 12px !important;
     }
     > thead > tr > th:last-child,
     > tbody > tr > td:last-child {
-      padding-inline-end: 0 !important;
+      padding-inline-end: 12px !important;
     }
     > tbody > tr:hover {
       background: var(--sd-modern-inset);
@@ -1345,6 +1345,7 @@ export default {
     width: 44px;
     height: 48px;
     flex: 0 0 44px;
+    padding: 2px;
     border: 1px solid var(--sd-modern-border);
     border-radius: 9px;
     background: var(--sd-modern-inset);
@@ -1362,7 +1363,7 @@ export default {
       background: rgb(var(--v-theme-surface));
     }
     > .v-img {
-      border-radius: inherit;
+      border-radius: 6px;
     }
   }
   .b-blog-categories-list__copy {
@@ -1598,7 +1599,10 @@ export default {
     line-height: 20px;
   }
   .b-blog-category-editor__field :deep(.v-textarea .v-field__input) {
-    min-height: 76px;
+    min-height: max(76px, var(--v-input-control-height));
+    // External labels need no label mask; it fades text with this compact padding.
+    mask-image: none;
+    -webkit-mask-image: none;
   }
   .b-blog-category-editor__field :deep(.v-input__details) {
     min-height: 0;
@@ -1689,7 +1693,6 @@ export default {
   .b-blog-category-editor__visibility {
     margin-block-start: 4px;
     padding-block-start: 20px;
-    border-block-start: 1px solid var(--sd-modern-border);
   }
   .b-blog-category-editor__visibility h3 {
     margin-block-end: 6px;
@@ -1762,7 +1765,7 @@ export default {
         grid-template-columns: minmax(0, 1fr) auto auto;
         align-items: center;
         gap: 10px 14px;
-        padding: 17px 0;
+        padding: 17px 12px;
         border-block-start: 1px solid var(--sd-modern-border);
         > td {
           display: flex;

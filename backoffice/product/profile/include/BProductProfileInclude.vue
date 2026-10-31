@@ -15,7 +15,15 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ Assign Package Profile ▂▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
-  <v-list-item class="row-hover" prepend-icon="bento" @click="showIncludes()" slim>
+  <v-list-item
+    :class="modern ? 'b-product-profile-include--modern sd-modern-clickable-item text-start' : 'row-hover'"
+    :prepend-icon="modern ? undefined : 'bento'"
+    @click="showIncludes()"
+    slim
+  >
+    <template v-if="modern" #prepend>
+      <b-product-edit-info-icon class="me-3" name="PackageOpen" />
+    </template>
     <v-list-item-title>
       <b
         >{{ $t("global.commons.included_in_the_product") }}
@@ -23,7 +31,7 @@
           <v-icon class="mx-1" color="#111">{{
             $t("icons.chevron_next")
           }}</v-icon>
-          {{ product.includes.length }} items</span
+          {{ modern ? $t('add_product.edit_info.modern.digest_included', { count: product.includes.length }, product.includes.length) : `${product.includes.length} items` }}</span
         >
       </b>
     </v-list-item-title>
@@ -47,12 +55,20 @@
       </v-sheet>
     </v-menu>
     <v-list-item-subtitle v-if="!product.includes?.length">
-      {{ $t("product_include_profile.subtitle") }}
+      {{ $t(modern ? 'add_product.edit_info.modern.not_assigned' : "product_include_profile.subtitle") }}
     </v-list-item-subtitle>
 
     <template v-slot:append>
       <v-list-item-action end>
         <v-btn
+          v-if="modern"
+          class="sd-modern-button sd-modern-button--inline"
+          color="primary"
+          variant="text"
+          @click.stop="showIncludes()"
+        >{{ $t('global.commons.manage') }}</v-btn>
+        <v-btn
+          v-else
           :color="product.includes?.length ? 'success' : 'primary'"
           icon
           variant="text"
@@ -231,6 +247,7 @@
 <script lang="ts">
 import BIncludeItemInput from "../../../include-item/input/BIncludeItemInput.vue";
 import BIncludeItemAdd from "../../../include-item/add/BIncludeItemAdd.vue";
+import BProductEditInfoIcon from "../../edit/info/BProductEditInfoIcon.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -238,10 +255,12 @@ export default {
   name: "BProductProfileInclude",
   mixins: [],
   components: {
+    BProductEditInfoIcon,
     BIncludeItemAdd,
     BIncludeItemInput,
   },
   props: {
+    modern: { type: Boolean, default: false },
     product: {
       required: true,
       type: Object,
@@ -329,6 +348,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-product-profile-include--modern {
+  min-height: 62px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  :deep(.v-list-item-title), :deep(.v-list-item-title b) { font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; letter-spacing: 0; white-space: normal; }
+  :deep(.v-list-item-title .v-icon) { font-size: 14px; color: var(--sd-modern-muted) !important; }
+  :deep(.v-list-item-subtitle) { margin-top: 2px; color: var(--sd-modern-muted); font-size: 12px; font-weight: 400; line-height: 19px; opacity: 1; white-space: normal; overflow-wrap: anywhere; }
+  :deep(.v-list-item__append) { padding-inline-start: 12px; }
+  .b-product-edit-info-icon { color: var(--sd-modern-muted); }
+}
+
 .label-s-number-input {
   color: #2f3133;
   font-weight: 400;

@@ -16,17 +16,19 @@
   <v-card
     :variant="inline ? 'text' : 'flat'"
     class="position-relative text-start"
-    :class="{ 'sd-modern-widget': modern, 'b-domain-add-modern': modern }"
+    :class="{ 'sd-modern-widget': modern, 'b-domain-add-modern': modern, 'b-domain-add-guided': guidedAdd }"
   >
     <u-loading-progress v-if="busy_add"></u-loading-progress>
     <template v-if="modern">
       <header class="b-domain-add-modern__header">
         <div>
-          <h2>{{ $t("domains_modern.connection.title") }}</h2>
+          <h2>{{ $t(guidedAdd ? 'domains_modern.connection.guided.title' : 'domains_modern.connection.title') }}</h2>
           <p>
             {{
               $t(
-                inDomainEditMode
+                guidedAdd
+                  ? 'domains_modern.connection.guided.subtitle'
+                  : inDomainEditMode
                   ? "domains_modern.connection.editSubtitle"
                   : "domains_modern.connection.addSubtitle",
               )
@@ -44,6 +46,7 @@
               icon
               variant="text"
               class="sd-modern-icon-button"
+              :disabled="guidedAdd && busy_add"
               :aria-label="$t('global.actions.close')"
               @click="close()"
               ><v-icon>close</v-icon></v-btn
@@ -53,10 +56,37 @@
         </v-tooltip>
       </header>
 
-      <v-card-text class="b-domain-add-modern__body thin-scroll">
+      <div class="b-domain-add-modern__workspace">
+      <aside v-if="guidedAdd" class="b-domain-add-guided__rail">
+        <nav class="b-domain-add-guided__steps" :aria-label="$t('domains_modern.connection.guided.title')">
+          <button v-for="(step, index) in guidedSteps" :key="step"
+                  type="button" class="b-domain-add-guided__step"
+                  :data-guided-step="index + 1"
+                  :aria-current="guided_step === index + 1 ? 'step' : undefined"
+                  :disabled="busy_add || (index > 0 && !is_valid_domain)"
+                  @click="goToGuidedStep(index + 1)">
+            <span class="b-domain-add-guided__number" aria-hidden="true">{{ $n(index + 1) }}</span>
+            <span><strong>{{ $t(`domains_modern.connection.guided.${step}Title`) }}</strong>
+              <small>{{ $t(`domains_modern.connection.guided.${step}Subtitle`) }}</small></span>
+          </button>
+        </nav>
+        <p>{{ $t('domains_modern.connection.guided.railHint') }}</p>
+      </aside>
+      <div class="b-domain-add-modern__stage">
+      <v-card-text ref="guidedBody" class="b-domain-add-modern__body thin-scroll" :aria-busy="busy_add">
+        <header v-if="guidedAdd" class="b-domain-add-guided__stage-heading">
+          <div class="sd-modern-eyebrow">{{ $t(`domains_modern.connection.guided.${guidedSteps[guided_step - 1]}Title`) }}</div>
+          <h3 ref="guidedHeading" tabindex="-1">{{ $t(`domains_modern.connection.guided.${guidedStageKey}Heading`) }}</h3>
+          <p>{{ $t(`domains_modern.connection.guided.${guidedStageKey}Hint`) }}</p>
+        </header>
+        <div v-if="guidedAdd && guided_step === 2" class="b-domain-add-guided__domain-summary">
+          <v-icon size="18" aria-hidden="true">language</v-icon>
+          <div><bdi dir="ltr">{{ input_domain }}</bdi><p>{{ $t(externally_hosted ? 'domains_modern.connection.external' : show_ssl_ips ? 'domains_modern.connection.secure' : 'domains_modern.connection.direct') }}</p></div>
+          <span class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot sd-modern-status__dot--warning" />{{ $t(last_domain_check ? 'domains_modern.connection.feedback.needsAttention' : 'domains_modern.connection.guided.notChecked') }}</span>
+        </div>
         <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Address, visitor access and sign-in ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
-        <section class="b-domain-add-modern__section">
-          <div class="b-domain-add-modern__heading">
+        <section v-show="!guidedAdd || guided_step === 1" class="b-domain-add-modern__section">
+          <div v-if="!guidedAdd" class="b-domain-add-modern__heading">
             <v-icon aria-hidden="true">language</v-icon>
             <div>
               <h3>{{ $t("domains_modern.connection.addressAccess") }}</h3>
@@ -123,7 +153,7 @@
                   placeholder="store.example.com"
                   :disabled="busy_add"
                   :messages="' '"
-                  @keydown.enter="is_valid_domain && setShopDomain()"
+                  @keydown.enter.prevent="handleDomainEnter()"
                 >
                   <template #prepend-inner
                     ><span class="b-domain-add-modern__prefix" dir="ltr"
@@ -261,7 +291,7 @@
 
         <template v-if="is_valid_domain">
           <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Storefront hosting and connection method ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
-          <section class="b-domain-add-modern__section">
+          <section v-show="!guidedAdd || guided_step === 1" class="b-domain-add-modern__section">
             <div class="b-domain-add-modern__heading">
               <v-icon aria-hidden="true">storefront</v-icon>
               <div>
@@ -300,6 +330,21 @@
               item-text="title"
               item-value="code"
             />
+            <template v-if="guidedAdd">
+              <b-domain-setup-illustration kind="hosting" :external="externally_hosted" />
+              <div v-if="externally_hosted" class="b-domain-add-guided__resource-links">
+                <v-btn href="https://github.com/selldone/storefront" target="_blank" rel="noopener noreferrer"
+                       color="primary" variant="text" class="sd-modern-button sd-modern-button--inline">
+                  <v-icon start aria-hidden="true">code</v-icon>{{ $t('domains_modern.connection.illustration.getCode') }}<v-icon end aria-hidden="true">north_east</v-icon>
+                  <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.connection.illustration.codeHelp') }}</v-tooltip>
+                </v-btn>
+                <v-btn href="https://developers.cloudflare.com/pages/platform/limits/" target="_blank" rel="noopener noreferrer"
+                       color="primary" variant="text" class="sd-modern-button sd-modern-button--inline">
+                  Cloudflare Pages<v-icon end aria-hidden="true">north_east</v-icon>
+                  <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.connection.illustration.pagesHelp') }}</v-tooltip>
+                </v-btn>
+              </div>
+            </template>
             <div v-if="inDomainEditMode" class="b-domain-add-modern__meta">
               <v-icon size="12" aria-hidden="true">lock_outline</v-icon
               >{{ $t("domains_modern.connection.fixedHosting") }}
@@ -346,7 +391,7 @@
                   v-if="has_ssl_proxy"
                   :model-value="!show_ssl_ips"
                   @update:model-value="show_ssl_ips = !$event"
-                  :true-title="$t('domains_modern.connection.direct')"
+                  :true-title="$t(guidedAdd ? 'domains_modern.connection.illustration.directRecommended' : 'domains_modern.connection.direct')"
                   :true-description="$t('domains_modern.connection.directDesc')"
                   true-icon="cloud_done"
                   :false-title="$t('domains_modern.connection.secure')"
@@ -357,10 +402,18 @@
                   accessible
                   class="sd-modern-smart-select"
                 />
+                <b-domain-setup-illustration v-if="guidedAdd" kind="connection" :secure="show_ssl_ips" />
                 <p v-if="inDomainEditMode">
                   {{ $t("domains_modern.connection.saveAccessHint") }}
                 </p>
-                <u-pods-panel class="b-domain-add-modern__pods">
+              </div>
+            </template>
+          </section>
+
+          <section v-if="!externally_hosted && (!inDomainEditMode || error_dns)"
+                   v-show="!guidedAdd || guided_step === 2" class="b-domain-add-modern__section">
+                <b-domain-connection-flow v-if="guidedAdd" :domain="input_domain" :secure="show_ssl_ips" :image="getShopImagePath(shop.icon, 64)" />
+                <u-pods-panel v-else class="b-domain-add-modern__pods">
                   <u-pod-node
                     :image="getShopImagePath(shop.icon, 64)"
                     :title="$t('domains_modern.connection.domain')"
@@ -383,9 +436,16 @@
                   /></template>
                   <u-pod-node is-selldone-icon title="Selldone" />
                 </u-pods-panel>
-              </div>
               <h3>{{ $t("domains_modern.connection.requiredRecords") }}</h3>
               <p>{{ $t("domains_modern.connection.requiredRecordsHint") }}</p>
+              <v-radio-group v-if="guidedAdd && canUseGuidedCname" v-model="guided_record_type"
+                             inline hide-details :disabled="busy_add"
+                             :aria-label="$t('domains_modern.connection.requiredRecords')"
+                             class="b-domain-add-guided__record-choice">
+                <v-radio label="A" value="A" /><v-radio label="CNAME" value="CNAME" />
+              </v-radio-group>
+              <b-domain-dns-records v-if="guidedAdd" :records="guidedRecords" />
+              <template v-else>
               <div
                 v-for="item in SelldoneShopsHostIPs.filter((x) =>
                   show_ssl_ips
@@ -449,12 +509,13 @@
                   />
                 </div>
               </template>
-            </template>
+              </template>
           </section>
 
           <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Ownership verification ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
           <section
             v-if="!inDomainEditMode || error_dns"
+            v-show="!guidedAdd || guided_step === 2"
             class="b-domain-add-modern__section"
           >
             <div class="b-domain-add-modern__heading">
@@ -495,8 +556,10 @@
               item-text="title"
               item-value="code"
             />
+            <b-domain-dns-records v-if="guidedAdd && (!externally_hosted || verification_method === 'txt')"
+                                 :records="[{ type: 'TXT', host: domain_verification_txt_title, value: domain_verification_code }]" />
             <div
-              v-if="!externally_hosted || verification_method === 'txt'"
+              v-else-if="!externally_hosted || verification_method === 'txt'"
               class="b-domain-add-modern__record-block"
             >
               <span class="b-domain-add-modern__label">TXT</span
@@ -551,7 +614,7 @@
               role="alert"
             >
               <v-icon color="warning" size="18" aria-hidden="true">error_outline</v-icon
-              >{{ domain_error_msg }}
+              ><span class="sd-modern-notice__content">{{ guidedAdd ? guidedErrorMessage : domain_error_msg }}</span>
             </div>
           </section>
 
@@ -740,7 +803,8 @@
             </div>
           </section>
           <section
-            v-if="show_dns && !externally_hosted"
+            v-if="!guidedAdd && show_dns && !externally_hosted"
+            v-show="!guidedAdd || guided_step === 2"
             class="b-domain-add-modern__section"
           >
             <h3>{{ $t("domains_modern.connection.dns") }}</h3>
@@ -781,10 +845,27 @@
               </tbody></v-table
             >
           </section>
+          <section v-if="guidedAdd && last_domain_check && guidedFeedbackExpected.length"
+                   v-show="guided_step === 2" class="b-domain-add-modern__section">
+            <div v-if="domain_error_msg && !externally_hosted" class="sd-modern-notice b-domain-add-modern__notice" role="alert">
+              <v-icon color="warning" size="18" aria-hidden="true">error_outline</v-icon>
+              <span class="b-domain-add-guided__error-text">{{ guidedErrorMessage }}</span>
+            </div>
+            <b-domain-dns-feedback :expected="guidedFeedbackExpected" :detected="last_dns"
+                                   :domain="input_domain" :secure="show_ssl_ips" :verification="last_domain_check" />
+          </section>
+          <b-domain-cloudflare-setup v-if="guidedAdd && guidedExportRecords.length" v-show="guided_step === 2"
+                                    :domain="input_domain" :records="guidedExportRecords" :disabled="busy_add" />
+          <div v-if="guidedAdd && guided_step === 2 && !externally_hosted && !last_domain_check && domain_error_msg"
+               class="sd-modern-notice b-domain-add-modern__notice" role="alert">
+            <v-icon color="warning" size="18" aria-hidden="true">error_outline</v-icon>
+            <span class="b-domain-add-guided__error-text">{{ guidedErrorMessage }}</span>
+          </div>
 
           <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Provider setup and migration guidance ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
           <details
             v-if="!externally_hosted && !show_ssl_ips"
+            v-show="!guidedAdd || guided_step === 2"
             class="b-domain-add-modern__guidance"
           >
             <summary>{{ $t("domains_modern.connection.cloudflare") }}</summary>
@@ -857,14 +938,28 @@
               </div>
             </template>
           </details>
+          <section v-if="guidedAdd && guided_step === 3" class="b-domain-add-guided__review">
+            <dl>
+              <div><dt>{{ $t('domains_modern.connection.domain') }}</dt><dd><bdi dir="ltr">{{ input_domain }}</bdi></dd></div>
+              <div><dt>{{ $t('domains_modern.connection.hosting') }}</dt><dd>{{ $t(externally_hosted ? 'domains_modern.connection.external' : 'domains_modern.connection.hosted') }}</dd></div>
+              <div v-if="!externally_hosted"><dt>{{ $t('domains_modern.connection.sslTitle') }}</dt><dd>{{ $t(show_ssl_ips ? 'domains_modern.connection.secure' : 'domains_modern.connection.direct') }}</dd></div>
+              <div><dt>{{ $t('domains_modern.connection.verification') }}</dt><dd>{{ $t(externally_hosted && verification_method === 'meta' ? 'domains_modern.connection.meta' : 'domains_modern.connection.txt') }}<span class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot sd-modern-status__dot--warning" />{{ $t('domains_modern.connection.guided.notChecked') }}</span></dd></div>
+            </dl>
+            <v-btn variant="text" class="sd-modern-button sd-modern-button--inline" :disabled="busy_add" @click="goToGuidedStep(2)">{{ $t('domains_modern.connection.guided.reviewRecords') }}</v-btn>
+            <div class="sd-modern-notice b-domain-add-modern__notice"><v-icon size="18" aria-hidden="true">info_outline</v-icon><span>{{ $t(externally_hosted ? 'domains_modern.connection.externalNote' : 'domains_modern.connection.guided.sslHint') }}</span></div>
+            <v-checkbox v-model="guided_acknowledged" hide-details :disabled="busy_add" :label="$t('domains_modern.connection.guided.confirm')" class="b-domain-add-guided__confirmation" />
+          </section>
         </template>
       </v-card-text>
       <v-card-actions class="b-domain-add-modern__footer">
+        <span v-if="guidedAdd" class="b-domain-add-guided__caption" role="status">{{ guided_step === 3 ? $t('domains_modern.connection.guided.connectHint') : $t('domains_modern.connection.guided.step', { step: $n(guided_step), total: $n(3) }) }}</span>
         <div class="b-domain-add-modern__actions">
+          <v-btn v-if="guidedAdd && guided_step > 1" variant="text" class="sd-modern-button" :disabled="busy_add" @click="goToGuidedStep(guided_step - 1)">{{ $t('domains_modern.connection.guided.back') }}</v-btn>
           <v-btn
-            v-if="!inline"
+            v-if="!inline && (!guidedAdd || guided_step === 1)"
             variant="text"
             class="sd-modern-button sd-modern-button--small"
+            :disabled="guidedAdd && busy_add"
             @click="close()"
             >{{ $t("global.actions.close") }}</v-btn
           >
@@ -878,12 +973,17 @@
             ><v-icon start aria-hidden="true">save</v-icon
             >{{ $t("global.actions.update") }}</v-btn
           >
+          <v-btn v-else-if="guidedAdd && guided_step < 3" class="sd-modern-button sd-modern-button--primary"
+                 color="primary" variant="flat" :disabled="!is_valid_domain || busy_add"
+                 @click="goToGuidedStep(guided_step + 1)">
+            <v-icon start aria-hidden="true">{{ $t('icons.chevron_next') }}</v-icon>{{ $t(guided_step === 1 ? 'domains_modern.connection.guided.continue' : 'domains_modern.connection.guided.reviewAction') }}
+          </v-btn>
           <v-btn
             v-else
             class="sd-modern-button sd-modern-button--small sd-modern-button--primary"
             color="primary"
             variant="flat"
-            :disabled="!is_valid_domain"
+            :disabled="!is_valid_domain || (guidedAdd && !canSubmitGuided)"
             :loading="busy_add"
             @click="setShopDomain()"
             ><v-icon start aria-hidden="true">add</v-icon
@@ -891,6 +991,8 @@
           >
         </div>
       </v-card-actions>
+      </div>
+      </div>
     </template>
     <template v-else>
     <v-card-title v-if="!inline && !modern">
@@ -1766,6 +1868,12 @@ import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
+import BDomainConnectionFlow from "./BDomainConnectionFlow.vue";
+import BDomainDnsRecords from "./BDomainDnsRecords.vue";
+import BDomainSetupIllustration from "./BDomainSetupIllustration.vue";
+import BDomainDnsFeedback from "./BDomainDnsFeedback.vue";
+import BDomainCloudflareSetup from "./BDomainCloudflareSetup.vue";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -1774,6 +1882,11 @@ export default {
   mixins: [],
   emits: ["add", "update", "click:close"],
   components: {
+    BDomainConnectionFlow,
+    BDomainDnsRecords,
+    BDomainSetupIllustration,
+    BDomainDnsFeedback,
+    BDomainCloudflareSetup,
     ULoadingEllipsis,
     UPodWire,
     UPodNode,
@@ -1803,6 +1916,9 @@ export default {
   },
 
   data: () => ({
+    guided_step: 1,
+    guided_acknowledged: false,
+    guided_record_type: "A",
     show_ssl_message: false,
 
     busy_fetch_domain_data: false,
@@ -1859,6 +1975,7 @@ export default {
 
     //---------------------------------
     last_dns: null,
+    last_domain_check: null,
     show_dns: false,
     domain_error_msg: null,
 
@@ -1886,6 +2003,54 @@ export default {
   }),
 
   computed: {
+    guidedAdd() {
+      return this.modern && !this.inline && !this.inDomainEditMode;
+    },
+    guidedSteps() {
+      return ["address", "dns", "review"];
+    },
+    guidedStageKey() {
+      return this.guidedSteps[this.guided_step - 1];
+    },
+    guidedErrorMessage() {
+      // Preserve server message breaks without rendering its HTML in the Guided alert.
+      return String(this.domain_error_msg || '')
+        .replace(/<(?:br|hr)\s*\/?>/gi, '\n')
+        .replace(/<\/?(?:b|strong|p)>/gi, '')
+        .trim();
+    },
+    canUseGuidedCname() {
+      return !this.externally_hosted && this.is_subdomain && !this.show_ssl_ips && !!this.SelldoneShopsHostCNAMEs.length;
+    },
+    guidedRecords() {
+      const useCname = this.canUseGuidedCname && this.guided_record_type === "CNAME";
+      const values = useCname ? this.SelldoneShopsHostCNAMEs : this.SelldoneShopsHostIPs.filter((ip) =>
+        this.show_ssl_ips ? this.custom_ips_ssl_proxy?.includes(ip) : !this.custom_ips_ssl_proxy?.includes(ip),
+      );
+      return values.map((value) => ({ type: useCname ? "CNAME" : "A", host: this.domain_verification_title, value }));
+    },
+    guidedFeedbackExpected() {
+      if (this.externally_hosted && this.verification_method !== "txt") return [];
+      const ownership = { type: "TXT", host: this.domain_verification_txt_title, value: this.domain_verification_code };
+      if (this.externally_hosted) return [ownership];
+      const origins = this.SelldoneShopsHostIPs.filter((ip) =>
+        this.show_ssl_ips ? this.custom_ips_ssl_proxy?.includes(ip) : !this.custom_ips_ssl_proxy?.includes(ip),
+      ).map((value) => ({ type: "A", host: this.domain_verification_title, value }));
+      if (this.canUseGuidedCname) origins.push(...this.SelldoneShopsHostCNAMEs.map((value) => ({ type: "CNAME", host: this.domain_verification_title, value })));
+      return [...origins, ownership];
+    },
+    guidedExportRecords() {
+      if (!this.is_valid_domain || (this.externally_hosted && this.verification_method !== 'txt')) return [];
+      return [
+        ...(this.externally_hosted ? [] : this.guidedRecords),
+        { type: 'TXT', host: this.domain_verification_txt_title, value: this.domain_verification_code },
+      ];
+    },
+    canSubmitGuided() {
+      return this.guided_step === 3 && this.is_valid_domain && this.guided_acknowledged &&
+        this.can_add_new_domain && (!this.show_ssl_ips || this.has_ssl_proxy) &&
+        this.writeShopAccess(ShopPermissionRegions.SETTINGS.code);
+    },
     modern_hosting_options() {
       return this.hosting_options.map((option) => ({
         ...option,
@@ -1902,6 +2067,7 @@ export default {
         if (this.externally_hosted) this.show_ssl_ips = false;
 
         this.domain_error_msg = null;
+        this.last_domain_check = null;
         this.last_dns = null;
         this.show_dns = false;
       },
@@ -2033,7 +2199,21 @@ export default {
   },
 
   watch: {
+    input_domain() {
+      this.resetGuidedConfirmation();
+      if (!this.guidedAdd) return;
+      this.domain_error_msg = null;
+      this.last_domain_check = null;
+      this.last_dns = null;
+      this.show_dns = false;
+      if (!this.is_valid_domain) this.guided_step = 1;
+    },
+    externally_hosted() { this.resetGuidedConfirmation(); this.last_domain_check = null; },
+    show_ssl_ips() { this.resetGuidedConfirmation(); this.last_domain_check = null; },
+    guided_record_type() { this.resetGuidedConfirmation(); },
     verification_method() {
+      this.resetGuidedConfirmation();
+      this.last_domain_check = null;
       this.domain_error_msg = null;
       this.last_dns = null;
       this.show_dns = false;
@@ -2041,6 +2221,24 @@ export default {
   },
 
   methods: {
+    resetGuidedConfirmation() {
+      this.guided_acknowledged = false;
+    },
+    focusGuidedStep() {
+      this.$nextTick(() => {
+        this.$refs.guidedHeading?.focus({ preventScroll: true });
+        this.$el.querySelector('.b-domain-add-modern__workspace')?.scrollTo({ top: 0 });
+      });
+    },
+    goToGuidedStep(step) {
+      if (!this.guidedAdd || this.busy_add || ![1, 2, 3].includes(step) || (step > 1 && !this.is_valid_domain)) return;
+      this.guided_step = step;
+      this.focusGuidedStep();
+    },
+    handleDomainEnter() {
+      if (this.guidedAdd) this.goToGuidedStep(2);
+      else if (this.is_valid_domain) this.setShopDomain();
+    },
     anyMatch(record) {
       return (
         (record.type === "TXT" &&
@@ -2093,7 +2291,10 @@ export default {
 
     setShopDomain() {
       if (this.busy_add) return;
+      // Guided navigation never submits; recheck access and consent at the final action.
+      if (this.guidedAdd && !this.canSubmitGuided) return;
       this.busy_add = true;
+      if (this.guidedAdd) this.last_domain_check = null;
 
       axios
         .post(window.API.POST_ADD_DOMAIN(this.shop.id), {
@@ -2119,10 +2320,30 @@ export default {
             this.last_dns = this.externally_hosted ? null : data.dns;
             this.show_dns = !this.externally_hosted && !!data.dns;
             this.domain_error_msg = data.error_msg;
+            if (this.guidedAdd) {
+              this.last_dns = (!this.externally_hosted || this.verification_method === 'txt') && Array.isArray(data.dns) ? data.dns : null;
+              this.last_domain_check = {
+                approved: typeof data.approved === 'boolean' ? data.approved : null,
+                valid_txt: typeof data.valid_txt === 'boolean' ? data.valid_txt : null,
+                verified: typeof data.verified === 'boolean' ? data.verified : null,
+                dns_challenge: Array.isArray(data.dns_challenge) ? data.dns_challenge : null,
+                challenge_domain: typeof data.challenge_domain === 'string' ? data.challenge_domain : null,
+                verification_host: typeof data.verification_host === 'string' ? data.verification_host : null,
+              };
+              this.guided_step = 2;
+              this.resetGuidedConfirmation();
+              this.focusGuidedStep();
+            }
           }
         })
         .catch((error) => {
           NotificationService.showLaravelError(error);
+          if (this.guidedAdd) {
+            this.guided_step = 2;
+            this.resetGuidedConfirmation();
+            this.domain_error_msg = this.$t('domains_modern.connection.guided.connectionError');
+            this.focusGuidedStep();
+          }
         })
         .finally(() => {
           this.busy_add = false;
@@ -2328,7 +2549,7 @@ export default {
   font-weight: 400;
   line-height: 19px;
 }
-.b-domain-add-modern.v-card > .b-domain-add-modern__body.v-card-text {
+.b-domain-add-modern.v-card .b-domain-add-modern__body.v-card-text {
   padding: 0;
   font: inherit;
   letter-spacing: 0;
@@ -2690,5 +2911,178 @@ export default {
     height: 44px !important;
     min-height: 44px !important;
   }
+}
+.b-domain-add-modern__workspace,
+.b-domain-add-modern__stage {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.b-domain-add-modern__body { overflow-y: auto; }
+
+.b-domain-add-modern.b-domain-add-guided.v-card {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0 !important;
+  background: color-mix(in srgb, rgb(var(--v-theme-surface)) 96%, rgb(var(--v-theme-on-surface)));
+  font-size: var(--sd-modern-font-body);
+  line-height: 22px;
+  overflow: hidden;
+}
+.b-domain-add-guided .b-domain-add-modern__header {
+  flex: 0 0 auto;
+  width: min(1104px, 100%);
+  margin-inline: auto;
+  padding: 25px 32px 20px;
+  border: 0;
+}
+.b-domain-add-guided .b-domain-add-modern__header h2 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  letter-spacing: -.5px;
+}
+.b-domain-add-guided p {
+  font-size: var(--sd-modern-font-small);
+  line-height: 21px;
+}
+.b-domain-add-guided .b-domain-add-modern__workspace {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+  width: min(1104px, 100%);
+  margin-inline: auto;
+  padding: 0 32px 28px;
+  overflow-y: auto;
+}
+.b-domain-add-guided__rail { padding-block: 7px; }
+.b-domain-add-guided__steps { display: grid; gap: 12px; }
+.b-domain-add-guided__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 12px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--sd-modern-muted);
+  text-align: start;
+  font-family: inherit;
+}
+.b-domain-add-guided__step[aria-current="step"],
+.b-domain-add-guided__step:hover:not(:disabled) {
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+}
+.b-domain-add-guided__step[aria-current="step"] { box-shadow: var(--sd-modern-selected-shadow); }
+.b-domain-add-guided__step:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+.b-domain-add-guided__step:disabled { cursor: default; opacity: .65; }
+.b-domain-add-guided__number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 26px;
+  width: 26px;
+  min-width: 26px;
+  height: 26px;
+  border: 1px solid var(--sd-modern-border);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 400;
+  background: rgb(var(--v-theme-surface));
+}
+.b-domain-add-guided__step[aria-current="step"] .b-domain-add-guided__number { color: rgb(var(--v-theme-primary)); border-color: currentColor; }
+.b-domain-add-guided__step strong { display: block; font-size: 13px; font-weight: 500; line-height: 21px; }
+.b-domain-add-guided__step small { display: block; margin-top: 2px; font-size: 12px; font-weight: 400; line-height: 19px; }
+.b-domain-add-guided__rail > p { margin: 28px 12px 0; font-size: 12px; }
+.b-domain-add-guided .b-domain-add-modern__stage { display: block; }
+.b-domain-add-modern.b-domain-add-guided.v-card .b-domain-add-modern__body.v-card-text {
+  padding: 28px;
+  border-radius: 17px;
+  background: rgb(var(--v-theme-surface));
+  overflow: visible;
+  font: inherit;
+}
+.b-domain-add-guided__stage-heading { margin-bottom: 25px; }
+.b-domain-add-guided__stage-heading .sd-modern-eyebrow { margin-bottom: 8px; }
+.b-domain-add-guided .b-domain-add-guided__stage-heading h3 { font-size: 20px; font-weight: 500; line-height: 28px; letter-spacing: -.2px; outline-offset: 5px; }
+.b-domain-add-guided .b-domain-add-modern__section { margin: 0; padding-top: 26px; border: 0; }
+.b-domain-add-guided .b-domain-add-guided__stage-heading + .b-domain-add-modern__section { padding-top: 0; }
+.b-domain-add-guided .b-domain-add-modern__heading { margin-bottom: 12px; }
+.b-domain-add-guided .b-domain-add-modern__section h3 { font-size: 14px; font-weight: 500; line-height: 22px; }
+.b-domain-add-guided .b-domain-add-modern__heading > div { min-width: 0; }
+.b-domain-add-guided .b-domain-add-modern__setup { padding-top: 26px; }
+.b-domain-add-guided .b-domain-add-modern__setup .sd-modern-smart-select { margin-top: 12px; }
+.b-domain-add-guided .b-domain-add-modern__input :deep(.v-field__input) { font-size: 18px; font-weight: 400; line-height: 28px; }
+.b-domain-add-guided .b-domain-add-modern__prefix { font-size: 16px; line-height: 28px; }
+.b-domain-add-guided .b-domain-add-modern__message { font-size: 13px; line-height: 21px; }
+.b-domain-add-guided__domain-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding-bottom: 17px; border-bottom: 1px solid var(--sd-modern-border); }
+.b-domain-add-guided__domain-summary > div { flex: 1; min-width: 0; }
+.b-domain-add-guided__domain-summary bdi { font-size: 14px; font-weight: 500; line-height: 22px; overflow-wrap: anywhere; }
+.b-domain-add-guided__domain-summary p { margin-top: 2px; }
+.b-domain-add-guided__domain-summary .sd-modern-status { font-size: 12px; line-height: 20px; }
+.b-domain-add-guided__record-choice { margin-top: 12px; }
+.b-domain-add-guided__error-text { white-space: pre-line; overflow-wrap: anywhere; }
+.b-domain-add-guided__resource-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.b-domain-add-guided__record-choice :deep(.v-label) { font-family: inherit; font-size: 13px; line-height: 21px; }
+.b-domain-add-guided .b-domain-add-modern__notice { font-size: var(--sd-modern-font-small); line-height: 22px; }
+.b-domain-add-guided .b-domain-add-modern__notice > span { min-width: 0; overflow-wrap: anywhere; }
+.b-domain-add-guided .b-domain-add-modern__guidance { margin-top: 24px; font-size: 13px; line-height: 21px; }
+.b-domain-add-guided .b-domain-add-modern__guidance summary { padding-block: 10px; color: rgb(var(--v-theme-on-surface)); }
+.b-domain-add-guided .b-domain-add-modern__record-block { padding: 0; border: 0; }
+.b-domain-add-guided .b-domain-add-modern__record-block :deep(.-link),
+.b-domain-add-guided .b-domain-add-modern__record-block :deep(.-link .small) { font-size: 13px; line-height: 21px; }
+.b-domain-add-guided .b-domain-add-modern__dns-table :deep(tbody td) { font-size: 13px; line-height: 21px; }
+.b-domain-add-guided__review dl { margin: 20px 0 0; }
+.b-domain-add-guided__review dl > div { display: grid; grid-template-columns: minmax(100px,.7fr) minmax(0,1fr); gap: 20px; padding-block: 12px; border-bottom: 1px solid var(--sd-modern-border); font-size: 13px; line-height: 21px; }
+.b-domain-add-guided__review dt { color: var(--sd-modern-muted); }
+.b-domain-add-guided__review dd { margin: 0; overflow-wrap: anywhere; }
+.b-domain-add-guided__review dd .sd-modern-status { display: flex; margin-top: 4px; font-size: 12px; }
+.b-domain-add-guided__review .sd-modern-button--inline { margin-top: 10px; }
+.b-domain-add-guided__confirmation { margin-top: 20px; }
+.b-domain-add-guided__confirmation :deep(.v-label) { font-family: inherit; font-size: 13px; font-weight: 400; line-height: 22px; opacity: 1; }
+.b-domain-add-guided .b-domain-add-modern__footer.v-card-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 0; padding: 19px 2px 0; border: 0; }
+.b-domain-add-guided__caption { color: var(--sd-modern-muted); font-size: 12px; line-height: 20px; }
+.b-domain-add-guided .b-domain-add-modern__actions { width: auto; margin-inline-start: auto; gap: 10px; }
+.b-domain-add-guided .b-domain-add-modern__footer .sd-modern-button { min-height: 42px; height: auto; padding: 9px 17px; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 22px; letter-spacing: 0; }
+.b-domain-add-guided .b-domain-add-modern__footer :deep(.v-btn__content) { font: inherit; letter-spacing: 0; }
+.b-domain-add-guided .b-domain-add-modern__footer .v-icon { font-size: 18px; }
+@media (max-width: 800px) {
+  .b-domain-add-guided .b-domain-add-modern__header { padding-inline: 22px; }
+  .b-domain-add-guided .b-domain-add-modern__workspace { grid-template-columns: 170px minmax(0,1fr); gap: 18px; padding-inline: 22px; }
+  .b-domain-add-guided__step { gap: 9px; padding-inline: 9px; }
+  .b-domain-add-guided__step small { display: none; }
+}
+@media (max-width: 600px) {
+  .b-domain-add-guided .b-domain-add-modern__header { padding: 22px 18px 12px; }
+  .b-domain-add-guided .b-domain-add-modern__header h2 { font-size: 22px; line-height: 30px; }
+  .b-domain-add-guided .b-domain-add-modern__workspace { display: block; padding: 0 14px 22px; }
+  .b-domain-add-guided__rail { padding: 0 2px 17px; }
+  .b-domain-add-guided__steps { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
+  .b-domain-add-guided__step { flex-direction: column; gap: 6px; padding: 10px 8px; }
+  .b-domain-add-guided__step strong { font-size: 12px; line-height: 18px; }
+  .b-domain-add-guided__rail > p { display: none; }
+  .b-domain-add-modern.b-domain-add-guided.v-card .b-domain-add-modern__body.v-card-text { padding: 22px 18px; border-radius: 14px; }
+  .b-domain-add-guided .b-domain-add-guided__stage-heading h3 { font-size: 19px; line-height: 27px; }
+  .b-domain-add-guided .b-domain-add-modern__input :deep(.v-field__input) { font-size: 16px; }
+  .b-domain-add-guided__domain-summary { align-items: flex-start; }
+  .b-domain-add-guided__domain-summary > div { flex: 1 1 calc(100% - 32px); }
+  .b-domain-add-guided__domain-summary .sd-modern-status { margin-inline-start: 28px; }
+  .b-domain-add-guided__review dl > div { grid-template-columns: minmax(0,1fr); gap: 3px; }
+  .b-domain-add-guided__caption { flex-basis: 100%; }
+  .b-domain-add-guided .b-domain-add-modern__actions { gap: 5px; }
+  .b-domain-add-guided .b-domain-add-modern__footer .sd-modern-button { padding-inline: 13px; }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .b-domain-add-guided .b-domain-add-modern__footer .sd-modern-button { min-height: 44px; }
 }
 </style>

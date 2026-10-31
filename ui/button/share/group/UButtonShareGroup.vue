@@ -26,13 +26,17 @@
         :hashtags="hashtags_string"
         :media="media"
         :twitterUser="twitter_user"
+        :aria-label="embedMode ? item.code : undefined"
       >
         <a :class="`btn ${item.code}`" @click="$emit('share', item.code)"
           ><i :class="item.icon"
         /></a>
       </share-network>
 
-      <a
+      <component
+        :is="embedMode ? 'button' : 'a'"
+        :type="embedMode ? 'button' : undefined"
+        :aria-label="embedMode ? $t('global.commons.embed') : undefined"
         v-if="networks.includes('embed') && embedCode"
         class="btn embed"
         @click="
@@ -40,9 +44,12 @@
           $emit('embed');
         "
         ><i class="fas fa-code"
-      /></a>
+      /></component>
 
-      <a
+      <component
+        :is="embedMode ? 'button' : 'a'"
+        :type="embedMode ? 'button' : undefined"
+        :aria-label="embedMode ? $t('global.actions.copy') : undefined"
         v-if="networks.includes('copy') && url"
         class="btn copy pp"
         @click="
@@ -50,7 +57,7 @@
           $emit('share', 'copy');
         "
         ><i class="fas fa-copy"
-      /></a>
+      /></component>
     </div>
   </div>
 </template>
@@ -65,6 +72,7 @@ export default {
     "share-network": VueSocialSharing,
   },
   props: {
+    embedMode: { type: Boolean, default: false },
     networks: {
       type: Array,
       default: () => [

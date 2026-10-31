@@ -19,6 +19,7 @@
       :check-validity="true"
       :data-max-file-size="maxFileSize"
       :files="file"
+      :disabled="disabled"
       :label-idle="`<p class='text-dark'>${label}</p>`"
       :max-files="1"
       :maxFileSize="maxFileSize"
@@ -30,6 +31,10 @@
       style="min-height: 84px"
       @error="handleFilePondError"
       @processfile="handleProcessFile"
+      @addfilestart="$emit('busy', true)"
+      @processfilestart="$emit('busy', true)"
+      @processfileabort="$emit('busy', false)"
+      @removefile="$emit('busy', false)"
     />
     <!-- NOT WORK! invalid mine type in usdz and glf files! :accepted-file-types="acceptedFileTypes" -->
     <!-- NOT WORK! accepted-file-types=".gltf, .glb" -->
@@ -47,10 +52,12 @@ import FilePondLoader from "@selldone/components-vue/plugins/filepond/FilePondLo
 
 export default {
   name: "SArModelUploader",
+  emits: ["new-path", "update:ar", "busy"],
   components: {
     FilePond: FilePondLoader.loadFilePondComponent(),
   },
   props: {
+    disabled: Boolean,
     label: {
       required: false,
       type: String,
@@ -93,23 +100,30 @@ export default {
   },
 
   created() {},
+  beforeUnmount() {
+    this.$emit("busy", false);
+  },
 
   methods: {
     handleFilePondError(error) {
+      this.$emit("busy", false);
       NotificationService.showErrorAlert(null, error.body);
       //  console.error('handleFilePondError',error)
     },
     handleProcessFile: function (error, file, ssss) {
-      if (!error) {
-        let response = JSON.parse(file.serverId);
-        console.log("done", response.files.path);
-        this.$emit("new-path", response.files.path);
-        this.$emit("update:ar", response.ar);
+      try {
+        if (!error) {
+          let response = JSON.parse(file.serverId);
+          console.log("done", response.files.path);
+          this.$emit("new-path", response.files.path);
+          this.$emit("update:ar", response.ar);
 
-        // this.$emit("created", response.files.app_file);
+          // this.$emit("created", response.files.app_file);
 
-        return true;
-      } else {
+          return true;
+        }
+      } finally {
+        this.$emit("busy", false);
       }
     },
   },

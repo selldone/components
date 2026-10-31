@@ -13,17 +13,24 @@
   -->
 
 <template>
-  <div>
+  <div :class="{ 'b-spreadsheet-products--modern': modern }" :aria-busy="converting_file">
     <v-file-input
       v-if="!converted_file"
       v-model="input_files"
       :disabled="!canSelectFile"
       accept=".csv,.xls,.xlsx"
       hide-details
-      label="Select products .csv / .xlsx file..."
+      :label="modern ? undefined : 'Select products .csv / .xlsx file...'"
+      :aria-label="
+        modern ? $t('importer.product_workspace.select_file') : undefined
+      "
+      :class="{
+        'b-spreadsheet-products__file': modern,
+        'b-spreadsheet-products__file--empty': modern && !file,
+      }"
       prepend-icon=""
       show-size
-      variant="outlined"
+      :variant="modern ? 'plain' : 'outlined'"
       @update:model-value="selectFile"
     >
       <template v-slot:prepend-inner>
@@ -33,12 +40,58 @@
           src="../../../assets/file/excel.svg"
           width="24"
         />
+        <div v-if="modern && !file" class="b-spreadsheet-products__file-copy">
+          <p>{{ $t("importer.product_workspace.drop_title") }}</p>
+          <span>{{ $t("importer.product_workspace.file_formats") }}</span>
+        </div>
+      </template>
+      <template v-if="modern && !file" v-slot:append-inner>
+        <span class="b-spreadsheet-products__select" aria-hidden="true">
+          <v-icon size="16">upload_file</v-icon>
+          {{ $t("importer.product_workspace.select_file") }}
+        </span>
+      </template>
+      <template v-if="modern" #selection="{ totalBytesReadable }">
+        <span
+          ><bdi>{{ file?.name }}</bdi>
+          <span class="b-spreadsheet-products__file-size"
+            >({{ totalBytesReadable }})</span
+          ></span
+        >
       </template>
     </v-file-input>
+    <div v-else-if="modern" class="b-spreadsheet-products__converted">
+      <img src="../../../assets/file/excel.svg" width="24" height="24" alt="" />
+      <span
+        ><bdi>{{ file?.name }}</bdi></span
+      >
+    </div>
+
+    <b-spreadsheet-conversion-progress
+
+      v-if="converting_file"
+
+      :filename="file?.name"
+
+    />
 
     <b-spreadsheet
+      v-show="!converting_file"
       ref="sheet"
-      :cols="cols"
+      :cols="
+        modern
+          ? [
+              'Type',
+              'Title',
+              'SKU',
+              'Price',
+              'Currency',
+              'Quantity',
+              'V_Color',
+              'V_Style',
+            ]
+          : cols
+      "
       :headers="headers"
       :items="items"
       :modern="modern"
@@ -68,7 +121,7 @@ const Papa = require("papaparse");
 
 export default {
   name: "BSpreadsheetProducts",
-  mixins: [SpreadsheetMixin ],
+  mixins: [SpreadsheetMixin],
   components: {
     ImportInvalidCharacterErrorDialog,
     BSpreadsheet,
@@ -124,7 +177,7 @@ export default {
      * successful completion of all data chunks.
      */
     async generateJson(callback, chunk_size = 100, delay = 3000, onError) {
-      if (!this.items || !this.headers) {
+      if (this.converting_file || !this.items || !this.headers) {
         onError();
 
         return false;
@@ -197,10 +250,18 @@ export default {
      * file content and format.
      */
     parseFile() {
+      const selectedFile = this.file;
+      const version = this.conversion_version;
       const config = {
         complete: (results, file) => {
+          if (this.file !== selectedFile || this.conversion_version !== version) {
+            return;
+          }
           //  console.log("Parsing complete:", results, file);
-          NotificationService.showSuccessAlert(null, "Load CSV file completed.");
+          NotificationService.showSuccessAlert(
+            null,
+            "Load CSV file completed.",
+          );
           this.loadCsvToSheet(results);
 
           let valid = ProductsCsvFormat.CheckValidFile(this.headers);
@@ -226,6 +287,9 @@ export default {
           this.$emit("update:valid", valid);
         },
         error: () => {
+          if (this.file !== selectedFile || this.conversion_version !== version) {
+            return;
+          }
           NotificationService.showErrorAlert(null, "Parsing error!");
           this.$emit("update:valid", false);
 
@@ -314,3 +378,126 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.b-spreadsheet-products--modern {
+  min-width: 0;
+
+  .b-spreadsheet-products__file {
+    padding: 26px 20px;
+    color: rgb(var(--v-theme-on-surface));
+    background: var(--sd-modern-inset);
+    border: 1px dashed var(--sd-modern-border);
+    border-radius: 12px;
+
+    :deep(.v-input__control),
+    :deep(.v-field__field) {
+      min-width: 0;
+    }
+    :deep(.v-field) {
+      align-items: center;
+      padding: 0;
+    }
+    :deep(.v-field__prepend-inner) {
+      align-items: center;
+      padding: 0;
+      flex-grow: 1;
+    }
+    :deep(.v-field__append-inner) {
+      align-items: center;
+      padding: 0;
+    }
+    :deep(.v-field__input) {
+      min-height: 46px;
+      padding-block: 0;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 22px;
+      overflow-wrap: anywhere;
+    }
+
+    &:focus-within {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 3px;
+    }
+    &--empty :deep(.v-field) {
+      grid-template-columns: minmax(0, 1fr) minmax(
+          0,
+          1fr
+        ) min-content min-content;
+    }
+  }
+
+  .b-spreadsheet-products__file-copy {
+    min-width: 0;
+    text-align: start;
+    p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 22px;
+    }
+    span {
+      display: block;
+      color: var(--sd-modern-muted);
+      font-size: 13px;
+      line-height: 21px;
+      margin-block-start: 3px;
+    }
+  }
+
+  .b-spreadsheet-products__file-size {
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+  }
+
+  .b-spreadsheet-products__select {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 36px;
+    margin-inline-start: 16px;
+    padding: 7px 12px;
+    color: rgb(var(--v-theme-on-surface));
+    background: rgb(var(--v-theme-surface));
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+
+  .b-spreadsheet-products__converted {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-block: 12px;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 599px) {
+    .b-spreadsheet-products__file {
+      padding: 16px;
+      &--empty :deep(.v-field) {
+        grid-template-areas: "prepend-inner" "field";
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 12px;
+      }
+      &--empty :deep(.v-field__append-inner) {
+        grid-area: field;
+        width: 100%;
+      }
+      :deep(.v-field__input) {
+        font-size: 16px;
+      }
+    }
+    .b-spreadsheet-products__select {
+      width: 100%;
+      min-height: 44px;
+      justify-content: center;
+      margin-inline: 0;
+    }
+  }
+}
+</style>

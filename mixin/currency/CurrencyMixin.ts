@@ -20,6 +20,9 @@ import {BasketItem, Shop} from "@selldone/core-js/models";
 import numeral from "numeral";
 
 const CurrencyMixin = {
+  inject: {
+    $productEmbedCurrency: { default: null },
+  },
   methods: {
     getCurrencyName: function getCurrencyName(
       currency_code: keyof typeof Currency | ICurrency,
@@ -65,6 +68,7 @@ const CurrencyMixin = {
      * @constructor
      */
     GetUserSelectedCurrency(): ICurrency {
+      if (this.$productEmbedCurrency) return this.$productEmbedCurrency;
       return CurrencyHelper.GetUserSelectedCurrency(
         this.$localstorage_base_path(),
       );
@@ -165,7 +169,7 @@ const CurrencyMixin = {
               ? _currency
               : _currency
                   ? Currency[_currency]
-                  : CurrencyHelper.GetUserSelectedCurrency(
+                  : this.$productEmbedCurrency || CurrencyHelper.GetUserSelectedCurrency(
                       this.$localstorage_base_path(),
                   );
 

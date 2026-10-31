@@ -13,7 +13,83 @@
   -->
 
 <template>
-  <div v-if="variant_assets?.length">
+  <div
+    v-if="modern"
+    class="b-product-graphical-assets-selector sd-modern-input-action-host"
+  >
+    <v-btn
+      icon
+      variant="text"
+      class="sd-modern-icon-button sd-modern-input-action"
+      :loading="busy_fetch"
+      :disabled="disabled || !variant_assets?.length"
+      :aria-label="$t('b_product_inventory.editor.choose_image_value')"
+      @click="showDialog"
+    >
+      <v-icon>image</v-icon>
+      <v-tooltip
+        activator="parent"
+        location="top"
+        content-class="sd-modern-tooltip text-start"
+        >{{ $t("b_product_inventory.editor.choose_image_value") }}</v-tooltip
+      >
+    </v-btn>
+
+    <v-dialog
+      v-if="dialog_pre"
+      v-model="dialog"
+      :fullscreen="$vuetify.display.xs"
+      max-width="680"
+      scrollable
+    >
+      <v-card
+        class="sd-modern-widget b-product-graphical-assets-selector__dialog text-start"
+        :theme="USER()?.preferences?.dark ? 'dark' : 'light'"
+      >
+        <header class="b-product-graphical-assets-selector__header">
+          <div>
+            <h2>{{ $t("variant_graphical_assets.title") }}</h2>
+            <p>{{ $t("b_product_inventory.editor.image_value_help") }}</p>
+          </div>
+          <v-btn
+            icon
+            variant="text"
+            class="sd-modern-icon-button"
+            :aria-label="$t('global.actions.close')"
+            @click="closeDialog"
+          >
+            <v-icon>close</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="top"
+              content-class="sd-modern-tooltip text-start"
+              >{{ $t("global.actions.close") }}</v-tooltip
+            >
+          </v-btn>
+        </header>
+        <v-card-text class="b-product-graphical-assets-selector__body">
+          <div class="b-product-graphical-assets-selector__grid">
+            <button
+              v-for="asset in variant_assets"
+              :key="asset.id"
+              type="button"
+              class="b-product-graphical-assets-selector__asset"
+              :disabled="disabled"
+              @click="selectAsset(asset)"
+            >
+              <img
+                :src="getShopImagePath(asset.path)"
+                :alt="getName(asset.name) || asset.name"
+                class="no-inv"
+              />
+              <span>{{ getName(asset.name) || asset.name }}</span>
+            </button>
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+  </div>
+  <div v-else-if="variant_assets?.length">
     <v-slide-group show-arrows>
       <v-slide-group-item key="o">
         <v-btn
@@ -93,7 +169,6 @@
 </template>
 
 <script lang="ts">
-
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
@@ -103,7 +178,8 @@ export default {
   inject: ["$shop"],
   emits: ["select"],
   props: {
-
+    modern: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
   },
   data: () => ({
     dialog_pre: false,
@@ -128,8 +204,14 @@ export default {
   created() {
     this.fetchVariantAssets();
   },
+  watch: {
+    disabled(value) {
+      if (value) this.closeDialog();
+    },
+  },
   methods: {
     showDialog() {
+      if (this.disabled || !this.variant_assets?.length) return;
       this.dialog_pre = true;
       this.$nextTick(() => {
         this.dialog = true;
@@ -140,6 +222,11 @@ export default {
       this.$nextTick(() => {
         this.dialog_pre = false;
       });
+    },
+    selectAsset(asset) {
+      if (this.disabled) return;
+      this.$emit("select", `{${asset.name}}`);
+      this.closeDialog();
     },
 
     fetchVariantAssets() {
@@ -180,4 +267,92 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-product-graphical-assets-selector {
+  &__dialog.v-card {
+    padding: 0;
+    border-radius: 16px;
+    color: rgb(var(--v-theme-on-surface));
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px 12px;
+    flex-shrink: 0;
+
+    h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 24px;
+    }
+
+    p {
+      margin: 5px 0 0;
+      font-size: 13px;
+      line-height: 20px;
+      color: var(--sd-modern-muted);
+    }
+  }
+
+  &__body {
+    min-width: 0;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 16px;
+  }
+
+  &__asset {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 12px;
+    color: inherit;
+    background: rgb(var(--v-theme-surface));
+    font: inherit;
+    font-size: 13px;
+    line-height: 20px;
+    text-align: start;
+
+    img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    span {
+      overflow-wrap: anywhere;
+    }
+
+    &:hover:not(:disabled) {
+      background: var(--sd-modern-inset);
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 3px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .b-product-graphical-assets-selector__dialog.v-card {
+    border-radius: 0;
+  }
+
+  .b-product-graphical-assets-selector__header {
+    padding: 16px;
+  }
+}
+</style>

@@ -33,7 +33,7 @@
           <v-btn class="sd-modern-button sd-modern-button--compact" variant="outlined" :disabled="busyEdit === item" @click="$emit('cancel-edit', item)">
             <v-icon start size="18" aria-hidden="true">close</v-icon>{{ $t('global.actions.cancel') }}
           </v-btn>
-          <v-btn class="sd-modern-button sd-modern-button--compact" color="primary" variant="flat" :loading="busyEdit === item" :disabled="!String(data.message || '').trim()" @click="$emit('save', item)">
+          <v-btn class="sd-modern-button sd-modern-button--compact sd-modern-button--primary" color="primary" variant="flat" :loading="busyEdit === item" :disabled="!String(data.message || '').trim()" @click="$emit('save', item)">
             <v-icon start size="18" aria-hidden="true">save</v-icon>{{ $t('global.actions.save') }}
           </v-btn>
         </div>
@@ -56,7 +56,7 @@
               <template #activator="{ props }">
                 <button v-bind="props" type="button" class="b-order-timeline-event__reference" :aria-label="$t('order_timeline.modern.recorded_reference')">
                   <img v-if="orderImage" :src="orderImage" alt="" width="17" height="19" />
-                  <bdi>{{ getBasketOrderCode(order) }}</bdi><v-icon size="14" aria-hidden="true">info_outline</v-icon>
+                  <bdi>{{ IS_VENDOR_PANEL ? getVendorOrderCode(order) : getBasketOrderCode(order) }}</bdi><v-icon size="14" aria-hidden="true">info_outline</v-icon>
                 </button>
               </template>
               <div>{{ $t('order_timeline.modern.reference_help') }}</div>
@@ -102,7 +102,7 @@
         <v-icon start size="16" aria-hidden="true">visibility</v-icon>{{ $t('order_timeline.modern.preview_email') }}
       </v-btn>
       <span v-if="canResend && data.resend" class="b-order-timeline-event__resent">{{ $t('order_timeline.modern.resent_at', { time: resendTime }) }}</span>
-      <v-btn v-else-if="canResend && data.can_resend" class="sd-modern-button sd-modern-button--compact sd-modern-button--inline" variant="text" color="primary" :loading="busyResend === item.id" :disabled="busyResend !== null" @click.stop="$emit('resend', item)">
+      <v-btn v-else-if="canResend && data.can_resend && !IS_VENDOR_PANEL" class="sd-modern-button sd-modern-button--compact sd-modern-button--inline" variant="text" color="primary" :loading="busyResend === item.id" :disabled="busyResend !== null" @click.stop="$emit('resend', item)">
         <v-icon start size="16" aria-hidden="true">send</v-icon>{{ $t('global.actions.resend') }}
       </v-btn>
       <v-tooltip v-if="isSms" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true" :open-on-click="true">
@@ -149,6 +149,10 @@ export default {
     busyEdit: { default: null }, busyDelete: { default: false }, busyResend: { default: null },
   },
   computed: {
+    IS_VENDOR_PANEL() {
+      /*🟢 Vendor Panel 🟢*/
+      return !!(this.$route.params.vendor_id && this.$route.matched.some(record => record.meta.vendor));
+    },
     MapHelper() { return MapHelper; },
     wireIcon() { return wireIcon; },
     data() { return this.item.data && typeof this.item.data === 'object' && !Array.isArray(this.item.data) ? this.item.data : {}; },
@@ -171,7 +175,7 @@ export default {
     connectIcon() { return this.data.connect_id ? window.CDN.GET_CONNECT_ICON(this.data.connect_id) : null; },
     orderImage() { return this.getBasketTypeImage(this.order.type); },
     isCurrentOrderReference() {
-      const prefix = ['physical', 'virtual', 'file', 'service', 'subscription'].includes(this.orderType) ? 'Basket' : {pos:'POS',fulfillment:'Fulfilment',avocado:'AVO',hyper:'HYP'}[this.orderType];
+      const prefix = this.IS_VENDOR_PANEL ? 'Vendor Order' : ['physical', 'virtual', 'file', 'service', 'subscription'].includes(this.orderType) ? 'Basket' : {pos:'POS',fulfillment:'Fulfilment',avocado:'AVO',hyper:'HYP'}[this.orderType];
       return !!prefix && this.order.id !== undefined && this.payment?.message === `${prefix}-${this.order.id}`;
     },
     addressChanges() { return [{key:'old',label:'order_timeline.modern.previous_address',address:this.data.old},{key:'new',label:'order_timeline.modern.updated_address',address:this.data.new}].filter(change=>change.address && typeof change.address === 'object' && !Array.isArray(change.address)); },
@@ -199,6 +203,8 @@ export default {
   &__invalid-amount { display: inline-flex; align-items: center; gap: 5px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; }
   &__payment-message { overflow-wrap: anywhere; }
   &__reference { display: inline-flex; align-items: center; gap: 5px; min-height: 26px; padding: 0; border: 0; background: transparent; color: rgb(var(--v-theme-primary)); font: inherit; cursor: var(--cursor-interaction,pointer); }
+  .smart-invert &__reference > bdi,
+  .smart-invert &__reference > .v-icon { filter: invert(1); }
   &__meta, &__actor, &__delivery { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   &__meta { gap: 7px 12px; margin-block-start: 5px; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; }
   &__connect { flex: 0 0 24px; }

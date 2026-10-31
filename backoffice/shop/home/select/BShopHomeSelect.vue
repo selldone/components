@@ -383,39 +383,19 @@
         <template v-if="modern">{{ $t('domains_modern.home.use_default') }}</template>
         <template v-else>Clear <small>(Set shop default)</small></template>
       </v-btn>
+      <p v-if="modern" class="b-shop-home-select-modern__inherit-help">
+        {{ $t('domains_modern.home.default_help') }}
+      </p>
     </div>
       </div>
 
       <aside v-if="modern" class="b-shop-home-select-modern__preview">
-        <div class="sd-modern-list-header">{{ $t('domains_modern.home.preview_title') }}</div>
-        <div
-          class="b-shop-home-select-modern__browser"
-          role="img"
-          :aria-label="$t('domains_modern.home.preview_label', { type: modernPreviewName })"
-        >
-          <div class="b-shop-home-select-modern__address">
-            <v-icon size="12">language</v-icon>
-            <bdi dir="ltr">{{ domain?.domain || shop.domain || shop.name }}</bdi>
-          </div>
-          <div class="b-shop-home-select-modern__page">
-            <div class="b-shop-home-select-modern__preview-nav">
-              <span>{{ shop.title || shop.name }}</span>
-              <img :src="modernPreviewIcon" alt="" height="16" width="16" />
-            </div>
-            <div class="b-shop-home-select-modern__hero">
-              <span class="b-shop-home-select-modern__preview-caption">{{ modernPreviewName }}</span>
-              <strong><bdi :dir="modernPreviewType === 'static' ? 'ltr' : 'auto'">{{ modernPreviewTitle }}</bdi></strong>
-              <span class="b-shop-home-select-modern__placeholder-line" aria-hidden="true"></span>
-              <span v-if="modernPreviewType === 'landing' || modernPreviewType === 'shop'" class="b-shop-home-select-modern__preview-cta">
-                {{ $t('domains_modern.home.preview_cta') }}
-              </span>
-            </div>
-            <div class="b-shop-home-select-modern__preview-blocks" aria-hidden="true">
-              <span v-for="block in 3" :key="block"><v-icon size="18">{{ modernPreviewBlockIcon }}</v-icon></span>
-            </div>
-          </div>
-        </div>
-        <p class="b-shop-home-select-modern__preview-help">{{ $t('domains_modern.home.preview_help') }}</p>
+        <b-domain-storefront-preview
+          :shop="shop"
+          :address="domain?.domain || shop.domain || shop.name"
+          :home="modernPreviewHome"
+          :external="!!domain?.externally_hosted"
+        />
       </aside>
     </div>
     <div v-if="modern" class="b-shop-home-select-modern__status" role="status" aria-live="polite">
@@ -432,11 +412,12 @@ import { throttle } from "lodash-es";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import DomainMixin from "@selldone/components-vue/mixin/domain/DomainMixin.ts";
+import BDomainStorefrontPreview from "../../../domain/workspace/BDomainStorefrontPreview.vue";
 
 export default {
   name: "BShopHomeSelect",
   mixins: [DomainMixin],
-  components: { UButtonFeature },
+  components: { UButtonFeature, BDomainStorefrontPreview },
   props: {
     shop: {
       required: false,
@@ -488,24 +469,6 @@ export default {
     },
     modernPreviewHome() {
       return this.home_page || (this.domain ? this.shop.home : null) || 'shop';
-    },
-    modernPreviewType() {
-      if (('' + this.modernPreviewHome).startsWith('/')) return 'static';
-      return ['shop', 'avocado', 'hyper', 'community', 'blog', 'map'].includes(this.modernPreviewHome) ? this.modernPreviewHome : 'landing';
-    },
-    modernPreviewName() {
-      return this.GetDomainHomeName(this.modernPreviewHome);
-    },
-    modernPreviewIcon() {
-      return this.GetDomainHomeIcon(this.modernPreviewHome);
-    },
-    modernPreviewTitle() {
-      if (this.modernPreviewType === 'landing') return this.pages.find(page => '' + page.id === '' + this.modernPreviewHome)?.title || this.modernPreviewName;
-      if (this.modernPreviewType === 'static') return this.modernPreviewHome;
-      return this.shop.title || this.shop.name;
-    },
-    modernPreviewBlockIcon() {
-      return this.modernPreviewType === 'blog' ? 'article' : this.modernPreviewType === 'community' ? 'forum' : this.modernPreviewType === 'map' ? 'place' : this.modernPreviewType === 'static' ? 'code' : 'inventory_2';
     },
     landing_page_mode() {
       return (
@@ -566,15 +529,15 @@ export default {
         });
     },
     setHomePage: throttle(function () {
-      if (this.readOnly) return;
+      if (this.readOnly || this.busy_set) return;
       if (this.old_page === this.home_page) return;
-      this.old_page = this.home_page;
 
       this.setHomePageNow();
     }, 1000),
 
     setHomePageNow() {
-      if (this.readOnly) return;
+      if (this.readOnly || this.busy_set) return;
+      const submittedHome = this.home_page;
       this.busy_set = true;
 
       axios
@@ -588,11 +551,12 @@ export default {
                 this.shop.id,
               ) /* Default shop home page */,
           {
-            page_id: this.home_page,
+            page_id: submittedHome,
           },
         )
         .then(({ data }) => {
           if (!data.error) {
+            this.old_page = submittedHome;
             if (this.domain) {
               this.domain.home = data.home;
 
@@ -778,11 +742,10 @@ export default {
     line-height: 18px;
   }
 
-  &__inherit-help,
-  &__preview-help {
+  &__inherit-help {
     margin: 7px 0 0;
-    font-size: 11px;
-    line-height: 18px;
+    font-size: 13px;
+    line-height: 21px;
     color: var(--sd-modern-muted);
   }
 
@@ -793,109 +756,6 @@ export default {
   &__preview {
     padding-inline-start: 30px;
     border-inline-start: 1px solid var(--sd-modern-border);
-  }
-
-  &__browser {
-    border: 1px solid var(--sd-modern-border);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-top: 12px;
-    background: rgb(var(--v-theme-surface));
-  }
-
-  &__address {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--sd-modern-border);
-    background: var(--sd-modern-inset);
-    color: var(--sd-modern-muted);
-    font-size: 10px;
-    line-height: 16px;
-
-    > bdi {
-      min-width: 0;
-      overflow-wrap: anywhere;
-    }
-  }
-
-  &__page {
-    padding: 18px;
-    min-height: 230px;
-  }
-
-  &__preview-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 23px;
-    font-size: 11px;
-    line-height: 18px;
-
-    > img {
-      flex-shrink: 0;
-    }
-  }
-
-  &__hero {
-    padding: 20px 15px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    background: var(--sd-modern-inset);
-
-    > strong {
-      display: block;
-      margin-top: 5px;
-      font-size: 19px;
-      font-weight: 500;
-      line-height: 27px;
-      overflow-wrap: anywhere;
-    }
-  }
-
-  &__preview-caption {
-    font-size: 11px;
-    line-height: 18px;
-    color: var(--sd-modern-muted);
-  }
-
-  &__placeholder-line {
-    display: block;
-    height: 5px;
-    width: 68%;
-    margin: 8px 0;
-    border-radius: 3px;
-    background: rgba(var(--v-theme-on-surface), .12);
-  }
-
-  &__preview-cta {
-    display: inline-block;
-    margin-top: 12px;
-    padding: 5px 10px;
-    border-radius: 8px;
-    background: rgb(var(--v-theme-primary));
-    color: rgb(var(--v-theme-on-primary));
-    font-size: 10px;
-    font-weight: 500;
-    line-height: 19px;
-  }
-
-  &__preview-blocks {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 9px;
-
-    > span {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      aspect-ratio: 1.3;
-      border-radius: 7px;
-      background: var(--sd-modern-inset);
-      color: var(--sd-modern-muted);
-    }
   }
 
   &__status {

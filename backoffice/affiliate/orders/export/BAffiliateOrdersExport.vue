@@ -13,36 +13,47 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="widget-box">
-    <h2>Export orders</h2>
-    <v-list-subheader></v-list-subheader>
+  <div class="sd-modern-widget b-affiliate-orders-export text-start">
+    <h2 class="sd-modern-title-text">
+      {{ $t("affiliate_workspace.orders.export") }}
+    </h2>
+    <p class="sd-modern-subtitle">
+      {{ $t("exporter.sections.affiliate_scope") }}
+    </p>
 
-    <u-date-input
-      v-model="start"
-      :label="$t('global.commons.start_date')"
-      :placeholder="$t('global.placeholders.select_date')"
-      clearable
-      date-only
-      return-utc
-    />
+    <div class="b-affiliate-orders-export__dates">
+      <u-date-input
+        v-model="start"
+        class="sd-modern-underlined-field"
+        variant="underlined"
+        :label="$t('global.commons.start_date')"
+        :placeholder="$t('global.placeholders.select_date')"
+        clearable
+        date-only
+        return-utc
+      />
 
-    <u-date-input
-      v-model="end"
-      :disabled="!start"
-      :label="$t('global.commons.end_date')"
-      :min="start"
-      :placeholder="$t('global.commons.now')"
-      clearable
-      date-only
-      return-utc
-    />
+      <u-date-input
+        v-model="end"
+        class="sd-modern-underlined-field"
+        variant="underlined"
+        :disabled="!start"
+        :label="$t('global.commons.end_date')"
+        :min="start"
+        :placeholder="$t('global.commons.now')"
+        clearable
+        date-only
+        return-utc
+      />
+    </div>
 
     <s-export-format-select
+      modern
       :csv="csv"
       :excel="excel"
       :pdf="pdf"
       dense
-      type="Affiliate orders"
+      :type="$t('affiliate_workspace.orders.title')"
     >
     </s-export-format-select>
   </div>
@@ -109,4 +120,42 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-affiliate-orders-export {
+  padding: 24px;
+  border-radius: 20px;
+
+  .sd-modern-title-text {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .sd-modern-subtitle {
+    margin-block-start: 4px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  &__dates {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-block: 20px;
+  }
+  .s--export-format-select--modern {
+    margin-inline: -24px;
+    margin-block-end: -24px;
+  }
+  @media (max-width: 600px) {
+    padding: 20px;
+
+    &__dates {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .s--export-format-select--modern {
+      margin-inline: -20px;
+      margin-block-end: -20px;
+    }
+  }
+}
+</style>

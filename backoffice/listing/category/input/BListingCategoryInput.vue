@@ -6,7 +6,11 @@
     :items="categories"
     :label="label"
     :loading="busy"
-    :messages="selectedCategory && selectedCategory.description ? selectedCategory.description : ''"
+    :messages="
+      selectedCategory && selectedCategory.description
+        ? selectedCategory.description
+        : ''
+    "
     :model-value="modelValue"
     :variant="variant"
     :rules="rules"
@@ -18,11 +22,17 @@
     @click:clear="onClear"
     :prepend-inner-icon="prependInnerIcon"
   >
+    <template v-if="$slots['append-inner']" #append-inner>
+      <slot name="append-inner" />
+    </template>
     <!-- Selected item view -->
     <template v-slot:selection="{ item }">
       <v-avatar class="m-2" size="32" color="grey-lighten-4">
         <template v-if="item.raw.icon">
-          <img :src="getShopImagePath(item.raw.icon)" style="object-fit: cover" />
+          <img
+            :src="getShopImagePath(item.raw.icon)"
+            style="object-fit: cover"
+          />
         </template>
         <template v-else>
           <v-icon size="18" color="#333">folder</v-icon>
@@ -61,7 +71,10 @@
         <template v-slot:prepend>
           <v-avatar class="m-2" size="32" color="grey-lighten-4">
             <template v-if="item.raw.icon">
-              <img :src="getShopImagePath(item.raw.icon)" style="object-fit: cover" />
+              <img
+                :src="getShopImagePath(item.raw.icon)"
+                style="object-fit: cover"
+              />
             </template>
             <template v-else>
               <v-icon size="18" color="#333">folder</v-icon>
@@ -184,6 +197,7 @@ export default {
       total: 0,
 
       busy: false,
+      request_id: 0,
       search: null as string | null,
     };
   },
@@ -199,7 +213,9 @@ export default {
       return (
         (this as any).$route?.params?.vendor_id &&
         // @ts-ignore
-        (this as any).$route?.matched?.some((record: any) => record?.meta?.vendor)
+        (this as any).$route?.matched?.some(
+          (record: any) => record?.meta?.vendor,
+        )
       );
     },
 
@@ -213,6 +229,12 @@ export default {
       return String((this as any).shop?.name || "").trim();
     },
 
+    contextKey(): string {
+      return this.IS_VENDOR_PANEL
+        ? `vendor:${this.shopName}`
+        : `shop:${this.shopId}`;
+    },
+
     selectedId(): number | null {
       const v: any = this.modelValue;
 
@@ -224,14 +246,25 @@ export default {
 
     selectedCategory(): any | null {
       if (!this.selectedId) return null;
-      return this.categories.find((c: any) => c && c.id === this.selectedId) || null;
+      return (
+        this.categories.find((c: any) => c && c.id === this.selectedId) || null
+      );
     },
   },
 
   watch: {
-    search: throttle(function () {
+    contextKey() {
+      this.categories = [];
+      this.total = 0;
+      this.busy = false;
       this.getCategories();
-    }, (window as any).SERACH_THROTTLE || 600),
+    },
+    search: throttle(
+      function () {
+        this.getCategories();
+      },
+      (window as any).SERACH_THROTTLE || 600,
+    ),
 
     modelValue: {
       handler() {
@@ -248,6 +281,24 @@ export default {
   },
 
   methods: {
+    selectCategory(category: any) {
+      if (!category?.id) return;
+      // A search started before creation must not clear the new selection.
+      this.request_id++;
+      this.busy = false;
+      this.search = null;
+      const exists = this.categories.some((row: any) => row.id === category.id);
+      this.categories = [
+        ...this.categories.filter((row: any) => row.id !== category.id),
+        category,
+      ];
+      if (!exists) this.total++;
+      this.$emit(
+        "update:modelValue",
+        this.returnObject ? category : category.id,
+      );
+    },
+
     isObject(val: any): boolean {
       return val !== null && typeof val === "object" && !Array.isArray(val);
     },
@@ -290,16 +341,21 @@ export default {
       }
 
       this.busy = true;
+      const requestId = ++this.request_id;
+      const context = this.contextKey;
+      const current = () =>
+        requestId === this.request_id && context === this.contextKey;
 
       // Pick endpoint
       // @ts-ignore
-      const url = this.IS_VENDOR_PANEL && window.XAPI
-        // @ts-ignore
-        ? window.XAPI.GET_SHOP_LISTING_CATEGORIES(shopName)
-        // @ts-ignore
-        : window.API.GET_SHOP_LISTING_CATEGORIES(shopId);
+      const url =
+        this.IS_VENDOR_PANEL && window.XAPI
+          ? // @ts-ignore
+            window.XAPI.GET_SHOP_LISTING_CATEGORIES(shopName)
+          : // @ts-ignore
+            window.API.GET_SHOP_LISTING_CATEGORIES(shopId);
 
-      axios
+      return axios
         .get(url, {
           params: {
             contain: this.selectedId || null,
@@ -316,6 +372,7 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (!current()) return;
           if (data?.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
             return;
@@ -333,7 +390,9 @@ export default {
 
           // Normalize v-model type (id vs object) based on returnObject.
           if (this.selectedId) {
-            const found = this.categories.find((c: any) => c && c.id === this.selectedId) || null;
+            const found =
+              this.categories.find((c: any) => c && c.id === this.selectedId) ||
+              null;
 
             if (!found) {
               // Selected value is invalid (deleted/missing/unavailable).
@@ -346,11 +405,16 @@ export default {
 
             // Only emit if different to avoid loops.
             if (this.returnObject) {
-              if (!this.isObject(this.modelValue) || (this.modelValue as any)?.id !== found.id) {
+              if (
+                !this.isObject(this.modelValue) ||
+                (this.modelValue as any)?.id !== found.id
+              ) {
                 this.$emit("update:modelValue", normalized);
               }
             } else {
-              const currentId = this.isObject(this.modelValue) ? (this.modelValue as any)?.id : this.modelValue;
+              const currentId = this.isObject(this.modelValue)
+                ? (this.modelValue as any)?.id
+                : this.modelValue;
               if (parseInt(String(currentId), 10) !== found.id) {
                 this.$emit("update:modelValue", normalized);
               }
@@ -358,10 +422,10 @@ export default {
           }
         })
         .catch((error) => {
-          NotificationService.showLaravelError(error);
+          if (current()) NotificationService.showLaravelError(error);
         })
         .finally(() => {
-          this.busy = false;
+          if (current()) this.busy = false;
         });
     },
   },

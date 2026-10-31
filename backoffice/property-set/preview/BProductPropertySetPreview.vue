@@ -13,7 +13,12 @@
   -->
 
 <template>
-  <div class="b--product-property-set-preview">
+  <ol v-if="modern" class="b-product-property-set-options">
+    <li v-for="option in options" :key="option.code">
+      <v-icon aria-hidden="true" size="18">{{ option.icon }}</v-icon><span>{{ option.name }}</span>
+    </li>
+  </ol>
+  <div v-else class="b--product-property-set-preview">
     <div
       class="-card"
       v-for="group in groups"
@@ -40,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { GetVariantNameByCode } from "@selldone/core-js/enums/product/ProductVariants.ts";
+import { ProductVariants, GetVariantNameByCode, GetVariantIconByCode } from "@selldone/core-js/enums/product/ProductVariants.ts";
 
 /**
  * <b-product-property-set-preview>
@@ -49,6 +54,7 @@ export default defineComponent({
   name: "BProductPropertySetPreview",
 
   props: {
+    modern: { type: Boolean, default: false },
     propertySet: {
       type: Object,
     },
@@ -59,6 +65,17 @@ export default defineComponent({
   },
 
   computed: {
+    options() {
+      const codes = [...new Set([
+        ...(this.propertySet?.variants || []).map((variant) => variant.code).filter((code) => Object.hasOwn(ProductVariants, code)),
+        ...Object.keys(ProductVariants),
+      ])];
+      return codes.map((code) => ({
+        code,
+        name: this.$t(GetVariantNameByCode(code, { property_set: this.propertySet })),
+        icon: GetVariantIconByCode(code, { property_set: this.propertySet }),
+      }));
+    },
     groups() {
       return [
         {
@@ -121,6 +138,34 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+.b-product-property-set-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 22px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: property-option;
+  > li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 2px;
+    border-block-end: 1px solid var(--sd-modern-border);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 21px;
+    counter-increment: property-option;
+  }
+  > li::before { content: counter(property-option); flex: 0 0 13px; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; font-variant-numeric: tabular-nums; }
+  > li > .v-icon { color: var(--sd-modern-muted); flex: 0 0 18px; font-size: 18px; }
+  > li > span { min-width: 0; overflow-wrap: anywhere; }
+  > li:nth-last-child(-n+2) { border-block-end: 0; }
+  @media (max-width: 520px) { column-gap: 16px; > li { gap: 8px; } }
+  @media (max-width: 360px) { grid-template-columns: minmax(0, 1fr); > li:nth-last-child(2) { border-block-end: 1px solid var(--sd-modern-border); } }
+}
 .b--product-property-set-preview {
   display: flex;
   justify-content: space-between;

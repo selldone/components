@@ -419,7 +419,7 @@
               {{ $t('global.actions.cancel') }}
             </v-btn>
             <v-btn
-              class="sd-modern-button sd-modern-button--compact"
+              class="sd-modern-button sd-modern-button--compact sd-modern-button--primary"
               color="primary"
               variant="elevated"
               :loading="saving"
@@ -614,7 +614,7 @@ export default {
   },
   computed: {
     useModernTimeline() {
-      return this.modern && !this.IS_VENDOR_PANEL;
+      return this.modern;
     },
     noteLength() {
       return Array.from(this.message || "").length;

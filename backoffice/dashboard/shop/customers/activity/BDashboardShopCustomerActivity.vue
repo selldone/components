@@ -403,7 +403,7 @@ export default {
     align-items: center;
     gap: 10px;
     min-height: 52px;
-    padding: 6px 8px;
+    padding: 6px 12px;
     border-radius: 8px;
     color: rgb(var(--v-theme-on-surface));
     text-decoration: none;
@@ -437,8 +437,6 @@ export default {
     margin: 12px 0;
   }
   &__notice {
-    display: flex;
-    align-items: center;
     gap: 10px;
     margin-block-end: 16px;
   }
@@ -461,14 +459,6 @@ export default {
       border-block-start: 1px solid var(--sd-modern-border);
       padding-inline-start: 0;
       padding-block-start: 16px;
-    }
-  }
-  @media (max-width: 600px) {
-    &__notice {
-      flex-wrap: wrap;
-    }
-    &__notice p {
-      flex-basis: calc(100% - 30px);
     }
   }
 }

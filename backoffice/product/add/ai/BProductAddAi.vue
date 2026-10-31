@@ -273,7 +273,7 @@
           ></u-price-input>
         </v-sheet>
 
-        <div v-if="!demo" class="widget-buttons">
+        <div v-if="!demo" class="widget-buttons sd-vendor-form-actions">
           <v-btn
             :disabled="!type"
             :loading="busy_edit"

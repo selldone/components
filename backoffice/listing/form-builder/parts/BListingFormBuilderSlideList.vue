@@ -1,22 +1,23 @@
 <template>
-  <v-card class="sld-bfb-list" rounded="xl" variant="flat">
-    <v-card-title class="d-flex align-center">
-      <div class="font-weight-black">Steps</div>
+  <v-card class="sld-bfb-list" :class="{ 'sld-bfb-list--modern': modern }" rounded="xl" variant="flat">
+    <v-card-title v-if="!modern" class="d-flex align-center">
+      <div class="font-weight-black">{{ $t('shop_listing.form_builder.steps') }}</div>
       <v-spacer />
       <v-btn size="small" variant="text" @click="$emit('add')">
         <v-icon start>add</v-icon>
-        Add
+        {{ $t('shop_listing.form_builder.add_step') }}
       </v-btn>
     </v-card-title>
 
-    <v-divider />
+    <v-divider v-if="!modern" />
 
-    <v-card-text class="pa-2">
+    <v-card-text :class="modern ? 'pa-0' : 'pa-2'">
       <div v-if="localSlides.length" class="sld-bfb-list__items-wrap">
         <draggable
           v-model="localSlides"
           item-key="id"
           class="sld-bfb-list__items"
+          :class="{ 'sd-modern-section-nav': modern }"
           handle=".sld-bfb-drag-handle"
           :animation="180"
           :delay="220"
@@ -32,6 +33,7 @@
               :slide="s"
               :index="i"
               :active="String(s?.id) === String(selectedProxy)"
+              :modern="modern"
               @select="selectedProxy = s.id"
               @remove="$emit('remove', s.id)"
               @duplicate="$emit('duplicate', s.id)"
@@ -43,8 +45,12 @@
       </div>
 
       <div v-else class="text-muted pa-3">
-        No steps yet. Click <b>Add</b> to create your first step.
+        {{ $t('shop_listing.form_builder.no_steps') }}
       </div>
+      <v-btn v-if="modern" variant="text" color="primary" class="sd-modern-button sd-modern-button--inline sld-bfb-list__add" @click="$emit('add')">
+        <v-icon start aria-hidden="true">add</v-icon>
+        {{ $t('shop_listing.form_builder.add_step') }}
+      </v-btn>
     </v-card-text>
   </v-card>
 </template>
@@ -61,6 +67,7 @@ export default {
   props: {
     slides: { type: Array, default: () => [] },
     selected: { type: String, default: null },
+    modern: { type: Boolean, default: false },
   },
 
   // NOTE: keep API compatible with parent (BListingFormBuilder.vue)
@@ -80,14 +87,6 @@ export default {
       return Array.isArray((this as any).slides) ? (this as any).slides : [];
     },
 
-    /**
-     * Only change when order/length changes (not on editing fields),
-     * so we avoid unnecessary re-sync loops.
-     */
-    slidesOrderKey(): string {
-      return this.slidesSafe.map((s: any) => String(s?.id ?? "")).join("|");
-    },
-
     selectedProxy: {
       get(): string | null {
         return (this as any).selected || null;
@@ -99,10 +98,10 @@ export default {
   },
 
   watch: {
-    slidesOrderKey: {
+    slides: {
       immediate: true,
       handler() {
-        // Shallow copy (same slide object refs)
+        // Refresh edited titles as well as order; the parent replaces slides on each edit.
         this.localSlides = this.slidesSafe.slice();
       },
     },
@@ -166,5 +165,14 @@ export default {
 
 .sld-bfb-dragging {
   opacity: 0.95;
+}
+
+.sld-bfb-list--modern {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  .sld-bfb-list__items { gap: 8px; padding: 4px; }
+  .sld-bfb-list__add { margin-block-start: 14px; }
 }
 </style>

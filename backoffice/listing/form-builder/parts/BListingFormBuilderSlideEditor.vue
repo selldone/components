@@ -6,27 +6,36 @@
 -->
 
 <template>
-  <div class="sld-bfb-se">
+  <div class="sld-bfb-se text-start" :class="{ 'sld-bfb-se--modern': modern }">
+    <div v-if="modern" class="sld-bfb-se__tabs" role="tablist" :aria-label="$t('shop_listing.form_builder.step')">
+      <button type="button" role="tab" :aria-selected="workspace === 'edit'" @click="workspace = 'edit'">{{ $t('shop_listing.form_builder.edit_step') }}</button>
+      <button type="button" role="tab" :aria-selected="workspace === 'preview'" @click="workspace = 'preview'">{{ $t('shop_listing.form_builder.preview') }}</button>
+    </div>
     <div v-if="!local" class="text-muted pa-4">
-      Select a step to edit.
+      {{ $t('shop_listing.form_builder.select_step') }}
     </div>
 
     <div v-else class="sld-bfb-se__grid">
       <!-- ================= Left: Editor ================= -->
-      <div>
+      <div v-show="!modern || workspace === 'edit'" :class="{ 'sd-modern-underlined-field sld-bfb-se__edit': modern }">
         <!-- Slide basics -->
-        <v-card rounded="xl" variant="flat" class="mb-3">
-          <v-card-title class="font-weight-black">Step</v-card-title>
-          <v-divider />
+        <v-card rounded="xl" variant="flat" class="sld-bfb-se__section mb-3">
+          <v-card-title v-if="!modern" class="font-weight-black">{{ $t('shop_listing.form_builder.step') }}</v-card-title>
+          <v-divider v-if="!modern" />
 
           <v-card-text>
             <div class="d-grid" style="gap: 10px">
+              <div v-if="modern" class="sld-bfb-se__geometry">
+                <v-select :model-value="slideTypeSafe" :items="slideTypeOptions" item-title="title" item-value="value" :label="$t('shop_listing.form_builder.step_type')" variant="underlined" @update:modelValue="onChangeSlideType" />
+                <b-listing-form-builder-layout-picker modern :model-value="String(local.layout || 'split_right')" @update:modelValue="(v) => patchSlide({ layout: String(v || 'split_right') })" />
+              </div>
               <v-select
+                v-if="!modern"
                 :model-value="slideTypeSafe"
                 :items="slideTypeOptions"
                 item-title="title"
                 item-value="value"
-                label="Step type"
+                :label="$t('shop_listing.form_builder.step_type')"
                 variant="underlined"
                 @update:modelValue="onChangeSlideType"
               />
@@ -38,26 +47,28 @@
                 :items="infoVariantOptions"
                 item-title="title"
                 item-value="value"
-                label="Info layout"
+                :label="$t('shop_listing.form_builder.info_layout')"
                 variant="underlined"
                 @update:modelValue="onChangeInfoVariant"
               />
 
               <b-listing-form-builder-layout-picker
+                v-if="!modern"
+                :modern="modern"
                 :model-value="String(local.layout || 'split_right')"
                 @update:modelValue="(v) => patchSlide({ layout: String(v || 'split_right') })"
               />
 
               <v-text-field
                 :model-value="localTitle"
-                label="Title"
+                :label="$t('shop_listing.form_builder.title')"
                 variant="underlined"
                 @update:modelValue="(v) => (localTitle = String(v || ''))"
               />
 
               <v-textarea
                 :model-value="localSubtitle"
-                label="Subtitle"
+                :label="$t('shop_listing.form_builder.subtitle')"
                 variant="underlined"
                 rows="2"
                 auto-grow
@@ -66,7 +77,7 @@
 
               <v-textarea
                 :model-value="localTips"
-                label="Tips (optional)"
+                :label="$t('shop_listing.form_builder.tips')"
                 variant="underlined"
                 rows="2"
                 auto-grow
@@ -77,11 +88,11 @@
         </v-card>
 
         <!-- Media / Items -->
-        <v-card rounded="xl" variant="flat" class="mb-3">
-          <v-card-title class="font-weight-black">
-            {{ isInfoItemsList ? "Items" : "Illustration" }}
+        <v-card rounded="xl" variant="flat" class="sld-bfb-se__section sld-bfb-se__media mb-3">
+          <v-card-title v-if="!modern" class="font-weight-black">
+            {{ $t(isInfoItemsList ? 'shop_listing.form_builder.items' : 'shop_listing.form_builder.illustration') }}
           </v-card-title>
-          <v-divider />
+          <v-divider v-if="!modern" />
 
           <v-card-text>
             <!-- ✅ Informative itemized list -->
@@ -95,17 +106,17 @@
             <b-listing-form-builder-image-uploader
               v-else
               :model-value="String(local.image || '')"
-              label="Slide image"
-              hint="Optional. Used as the right-side illustration (Airbnb style)."
+              :label="$t('shop_listing.form_builder.slide_image')"
+              :hint="$t('shop_listing.form_builder.slide_image_hint')"
               @update:modelValue="(v) => patchSlide({ image: String(v || '') })"
             />
           </v-card-text>
         </v-card>
 
         <!-- Field (only when type=field) -->
-        <v-card v-if="isField" rounded="xl" variant="flat" class="mb-3">
-          <v-card-title class="font-weight-black">Input</v-card-title>
-          <v-divider />
+        <v-card v-if="isField" rounded="xl" variant="flat" class="sld-bfb-se__section sld-bfb-se__input mb-3">
+          <v-card-title v-if="!modern" class="font-weight-black">{{ $t('shop_listing.form_builder.input') }}</v-card-title>
+          <v-divider v-if="!modern" />
           <v-card-text>
             <!-- ✅ FIX: use modelValue/update:modelValue (FieldEditor API) -->
             <b-listing-form-builder-field-editor
@@ -116,9 +127,9 @@
         </v-card>
 
         <!-- FAQs (per-slide) -->
-        <v-card rounded="xl" variant="flat" class="mb-3">
+        <v-card rounded="xl" variant="flat" class="sld-bfb-se__section sld-bfb-se__questions mb-3">
           <v-card-title class="d-flex align-center">
-            <div class="font-weight-black">Questions (FAQs)</div>
+            <div class="font-weight-black">{{ $t('shop_listing.form_builder.faqs') }}</div>
             <v-spacer />
             <v-chip
               v-if="faqCount > 0"
@@ -129,35 +140,35 @@
               {{ faqCount }}
             </v-chip>
 
-            <v-btn size="small" variant="text" @click="faq_dialog = true">
+            <v-btn size="small" variant="text" color="primary" :class="{ 'sd-modern-button sd-modern-button--inline': modern }" @click="faq_dialog = true">
               <v-icon start>help_outline</v-icon>
-              Edit FAQs
+              {{ $t('shop_listing.form_builder.edit_faqs') }}
             </v-btn>
           </v-card-title>
 
-          <v-divider />
+          <v-divider v-if="!modern" />
 
           <v-card-text>
             <v-text-field
               :model-value="String(local.faq_title || '')"
-              label="Questions button title (optional)"
+              :label="$t('shop_listing.form_builder.faq_title')"
               variant="underlined"
               @update:modelValue="(v) => patchSlide({ faq_title: String(v || '') })"
             />
 
             <div class="text-muted small mt-1">
-              These FAQs belong to this step only. The storefront onboarding wizard can show them when the user clicks
-              <b>Questions</b>.
+              {{ $t('shop_listing.form_builder.faq_hint') }}
             </div>
           </v-card-text>
         </v-card>
       </div>
 
       <!-- ================= Right: Preview ================= -->
-      <div>
-        <div class="text-muted small mb-2">Preview</div>
+      <div v-show="!modern || workspace === 'preview'" class="sld-bfb-se__preview">
+        <div v-if="!modern" class="text-muted small mb-2">{{ $t('shop_listing.form_builder.preview') }}</div>
 
         <b-listing-form-builder-onboarding-preview
+          :modern="modern"
           :slide="local"
           :step-index="stepIndexSafe"
           :total-steps="totalStepsSafe"
@@ -165,28 +176,31 @@
         />
 
         <div class="text-muted small mt-2">
-          Preview is non-interactive and shows the final storefront chrome & layout.
+          {{ $t('shop_listing.form_builder.preview_hint') }}
         </div>
       </div>
     </div>
 
     <!-- FAQs dialog -->
     <v-dialog v-model="faq_dialog" max-width="920" scrollable>
-      <v-card rounded="xl" class="text-start">
+      <v-card rounded="xl" class="text-start" :class="{ 'sld-bfb-se__faq-dialog sd-modern-widget sd-modern-underlined-field': modern }">
         <v-toolbar flat>
-          <v-btn icon variant="text" @click="faq_dialog = false">
-            <v-icon>close</v-icon>
-          </v-btn>
+          <v-tooltip location="top" content-class="sd-modern-tooltip">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" icon variant="text" :class="{ 'sd-modern-icon-button': modern }" :aria-label="$t('global.actions.close')" @click="faq_dialog = false"><v-icon aria-hidden="true">close</v-icon></v-btn>
+            </template>
+            {{ $t('global.actions.close') }}
+          </v-tooltip>
 
           <v-toolbar-title class="font-weight-black">
-            FAQs for this step
+            {{ $t('shop_listing.form_builder.faq_dialog') }}
           </v-toolbar-title>
 
           <v-spacer />
 
-          <v-btn variant="text" @click="faq_dialog = false">
+          <v-btn variant="text" color="primary" :class="{ 'sd-modern-button': modern }" @click="faq_dialog = false">
             <v-icon start>done</v-icon>
-            Done
+            {{ $t('shop_listing.form_builder.done') }}
           </v-btn>
         </v-toolbar>
 
@@ -228,6 +242,7 @@ export default {
 
     stepIndex: { type: Number, default: 0 }, // 0-based
     totalSteps: { type: Number, default: 1 },
+    modern: { type: Boolean, default: false },
   },
 
   emits: ["update:slide"],
@@ -237,6 +252,7 @@ export default {
     _syncing: false,
 
     faq_dialog: false,
+    workspace: "edit",
   }),
 
   computed: {
@@ -252,15 +268,15 @@ export default {
 
     slideTypeOptions(): any[] {
       return [
-        { title: "Informative (no input)", value: "info" },
-        { title: "Input (field)", value: "field" },
+        { title: this.$t("shop_listing.form_builder.informative"), value: "info" },
+        { title: this.$t("shop_listing.form_builder.input"), value: "field" },
       ];
     },
 
     infoVariantOptions(): any[] {
       return [
-        { title: "Hero illustration (single image)", value: "hero" },
-        { title: "Itemized list (Airbnb style)", value: "items_list" },
+        { title: this.$t("shop_listing.form_builder.hero"), value: "hero" },
+        { title: this.$t("shop_listing.form_builder.items_list"), value: "items_list" },
       ];
     },
 
@@ -531,5 +547,36 @@ export default {
       grid-template-columns: 1fr;
     }
   }
+}
+
+.sld-bfb-se--modern {
+  .sld-bfb-se__edit { display: flex; flex-direction: column; min-width: 0; }
+  .sld-bfb-se__geometry { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .sld-bfb-se__input { order: 2; }
+  .sld-bfb-se__media { order: 3; }
+  .sld-bfb-se__questions { order: 4; }
+  .sld-bfb-se__grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .sld-bfb-se__tabs { display: flex; gap: 22px; border-block-end: 1px solid var(--sd-modern-border); margin-block-end: 24px; }
+  .sld-bfb-se__tabs button { padding-block: 0 12px; font: inherit; font-size: 13px; line-height: 21px; min-height: 36px; border-block-end: 2px solid transparent; color: var(--sd-modern-muted); }
+  .sld-bfb-se__tabs button[aria-selected="true"] { color: inherit; border-block-end-color: rgb(var(--v-theme-primary)); }
+  .sld-bfb-se__tabs button:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  .sld-bfb-se__section { background: transparent; border-radius: 0; margin-block-end: 26px !important; overflow: visible; }
+  .sld-bfb-se__section > .v-card-title { padding: 0 0 16px; font: inherit; font-weight: 500; font-size: 13px; line-height: 21px; white-space: normal; flex-wrap: wrap; gap: 8px; }
+  .sld-bfb-se__section > .v-card-text { padding: 0; font: inherit; }
+  .sld-bfb-se__edit > .sld-bfb-se__section:first-child > .v-card-text > .d-grid { gap: 26px !important; }
+  .sld-bfb-se__questions { border-block-start: 1px solid var(--sd-modern-border); padding-block-start: 22px; }
+  .sld-bfb-se__questions .font-weight-black { font-weight: 500 !important; }
+  .sld-bfb-se__questions .v-chip { background: transparent; color: var(--sd-modern-muted); font-size: 11px; }
+  .sld-bfb-se__section .small, .sld-bfb-se__preview > .small { font-size: 12px; line-height: 20px; color: var(--sd-modern-muted); }
+  .sld-bfb-se__preview { min-width: 0; }
+  @media (max-width: 760px) { .sld-bfb-se__geometry { grid-template-columns: 1fr; gap: 26px; } }
+}
+
+.sld-bfb-se__faq-dialog {
+  .v-toolbar { background: transparent; padding: 0; }
+  :deep(.v-toolbar-title) { font-size: 16px; font-weight: 500 !important; line-height: 24px; }
+  :deep(.sld-bfb-faqe) { border: 0; background: transparent; }
+  :deep(.sld-bfb-faqe .font-weight-black) { font-size: 13px; font-weight: 500 !important; line-height: 21px; }
+  :deep(.sld-bfb-faqe__row) { background: transparent; border: 0; border-block-start: 1px solid var(--sd-modern-border); border-radius: 0; padding: 18px 0; }
 }
 </style>

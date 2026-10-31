@@ -14,12 +14,15 @@
 
 <template>
   <v-list-item
-    class="row-hover"
-    prepend-icon="map"
+    :class="modern ? 'b-product-profile-map--modern sd-modern-clickable-item text-start' : 'row-hover'"
+    :prepend-icon="modern ? undefined : 'map'"
     v-bind="$attrs"
     @click="showSetMapTag()"
     slim
   >
+    <template v-if="modern" #prepend>
+      <b-product-edit-info-icon class="me-3" name="MapPin" />
+    </template>
     <v-list-item-title class="d-flex align-center">
       <b>{{ $t("product_location_profile.title") }}</b>
 
@@ -60,13 +63,21 @@
       {{
         product.map
           ? product.map.address
-          : $t("product_location_profile.empty_subtitle")
+          : $t(modern ? 'add_product.edit_info.modern.not_assigned' : "product_location_profile.empty_subtitle")
       }}
     </v-list-item-subtitle>
 
     <template v-slot:append>
       <v-list-item-action end>
         <v-btn
+          v-if="modern"
+          class="sd-modern-button sd-modern-button--inline"
+          color="primary"
+          variant="text"
+          @click.stop="showSetMapTag()"
+        >{{ $t(product.map_id ? 'global.actions.change' : 'add_product.edit_info.modern.assign') }}</v-btn>
+        <v-btn
+          v-else
           :color="product.map_id ? 'success' : 'primary'"
           icon
           variant="text"
@@ -209,13 +220,15 @@ import UMapViewPin from "../../../../ui/map/view/market/UMapViewPin.vue";
 import BMapTagInput from "../../../map/tag/input/BMapTagInput.vue";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import BProductEditInfoIcon from "../../edit/info/BProductEditInfoIcon.vue";
 
 export default defineComponent({
   name: "BProductProfileMap",
   mixins: [DateMixin],
-  components: { BMapTagInput, UMapViewPin },
+  components: { BProductEditInfoIcon, BMapTagInput, UMapViewPin },
 
   props: {
+    modern: { type: Boolean, default: false },
     product: {
       required: true,
       type: Object,
@@ -272,4 +285,15 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-product-profile-map--modern {
+  min-height: 62px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  :deep(.v-list-item-title), :deep(.v-list-item-title b) { font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; letter-spacing: 0; white-space: normal; flex-wrap: wrap; }
+  :deep(.v-list-item-title .v-icon) { font-size: 14px; color: var(--sd-modern-muted) !important; }
+  :deep(.v-list-item-subtitle) { margin-top: 2px; color: var(--sd-modern-muted); font-size: 12px; font-weight: 400; line-height: 19px; opacity: 1; white-space: normal; overflow-wrap: anywhere; }
+  :deep(.v-list-item__append) { padding-inline-start: 12px; }
+  .b-product-edit-info-icon { color: var(--sd-modern-muted); }
+}
+</style>

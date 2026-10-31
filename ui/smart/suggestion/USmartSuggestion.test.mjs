@@ -200,11 +200,13 @@ async function render(props = {}, { openLegacy = false } = {}) {
     ["v-slide-group-item", "div"],
     ["v-dialog", "aside"],
     ["v-card", "section"],
+    ["v-card-title", "header"],
     ["v-card-text", "div"],
     ["v-card-actions", "footer"],
     ["v-list", "ul"],
     ["v-list-item-title", "strong"],
     ["v-list-item-subtitle", "small"],
+    ["v-divider", "hr"],
     ["v-icon", "i"],
   ])
     app.component(name, passthrough(tag));

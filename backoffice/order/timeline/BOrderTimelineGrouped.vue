@@ -2,7 +2,7 @@
   <div class="b-order-timeline-grouped text-start" :aria-busy="busy">
     <header class="sd-modern-header b-order-timeline-grouped__header">
       <div>
-        <div class="b-order-timeline-grouped__context sd-modern-list-header"><img v-if="orderImage" :src="orderImage" alt="" width="16" height="18" /><span>{{ $t('global.commons.orders') }}</span><span>/</span><bdi>{{ getBasketOrderCode(order) }}</bdi></div>
+        <div class="b-order-timeline-grouped__context sd-modern-list-header"><img v-if="orderImage" :src="orderImage" alt="" width="16" height="18" /><span>{{ $t('global.commons.orders') }}</span><span>/</span><template v-if="IS_VENDOR_PANEL && order.basket_id != null"><bdi>{{ getBasketOrderCode({ type: order.type, id: order.basket_id }) }}</bdi><span>/</span></template><bdi>{{ IS_VENDOR_PANEL ? getVendorOrderCode(order) : getBasketOrderCode(order) }}</bdi></div>
         <h1 class="sd-modern-title-text b-order-timeline-grouped__title">{{ $t('global.commons.timeline') }}</h1>
         <div class="b-order-timeline-grouped__subtitle">
           <p class="sd-modern-subtitle">{{ $t('order_timeline.modern.subtitle') }}</p>
@@ -12,7 +12,7 @@
           </v-tooltip>
         </div>
       </div>
-      <v-btn class="sd-modern-button b-order-timeline-grouped__add" color="primary" variant="flat" :disabled="showAdd || busy || failed" @click="$emit('add-note')">
+      <v-btn class="sd-modern-button sd-modern-button--primary b-order-timeline-grouped__add" color="primary" variant="flat" :disabled="showAdd || busy || failed" @click="$emit('add-note')">
         <v-icon start size="18" aria-hidden="true">note_add</v-icon>{{ $t('global.commons.add_note') }}
       </v-btn>
     </header>
@@ -109,6 +109,10 @@ export default {
   },
   data() { return {filter:'all',expandedBundles:{}}; },
   computed: {
+    IS_VENDOR_PANEL() {
+      /*🟢 Vendor Panel 🟢*/
+      return !!(this.$route.params.vendor_id && this.$route.matched.some(record => record.meta.vendor));
+    },
     categories() { return ['all','order','payment','message','note']; },
     sections() { return buildTimelineSections(this.timelines, this.filter); },
     visibleCount() { return this.timelines.filter(item=>this.filter==='all'||getTimelineCategory(item.type)===this.filter).length; },
@@ -132,7 +136,7 @@ export default {
 .b-order-timeline-grouped {
   min-width: 0; font-family: inherit; color: rgb(var(--v-theme-on-surface));
   &__header { align-items: center; gap:20px; margin-block-end:22px; }
-  &__context { display:flex; align-items:center; gap:7px; margin-block-end:5px; img {object-fit:contain;} }
+  &__context { display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin-block-end:5px; img {object-fit:contain;} }
   &__title { margin:0; font-size:22px; line-height:29px; font-weight:500; letter-spacing:-.3px; }
   &__subtitle { display:flex; align-items:center; gap:6px; margin-block-start:4px; .sd-modern-subtitle {margin:0;font-size:12px;font-weight:400;line-height:20px;} }
   &__add { font-size:13px; font-weight:500; line-height:20px; }
@@ -146,7 +150,7 @@ export default {
   &__sort {display:inline-flex;align-items:center;gap:5px;color:var(--sd-modern-muted);font-size:11px;line-height:18px;white-space:nowrap;}
   &__composer {padding:20px;border-block-end:1px solid var(--sd-modern-border);}
   &__loading {display:grid;place-items:center;min-height:160px;}
-  &__error {margin:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;line-height:20px;>span{flex:1;}}
+  &__error {margin:20px;gap:12px;font-size:12px;line-height:20px;>span{flex:1;}}
   &__section {padding:0 20px 4px;&--pinned {padding-block-end:8px;border-block-end:1px solid var(--sd-modern-border);}}
   &__day {display:flex;align-items:center;gap:10px;margin:0;padding:21px 0 9px;font-size:12px;font-weight:500;line-height:20px;&:after{content:'';height:1px;background:var(--sd-modern-border);flex:1;margin-inline-start:5px;}}
   &__count {color:var(--sd-modern-muted);font-size:11px;font-weight:400;line-height:17px;}

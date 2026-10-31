@@ -7,11 +7,11 @@
 <template>
   <v-card rounded="lg" variant="outlined" class="sld-bfb-faqe">
     <v-card-title class="d-flex align-center py-2">
-      <div class="font-weight-black">FAQs</div>
+      <div class="font-weight-black">{{ $t('shop_listing.form_builder.faqs') }}</div>
       <v-spacer />
-      <v-btn size="small" variant="text" @click="addFaq">
+      <v-btn size="small" variant="text" :class="{ 'sd-modern-button sd-modern-button--inline': listingFormBuilderModern }" @click="addFaq">
         <v-icon start>add</v-icon>
-        Add
+        {{ $t('shop_listing.form_builder.add_question') }}
       </v-btn>
     </v-card-title>
 
@@ -19,7 +19,7 @@
 
     <v-card-text class="pa-2">
       <div v-if="!faqsLocal.length" class="text-muted pa-3">
-        No questions yet. Click <b>Add</b> to create FAQs for this step.
+        {{ $t('shop_listing.form_builder.no_questions') }}
       </div>
 
       <draggable
@@ -36,12 +36,12 @@
         <template #item="{ element, index }">
           <v-card rounded="lg" variant="flat" class="sld-bfb-faqe__row">
             <div class="d-flex align-center mb-2">
-              <span class="sld-bfb-faqe__drag" title="Drag to reorder">
+              <span class="sld-bfb-faqe__drag" :title="$t('shop_listing.form_builder.drag_reorder')">
                 <v-icon size="18">drag_indicator</v-icon>
               </span>
 
               <div class="ms-2 font-weight-black">
-                Question {{ index + 1 }}
+                {{ $t('shop_listing.form_builder.question_number', { number: index + 1 }) }}
               </div>
 
               <v-spacer />
@@ -50,23 +50,26 @@
                 icon
                 size="x-small"
                 variant="text"
-                title="Remove"
+                :class="{ 'sd-modern-icon-button': listingFormBuilderModern }"
+                :aria-label="$t('shop_listing.form_builder.remove')"
+                :title="$t('shop_listing.form_builder.remove')"
                 @click="removeFaq(String(element.id))"
               >
-                <v-icon size="18">delete</v-icon>
+                <v-icon size="18" aria-hidden="true">delete</v-icon>
+                <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip">{{ $t('shop_listing.form_builder.remove') }}</v-tooltip>
               </v-btn>
             </div>
 
             <v-text-field
               :model-value="String(element.q || '')"
-              label="Question"
+              :label="$t('shop_listing.form_builder.question')"
               variant="underlined"
               @update:modelValue="(v) => patchFaq(String(element.id), { q: String(v || '') })"
             />
 
             <v-textarea
               :model-value="String(element.a || '')"
-              label="Answer"
+              :label="$t('shop_listing.form_builder.answer')"
               variant="underlined"
               rows="2"
               auto-grow
@@ -90,6 +93,7 @@ type FaqItem = {
 
 export default {
   name: "BListingFormBuilderFaqEditor",
+  inject: { listingFormBuilderModern: { default: false } },
 
   components: { draggable },
 

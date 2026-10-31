@@ -43,6 +43,7 @@
     <v-btn
       v-if="nullable"
       :size="size"
+      :aria-label="$t('global.actions.clear') + ': ' + (dialogTitle || title || $t('global.commons.color'))"
       class="ms-2"
       icon
       variant="text"
@@ -53,6 +54,7 @@
       "
     >
       <v-icon>close</v-icon>
+      <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('global.actions.clear') + ': ' + (dialogTitle || title || $t('global.commons.color')) }}</v-tooltip>
     </v-btn>
 
     <v-dialog
@@ -118,7 +120,11 @@ export default {
     };
   },
 
-  watch: {},
+  watch: {
+    modelValue(value) {
+      this.old_val = this.noAlpha ? toOpaqueHex(value) : value;
+    },
+  },
   created() {
     this.old_val = this.modelValue;
 

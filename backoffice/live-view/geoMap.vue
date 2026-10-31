@@ -1854,7 +1854,6 @@ export default {
   }
   &__notice {
     margin-block-end: 16px;
-    align-items: center;
   }
   &__notice p {
     margin: 0;
@@ -2254,6 +2253,10 @@ export default {
   }
   &__countries td button:hover {
     background: var(--sd-modern-inset);
+  }
+  &__countries td button.sd-modern-clickable-item {
+    padding-inline: 12px;
+    margin-inline-start: -12px;
   }
   &__pulse {
     fill: none;

@@ -1,0 +1,19 @@
+# Vendor application review
+
+`BVendorOnboarding` adds the approved Refined administrator review only when both `modern` and `adminMode` are true. `modern` defaults to false. The existing administrator wizard and vendor submission, upload, attachment-removal and embedded-form flows remain available to legacy callers.
+
+The modern review keeps all six sections: Company, Person, Merchandise, Payout, Documents and Decision. Submitted company, personal, product and bank fields are read-only values. Missing bank details, documents or other submission fields do not become new acceptance requirements. The two native `USmartVerify` choices start unchecked, remain mutually exclusive and support keyboard activation. Acceptance creates a vendor only when the native backend finds no existing active vendor; rejection does not remove that vendor or revoke its access. The component displays the current server decision timestamp without synthesizing dates or changing backend rules.
+
+Configured document titles, names, guides and all native types remain available. Multiple Embed and Link entries are retained. Returned attachments remain visible when their old configuration has been removed, with their native file icon, full filename, filename extension, byte-size formatting and optional note. Downloads use the existing authorized shop/request/attachment route with secure new-tab attributes. Link and embedded documents retain their existing configured actions; the review adds no upload or deletion controls and never exposes private storage paths.
+
+Successful modern decisions merge the returned request into the current model, preserving loaded relations. Existing `update` and `close` events remain; the additional `updated` event carries that merged model once so the owning page can refresh its filtered server list. The pending badge decrements only for an originally pending application. Duplicate submissions and callbacks from an old shop, request, mode or disposed component cannot affect the current review. Failed current-context decisions keep the explicit choice available for retry. Legacy decision event/counter behavior remains unchanged.
+
+The parent owns the native fullscreen dialog. Feature-scoped geometry uses a square `100dvh` surface, separate fixed header/footer rows and independently scrolling content. Tab content never determines the dialog's height. Header typography is 21px/29px at weight 600, with 22px/24px/18px insets. The body uses a 174px navigation rail, 30px gap and 28px/24px/30px insets; the content column is capped at 760px and white widgets have 26px insets with 17px corners. Section titles are 23px/31px at weight 600, field labels 12px/19px and values 14px/23px. The footer uses 16px/24px insets and 10px action gaps, reserving its read-only-label space on the Decision section to avoid a mobile action-bar jump. Below 851px, navigation wraps above the independently scrolling content; all sections/fields retain 44px touch targets and the value/choice grids stack where needed. Valid section changes reset the content scroll position, while invalid values leave the current section and scroll untouched. Native verification motion is disabled for reduced-motion preferences within this opt-in branch.
+
+Run the focused check from the components repository:
+
+```powershell
+node --test "backoffice/vendor/onboarding/BVendorOnboarding.test.mjs"
+```
+
+All 15 isolated tests pass. They compile the real SFC/template/scoped SCSS, render through Vue and exercise native event handlers and request methods using inert UI/request fixtures. They cover review fields, verification and context guards, server timestamp/model/event behavior, configured document metadata and legacy vendor contracts. They do not open attachments, execute configured document scripts, contact application/provider APIs, start servers or perform live decisions.

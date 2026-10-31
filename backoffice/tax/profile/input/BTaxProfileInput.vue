@@ -4,6 +4,7 @@ import { computed } from "vue";
 const props = withDefaults(
   defineProps<{
     shop: any;
+    modern?: boolean;
     modelValue?: any;
     returnObject?: boolean;
     solo?: boolean;
@@ -12,6 +13,7 @@ const props = withDefaults(
     variant?: string;
   }>(),
   {
+    modern: false,
     returnObject: false,
     solo: false,
     flat: false,
@@ -54,6 +56,63 @@ function externalTaxProviderColor(profile: any) {
 
 <template>
   <v-select
+    v-if="modern"
+    class="b-tax-profile-input--modern sd-modern-underlined-field text-start"
+    :bg-color="backgroundColor"
+    :flat="flat"
+    :items="taxProfiles"
+    :model-value="modelValue"
+    :return-object="returnObject"
+    :solo="solo"
+    :variant="variant"
+    :label="$t('product_tax_profile.refined.label_selected')"
+    :placeholder="$t('product_tax_profile.refined.store_default')"
+    :menu-props="{ contentClass: 'b-tax-profile-input__menu text-start' }"
+    clearable
+    hide-details
+    persistent-placeholder
+    item-title="name"
+    item-value="id"
+    @update:model-value="(value) => emit('update:modelValue', value)"
+  >
+    <template #selection="{ item }">
+      <span class="b-tax-profile-input__selection">{{ item.raw.name }}</span>
+    </template>
+    <template #item="{ item, props: itemProps }">
+      <v-list-item
+        v-bind="itemProps"
+        class="b-tax-profile-input__option text-start"
+        :dir="$attrs.dir"
+      >
+        <template #prepend>
+          <v-icon class="me-3" size="18">{{ item.raw.icon || 'receipt_long' }}</v-icon>
+        </template>
+        <template #title>
+          <span class="b-tax-profile-input__name">{{ item.raw.name }}</span>
+        </template>
+        <template #subtitle>
+          <div class="b-tax-profile-input__metadata">
+            <span v-if="!item.raw.enable" class="b-tax-profile-input__disabled">
+              <span class="sd-modern-status__dot sd-modern-status__dot--error no-inv" aria-hidden="true"></span>
+              {{ $t('product_tax_profile.refined.disabled') }}
+            </span>
+            <template v-else>
+              <span v-if="isExternalTaxProfile(item.raw)">{{ $t(externalTaxMeta(item.raw)?.provider === 'stripe_tax' ? 'product_tax_profile.refined.provider_stripe' : 'product_tax_profile.refined.external') }}</span>
+              <span v-else-if="item.raw.fix">
+                {{ $t('product_tax_profile.refined.goods') }}: <bdi>{{ item.raw.fix_vat || 0 }}%</bdi>
+                <template v-if="item.raw.shipping"> · {{ $t('product_tax_profile.refined.shipping') }}: <bdi>{{ item.raw.fix_shipping || 0 }}%</bdi></template>
+              </span>
+              <span v-else>{{ $t('product_tax_profile.refined.by_location') }}</span>
+              <span> · {{ $t(item.raw.included ? 'product_tax_profile.refined.tax_included' : 'product_tax_profile.refined.tax_excluded') }}</span>
+              <span v-if="!item.raw.shipping"> · {{ $t('product_tax_profile.refined.shipping') }}: {{ $t('product_tax_profile.refined.not_applied') }}</span>
+            </template>
+          </div>
+        </template>
+      </v-list-item>
+    </template>
+  </v-select>
+  <v-select
+    v-else
     :bg-color="backgroundColor"
     :class="{ 'tax-profile-default-mode': !modelValue }"
     :flat="flat"
@@ -197,6 +256,88 @@ function externalTaxProviderColor(profile: any) {
 </template>
 
 <style scoped>
+.b-tax-profile-input--modern {
+  min-width: 0;
+}
+
+.b-tax-profile-input--modern[dir="rtl"],
+.b-tax-profile-input__option[dir="rtl"] {
+  direction: rtl;
+}
+
+.b-tax-profile-input--modern :deep(.v-field__input) {
+  min-width: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.b-tax-profile-input--modern :deep(.v-field-label) {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 19px;
+}
+
+.b-tax-profile-input__selection {
+  line-height: 22px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.b-tax-profile-input__option {
+  padding: 10px 12px;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.b-tax-profile-input__option :deep(.v-list-item__content) {
+  min-width: 0;
+}
+
+.b-tax-profile-input__option :deep(.v-list-item-title),
+.b-tax-profile-input__name {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.b-tax-profile-input__option :deep(.v-list-item-subtitle) {
+  display: block;
+  overflow: visible;
+  opacity: 1;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: unset;
+}
+
+.b-tax-profile-input__metadata {
+  margin-top: 3px;
+  color: rgba(var(--v-theme-on-surface), .65);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 21px;
+}
+
+.b-tax-profile-input__disabled {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .b-tax-profile-input--modern :deep(.v-field__input) {
+    font-size: 16px;
+  }
+  .b-tax-profile-input__option {
+    min-height: 44px;
+  }
+}
+
 .tax-profile-default-chip {
   margin-top: 2px;
 }

@@ -20,7 +20,7 @@
     >
 
     <u-loading-progress v-if="busy"></u-loading-progress>
-    <p v-if="workspace && busy" class="s-article-search-console__loading" role="status">{{ $t('global.article.search_console.loading') }}</p>
+    <p v-if="workspace && busy && !has_data" class="s-article-search-console__loading" role="status">{{ $t('global.article.search_console.loading') }}</p>
 
     <div v-if="workspace && error" class="s-article-search-console__notice sd-modern-notice" role="status">
       <v-icon icon="warning_amber" size="19" aria-hidden="true" />
@@ -61,7 +61,7 @@
         Connect to Search Console
       </v-btn>
     </div>
-    <div v-if="!busy && !error && (!workspace || has_data)" :class="workspace ? 's-article-search-console__data' : 'mt-2'">
+    <div v-if="!error && (!busy || (workspace && has_data)) && (!workspace || has_data)" :class="workspace ? 's-article-search-console__data' : 'mt-2'">
       <div v-if="!workspace || page || (start && end)" :class="workspace ? 's-article-search-console__page' : 'small mb-2'">
         <span v-if="!workspace || page">
         <v-icon class="me-1" size="small">link</v-icon>

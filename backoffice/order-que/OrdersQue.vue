@@ -15,7 +15,10 @@
 <template>
   <div
     class="d-flex justify-content-between align-items-center text-center"
-    :class="{ 'orders-que--distribution': showDistribution && list.length }"
+    :class="{
+      'orders-que--distribution': showDistribution && list.length,
+      'orders-que--modern': modern,
+    }"
   >
     <div
       v-for="(item, index) in list"
@@ -28,10 +31,13 @@
         <b>
           {{ numeralFormat(getQueCountBasketsByType(item.code), "0,0") }}
         </b>
+        <span v-if="modern" class="orders-que__stage-label">{{
+          $t(item.name)
+        }}</span>
       </span>
 
       <v-icon
-        v-if="index !== list.length - 1"
+        v-if="!modern && index !== list.length - 1"
         :color="dark ? '#fff' : '#000'"
         class="flex-grow-1 op-0-7 flip-rtl"
         size="16"
@@ -96,6 +102,7 @@ import { Basket } from "@selldone/core-js";
 export default {
   name: "OrdersQue",
   props: {
+    modern: Boolean,
     showDistribution: { type: Boolean, default: false },
     orderQue: {
       required: true,
@@ -193,6 +200,30 @@ export default {
 </script>
 
 <style scoped>
+.orders-que--modern {
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-block: 18px;
+}
+.orders-que--modern > div {
+  min-width: 50px;
+  flex: 1;
+}
+.orders-que--modern > div > span {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+.orders-que--modern b {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 26px;
+}
+.orders-que__stage-label {
+  font-size: 11px;
+  line-height: 17px;
+  color: var(--sd-modern-muted);
+}
 .orders-que--distribution {
   position: relative;
   padding-block-end: 8px;

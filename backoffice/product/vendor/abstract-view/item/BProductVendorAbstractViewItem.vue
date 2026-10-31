@@ -16,9 +16,10 @@
   <v-expansion-panels
     v-model="expanded"
     class="b--product-vendor-abstract-view"
+    :class="{ 'b-product-vendor-refined-item': modern }"
   >
     <v-expansion-panel
-      :bg-color="expanded === 0 ? '#fff' : 'transparent'"
+      :bg-color="modern ? 'transparent' : expanded === 0 ? '#fff' : 'transparent'"
       elevation="0"
       rounded="xl"
     >
@@ -44,8 +45,13 @@
                   / {{ vendor.state }}</span
                 >
               </span>
+              <span v-if="modern && ['PENDING', 'REJECTED', 'ACCEPTED'].includes(vendor.status)" class="sd-modern-status sd-modern-status--plain ms-2">
+                <i class="sd-modern-status__dot" :class="vendor.status === 'PENDING' ? 'sd-modern-status__dot--warning' : vendor.status === 'REJECTED' ? 'sd-modern-status__dot--error' : 'sd-modern-status__dot--success'"></i>
+                {{ $t(`b_product_dashboard.identity.vendor_${vendor.status.toLowerCase()}`) }}
+              </span>
+              <span v-if="modern && isOwner" class="sd-modern-tag ms-2">{{ $t('global.commons.owner') }}</span>
               <v-chip
-                v-if="vendor.status === 'PENDING'"
+                v-if="!modern && vendor.status === 'PENDING'"
                 class="mx-2 pa-1"
                 color="#F57C00"
                 label
@@ -55,7 +61,7 @@
                 Pending
               </v-chip>
               <v-chip
-                v-if="vendor.status === 'REJECTED'"
+                v-if="!modern && vendor.status === 'REJECTED'"
                 class="mx-2 pa-1"
                 color="red"
                 label
@@ -65,7 +71,7 @@
                 Rejected
               </v-chip>
               <v-chip
-                v-if="vendor.status === 'ACCEPTED'"
+                v-if="!modern && vendor.status === 'ACCEPTED'"
                 class="mx-2 pa-1"
                 color="green"
                 label
@@ -76,7 +82,7 @@
               </v-chip>
 
               <v-chip
-                v-if="isOwner"
+                v-if="!modern && isOwner"
                 class="mx-2 pa-1"
                 color="#673AB7"
                 label
@@ -127,8 +133,11 @@
                 name: 'BPageMarketplaceVendors',
                 query: { search: vendor.name },
               }"
-              class="nbt mt-2"
+              :class="modern ? 'sd-modern-button sd-modern-button--small mt-2' : 'nbt mt-2'"
               target="_blank"
+              rel="noopener noreferrer"
+              :variant="modern ? 'text' : undefined"
+              :color="modern ? 'primary' : undefined"
             >
               <v-avatar
                 :class="{ disabled: vendor.enable === false }"
@@ -142,8 +151,8 @@
                 <v-icon v-else color="#fff">storefront</v-icon>
               </v-avatar>
 
-              Go to vendor management
-              <v-icon class="ms-1" size="small">open_in_new</v-icon>
+              {{ modern ? $t('b_product_dashboard.identity.vendor_management') : 'Go to vendor management' }}
+              <v-icon class="ms-1" size="small">north_east</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -168,6 +177,7 @@ export default {
       required: true,
     },
     isOwner: Boolean,
+    modern: Boolean,
   },
   data: () => ({
     expanded: null,
@@ -200,5 +210,12 @@ export default {
       background: transparent !important;
     }
   }
+}
+.b-product-vendor-refined-item {
+  font-size: 14px;
+  :deep(.v-expansion-panel-title) { padding-inline: 8px; min-height: 56px; text-align: start; }
+  :deep(.v-expansion-panel-text__wrapper) { padding: 8px; }
+  .body-title { font-size: 14px; font-weight: 500; line-height: 22px; }
+  .small { font-size: 12px; line-height: 19px; }
 }
 </style>

@@ -25,8 +25,9 @@ const linked = (extra = {}) => ({
 });
 
 // Deferred local fixtures only; this suite cannot connect to a customer or shop.
-function fixture() {
+function fixture(props = {}) {
   const requests = [],
+    events = [],
     exports = {};
   vm.runInNewContext(
     ts.transpileModule(descriptor.script.content, {
@@ -60,6 +61,10 @@ function fixture() {
   const state = {
     shop: { id: 7 },
     contact: { id: 31, name: "Sender snapshot", email: "sender@example.test" },
+    providedContext: undefined,
+    contextLoading: false,
+    contextError: false,
+    $emit: (...event) => events.push(event),
     $t: (key) => key,
     getLocalDateString: (value) => value,
     getBasketOrderProcessTo: (order) =>
@@ -70,6 +75,7 @@ function fixture() {
           }
         : null,
     ...component.data(),
+    ...props,
   };
   for (const [name, method] of Object.entries(component.methods))
     state[name] = method.bind(state);
@@ -80,7 +86,7 @@ function fixture() {
     component.watch.contextKey.handler.call(state);
   };
   component.watch.contextKey.handler.call(state);
-  return { state, component, requests, select };
+  return { state, component, requests, events, select };
 }
 
 test("context template compiles with native links and disclosures", () => {
@@ -301,4 +307,96 @@ test("unmount and deselection invalidate pending requests", async () => {
   f.requests[1].resolve({ data: linked() });
   await settle();
   assert.equal(f.state.context, null);
+});
+
+test("provided comment context never requests a contact endpoint, including retry and selection", () => {
+  const f = fixture({ providedContext: linked() });
+  assert.equal(f.requests.length, 0);
+  assert.equal(f.state.customer.id, 12);
+  assert.equal(f.state.selectedPayment.currency, "USD");
+  f.state.fetchContext(true);
+  assert.deepEqual(f.events, [["retry"]]);
+  assert.equal(f.requests.length, 0);
+  f.select({ id: 52, user_id: 41 });
+  assert.equal(f.requests.length, 0);
+});
+
+test("controlled loading, errors and guest data remain truthful without customer metrics", () => {
+  const f = fixture({ providedContext: null, contextLoading: true });
+  assert.equal(f.requests.length, 0);
+  assert.equal(f.state.busy, true);
+  assert.equal(f.state.customer, null);
+  f.state.contextLoading = false;
+  f.state.contextError = true;
+  assert.equal(f.state.busy, false);
+  assert.equal(f.state.error, true);
+  f.state.providedContext = { state: "guest", customer: null };
+  f.state.contextError = false;
+  f.component.watch.providedContext.call(f.state);
+  assert.equal(f.state.customer, null);
+  assert.equal(f.state.selectedPayment, undefined);
+  assert.equal(f.state.orders.length, 0);
+  assert.equal(f.state.activityAvailable, false);
+  assert.equal(f.requests.length, 0);
+});
+
+test("provided context keeps a valid currency selection and clears restricted totals", () => {
+  const f = fixture({ providedContext: null });
+  f.state.providedContext = linked();
+  f.component.watch.providedContext.call(f.state);
+  assert.equal(f.state.currency, "USD");
+  f.state.currency = "EUR";
+  f.state.providedContext = linked({ payments: [{ amount: 0, currency: "EUR" }] });
+  f.component.watch.providedContext.call(f.state);
+  assert.equal(f.state.currency, "EUR");
+  assert.equal(f.state.selectedPayment.amount, 0);
+  f.state.providedContext = {
+    state: "restricted",
+    customer: null,
+    payments_state: "restricted",
+  };
+  f.component.watch.providedContext.call(f.state);
+  assert.equal(f.state.currency, null);
+  assert.equal(f.state.selectedPayment, undefined);
+});
+
+test("switching between supplied and native context invalidates the former contact request", async () => {
+  const f = fixture();
+  f.state.providedContext = linked({ customer: { id: 27 } });
+  f.component.watch.providedContext.call(f.state);
+  f.requests[0].resolve({ data: linked({ customer: { id: 12 } }) });
+  await settle();
+  assert.equal(f.state.customer.id, 27);
+  assert.equal(f.state.loadedContext, null);
+  f.state.providedContext = undefined;
+  f.component.watch.providedContext.call(f.state);
+  assert.equal(f.requests.length, 2);
+  assert.equal(f.state.customer, null);
+  f.requests[1].resolve({ data: linked({ customer: { id: 39 } }) });
+  await settle();
+  assert.equal(f.state.customer.id, 39);
+});
+
+test("total order count uses explicit metadata rather than the recent list or buy actions", () => {
+  const f = fixture({
+    providedContext: linked({
+      orders_count: 42,
+      orders_state: "available",
+      orders: [31, 30, 29, 28, 27].map((id) => ({ id })),
+      activity: { state: "available", totals: { buys: 99 } },
+    }),
+  });
+  assert.equal(f.state.orders.length, 3);
+  assert.equal(f.state.ordersCount, 42);
+  for (const orders_state of ["restricted", "error", "unavailable"])
+    for (const orders_count of [42, null]) {
+      f.state.providedContext = linked({ orders_state, orders_count });
+      assert.equal(f.state.ordersCount, null);
+    }
+  f.state.providedContext = linked({ orders_state: "empty", orders_count: 0 });
+  assert.equal(f.state.ordersCount, 0);
+  for (const orders_count of [undefined, null, "42", -1, 1.5]) {
+    f.state.providedContext = linked({ orders_state: "available", orders_count });
+    assert.equal(f.state.ordersCount, null);
+  }
 });

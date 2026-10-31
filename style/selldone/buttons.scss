@@ -12,6 +12,34 @@
  * Tread carefully, for you're treading on dreams.
  */
 
+// v-ctrl.s owns this hint; keep native prepend/content/append slots in their own columns.
+.v-btn:has(> .sd-modern-save-shortcut__hint) {
+  grid-template-areas: "prepend content append shortcut";
+  grid-template-columns: max-content auto max-content max-content;
+
+  > .v-btn__append { margin-inline-end: 0; }
+
+  > .sd-modern-save-shortcut__hint {
+    grid-area: shortcut;
+    display: inline-flex;
+    align-items: center;
+    margin-inline-start: 10px;
+    padding-inline-start: 10px;
+    border-inline-start: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+    color: inherit;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0;
+    text-indent: 0;
+    text-transform: none;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  &.v-btn--loading > .sd-modern-save-shortcut__hint { opacity: 0; }
+}
+
 a {
 
   // https://codepen.io/kathykato/pen/rZRaNe

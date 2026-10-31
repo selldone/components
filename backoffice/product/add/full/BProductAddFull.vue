@@ -13,8 +13,8 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs" :class="{ 'b-product-add-full--modern text-start': modern }">
-    <template v-if="$product.id">
+  <div v-bind="$attrs" :class="{ 'b-product-add-full--modern': modern, 'b-product-add-full--general sd-modern-canvas': modernGeneral, 'b-product-add-full--general-info': modernWorkspace && step === TAB_GENERAL_INFO, 'b-product-add-full--features-info': modernWorkspace && step === TAB_RATING, 'b-product-add-full--spec-info': modernWorkspace && step === TAB_SPEC, 'b-product-add-full--images-info': modernWorkspace && step === TAB_IMAGES, 'b-product-add-full--inputs-info': modernWorkspace && step === TAB_INPUTS, 'b-product-add-full--price-info': modernWorkspace && step === TAB_PRICE, 'b-product-add-full--shipping-info': modernWorkspace && step === TAB_PHYSICAL_EXTRA_INFO, 'b-product-add-full--description-info': modernWorkspace && step === TAB_REVIEW_BLOG, 'b-product-add-full--inventory-info': modernWorkspace && step === TAB_VARIANTS, 'text-start': modernWorkspace }">
+    <template v-if="!modernWorkspace && $product.id">
       <v-row align="center" no-gutters>
         <div style="min-width: 48px">
           <u-chart-radial-bar
@@ -58,7 +58,7 @@
       </v-row>
     </template>
 
-    <div v-if="type">
+    <div v-if="!modernWorkspace && type">
       <u-tabs-rounded
         v-model="step"
         :src="type.image"
@@ -217,20 +217,141 @@
       </u-tabs-rounded>
     </div>
 
+    <div ref="flowScroll" :class="{ 'b-product-add-full__scroll': modernWorkspace }">
+      <div :class="{ 'b-product-add-full__layout': modernWorkspace }">
+        <aside v-if="modernWorkspace" class="b-product-add-full__sidebar">
+          <p v-if="modernGeneral" class="sd-modern-eyebrow b-product-add-full__rail-title">{{ $t('add_product.edit_info.modern.edit_product') }}</p>
+          <div class="b-product-add-full__mobile-nav">
+            <label :for="flowSelectId">{{ $t('add_product.flow.section') }}</label>
+            <select
+              :id="flowSelectId"
+              :value="step"
+              :disabled="flowBusy"
+              @change="goTo(Number($event.target.value))"
+            >
+              <option
+                v-for="tab in flowTabs"
+                :key="tab.value"
+                :value="tab.value"
+                :disabled="!canSelectStep(tab.value)"
+              >{{ tab.title }}</option>
+            </select>
+          </div>
+          <nav class="sd-modern-section-nav b-product-add-full__nav" :aria-label="$t('add_product.flow.navigation')">
+            <template v-for="tab in flowTabs" :key="tab.value">
+              <div v-if="tab.group" class="sd-modern-eyebrow b-product-add-full__group">{{ tab.group }}</div>
+              <button
+                type="button"
+                class="sd-modern-section-nav__item"
+                :aria-current="step === tab.value ? 'location' : undefined"
+                :disabled="!canSelectStep(tab.value)"
+                @click="goTo(tab.value)"
+              >
+                <b-product-edit-info-icon :name="tab.icon" :size="16" />
+                <span>{{ tab.title }}</span>
+                <b-product-edit-info-icon v-if="completedSteps.includes(tab.value)" name="Check" class="b-product-add-full__saved" :size="12" />
+              </button>
+            </template>
+          </nav>
+          <p v-if="modern" class="b-product-add-full__context">{{ $t($product.id ? 'add_product.flow.created_hint' : 'add_product.flow.create_hint') }}</p>
+          <div v-if="$product.id" class="b-product-add-full__product">
+            <p class="b-product-add-full__completion"><b-product-edit-info-icon name="CircleCheck" :size="14" />{{ $t('add_product.completed') }} · {{ series[0] }}%</p>
+            <b-product-breadcrumbs :image-size="20" :product="$product" :shop="shop" />
+            <v-btn class="sd-modern-button sd-modern-button--inline" variant="text" :disabled="flowBusy" @click="dialogDeleteProduct = true">
+              <template #prepend><b-product-edit-info-icon name="Trash2" :size="16" /></template>
+              {{ $t('global.actions.delete') }}
+            </v-btn>
+          </div>
+          <div v-if="canShowGooglePreview" class="b-product-add-full__preview-tools">
+            <hr />
+            <v-dialog
+              v-model="show_preview"
+              max-width="760"
+              scrollable
+              :theme="USER()?.preferences?.dark ? 'dark' : 'light'"
+              :content-props="{ 'aria-label': $t('global.commons.seo_preview') }"
+              @keydown.ctrl.s.stop.prevent
+            >
+              <template #activator="{ props }">
+                <v-tooltip
+                  class="b-product-add-full__preview-tooltip"
+                  content-class="sd-modern-tooltip text-start"
+                  location="top"
+                  :open-on-focus="true"
+                  :open-on-click="false"
+                  :open-delay="300"
+                  :close-delay="150"
+                  :disabled="!$vuetify.display.lgAndUp || show_preview || dialogDeleteProduct || flowBusy"
+                  :theme="USER()?.preferences?.dark ? 'dark' : 'light'"
+                  interactive
+                >
+                  <template #activator="{ props: hoverProps }">
+                    <v-btn v-bind="mergeProps(props, hoverProps)" class="sd-modern-button sd-modern-button--inline b-product-add-full__preview-launcher" variant="text" :disabled="flowBusy">
+                      <template #prepend><img src="../../../../assets/trademark/google.svg" width="18" height="18" alt="" /></template>
+                      {{ $t('global.commons.seo_preview') }}
+                    </v-btn>
+                  </template>
+                  <div class="b-product-add-full__hover-preview" :aria-busy="busy_render_google">
+                    <div :class="{ blurred: busy_render_google }" class="seo-preview" v-html="rendered_on_google"></div>
+                  </div>
+                </v-tooltip>
+              </template>
+              <v-card class="sd-modern-widget b-product-add-full__preview-dialog text-start">
+                <header class="b-product-add-full__preview-header">
+                  <h2><img src="../../../../assets/trademark/google.svg" width="20" height="20" alt="" />{{ $t('global.commons.seo_preview') }}</h2>
+                  <v-btn class="sd-modern-button sd-modern-button--inline" color="primary" variant="text" prepend-icon="refresh" :loading="busy_render_google" @click="getRenderedOnGoogle">{{ $t('global.actions.update') }}</v-btn>
+                  <v-tooltip location="top" content-class="sd-modern-tooltip">
+                    <template #activator="{ props }">
+                      <v-btn v-bind="props" class="sd-modern-icon-button" variant="text" icon="close" :aria-label="$t('global.actions.close')" @click="show_preview = false" />
+                    </template>
+                    {{ $t('global.actions.close') }}
+                  </v-tooltip>
+                </header>
+                <v-card-text class="b-product-add-full__preview-body">
+                  <div :class="{ blurred: busy_render_google }" class="seo-preview" v-html="rendered_on_google"></div>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+          </div>
+        </aside>
+        <main :class="{ 'b-product-add-full__main': modernWorkspace }">
+          <header v-if="modernWorkspace" class="b-product-add-full__heading">
+            <div>
+              <p v-if="!modernGeneral" class="b-product-add-full__position">
+                {{ $t('add_product.flow.position', { current: flowStepIndex + 1, total: flowTabs.length }) }}
+                <template v-if="type && step !== TAB_TYPE"><span aria-hidden="true">·</span>{{ $t(type.name) }}</template>
+              </p>
+              <h2>{{ flowCurrentTab?.title }}</h2>
+              <p class="b-product-add-full__subtitle">{{ modernGeneral && step === TAB_GENERAL_INFO ? $t('add_product.edit_info.modern.page_subtitle') : flowSubtitle }}</p>
+            </div>
+            <span v-if="modernGeneral && type" class="b-product-add-full__type-label"><b-product-edit-info-icon name="PackageOpen" :size="14" />{{ $t(type.name) }}</span>
+            <v-btn v-if="step === TAB_GENERAL_INFO && !$product.id" color="primary" variant="text" class="sd-modern-button sd-modern-button--inline" :disabled="flowBusy" @click="goTo(TAB_TYPE)">
+              {{ $t('add_product.flow.change_type') }}
+            </v-btn>
+          </header>
+          <div>
+            <div v-if="modern && step === TAB_GENERAL_INFO && !$product.id" class="sd-modern-notice b-product-add-full__create-notice" role="status">
+              <v-icon size="17" aria-hidden="true">info_outline</v-icon>
+              <span>{{ $t('add_product.flow.create_notice') }}</span>
+            </div>
+
     <!-- ███████████████████████ Product Type ███████████████████████ -->
 
     <div v-if="step === TAB_TYPE" class="max-width-container-1280px mx-auto" :class="{ 'sd-modern-widget b-product-add-full__type': modern }">
       <u-widget-header
+        v-if="!modern"
         :title="$t('global.commons.product_type')"
         icon="workspaces"
         :icon-color="modern ? undefined : '#333'"
         :class="{ 'sd-modern-form-header': modern }"
       ></u-widget-header>
-      <v-list-subheader>
+      <v-list-subheader v-if="!modern">
         {{ $t("add_product.select_type.title") }}
       </v-list-subheader>
 
       <b-product-edit-type
+        :modern="modern"
+        :selected-type="type?.code"
         :shop="shop"
         has-add-connect-os
         has-add-dropshipping
@@ -241,25 +362,40 @@
 
     <!-- ███████████████████████ Product Info ███████████████████████ -->
 
+    <component :is="modernWorkspace ? 'VForm' : 'div'" v-if="isStepMounted(TAB_GENERAL_INFO)" v-show="step === TAB_GENERAL_INFO" ref="stepForm" @submit.prevent="submitStep">
     <b-product-edit-info
-      v-if="step === TAB_GENERAL_INFO"
+      :ref="(editor) => setStepEditor(editor, TAB_GENERAL_INFO)"
+      :modern="modernWorkspace"
+      :external-action-buttons="modernWorkspace"
+      :class="{ 'b-product-add-full__general-editor sd-modern-underlined-field': modernWorkspace }"
       :busy="busy"
       :product="$product"
       :shop="shop"
       :vendor="vendor"
-      @next="nextStep()"
+      @next="modernGeneral ? submitStep() : nextStep()"
     />
+    </component>
     <!-- ███████████████████████ Product Rating ███████████████████████ -->
 
+    <!-- Visibility belongs on DOM wrappers because some editors have fragment roots. -->
+    <div v-if="isStepMounted(TAB_RATING)" v-show="step === TAB_RATING">
     <b-product-edit-features
-      v-if="step === TAB_RATING"
+      :ref="(editor) => setStepEditor(editor, TAB_RATING)"
+      :modern="modernWorkspace"
+      :external-action-buttons="modern"
+      :class="{ 'b-product-add-full__features-editor sd-modern-underlined-field': modernWorkspace }"
       :product="$product"
       @next="nextStep()"
     />
+    </div>
     <!-- ███████████████████████ Product Spec ███████████████████████ -->
 
+    <div v-if="isStepMounted(TAB_SPEC)" v-show="step === TAB_SPEC">
     <b-product-edit-spec
-      v-if="step === TAB_SPEC"
+      :ref="(editor) => setStepEditor(editor, TAB_SPEC)"
+      :modern="modernWorkspace"
+      :external-action-buttons="modern"
+      :class="{ 'b-product-add-full__spec-editor sd-modern-underlined-field': modernWorkspace }"
       :product="$product"
       :shop="shop"
       @next="nextStep()"
@@ -272,64 +408,94 @@
         }
       "
     />
+    </div>
     <!-- ███████████████████████ Product Images ███████████████████████ -->
 
+    <div v-if="isStepMounted(TAB_IMAGES)" v-show="step === TAB_IMAGES">
     <b-product-edit-images
-      v-if="step === TAB_IMAGES"
+      :ref="(editor) => setStepEditor(editor, TAB_IMAGES)"
+      :modern="modernWorkspace"
+      :busy-save="busy"
+      :external-action-buttons="modern"
+      :class="{ 'sd-modern-underlined-field': modernWorkspace }"
       :product="$product"
       @next="nextStep()"
       @update:icon="(icon) => ($product.icon = icon)"
       @update:video="(video) => ($product.video = video)"
     />
+    </div>
     <!-- ███████████████████████ Product Price ███████████████████████ -->
 
+    <div v-if="isStepMounted(TAB_PRICE)" v-show="step === TAB_PRICE">
     <b-product-edit-price
-      v-if="step === TAB_PRICE"
+      :ref="(editor) => setStepEditor(editor, TAB_PRICE)"
+      :modern="modernWorkspace"
+      :active="step === TAB_PRICE"
+      :light="modernWorkspace"
+      :external-action-buttons="modern || step !== TAB_PRICE"
+      :class="modernWorkspace ? 'b-product-add-full__price-editor sd-modern-underlined-field' : 'mt-5'"
       :busy="busy"
       :is-marketplace="is_marketplace"
       :product="$product"
       :shop="shop"
       :vendor="vendor"
-      class="mt-5"
       has-button-next
       @next="nextStep()"
     />
+    </div>
 
     <!-- ███████████████████████ Product Inputs ███████████████████████ -->
 
+    <div v-if="isStepMounted(TAB_INPUTS)" v-show="step === TAB_INPUTS">
     <b-product-edit-inputs
-      v-if="step === TAB_INPUTS"
+      :ref="(editor) => setStepEditor(editor, TAB_INPUTS)"
+      :modern="modernWorkspace"
+      :external-action-buttons="modern || step !== TAB_INPUTS"
       :busy="busy"
       :product="$product"
       @next="nextStep()"
     />
+    </div>
     <!-- ███████████████████████ Product Outputs ███████████████████████ -->
 
+    <div v-if="isStepMounted(TAB_OUTPUTS)" v-show="step === TAB_OUTPUTS">
     <b-product-edit-outputs
-      v-if="step === TAB_OUTPUTS"
+      :ref="(editor) => setStepEditor(editor, TAB_OUTPUTS)"
+      :external-action-buttons="modern"
+      :class="{ 'b-product-add-full__editor sd-modern-underlined-field': modern }"
       :busy="busy"
       :product="$product"
       @next="nextStep()"
     />
+    </div>
     <!-- ███████████████████████ Product Extra ███████████████████████ -->
 
+    <div v-if="isStepMounted(TAB_PHYSICAL_EXTRA_INFO)" v-show="step === TAB_PHYSICAL_EXTRA_INFO">
     <b-product-edit-extra
-      v-if="step === TAB_PHYSICAL_EXTRA_INFO"
+      :ref="(editor) => setStepEditor(editor, TAB_PHYSICAL_EXTRA_INFO)"
+      :modern="modernWorkspace"
+      :active="step === TAB_PHYSICAL_EXTRA_INFO"
+      :parent-busy="busy"
+      :external-action-buttons="modern || step !== TAB_PHYSICAL_EXTRA_INFO"
+      :class="modernWorkspace ? 'b-product-add-full__shipping-editor' : undefined"
       :product="$product"
       :shop="shop"
       @next="
         () => {
-          nextStep();
+          if (step === TAB_PHYSICAL_EXTRA_INFO) nextStep();
         }
       "
     />
+    </div>
 
     <!-- ███████████████████████ Product Article ███████████████████████ -->
 
-    <div v-if="step === TAB_REVIEW_BLOG">
+    <div v-if="isStepMounted(TAB_REVIEW_BLOG)" v-show="step === TAB_REVIEW_BLOG" :class="{ 'b-product-add-full__article': modernWorkspace }">
       <article-viewer
         v-if="show_article"
-        ref="product_article"
+        :ref="modernWorkspace ? (editor) => setStepEditor(editor, TAB_REVIEW_BLOG) : 'product_article'"
+        :workspace="modernWorkspace"
+        :active="step === TAB_REVIEW_BLOG"
         :article-type="article_type.code"
         :initial-article-pack="SELECTED_ARTICLE_PACK"
         :need-create-new="!SELECTED_ARTICLE_PACK"
@@ -343,7 +509,7 @@
           $product.category ? $product.category.title : null,
         )},${Slugify.apply($product.title)},${Slugify.apply($product.title_en)}`"
         :target-id="SELECTED_ARTICLE_PACK ? $product.id : 'new'"
-        class="mt-5 min-height-60vh"
+        :class="modernWorkspace ? 'b-product-add-full__article-editor' : 'mt-5 min-height-60vh'"
         initial-render-state="editing"
         no-return-back-on-delete
         @delete="
@@ -369,7 +535,7 @@
         "
       />
 
-      <s-widget-buttons auto-fixed-position class="mb-5 mt-12">
+      <s-widget-buttons v-if="!modernWorkspace" auto-fixed-position class="mb-5 mt-12">
         <v-btn
           :loading="busy"
           color="primary"
@@ -389,22 +555,49 @@
           </v-icon>
         </v-btn>
       </s-widget-buttons>
+      <footer v-if="modernWorkspace && step === TAB_REVIEW_BLOG" class="b-product-add-full__description-actions">
+        <div v-if="active_editor?.article" class="b-product-add-full__description-status">
+          <p role="status" aria-live="polite">
+            <b-product-edit-info-icon :name="generalDirty ? 'Circle' : 'CircleCheck'" :size="15" />
+            {{ $t(generalDirty ? 'add_product.description_modern.unsaved' : 'add_product.description_modern.saved') }}
+          </p>
+          <small>{{ active_editor.product_save_hint || $t('add_product.description_modern.save_scope') }}</small>
+        </div>
+        <div v-if="modernGeneral" class="b-product-add-full__actions">
+          <v-btn class="sd-modern-button sd-modern-button--primary" color="primary" variant="elevated" :loading="flowBusy" :disabled="flowSubmitDisabled" aria-keyshortcuts="Control+s" @click="submitStep" v-ctrl.s="submitStep">
+            <template #prepend><b-product-edit-info-icon name="Save" :size="16" /></template>
+            {{ $t('global.actions.save_continue') }}
+            <template #append><b-product-edit-info-icon name="ArrowRight" :size="16" class="b-product-add-full__description-direction" /></template>
+          </v-btn>
+        </div>
+      </footer>
     </div>
 
     <!-- ███████████████████████ Product Variants ███████████████████████ -->
 
-    <div v-if="step === TAB_VARIANTS">
+    <div v-if="isStepMounted(TAB_VARIANTS)" v-show="step === TAB_VARIANTS" :class="modernWorkspace && isPhysical ? 'b-product-add-full__inventory sd-modern-underlined-field' : modern ? 'b-product-add-full__editor sd-modern-underlined-field' : undefined">
       <b-product-inventory-management
+        :ref="(editor) => setStepEditor(editor, TAB_VARIANTS)"
         :product="$product"
         :shop="shop"
         :vendor="vendor"
         :withTrashed="withTrashed"
-        class="mt-5"
+        :modern="modernWorkspace"
+        :product-workspace="modernWorkspace"
+        :class="modernWorkspace ? undefined : 'mt-5'"
         @update:withTrashed="(val) => $emit('update:withTrashed', val)"
       />
 
+      <footer v-if="modernGeneral && isPhysical && step === TAB_VARIANTS" class="b-product-add-full__inventory-actions">
+        <p><b-product-edit-info-icon name="CircleCheck" :size="14" />{{ $t('add_product.inventory_modern.save_scope') }}</p>
+        <v-btn class="sd-modern-button sd-modern-button--primary" color="primary" variant="elevated" :loading="flowBusy" :disabled="flowSubmitDisabled" aria-keyshortcuts="Control+s" @click="submitStep" v-ctrl.s="submitStep">
+          <template #prepend><b-product-edit-info-icon name="Check" :size="16" /></template>
+          {{ $t('global.actions.finish') }}
+        </v-btn>
+      </footer>
+
       <div
-        v-if="!$route.params.product_id /*Not be in the product edit page!*/"
+        v-if="!modernWorkspace && !$route.params.product_id /*Not be in the product edit page!*/"
         class="widget-buttons mb-5 mt-12"
       >
         <v-btn
@@ -425,9 +618,22 @@
       </div>
     </div>
 
+          </div>
+
+          <footer v-if="modernGeneral && step === TAB_GENERAL_INFO" class="b-product-add-full__general-actions">
+            <p v-if="generalDirty !== null" role="status" aria-live="polite">{{ $t(generalDirty ? 'add_product.edit_info.modern.unsaved' : 'add_product.edit_info.modern.all_saved') }}</p>
+            <div class="b-product-add-full__actions">
+              <v-btn class="sd-modern-button" variant="outlined" :disabled="flowBusy || !generalDirty" @click="discardGeneralChanges">{{ $t('add_product.edit_info.modern.discard') }}</v-btn>
+              <v-btn class="sd-modern-button sd-modern-button--primary" color="primary" variant="elevated" :loading="flowBusy" :disabled="flowSubmitDisabled" aria-keyshortcuts="Control+s" @click="submitStep" v-ctrl.s="submitStep">
+                <template #prepend><b-product-edit-info-icon name="Save" :size="16" /></template>
+                {{ $t('add_product.edit_info.modern.save_changes') }}
+              </v-btn>
+            </div>
+          </footer>
+
     <!-- ---------------------  Google search preview  ----------------------->
 
-    <div v-if="canShowGooglePreview" class="py-5">
+    <div v-if="!modernWorkspace && canShowGooglePreview" class="py-5">
       <v-btn
         v-if="!force_show_preview"
         class="my-10 tnt"
@@ -449,7 +655,7 @@
 
       <v-expand-transition>
         <div v-if="show_preview || force_show_preview">
-          <div class="widget-box" style="--background: #fff">
+          <div :class="modern || (modernGeneral && [TAB_GENERAL_INFO, TAB_RATING, TAB_REVIEW_BLOG].includes(step)) ? 'b-product-add-full__seo' : 'widget-box'">
             <u-widget-header
               :add-caption="$t('global.actions.update')"
               :add-loading="busy_render_google"
@@ -469,6 +675,33 @@
         </div>
       </v-expand-transition>
     </div>
+        </main>
+      </div>
+    </div>
+    <footer v-if="modern" class="b-product-add-full__footer">
+      <div class="b-product-add-full__footer-inner">
+        <p>{{ $t(step === TAB_TYPE ? 'add_product.flow.choose_hint' : step === TAB_RATING ? 'add_product.features_modern.save_hint' : step === TAB_VARIANTS ? 'add_product.inventory_modern.save_scope' : $product.id ? 'add_product.flow.save_hint' : 'add_product.flow.create_action_hint') }}</p>
+        <div class="b-product-add-full__actions">
+          <v-btn v-if="canGoBack" class="sd-modern-button b-product-add-full__back" variant="outlined" :disabled="flowBusy" prepend-icon="arrow_back" @click="previousStep">{{ $t('global.actions.back') }}</v-btn>
+          <v-btn v-if="$product.id && step !== TAB_VARIANTS" class="sd-modern-button" variant="text" :disabled="flowBusy" prepend-icon="done" @click="finish">{{ $t('global.actions.finish') }}</v-btn>
+          <v-btn
+            class="sd-modern-button sd-modern-button--primary"
+            :class="{ 'b-product-add-full__continue': step === TAB_TYPE || step === TAB_RATING }"
+            color="primary"
+            variant="elevated"
+            :loading="flowBusy"
+            :disabled="flowSubmitDisabled"
+            :prepend-icon="step === TAB_SPEC ? undefined : step === TAB_TYPE || step === TAB_RATING ? 'arrow_forward' : step === TAB_GENERAL_INFO && !$product.id ? 'add' : step === TAB_VARIANTS ? 'done' : 'save'"
+            aria-keyshortcuts="Control+s"
+            @click="submitStep"
+            v-ctrl.s="submitStep"
+          >
+            <template v-if="step === TAB_SPEC" #prepend><b-product-edit-info-icon name="Save" :size="16" /></template>
+            {{ $t(step === TAB_TYPE || step === TAB_RATING ? 'global.actions.continue' : step === TAB_VARIANTS ? 'global.actions.finish' : 'global.actions.save_continue') }}
+          </v-btn>
+        </div>
+      </div>
+    </footer>
   </div>
 
   <!-- --------------------- Dialog delete --------------------- -->
@@ -531,6 +764,7 @@
 
 <script lang="ts">
 import BProductEditInfo from "../../../product/edit/info/BProductEditInfo.vue";
+import BProductEditInfoIcon from "../../../product/edit/info/BProductEditInfoIcon.vue";
 import BProductEditFeatures from "../../../product/edit/features/BProductEditFeatures.vue";
 import BProductEditPrice from "../../../product/edit/price/BProductEditPrice.vue";
 import BProductEditOutputs from "../../../product/edit/outputs/BProductEditOutputs.vue";
@@ -558,6 +792,8 @@ import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
+import { mergeProps, useId } from "vue";
+import { VForm } from "vuetify/components";
 
 const TAB_TYPE = 1;
 const TAB_GENERAL_INFO = 2;
@@ -580,8 +816,12 @@ const TAB_VARIANTS = 11;
  */
 export default {
   name: "BProductAddFull",
+  setup() {
+    return { flowSelectId: `product-flow-${useId()}`, mergeProps };
+  },
   mixins: [],
   components: {
+    VForm,
     UWidgetHeader,
     UPrice,
     SWidgetButtons,
@@ -598,6 +838,7 @@ export default {
     BProductEditPrice,
     BProductEditFeatures,
     BProductEditInfo,
+    BProductEditInfoIcon,
     ArticleViewer,
   },
   /**
@@ -607,6 +848,7 @@ export default {
   emits: ["update:withTrashed", "update:product", "edit", "add", "delete"],
   props: {
     modern: { type: Boolean, default: false },
+    modernGeneral: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,
@@ -664,6 +906,12 @@ export default {
       },
 
       busy: false, // Add or Edit button busy
+      active_editor: null,
+      stepEditors: {},
+      visitedSteps: [],
+      validatingStep: false,
+      disposed: false,
+      completedSteps: [],
 
       dialogDeleteProduct: false,
 
@@ -696,6 +944,13 @@ export default {
     };
   },
   computed: {
+    modernWorkspace() {
+      return this.modern || !!this.modernGeneral;
+    },
+    generalDirty() {
+      return typeof this.active_editor?.hasUnsavedChanges === 'boolean'
+        ? this.active_editor.hasUnsavedChanges : null;
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -720,7 +975,7 @@ export default {
 
     tabs() {
       return [
-        !this.$product?.id /*In Edit Mode*/
+        this.modern || !this.$product?.id /*In Edit Mode*/
           ? {
               title: this.$t("add_product.menu.type"),
               value: TAB_TYPE,
@@ -731,25 +986,25 @@ export default {
         {
           title: this.$t("add_product.menu.general_info"),
           value: TAB_GENERAL_INFO,
-          color: this.type.color,
+          color: this.type?.color,
           icon: "fa:fas fa-pencil-ruler",
         },
         {
           title: this.$t("add_product.menu.rating"),
           value: TAB_RATING,
-          color: this.type.color,
+          color: this.type?.color,
           icon: "fa:fas fa-poll-h",
         },
         {
           title: this.$t("add_product.menu.spec"),
           value: TAB_SPEC,
-          color: this.type.color,
+          color: this.type?.color,
           icon: "fa:fas fa-sliders-h",
         },
         {
           title: this.$t("add_product.menu.images"),
           value: TAB_IMAGES,
-          color: this.type.color,
+          color: this.type?.color,
           icon: "fa:fas fa-image",
         },
 
@@ -757,7 +1012,7 @@ export default {
           ? {
               title: this.$t("add_product.menu.inputs"),
               value: TAB_INPUTS,
-              color: this.type.color,
+              color: this.type?.color,
               icon: "fa:fas fa-code-branch",
             }
           : null,
@@ -765,7 +1020,7 @@ export default {
         {
           title: this.$t("add_product.menu.price"),
           value: TAB_PRICE,
-          color: this.type.color,
+          color: this.type?.color,
           icon: "fa:fas fa-cash-register",
         },
 
@@ -773,7 +1028,7 @@ export default {
           ? {
               title: this.$t("add_product.menu.outputs"),
               value: TAB_OUTPUTS,
-              color: this.type.color,
+              color: this.type?.color,
               icon: "fa:fas fa-code-branch",
             }
           : null,
@@ -781,31 +1036,84 @@ export default {
           ? {
               title: this.$t("add_product.menu.extra"),
               value: TAB_PHYSICAL_EXTRA_INFO,
-              color: this.type.color,
+              color: this.type?.color,
               icon: "fa:fas fa-dolly-flatbed",
             }
           : null,
         {
           title: this.$t("add_product.menu.review"),
           value: TAB_REVIEW_BLOG,
-          color: this.type.color,
+          color: this.type?.color,
           icon: "fa:fas fa-feather-alt",
         },
         this.hasStep__inventory
           ? {
               title: this.$t("add_product.menu.inventory"),
               value: TAB_VARIANTS,
-              color: this.type.color,
+              color: this.type?.color,
               icon: "fa:fas fa-boxes",
             }
           : null,
       ];
     },
 
+    flowTabs() {
+      const icons = {
+        [TAB_TYPE]: 'Shapes',
+        [TAB_GENERAL_INFO]: 'SquarePen',
+        [TAB_RATING]: 'ListChecks',
+        [TAB_SPEC]: 'SlidersHorizontal',
+        [TAB_IMAGES]: 'Images',
+        [TAB_INPUTS]: 'ClipboardList',
+        [TAB_PRICE]: 'Tag',
+        [TAB_OUTPUTS]: 'PackageCheck',
+        [TAB_PHYSICAL_EXTRA_INFO]: 'Truck',
+        [TAB_REVIEW_BLOG]: 'AlignLeft',
+        [TAB_VARIANTS]: 'Archive',
+      };
+      return this.tabs.filter(Boolean).map((tab) => {
+        const key = Object.keys(this.tabs_name).find((key) => this.tabs_name[key] === tab.value);
+        return {
+          ...tab,
+          icon: icons[tab.value],
+          title: tab.value === TAB_VARIANTS && this.type
+            ? this.$t(`add_product.flow.inventory.${this.type.code}`)
+            : this.$t(`add_product.flow.menu.${key}`),
+          group: this.modernGeneral ? null : tab.value === TAB_TYPE ? this.$t('add_product.flow.start')
+            : tab.value === TAB_GENERAL_INFO ? this.$t('add_product.flow.create')
+              : tab.value === TAB_RATING ? this.$t('add_product.flow.refine') : null,
+        };
+      });
+    },
+    flowStepIndex() {
+      return this.flowTabs.findIndex((tab) => tab.value === this.step);
+    },
+    flowCurrentTab() {
+      return this.flowTabs[this.flowStepIndex];
+    },
+    flowSubtitle() {
+      if (this.step === TAB_VARIANTS && this.isPhysical) return this.$t('add_product.inventory_modern.intro');
+      const key = Object.keys(this.tabs_name).find((key) => this.tabs_name[key] === this.step);
+      return this.$t(`add_product.flow.descriptions.${key}`);
+    },
+    flowBusy() {
+      return this.busy || this.validatingStep || !!this.active_editor?.busy || (this.step === TAB_IMAGES && !!this.active_editor?.mediaBusy) || ([TAB_PRICE, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.workspaceBusy) || this.active_editor?.state === 'saving';
+    },
+    flowSubmitDisabled() {
+      return this.flowBusy || (this.modernWorkspace && this.show_preview) || !this.type ||
+        ([TAB_IMAGES, TAB_INPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.saveBlocked) ||
+        (!this.$product.id && this.step > TAB_GENERAL_INFO) ||
+        (this.step === TAB_PRICE && this.active_editor?.calculatePrice < 0);
+    },
+    canGoBack() {
+      return this.flowStepIndex > (this.$product.id ? 1 : 0);
+    },
+
     canShowGooglePreview() {
       return this.shop && this.shop.id && this.$product.id;
     },
     force_show_preview() {
+      if (this.modernWorkspace) return false;
       return [
         TAB_GENERAL_INFO,
         TAB_RATING,
@@ -830,21 +1138,21 @@ export default {
     hasStep__Inputs() {
       // Inputs
       return (
-        this.type.code === ProductType.VIRTUAL.code ||
-        this.type.code === ProductType.PHYSICAL.code ||
-        this.type.code === ProductType.SERVICE.code
+        this.type?.code === ProductType.VIRTUAL.code ||
+        this.type?.code === ProductType.PHYSICAL.code ||
+        this.type?.code === ProductType.SERVICE.code
       );
     },
     hasStep__Outputs() {
       // Outputs
       return (
-        this.type.code === ProductType.VIRTUAL.code ||
-        this.type.code === ProductType.SERVICE.code
+        this.type?.code === ProductType.VIRTUAL.code ||
+        this.type?.code === ProductType.SERVICE.code
       );
     },
     hasStep__physicalExtra() {
       // Extra
-      return this.type.code === ProductType.PHYSICAL.code;
+      return this.type?.code === ProductType.PHYSICAL.code;
     },
 
     hasStep__inventory() {
@@ -916,7 +1224,19 @@ export default {
   },
   watch: {
     step(step) {
+      if (this.modernWorkspace) {
+        if (!this.visitedSteps.includes(step)) this.visitedSteps.push(step);
+        this.active_editor = this.stepEditors[step] || null;
+      }
       this.$nextTick(() => {
+        if (this.modern) {
+          this.$refs.flowScroll?.scrollTo({ top: 0, behavior: 'instant' });
+          return;
+        }
+        if (this.modernGeneral) {
+          this.$refs.flowScroll?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+          return;
+        }
         try {
           if (this.$product.id) {
             ScrollHelper.scrollToElement("#radial_bar", 0, "smooth");
@@ -947,7 +1267,9 @@ export default {
       // console.log("this.$route.hash", this.$route.hash);
       if (this.$route.hash) {
         const hash = this.$route.hash.replace("#", "");
-        if (hash && this.tabs_name[hash]) this.step = this.tabs_name[hash];
+        if (hash && this.tabs_name[hash] && !(this.modernGeneral && this.tabs_name[hash] === TAB_TYPE)) {
+          this.step = this.tabs_name[hash];
+        }
       }
     } else {
       // New product mode:
@@ -961,6 +1283,9 @@ not need!
     }
 
     this.type = this.$product.type ? ProductType[this.$product.type] : null;
+    if (this.modern && !this.type && this.available_types.length) {
+      this.setType(this.available_types[0]);
+    }
 
     this.$product.inputs = this.$product.inputs ? this.$product.inputs : [];
     this.$product.outputs = this.$product.outputs ? this.$product.outputs : [];
@@ -982,7 +1307,9 @@ not need!
     // console.log('---SELECTED_ARTICLE_PACK---',this.SELECTED_ARTICLE_PACK)
   },
 
-  beforeUnmount() {},
+  beforeUnmount() {
+    this.disposed = true;
+  },
 
   methods: {
     generatePack(article) {
@@ -1026,17 +1353,75 @@ not need!
         });
     },
 
+    isStepMounted(step) {
+      // Keep modern draft snapshots; inactive editors have no save button or shortcut.
+      return this.step === step ||
+        ((this.modern || (!!this.modernGeneral && ([TAB_GENERAL_INFO, TAB_INPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG].includes(step) || (step === TAB_VARIANTS && this.isPhysical)))) && this.visitedSteps.includes(step));
+    },
+
+    setStepEditor(editor, step = this.step) {
+      if (editor) this.stepEditors[step] = editor;
+      else delete this.stepEditors[step];
+      if (step === this.step) this.active_editor = editor;
+    },
+
+    canSelectStep(step) {
+      if (this.flowBusy || !this.flowTabs.some((tab) => tab.value === step)) return false;
+      if (this.step === TAB_VARIANTS && this.active_editor?.saveBlocked) return false;
+      if (step === TAB_TYPE) return !this.$product.id;
+      return !!this.type && (step === TAB_GENERAL_INFO || !!this.$product.id);
+    },
+
     goTo(step) {
+      if (this.modernWorkspace && !this.canSelectStep(step)) return;
       this.step = step;
     },
 
+    previousStep() {
+      if (this.canGoBack) this.goTo(this.flowTabs[this.flowStepIndex - 1].value);
+    },
+
+    async submitStep() {
+      if (this.disposed) return;
+      if (this.step === TAB_SPEC && this.active_editor?.dialog_ai) return;
+      if (this.flowSubmitDisabled) return;
+      if (this.step === TAB_IMAGES && this.active_editor?.prepareSave?.() === false) return;
+      if (this.modernWorkspace && [TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO].includes(this.step) && this.active_editor?.prepareSave?.() === false) return;
+      if (this.step === TAB_GENERAL_INFO) {
+        this.validatingStep = true;
+        try {
+          const result = await this.$refs.stepForm.validate();
+          if (!result.valid) {
+            this.active_editor?.revealValidation?.();
+            return;
+          }
+        } finally {
+          this.validatingStep = false;
+        }
+        if (this.disposed) return;
+        if (this.modernGeneral) return this.editProduct();
+      }
+      // These editors own their saves and emit next only after success.
+      if (this.step === TAB_SPEC) return this.active_editor.saveSpec(true);
+      if (this.step === TAB_PHYSICAL_EXTRA_INFO) return this.active_editor.setExtraInfo();
+      this.nextStep();
+    },
+
+    discardGeneralChanges() {
+      if (this.flowBusy || this.step !== TAB_GENERAL_INFO) return;
+      this.active_editor?.discardChanges?.();
+      this.$refs.stepForm?.resetValidation();
+    },
+
     setType(type) {
+      if (this.modernWorkspace && this.$product.id) return;
       this.$product.type = type.code;
       this.type = type;
 
-      this.nextStep();
+      if (!this.modern) this.nextStep();
     },
     addProduct(callback = null) {
+      const generalEditor = this.stepEditors[TAB_GENERAL_INFO];
       this.busy = true;
       axios
         .post(
@@ -1142,6 +1527,9 @@ not need!
             );
             this.$emit("add", data.product);
             Object.assign(this.$product, data.product);
+            if (generalEditor) this.$nextTick(() => {
+              if (!this.disposed && this.stepEditors[TAB_GENERAL_INFO] === generalEditor) generalEditor.markSaved?.();
+            });
 
             this.getRenderedOnGoogle();
 
@@ -1169,6 +1557,10 @@ not need!
         });
     },
     editProduct(callback = null) {
+      const generalEditor = this.stepEditors[TAB_GENERAL_INFO];
+      const imagesEditor = this.step === TAB_IMAGES ? this.stepEditors[TAB_IMAGES] : null;
+      const inputsEditor = this.stepEditors[TAB_INPUTS];
+      const priceEditor = this.stepEditors[TAB_PRICE];
       this.busy = true;
       axios
         .put(
@@ -1273,6 +1665,12 @@ not need!
             NotificationService.showSuccessAlert(null, "The product edited.");
 
             Object.assign(this.$product, data.product); // Copy product data (refresh)
+            if (imagesEditor && !this.disposed && this.stepEditors[TAB_IMAGES] === imagesEditor) imagesEditor.markSaved?.();
+            if (inputsEditor && !this.disposed && this.stepEditors[TAB_INPUTS] === inputsEditor) inputsEditor.markSaved?.();
+            if (priceEditor && !this.disposed && this.stepEditors[TAB_PRICE] === priceEditor) priceEditor.markSaved?.();
+            if (generalEditor) this.$nextTick(() => {
+              if (!this.disposed && this.stepEditors[TAB_GENERAL_INFO] === generalEditor) generalEditor.markSaved?.();
+            });
 
             this.$emit("update:product", data.product);
 
@@ -1333,6 +1731,72 @@ not need!
     },
 
     nextStep() {
+      if (this.modernWorkspace && this.show_preview) return;
+      if (this.modernWorkspace && this.step === TAB_VARIANTS) {
+        if (this.flowSubmitDisabled) return;
+        // Inventory operations save separately; Finish waits only for the product save.
+        const editor = this.active_editor;
+        this.editProduct(() => {
+          if (!this.disposed && this.step === TAB_VARIANTS && this.stepEditors[TAB_VARIANTS] === editor) this.finish();
+        });
+        return;
+      }
+      if (this.modernWorkspace && this.step === TAB_REVIEW_BLOG) {
+        if (this.flowSubmitDisabled) return;
+        const editor = this.active_editor;
+        const current = this.step;
+        const next = this.flowTabs[this.flowStepIndex + 1]?.value;
+        // Article saving owns validation and success; stale completions cannot navigate.
+        editor?.saveChange?.(() => {
+          if (this.disposed || this.step !== current || this.stepEditors[current] !== editor) return;
+          if (next) this.step = next;
+          else this.finish();
+        });
+        return;
+      }
+      if (this.modernWorkspace && this.step === TAB_PRICE) {
+        if (this.flowBusy || this.active_editor?.saveBlocked || this.active_editor?.prepareSave?.() === false) return;
+        if (this.modernGeneral) {
+          const next = this.flowTabs[this.flowStepIndex + 1]?.value;
+          this.editProduct(() => {
+            if (!this.disposed && this.step === TAB_PRICE && next) this.step = next;
+          });
+          return;
+        }
+      }
+      if (this.modernWorkspace && this.step === TAB_INPUTS) {
+        if (this.busy || this.active_editor?.saveBlocked) return;
+        if (this.modernGeneral) {
+          this.editProduct(() => { if (!this.disposed && this.step === TAB_INPUTS) this.step = TAB_PRICE; });
+          return;
+        }
+      }
+      if (this.modernWorkspace && this.step === TAB_IMAGES) {
+        if (this.busy || this.active_editor?.prepareSave?.() === false) return;
+        if (this.modernGeneral) {
+          this.editProduct(() => { if (!this.disposed && this.step === TAB_IMAGES) this.step = this.hasStep__Inputs ? TAB_INPUTS : TAB_PRICE; });
+          return;
+        }
+      }
+      if (this.modern) {
+        if (!this.type || this.busy || (this.step > TAB_GENERAL_INFO && !this.$product.id)) return;
+        const current = this.step;
+        const next = this.flowTabs[this.flowStepIndex + 1]?.value;
+        const advance = () => {
+          if (!this.completedSteps.includes(current)) this.completedSteps.push(current);
+          if (next) this.step = next;
+          else this.finish();
+        };
+        if (current === TAB_GENERAL_INFO) {
+          if (this.$product.id) this.editProduct(advance);
+          else this.addProduct(advance);
+        } else if ([TAB_SPEC, TAB_IMAGES, TAB_INPUTS, TAB_PRICE, TAB_OUTPUTS, TAB_VARIANTS].includes(current)) {
+          this.editProduct(advance);
+        } else {
+          advance();
+        }
+        return;
+      }
       if (this.step === TAB_TYPE) {
         this.step = TAB_GENERAL_INFO;
       } else if (this.step === TAB_GENERAL_INFO) {
@@ -1424,33 +1888,211 @@ not need!
 
 <style lang="scss" scoped>
 .b-product-add-full--modern {
-  width: 100%;
-  max-width: 1248px;
-  margin-inline: auto;
-  padding: 24px;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
+}
 
-  .b-product-add-full__type { max-width: 1040px; padding: 24px; }
-  :deep(.widget-box) {
+.b-product-add-full--modern,
+.b-product-add-full--general {
+  width: 100%;
+  font-family: inherit;
+  color: rgb(var(--v-theme-on-surface));
+
+  .b-product-add-full__scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+  .b-product-add-full__layout { display: grid; grid-template-columns: 172px minmax(0, 1fr); gap: 22px; max-width: 1040px; margin-inline: auto; padding: 24px; align-items: start; }
+  .b-product-add-full__sidebar { position: sticky; top: 24px; min-width: 0; max-height: calc(100dvh - 224px); overflow-y: auto; scrollbar-width: thin; padding: 3px; }
+  .b-product-add-full__main { min-width: 0; }
+  .b-product-add-full__mobile-nav { display: none; }
+  .b-product-add-full__nav { padding-block: 3px; gap: 5px; }
+  .b-product-add-full__nav > button { min-height: 42px; font-weight: 400; }
+  .b-product-add-full__nav > button[aria-current] { font-weight: 500; }
+  .b-product-add-full__nav > button:disabled { opacity: 0.55; }
+  .b-product-add-full__group { margin: 15px 10px 7px; font-weight: 400; }
+  .b-product-add-full__group:first-child { margin-block-start: 0; }
+  .b-product-add-full__rail-title { margin: 5px 10px 15px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; }
+  .b-product-add-full__saved { margin-inline-start: auto; }
+  .b-product-add-full__context { margin: 20px 10px 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  .b-product-add-full__product { margin: 22px 10px 0; overflow-wrap: anywhere; }
+  .b-product-add-full__completion { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; color: var(--sd-modern-muted); font-size: 12px; }
+  .b-product-add-full__product :deep(.body-title) { font-size: 12px; }
+  .b-product-add-full__preview-tools { margin: 22px 10px 0; }
+  .b-product-add-full__preview-tools > hr { margin: 0 0 14px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
+  .b-product-add-full__preview-launcher { width: 100%; height: auto; min-height: 42px; justify-content: flex-start; text-align: start; }
+  .b-product-add-full__preview-launcher :deep(.v-btn__content) { white-space: normal; }
+  .b-product-add-full__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 0 2px 18px; }
+  .b-product-add-full__heading > div { min-width: 0; }
+  .b-product-add-full__heading h2 { margin: 0; font-family: inherit; font-size: 19px; font-weight: 500; line-height: 28px; letter-spacing: -0.2px; }
+  .b-product-add-full__position { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin: 0 0 5px; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
+  .b-product-add-full__subtitle { margin: 4px 0 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  .b-product-add-full__type-label { display: flex; align-items: center; gap: 5px; padding-top: 8px; color: var(--sd-modern-muted); font-size: 11px; white-space: nowrap; }
+  .b-product-add-full__create-notice { display: flex; flex-wrap: nowrap; align-items: flex-start; gap: 9px; margin-bottom: 20px; padding: 12px 13px; font-size: 13px; line-height: 20px; }
+  .b-product-add-full__create-notice > span { flex: 1; min-width: 0; }
+  .b-product-add-full__create-notice > .v-icon { margin-top: 2px; flex-shrink: 0; color: var(--sd-modern-muted); }
+  .b-product-add-full__type { width: 100%; max-width: none; padding: 22px; border-radius: 15px; }
+
+  :deep(.b-product-add-full__editor .widget-box) {
     --background: rgb(var(--v-theme-surface));
-    max-width: 760px;
-    margin-inline: auto;
-    padding: 24px;
+    width: 100%;
+    max-width: none;
+    margin: 0 auto 20px !important;
+    padding: 22px;
     border: 1px solid var(--sd-modern-border);
-    border-radius: 18px;
+    border-radius: 15px;
     background: rgb(var(--v-theme-surface));
     color: rgb(var(--v-theme-on-surface));
+    text-align: start;
   }
-  :deep(.widget-box > .s--widget-header h2) { font-family: inherit; font-size: 17px; font-weight: 500; line-height: 25px; }
-  :deep(.widget-box > .s--widget-header .--icon) { font-size: 20px !important; }
-  :deep(.widget-box > .v-list-subheader) { font-family: inherit; font-size: 12px; font-weight: 400; line-height: 19px; color: var(--sd-modern-muted); }
+  :deep(.b-product-add-full__editor .widget-box > .s--widget-header h2),
+  :deep(.b-product-add-full__editor .widget-box > h2),
+  :deep(.b-product-add-full__editor .widget-box > .v-row > .v-col > h2) { font-family: inherit; font-size: 17px !important; font-weight: 500; line-height: 25px; }
+  :deep(.b-product-add-full__editor .widget-box > .s--widget-header .--icon) { font-size: 20px !important; color: var(--sd-modern-muted); }
+  :deep(.b-product-add-full__editor .widget-box > .v-list-subheader) { min-height: 0; height: auto; margin-block: 8px 16px; padding: 0; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 20px; color: var(--sd-modern-muted); }
+  :deep(.b-product-add-full__editor .widget-body) { margin-inline: 0; }
+  :deep(.b-product-add-full__editor .v-alert) { background: var(--sd-modern-inset) !important; color: rgb(var(--v-theme-on-surface)) !important; }
+  .b-product-add-full__article-editor { margin: 0; min-height: 340px; }
+  .b-product-add-full__article { width: 100%; max-width: 760px; margin-inline: auto; }
+  .b-product-add-full__inventory { width: 100%; max-width: 760px; margin-inline: auto; }
+  .b-product-add-full__inventory-actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-block-start: 22px; padding: 5px 0 9px; }
+  .b-product-add-full__inventory-actions > p { display: flex; align-items: flex-start; gap: 7px; margin: 0; font-size: 11px; font-weight: 400; line-height: 18px; color: var(--sd-modern-muted); }
+  .b-product-add-full__inventory-actions > p > svg { flex-shrink: 0; margin-block-start: 2px; }
+  .b-product-add-full__inventory-actions > .v-btn { flex-shrink: 0; font-size: 13px; font-weight: 500; line-height: 20px; }
+  .b-product-add-full__inventory-actions :deep(.v-btn__content) { font: inherit; }
+  .b-product-add-full__description-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 5px 0 9px; }
+  .b-product-add-full__description-status { min-width: 0; }
+  .b-product-add-full__description-status p { display: flex; align-items: center; gap: 7px; margin: 0; font-size: 12px; line-height: 19px; }
+  .b-product-add-full__description-status small { display: block; margin-top: 3px; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
+  &:dir(rtl) .b-product-add-full__description-direction { transform: scaleX(-1); }
+  .b-product-add-full__seo { padding-block: 16px; text-align: start; }
+  .b-product-add-full__seo :deep(h2) { font-family: inherit; font-size: 17px; font-weight: 500; line-height: 25px; }
+  .b-product-add-full__seo .seo-preview { padding: 20px; background: rgb(var(--v-theme-surface)); border: 1px solid var(--sd-modern-border); border-radius: 15px; overflow-wrap: anywhere; }
 
-  @media (max-width: 599px) {
-    padding: 20px 12px;
-    .b-product-add-full__type { padding: 20px 16px; }
-    :deep(.widget-box) { padding: 20px 16px; }
+  .b-product-add-full__footer { flex: 0 0 auto; background: rgb(var(--v-theme-surface)); border-block-start: 1px solid var(--sd-modern-border); }
+  .b-product-add-full__footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; max-width: 1040px; padding: 17px 24px; margin-inline: auto; }
+  .b-product-add-full__footer-inner > p { max-width: 240px; margin: 0; font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
+  .b-product-add-full__actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 9px; margin-inline-start: auto; }
+  .b-product-add-full__actions > .v-btn { margin: 0; font-size: 13px; font-weight: 500; line-height: 20px; }
+  .b-product-add-full__actions :deep(.v-btn__content) { font: inherit; }
+  .b-product-add-full__actions :deep(.v-btn__prepend .v-icon) { font-size: 16px; }
+  .b-product-add-full__general-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; padding: 12px 0 8px; }
+  .b-product-add-full__general-actions > p { margin: 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  .b-product-add-full__general-actions .v-btn { padding-inline: 16px; }
+
+  &:dir(rtl) .b-product-add-full__back :deep(.v-btn__prepend .v-icon),
+  &:dir(rtl) .b-product-add-full__continue :deep(.v-btn__prepend .v-icon) { transform: scaleX(-1); }
+
+  @media (max-width: 720px) {
+    .b-product-add-full__layout { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 20px 18px; }
+    .b-product-add-full__sidebar { position: static; max-height: none; overflow: visible; padding: 0; }
+    .b-product-add-full__nav, .b-product-add-full__context, .b-product-add-full__product { display: none; }
+    .b-product-add-full__mobile-nav { display: flex; align-items: center; gap: 15px; justify-content: space-between; }
+    .b-product-add-full__preview-tools { margin: 16px 0 0; }
+    .b-product-add-full__preview-tools > hr { margin-block-end: 8px; }
+    .b-product-add-full__preview-launcher { width: auto; min-height: 44px; }
+    .b-product-add-full__mobile-nav label { color: var(--sd-modern-muted); font-size: 12px; }
+    .b-product-add-full__mobile-nav select { width: min(230px, 78%); min-height: 44px; padding: 8px 0; border-block-end: 1px solid var(--sd-modern-border); color: rgb(var(--v-theme-on-surface)); background: transparent; appearance: auto; font-family: inherit; font-size: 13px; }
+    .b-product-add-full__mobile-nav option { color: rgb(var(--v-theme-on-surface)); background: rgb(var(--v-theme-surface)); }
+    .b-product-add-full__mobile-nav select:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+    .b-product-add-full__type { padding: 19px 17px; }
+    :deep(.b-product-add-full__editor .widget-box) { padding: 19px 17px; }
+    .b-product-add-full__footer-inner { padding: 16px 18px; gap: 12px; }
+    .b-product-add-full__footer-inner > p { max-width: none; }
+    .b-product-add-full__actions > .v-btn { min-height: 44px; }
+    .b-product-add-full__description-status { flex-basis: 100%; }
+  }
+
+  @media (max-width: 420px) {
+    .b-product-add-full__actions { width: 100%; }
+    .b-product-add-full__actions > .sd-modern-button--primary { flex: 1; }
+    .b-product-add-full__heading { gap: 8px; }
+  }
+  @media (pointer: coarse) {
+    .b-product-add-full__mobile-nav select { font-size: 16px; }
+  }
+  @media (max-width: 380px) {
+    .b-product-add-full__general-actions .b-product-add-full__actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+    .b-product-add-full__general-actions .v-btn { width: 100%; }
+  }
+}
+
+.b-product-add-full--general {
+  // The product router-view supplies white inline; this workspace owns its neutral canvas.
+  background: var(--sd-modern-canvas-color) !important;
+
+  .b-product-add-full__scroll { overflow: visible; }
+  .b-product-add-full__layout { grid-template-columns: 168px minmax(0, 1fr); gap: 26px; max-width: 1096px; padding: 30px 28px 34px; }
+  .b-product-add-full__heading { padding-block-end: 22px; }
+  .b-product-add-full__heading h2 { font-size: 23px; line-height: 31px; letter-spacing: -0.45px; }
+  .b-product-add-full__nav > button { font-size: 12px; line-height: 18px; }
+
+  @media (max-width: 800px) {
+    .b-product-add-full__layout { grid-template-columns: 148px minmax(0, 1fr); gap: 18px; padding: 25px 18px; }
+    .b-product-add-full__nav > button { font-size: 11px; }
+  }
+  @media (max-width: 720px) {
+    .b-product-add-full__layout { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 20px 18px 26px; }
+    .b-product-add-full__rail-title { margin: 0 0 11px; }
+    .b-product-add-full__heading h2 { font-size: 21px; line-height: 29px; }
+    .b-product-add-full__type-label { font-size: 10px; }
+    .b-product-add-full__type-label > svg { display: none; }
+    .b-product-add-full__inventory-actions { flex-wrap: wrap; }
+    .b-product-add-full__inventory-actions > .v-btn { margin-inline-start: auto; min-height: 44px; }
+  }
+}
+
+.b-product-add-full--general-info,
+.b-product-add-full--features-info,
+.b-product-add-full--spec-info,
+.b-product-add-full--images-info,
+.b-product-add-full--inputs-info,
+.b-product-add-full--price-info,
+.b-product-add-full--shipping-info,
+.b-product-add-full--description-info,
+.b-product-add-full--inventory-info {
+  .b-product-add-full__heading,
+  .b-product-add-full__general-actions,
+  .b-product-add-full__seo { width: 100%; max-width: 760px; margin-inline: auto; }
+}
+
+.b-product-add-full--description-info,
+.b-product-add-full--inventory-info {
+  .b-product-add-full__heading h2 { font-size: 23px; font-weight: 500; line-height: 31px; letter-spacing: -0.45px; }
+  .b-product-add-full__mobile-nav select { font-size: 16px; }
+}
+
+.b-product-add-full__hover-preview {
+  max-height: min(420px, calc(100dvh - 96px));
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  .seo-preview { margin: 0; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .b-product-add-full__preview-tooltip :deep(.v-overlay__content) { display: none; }
+}
+
+.b-product-add-full__preview-dialog {
+  padding: 0;
+  border-radius: 18px;
+  font-family: inherit;
+  color: rgb(var(--v-theme-on-surface));
+
+  .b-product-add-full__preview-header { display: flex; align-items: center; gap: 12px; padding: 20px 22px; border-block-end: 1px solid var(--sd-modern-border); }
+  .b-product-add-full__preview-header h2 { display: flex; align-items: center; gap: 9px; flex: 1; min-width: 0; margin: 0; font-family: inherit; font-size: 18px; font-weight: 500; line-height: 26px; }
+  .b-product-add-full__preview-header h2 > img { flex-shrink: 0; }
+  .b-product-add-full__preview-header > .v-btn { flex-shrink: 0; }
+  .b-product-add-full__preview-body { padding: 22px; }
+  .seo-preview { margin: 0; overflow-wrap: anywhere; }
+
+  @media (max-width: 600px) {
+    .b-product-add-full__preview-header { flex-wrap: wrap; padding: 16px; gap: 8px; }
+    .b-product-add-full__preview-header h2 { font-size: 17px; line-height: 25px; }
+    .b-product-add-full__preview-body { padding: 16px; }
   }
 }
 

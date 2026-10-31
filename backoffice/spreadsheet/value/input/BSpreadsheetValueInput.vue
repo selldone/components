@@ -24,6 +24,7 @@
       (!styler[headers[col]] || !styler[headers[col]].onlyVariant || is_variant)
     "
     class="b--spreadsheet-value-input"
+    :class="{ 'sd-modern-underlined-field': modern }"
   >
     <!-- --------------- Enum --------------- -->
     <v-select
@@ -34,7 +35,8 @@
       :label="label"
       :return-object="false"
       item-value="code"
-      variant="outlined"
+      :variant="modern ? 'underlined' : 'outlined'"
+      :hide-details="modern ? 'auto' : undefined"
     >
       <template v-slot:item="{ item, props }">
         <v-list-item v-if="item?.raw" class="text-start" v-bind="props">
@@ -79,7 +81,8 @@
       :items="stylerItem.list"
       :label="label"
       :return-object="false"
-      variant="outlined"
+      :variant="modern ? 'underlined' : 'outlined'"
+      :hide-details="modern ? 'auto' : undefined"
     >
     </u-currency-input>
     <!-- --------------- Price --------------- -->
@@ -90,7 +93,8 @@
       :currency="currency"
       :label="label"
       item-value="code"
-      variant="outlined"
+      :variant="modern ? 'underlined' : 'outlined'"
+      :hide-details="modern ? 'auto' : undefined"
     >
     </u-price-input>
 
@@ -99,7 +103,8 @@
       v-else-if="stylerItem?.type === 'image'"
       v-model="local_value"
       :label="label"
-      variant="outlined"
+      :variant="modern ? 'underlined' : 'outlined'"
+      :hide-details="modern ? 'auto' : undefined"
     >
       <template v-slot:append-inner>
         <v-avatar class="hover-scale force-top" size="32">
@@ -114,7 +119,8 @@
       v-else-if="stylerItem?.type === 'images'"
       v-model="local_value"
       :label="label"
-      variant="outlined"
+      :variant="modern ? 'underlined' : 'outlined'"
+      :hide-details="modern ? 'auto' : undefined"
     >
     </v-textarea>
 
@@ -124,7 +130,8 @@
       v-else-if="stylerItem?.type === 'date'"
       v-model="local_value"
       :label="label"
-      variant="outlined"
+      :variant="modern ? 'underlined' : 'outlined'"
+      :hide-details="modern ? 'auto' : undefined"
     >
     </u-date-input>
 
@@ -153,7 +160,8 @@
       v-else-if="stylerItem?.type === 'json'"
       v-model="local_value"
       :label="label"
-      variant="outlined"
+      :variant="modern ? 'underlined' : 'outlined'"
+      :hide-details="modern ? 'auto' : undefined"
     >
     </v-textarea>
 
@@ -166,7 +174,8 @@
       v-model="local_value"
       :label="label"
       :min="1"
-      variant="outlined"
+      :variant="modern ? 'underlined' : 'outlined'"
+      :hide-details="modern ? 'auto' : undefined"
     >
     </u-number-input>
 
@@ -176,7 +185,8 @@
       v-else
       v-model="local_value"
       :label="label"
-      variant="outlined"
+      :variant="modern ? 'underlined' : 'outlined'"
+      :hide-details="modern ? 'auto' : undefined"
     >
     </v-text-field>
   </div>
@@ -207,6 +217,7 @@ export default {
     UPriceInput,
   },
   props: {
+    modern: { type: Boolean, default: false },
     styler: { require: true, type: Object },
     headers: { require: true, type: Object },
     row: { require: true },

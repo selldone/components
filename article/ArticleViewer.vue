@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="master-article-container" :class="{ 's-article-workspace text-start': workspace, 's-article-workspace--metadata': workspace && ['seo', 'faq'].includes(workspaceSection), 's-article-workspace--details': workspace && workspace_details && workspaceSection === 'edit' }">
+  <div class="master-article-container" :class="{ 's-article-workspace text-start': workspace, 's-article-workspace--product': product_workspace, 's-article-workspace--metadata': workspace && !product_workspace && ['seo', 'faq'].includes(workspaceSection) }">
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Loading animation ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
     <u-loading-progress v-if="inLoading" />
@@ -57,7 +57,19 @@
 
     <div v-show="showContent" class="article article-container">
       <template v-if="workspace && article">
-        <header v-if="workspaceSection !== 'comments'" class="s-article-workspace__header">
+        <header v-if="product_workspace" class="s-article-product__header">
+          <div class="s-article-product__title"><b-product-edit-info-icon name="FilePenLine" :size="18" /><h2>{{ $t('add_product.description_modern.product_story') }}</h2></div>
+          <div class="s-article-product__actions">
+            <v-btn class="sd-modern-button sd-modern-button--inline" variant="text" :aria-pressed="in_view_mode" :disabled="!active || workspace_busy || workspace_pending_changes || (!workspace_can_write && in_view_mode)" @click="toggleProductPreview()"><b-product-edit-info-icon name="Eye" :size="16" /><span>{{ $t(in_view_mode ? 'add_product.description_modern.back_to_editor' : 'global.article.workspace.preview') }}</span></v-btn>
+            <v-menu v-model="workspace_tools" :disabled="!active" eager>
+              <template #activator="{ props }"><v-btn v-bind="props" class="sd-modern-icon-button" icon variant="text" :aria-label="$t('global.article.workspace.tools')" :disabled="!active || workspace_busy"><b-product-edit-info-icon name="Ellipsis" :size="16" /><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :disabled="workspace_tools">{{ $t('global.article.workspace.tools') }}</v-tooltip></v-btn></template>
+              <v-list class="s-article-workspace__menu text-start" density="compact">
+                <v-list-item prepend-icon="delete_outline" :title="$t('global.article.menu.delete')" :disabled="!workspace_can_write || isNew || workspace_busy" @click="openDeleteArticleAlert()" />
+              </v-list>
+            </v-menu>
+          </div>
+        </header>
+        <header v-else-if="workspaceSection !== 'comments'" class="s-article-workspace__header">
           <div>
             <h1>{{ $t('global.article.workspace.' + workspace_heading) }}</h1>
             <p>{{ $t('global.article.workspace.' + workspace_subtitle) }}</p>
@@ -77,7 +89,7 @@
         </header>
 
         <div v-if="workspaceSection === 'edit'" class="s-article-workspace__controls">
-          <div class="s-article-workspace__command" role="group" :aria-label="$t('global.article.workspace.controls')">
+          <div class="s-article-workspace__command" :class="{ 'no-inv': product_workspace }" role="group" :aria-label="$t('global.article.workspace.controls')">
             <v-menu
               v-for="control in workspace_controls"
               :key="control.key"
@@ -90,11 +102,28 @@
             >
               <template #activator="{ props }">
                 <v-btn v-bind="props" class="s-article-workspace__command-button" variant="text" :disabled="control.disabled" :aria-label="control.label">
-                  <v-icon size="16" class="me-2">{{ control.icon }}</v-icon><span>{{ control.value }}</span><v-icon size="12" class="ms-1">arrow_drop_down</v-icon>
+                  <b-product-edit-info-icon v-if="product_workspace" :name="control.outline" :size="15" class="me-2" /><v-icon v-else size="16" class="me-2">{{ control.icon }}</v-icon><span>{{ control.value }}</span><b-product-edit-info-icon v-if="product_workspace" name="ChevronDown" :size="12" class="ms-1" /><v-icon v-else size="12" class="ms-1">arrow_drop_down</v-icon>
                   <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :disabled="workspace_setting === control.key">{{ control.hint }}</v-tooltip>
                 </v-btn>
               </template>
-              <v-card ref="workspaceSettingCard" :data-setting="control.key" class="s-article-workspace__setting text-start" role="dialog" :aria-label="control.label" @keydown.esc.stop.prevent="cancelWorkspaceSetting()">
+              <v-list v-if="product_workspace && control.key !== 'language'" class="s-article-workspace__menu text-start" density="compact" role="menu" :aria-label="control.label" @keydown.esc.stop.prevent="cancelWorkspaceSetting()">
+                <v-list-item
+                  v-for="option in control.key === 'status' ? [...workspace_statuses].reverse() : workspace_visibilities"
+                  :key="String(option.value)"
+                  :title="option.title"
+                  :prepend-icon="control.key === 'status' ? (option.value ? 'rss_feed' : 'edit_note') : (option.value ? 'lock_outline' : 'public')"
+                  role="menuitemradio"
+                  :aria-checked="control.key === 'status' ? !schedule_at && published_state === option.value : isPrivate === option.value"
+                  :disabled="control.disabled || (control.key === 'status' && !!schedule_at)"
+                  @click="selectProductWorkspaceSetting(control.key, option.value)"
+                >
+                  <template #append><v-icon v-if="control.key === 'status' ? !schedule_at && published_state === option.value : isPrivate === option.value" size="16">check</v-icon></template>
+                </v-list-item>
+                <v-list-item v-if="control.key === 'status'" :title="$t('global.article.workspace.schedule')" :subtitle="schedule_at ? $t('add_product.description_modern.status_schedule_hint') : undefined" prepend-icon="schedule" role="menuitemradio" :aria-checked="!!schedule_at" :disabled="control.disabled" @click="openWorkspaceSchedule()">
+                  <template #append><v-icon v-if="schedule_at" size="16">check</v-icon></template>
+                </v-list-item>
+              </v-list>
+              <v-card v-else ref="workspaceSettingCard" :data-setting="control.key" class="s-article-workspace__setting text-start" role="dialog" :aria-label="control.label" @keydown.esc.stop.prevent="cancelWorkspaceSetting()">
                 <h2>{{ control.label }}</h2>
                 <v-select
                   v-if="control.key !== 'language'"
@@ -121,18 +150,28 @@
               </v-card>
             </v-menu>
             <span class="s-article-workspace__command-separator" aria-hidden="true"></span>
-            <v-btn class="sd-modern-icon-button s-article-workspace__command-button" icon variant="text" :aria-label="$t('global.article.workspace.import_word')" :disabled="!workspace_can_write || workspace_busy" @click="openWorkspaceWordImport()">
+            <div class="s-article-workspace__editing-tools">
+            <v-btn class="sd-modern-icon-button s-article-workspace__command-button" icon variant="text" :aria-label="$t('global.article.workspace.import_word')" :disabled="!active || !showContent || !workspace_can_write || workspace_busy || workspace_pending_changes" @click="openWorkspaceWordImport()">
               <img class="s-article-workspace__word-icon" src="@selldone/core-js/enums/file/assets/extensions/docx.svg" alt="" />
               <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('global.article.workspace.import_word_hint') }}</v-tooltip>
             </v-btn>
-            <v-btn class="sd-modern-icon-button s-article-workspace__command-button" icon variant="text" :aria-label="$t('global.article.workspace.auto_fix')" :disabled="!workspace_can_write || (!article.body && state !== 'changed') || workspace_busy" @click="autoFixArticle()">
-              <v-icon size="16">auto_fix_high</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('global.article.workspace.auto_fix') }}</v-tooltip>
+            <v-btn class="sd-modern-icon-button s-article-workspace__command-button" icon variant="text" :aria-label="$t('global.article.workspace.auto_fix')" :disabled="!active || !workspace_can_write || (!article.body && state !== 'changed') || workspace_busy" @click="autoFixArticle()">
+              <v-icon size="16">auto_fix_high</v-icon>
+              <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">
+                <span class="sd-modern-tooltip__title">{{ $t('global.article.workspace.auto_fix') }}</span>
+                <span class="sd-modern-tooltip__details">{{ $t('global.article.workspace.auto_fix_hint') }}</span>
+              </v-tooltip>
             </v-btn>
+            </div>
             <v-spacer />
-            <v-btn class="sd-modern-icon-button s-article-workspace__command-button" icon variant="text" :aria-label="$t('global.article.workspace.details')" :aria-expanded="workspace_details" :disabled="workspace_busy" @click="workspace_details = !workspace_details">
+            <span v-if="product_workspace && !IS_VENDOR_PANEL" class="s-article-product__ai-action d-inline-flex" :tabindex="!article.id ? 0 : undefined">
+              <v-btn class="s-article-workspace__command-button s-article-product__ai" variant="text" :disabled="!article.id || !workspace_can_write || !active || workspace_busy" :loading="auto_generate_busy" @click="autoGenerate()"><b-product-edit-info-icon name="Sparkles" :size="16" /><span>{{ $t('add_product.description_modern.ai_write') }}</span><v-tooltip v-if="article.id" activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('add_product.description_modern.ai_write_hint') }}</v-tooltip></v-btn>
+              <v-tooltip v-if="!article.id" activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-click>{{ $t('global.article.workspace.save_first') }}</v-tooltip>
+            </span>
+            <v-btn v-if="!product_workspace" class="sd-modern-icon-button s-article-workspace__command-button" icon variant="text" :aria-label="$t('global.article.workspace.details')" :aria-expanded="workspace_details" :disabled="workspace_busy" @click="workspace_details = !workspace_details">
               <v-icon size="16">tune</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('global.article.workspace.details_hint') }}</v-tooltip>
             </v-btn>
-            <v-menu v-model="workspace_tools" eager>
+            <v-menu v-if="!product_workspace" v-model="workspace_tools" eager>
               <template #activator="{ props }"><v-btn v-bind="props" class="sd-modern-icon-button s-article-workspace__command-button" icon variant="text" :aria-label="$t('global.article.workspace.tools')" :disabled="workspace_busy"><v-icon size="16">more_vert</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :disabled="workspace_tools">{{ $t('global.article.workspace.tools') }}</v-tooltip></v-btn></template>
               <v-list class="s-article-workspace__menu text-start" density="compact">
                 <v-list-item v-if="can_auto_translate" prepend-icon="g_translate" :title="$t('global.commons.translate')" :disabled="!workspace_can_write" @click="$emit('request-auto-translate', forceLanguage)" />
@@ -141,17 +180,26 @@
             </v-menu>
           </div>
           <div class="s-article-workspace__people">
-            <div class="s-article-workspace__author">
+            <div v-if="!product_workspace" class="s-article-workspace__author">
               <v-avatar size="26" class="avatar-gradient -thin"><img :src="author_avatar" alt="" /></v-avatar>
               <div class="s-article-workspace__author-copy"><span>{{ author_name || user?.name || $t('global.commons.author') }}</span><small>{{ $t('global.commons.author') }}</small></div>
               <slot name="workspace-author" :article="article" :disabled="!workspace_can_write || state === 'saving' || busy_fix || workspace_importing" :on-busy="(value) => workspace_author_busy = value" />
             </div>
             <div class="s-article-workspace__schedule-control">
-              <span class="s-article-workspace__schedule-copy">{{ schedule_at ? getLocalTimeString(schedule_at) : $t('global.article.workspace.no_schedule') }}<template v-if="schedule_at"> · {{ workspace_timezone }}</template></span>
-              <v-btn variant="outlined" class="sd-modern-button sd-modern-button--compact" :disabled="!workspace_can_write || workspace_busy" prepend-icon="schedule" @click="openWorkspaceSchedule()">{{ $t('global.article.workspace.schedule') }}</v-btn>
+              <b-product-edit-info-icon v-if="product_workspace" name="Clock3" :size="14" />
+              <span v-if="product_workspace" class="s-article-workspace__schedule-copy" :tabindex="schedule_at ? 0 : undefined">{{ workspace_schedule_summary }}<v-tooltip v-if="schedule_at" activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-click>{{ workspace_schedule_details }}</v-tooltip></span>
+              <span v-else class="s-article-workspace__schedule-copy">{{ schedule_at ? getLocalTimeString(schedule_at) : $t('global.article.workspace.no_schedule') }}<template v-if="schedule_at"> · {{ workspace_timezone }}</template></span>
+              <v-btn :variant="product_workspace ? 'text' : 'outlined'" class="sd-modern-button sd-modern-button--compact" :disabled="!workspace_can_write || !active || workspace_busy" :prepend-icon="product_workspace ? undefined : 'schedule'" @click="openWorkspaceSchedule()">{{ $t('global.article.workspace.schedule') }}</v-btn>
             </div>
           </div>
         </div>
+        <section v-if="!product_workspace" v-show="workspace_details && workspaceSection === 'edit'" class="s-article-workspace__details" :inert="!workspace_can_write || workspace_busy">
+          <h2>{{ $t('global.article.workspace.details') }}</h2>
+          <div class="s-article-workspace__detail-fields">
+            <slot name="extra-header-options" :categoryId="category" :setCategoryId="setWorkspaceCategory" :clusterId="cluster_id" :setClusterId="setWorkspaceCluster" :inEditMode="in_edit_mode" :state="state" :onChange="onChangeNote" :disabled="!workspace_can_write || workspace_busy" />
+          </div>
+          <s-article-tags-editor v-if="article.id && is_shop_blog && workspace_can_write" class="s-article-workspace__tags" :article="article" :shop="$shop" />
+        </section>
 
         <section v-if="workspaceSection === 'analytics'" class="s-article-workspace__analytics sd-modern-widget">
           <dl class="s-article-workspace__metrics"><div v-for="metric in workspace_metrics" :key="metric.label"><dt>{{ $t('global.article.workspace.' + metric.label) }}</dt><dd>{{ metric.value ?? '—' }}</dd><span>{{ $t('global.article.workspace.all_time') }}</span></div></dl>
@@ -161,7 +209,7 @@
         </section>
 
         <!-- Keep staged SEO/FAQ dialogs mounted when moving between resource tabs. -->
-        <section v-show="workspaceSection === 'seo'" class="s-article-workspace__seo">
+        <section v-if="!product_workspace" v-show="workspaceSection === 'seo'" class="s-article-workspace__seo">
           <div class="s-article-workspace__seo-grid">
             <s-article-seo-editor v-if="article" :article="article" :images="images_in_article" workspace :disabled="!workspace_can_write || workspace_busy" @change="onChangeNote" @open-menu="$refs.editorContainer?.findAllImages()" />
             <aside class="s-article-workspace__previews">
@@ -193,7 +241,7 @@
             <s-article-structured-data v-model="article.structures" workspace :active="workspaceSection === 'seo'" :editMode="workspace_can_write && !workspace_busy" @update:model-value="onChangeNote" @pending-change="workspace_schema_pending = $event" />
           </div>
         </section>
-        <s-article-workspace-faqs v-show="workspaceSection === 'faq'" v-model="article.faqs" :active="workspaceSection === 'faq'" :edit-mode="workspace_can_write" :disabled="workspace_busy" @update:model-value="onChangeNote" @pending-change="workspace_faq_pending = $event" />
+        <s-article-workspace-faqs v-if="!product_workspace" v-show="workspaceSection === 'faq'" v-model="article.faqs" :active="workspaceSection === 'faq'" :edit-mode="workspace_can_write" :disabled="workspace_busy" @update:model-value="onChangeNote" @pending-change="workspace_faq_pending = $event" />
       </template>
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Top author info + Edit / Follow / Save ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -852,16 +900,17 @@
       <hr v-if="!workspace && canEdit" />
 
       <!-- ――――――――――――――――――――― 🔍 Google search rank ――――――――――――――――――――― -->
-      <v-expand-transition>
+      <v-expand-transition v-if="!product_workspace || !productSectionTabs">
         <div
-          v-show="!workspace && show_google_tank"
-          class="shadow-paper rounded-14-12 max-width-container-1280px mx-auto"
+          v-show="show_google_tank && (!workspace || (product_workspace && canEdit && !IS_VENDOR_PANEL && article?.id))"
+          :class="product_workspace ? 's-article-product__search sd-modern-widget' : 'shadow-paper rounded-14-12 max-width-container-1280px mx-auto'"
         >
           <s-article-search-console
-            v-if="article?.id && first_load_seo_audit"
+            v-if="article?.id && first_load_seo_audit && (!workspace || (product_workspace && canEdit && !IS_VENDOR_PANEL))"
             :key="'seo' + article?.id"
             :article="article"
             :shop="$shop"
+            :workspace="workspace"
           >
           </s-article-search-console>
         </div>
@@ -869,7 +918,7 @@
       <!-- ―――――――――――――――――――――――――――――――――――――――――――――――― -->
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-      <div class="samin-article-widget" :class="{ 's-article-workspace__writing': workspace, 's-article-workspace__writing--details': workspace && workspaceSection === 'edit' && workspace_details }" :inert="workspace && workspace_busy" v-show="!workspace || ['edit', 'article'].includes(workspaceSection)">
+      <div class="samin-article-widget" :class="{ 's-article-workspace__writing': workspace }" :inert="workspace && workspace_busy" v-show="!workspace || ['edit', 'article'].includes(workspaceSection)">
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article > Content ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
         <!-- display: inline-block; Bug in flow image correction -->
 
@@ -885,6 +934,9 @@
           :hide-title="hideTitle"
           :only-view="workspace ? !workspace_can_write : !canEdit"
           :workspace="workspace"
+          :product-workspace="product_workspace"
+          :language="article.lang"
+          :active="active"
           :upload-url="upload_url"
           :word-converter-url="word_converter_url"
           class="samin-article-content"
@@ -892,8 +944,9 @@
           @change="onChangeNote"
           @update:images="onChangeImages"
           @workspace-busy="workspace_importing = $event"
+          @workspace-pending="workspace_import_pending = $event"
         >
-          <template v-if="workspace && workspaceSection === 'article'" #before-title>
+          <template v-if="workspace && !product_workspace && workspaceSection === 'article'" #before-title>
             <div class="s-article-workspace__metadata" role="group" :aria-label="$t('global.article.workspace.details')">
               <dl class="s-article-workspace__metadata-fields">
                 <div v-for="field in workspace_metadata" :key="field.key" :data-metadata="field.key">
@@ -903,6 +956,16 @@
                     <v-icon :icon="field.icon" size="14" aria-hidden="true" />
                     <span>{{ field.value }}</span>
                   </dd>
+                </div>
+              </dl>
+              <dl v-if="showUserFeedbackButtons && !isNew" class="s-article-workspace__engagement">
+                <div>
+                  <dt><v-icon icon="fa:fas fa-sign-language" size="14" aria-hidden="true" />{{ $t('global.article.workspace.claps') }}</dt>
+                  <dd>{{ article.power == null ? '—' : numeralFormat(article.power, '0.[0] a') }}</dd>
+                </div>
+                <div v-if="hasLike">
+                  <dt><v-icon icon="favorite_border" size="14" aria-hidden="true" />{{ $t('global.article.workspace.likes') }}</dt>
+                  <dd>{{ article.like == null ? '—' : numeralFormat(article.like, '0.[0] a') }}</dd>
                 </div>
               </dl>
               <span v-if="isNew || workspace_dirty" class="s-article-workspace__metadata-note">{{ $t('global.article.workspace.unsaved') }}</span>
@@ -999,7 +1062,7 @@
 
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article > Like / Star ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-        <div v-if="showUserFeedbackButtons && !isNew && (!workspace || workspaceSection === 'article')" style="min-height: 64px;" class="text-end">
+        <div v-if="!workspace && showUserFeedbackButtons && !isNew" style="min-height: 64px;" class="text-end">
 
 
 
@@ -1060,18 +1123,37 @@
             {{$t('global.commons.favorite')}}
           </v-chip>
         </div>
-        <aside v-if="workspace" v-show="workspace_details && workspaceSection === 'edit'" class="s-article-workspace__details" :inert="!workspace_can_write || workspace_busy">
-          <h2>{{ $t('global.article.workspace.details') }}</h2>
-          <slot name="extra-header-options" :categoryId="category" :setCategoryId="setWorkspaceCategory" :clusterId="cluster_id" :setClusterId="setWorkspaceCluster" :inEditMode="in_edit_mode" :state="state" :onChange="onChangeNote" :disabled="!workspace_can_write || workspace_busy" />
-          <s-article-tags-editor v-if="article.id && is_shop_blog && workspace_can_write" :article="article" :shop="$shop" />
-        </aside>
       </div>
-      <div v-if="workspace && ['edit', 'seo', 'faq'].includes(workspaceSection)" class="s-article-workspace__save-state" :class="{ 's-article-workspace__save-state--wide': workspaceSection !== 'edit' }" role="status">{{ $t(workspace_has_changes ? 'global.article.workspace.unsaved' : 'global.article.workspace.saved') }}</div>
+      <template v-if="product_workspace && article">
+        <details v-show="!productSectionTabs || workspaceSection === 'seo'" class="s-article-product__disclosure s-article-product__seo sd-modern-widget" :open="product_panels.seo" @toggle="onProductPanelToggle('seo', $event)">
+          <summary><b-product-edit-info-icon name="Search" :size="18" /><span class="s-article-product__summary-copy"><span class="s-article-product__summary-title">{{ $t('add_product.description_modern.search_sharing') }}</span><span class="s-article-product__digest">{{ product_seo_digest }}</span></span><b-product-edit-info-icon name="ChevronDown" :size="16" class="s-article-product__chevron" /></summary>
+          <div class="s-article-product__disclosure-body"><s-article-seo-editor :article="article" :images="images_in_article" workspace product-workspace :disabled="!workspace_can_write || workspace_busy || !active || !in_edit_mode" @change="onChangeNote" @open-menu="$refs.editorContainer?.findAllImages()" /><v-btn v-if="!article.image && !images_in_article.length" class="sd-modern-button s-article-product__image-action" variant="outlined" prepend-icon="add_photo_alternate" :disabled="!workspace_can_write || workspace_busy || !active || !in_edit_mode" @click="$refs.editorContainer?.showProductInsert()">{{ $t('add_product.description_modern.add_image') }}</v-btn></div>
+        </details>
+        <component :is="productSectionTabs ? 'section' : 'details'" v-show="!productSectionTabs || workspaceSection === 'faq'" :class="productSectionTabs ? 's-article-product__faq' : 's-article-product__disclosure sd-modern-widget'" :aria-label="productSectionTabs ? $t('global.article.workspace.faq_title') : undefined" :open="productSectionTabs ? undefined : product_panels.faq" @toggle="onProductPanelToggle('faq', $event)">
+          <summary v-if="!productSectionTabs"><b-product-edit-info-icon name="MessagesSquare" :size="18" /><span class="s-article-product__summary-copy"><span class="s-article-product__summary-title">{{ $t('global.article.workspace.faq_title') }}</span><span class="s-article-product__digest">{{ product_faq_digest }}</span></span><b-product-edit-info-icon name="ChevronDown" :size="16" class="s-article-product__chevron" /></summary>
+          <div :class="{ 's-article-product__disclosure-body': !productSectionTabs }"><s-article-workspace-faqs v-model="article.faqs" :active="active && (productSectionTabs ? workspaceSection === 'faq' : product_panels.faq)" :edit-mode="workspace_can_write && in_edit_mode" :disabled="workspace_busy" @update:model-value="onChangeNote" @pending-change="workspace_faq_pending = $event" /></div>
+        </component>
+        <details v-show="!productSectionTabs || workspaceSection === 'seo'" class="s-article-product__disclosure sd-modern-widget" :open="product_panels.schema" @toggle="onProductPanelToggle('schema', $event)">
+          <summary><b-product-edit-info-icon name="Braces" :size="18" /><span class="s-article-product__summary-copy"><span class="s-article-product__summary-title">{{ $t('add_product.description_modern.structured_data') }}</span><span class="s-article-product__digest">{{ product_schema_digest }}</span></span><b-product-edit-info-icon name="ChevronDown" :size="16" class="s-article-product__chevron" /></summary>
+          <div class="s-article-product__disclosure-body"><s-article-structured-data v-model="article.structures" workspace :active="active && product_panels.schema && (!productSectionTabs || workspaceSection === 'seo')" :edit-mode="workspace_can_write && in_edit_mode && !workspace_busy" @update:model-value="onChangeNote" @pending-change="workspace_schema_pending = $event" /></div>
+        </details>
+        <section v-if="productSectionTabs && canEdit && !IS_VENDOR_PANEL" v-show="workspaceSection === 'seo'" class="s-article-product__search sd-modern-widget">
+          <div class="s-article-workspace__search-title"><img src="../assets/trademark/google.svg" alt="" width="18" height="18" /><div><h2>{{ $t('global.article.search_console.title') }}</h2><p>{{ $t('global.article.search_console.subtitle') }}</p></div></div>
+          <template v-if="!$shop?.search_console && !$shop?.search_console_sample">
+            <p class="sd-modern-help">{{ $t('global.article.search_console.connect_message') }}</p>
+            <v-btn class="sd-modern-button sd-modern-button--compact" variant="text" color="primary" prepend-icon="cable" :to="{ name: 'BPageShopSettingSeo', params: { shop_id } }">{{ $t('global.article.search_console.connect') }}</v-btn>
+          </template>
+          <p v-else-if="!article.id" class="sd-modern-help">{{ $t('global.article.workspace.save_first') }}</p>
+          <v-btn v-else-if="!show_google_tank" class="sd-modern-button sd-modern-button--compact" variant="outlined" :disabled="!active || workspace_busy" @click="showGoogleSearch()">{{ $t('add_product.description_modern.view_search_report') }}</v-btn>
+          <s-article-search-console v-if="show_google_tank && workspaceSection === 'seo' && active && article.id && ($shop?.search_console || $shop?.search_console_sample)" :key="'seo' + article.id" :article="article" :shop="$shop" workspace />
+        </section>
+      </template>
+      <div v-if="workspace && !product_workspace && ['edit', 'seo', 'faq'].includes(workspaceSection)" class="s-article-workspace__save-state" :class="{ 's-article-workspace__save-state--wide': workspaceSection !== 'edit' }" role="status">{{ $t(workspace_has_changes ? 'global.article.workspace.unsaved' : 'global.article.workspace.saved') }}</div>
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ author info + Edit / Follow / Save ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
       <v-sheet
-        v-if="showAuthorInfo && article?.user_id > 0 && (!workspace || workspaceSection === 'article')"
+        v-if="!workspace && showAuthorInfo && article?.user_id > 0"
         color="#eee"
         class="my-5 pa-2 overflow-hidden mx-auto"
         rounded="xl"
@@ -1252,11 +1334,13 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+import BProductEditInfoIcon from "../backoffice/product/edit/info/BProductEditInfoIcon.vue";
 
 export default {
   name: "ArticleViewer",
   mixins: [DateMixin,AuthMixin ],
   components: {
+    BProductEditInfoIcon,
     SArticleAuthorBox,
 
     UButtonAiSmall,
@@ -1279,7 +1363,9 @@ export default {
   emits: ["request-auto-translate", "update-article", "delete", "get-data", "workspace-preview", "workspace-edit", "workspace-dirty", "workspace-busy"],
   props: {
     workspace: { type: Boolean, default: false },
+    active: { type: Boolean, default: true },
     workspaceSection: { type: String, default: "edit" },
+    productSectionTabs: { type: Boolean, default: false },
     initialArticlePack: {
       required: false,
       type: Object,
@@ -1501,17 +1587,39 @@ export default {
       workspace_faq_pending: false,
       workspace_ready: false,
       workspace_importing: false,
+      workspace_import_pending: false,
       workspace_saved_schedule: null,
+      product_panels: { seo: false, faq: false, schema: false },
     };
   },
 
   computed: {
+    product_workspace() { return this.workspace && this.articleType === Article.Types.Product.code; },
+    hasUnsavedChanges() { return this.workspace_has_changes; },
+    workspaceBusy() { return this.workspace_busy; },
+    saveBlocked() { return this.workspace && (!this.active || (this.product_workspace && !this.workspace_ready) || !this.showContent || !this.workspace_can_write || this.workspace_busy || this.workspace_pending_changes || !!this.workspace_setting || this.workspace_schedule || this.workspace_tools || this.dialog_timeline); },
+    product_save_hint() {
+      if (this.schedule_at) return this.$t('add_product.description_modern.save_scope_scheduled', { date: this.getLocalTimeString(this.schedule_at), timezone: this.workspace_timezone });
+      return this.$t('add_product.description_modern.save_scope_' + (!this.published_state ? 'draft' : this.isPrivate ? 'private' : 'published'));
+    },
+    product_seo_digest() {
+      return [this.$t('add_product.description_modern.' + (this.article.description ? 'seo_digest_set' : 'seo_digest_missing')), this.$t('add_product.description_modern.' + (this.article.image ? 'image_set' : 'no_image'))].join(' · ');
+    },
+    product_faq_digest() {
+      const items = Array.isArray(this.article.faqs) ? this.article.faqs : [];
+      return items.length ? this.$t('add_product.description_modern.faq_digest', { count: items.length, first: String(items[0]?.question || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').slice(0, 72) }) : this.$t('add_product.description_modern.faq_digest_empty');
+    },
+    product_schema_digest() {
+      const items = Array.isArray(this.article.structures) ? this.article.structures : [];
+      return items.length ? this.$t('add_product.description_modern.schema_digest', { count: items.length, types: items.map(item => item?.['@type']).filter(Boolean).join(' · ') }) : this.$t('add_product.description_modern.schema_digest_empty');
+    },
     workspace_can_write() {
       // 🔏 A resource view never grants Shop BLOG write access by itself.
-      return this.canEdit && (!this.workspace || (this.USER() && typeof this.writeShopAccess === "function" && this.writeShopAccess(ShopPermissionRegions.BLOG.code)));
+      // Product descriptions retain their existing article/vendor authorization.
+      return this.canEdit && (!this.workspace || this.product_workspace || (this.USER() && typeof this.writeShopAccess === "function" && this.writeShopAccess(ShopPermissionRegions.BLOG.code)));
     },
-    workspace_busy() { return this.workspace && (this.state === "saving" || this.busy_fix || this.workspace_importing || this.workspace_author_busy || this.workspace_comments_busy); },
-    workspace_pending_changes() { return this.workspace_schema_pending || this.workspace_faq_pending; },
+    workspace_busy() { return this.workspace && (this.state === "saving" || this.busy_fix || this.workspace_importing || this.workspace_author_busy || this.workspace_comments_busy || (this.product_workspace && this.auto_generate_busy)); },
+    workspace_pending_changes() { return this.workspace_schema_pending || this.workspace_faq_pending || this.workspace_import_pending; },
     workspace_has_changes() { return this.workspace_dirty || (this.workspace && (this.workspace_comments_dirty || this.workspace_pending_changes)); },
     workspace_dirty() {
       return this.workspace && this.workspace_ready && (this.workspace_busy || this.state === "changed" || this.published_state !== this.article.published || this.isPrivate !== this.article.private || this.schedule_at !== this.workspace_saved_schedule);
@@ -1523,14 +1631,26 @@ export default {
       if (!this.isNew && this.article.published) return "global.article.workspace.save_changes";
       return "global.article.workspace.save_and_publish";
     },
-    workspace_metadata() {
+    workspace_language_name() {
       const language = this.forceLanguage || this.article.lang;
+      if (!language) return this.$t("global.commons.not_set");
+      const name = this.getLanguageName(language);
+      if (name && name !== language) return name;
+      // Some browser language catalogs omit the valid ISO 639-1 code for Bislama.
+      if (language.toLowerCase() === "bi") return "Bislama";
+      try {
+        return new Intl.DisplayNames([this.getCurrentLanguage()?.code || "en"], { type: "language", fallback: "none" }).of(language) || language;
+      } catch {
+        return language;
+      }
+    },
+    workspace_metadata() {
       const fields = [
         { key: "status", label: this.$t("global.article.workspace.status"), value: this.$t(this.schedule_at ? "global.article.workspace.scheduled" : this.published_state ? "global.article.published" : "global.article.draft"), icon: this.schedule_at ? "watch_later" : this.published_state ? "fa:fas fa-rss" : "fa:fas fa-pencil-ruler", tone: this.published_state && !this.schedule_at ? "success" : "warning" },
         { key: "visibility", label: this.$t("global.article.workspace.visibility"), value: this.$t(this.isPrivate ? "global.article.private" : "global.article.public"), icon: this.isPrivate ? "fa:fas fa-user-lock" : "fa:fas fa-globe", tone: this.isPrivate ? "error" : "success" },
-        { key: "language", label: this.$t("global.article.workspace.language"), value: language ? this.getLanguageName(language) || language : this.$t("global.commons.not_set"), icon: "translate" },
+        { key: "language", label: this.$t("global.article.workspace.language"), value: this.workspace_language_name, icon: "translate" },
       ];
-      if (this.schedule_at) fields.push({ key: "schedule", label: this.$t("global.article.workspace.schedule"), value: `${this.getLocalTimeString(this.schedule_at)} · ${this.workspace_timezone}`, icon: "schedule" });
+      if (this.schedule_at) fields.push({ key: "schedule", label: this.$t("global.article.workspace.schedule"), value: this.product_workspace ? this.workspace_schedule_summary : this.workspace_schedule_details, tooltip: this.product_workspace ? this.workspace_schedule_details : undefined, icon: "schedule" });
       return fields;
     },
     workspace_statuses() { return [
@@ -1542,14 +1662,16 @@ export default {
       { title: this.$t("global.article.private"), value: true, icon: "fa:fas fa-user-lock" },
     ]; },
     workspace_controls() {
-      const disabled = !this.workspace_can_write || this.workspace_busy;
+      const disabled = !this.active || !this.workspace_can_write || this.workspace_busy;
       return [
-        { key: "status", label: this.$t("global.article.workspace.status"), hint: this.$t("global.article.workspace.status"), value: this.$t(this.published_state ? "global.article.published" : "global.article.draft"), icon: this.published_state ? "fa:fas fa-rss" : "fa:fas fa-pencil-ruler", disabled: disabled || !!this.schedule_at },
-        { key: "visibility", label: this.$t("global.article.workspace.visibility"), hint: this.$t("global.article.workspace.visibility_hint"), value: this.$t(this.isPrivate ? "global.article.private" : "global.article.public"), icon: this.isPrivate ? "fa:fas fa-user-lock" : "fa:fas fa-globe", disabled },
-        { key: "language", label: this.$t("global.article.workspace.language"), hint: this.$t("global.article.workspace.language_hint"), value: (this.forceLanguage || this.article.lang || "").toUpperCase(), icon: "translate", disabled: disabled || !this.can_change_article_language },
+        { key: "status", label: this.$t("global.article.workspace.status"), hint: this.$t("global.article.workspace.status"), value: this.$t(this.product_workspace && this.schedule_at ? "global.article.workspace.scheduled" : this.published_state ? "global.article.published" : "global.article.draft"), icon: this.published_state ? "fa:fas fa-rss" : "fa:fas fa-pencil-ruler", outline: this.product_workspace && this.schedule_at ? "Clock3" : this.published_state ? "Radio" : "FilePenLine", disabled: disabled || (!this.product_workspace && !!this.schedule_at) },
+        { key: "visibility", label: this.$t("global.article.workspace.visibility"), hint: this.$t("global.article.workspace.visibility_hint"), value: this.$t(this.isPrivate ? "global.article.private" : "global.article.public"), icon: this.isPrivate ? "fa:fas fa-user-lock" : "fa:fas fa-globe", outline: this.isPrivate ? "LockKeyhole" : "Globe", disabled },
+        { key: "language", label: this.$t("global.article.workspace.language"), hint: this.$t("global.article.workspace.language_hint"), value: this.workspace_language_name, icon: "translate", outline: "Languages", disabled: disabled || !this.can_change_article_language },
       ];
     },
     workspace_timezone() { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; },
+    workspace_schedule_summary() { return this.schedule_at ? this.getFromNowString(this.schedule_at) : this.$t("global.article.workspace.no_schedule"); },
+    workspace_schedule_details() { return this.schedule_at ? `${this.getLocalTimeString(this.schedule_at)} · ${this.workspace_timezone}` : ""; },
     workspace_heading() { return ({ article: "article", edit: this.isNew ? "new_title" : "edit_title", seo: "seo_title", faq: "faq_title", analytics: "analytics", comments: "comments" })[this.workspaceSection] || "article"; },
     workspace_subtitle() { return ({ article: "article_subtitle", edit: this.isNew ? "new_subtitle" : "edit_subtitle", seo: "seo_subtitle", faq: "faq_subtitle", analytics: "analytics_subtitle", comments: "comments_subtitle" })[this.workspaceSection] || "article_subtitle"; },
     workspace_storefront() { return { name: window.$storefront?.routes.SHOP_BLOG_PAGE, params: { shop_name: this.$shop?.name, blog_id: this.article.parent_id || this.targetId } }; },
@@ -1702,6 +1824,13 @@ export default {
   },
 
   watch: {
+    active(value) {
+      if (!this.workspace || value) return;
+      this.cancelWorkspaceSetting();
+      this.workspace_schedule = false;
+      this.workspace_tools = false;
+      this.dialog_timeline = false;
+    },
     workspaceSection(section, previousSection) { this.syncWorkspaceSection(previousSection); },
     workspace_has_changes(value) { if (this.workspace) this.$emit("workspace-dirty", !!value); },
     workspace_busy(value) { if (this.workspace) { this.$emit("workspace-busy", !!value); if (value) { this.cancelWorkspaceSetting(); this.workspace_schedule = false; this.workspace_tools = false; } } },
@@ -1747,6 +1876,25 @@ export default {
   beforeUnmount() { this._workspaceGeneration++; },
 
   methods: {
+    onProductPanelToggle(key, event) {
+      this.product_panels[key] = !!event.target.open;
+      if (key === 'seo' && this.product_panels.seo) this.$nextTick(() => this.$refs.editorContainer?.findAllImages());
+    },
+    toggleProductPreview() {
+      if (!this.product_workspace || !this.active || this.workspace_busy || this.workspace_pending_changes) return;
+      this.cancelWorkspaceSetting();
+      this.workspace_schedule = false;
+      this.workspace_tools = false;
+      if (this.in_edit_mode) {
+        // Preserve untouched rich blocks instead of serializing their mounted Vue DOM.
+        if (this.$refs.editorContainer?.state === 'changed') {
+          this.article.title = this.$refs.editorContainer.purifyTitle();
+          this.article.body = this.$refs.editorContainer.purifyBody();
+        }
+        this.render_state = 'review';
+      }
+      else if (this.workspace_can_write) this.render_state = 'editing';
+    },
     syncWorkspaceSection(previousSection = this.workspaceSection) {
       if (!this.workspace) return;
       // Metadata and FAQ edits must not re-serialize an untouched article body.
@@ -1758,6 +1906,7 @@ export default {
       this.cancelWorkspaceSetting();
       this.workspace_schedule = false;
       this.render_state = ["edit", "seo", "faq"].includes(this.workspaceSection) && this.workspace_can_write ? "editing" : "review";
+      if (this.product_workspace && this.productSectionTabs && this.workspaceSection === "seo") this.product_panels.seo = true;
       if (this.workspaceSection === "seo") this.$nextTick(() => this.$refs.editorContainer?.findAllImages());
     },
     setWorkspaceCategory(value) { if (this.workspace_can_write && !this.workspace_busy) { this.category = value; this.onChangeNote(); } },
@@ -1776,7 +1925,7 @@ export default {
       cards.find((card) => card.$el?.dataset.setting === this.workspace_setting)?.$el.querySelector("input")?.focus();
     },
     openWorkspaceLanguagePicker() {
-      if (this.workspace_setting !== "language" || !this.workspace_can_write || this.workspace_busy || !this.can_change_article_language) return;
+      if (!this.active || this.workspace_setting !== "language" || !this.workspace_can_write || this.workspace_busy || !this.can_change_article_language) return;
       this.$refs.workspaceLanguageInput?.[0]?.showDialog();
     },
     applyWorkspaceSetting() {
@@ -1791,20 +1940,37 @@ export default {
       }
       this.cancelWorkspaceSetting();
     },
-    openWorkspaceWordImport() { if (this.workspace_can_write && !this.workspace_busy) this.$refs.editorContainer?.showSelectWord(); },
+    selectProductWorkspaceSetting(key, value) {
+      if (!this.product_workspace || !["status", "visibility"].includes(key) || this.workspace_setting !== key || typeof value !== "boolean" || (key === "status" && this.schedule_at)) return;
+      this.workspace_setting_values[key] = value;
+      this.applyWorkspaceSetting();
+    },
+    openWorkspaceWordImport() {
+      if (!this.active || !this.showContent || !this.workspace_can_write || this.workspace_busy || this.workspace_pending_changes) return;
+      this.workspace_tools = false;
+      if (!this.product_workspace || !this.in_view_mode) {
+        this.$refs.editorContainer?.showSelectWord();
+        return;
+      }
+      const article = this.article, generation = this._workspaceGeneration;
+      this.toggleProductPreview();
+      this.$nextTick(() => {
+        if (this.active && this.showContent && this.in_edit_mode && this.workspaceSection === 'edit' && article === this.article && generation === this._workspaceGeneration && this.workspace_can_write && !this.workspace_busy && !this.workspace_pending_changes) this.$refs.editorContainer?.showSelectWord();
+      });
+    },
     openWorkspaceSchedule() {
-      if (!this.workspace || !this.workspace_can_write || this.workspace_busy) return;
+      if (!this.workspace || !this.active || !this.workspace_can_write || this.workspace_busy) return;
       this.cancelWorkspaceSetting();
       this.workspace_schedule_value = this.schedule_at;
       this.workspace_schedule_context = { generation: this._workspaceGeneration, article: this.article, shopId: this.shop_id };
       this.workspace_schedule = true;
     },
     openWorkspaceSchedulePicker() {
-      if (this.workspace_schedule && this.workspace_can_write && !this.workspace_busy) this.$refs.workspaceScheduleInput?.showDialog();
+      if (this.active && this.workspace_schedule && this.workspace_can_write && !this.workspace_busy) this.$refs.workspaceScheduleInput?.showDialog();
     },
     applyWorkspaceSchedule() {
       const context = this.workspace_schedule_context;
-      if (!this.workspace_can_write || this.workspace_busy || !context || context.generation !== this._workspaceGeneration || context.article !== this.article || context.shopId !== this.shop_id) { this.workspace_schedule = false; return; }
+      if (!this.active || !this.workspace_can_write || this.workspace_busy || !context || context.generation !== this._workspaceGeneration || context.article !== this.article || context.shopId !== this.shop_id) { this.workspace_schedule = false; return; }
       const pending = this.workspace_schedule_value, current = this.schedule_at;
       const sameTime = pending && current && Number.isFinite(Date.parse(current)) && Date.parse(pending) === Date.parse(current);
       if (pending !== current && !sameTime) { this.schedule_at = pending; this.onChangeNote(); }
@@ -1821,6 +1987,7 @@ export default {
       if (!Array.isArray(this.article.faqs)) this.article.faqs = [];
       if (!Array.isArray(this.article.structures)) this.article.structures = [];
       this.syncWorkspaceSection();
+      if (this.product_workspace && this.workspaceSection === 'edit' && !this.isNew && this.initialRenderState === 'review') this.render_state = 'review';
       const generation = this._workspaceGeneration;
       this.$nextTick(() => { if (generation !== this._workspaceGeneration) return; this.workspace_saved_schedule = this.schedule_at; this.state = "no-change"; this.workspace_ready = true; });
     },
@@ -1858,7 +2025,7 @@ export default {
     },
 
     saveChange(callback_success = null) {
-      if (this.workspace && (!this.workspace_can_write || this.workspace_busy || this.workspace_pending_changes || !this.$refs.editorContainer)) return;
+      if (this.workspace && (this.saveBlocked || !this.$refs.editorContainer)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article, shopId = this.shop_id;
       if (!this.article.description)
         this.article.description = this.$refs.editorContainer.gist();
@@ -1868,7 +2035,7 @@ export default {
 
       // ==================== Purify Body ==================
 
-      const readEditor = !this.workspace || this.workspaceSection === "edit";
+      const readEditor = !this.workspace || (this.workspaceSection === "edit" && (!this.product_workspace || this.in_edit_mode));
       let pure_title = readEditor ? this.$refs.editorContainer.purifyTitle() : this.article.title;
       if (!pure_title) {
         return NotificationService.showErrorAlert(null, this.workspace ? this.$t("global.article.workspace.missing_title") : "Title can not be empty!");
@@ -1876,7 +2043,7 @@ export default {
       this.article.title = pure_title;
 
       let pure_body = readEditor ? this.$refs.editorContainer.purifyBody() : this.article.body;
-      if (this.workspace && !pure_body?.trim()) return NotificationService.showErrorAlert(null, this.$t("global.article.workspace.missing_body"));
+      if (this.workspace && !this.product_workspace && !pure_body?.trim()) return NotificationService.showErrorAlert(null, this.$t("global.article.workspace.missing_body"));
 
       // TODO: مهم اینو برداشتم!!!!!!!!!!!!! باید اضافه کنم اما پوست رندر رو روش بزنم حتما! برای نوشن دادن ویو کامپوننت ها!
       this.article.body = pure_body;
@@ -2161,10 +2328,10 @@ export default {
 
       // Set language in shop mode:
       if (this.$shop) {
-        this.article.lang = this.workspace ? this.$shop.language || this.getCurrentLanguage().code : this.$shop.langauge;
+        this.article.lang = this.workspace ? this.forceLanguage || this.$shop.language || this.getCurrentLanguage().code : this.$shop.langauge;
       }
 
-      if (this.workspace) { this.article.published = false; this.published_state = false; this.article.private = false; this.inLoading = false; }
+      if (this.workspace) { this.article.published = !this.product_workspace ? false : this.article.published; this.published_state = this.article.published; this.article.private = false; this.inLoading = false; }
 
       this.refreshPlaceholders();
       this.readyWorkspace();
@@ -2277,7 +2444,7 @@ export default {
 
     //――――――――――――――――――――――― Delete this article ―――――――――――――――――――――――
     openDeleteArticleAlert() {
-      if (this.workspace && (!this.workspace_can_write || this.workspace_busy || this.isNew)) return;
+      if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy || this.isNew)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article;
       NotificationService.openDangerAlert(
         this.$t("global.article.alert.delete_article.title"),
@@ -2291,7 +2458,7 @@ export default {
     },
 
     deleteArticle() {
-      if (this.workspace && (!this.workspace_can_write || this.workspace_busy || this.isNew)) return;
+      if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy || this.isNew)) return;
       axios
         .delete(
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -2327,9 +2494,9 @@ export default {
     //――――――――――――――――― Fix body structure ―――――――――――――――――
 
     autoFixArticle() {
-      if (this.workspace && (!this.workspace_can_write || this.workspace_busy)) return;
+      if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article;
-      if (this.workspace && this.$refs.editorContainer) this.article.body = this.$refs.editorContainer.purifyBody();
+      if (this.workspace && this.$refs.editorContainer && (!this.product_workspace || this.in_edit_mode)) this.article.body = this.$refs.editorContainer.purifyBody();
       if (this.workspace && !this.article.body?.trim()) return;
       this.busy_fix = true;
       axios
@@ -2350,7 +2517,8 @@ export default {
             return;
           }
           this.article.body = data.body;
-          this.onChangeNote();
+          if (this.product_workspace) this.state = 'changed';
+          else this.onChangeNote();
         })
         .catch((e) => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article)) return;
@@ -2388,6 +2556,8 @@ export default {
     },
 
     showGoogleSearch() {
+      if (this.product_workspace && (!this.active || !this.canEdit || this.IS_VENDOR_PANEL || !this.article?.id || this.workspace_busy)) return;
+      if (this.product_workspace && this.productSectionTabs && (this.workspaceSection !== 'seo' || (!this.$shop?.search_console && !this.$shop?.search_console_sample))) return;
       this.first_load_seo_audit = true;
       this.$nextTick(() => {
         this.show_google_tank = !this.show_google_tank;
@@ -2397,6 +2567,8 @@ export default {
     // ┣━━━━━━━━━━━━━━━━━━━━━━━━━━ AI / Auto generate article  ━━━━━━━━━━━━━━━━━━━━━━━━━━┫
 
     autoGenerate(retry = false) {
+      if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy || this.IS_VENDOR_PANEL)) return;
+      const generation = this._workspaceGeneration, sourceArticle = this.article;
       console.log("🆎 AI / Auto generate article.");
 
       if (!this.article.id) {
@@ -2425,6 +2597,7 @@ export default {
           body: body,
         })
         .then(({ data }) => {
+          if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article || !this.workspace_can_write)) return;
           if (data.retry /*Retry after ms*/) {
             delay(
               () => {
@@ -2450,6 +2623,7 @@ export default {
           }
         })
         .catch((error) => {
+          if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article || !this.workspace_can_write)) return;
           if (retry) {
             // Retry after 2 minutes
             delay(() => {
@@ -2460,6 +2634,7 @@ export default {
           }
         })
         .finally(() => {
+          if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article)) return;
           this.auto_generate_busy = false;
         });
     },
@@ -2483,7 +2658,6 @@ export default {
     background: transparent;
   }
   .s-article-workspace__editor { min-width: 0; padding: 36px !important; border: 1px solid rgba(var(--v-theme-on-surface), 0.1); border-radius: 18px; background: rgb(var(--v-theme-surface)); }
-  .s-article-workspace__writing--details { max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) 224px; gap: 20px; align-items: start; }
   .s-article-workspace__header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
   .s-article-workspace__header h1 { margin: 0; font-family: inherit; font-size: 18px; font-weight: 500; line-height: 25px; }
   .s-article-workspace__header p { margin: 4px 0 0; font-size: 12px; line-height: 19px; color: rgba(var(--v-theme-on-surface), 0.66); }
@@ -2494,8 +2668,11 @@ export default {
   .s-article-workspace__metadata-fields dd { margin: 0; font: inherit; gap: 5px; overflow-wrap: anywhere; }
   .s-article-workspace__metadata-fields .sd-modern-status__dot { flex-basis: 5px; width: 5px; height: 5px; }
   .s-article-workspace__metadata-note { color: var(--sd-modern-muted); }
+  .s-article-workspace__engagement { display: flex; flex-wrap: wrap; gap: 12px; margin: 0; margin-inline-start: auto; color: var(--sd-modern-muted); font: inherit; }
+  .s-article-workspace__engagement > div, .s-article-workspace__engagement dt { display: inline-flex; align-items: center; gap: 5px; }
+  .s-article-workspace__engagement dt, .s-article-workspace__engagement dd { margin: 0; font: inherit; }
+  .s-article-workspace__engagement dd { font-variant-numeric: tabular-nums; }
   .s-article-workspace__controls { max-width: 780px; margin: 0 auto 18px; }
-  &.s-article-workspace--details .s-article-workspace__controls { max-width: none; }
   .s-article-workspace__command {
     --article-command-background: light-dark(#25252b, #37353f);
     --article-command-foreground: light-dark(#f7f7f9, #f9f9fb);
@@ -2516,6 +2693,8 @@ export default {
     &.sd-modern-icon-button { --sd-modern-icon-button-size: 32px; padding: 0; border-color: var(--article-command-border) !important; }
   }
   .s-article-workspace__command-separator { height: 20px; width: 1px; margin-inline: 5px; background: var(--article-command-border); }
+  .s-article-workspace__editing-tools { display: flex; align-items: center; gap: 4px; }
+  .s-article-workspace__editing-tools > .sd-modern-icon-button { flex-shrink: 0; justify-content: center; height: var(--sd-modern-icon-button-size); min-height: var(--sd-modern-icon-button-size); }
   .s-article-workspace__word-icon { width: 16px; height: 16px; }
   .s-article-workspace__people { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 11px; }
   .s-article-workspace__author { display: flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; }
@@ -2523,8 +2702,11 @@ export default {
   .s-article-workspace__author-copy small { display: block; color: rgba(var(--v-theme-on-surface), 0.66); font-size: 11px; font-weight: 400; line-height: 15px; }
   .s-article-workspace__schedule-control { margin-inline-start: auto; display: flex; align-items: center; gap: 8px; min-width: 0; }
   .s-article-workspace__schedule-copy { color: rgba(var(--v-theme-on-surface), 0.66); font-size: 12px; line-height: 19px; overflow-wrap: anywhere; }
-  .s-article-workspace__details { display: grid; gap: 18px; min-width: 0; padding: 20px; border: 1px solid rgba(var(--v-theme-on-surface), 0.1); border-radius: 14px; background: rgb(var(--v-theme-surface)); }
+  .s-article-workspace__details { display: grid; gap: 24px; min-width: 0; max-width: 780px; margin: 0 auto 18px; padding: 24px; border: 1px solid var(--sd-modern-border); border-radius: 14px; background: rgb(var(--v-theme-surface)); }
   .s-article-workspace__details h2 { margin: 0; font-size: 13px !important; font-weight: 500; line-height: 20px; }
+  .s-article-workspace__details > *, .s-article-workspace__detail-fields > :deep(.v-input) { min-width: 0; }
+  .s-article-workspace__detail-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .s-article-workspace__tags :deep(.v-list-subheader__text) { white-space: normal; }
   .s-article-workspace__save-state { max-width: 780px; margin: 10px auto 0; font-size: 11px; color: rgba(var(--v-theme-on-surface), 0.62); text-align: end; }
   .s-article-workspace__analytics { padding: 26px; }
   .s-article-workspace__metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; margin: 0 0 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.1); }
@@ -2561,6 +2743,70 @@ export default {
   .s-article-workspace__seo-extra { margin-top: 24px; }
   .s-article-workspace__save-state--wide { max-width: none; margin-top: 12px; text-align: start; line-height: 18px; }
 }
+.s-article-workspace--product {
+  width: 100%; max-width: 760px; font-size: 14px; line-height: 22px;
+  .s-article-product__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 23px 23px 18px; border: 1px solid var(--sd-modern-border); border-bottom: 0; border-radius: 16px 16px 0 0; background: rgb(var(--v-theme-surface)); }
+  .s-article-product__title, .s-article-product__actions { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .s-article-product__title > svg { color: var(--sd-modern-muted); flex-shrink: 0; }
+  .s-article-product__title h2 { margin: 0; font-family: inherit; font-size: 16px !important; font-weight: 500; line-height: 24px; }
+  .s-article-product__actions { gap: 8px; }
+  .s-article-product__actions .sd-modern-button { min-height: 32px; font-size: 12px; font-weight: 400; line-height: 20px; gap: 7px; }
+  .s-article-product__actions .sd-modern-button :deep(.v-btn__content) { gap: 7px; font: inherit; }
+  .s-article-workspace__controls { max-width: none; margin: 0; padding: 0 23px; border-inline: 1px solid var(--sd-modern-border); background: rgb(var(--v-theme-surface)); }
+  .s-article-workspace__command { padding: 5px; gap: 2px; border: 0; border-radius: 10px; }
+  .s-article-workspace__command-button { height: 36px; min-height: 36px; padding: 7px 10px; font-size: 12px !important; font-weight: 400; line-height: 20px; }
+  .s-article-product__ai :deep(.v-btn__content) { gap: 6px; }
+  .s-article-workspace__people { padding: 10px 1px 20px; }
+  .s-article-workspace__schedule-control { width: 100%; margin: 0; gap: 6px; flex-wrap: nowrap; }
+  .s-article-workspace__schedule-control > svg { color: var(--sd-modern-muted); flex-shrink: 0; }
+  .s-article-workspace__schedule-copy { font-size: 11px; line-height: 18px; flex: 1; }
+  .s-article-workspace__schedule-control .sd-modern-button { margin-inline-start: auto; min-height: 32px; padding: 5px 10px; font-size: 11px; font-weight: 400; line-height: 18px; }
+  .samin-article-widget { max-width: none; margin: 0 0 16px; }
+  .s-article-workspace__editor { padding: 0 23px 23px !important; border: 1px solid var(--sd-modern-border); border-top: 0; border-radius: 0 0 16px 16px; }
+  .s-article-product__disclosure { margin: 0 0 16px; padding: 0; border: 1px solid var(--sd-modern-border); border-radius: 16px; background: rgb(var(--v-theme-surface)); box-shadow: none; }
+  .s-article-product__disclosure > summary { box-sizing: border-box; display: flex; align-items: center; gap: 12px; min-height: 84px; padding: 19px 23px; border-radius: 16px; list-style: none; cursor: pointer; }
+  .s-article-product__disclosure > summary::-webkit-details-marker { display: none; }
+  .s-article-product__disclosure > summary > svg { flex-shrink: 0; color: var(--sd-modern-muted); }
+  .s-article-product__summary-copy { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+  .s-article-product__summary-title { font-size: 14px; font-weight: 500; line-height: 21px; }
+  .s-article-product__digest { color: var(--sd-modern-muted); font-size: 12px; font-weight: 400; line-height: 18px; overflow-wrap: anywhere; }
+  .s-article-product__disclosure[open] > summary { min-height: 69px; padding-bottom: 12px; }
+  .s-article-product__disclosure[open] .s-article-product__summary-title { font-size: 16px; line-height: 24px; }
+  .s-article-product__disclosure[open] .s-article-product__digest { display: none; }
+  .s-article-product__disclosure[open] .s-article-product__chevron { transform: rotate(180deg); }
+  .s-article-product__disclosure-body { box-sizing: border-box; min-width: 0; padding: 0 23px 23px; }
+  .s-article-product__image-action { margin-top: 14px; }
+  .s-article-product__disclosure-body :deep(.s--article-seo-editor--workspace), .s-article-product__disclosure-body :deep(.s-article-workspace-faqs__list), .s-article-product__disclosure-body :deep(.s-article-structures-refined) { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+  .s-article-product__disclosure-body :deep(.s--article-seo-editor__heading > h2), .s-article-product__disclosure-body :deep(.s-article-workspace-faqs__section-heading h2), .s-article-product__disclosure-body :deep(.s-article-structures-refined__heading h2) { display: none; }
+}
+@media (max-width: 720px) {
+  .s-article-workspace--product {
+    .s-article-product__header { padding-inline: 19px; flex-wrap: wrap; }
+    .s-article-product__actions { margin-inline-start: auto; }
+    .s-article-workspace__controls, .s-article-workspace__editor { padding-inline: 19px !important; }
+    .s-article-product__disclosure > summary, .s-article-product__disclosure-body { padding-inline: 19px; }
+  }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .s-article-workspace--product {
+    .s-article-workspace__command { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; }
+    .s-article-workspace__command :deep(.v-spacer) { display: none; }
+    .s-article-workspace__command-separator { display: none; }
+    .s-article-product__ai-action { grid-column: 1 / -1; justify-content: flex-end; }
+    .s-article-workspace__command-button { height: auto; min-height: 44px; justify-content: start; white-space: normal; padding-inline: 9px; }
+    .s-article-workspace__command-button :deep(.v-btn__content) { min-width: 0; max-width: 100%; white-space: normal; text-align: start; }
+    .s-article-product__actions .sd-modern-button, .s-article-workspace__schedule-control .sd-modern-button { min-height: 44px; }
+  }
+}
+@media (max-width: 360px) {
+  .s-article-workspace--product {
+    .s-article-product__header { padding-inline: 15px; }
+    .s-article-workspace__controls, .s-article-workspace__editor { padding-inline: 15px !important; }
+    .s-article-product__disclosure > summary, .s-article-product__disclosure-body { padding-inline: 15px; }
+    .s-article-workspace__command-button { padding-inline: 6px; }
+    .s-article-workspace__command-button :deep(.b-product-edit-info-icon:first-child) { display: none; }
+  }
+}
 .s-article-workspace__menu { font-family: inherit; min-width: 230px; }
 .s-article-workspace__menu :deep(.v-list-item-title) { font-size: 13px; font-weight: 400; line-height: 20px; }
 .s-article-workspace__setting { width: 290px; max-width: calc(100vw - 32px); padding: 18px; border: 1px solid rgba(var(--v-theme-on-surface), 0.1); border-radius: 12px; }
@@ -2574,12 +2820,12 @@ export default {
     .s-article-workspace__header { flex-wrap: wrap; align-items: start; }
     .s-article-workspace__seo-grid { grid-template-columns: minmax(0, 1fr); }
     .s-article-workspace__previews { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .s-article-workspace__writing--details { grid-template-columns: minmax(0, 1fr); }
     .s-article-workspace__editor { padding: 24px 20px !important; }
   }
 }
 @media (max-width: 540px) {
   .s-article-workspace {
+    .s-article-workspace__detail-fields { grid-template-columns: minmax(0, 1fr); }
     .s-article-workspace__schedule-control { margin-inline-start: 0; flex-wrap: wrap; width: 100%; }
     .s-article-workspace__details { grid-template-columns: minmax(0, 1fr); }
     .s-article-workspace__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }

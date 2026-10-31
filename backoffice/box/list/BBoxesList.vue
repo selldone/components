@@ -23,16 +23,16 @@
           <p class="sd-modern-subtitle">{{ $t('transportation_boxes.subtitle') }}</p>
         </div>
       </div>
-      <v-btn class="sd-modern-button sd-modern-button--small" color="primary" variant="flat" prepend-icon="add" @click="openCreateDialog()">
+      <v-btn v-if="canManageBoxes" class="sd-modern-button sd-modern-button--small" color="primary" variant="flat" prepend-icon="add" @click="openCreateDialog()">
         {{ $t('transportation_boxes.add_action') }}
       </v-btn>
     </header>
-    <div :class="modern ? 'sd-modern-widget b-boxes-list__widget' : 'widget-box -large mb-5 min-height-50vh'">
+    <div class="s-table-loading" :class="modern ? 'sd-modern-widget b-boxes-list__widget' : 'widget-box -large mb-5 min-height-50vh'" :aria-busy="busy_fetch">
       <u-widget-header
         v-if="!modern"
         :title="$t('transportation_boxes.title')"
         icon="inventory_2"
-        :add-caption="$t('transportation_boxes.add_action')"
+        :add-caption="canManageBoxes ? $t('transportation_boxes.add_action') : undefined"
         @click:add="openCreateDialog()"
       />
 
@@ -43,7 +43,7 @@
       <u-loading-progress v-if="busy_fetch" />
 
       <!-- Top tools (search) -->
-      <v-row :class="{ 'b-boxes-list__toolbar': modern }" align="center" no-gutters>
+      <v-row :class="{ 'sd-modern-list-toolbar b-boxes-list__toolbar': modern }" align="center" no-gutters>
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -70,13 +70,13 @@
         :items-length="totalItems"
         :items-per-page="itemsPerPage"
         :loading-text="$t('global.commons.waiting_load_data')"
-        :row-props="() => ({ class: 'row-hover' })"
+        :row-props="() => ({ class: canManageBoxes ? (modern ? 'sd-modern-clickable-item' : 'row-hover') : 'excluded' })"
         class="bg-transparent"
         :class="modern ? 'sd-modern-data-table sd-modern-data-table--compact' : 'min-height-60vh'"
         density="compact"
         hide-default-footer
         item-key="id"
-        @click:row="(_, r) => openEditDialog(r.item)"
+        v-on="canManageBoxes ? { 'click:row': (_, r) => openEditDialog(r.item) } : {}"
       >
 
 
@@ -108,10 +108,26 @@
         </template>
 
         <template #item.actions="{ item }">
-          <v-btn v-if="modern" class="sd-modern-button sd-modern-button--compact" variant="text" @click.stop="openEditDialog(item)">
-            {{ $t('global.actions.edit') }}
+          <div :class="{ 'b-boxes-list__actions': modern }" @click.stop>
+          <v-btn
+            v-if="modern && canManageBoxes"
+            class="sd-modern-icon-button"
+            icon
+            variant="text"
+            :aria-label="$t('global.actions.edit')"
+            @click.stop="openEditDialog(item)"
+          >
+            <v-icon aria-hidden="true">edit</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="top"
+              :open-on-focus="true"
+              content-class="sd-modern-tooltip text-start"
+            >{{ $t('global.actions.edit') }}</v-tooltip>
           </v-btn>
           <u-smart-menu
+            v-if="canManageBoxes"
+            :modern="modern"
             :class="{ 'b-boxes-list__menu': modern }"
             :title="$t('global.commons.actions')"
             :items="[
@@ -123,6 +139,7 @@
             ]"
           >
           </u-smart-menu>
+          </div>
         </template>
 
         <template #no-data>
@@ -143,6 +160,7 @@
 
       <!-- Dialog: Create / Edit Box -->
       <v-bottom-sheet
+        v-if="canManageBoxes"
         v-model="dialog"
         max-width="720"
         width="98vw"
@@ -169,7 +187,7 @@
           <v-card-text :class="{ 'b-boxes-list-form__body': modern }">
 
 
-            <u-cube  v-if="form?.width && form?.length && form?.height"     :size="100"
+            <u-cube  v-if="!modern && form?.width && form?.length && form?.height"     :size="100"
                           :x="form?.width"
                           :y="form?.length"
                           :z="form?.height"
@@ -177,11 +195,12 @@
 
 
 
-            <v-row>
-              <v-col cols="12">
+            <div :class="modern ? 'b-boxes-list-form__identity' : 'py-3'">
+              <div>
                 <v-text-field
                   v-model="form.name"
                   :label="$t('global.commons.name')"
+                  :class="{ 'sd-modern-underlined-field': modern }"
                   variant="underlined"
                   clearable
                   :rules="[GlobalRules.required()]"
@@ -193,13 +212,23 @@
                   class="mb-4"
                   @select="(v) => (form.name = v)"
                 ></u-smart-suggestion>
-              </v-col>
-            </v-row>
+              </div>
+              <u-cube
+                v-if="modern"
+                modern
+                :unit="size_unit"
+                :x="form.width"
+                :y="form.length"
+                :z="form.height"
+                class="b-boxes-list-form__preview"
+              />
+            </div>
 
             <v-row>
-              <v-col cols="12" sm="4">
+              <v-col cols="12" :sm="modern ? 6 : 4" :md="modern ? 3 : 4">
                 <u-number-input
                   v-model="form.length"
+                  :class="{ 'sd-modern-underlined-field': modern }"
                   :min="0"
                   :step="1"
                   :decimal="3"
@@ -209,9 +238,10 @@
                   :prefix="size_unit"
                 />
               </v-col>
-              <v-col cols="12" sm="4">
+              <v-col cols="12" :sm="modern ? 6 : 4" :md="modern ? 3 : 4">
                 <u-number-input
                   v-model="form.width"
+                  :class="{ 'sd-modern-underlined-field': modern }"
                   :min="0"
                   :step="1"
                   :decimal="3"
@@ -221,9 +251,10 @@
                   :prefix="size_unit"
                 />
               </v-col>
-              <v-col cols="12" sm="4">
+              <v-col cols="12" :sm="modern ? 6 : 4" :md="modern ? 3 : 4">
                 <u-number-input
                   v-model="form.height"
+                  :class="{ 'sd-modern-underlined-field': modern }"
                   :min="0"
                   :step="1"
                   :decimal="3"
@@ -233,12 +264,10 @@
                   :prefix="size_unit"
                 />
               </v-col>
-            </v-row>
-
-            <v-row>
-              <v-col cols="12" sm="6">
+              <v-col cols="12" sm="6" :md="modern ? 3 : 6">
                 <u-number-input
                   v-model="form.weight"
+                  :class="{ 'sd-modern-underlined-field': modern }"
                   :min="0"
                   :step="1"
                   :decimal="3"
@@ -250,7 +279,7 @@
             </v-row>
           </v-card-text>
 
-          <v-card-actions class="justify-end" :class="{ 'sd-modern-form-actions': modern }">
+          <v-card-actions class="justify-end" :class="{ 'sd-modern-form-actions b-boxes-list-form__actions': modern }">
             <div class="widget-buttons">
               <v-btn
                 @click="dialog = false"
@@ -269,7 +298,7 @@
                 variant="elevated"
                 :prepend-icon="editMode ? 'save' : 'add'"
                 size="x-large"
-                :disabled="!(form?.width && form?.length && form?.height && form.name) "
+                :disabled="!canManageBoxes || busy || !(form?.width && form?.length && form?.height && form.name) "
               >
                 {{
                   editMode
@@ -295,6 +324,8 @@ import USmartMenu from "@selldone/components-vue/ui/smart/menu/USmartMenu.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper";
 import UCube from "@selldone/components-vue/ui/cube/UCube.vue";
 import USmartSuggestion from "@selldone/components-vue/ui/smart/suggestion/USmartSuggestion.vue";
+import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model";
 
 export default {
   name: "BBoxesList",
@@ -328,6 +359,7 @@ export default {
     // dialog
     dialog: false,
     editMode: false,
+    formOwner: null as string | null,
     form: {
       id: null as number | null,
       name: "",
@@ -337,18 +369,32 @@ export default {
       weight: null as number | null,
     },
 
-    // table headers
-    headers: [
-      { title: "Name", key: "name", sortable: true, align: "start" },
-      { title: "L", key: "length", sortable: true, align: "end" },
-      { title: "W", key: "width", sortable: true, align: "end" },
-      { title: "H", key: "height", sortable: true, align: "end" },
-      { title: "Weight", key: "weight", sortable: true, align: "end" },
-      { title: "Actions", key: "actions", sortable: false, align: "end" },
-    ],
   }),
 
   computed: {
+    headers() {
+      return [
+        { title: this.$t("global.commons.name"), key: "name", sortable: true, align: "start" },
+        { title: this.$t("global.commons.length"), key: "length", sortable: true, align: "end" },
+        { title: this.$t("global.commons.width"), key: "width", sortable: true, align: "end" },
+        { title: this.$t("global.commons.height"), key: "height", sortable: true, align: "end" },
+        { title: this.$t("global.commons.weight"), key: "weight", sortable: true, align: "end" },
+        { title: this.$t("global.commons.actions"), key: "actions", sortable: false, align: "end" },
+      ];
+    },
+    canManageBoxes(): boolean {
+      if (!this.$shop?.id) return false;
+      return this.isVendor
+        ? this.writeVendorAccess(
+            this.$vendor,
+            VendorMemberTypes.VendorMemberRegionCode.SHIPPING,
+          )
+        : this.writeShopAccess(ShopPermissionRegions.LOGISTIC.code);
+    },
+    ownerKey(): string {
+      const ownerId = this.isVendor ? this.$vendor.id : this.$shop?.id;
+      return `${this.isVendor ? "vendor" : "shop"}:${this.$shop?.id}:${ownerId}`;
+    },
     size_unit() {
       return ShopOptionsHelper.GetSizeUnit(this.$shop);
     },
@@ -378,6 +424,16 @@ export default {
   },
 
   watch: {
+    ownerKey() {
+      this.dialog = false;
+      this.formOwner = null;
+    },
+    canManageBoxes(value) {
+      if (!value) {
+        this.dialog = false;
+        this.formOwner = null;
+      }
+    },
     // server table driver
     options: {
       handler() {
@@ -465,7 +521,9 @@ export default {
 
     // -------------------- UI / Dialog --------------------
     openCreateDialog() {
+      if (!this.canManageBoxes || this.busy) return;
       this.editMode = false;
+      this.formOwner = this.ownerKey;
       this.form = {
         id: null,
         name: "",
@@ -478,7 +536,9 @@ export default {
     },
 
     openEditDialog(box: any) {
+      if (!this.canManageBoxes || this.busy || !box?.id) return;
       this.editMode = true;
+      this.formOwner = this.ownerKey;
       this.form = {
         id: box.id,
         name: box.name,
@@ -492,6 +552,11 @@ export default {
 
     // -------------------- Create / Update --------------------
     submit() {
+      // The shared editor must use the current Shop or Vendor write permission.
+      if (
+        !this.canManageBoxes || this.busy || !this.dialog ||
+        this.formOwner !== this.ownerKey
+      ) return;
       if (
         !this.form.name ||
         this.form.length == null ||
@@ -506,6 +571,7 @@ export default {
       }
 
       this.busy = true;
+      const ownerKey = this.ownerKey;
 
       const payload = {
         name: this.form.name,
@@ -526,6 +592,7 @@ export default {
         axios
           .put(url, payload)
           .then(({ data }) => {
+            if (this.ownerKey !== ownerKey) return;
             if (!data.error) {
               NotificationService.showSuccessAlert(
                 null,
@@ -552,6 +619,7 @@ export default {
         axios
           .post(url, payload)
           .then(({ data }) => {
+            if (this.ownerKey !== ownerKey) return;
             if (!data.error) {
               NotificationService.showSuccessAlert(
                 null,
@@ -575,33 +643,52 @@ export default {
 
     // -------------------- Delete --------------------
     removeBox(box: any) {
-      if (!box?.id) return;
-      this.busy = true;
+      if (!this.canManageBoxes || this.busy || !box?.id) return;
+      const ownerKey = this.ownerKey;
+      const boxId = String(box.id);
+      let confirmed = false;
+      const remove = () => {
+        // Confirmation can outlive its owner context or the user's write access.
+        if (
+          confirmed || !this.canManageBoxes || this.busy ||
+          this.ownerKey !== ownerKey
+        ) return;
+        confirmed = true;
+        this.busy = true;
 
-      const url = this.isVendor
-        ? this.API.DELETE_MY_VENDOR_BOX(this.ownerId, String(box.id))
-        : this.API.DELETE_SHOP_BOX(this.ownerId, String(box.id));
+        const url = this.isVendor
+          ? this.API.DELETE_MY_VENDOR_BOX(this.ownerId, boxId)
+          : this.API.DELETE_SHOP_BOX(this.ownerId, boxId);
 
-      axios
-        .delete(url)
-        .then(({ data }) => {
-          if (!data.error) {
-            NotificationService.showSuccessAlert(
-              null,
-              this.$t("transportation_boxes.deleted"),
-            );
-            this.fetchBoxes(
-              this.page,
-              this.sortBy?.[0]?.key,
-              this.sortBy?.[0]?.order === "desc",
-              this.itemsPerPage,
-            );
-          } else {
-            NotificationService.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => NotificationService.showLaravelError(error))
-        .finally(() => (this.busy = false));
+        return axios
+          .delete(url)
+          .then(({ data }) => {
+            if (this.ownerKey !== ownerKey) return;
+            if (!data.error) {
+              NotificationService.showSuccessAlert(
+                null,
+                this.$t("transportation_boxes.deleted"),
+              );
+              this.fetchBoxes(
+                this.page,
+                this.sortBy?.[0]?.key,
+                this.sortBy?.[0]?.order === "desc",
+                this.itemsPerPage,
+              );
+            } else {
+              NotificationService.showErrorAlert(null, data.error_msg);
+            }
+          })
+          .catch((error) => NotificationService.showLaravelError(error))
+          .finally(() => (this.busy = false));
+      };
+      if (!this.modern) return remove();
+      NotificationService.openDangerAlert(
+        this.$t("transportation_boxes.delete_title"),
+        this.$t("transportation_boxes.delete_message", { name: box.name }),
+        this.$t("global.actions.delete"),
+        remove,
+      );
     },
   },
 };
@@ -611,26 +698,31 @@ export default {
 .b-boxes-list--modern {
   .b-boxes-list__title { font-size: 21px; font-weight: 600; line-height: 1.35; letter-spacing: -0.25px; }
   .sd-modern-subtitle { margin: 4px 0 0; font-size: 13px; line-height: 1.45; }
-  .b-boxes-list__widget { padding: 0; overflow: hidden; }
+  .b-boxes-list__widget { padding: 0; overflow: visible; }
+  :deep(.sd-modern-data-table > .v-table__wrapper) { overflow: visible; }
+  .b-boxes-list__actions { display: flex !important; align-items: center; justify-content: flex-end; flex-wrap: nowrap; gap: 8px; white-space: nowrap; }
   .b-boxes-list__toolbar { margin: 0; padding: 12px 18px; border-block-end: 1px solid var(--sd-modern-border); }
   .b-boxes-list__footer { justify-content: flex-end; padding: 14px 18px; }
   :deep(.b-boxes-list__toolbar .v-field__input) { font-size: 12px; }
-  :deep(.b-boxes-list__menu > .v-btn) { width: 36px; height: 36px; border-radius: 9px; }
 }
 .b-boxes-list-form--modern {
-  .b-boxes-list-form__title { padding: 22px 24px; font-size: 19px; font-weight: 600; line-height: 1.4; white-space: normal; }
-  .b-boxes-list-form__body { padding: 0 24px 20px; font-size: 14px; }
+  .b-boxes-list-form__title { padding: 20px 24px; font-size: 19px; font-weight: 600; line-height: 1.4; white-space: normal; }
+  .b-boxes-list-form__body { padding: 0 24px 12px; font-size: var(--sd-modern-font-body, 14px); }
+  .b-boxes-list-form__identity { display: grid; grid-template-columns: minmax(0, 1fr) 180px; align-items: center; gap: 24px; margin-block-end: 12px; }
+  .b-boxes-list-form__identity > div { min-width: 0; }
+  .b-boxes-list-form__actions { padding: 12px 16px; border-block-start: 1px solid var(--sd-modern-border); }
 }
 @media (max-width: 599px) {
   .b-boxes-list--modern {
     .b-boxes-list__title { font-size: 19px; }
     .b-boxes-list__toolbar { padding-inline: 14px; }
     :deep(.b-boxes-list__toolbar .v-field__input) { font-size: 16px; }
-    :deep(.b-boxes-list__menu > .v-btn) { width: 44px; height: 44px; }
   }
   .b-boxes-list-form--modern {
     .b-boxes-list-form__title { padding-inline: 16px; }
     .b-boxes-list-form__body { padding-inline: 16px; }
+    .b-boxes-list-form__identity { grid-template-columns: minmax(0, 1fr) 120px; gap: 12px; }
+    .b-boxes-list-form__actions { padding-inline: 8px; }
   }
 }
 </style>

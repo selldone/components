@@ -90,6 +90,11 @@
           </template>
         </v-combobox>
 
+        <aside v-if="modern" class="b-category-engine-editor__matching">
+          <h3>{{ $t("category_engine_editor.matching.title") }}</h3>
+          <p>{{ $t("category_engine_editor.matching." + matchingRule) }}</p>
+        </aside>
+
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ Auto Add All Sub Categories ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <v-list-subheader :class="{ 'b-category-engine-editor__help': modern }">
@@ -109,25 +114,45 @@
             {{ $t("category_engine_editor.actions.auto_add_subcategories") }}
           </v-btn>
         </div>
+        <footer
+          v-if="embedded"
+          class="b-category-engine-editor__inline-actions sd-modern-actions"
+        >
+          <p class="sd-modern-subtitle">
+            {{ $t("category_engine_editor.save_scope") }}
+          </p>
+          <v-btn
+            :disabled="
+              IS_VENDOR_PANEL || !engine_changed || busy_engine || busy_auto
+            "
+            :loading="busy_engine"
+            class="sd-modern-button sd-modern-button--primary"
+            color="primary"
+            prepend-icon="save"
+            variant="elevated"
+            @click="saveEngine()"
+            >{{ $t("category_engine_editor.actions.save_engine") }}</v-btn
+          >
+        </footer>
       </div>
       <div
         v-if="modern"
         class="b-category-engine-editor__preview sd-modern-widget"
       >
-        <h3 class="sd-modern-eyebrow">
-          {{ $t("global.commons.preview") }}
-        </h3>
-        <b-category-engine-preview
+        <h2>{{ $t("category_engine_editor.preview.title") }}</h2>
+        <b-category-engine-explanation
+          :shop="shop"
           :category="category"
-          :engine-categories="engine_categories"
-          :engine-tags="engine_tags"
+          :has-sources="
+            Boolean(engine_categories?.length || engine_tags?.length)
+          "
         />
       </div>
     </div>
 
     <v-fade-transition>
       <s-widget-buttons
-        v-if="modern || engine_changed"
+        v-if="!embedded && (modern || engine_changed)"
         :class="{ 'sd-modern-form-actions': modern }"
         auto-fixed-position
       >
@@ -166,6 +191,7 @@ import SWidgetButtons from "../../../ui/widget/buttons/SWidgetButtons.vue";
 import UWidgetHeader from "../../../ui/widget/header/UWidgetHeader.vue";
 import { BackofficeLocalStorages } from "@selldone/core-js/helper/local-storage/BackofficeLocalStorages";
 import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category/engine/preview/BCategoryEnginePreview.vue";
+import BCategoryEngineExplanation from "./preview/BCategoryEngineExplanation.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -174,6 +200,7 @@ export default {
   mixins: [],
   components: {
     BCategoryEnginePreview,
+    BCategoryEngineExplanation,
     UWidgetHeader,
     SWidgetButtons,
     BCategoryInput,
@@ -182,6 +209,7 @@ export default {
   emits: ["edit-engine", "edit-filters", "cancel"],
   props: {
     modern: Boolean,
+    embedded: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -202,6 +230,17 @@ export default {
     busy_auto: false,
   }),
   computed: {
+    matchingRule() {
+      const categories = Boolean(this.engine_categories?.length);
+      const tags = Boolean(this.engine_tags?.length);
+      return categories && tags
+        ? "combined"
+        : categories
+          ? "categories"
+          : tags
+            ? "tags"
+            : "none";
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -257,6 +296,7 @@ export default {
     },
 
     saveEngine() {
+      if (this.busy_engine || this.busy_auto) return;
       this.busy_engine = true;
 
       axios
@@ -334,10 +374,23 @@ export default {
 <style lang="scss" scoped>
 .b-category-engine-editor--modern {
   padding: 0;
+  max-width: 808px;
+
+  .b-category-engine-editor__inline-actions {
+    margin-top: 24px;
+    justify-content: space-between;
+    gap: 12px 20px;
+    .sd-modern-subtitle {
+      flex: 1 1 240px;
+      margin: 0;
+      font-size: 13px;
+      line-height: 20px;
+    }
+  }
 
   .b-category-engine-editor__layout {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
     gap: 19px;
   }
@@ -350,9 +403,9 @@ export default {
   }
 
   :deep(.sd-modern-form-header h2) {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 500;
-    line-height: 24px;
+    line-height: 26px;
   }
 
   .b-category-engine-editor__help {
@@ -361,8 +414,8 @@ export default {
     padding-inline: 0;
     margin-block: 0 18px;
     color: var(--sd-modern-muted);
-    font-size: 12px;
-    line-height: 19px;
+    font-size: 14px;
+    line-height: 23px;
     white-space: normal;
 
     :deep(.v-list-subheader__text) {
@@ -402,15 +455,32 @@ export default {
     font-size: 12px;
   }
 
-  .b-category-engine-editor__preview > .sd-modern-eyebrow {
-    margin-block-end: 14px;
+  .b-category-engine-editor__matching {
+    margin-block: 16px 20px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: var(--sd-modern-inset);
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 23px;
+    }
+    p {
+      margin: 4px 0 0;
+      font-size: 14px;
+      line-height: 23px;
+    }
+  }
+
+  .b-category-engine-editor__preview > h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 26px;
   }
 
   @media (max-width: 760px) {
-    .b-category-engine-editor__layout {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
     .b-category-engine-editor__fields,
     .b-category-engine-editor__preview {
       padding: 19px;

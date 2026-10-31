@@ -12,7 +12,7 @@
   <v-card variant="outlined" rounded="lg" class="sld-bfb-field">
     <v-card-text class="text-start">
       <div class="d-flex align-center mb-3">
-        <div class="font-weight-black">Input</div>
+        <div class="font-weight-black">{{ $t('shop_listing.form_builder.input') }}</div>
         <v-spacer />
 
         <v-chip
@@ -23,7 +23,7 @@
           class="text-amber-darken-3"
         >
           <v-icon start size="16">star</v-icon>
-          Official
+          {{ $t('shop_listing.form_builder.official') }}
         </v-chip>
 
         <v-chip v-else size="x-small" variant="tonal" label>
@@ -42,7 +42,7 @@
         :items="typeItems"
         item-title="title"
         item-value="value"
-        label="Input type"
+        :label="$t('shop_listing.form_builder.input_type')"
         variant="underlined"
         @update:modelValue="onTypeChange"
       />
@@ -54,7 +54,7 @@
         border="start"
         class="mt-3"
       >
-        Official fields are stored directly in dedicated database columns (not inside <code>meta</code>).
+        {{ $t('shop_listing.form_builder.official_hint') }}
       </v-alert>
 
       <v-divider class="my-4" />
@@ -69,7 +69,7 @@
 
       <!-- Official field settings (minimal) -->
       <div v-else class="text-muted">
-        No extra settings.
+        {{ $t('shop_listing.form_builder.no_extra_settings') }}
       </div>
     </v-card-text>
   </v-card>
@@ -146,29 +146,29 @@ export default {
     typeItems(): any[] {
       return [
         // Custom
-        { title: "Text", value: "text" },
-        { title: "Textarea", value: "textarea" },
-        { title: "Number", value: "number" },
-        { title: "Switch", value: "switch" },
+        { title: this.$t("shop_listing.form_builder.text"), value: "text" },
+        { title: this.$t("shop_listing.form_builder.textarea"), value: "textarea" },
+        { title: this.$t("shop_listing.form_builder.number"), value: "number" },
+        { title: this.$t("shop_listing.form_builder.switch"), value: "switch" },
 
         // Select presets
-        { title: "Select (grid)", value: "select:grid" },
-        { title: "Select (list)", value: "select:list" },
-        { title: "Select (chips)", value: "select:chips" },
+        { title: this.$t("shop_listing.form_builder.select_grid"), value: "select:grid" },
+        { title: this.$t("shop_listing.form_builder.select_list"), value: "select:list" },
+        { title: this.$t("shop_listing.form_builder.select_chips"), value: "select:chips" },
 
-        { title: "Map", value: "map" },
-        { title: "Media uploader", value: "media" },
+        { title: this.$t("shop_listing.form_builder.map"), value: "map" },
+        { title: this.$t("shop_listing.form_builder.media"), value: "media" },
 
         // Official
-        { title: "★ Official: Title", value: "official:title" },
-        { title: "★ Official: Subtitle", value: "official:subtitle" },
-        { title: "★ Official: Description", value: "official:description" },
-        { title: "★ Official: Price", value: "official:price" },
-        { title: "★ Official: Location", value: "official:location" },
-        { title: "★ Official: Contact info", value: "official:contact" },
-        { title: "★ Official: Opening hours", value: "official:opening_hours" },
-        { title: "★ Official: Links", value: "official:links" },
-        { title: "★ Official: Media gallery", value: "official:media" },
+        { title: this.$t("shop_listing.form_builder.official_title"), value: "official:title" },
+        { title: this.$t("shop_listing.form_builder.official_subtitle"), value: "official:subtitle" },
+        { title: this.$t("shop_listing.form_builder.official_description"), value: "official:description" },
+        { title: this.$t("shop_listing.form_builder.official_price"), value: "official:price" },
+        { title: this.$t("shop_listing.form_builder.official_location"), value: "official:location" },
+        { title: this.$t("shop_listing.form_builder.official_contact"), value: "official:contact" },
+        { title: this.$t("shop_listing.form_builder.official_opening_hours"), value: "official:opening_hours" },
+        { title: this.$t("shop_listing.form_builder.official_links"), value: "official:links" },
+        { title: this.$t("shop_listing.form_builder.official_media"), value: "official:media" },
       ];
     },
 

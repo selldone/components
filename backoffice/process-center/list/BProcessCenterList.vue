@@ -15,18 +15,34 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
     class="b-process-center-list"
-    :class="modern ? 'b-process-center-list--modern text-start' : 'widget-box -x-large mb-5 min-height-50vh'"
+    :class="[modern ? 'b-process-center-list--modern text-start' : 'widget-box -x-large mb-5 min-height-50vh', { 'b-process-center-list--wholesale': modernWholesale, 'b-process-center-list--marketplace': modernMarketplace, 'b-process-center-list--vendor': modernVendorPanel, 'b-process-center-list--rtl': modernVendorPanel && $vuetify.locale?.isRtl }]"
     :style="modern ? { '--sd-order-status-filter': $vuetify.theme?.current?.dark ? 'invert(1) hue-rotate(180deg)' : 'none' } : undefined"
     :aria-busy="busy_fetch"
   >
-    <header v-if="modern" class="sd-modern-header b-process-center-list__header">
+    <header v-if="modern && !modernMarketplace && !modernVendorPanel" class="sd-modern-header b-process-center-list__header">
       <slot name="heading"></slot>
       <slot name="top-menu"></slot>
     </header>
-    <div :class="{ 'sd-modern-widget b-process-center-list__body': modern }">
-    <v-row align="center" class="px-2 py-2 b-process-center-list__toolbar" justify="start" no-gutters>
+    <div class="s-table-loading" :class="{ 'sd-modern-widget b-process-center-list__body': modern }">
+    <v-row align="center" class="px-2 py-2 b-process-center-list__toolbar" :class="{ 'sd-modern-list-toolbar': modernMarketplace || modernVendorPanel }" justify="start" no-gutters>
       <div class="flex-grow-1">
+        <v-btn-toggle
+          v-if="modernMarketplace || modernVendorPanel"
+          v-model="status"
+          :class="modernVendorPanel ? 'b-process-center-list__vendor-statuses' : 'b-process-center-list__marketplace-statuses'"
+          :aria-label="$t(modernVendorPanel ? 'vendor_orders.selected_states' : 'marketplace_fulfillments.selected_states')"
+          multiple
+          mandatory
+          @update:model-value="refreshOrders"
+        >
+          <v-btn v-for="state in marketplaceStatuses" :key="state.code" :value="state.code" :aria-pressed="status.includes(state.code)" variant="text">
+            <b-vendor-order-icon v-if="modernVendorPanel" :name="vendorStatusIcon(state.code)" :size="14" class="me-1" />
+            <v-icon v-else-if="status.includes(state.code)" size="12" class="me-1" aria-hidden="true">check</v-icon>
+            {{ $t(state.title) }}
+          </v-btn>
+        </v-btn-toggle>
         <s-order-statuses-select
+          v-else
           v-model="status"
           :has-cod="has_cod"
           :has-open="!isDropShipping"
@@ -42,7 +58,7 @@
       <!-- 🎗️ Subscription plan filter -->
       <div
         v-if="
-          isSubscription &&
+          isSubscription && !modernVendorPanel &&
           !filterSubscriptionPriceId /*Not be just for a specific price*/
         "
         class="flex-grow-1"
@@ -69,20 +85,23 @@
 
       <v-text-field
         v-model="search"
-        :placeholder="modern ? $t(isDropShipping ? 'admin_shop.orders.modern.reseller_search' : 'admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
+        :placeholder="modernVendorPanel ? $t('vendor_orders.search') : modernMarketplace ? $t('marketplace_fulfillments.search') : modern ? $t(isDropShipping ? 'admin_shop.orders.modern.wholesale.search' : 'admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
         bg-color="transparent"
         class="min-width-200 max-width-field b-process-center-list__search"
-        :aria-label="modern ? $t(isDropShipping ? 'admin_shop.orders.modern.reseller_search' : 'admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
+        :aria-label="modernVendorPanel ? $t('vendor_orders.search') : modernMarketplace ? $t('marketplace_fulfillments.search') : modern ? $t(isDropShipping ? 'admin_shop.orders.modern.wholesale.search' : 'admin_shop.orders.physical.modern.search') : $t('global.commons.search')"
         clearable
         flat
         hide-details
-        prepend-inner-icon="search"
+        :prepend-inner-icon="modernVendorPanel ? undefined : 'search'"
         single-line
         :variant="modern ? 'plain' : 'solo'"
-      ></v-text-field>
+      >
+        <template v-if="modernVendorPanel" #prepend-inner><b-vendor-order-icon name="search" :size="18" /></template>
+        <template v-if="modernVendorPanel" #clear="{ props }"><button v-bind="props" type="button" class="b-process-center-list__vendor-clear" :aria-label="$t('global.actions.clear')"><b-vendor-order-icon name="x" :size="14" /></button></template>
+      </v-text-field>
 
       <v-btn
-        v-if="modern"
+        v-if="modern && !modernMarketplace && !modernVendorPanel"
         class="sd-modern-button sd-modern-button--compact b-process-center-list__filter-button"
         variant="text"
         prepend-icon="tune"
@@ -92,7 +111,23 @@
         <span v-if="extraFilterSummaries.length" class="ms-1">· {{ extraFilterSummaries.length }}</span>
       </v-btn>
 
-      <div v-if="modern && extraFilterSummaries.length" class="b-process-center-list__filter-summaries" :aria-label="$t('admin_shop.orders.physical.modern.filters.applied_summary', { count: extraFilterSummaries.length })">
+      <v-menu v-if="modernMarketplace || modernVendorPanel" location="bottom end">
+        <template #activator="{ props }">
+          <v-btn v-bind="props" icon variant="text" class="sd-modern-icon-button b-process-center-list__sort-button" :aria-label="$t('global.commons.sort_by')">
+            <b-vendor-order-icon v-if="modernVendorPanel" name="arrow-up-down" :size="18" />
+            <v-icon v-else aria-hidden="true">sort</v-icon>
+            <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('marketplace_fulfillments.sort') }}</v-tooltip>
+          </v-btn>
+        </template>
+        <v-list density="compact" class="b-process-center-list__sort-menu text-start">
+          <v-list-item v-for="header in headers.filter(header => header.sortable)" :key="header.value" :active="sortBy[0]?.key === header.value" @click="sortMarketplace(header.value)">
+            <v-list-item-title>{{ header.title }}</v-list-item-title>
+            <template #append><v-icon v-if="sortBy[0]?.key === header.value" size="16" class="ms-3">{{ sortBy[0].order === 'desc' ? 'south' : 'north' }}</v-icon></template>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <div v-if="modern && !modernVendorPanel && extraFilterSummaries.length" class="b-process-center-list__filter-summaries" :aria-label="$t('admin_shop.orders.physical.modern.filters.applied_summary', { count: extraFilterSummaries.length })">
         <v-chip
           v-for="filter in extraFilterSummaries"
           :key="filter.key"
@@ -117,8 +152,35 @@
       <slot v-if="!modern" name="top-menu"></slot>
     </v-row>
 
+    <div v-if="modernVendorPanel" class="b-process-center-list__vendor-title">
+      <h2>{{ $t('vendor_orders.list_title', { type: $t(type.name) }) }}</h2>
+      <span>{{ totalItems }}</span>
+      <v-btn v-if="marketplaceFiltersChanged" class="sd-modern-button sd-modern-button--inline" color="primary" variant="text" @click="clearMarketplaceFilters">{{ $t('vendor_orders.clear_filters') }}</v-btn>
+    </div>
+
+    <div v-if="modernVendorPanel && fetch_error" class="sd-modern-empty-state b-process-center-list__vendor-empty" role="alert">
+      <b-vendor-order-icon name="clipboard-list" :size="30" />
+      <h2>{{ $t('vendor_orders.error_title') }}</h2>
+      <p>{{ $t('vendor_orders.error_body') }}</p>
+      <v-btn class="sd-modern-button" variant="outlined" :loading="busy_fetch" @click="refreshOrders"><b-vendor-order-icon name="rotate-ccw" :size="16" class="me-2" />{{ $t('vendor_orders.retry') }}</v-btn>
+    </div>
+
+    <div v-if="modernMarketplace" class="b-process-center-list__marketplace-title">
+      <span>{{ $t(type.name) }} · {{ $t('marketplace_fulfillments.list_title') }}</span>
+      <span class="sd-modern-status sd-modern-status--plain">{{ totalItems }}</span>
+      <v-btn v-if="marketplaceFiltersChanged" class="sd-modern-button sd-modern-button--inline" color="primary" variant="text" @click="clearMarketplaceFilters">{{ $t('marketplace_fulfillments.clear_filters') }}</v-btn>
+    </div>
+
+    <div v-if="modernMarketplace && fetch_error" class="sd-modern-empty-state b-process-center-list__marketplace-empty" role="alert">
+      <v-icon size="28" aria-hidden="true">error_outline</v-icon>
+      <h2>{{ $t('marketplace_fulfillments.error_title') }}</h2>
+      <p>{{ $t('marketplace_fulfillments.error_body') }}</p>
+      <v-btn class="sd-modern-button" variant="outlined" prepend-icon="refresh" :loading="busy_fetch" @click="refreshOrders">{{ $t('marketplace_fulfillments.retry') }}</v-btn>
+    </div>
+
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
+      v-show="!(modernMarketplace || modernVendorPanel) || !fetch_error"
       v-model:page="page"
       v-model:sort-by="sortBy"
       :class="{ 'blurred disabled': busy_fetch && !HIGHLIGHT_ID, 'sd-modern-data-table b-process-center-list__table': modern }"
@@ -127,7 +189,7 @@
       :items="orders"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
-      :mobile="modern ? $vuetify.display.width < 1000 : $vuetify.display.xs"
+      :mobile="modernVendorPanel ? $vuetify.display.width < 1000 : modernMarketplace ? $vuetify.display.width < 1100 : modern ? $vuetify.display.width < 1000 : $vuetify.display.xs"
       :row-props="
         (_data) => {
           return {
@@ -145,7 +207,23 @@
     >
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="!busy_fetch && !search && (!modern || !extraFilterSummaries.length)" class="py-5 usn text-center fadeIn" :class="{ 'sd-modern-empty-state': modern }">
+        <div v-if="modernVendorPanel" class="sd-modern-empty-state b-process-center-list__vendor-empty" role="status">
+          <template v-if="!busy_fetch">
+            <b-vendor-order-icon :name="marketplaceFiltersChanged ? 'search' : 'clipboard-list'" :size="30" />
+            <h2>{{ $t(marketplaceFiltersChanged ? 'vendor_orders.no_results_title' : 'vendor_orders.empty_title') }}</h2>
+            <p>{{ $t(marketplaceFiltersChanged ? 'vendor_orders.no_results_body' : 'vendor_orders.empty_body') }}</p>
+            <v-btn v-if="marketplaceFiltersChanged" class="sd-modern-button" variant="outlined" @click="clearMarketplaceFilters">{{ $t('vendor_orders.clear_filters') }}</v-btn>
+          </template>
+        </div>
+        <div v-else-if="modernMarketplace" class="sd-modern-empty-state b-process-center-list__marketplace-empty" role="status">
+          <template v-if="!busy_fetch">
+            <v-icon size="28" aria-hidden="true">{{ marketplaceFiltersChanged ? 'search_off' : 'inventory_2' }}</v-icon>
+            <h2>{{ $t(marketplaceFiltersChanged ? 'marketplace_fulfillments.no_results_title' : 'marketplace_fulfillments.empty_title') }}</h2>
+            <p>{{ $t(marketplaceFiltersChanged ? 'marketplace_fulfillments.no_results_body' : 'marketplace_fulfillments.empty_body') }}</p>
+            <v-btn v-if="marketplaceFiltersChanged" class="sd-modern-button" variant="outlined" @click="clearMarketplaceFilters">{{ $t('marketplace_fulfillments.clear_filters') }}</v-btn>
+          </template>
+        </div>
+        <div v-else-if="!busy_fetch && !search && (!modern || !extraFilterSummaries.length)" class="py-5 usn text-center fadeIn" :class="{ 'sd-modern-empty-state': modern }">
           <img
             :src="require('../../../assets/guides/orders-empty.png')"
             class="m-3 op-0-3"
@@ -210,9 +288,10 @@
         <div class="py-1 py-sm-0">
           <div class="min-width-250 d-flex align-center b-process-center-list__order">
             <router-link
-              v-if="modern"
+              v-if="modern && !modernMarketplace"
               :to="createRouteTo(item)"
               target="_blank"
+              rel="noopener noreferrer"
               class="b-process-center-list__basket"
               :aria-label="getBasketOrderCode(item)"
               @click.stop
@@ -278,12 +357,32 @@
             <!-- Others (has items) -->
             <template v-else>
               <!-- Vendor order mode -->
-              <b v-if="isVendorOrders">
+              <div v-if="modernMarketplace" class="b-process-center-list__marketplace-codes">
+                <v-btn variant="text" class="b-process-center-list__marketplace-code" :aria-label="$t('marketplace_fulfillments.fulfillment_help', { code: getVendorOrderCode(item) })" @click.stop="handleSelected(item)">
+                  {{ getVendorOrderCode(item) }}
+                  <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('marketplace_fulfillments.fulfillment_help', { code: getVendorOrderCode(item) }) }}</v-tooltip>
+                </v-btn>
+                <bdi class="b-process-center-list__marketplace-parent">{{ getBasketOrderCode(item) }}</bdi>
+              </div>
+              <router-link
+                v-else-if="modernVendorPanel"
+                :to="createRouteTo(item)"
+                class="b-process-center-list__vendor-code"
+                :aria-label="$t('vendor_orders.open_order', { code: getVendorOrderCode(item) })"
+                @click.stop="cacheRouteState(item.id)"
+              ><bdi>{{ getBasketOrderCode(item) }}</bdi><b-vendor-order-icon name="chevron-right" :size="13" /><bdi>{{ getVendorOrderCode(item) }}</bdi></router-link>
+              <b v-else-if="isVendorOrders">
                 {{
                   `${getBasketOrderCode(item)} ❯ ${getVendorOrderCode(item)}`
                 }}
               </b>
               <!-- Normal mode -->
+              <router-link
+                v-else-if="modernWholesale"
+                :to="createRouteTo(item)"
+                class="b-process-center-list__code"
+                @click.stop="cacheRouteState(item.id)"
+              >{{ getBasketOrderCode(item) }}</router-link>
               <b v-else class="flex-grow-1 flex-md-grow-0 text-start b-process-center-list__code">
                 {{ getBasketOrderCode(item) }}
               </b>
@@ -291,6 +390,7 @@
                 class="b-process-center-list__products"
                 :style="modern ? undefined : { display: 'contents' }"
               >
+                <b-process-center-customer v-if="modernMarketplace" :item="item" :shop="shop" :is-affiliate-pos="isAffiliatePos" />
                 <products-dense-images-circles
                   :ids="getProductsIDs(item)"
                   :size="modern ? 27 : 32"
@@ -299,6 +399,9 @@
                   class="py-1"
                   style="vertical-align: super; display: inline"
                 ></products-dense-images-circles>
+                <!-- Preserve the vendor endpoint's existing customer projection and Guest fallback. -->
+                <span v-if="modernVendorPanel && !item.customer && !item.buyer" class="b-process-center-list__vendor-guest"><b-vendor-order-icon name="user-round" :size="12" />{{ $t('global.commons.guest') }}</span>
+                <b-process-center-customer v-else-if="modernVendorPanel" :item="item" :shop="shop" :is-affiliate-pos="isAffiliatePos" />
                 <return-request-button-badge
                   v-if="modern && item.basket_item_returns?.length"
                   :basket-item-returns="item.basket_item_returns"
@@ -325,7 +428,7 @@
               </v-chip>
 
               <i
-                v-if="inQueProcess(item) && !item.reject"
+                v-if="!modernWholesale && !modernMarketplace && !modernVendorPanel && inQueProcess(item) && !item.reject"
                 class="fas fa-circle-notch fa-spin text-info mx-2"
               >
                 <v-tooltip activator="parent">
@@ -340,6 +443,15 @@
                   </div>
                 </v-tooltip>
               </i>
+              <span v-if="modernVendorPanel && inQueProcess(item) && !item.reject" class="b-process-center-list__vendor-queue" tabindex="0" @click.stop>
+                <b-vendor-order-icon name="loader-circle" :size="13" />
+                <v-tooltip activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">{{ $t('admin_shop.orders.physical.modern.attention.unknown.title') }}</v-tooltip>
+              </span>
+              <span v-if="modernMarketplace && inQueProcess(item) && !item.reject" class="b-process-center-list__marketplace-queue" tabindex="0" @click.stop>
+                <v-icon size="12" color="warning" aria-hidden="true">schedule</v-icon>
+                {{ $t('marketplace_fulfillments.queued') }}
+                <v-tooltip activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">{{ $t('marketplace_fulfillments.queued_help') }}</v-tooltip>
+              </span>
             </template>
 
             <v-spacer class="flex-grow-0 flex-md-grow-1"></v-spacer>
@@ -381,8 +493,22 @@
             </v-chip>
 
 
+            <span v-if="modernWholesale && inQueProcess(item) && !item.reject" class="b-process-center-list__queue" tabindex="0" @click.stop>
+              <v-icon size="12" color="warning" aria-hidden="true">schedule</v-icon>
+              {{ $t('admin_shop.orders.modern.wholesale.queued') }}
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" :persistent="false" content-class="sd-modern-tooltip text-start">{{ $t('admin_shop.orders.modern.wholesale.queue_help') }}</v-tooltip>
+            </span>
+            <span v-if="modernWholesale && item.reject" class="b-process-center-list__rejection" tabindex="0" @click.stop>
+              <v-icon size="12" color="error" aria-hidden="true">error_outline</v-icon>
+              {{ $t('admin_shop.orders.modern.wholesale.rejection') }}
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" :persistent="false" content-class="sd-modern-tooltip text-start">
+                <span class="d-block">{{ $t('admin_shop.orders.modern.wholesale.rejection_help') }}</span>
+                <span v-if="item.reject_note" class="d-block mt-1">{{ item.reject_note }}</span>
+                <span v-if="item.reject_at" class="d-block mt-1">{{ getLocalTimeString(item.reject_at) }}</span>
+              </v-tooltip>
+            </span>
             <v-chip
-              v-if="item.reject"
+              v-else-if="item.reject && !modernMarketplace"
               class="font-weight-bold mx-1"
               color="red"
               size="x-small"
@@ -391,6 +517,11 @@
 
               <v-icon end>fa:fas fa-exclamation</v-icon>
             </v-chip>
+            <span v-if="modernMarketplace && item.reject" class="b-process-center-list__marketplace-queue" tabindex="0" @click.stop>
+              <v-icon size="12" color="error" aria-hidden="true">error_outline</v-icon>
+              {{ $t('admin_shop.orders.physical.rejected') }}
+              <v-tooltip activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">{{ $t('admin_shop.orders.physical.modern.attention.rejected.body') }}</v-tooltip>
+            </span>
 
 
             <div
@@ -530,7 +661,7 @@
             <v-spacer></v-spacer>
             <!-- Show currency flag if two currency has same unicode -->
             <u-currency-icon
-              v-if="CurrencyHelper.NeedToSHowCurrencyFlag(shop.currencies)"
+              v-if="modernWholesale || CurrencyHelper.NeedToSHowCurrencyFlag(shop.currencies)"
               :currency="item.currency"
               flag-only
               small
@@ -540,7 +671,7 @@
 
           <!-- User select an specific date to deliver -->
           <div
-            v-if="waitingToDeliver(item)"
+            v-if="!modernWholesale && waitingToDeliver(item)"
             :title="`Time remaining until the delivery due date. ● ${getLocalTimeString(
               item.delivery_info.date,
             )}`"
@@ -609,7 +740,8 @@
 
           <v-row class="text-muted small mt-1 b-process-center-list__amount-details" no-gutters>
             <div v-if="has_delivery">
-              <v-icon size="x-small">local_shipping</v-icon>
+              <b-vendor-order-icon v-if="modernVendorPanel" name="truck" :size="12" />
+              <v-icon v-else size="x-small">local_shipping</v-icon>
               <span class="mx-1"
                 >{{ $t("admin_shop.orders.physical.delivery") }}:</span
               >
@@ -647,7 +779,13 @@
 
       <!-- Country -->
       <template v-slot:item.country="{ item }">
+        <div v-if="modernWholesale" class="b-process-center-list__country" tabindex="0" @click.stop>
+          <flag :iso="item.country" :squared="false" />
+          <span>{{ item.country }}</span>
+          <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" :persistent="false" content-class="sd-modern-tooltip text-start">{{ getCountryName(item.country) }}</v-tooltip>
+        </div>
         <flag
+          v-else
           :iso="item.country"
           :squared="false"
           :title="getCountryName(item.country)"
@@ -662,7 +800,12 @@
           :aria-label="modern && getPaymentDetailRows(item.payment).length ? $t('admin_shop.orders.physical.modern.payment.title') : undefined"
           @click="modern && getPaymentDetailRows(item.payment).length && $event.stopPropagation()"
         >
+        <span v-if="modernMarketplace && marketplacePaymentStatus(item)" class="sd-modern-status sd-modern-status--plain b-process-center-list__marketplace-payment">
+          <span class="sd-modern-status__dot" :class="item.status === BasketStatus.Payed.code ? 'sd-modern-status__dot--success' : item.status === BasketStatus.Canceled.code ? 'sd-modern-status__dot--error' : 'sd-modern-status__dot--warning'"></span>
+          {{ $t(marketplacePaymentStatus(item).title) }}
+        </span>
         <s-order-status-view
+          v-else
           :gateway-processing="item.gateway_processing"
           :payment-require-capture="
             item.payment?.status ===TransactionStatus.RequireCapture.code
@@ -720,21 +863,32 @@
           :states="deliveryStates"
           :modern-tooltips="modern"
           :modern-tooltip-prefix="modernTooltipPrefix"
+          :modern-final-tooltip="modernWholesale || ((modernMarketplace || modernVendorPanel) && !hasReceiverInfo)"
           class="my-1 b-process-center-list__stepper"
+          :style="modernVendorPanel ? { '--sd-vendor-stage-offset': `${50 / Object.keys(deliveryStates).length}%` } : undefined"
           :color="modern ? 'rgba(var(--v-theme-on-surface), 0.25)' : undefined"
           :dark-color="modern ? 'rgb(var(--v-theme-on-surface))' : undefined"
           @mouseEnterToCustomer="(n) => setActivator(n, item)"
-        />
+        >
+          <template v-if="modernVendorPanel" #stage-icon="{ item: stage, completed }">
+            <span class="b-process-center-list__vendor-stage-icon"><b-vendor-order-icon :name="completed ? 'check' : vendorStageIcon(stage.code)" :size="13" :stroke-width="1.8" /></span>
+          </template>
+        </s-order-delivery-status-stepper>
 
         <div
           class="py-1 small min-width-200 d-flex align-center justify-center b-process-center-list__delivery-caption"
         >
-          <span v-if="!modern" class="text-muted">
+          <span v-if="!modern || modernVendorPanel" class="text-muted">
             {{ getDeliveryStateString(item.delivery_state) }}
           </span>
           <template v-if="item.receiver_info">
             <span class="dashed-flex-space"></span>
-            <div class="ps-1">
+            <button v-if="modernMarketplace && hasReceiverInfo" type="button" class="b-process-center-list__marketplace-receiver" :aria-label="$t('marketplace_fulfillments.receiver_details')" @click.stop="openMarketplaceReceiver($event, item)">
+              <flag :iso="item.receiver_info.country" :squared="false" class="me-1" />
+              <span>{{ getShortAddress(item.receiver_info) }}</span>
+              <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('marketplace_fulfillments.receiver_details') }}</v-tooltip>
+            </button>
+            <div v-else class="ps-1">
               <flag
                 :iso="item.receiver_info.country"
                 :squared="false"
@@ -743,10 +897,15 @@
               <span>{{ getShortAddress(item.receiver_info) }}</span>
             </div>
           </template>
-          <span v-if="modern" class="text-muted">
+          <span v-if="modern && !modernVendorPanel" class="text-muted">
             {{ getDeliveryStateString(item.delivery_state) }}
           </span>
         </div>
+        <span v-if="modernWholesale && waitingToDeliver(item)" class="b-process-center-list__delivery-schedule" tabindex="0" @click.stop>
+          <v-icon size="12" :color="item.delivery_info.date.convertToLocalDate()?.isAfterToday() ? undefined : 'warning'" aria-hidden="true">event</v-icon>
+          {{ $t(`admin_shop.orders.modern.wholesale.${item.delivery_info.date.convertToLocalDate()?.isAfterToday() ? 'delivery_due' : 'delivery_overdue'}`) }} · {{ getLocalDateString(item.delivery_info.date) }}
+          <v-tooltip activator="parent" location="top" :open-on-focus="true" :open-on-click="true" :persistent="false" content-class="sd-modern-tooltip text-start">{{ getLocalTimeString(item.delivery_info.date) }}</v-tooltip>
+        </span>
       </template>
 
       <template v-slot:item.reserved_at="{ item }">
@@ -757,7 +916,7 @@
             )
           }}
 
-          <span class="float-end">
+          <span v-if="!modernMarketplace" class="float-end">
             <!-- ▂▂▂▂▂▂▂▂ Chat ▂▂▂▂▂▂▂ -->
 
             <v-btn
@@ -777,7 +936,8 @@
                 color="red"
                 dot
               >
-                <v-icon>chat</v-icon>
+                <b-vendor-order-icon v-if="modernVendorPanel" name="message-circle" :size="14" />
+                <v-icon v-else>chat</v-icon>
               </v-badge>
 
               <v-tooltip
@@ -854,9 +1014,35 @@
         </div>
       </template>
 
+      <template v-if="modernMarketplace" v-slot:item.actions="{ item }">
+        <div class="b-process-center-list__marketplace-actions" @click.stop>
+          <v-btn v-if="item.chat?.length" icon variant="text" class="sd-modern-icon-button b-process-center-list__chat" :aria-label="$t('global.commons.chat')" @click.stop="showChat(item)">
+            <v-badge :model-value="!item.chat[item.chat.length - 1].officer" color="error" dot>
+              <v-icon aria-hidden="true">chat</v-icon>
+            </v-badge>
+            <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">
+              <s-order-chat-message :basket="item" :message="item.chat[item.chat.length - 1]" is-admin />
+            </v-tooltip>
+          </v-btn>
+          <v-btn v-if="getDiffLastUpdateEmoji(item)" icon variant="text" class="b-process-center-list__attention" :aria-label="$t(orderAttention(item)?.titleKey || 'global.commons.order')">
+            <img :src="getDiffLastUpdateEmoji(item)" alt="" width="20" height="20" />
+            <v-tooltip v-if="orderAttention(item)" activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">
+              <div class="sd-modern-tooltip__title">{{ $t(orderAttention(item).titleKey) }}</div>
+              <div class="sd-modern-tooltip__body">{{ $t(orderAttention(item).bodyKey) }}</div>
+            </v-tooltip>
+          </v-btn>
+          <v-btn :to="createRouteTo(item)" target="_blank" rel="noopener noreferrer" icon variant="text" class="sd-modern-icon-button" :aria-label="$t('marketplace_fulfillments.order_help', { code: getBasketOrderCode(item) })">
+            <v-icon aria-hidden="true">north_east</v-icon>
+            <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('marketplace_fulfillments.order_help', { code: getBasketOrderCode(item) }) }}</v-tooltip>
+          </v-btn>
+        </div>
+      </template>
+
       <template v-slot:bottom>
         <div :class="{ 'sd-modern-table-footer b-process-center-list__footer': modern }">
-          <span v-if="modern">{{ $t('global.commons.orders') }} · {{ totalItems }}</span>
+          <span v-if="modernVendorPanel" role="status">{{ $t('vendor_orders.range', marketplaceRange) }}</span>
+          <span v-else-if="modernMarketplace">{{ $t('marketplace_fulfillments.range', marketplaceRange) }}</span>
+          <span v-else-if="modern">{{ $t('global.commons.orders') }} · {{ totalItems }}</span>
           <v-pagination v-model="page" :length="pageCount" :class="{ 'sd-modern-pagination': modern }" :total-visible="modern ? 7 : undefined" rounded />
         </div>
       </template>
@@ -867,7 +1053,7 @@
     <slot v-if="modern"></slot>
 
     <b-process-center-filters
-      v-if="modern && dialogExtraFilters"
+      v-if="modern && !modernVendorPanel && dialogExtraFilters"
       v-model="dialogExtraFilters"
       :filters="extraFilters"
       :shop="shop"
@@ -882,6 +1068,7 @@
     <!-- ----------------------------------- Receiver Info Details Menu ----------------------------------- -->
     <v-menu
       v-if="hasReceiverInfo"
+      v-model="receiver_menu"
       :activator="activator"
       :open-delay="200"
       location="top"
@@ -966,6 +1153,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import {TransactionStatus} from "@selldone/core-js/enums/payment/TransactionStatus.ts";
 import { getOrderAttention, getPaymentDetailRows } from "./ProcessCenterPresentation";
 import BProcessCenterFilters from "./BProcessCenterFilters.vue";
+import BVendorOrderIcon from "./icon/BVendorOrderIcon.vue";
 
 const modernPhysicalIcons = {
   CheckQueue: 'shopping_basket',
@@ -980,6 +1168,7 @@ export default {
   mixins: [RouteMixin, DateMixin, OrderMixin ],
 
   components: {
+    BVendorOrderIcon,
     BProcessCenterFilters,
     BCampaignSourceIcon,
     UCurrencyIcon,
@@ -1061,10 +1250,10 @@ export default {
       /*🟢 Vendor Panel 🟢*/ default: false,
       type: Boolean,
     },
-    /*   vendor: {
-      required: false,
+    vendor: {
       type: Object,
-    },*/
+      default: null,
+    },
   },
 
   data: function () {
@@ -1079,6 +1268,7 @@ export default {
       status: [Basket.Status.Payed.code, Basket.Status.COD.code],
 
       busy_fetch: false,
+      fetch_error: false,
       ordersRequestId: 0,
 
       orders: [],
@@ -1096,17 +1286,41 @@ export default {
 
       dialog_chat: false,
       selected_basket: null,
+      receiver_menu: false,
     };
   },
   computed: {
 
+    modernMarketplace() {
+      return this.modern && this.isVendorOrders && !this.isVendorPanel;
+    },
+    modernVendorPanel() {
+      return this.modern && this.isVendorPanel;
+    },
+    marketplaceStatuses() {
+      return [Basket.Status.Open, Basket.Status.Reserved, Basket.Status.Payed, ...(this.has_cod ? [Basket.Status.COD] : []), Basket.Status.Canceled];
+    },
+    marketplaceDefaultStatuses() {
+      return [Basket.Status.Payed.code, this.isService ? Basket.Status.Reserved.code : Basket.Status.COD.code];
+    },
+    marketplaceFiltersChanged() {
+      return !!this.search || this.status.length !== this.marketplaceDefaultStatuses.length || this.marketplaceDefaultStatuses.some(status => !this.status.includes(status));
+    },
+    marketplaceRange() {
+      return { start: this.totalItems ? (this.page - 1) * this.itemsPerPage + 1 : 0, end: Math.min(this.page * this.itemsPerPage, this.totalItems), total: this.totalItems };
+    },
+
     extraFilterSupport() {
       return { product: !this.isAvocado, customer: !this.isDropShipping, updatedAfter: !this.isPos };
+    },
+    modernWholesale() {
+      return this.modern && this.isDropShipping;
     },
     selectedSubscriptionPriceId() {
       return this.selected_subscription_price?.id ?? this.selected_subscription_price ?? null;
     },
     modernTooltipPrefix() {
+      if (this.modernWholesale) return 'admin_shop.orders.modern.wholesale.stages';
       const type = this.isAvocado ? 'avocado' : this.type?.code?.toLowerCase();
       return type && type !== 'physical'
         ? `admin_shop.orders.modern.${type}.stages`
@@ -1156,14 +1370,36 @@ export default {
     },
 
     headers() {
+      if (this.modernVendorPanel) return [
+        { title: this.$t('admin_shop.orders.physical.table.order_number'), value: 'id', align: 'start', sortable: true, width: '24%', cellProps: { class: 'b-process-center-list__vendor-identity-cell' } },
+        { title: this.$t('admin_shop.orders.physical.table.price'), value: 'price', align: 'end', sortable: true, width: '14%' },
+        { title: this.$t('admin_shop.orders.physical.table.payment_status'), value: 'status', align: 'center', sortable: true, width: '12%' },
+        { title: this.$t('admin_shop.orders.physical.table.status'), value: 'delivery_state', align: 'start', sortable: true, width: '29%', cellProps: { class: 'b-process-center-list__wide-cell' } },
+        { title: this.$t('admin_shop.orders.physical.table.order_date'), value: 'reserved_at', align: 'start', sortable: true, width: '21%', cellProps: { class: 'b-process-center-list__wide-cell' } },
+      ];
+      if (this.modernMarketplace) return [
+        { title: this.$t('marketplace_fulfillments.fulfillment'), value: 'id', align: 'start', sortable: true, width: '21%', cellProps: { class: 'b-process-center-list__marketplace-identity-cell' } },
+        { title: this.$t('admin_shop.orders.physical.table.price'), value: 'price', align: 'start', sortable: true, width: '14%' },
+        { title: this.$t('marketplace_fulfillments.payment'), value: 'status', align: 'start', sortable: true, width: '11%' },
+        { title: this.$t('marketplace_fulfillments.progress'), value: 'delivery_state', align: 'start', sortable: true, width: '25%', cellProps: { class: 'b-process-center-list__wide-cell' } },
+        { title: this.$t('marketplace_fulfillments.checkout'), value: 'reserved_at', align: 'start', sortable: true, width: '17%', cellProps: { class: 'b-process-center-list__wide-cell' } },
+        { title: this.$t('marketplace_fulfillments.actions'), value: 'actions', align: 'end', sortable: false, width: '12%', cellProps: { class: 'b-process-center-list__marketplace-actions-cell' } },
+      ];
       if (this.modern) {
-        const widths = this.isDropShipping ? ['18%', '17%', '13%', '13%', '20%', '12%']
-          : this.has_delivery_col ? ['21%', '18%', '13%', '13%', '23%', '12%']
+        if (this.isDropShipping) return [
+          { title: this.$t('admin_shop.orders.physical.table.order_number'), value: 'id', align: 'start', sortable: true, width: '20%' },
+          { title: this.$t('admin_shop.orders.modern.wholesale.owner'), value: 'customer', align: 'start', sortable: false, width: '17%' },
+          { title: this.$t('admin_shop.orders.modern.wholesale.merchandise'), value: 'price', align: 'end', sortable: true, width: '13%' },
+          { title: this.$t('admin_shop.orders.modern.wholesale.payment'), value: 'status', align: 'start', sortable: true, width: '13%' },
+          { title: this.$t('admin_shop.orders.modern.wholesale.fulfillment'), value: 'delivery_state', align: 'start', sortable: true, width: '19%', cellProps: { class: 'b-process-center-list__wide-cell' } },
+          { title: this.$t('global.commons.country'), value: 'country', align: 'center', sortable: true, width: '6%' },
+          { title: this.$t('admin_shop.orders.modern.wholesale.checkout'), value: 'reserved_at', align: 'start', sortable: true, width: '12%', cellProps: { class: 'b-process-center-list__wide-cell' } },
+        ];
+        const widths = this.has_delivery_col ? ['21%', '18%', '13%', '13%', '23%', '12%']
           : ['25%', '24%', '18%', '17%', null, '16%'];
         return [
           { title: this.$t('admin_shop.orders.physical.table.order_number'), value: 'id', align: 'start', sortable: true, width: widths[0] },
           { title: this.$t(this.isDropShipping ? 'admin_shop.orders.modern.reseller' : 'global.commons.customer'), value: 'customer', align: 'start', sortable: false, width: widths[1] },
-          ...(this.isDropShipping ? [{ title: this.$t('global.commons.country'), value: 'country', align: 'start', sortable: true, width: '7%' }] : []),
           { title: this.$t('admin_shop.orders.physical.table.price'), value: 'price', align: 'end', sortable: true, width: widths[2] },
           { title: this.$t('admin_shop.orders.physical.table.payment_status'), value: 'status', align: 'start', sortable: true, width: widths[3] },
           ...(this.has_delivery_col ? [{ title: this.$t('admin_shop.orders.physical.table.status'), value: 'delivery_state', align: 'start', sortable: true, width: widths[4], cellProps: { class: 'b-process-center-list__wide-cell' } }] : []),
@@ -1452,6 +1688,13 @@ export default {
     },
   },
   watch: {
+    'vendor.id'() {
+      if (!this.modernMarketplace) return;
+      this.ordersRequestId++;
+      this.orders = [];
+      this.totalItems = 0;
+      this.refreshOrders();
+    },
     selectedSubscriptionPriceId(value, previous) {
       if (this.modern && this.isSubscription && value !== previous) this.refreshOrders();
     },
@@ -1481,7 +1724,9 @@ export default {
     }, window.SERACH_THROTTLE),
   },
   created() {
-    if (this.isService) {
+    if (this.modernWholesale) {
+      this.status = [Basket.Status.Payed.code];
+    } else if (this.isService) {
       this.status = [Basket.Status.Payed.code, Basket.Status.Reserved.code]; // Show reserved basket to review by seller and set price. (Or auto pricing)
     } else if (this.isAvocado) {
       this.status = [Basket.Status.Reserved.code, Basket.Status.Payed.code]; // Show All
@@ -1499,6 +1744,29 @@ export default {
   },
 
   methods: {
+    vendorStatusIcon(code) {
+      return { Open: 'inbox', Reserved: 'pause', Payed: 'credit-card', COD: 'banknote', Canceled: 'square-x' }[code];
+    },
+    vendorStageIcon(code) {
+      if (code === 'PreparingOrder') {
+        return this.type?.code === ProductType.FILE.code ? 'link' : this.type?.code === ProductType.VIRTUAL.code ? 'laptop' : this.isService ? 'list-checks' : 'package';
+      }
+      return { CheckQueue: 'shopping-basket', OrderConfirm: 'circle-check', SentOrder: 'truck', ToCustomer: this.type?.code === ProductType.FILE.code ? 'download' : 'check-check' }[code] || 'circle-check';
+    },
+    sortMarketplace(key) {
+      if (!this.headers.some(header => header.sortable && header.value === key)) return;
+      this.page = 1;
+      this.sortBy = [{ key, order: this.sortBy[0]?.key === key && this.sortBy[0].order === 'desc' ? 'asc' : 'desc' }];
+    },
+    clearMarketplaceFilters() {
+      this.status = [...this.marketplaceDefaultStatuses];
+      this.search = null;
+      this.refreshOrders();
+    },
+    marketplacePaymentStatus(item) {
+      if (item.gateway_processing || item.payment?.status === TransactionStatus.RequireCapture.code || item.payment?.card) return null;
+      return Object.values(Basket.Status).find(status => status.code === item.status);
+    },
     openReturnRequest(item) {
       this.cacheRouteState(item.id);
       this.$router.push({ name: this.return_request_page_name, params: { basket_id: item.id } });
@@ -1525,11 +1793,15 @@ export default {
       this.activator = node;
       this.activator_item = item;
     },
+    openMarketplaceReceiver(event, item) {
+      this.setActivator(event.currentTarget, item);
+      this.receiver_menu = true;
+    },
     getShortAddress(receiver_info) {
       if (receiver_info.state && receiver_info.city)
         return `${receiver_info.state} > ${receiver_info.city}`;
       else if (receiver_info.city) return receiver_info.city;
-      else receiver_info.state;
+      else return receiver_info.state;
     },
     handleSelected(selected) {
       // For affiliate POS orders redirect user to shop page:
@@ -1587,7 +1859,17 @@ export default {
     fetchOrdersNow(page, sortBy, sortDesc = true) {
       this.page = page;
 
+      if (this.modernMarketplace && this.vendor != null && !(Number.isSafeInteger(Number(this.vendor.id)) && Number(this.vendor.id) > 0)) {
+        this.ordersRequestId++;
+        this.orders = [];
+        this.totalItems = 0;
+        this.busy_fetch = false;
+        this.fetch_error = true;
+        return;
+      }
+
       this.busy_fetch = true;
+      if (this.modernMarketplace || this.modernVendorPanel) this.fetch_error = false;
       // A late response must not replace the currently applied modern filters.
       const requestId = ++this.ordersRequestId;
       const modernRequest = this.modern;
@@ -1625,6 +1907,7 @@ export default {
 
           {
             params: {
+              ...(this.modernMarketplace && this.vendor != null ? { vendor_id: this.vendor.id } : {}),
               offset: (page - 1) * this.itemsPerPage,
               limit: this.itemsPerPage,
               product_id: this.filterProductId ?? (this.modern && this.extraFilterSupport.product ? this.extraFilters.productId ?? undefined : undefined),
@@ -1661,13 +1944,17 @@ export default {
         )
         .then(({ data }) => {
           if (modernRequest && requestId !== this.ordersRequestId) return;
-          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
+          if (data.error) {
+            if (this.modernMarketplace || this.modernVendorPanel) this.fetch_error = true;
+            return NotificationService.showErrorAlert(null, data.error_msg);
+          }
 
           this.totalItems = data.total;
           this.orders = data.orders;
         })
         .catch((e) => {
           if (modernRequest && requestId !== this.ordersRequestId) return;
+          if (this.modernMarketplace || this.modernVendorPanel) this.fetch_error = true;
           NotificationService.showLaravelError(e);
         })
         .finally(() => {
@@ -2099,6 +2386,7 @@ export default {
   }
 
   @media (max-width: 999px) {
+
     .b-process-center-list__table {
       // Keep native mobile labels/sorting while releasing the desktop table tracks.
       :deep(table), :deep(thead), :deep(tbody), :deep(thead > tr) { display: block; width: 100%; }
@@ -2131,6 +2419,250 @@ export default {
   }
 }
 
+.b-process-center-list--wholesale {
+  .b-process-center-list__code { color: inherit; text-decoration: none; }
+  .b-process-center-list__queue,
+  .b-process-center-list__rejection,
+  .b-process-center-list__delivery-schedule { display: inline-flex; align-items: center; gap: 4px; color: var(--sd-modern-muted); font-size: 11px; line-height: 16px; }
+  .b-process-center-list__rejection { flex-basis: 100%; order: 3; }
+  .b-process-center-list__delivery-schedule { margin-block-start: 3px; }
+  .b-process-center-list__country { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; line-height: 16px; color: var(--sd-modern-muted); }
+  .b-process-center-list__country :deep(.fi) { flex-shrink: 0; }
+  &:where(.smart-invert *) {
+    .b-process-center-list__queue > .v-icon,
+    .b-process-center-list__rejection > .v-icon,
+    .b-process-center-list__delivery-schedule > .text-warning { filter: invert(1); }
+  }
+  @media (max-width: 999px) {
+    .b-process-center-list__country { flex-direction: row; justify-content: flex-start; gap: 6px; }
+  }
+}
+.b-process-center-list--marketplace {
+  font-size: 13px;
+  line-height: 20px;
+
+  .b-process-center-list__body { padding-inline: 22px; border-radius: 17px; }
+  .b-process-center-list__toolbar { gap: 12px; padding: 20px 0 !important; }
+  .b-process-center-list__toolbar > .flex-grow-1 { flex: 1 1 auto; }
+  .b-process-center-list__search {
+    flex: 0 1 215px;
+    min-width: 170px !important;
+    :deep(.v-field__input) { min-height: 36px; padding-block: 7px !important; font-size: 13px !important; line-height: 20px; }
+    :deep(.v-field__prepend-inner) { height: 36px; }
+    :deep(.v-icon) { font-size: 18px !important; }
+  }
+  .b-process-center-list__marketplace-statuses {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    height: auto;
+    padding: 5px;
+    overflow: visible;
+    border-radius: 12px;
+    background: rgba(var(--v-theme-on-surface), .04);
+    :deep(> .v-btn) { height: 34px; min-height: 34px; min-width: 0; padding: 7px 10px; border-radius: 7px !important; background: transparent; color: rgb(var(--v-theme-on-surface)); font-family: inherit; font-size: 12px; font-weight: 400; line-height: 20px; letter-spacing: 0; text-transform: none; }
+    :deep(> .v-btn--active) { background: rgb(var(--v-theme-surface)); box-shadow: 0 1px 4px rgba(var(--v-theme-on-surface), .1); }
+    :deep(> .v-btn--active > .v-btn__overlay) { opacity: 0 !important; }
+    :deep(> .v-btn:focus-visible) { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
+  }
+  .b-process-center-list__marketplace-title { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; padding: 19px 12px 15px; font-size: 13px; line-height: 20px; }
+  .b-process-center-list__marketplace-title > .sd-modern-status { font-size: 12px; color: var(--sd-modern-muted); }
+  .b-process-center-list__marketplace-title > .v-btn { margin-inline-start: auto; }
+  .b-process-center-list__table {
+    --sd-modern-table-font-size: 13px;
+    --sd-modern-table-line-height: 20px;
+    :deep(.v-table__wrapper > table > thead > tr > th) { padding: 10px 12px 13px !important; }
+    :deep(.v-table__wrapper > table > tbody > tr > td) { height: auto; padding: 13px 12px !important; line-height: 20px; vertical-align: top; }
+  }
+  .b-process-center-list__marketplace-codes { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; flex-basis: 100%; }
+  .b-process-center-list__marketplace-code.v-btn { min-width: 0; height: auto; min-height: 22px; padding: 0; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; letter-spacing: 0; text-transform: none; }
+  .b-process-center-list__marketplace-parent { font-size: 11px; line-height: 18px; color: var(--sd-modern-muted); }
+  .b-process-center-list__products { gap: 7px; padding-inline: 0 !important; align-items: center; }
+  .b-process-center-list__products :deep(.b-process-center-customer) { font-size: 12px; line-height: 18px; }
+  .b-process-center-list__marketplace-queue { display: inline-flex; align-items: center; gap: 4px; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
+  .b-process-center-list__withdrawal { color: rgb(var(--v-theme-on-surface)) !important; background: var(--sd-modern-inset) !important; }
+  .b-process-center-list__amount { text-align: start; }
+  .b-process-center-list__amount-value { justify-content: flex-start; :deep(.u--price) { font-weight: 500; } }
+  .b-process-center-list__amount-details { align-items: flex-start; font-size: 11px; line-height: 18px; }
+  .b-process-center-list__marketplace-payment { font-size: 12px; line-height: 20px; }
+  .b-process-center-list__stepper { max-width: 230px; margin-inline: -6px; }
+  .b-process-center-list__delivery-caption { flex-direction: column; align-items: flex-start !important; gap: 2px; padding-block-start: 1px !important; font-size: 12px; line-height: 19px; }
+  .b-process-center-list__delivery-caption > span { order: -1; margin-inline-start: 0; color: rgb(var(--v-theme-on-surface)) !important; }
+  .b-process-center-list__delivery-caption > div { font-size: 11px; line-height: 18px; }
+  .b-process-center-list__marketplace-receiver { display: inline-flex; align-items: center; min-height: 22px; padding: 0; font: inherit; font-size: 11px; line-height: 18px; text-align: start; color: inherit; border-radius: 4px; }
+  .b-process-center-list__marketplace-receiver:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
+  .b-process-center-list__checkout { display: block; font-size: 12px; line-height: 19px; }
+  .b-process-center-list__checkout > small { margin-block-start: 4px; font-size: 11px; line-height: 18px; text-wrap: auto; }
+  .b-process-center-list__marketplace-actions { --sd-modern-icon-button-size: 33px; display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+  .b-process-center-list__marketplace-actions > .sd-modern-icon-button { margin: 0; }
+  .b-process-center-list__marketplace-actions > .b-process-center-list__attention { margin: 0; width: 24px; min-width: 24px; height: 33px; }
+  .b-process-center-list__footer { padding: 18px 9px 20px; font-size: 12px; line-height: 19px; }
+  .b-process-center-list__marketplace-empty { padding: 60px 20px 70px; min-height: 240px; }
+  .b-process-center-list__marketplace-empty > .v-icon { color: var(--sd-modern-muted); margin-block-end: 14px; }
+  .b-process-center-list__marketplace-empty h2 { margin: 0; font-family: inherit; font-size: 17px; font-weight: 500; line-height: 25px; }
+  .b-process-center-list__marketplace-empty p { max-width: 360px; margin: 6px auto 18px; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
+
+  @media (max-width: 1099px) {
+    .b-process-center-list__toolbar { padding-block: 17px !important; }
+    .b-process-center-list__toolbar > .flex-grow-1 { flex-basis: 100%; min-width: 0; }
+    .b-process-center-list__search { flex: 1 1 150px; max-width: none; :deep(.v-field__input) { font-size: 16px !important; } }
+    .b-process-center-list__marketplace-statuses { display: flex; width: 100%; :deep(> .v-btn) { flex: 1 1 auto; min-height: 40px; height: auto; } }
+    .b-process-center-list__table {
+      :deep(table), :deep(tbody) { display: block; width: 100%; }
+      // The dedicated toolbar menu retains all five sorting fields on mobile.
+      :deep(thead) { display: none; }
+      :deep(.v-data-table__tr--mobile) { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 17px 14px; padding: 20px 12px; border-block-end: 1px solid var(--sd-modern-border); }
+      :deep(.v-table__wrapper > table > tbody > .v-data-table__tr--mobile > td) { display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 6px; width: auto !important; height: auto; min-height: 0; padding: 0 !important; border: 0; }
+      :deep(.v-data-table__tr--mobile > .b-process-center-list__marketplace-identity-cell), :deep(.v-data-table__tr--mobile > .b-process-center-list__wide-cell), :deep(.v-data-table__tr--mobile > .b-process-center-list__marketplace-actions-cell) { grid-column: 1 / -1; }
+      :deep(.v-data-table__td-value) { text-align: start !important; min-width: 0; }
+      :deep(.v-data-table__tr--mobile > .b-process-center-list__marketplace-actions-cell > .v-data-table__td-title) { display: none; }
+    }
+    .b-process-center-list__checkout { border: 0; padding-block: 0 !important; }
+    .b-process-center-list__stepper { max-width: 270px; }
+  }
+  @media (max-width: 440px) {
+    .b-process-center-list__body { padding-inline: 8px; border-radius: 15px; }
+    .b-process-center-list__toolbar { margin-inline: 6px; }
+    .b-process-center-list__marketplace-statuses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); :deep(> .v-btn) { padding-inline: 5px; } }
+    .b-process-center-list__marketplace-title { padding-inline: 12px; }
+  }
+  @media (pointer: coarse) {
+    .b-process-center-list__marketplace-statuses :deep(> .v-btn), .b-process-center-list__marketplace-code.v-btn { min-height: 44px; }
+    .b-process-center-list__marketplace-receiver { min-height: 44px; }
+    .b-process-center-list__marketplace-actions > .v-btn { min-width: 44px; width: 44px; min-height: 44px; height: 44px; }
+    .b-process-center-list__marketplace-actions { --sd-modern-icon-button-size: 44px; gap: 6px; }
+  }
+}
+.b-process-center-list--vendor {
+  font-size: 13px;
+  line-height: 20px;
+
+  .b-process-center-list__body { padding: 6px 24px 0; border-radius: 18px; }
+  .b-process-center-list__toolbar { gap: 12px; padding: 15px 0 17px !important; }
+  .b-process-center-list__toolbar > .flex-grow-1 { flex: 1 1 auto; min-width: 0; }
+  .b-process-center-list__vendor-statuses {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    height: auto;
+    padding: 4px;
+    overflow: visible;
+    border-radius: 9px;
+    background: var(--sd-modern-inset);
+    :deep(> .v-btn) { height: 32px; min-height: 32px; min-width: 0; padding: 6px 9px; border-radius: 6px !important; background: transparent; color: rgb(var(--v-theme-on-surface)); font: inherit; font-size: 12px; line-height: 18px; letter-spacing: 0; text-transform: none; }
+    :deep(> .v-btn--active) { background: rgb(var(--v-theme-surface)); box-shadow: 0 1px 4px rgba(var(--v-theme-on-surface), .08); }
+    :deep(> .v-btn--active > .v-btn__overlay) { opacity: 0 !important; }
+    :deep(> .v-btn--active .v-btn__content::after) { content: ''; width: 4px; height: 4px; margin-inline-start: 6px; border-radius: 50%; background: rgb(var(--v-theme-primary)); }
+    :deep(> .v-btn:focus-visible) { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  }
+  .b-process-center-list__search {
+    flex: 0 1 205px;
+    min-width: 170px !important;
+    max-width: 205px;
+    border-block-end: 1px solid var(--sd-modern-border);
+    :deep(.v-field__input) { min-height: 36px; padding-block: 7px !important; font-size: 13px !important; line-height: 20px; }
+    :deep(.v-field__prepend-inner) { height: 36px; padding-block-start: 9px; color: var(--sd-modern-muted); }
+    :deep(.v-field__clearable) { align-items: center; padding-block: 0; }
+  }
+  .b-process-center-list__vendor-clear { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border-radius: 6px; color: var(--sd-modern-muted); }
+  .b-process-center-list__vendor-clear:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
+  .b-process-center-list__sort-button { display: none; }
+  .b-process-center-list__vendor-title { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; padding: 16px 0 12px; }
+  .b-process-center-list__vendor-title h2 { margin: 0; font: inherit; font-size: 14px; font-weight: 500; line-height: 22px; }
+  .b-process-center-list__vendor-title > span { margin-inline-start: auto; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
+  .b-process-center-list__vendor-title > .v-btn { margin-inline-start: auto; }
+  .b-process-center-list__table {
+    --sd-modern-table-font-size: 13px;
+    --sd-modern-table-line-height: 20px;
+    :deep(.v-table__wrapper > table > thead > tr > th) { padding: 11px 12px !important; }
+    :deep(.v-table__wrapper > table > tbody > tr > td) { height: 82px; padding: 12px; line-height: 20px; vertical-align: middle; overflow-wrap: anywhere; }
+  }
+  .b-process-center-list__order { gap: 5px 9px; }
+  .b-process-center-list__basket { flex: 0 0 26px; :deep(.v-img) { width: 26px !important; height: 26px !important; } }
+  .b-process-center-list__vendor-code { display: inline-flex; align-items: center; gap: 3px; color: inherit; font-size: 12px; font-weight: 500; line-height: 20px; text-decoration: none; white-space: nowrap; }
+  .b-process-center-list__vendor-code:hover { color: rgb(var(--v-theme-primary)); }
+  .b-process-center-list__vendor-code:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 4px; border-radius: 3px; }
+  .b-process-center-list__vendor-code > svg { color: var(--sd-modern-muted); }
+  &.b-process-center-list--rtl {
+    .b-process-center-list__vendor-code > svg { transform: scaleX(-1); }
+    .b-process-center-list__stepper {
+      :deep(.progressbar li) { float: right; }
+      :deep(.container-stepper > div:not(.top-chain)) { left: auto !important; right: var(--sd-vendor-stage-offset) !important; }
+      :deep(.top-chain) { right: auto; left: 0; }
+    }
+  }
+  .b-process-center-list__products { gap: 5px 9px; padding-inline: 0 !important; }
+  .b-process-center-list__products > .py-1 { padding-block: 0 !important; }
+  .b-process-center-list__products :deep(.b-process-center-customer__name) { font-size: 11px; line-height: 18px; }
+  .b-process-center-list__vendor-guest { display: inline-flex; align-items: center; gap: 5px; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
+  .b-process-center-list__vendor-queue { display: inline-flex; align-items: center; color: #a46ce7; }
+  .smart-invert & .b-process-center-list__vendor-queue, .v-theme--dark & .b-process-center-list__vendor-queue { color: #c59af6; }
+  // The content window inverts once; keep the real semantic and selection colors.
+  .smart-invert & {
+    .b-process-center-list__vendor-queue { filter: invert(1); }
+    .b-process-center-list__vendor-statuses :deep(> .v-btn--active .v-btn__content::after) { filter: invert(1); }
+    .b-process-center-list__payment :deep(.sup-icon > .v-icon) { filter: invert(1); }
+  }
+  .b-process-center-list__amount-value { font-size: 13px; :deep(.u--price) { font-size: inherit; font-weight: 500; } }
+  .b-process-center-list__amount-details { line-height: 18px; }
+  .b-process-center-list__amount-details > div { display: inline-flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .b-process-center-list__payment {
+    :deep(.s--order-status-view) { flex-direction: column; justify-content: center; gap: 2px; text-align: center; }
+    :deep(.s--order-status-view > .inline-block > img) { margin-inline: 0 !important; }
+    :deep(.s--order-status-view small) { line-height: 18px; }
+    :deep(.s--order-status-view .sup-icon) { min-width: 13px; min-height: 13px; width: 13px; height: 13px; padding: 0; inset-inline-start: -5px; inset-inline-end: auto; top: -3px; background: rgb(var(--v-theme-surface)); }
+    :deep(.s--order-status-view .sup-icon > .v-icon) { font-size: 13px; }
+    :deep(.s--order-status-view + .d-flex) { justify-content: center !important; }
+  }
+  .b-process-center-list__stepper { max-width: 230px; margin-inline: -6px; }
+  .b-process-center-list__vendor-stage-icon { position: absolute; inset: 0; display: grid; place-items: center; color: var(--sd-modern-muted); pointer-events: none; }
+  .b-process-center-list__stepper :deep(.progressbar li.active .b-process-center-list__vendor-stage-icon) { color: rgb(var(--v-theme-surface)); }
+  .b-process-center-list__delivery-caption { max-width: 230px; justify-content: space-between !important; gap: 0 8px; line-height: 18px; }
+  .b-process-center-list__delivery-caption > span { margin-inline-start: 0; }
+  .b-process-center-list__delivery-caption > div { font-size: 11px; line-height: 18px; }
+  .b-process-center-list__checkout { font-size: 12px; line-height: 20px; }
+  .b-process-center-list__checkout > small { margin-block-start: 2px; font-size: 11px; line-height: 18px; text-wrap: auto; }
+  .b-process-center-list__chat, .b-process-center-list__attention { min-width: 28px; height: 30px; padding: 3px; }
+  .b-process-center-list__footer { padding: 18px 0 20px; font-size: 11px; line-height: 18px; }
+  .b-process-center-list__vendor-empty { min-height: 360px; padding: 54px 24px; }
+  .b-process-center-list__vendor-empty > svg { margin-block-end: 14px; color: var(--sd-modern-muted); }
+  .b-process-center-list__vendor-empty h2 { margin: 0; font: inherit; font-size: 17px; font-weight: 500; line-height: 25px; }
+  .b-process-center-list__vendor-empty p { max-width: 360px; margin: 6px auto 18px; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
+
+  @media (max-width: 999px) {
+    .b-process-center-list__body { padding-inline: 16px; }
+    .b-process-center-list__toolbar > .flex-grow-1 { flex-basis: 100%; }
+    .b-process-center-list__vendor-statuses { display: flex; :deep(> .v-btn) { flex: 1 1 auto; min-height: 40px; height: auto; } }
+    .b-process-center-list__search { flex: 1 1 150px; max-width: none; :deep(.v-field__input) { font-size: 16px !important; } }
+    .b-process-center-list__sort-button { display: inline-flex; }
+    .b-process-center-list__table {
+      // The mobile toolbar keeps all five server sorting fields available.
+      :deep(thead) { display: none; }
+      :deep(.v-data-table__tr--mobile) { gap: 18px; padding: 20px 12px; }
+      :deep(.v-data-table__tr--mobile > .b-process-center-list__vendor-identity-cell) { grid-column: 1 / -1; }
+      :deep(.v-data-table__tr--mobile > .b-process-center-list__vendor-identity-cell > .v-data-table__td-title) { display: none; }
+      :deep(.v-data-table__tr--mobile > .b-process-center-list__vendor-identity-cell > .v-data-table__td-value > .py-1) { padding-block: 0 !important; }
+      :deep(.v-table__wrapper > table > tbody > .v-data-table__tr--mobile > td) { padding: 0 !important; }
+    }
+    .b-process-center-list__amount { padding-block: 0 !important; }
+    .b-process-center-list__payment :deep(.s--order-status-view) { align-items: flex-start; text-align: start; }
+    .b-process-center-list__amount-details > div { justify-content: flex-start; }
+    .b-process-center-list__stepper, .b-process-center-list__delivery-caption { max-width: 300px; }
+    .b-process-center-list__checkout { padding-block-start: 0 !important; border: 0; }
+  }
+  @media (max-width: 440px) {
+    .b-process-center-list__body { padding-inline: 12px; border-radius: 15px; }
+    .b-process-center-list__vendor-statuses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); :deep(> .v-btn) { padding-inline: 5px; } }
+    .b-process-center-list__footer { flex-wrap: wrap; }
+  }
+  @media (pointer: coarse) {
+    .b-process-center-list__vendor-statuses :deep(> .v-btn), .b-process-center-list__vendor-code, .b-process-center-list__vendor-clear { min-height: 44px; }
+    .b-process-center-list__chat, .b-process-center-list__attention { min-width: 44px; width: 44px; min-height: 44px; height: 44px; }
+  }
+}
+.b-process-center-list__sort-menu {
+  :deep(.v-list-item-title) { font-family: inherit; font-size: 13px; line-height: 20px; font-weight: 400; }
+}
 .data-table {
   cursor: pointer;
   font-size: 1.071rem;

@@ -25,11 +25,13 @@
     </template>
     <template v-slot:subtitle>
       <div v-if="$product.price === 0">
-        <v-icon class="me-1" color="red">cancel</v-icon>
+        <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--error" aria-hidden="true" />
+        <v-icon v-else class="me-1" color="red">cancel</v-icon>
         {{ $t("product_flow.pricing.no_product_price_msg") }}
       </div>
       <div v-else>
-        <v-icon class="me-1" color="green">check_circle</v-icon>
+        <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true" />
+        <v-icon v-else class="me-1" color="green">check_circle</v-icon>
         {{ $t("product_flow.pricing.listing_pricing_msg") }}
 
         <u-price
@@ -39,13 +41,15 @@
       </div>
 
       <div v-if="has_valuation">
-        <v-icon class="me-1" color="green">check_circle</v-icon>
+        <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true" />
+        <v-icon v-else class="me-1" color="green">check_circle</v-icon>
         {{ $t("product_flow.pricing.has_valuation_msg") }}
       </div>
 
       <template v-if="isSubscription">
         <div v-if="subscription_prices?.length">
-          <v-icon class="me-1" color="green">check_circle</v-icon>
+          <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true" />
+          <v-icon v-else class="me-1" color="green">check_circle</v-icon>
           {{
             $t("product_flow.pricing.subscription_pricing_msg", {
               count: subscription_prices?.length,
@@ -53,7 +57,8 @@
           }}
         </div>
         <div v-else>
-          <v-icon class="me-1" color="red">cancel</v-icon>
+          <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--error" aria-hidden="true" />
+          <v-icon v-else class="me-1" color="red">cancel</v-icon>
           {{ $t("product_flow.pricing.has_no_subscription_pricing_msg") }}
         </div>
       </template>
@@ -69,7 +74,7 @@ export default {
   components: {},
   inject: ["$shop", "$product"],
 
-  props: {},
+  props: { modern: { type: Boolean, default: false } },
 
   data: function () {
     return {};

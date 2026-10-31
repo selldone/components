@@ -15,7 +15,7 @@
 <template>
   <tr v-if="modern" class="b-inventory-list-group--modern">
     <td :colspan="columns.length">
-      <button type="button" class="b-inventory-list-group__toggle" :aria-expanded="is_open" @click="toggleGroup(item)">
+      <button type="button" class="b-inventory-list-group__toggle sd-modern-clickable-item" :aria-expanded="is_open" @click="toggleGroup(item)">
         <v-icon size="17">{{ is_open ? 'expand_more' : 'chevron_right' }}</v-icon>
         <v-avatar :size="isMobile ? 40 : 44" class="b-inventory-list-group__avatar hover-scale-small">
           <v-img :src="product.icon ? getShopImagePath(product.icon, IMAGE_SIZE_SMALL) : product_type.image" alt="">
@@ -28,15 +28,37 @@
           <span class="b-inventory-list-group__name">{{ product.title }}</span>
           <span v-if="product.title_en" class="b-inventory-list-group__secondary">{{ product.title_en }}</span>
         </span>
-        <product-variants-view v-if="product?.variants" :variants="product.variants" :dark="false" dense small />
+        <product-variants-view v-if="product?.variants" class="b-inventory-list-group__options" :variants="product.variants" :dark="false" dense small />
+        <span v-if="product.sku || product.mpn" class="b-inventory-list-group__identifiers">
+          <span v-if="product.sku"><span>{{ $t('inventory_list.table.sku') }}</span><bdi>{{ product.sku }}</bdi></span>
+          <span v-if="product.mpn"><span>{{ $t('inventory_list.table.mpn') }}</span><bdi>{{ product.mpn }}</bdi></span>
+        </span>
+        <span class="b-inventory-list-group__stock">
+          <template v-if="stock_summary">
+            <span class="b-inventory-list-group__stock-heading"><span class="b-inventory-list-group__stock-count">{{ $t('inventory_list.modern.group_stock_count', { stocked: stock_summary.stocked, total: stock_summary.total }) }}</span><bdi class="b-inventory-list-group__percentage">{{ stock_summary.percentage }}%</bdi></span>
+            <span class="b-inventory-list-group__stock-bar" aria-hidden="true"><span class="b-inventory-list-group__stock-fill" :style="{ width: stock_summary.percentage + '%' }"></span></span>
+          </template>
+          <template v-else>
+            <span>{{ $t(variant_count === null ? 'inventory_list.modern.group_variants_unknown' : variant_count ? 'inventory_list.modern.group_variant_count' : 'inventory_list.modern.group_no_variants', { count: variant_count }) }}</span>
+            <span class="b-inventory-list-group__secondary b-inventory-list-group__stock-state">
+              <span v-if="stock_tracked && variant_count === 0 && parent_stock !== null" class="sd-modern-status__dot" :class="parent_stock > 0 ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--error'"></span>
+              {{ $t(!stock_tracked ? 'inventory_list.modern.group_untracked_stock' : variant_count === 0 && parent_stock !== null ? parent_stock > 0 ? 'inventory_list.modern.group_in_stock' : 'inventory_list.modern.group_out_of_stock' : 'inventory_list.modern.group_stock_unknown') }}
+            </span>
+          </template>
+        </span>
         <span class="b-inventory-list-group__summary">
           <v-icon size="15" :aria-label="$t('inventory_list.table.status')">{{ icon }}</v-icon>
-          <span>{{ $t('global.commons.total') }}: {{ quantity }}</span>
+          <span>{{ $t('global.commons.total') }}: {{ stock_tracked ? quantity : $t('global.commons.infinite') }}</span>
           <span>
-            <u-price :amount="min_price" :currency="product.currency" />
-            <template v-if="max_price !== min_price"> ~ <u-price :amount="max_price" :currency="product.currency" /></template>
+            <u-price :amount="min_price" />
+            <template v-if="max_price !== min_price"> ~ <u-price :amount="max_price" /></template>
           </span>
         </span>
+        <v-tooltip v-if="product.sku || product.mpn || stock_summary" activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-focus>
+          <div v-if="product.sku">{{ $t('inventory_list.table.sku') }}: <bdi>{{ product.sku }}</bdi></div>
+          <div v-if="product.mpn">{{ $t('inventory_list.table.mpn') }}: <bdi>{{ product.mpn }}</bdi></div>
+          <div v-if="stock_summary">{{ $t('inventory_list.modern.group_stock_help') }}</div>
+        </v-tooltip>
       </button>
     </td>
   </tr>
@@ -194,6 +216,27 @@ export default defineComponent({
       return this.item.items[0].raw.product;
     },
 
+    variant_count() {
+      return Array.isArray(this.product.product_variants) ? this.product.product_variants.length : null;
+    },
+
+    stock_tracked() {
+      return this.product.type === ProductType.PHYSICAL.code || this.product.type === ProductType.VIRTUAL.code;
+    },
+
+    parent_stock() {
+      return this.recordedQuantity(this.product.quantity);
+    },
+
+    stock_summary() {
+      if (!this.stock_tracked || !this.variant_count) return null;
+      // The Inventory query returns every variant; count saved stock, including disabled variants.
+      const quantities = this.product.product_variants.map(variant => this.recordedQuantity(variant?.quantity));
+      if (quantities.some(quantity => quantity === null)) return null;
+      const stocked = quantities.filter(quantity => quantity > 0).length;
+      return { stocked, total: this.variant_count, percentage: Math.round(stocked / this.variant_count * 100) };
+    },
+
     min_price() {
       return this.item.items.map((x) => x.raw).minByKey("calc_price")
         .calc_price;
@@ -213,6 +256,13 @@ export default defineComponent({
         : this.item.items.some((i) => i.raw.status !== "Open")
           ? "rule"
           : "check_circle_outline";
+    },
+  },
+  methods: {
+    recordedQuantity(value) {
+      if (typeof value !== 'number' && (typeof value !== 'string' || !value.trim())) return null;
+      const quantity = Number(value);
+      return Number.isFinite(quantity) ? quantity : null;
     },
   },
 });
@@ -243,18 +293,33 @@ export default defineComponent({
     &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: -3px; }
   }
 
-  .b-inventory-list-group__identity { min-width: 0; }
+  .b-inventory-list-group__identity { flex: 1 1 160px; min-width: 0; }
   .b-inventory-list-group__avatar { flex: 0 0 44px; border-radius: 10px; background: rgba(var(--v-theme-on-surface), 0.035); }
-  .b-inventory-list-group__name { display: block; font-weight: 500; }
-  .b-inventory-list-group__secondary { display: block; font-size: 11px; color: var(--sd-modern-muted); }
-  .b-inventory-list-group__summary { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-inline-start: auto; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .b-inventory-list-group__name { display: block; font-weight: 500; overflow-wrap: anywhere; }
+  .b-inventory-list-group__secondary { display: block; font-size: 11px; line-height: 18px; color: var(--sd-modern-muted); }
+  .b-inventory-list-group__identifiers { flex: 0 1 190px; min-width: 110px; max-width: 220px; display: grid; gap: 4px; }
+  .b-inventory-list-group__identifiers > span { display: flex; align-items: baseline; gap: 8px; min-width: 0; font-size: 11px; line-height: 18px; }
+  .b-inventory-list-group__identifiers > span > span { color: var(--sd-modern-muted); flex: 0 0 30px; }
+  .b-inventory-list-group__identifiers bdi { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .b-inventory-list-group__stock { flex: 0 0 210px; min-width: 160px; display: block; font-size: 12px; line-height: 18px; text-align: start; }
+  .b-inventory-list-group__stock-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .b-inventory-list-group__percentage { color: var(--sd-modern-muted); font-size: 11px; white-space: nowrap; }
+  .b-inventory-list-group__stock-bar { display: block; height: 3px; margin-block-start: 7px; background: rgba(var(--v-theme-on-surface), 0.1); border-radius: 2px; overflow: hidden; }
+  .b-inventory-list-group__stock-fill { display: block; height: 100%; background: rgb(var(--v-theme-success)); border-radius: inherit; }
+  .b-inventory-list-group__stock-state { display: flex; align-items: center; gap: 6px; margin-block-start: 3px; }
+  .b-inventory-list-group__summary { display: flex; align-items: center; justify-content: space-between; flex: 0 0 210px; flex-wrap: wrap; gap: 10px; font-size: 11px; font-variant-numeric: tabular-nums; }
   :deep(.u--price) { font-size: 12px; font-weight: 400; }
 
   @media (max-width: 1199px) {
-    .b-inventory-list-group__toggle { gap: 8px; padding: 14px; }
+    .b-inventory-list-group__toggle { display: grid; grid-template-columns: 17px auto minmax(0, 1fr); gap: 10px 8px; padding: 14px; }
     .b-inventory-list-group__avatar { flex-basis: 40px; }
-    .b-inventory-list-group__identity { flex: 1; }
-    .b-inventory-list-group__summary { flex-basis: 100%; justify-content: space-between; }
+    .b-inventory-list-group__identity { grid-column: 3; }
+    .b-inventory-list-group__options,
+    .b-inventory-list-group__identifiers,
+    .b-inventory-list-group__stock,
+    .b-inventory-list-group__summary { grid-column: 2 / -1; min-width: 0; max-width: none; }
+    .b-inventory-list-group__identifiers { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 12px; }
+    .b-inventory-list-group__summary { margin-inline-start: 0; justify-content: space-between; }
   }
 
   @media (prefers-reduced-motion: reduce) {

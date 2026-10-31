@@ -14,6 +14,110 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
+    v-if="modernList"
+    :category-id="category.id"
+    :class="{ disabled: loading }"
+    :aria-busy="loading || undefined"
+    class="b-product-category-list"
+  >
+    <div
+      class="b-product-category-list__body sd-modern-clickable-item"
+      :class="{ 'b-product-category-list__body--no-image': !compactMode && !extended }"
+      @click="$emit('select')"
+    >
+      <span
+        v-if="compactMode || extended"
+        class="b-product-category-list__image"
+        :drop-image="!compactMode && extended ? 'true' : undefined"
+      >
+        <v-img
+          v-if="category.icon"
+          :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)"
+          class="hover-scale force-top"
+          width="100%"
+          height="100%"
+          cover
+          alt=""
+        >
+          <template #placeholder>
+            <v-progress-circular
+              class="center-absolute"
+              indeterminate
+              :size="18"
+              :width="2"
+            />
+          </template>
+        </v-img>
+        <v-icon v-else icon="folder_open" size="20" aria-hidden="true" />
+        <v-progress-circular
+          v-if="uploading"
+          :model-value="uploading.progress"
+          class="center-absolute"
+          color="primary"
+          :size="24"
+          :width="2"
+        />
+      </span>
+
+      <div class="b-product-category-list__identity">
+        <div class="b-product-category-list__header">
+          <button
+            type="button"
+            class="b-product-category-list__title"
+            :disabled="loading"
+            @click.stop="$emit('select')"
+          >
+            <v-icon
+              v-if="category.star"
+              :size="12"
+              class="me-1 text-warning"
+              role="img"
+              :aria-hidden="false"
+              :aria-label="$t('global.commons.star')"
+            >star</v-icon>
+            {{ category.title }}
+          </button>
+          <div class="b-product-category-list__actions" @click.stop>
+            <slot name="actions" />
+            <v-btn
+              icon
+              variant="text"
+              :disabled="loading"
+              class="sd-modern-icon-button"
+              :aria-label="$t('product_panel.workspace.list_view.more_actions')"
+              @click.stop="$emit('contextmenu', $event)"
+            >
+              <v-icon :size="18">more_horiz</v-icon>
+              <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t("product_panel.workspace.list_view.more_actions") }}</v-tooltip>
+            </v-btn>
+          </div>
+        </div>
+        <div
+          v-if="category.description"
+          class="b-product-category-list__description"
+          tabindex="0"
+        >
+          {{ category.description }}
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+          >{{ category.description }}</v-tooltip>
+        </div>
+        <div v-if="category.connect_id" class="b-product-category-list__hints">
+          <span class="b-product-category-list__connect" tabindex="0" @click.stop>
+            <img :src="getConnectIcon(category.connect_id)" :alt="$t('global.commons.connected')" />
+            <v-tooltip activator="parent" location="top" :open-on-click="true" content-class="sd-modern-tooltip text-start">
+              {{ $t("product_panel.workspace.list_view.connected_category") }}
+            </v-tooltip>
+          </span>
+        </div>
+      </div>
+      <v-progress-circular v-if="loading" class="center-absolute" indeterminate :size="24" :width="2" />
+    </div>
+  </div>
+  <div
+    v-else
     :category-id="category.id"
     :class="{ disabled: loading }"
     :style="{ '--card-color': isEmpty ? '#959c9f' : ThemeColorDeepDark }"
@@ -171,9 +275,14 @@ import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin
 export default {
   name: "BProductWindowCategoryLarge",
   mixins: [TemplateMixin],
+  emits: ["select", "click:edit", "contextmenu"],
 
   components: { CircleImage },
   props: {
+    modernList: {
+      type: Boolean,
+      default: false,
+    },
     category: {
       required: true,
       type: Object,
@@ -238,6 +347,156 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-product-category-list {
+  --sd-modern-icon-button-size: 32px;
+  display: flex;
+  flex-direction: column;
+  height: var(--b-products-list-item-height, auto);
+  min-width: 0;
+  border-block-start: 1px solid var(--sd-modern-border);
+
+  &__body {
+    display: grid;
+    flex: 1 0 auto;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-content: start;
+    align-items: start;
+    gap: 9px;
+    min-height: var(--b-products-list-row-min-height, 44px);
+    padding: 6px 12px;
+    border-radius: 9px;
+    text-align: start;
+
+    &--no-image { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  &__image {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 48px;
+    margin-block-start: 2px;
+    padding: 2px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 9px;
+    overflow: visible;
+    background: var(--sd-modern-inset);
+    color: var(--sd-modern-muted);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: 5px;
+      inset-block-start: -4px;
+      width: 17px;
+      height: 5px;
+      border: 1px solid var(--sd-modern-border);
+      border-block-end: 0;
+      border-radius: 4px 4px 0 0;
+      background: rgb(var(--v-theme-surface));
+    }
+
+    > .v-img { border-radius: 6px; }
+  }
+
+  &__identity { min-width: 0; }
+
+  &__header { display: flex; align-items: center; gap: 6px; min-width: 0; }
+
+  &__title {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+    text-align: start;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  &__description {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  &__hints {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1px 8px;
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  &__connect {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    img { width: 18px; height: 18px; object-fit: contain; }
+  }
+
+  &__actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+    margin-inline-start: auto;
+    > :deep(span) { display: flex; align-items: center; }
+    :deep(.sd-modern-icon-button.v-btn) {
+      --sd-modern-icon-button-size: 32px;
+      flex: 0 0 32px;
+      width: 32px !important;
+      min-width: 32px !important;
+      max-width: 32px !important;
+      height: 32px !important;
+      min-height: 32px !important;
+      max-height: 32px !important;
+      margin: 0;
+      padding: 0;
+    }
+    :deep(.sd-modern-icon-button.v-btn .v-icon) { font-size: 18px !important; }
+  }
+
+  &__title:focus-visible,
+  &__description:focus-visible,
+  &__connect:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 600px), (pointer: coarse) {
+    &__title, &__connect { min-height: 44px; }
+    &__actions :deep(.sd-modern-icon-button.v-btn) {
+      --sd-modern-icon-button-size: 44px;
+      flex-basis: 44px;
+      width: 44px !important;
+      min-width: 44px !important;
+      max-width: 44px !important;
+      height: 44px !important;
+      min-height: 44px !important;
+      max-height: 44px !important;
+    }
+  }
+}
+
 .widget-folder-root {
   cursor: pointer;
   margin: 0;

@@ -13,16 +13,19 @@
   -->
 
 <template>
-  <div v-bind="$attrs" :class="{ 'b-order-dashboard--modern text-start': modern, 'b-order-dashboard--workspace': modern && order_view_mode === 'workspace' }">
+  <div v-bind="$attrs" :class="{ 'b-order-dashboard--modern text-start': modern, 'b-order-dashboard--vendor': modernVendorPanel, 'b-order-dashboard--fulfillment': isModernFulfillment, 'b-order-dashboard--workspace': modern && !modernVendorPanel && order_view_mode === 'workspace' }">
     <header v-if="modern" class="sd-modern-content sd-modern-header b-order-dashboard__heading">
       <div class="b-order-dashboard__identity">
         <div class="sd-modern-eyebrow b-order-dashboard__breadcrumb">
-          <router-link :to="IS_VENDOR_PANEL ? {} : { name: root_baskets_name }">
+          <span v-if="modernVendorPanel" class="b-order-dashboard__vendor-type">
+            <img :src="getProductTypeImage(type)" alt="" width="16" height="16" />
+            {{ order_type }}
+          </span>
+          <router-link v-else :to="IS_VENDOR_PANEL ? {} : { name: root_baskets_name }">
             <img :src="getProductTypeImage(type)" alt="" width="16" height="16" />
             {{ order_type }}
           </router-link>
-          <span>/</span>
-          <span>{{ order_code }}</span>
+          <template v-if="!modernVendorPanel"><span>/</span><span>{{ order_code }}</span></template>
           <template v-if="basket.subscription_id">
             <span>/</span>
             <router-link :to="IS_VENDOR_PANEL ? {} : { name: ProductType.SUBSCRIPTION.order_page, params: { basket_id: basket.subscription_id } }">
@@ -32,16 +35,23 @@
           </template>
         </div>
         <div class="b-order-dashboard__title-row">
-          <h1 class="sd-modern-title-text">{{ $t("process_center.modern.overview") }}</h1>
+          <h1 v-if="modernVendorPanel" class="sd-modern-title-text b-order-dashboard__vendor-code">
+            <bdi>{{ getBasketOrderCode({ type: basket.type, id: basket.basket_id }) }}</bdi>
+            <b-vendor-order-icon name="chevron-right" :size="16" aria-hidden="true" />
+            <bdi>{{ getVendorOrderCode(basket) }}</bdi>
+          </h1>
+          <h1 v-else class="sd-modern-title-text">{{ $t("process_center.modern.overview") }}</h1>
           <span class="sd-modern-status sd-modern-status--plain">
-            <span class="sd-modern-status__dot" :style="{ backgroundColor: getStatusColor(basket.status) }" />
+            <span class="sd-modern-status__dot" :class="{ 'no-inv': !modernVendorPanel, 'sd-modern-status__dot--success': modernVendorPanel && isPayed, 'sd-modern-status__dot--warning': modernVendorPanel && (isCOD || isReserved), 'sd-modern-status__dot--error': modernVendorPanel && isCanceled }" :style="modernVendorPanel ? undefined : { backgroundColor: getStatusColor(basket.status) }" />
             {{ getStatusString(basket.status) }}
           </span>
         </div>
-        <p class="sd-modern-subtitle">{{ $t(type === ProductType.VIRTUAL.code ? "process_center.modern.virtual_overview_subtitle" : "process_center.modern.overview_subtitle") }}</p>
+        <p v-if="modernVendorPanel" class="sd-modern-subtitle">{{ $t('vendor_fulfillment.checkout') }} · {{ basket.reserved_at ? getLocalTimeString(basket.reserved_at, false) : '—' }}</p>
+        <p v-else class="sd-modern-subtitle">{{ $t(isModernFulfillment ? 'process_center.modern.fulfillment_overview_subtitle' : isModernHyper ? 'process_center.modern.hyper_overview_subtitle' : isAvocado ? "process_center.modern.avocado_overview_subtitle" : type === ProductType.FILE.code ? "process_center.modern.file_overview_subtitle" : type === ProductType.VIRTUAL.code ? "process_center.modern.virtual_overview_subtitle" : type === ProductType.SERVICE.code ? "process_center.modern.service_overview_subtitle" : type === ProductType.SUBSCRIPTION.code ? "process_center.modern.subscription_overview_subtitle" : "process_center.modern.overview_subtitle") }}</p>
       </div>
       <div class="b-order-dashboard__header-actions">
       <v-btn-toggle
+        v-if="!modernVendorPanel"
         :model-value="order_view_mode"
         mandatory
         selected-class="b-order-dashboard__view-mode--active"
@@ -70,9 +80,11 @@
         class="sd-modern-button sd-modern-button--compact sd-modern-button--inline b-order-dashboard__cancel"
         variant="text"
         color="error"
+        :disabled="vendorReadOnly"
         @click="dialog_reject = true"
       >
-        <v-icon size="16" class="me-2">gavel</v-icon>
+        <b-vendor-order-icon v-if="modernVendorPanel" name="ban" :size="16" class="me-2" />
+        <v-icon v-else size="16" class="me-2">gavel</v-icon>
         <u-count-down v-if="!!basket.reject_at" :end="endOfRejectPeriod" class="me-2" />
         {{ $t("process_order_page_dashboard.cancel_order_action") }}
       </v-btn>
@@ -184,11 +196,27 @@
         :is-fulfillment="isFulfillment"
         :modern="modern"
         :offset="inFirstCheckState ? 0 : 1"
+        :class="{ 'b-order-dashboard__vendor-progress': modernVendorPanel }"
         class="mx-auto"
-      />
+      >
+        <template v-if="modernVendorPanel" #stage-icon="{ stage }">
+          <b-vendor-order-icon :name="stage.complete ? 'check' : ({ CheckQueue: 'shopping-basket', OrderConfirm: 'circle-check', PreparingOrder: 'package', SentOrder: 'truck', ToCustomer: 'check-check' })[stage.code]" :size="14" />
+        </template>
+        <template v-if="modernVendorPanel" #stage-detail="{ stage }">
+          <small v-if="stage.code === 'CheckQueue' && basket.reserved_at">{{ getLocalTimeString(basket.reserved_at, false) }}</small>
+          <small v-else-if="stage.code === 'ToCustomer' && basket.delivery_at">{{ getLocalTimeString(basket.delivery_at, false) }}</small>
+          <span v-else hidden />
+        </template>
+      </s-order-delivery-state>
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Pre Payment Slot ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
       <slot name="pre-payment"></slot>
+
+      <b-order-dashboard-subscription
+        v-if="isModernSubscription"
+        :basket="basket"
+        :shop="shop"
+      />
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Payment > Normal ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -197,8 +225,9 @@
         :order="basket"
         :shop="shop"
         :modern="modern"
+        :is-fulfillment="isFulfillment"
         :view-mode="order_view_mode"
-        cod-enable
+        :cod-enable="!isModernAvocado && !isModernHyper"
         @fetch-order="$emit('fetch-order')"
       ></b-order-dashboard-payment>
 
@@ -208,6 +237,7 @@
         v-if="basket && IS_VENDOR_PANEL /*🟢 In Vendor Panel 🟢*/"
         :shop="shop"
         :vendor-order="basket"
+        :modern="modern"
       ></b-order-vendor-payment-management>
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ List > Items ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -221,7 +251,7 @@
           :modern="modern"
           :class="{ disabled: !is_active_OrderBasketListWidget }"
           :is-fulfillment="isFulfillment"
-          :readonly="isHyper"
+          :readonly="isHyper || (modernVendorPanel && (vendorReadOnly || rejected || !is_active_OrderBasketListWidget))"
           :shop="shop"
           @confirm-order="
             ({ list, callback }) =>
@@ -316,32 +346,45 @@
   <v-dialog
     v-if="!isHyper && basket"
     v-model="dialog_reject"
-    fullscreen
+    :fullscreen="!isModernCancellation"
+    :max-width="isModernCancellation ? 560 : undefined"
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card class="text-start">
+    <v-card class="text-start" :class="{ 'sd-modern-widget b-order-subscription-cancel': isModernCancellation }">
       <v-card-title class="d-flex align-center justify-start">
-        {{ $t("global.commons.reject") }} |
-        {{ getBasketOrderCode(basket) }}
+        <b-vendor-order-icon v-if="modernVendorPanel" name="ban" :size="20" />
+        <span>{{ $t(isModernCancellation ? "process_order_page_dashboard.cancel_order_action" : "global.commons.reject") }} |
+        {{ isModernFulfillment ? order_code : modernVendorPanel ? getVendorOrderCode(basket) : getBasketOrderCode(basket) }}</span>
 
         <v-avatar
-          v-for="item in basket.items"
+          v-for="item in isModernFulfillment ? [] : basket.items"
           :key="item.id"
           class="ma-1 avatar-gradient -thin -gray"
-          :image="getProductImage(item.product_id)"
+          :image="isModernAvocado ? (item.image ? getShopImagePath(item.image) : require('../../../assets/icons/product-outline.svg')) : getProductImage(item.product_id)"
         >
         </v-avatar>
+        <v-spacer v-if="isModernCancellation" />
+        <v-tooltip v-if="isModernCancellation" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" :icon="modernVendorPanel ? true : 'close'" variant="text" class="sd-modern-icon-button" :aria-label="$t('global.actions.close')" @click="dialog_reject = false"><b-vendor-order-icon v-if="modernVendorPanel" name="x" :size="16" /></v-btn>
+          </template>
+          {{ $t('global.actions.close') }}
+        </v-tooltip>
       </v-card-title>
 
       <v-card-text>
-        <div class="widget-box -large mb-5">
+        <div :class="isModernCancellation ? 'b-order-subscription-cancel__section' : 'widget-box -large mb-5'">
           <u-widget-header
+            :class="{ 'sd-modern-form-header': isModernCancellation }"
             :title="$t('process_order_page_dashboard.reject_dialog.title')"
           >
           </u-widget-header>
 
-          <v-list-subheader>
+          <p v-if="isModernCancellation" class="b-order-subscription-cancel__message">
+            {{ $t(isModernFulfillment ? 'process_center.modern.fulfillment_cancel_help' : isModernAvocado ? 'process_center.modern.avocado_cancel_message' : 'process_order_page_dashboard.reject_dialog.message') }}
+          </p>
+          <v-list-subheader v-else>
             {{ $t("process_order_page_dashboard.reject_dialog.message") }}
           </v-list-subheader>
 
@@ -349,7 +392,23 @@
             :customer="basket.customer"
           ></b-shop-customer-box>
 
+          <v-select
+            v-if="isModernCancellation"
+            v-model="reject_reason"
+            :items="basketRejectReasons"
+            :item-title="reason => $t(reason.title)"
+            item-value="code"
+            :label="$t('process_center.modern.subscription_cancel_reason')"
+            :menu-props="{ contentClass: 'sd-modern-select-menu' }"
+            :disabled="vendorReadOnly || busy_reject_order || busy_delete_reject"
+            required
+            aria-required="true"
+            variant="underlined"
+            hide-details="auto"
+            class="sd-modern-underlined-field mt-3"
+          />
           <u-smart-select
+            v-else
             v-model="reject_reason"
             :items="basketRejectReasons"
             item-text="title"
@@ -359,14 +418,18 @@
           </u-smart-select>
         </div>
 
-        <div v-if="!rejected" class="widget-box -large mb-5">
+        <div v-if="!rejected" :class="isModernCancellation ? 'b-order-subscription-cancel__section' : 'widget-box -large mb-5'">
           <u-widget-header
+            :class="{ 'sd-modern-form-header': isModernCancellation }"
             :title="
               $t('process_order_page_dashboard.reject_dialog.options.title')
             "
           >
           </u-widget-header>
-          <v-list-subheader>
+          <p v-if="isModernCancellation" class="b-order-subscription-cancel__message">
+            {{ $t("process_order_page_dashboard.reject_dialog.options.subtitle") }}
+          </p>
+          <v-list-subheader v-else>
             {{
               $t("process_order_page_dashboard.reject_dialog.options.subtitle")
             }}
@@ -396,20 +459,30 @@
             "
             true-icon="flash_on"
             false-icon="timelapse"
+            :border="isModernFulfillment"
+            :class="{ 'sd-modern-smart-select': isModernFulfillment }"
             class="my-3"
           >
           </u-smart-switch>
         </div>
 
-        <div v-if="rejected" class="widget-buttons">
+        <div v-if="isModernSubscription || isModernAvocado" class="sd-modern-notice b-order-subscription-cancel__notice">
+          <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+          <p>{{ $t(isModernAvocado ? 'process_center.modern.avocado_cancel_help' : 'process_center.modern.subscription_cancel_help') }}</p>
+        </div>
+
+        <div v-if="rejected" :class="isModernCancellation ? 'b-order-subscription-cancel__actions' : 'widget-buttons'">
           <v-btn
             :loading="busy_delete_reject"
-            color="green-darken-1"
-            size="x-large"
-            variant="flat"
+            :disabled="vendorReadOnly || (modernVendorPanel && (busy_reject_order || busy_delete_reject))"
+            :color="isModernCancellation ? undefined : 'green-darken-1'"
+            :size="isModernCancellation ? undefined : 'x-large'"
+            :variant="isModernCancellation ? 'outlined' : 'flat'"
+            :class="{ 'sd-modern-button': isModernCancellation }"
             @click="clearRejectOrder()"
           >
-            <v-icon class="me-1">settings_backup_restore</v-icon>
+            <b-vendor-order-icon v-if="modernVendorPanel" name="rotate-ccw" :size="16" class="me-1" />
+            <v-icon v-else class="me-1">settings_backup_restore</v-icon>
             {{
               $t(
                 "process_order_page_dashboard.reject_dialog.dismiss_reject_action",
@@ -420,20 +493,23 @@
       </v-card-text>
 
       <v-card-actions>
-        <div class="widget-buttons">
-          <v-btn size="x-large" variant="text" @click="dialog_reject = false">
-            <v-icon start>close</v-icon>
+        <div :class="isModernCancellation ? 'b-order-subscription-cancel__actions' : 'widget-buttons'">
+          <v-btn :size="isModernCancellation ? undefined : 'x-large'" :class="{ 'sd-modern-button': isModernCancellation }" variant="text" @click="dialog_reject = false">
+            <b-vendor-order-icon v-if="modernVendorPanel" name="x" :size="16" class="me-1" />
+            <v-icon v-else start>close</v-icon>
             {{ $t("global.actions.close") }}
           </v-btn>
           <v-btn
-            :class="{ disabled: !reject_reason }"
+            :class="{ disabled: !reject_reason, 'sd-modern-button sd-modern-button--danger': isModernCancellation }"
+            :disabled="vendorReadOnly || (isModernCancellation ? !reject_reason || busy_reject_order || busy_delete_reject : false)"
             :loading="busy_reject_order"
             color="red-darken-1"
-            size="x-large"
+            :size="isModernCancellation ? undefined : 'x-large'"
             variant="elevated"
             @click="rejectOrder()"
-            prepend-icon="check"
+            :prepend-icon="modernVendorPanel ? undefined : 'check'"
           >
+            <b-vendor-order-icon v-if="modernVendorPanel" name="check" :size="16" class="me-1" />
             {{
               reject_express
                 ? $t(
@@ -457,6 +533,7 @@ import UCountDown from "../../../ui/count-down/UCountDown.vue";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import BOrderDashboardCart from "./cart/BOrderDashboardCart.vue";
 import BOrderDashboardPayment from "./payment/BOrderDashboardPayment.vue";
+import BOrderDashboardSubscription from "./subscription/BOrderDashboardSubscription.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BOrderDashboardDropshippingFulfillment from "../../order/dashboard/dropshipping/fulfillment/BOrderDashboardDropshippingFulfillment.vue";
 import BOrderDashboardVendor from "../../order/dashboard/vendor/BOrderDashboardVendor.vue";
@@ -475,12 +552,17 @@ import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import BOrderDashboardWithdrawNotice from "./withdraw/BOrderDashboardWithdrawNotice.vue";
+import BVendorOrderIcon from "../../process-center/list/icon/BVendorOrderIcon.vue";
+import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
 export default {
   name: "BOrderDashboard",
-  mixins: [BEventBusMixin, MapMixin, OrderMixin, ProductMixin],
+  mixins: [BEventBusMixin, MapMixin, OrderMixin, ProductMixin, DateMixin],
   components: {
+    BVendorOrderIcon,
+    BOrderDashboardSubscription,
     BOrderDashboardWithdrawNotice,
     USmartSwitch,
     BShopCustomerBox,
@@ -502,6 +584,10 @@ export default {
     modern: {
       type: Boolean,
       default: false,
+    },
+    vendor: {
+      type: Object,
+      default: null,
     },
     shop: {
       require: true,
@@ -549,6 +635,30 @@ export default {
     };
   },
   computed: {
+    isModernFulfillment() {
+      return this.modern && this.isFulfillment && !this.IS_VENDOR_PANEL;
+    },
+    isModernCancellation() {
+      return this.isModernSubscription || this.isModernAvocado || this.modernVendorPanel || this.isModernFulfillment;
+    },
+    isModernAvocado() {
+      return this.modern && this.isAvocado && this.type === "AVO" && !this.IS_VENDOR_PANEL && !this.isFulfillment;
+    },
+    isModernHyper() {
+      return this.modern && this.isHyper && this.type === "HYP" && !this.IS_VENDOR_PANEL && !this.isFulfillment;
+    },
+    modernVendorPanel() {
+      return this.modern && this.IS_VENDOR_PANEL && this.type === ProductType.PHYSICAL.code;
+    },
+    vendorReadOnly() {
+      return this.modernVendorPanel && (!this.vendor ||
+        typeof this.writeVendorAccess !== 'function' ||
+        !this.writeVendorAccess(this.vendor, VendorMemberTypes.VendorMemberRegionCode.ORDERS));
+    },
+    isModernSubscription() {
+      return this.modern && this.type === ProductType.SUBSCRIPTION.code &&
+        !this.IS_VENDOR_PANEL && !this.isFulfillment && !this.isAvocado;
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -702,7 +812,7 @@ export default {
     this.reject_reason = this.basket.reject;
   },
   mounted() {
-    if (!this.modern) return;
+    if (!this.modern || this.modernVendorPanel) return;
     try {
       const saved = localStorage.getItem("selldone.backoffice.order-dashboard.view-mode");
       if (saved === "refined" || saved === "workspace") this.order_view_mode = saved;
@@ -713,7 +823,7 @@ export default {
   unmounted() {},
   methods: {
     setOrderViewMode(mode) {
-      if (!this.modern || (mode !== "refined" && mode !== "workspace")) return;
+      if (!this.modern || this.modernVendorPanel || (mode !== "refined" && mode !== "workspace")) return;
       this.order_view_mode = mode;
       try {
         localStorage.setItem("selldone.backoffice.order-dashboard.view-mode", mode);
@@ -732,6 +842,10 @@ export default {
       ) => void = null,
       delivery_info = null,
     ) {
+      if (this.vendorReadOnly) {
+        if (callback) callback(false);
+        return;
+      }
       this.busy_update_state = true;
       axios
         .post(
@@ -839,6 +953,10 @@ export default {
     //―――――――――――――――― Order ▶ Delivery return ――――――――――――――――
 
     deliveryReturn(state, list, callback = null, delivery_info = null) {
+      if (this.vendorReadOnly) {
+        if (callback) callback();
+        return;
+      }
       this.busy_update_state = true;
       axios
         .post(
@@ -893,6 +1011,9 @@ export default {
     //―――――――――――――――― Order ▶ Reject order ――――――――――――――――
 
     rejectOrder() {
+      if (this.vendorReadOnly) return;
+      if ((this.isModernAvocado || this.isModernFulfillment) && (!this.dialog_reject || this.basket.delivery_state === this.PhysicalOrderStates.ToCustomer.code || !(this.isCOD || this.isPayed || this.isReserved) || !this.basketRejectReasons.some(reason => reason.code === this.reject_reason))) return;
+      if (this.isModernCancellation && (!this.reject_reason || this.busy_reject_order || this.busy_delete_reject)) return;
       this.busy_reject_order = true;
       axios
         .put(
@@ -947,6 +1068,9 @@ export default {
     //―――――――――――――――― Order ▶ Clear reject order ――――――――――――――――
 
     clearRejectOrder() {
+      if (this.vendorReadOnly) return;
+      if ((this.isModernAvocado || this.isModernFulfillment) && (!this.rejected || this.busy_reject_order || this.busy_delete_reject || this.isCanceled)) return;
+      if (this.modernVendorPanel && (this.busy_reject_order || this.busy_delete_reject)) return;
       this.busy_delete_reject = true;
       axios
         .delete(
@@ -1050,6 +1174,10 @@ export default {
       tracking_url,
       callback: (success: boolean) => void,
     ) {
+      if (this.vendorReadOnly) {
+        if (callback) callback(false);
+        return;
+      }
       axios
         .put(
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -1140,6 +1268,20 @@ export default {
     //―――――――――――――――― Edit receiver info by seller ――――――――――――――――
 
     showEditAddress(callback) {
+      // Fulfillment receiver data belongs to the reseller's retail basket, not this supplier order ID.
+      if (this.isFulfillment) {
+        if (callback) callback(false);
+        return;
+      }
+      if (this.vendorReadOnly) {
+        if (callback) callback(false);
+        return;
+      }
+      const vendorContext = this.modernVendorPanel ? {
+        vendorId: this.$route.params.vendor_id,
+        orderId: this.$route.params.vendor_order_id,
+        basketId: this.basket.id,
+      } : null;
       const center =
         this.basket.receiver_info && this.basket.receiver_info.location
           ? Object.assign({}, this.basket.receiver_info.location)
@@ -1150,6 +1292,15 @@ export default {
         "detail",
         map_location,
         (info) => {
+          // Recheck access when saving a map opened before a permission change.
+          if (this.vendorReadOnly || (vendorContext && (!this.modernVendorPanel ||
+            vendorContext.vendorId !== this.$route.params.vendor_id ||
+            vendorContext.orderId !== this.$route.params.vendor_order_id ||
+            vendorContext.basketId !== this.basket.id))) {
+            if (callback) callback(false);
+            this.closeMap();
+            return;
+          }
           //  console.log("receiver_info", this.basket.receiver_info, ">>>", info);
 
           if (callback) callback(true);
@@ -1198,6 +1349,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-order-subscription-cancel {
+  &.sd-modern-widget { margin: 0; padding: 0; border-radius: 16px; font-family: inherit; font-size: 14px; line-height: 21px; }
+  :deep(.v-card-title) { flex-wrap: wrap; gap: 8px; padding: 20px 20px 10px; font-family: inherit; font-size: 18px; font-weight: 500; line-height: 24px; }
+  :deep(.v-card-text) { padding: 12px 20px 20px; font-size: 14px; line-height: 21px; }
+  :deep(.v-card-actions) { padding: 0 20px 20px; }
+  &__section { margin-block-end: 24px; }
+  &__section :deep(h2) { font-family: inherit; font-size: 16px; font-weight: 500; line-height: 24px; }
+  &__message { margin-block: 8px 16px; font-size: 14px; line-height: 21px; }
+  &__notice { margin-block: 16px; align-items: start; }
+  &__notice p { margin: 0; font-size: 14px; line-height: 21px; }
+  &__actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; width: 100%; }
+  :deep(.sd-modern-underlined-field .v-field__input) { font-family: inherit; font-size: 14px; line-height: 21px; }
+}
+
 .b-order-dashboard--modern {
   padding: 26px 22px 28px;
   font-family: inherit;
@@ -1244,6 +1409,67 @@ export default {
     padding: 20px 10px;
     .b-order-dashboard__header-actions { width: 100%; justify-content: space-between; }
     .b-order-dashboard__cancel { min-height: 44px; }
+  }
+}
+
+.b-order-dashboard--vendor {
+  padding: 30px 26px 32px;
+  > .sd-modern-content { width: min(1040px, 100%); margin-inline: auto; }
+  .b-order-dashboard__heading { margin-block-end: 22px; }
+  .b-order-dashboard__vendor-type { display: inline-flex; align-items: center; gap: 5px; }
+  .b-order-dashboard__vendor-code { display: flex; align-items: center; gap: 9px; }
+  .b-order-dashboard__vendor-code svg { color: var(--sd-modern-muted); }
+  .v-locale--is-rtl & .b-order-dashboard__vendor-code svg { transform: scaleX(-1); }
+  .b-order-dashboard__header-actions { align-self: center; }
+  .b-order-dashboard__cancel { font-weight: 400; line-height: 18px; }
+  .smart-invert & :deep(.sd-modern-button.text-error:not(.v-btn--disabled)) { filter: invert(1); }
+  :deep(.sd-modern-button--inline) { font-weight: 400; }
+  :deep(.sd-modern-button:not(.sd-modern-button--x-large, .sd-modern-button--inline, .sd-modern-button--compact)) { font-size: 13px; line-height: 20px; }
+  .b-order-dashboard__vendor-progress {
+    :deep(.b-order-delivery-state__steps) {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0;
+      padding: 18px 12px;
+      margin-block: 0 18px;
+      border-radius: 16px;
+    }
+    :deep(.b-order-delivery-state__steps > li) {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      padding-inline: 5px;
+      text-align: center;
+      color: rgb(var(--v-theme-on-surface));
+    }
+    :deep(.b-order-delivery-state__steps > li:not(:last-child)::after) {
+      content: '';
+      position: absolute;
+      height: 1px;
+      inset-block-start: 14px;
+      inset-inline-start: 50%;
+      width: 100%;
+      background: var(--sd-modern-border);
+    }
+    :deep(.b-order-delivery-state__steps > li.is-complete::after) { background: rgb(var(--v-theme-on-surface)); }
+    :deep(.b-order-delivery-state__node) { position: relative; z-index: 1; flex: 0 0 28px; }
+    :deep(.b-order-delivery-state__detail) { justify-content: center; }
+    :deep(.b-order-delivery-state__detail > small) { font-size: 10px; line-height: 15px; }
+  }
+  @media (max-width: 600px) {
+    padding: 25px 14px 24px;
+    .b-order-dashboard__header-actions { width: auto; justify-content: flex-start; }
+    .b-order-dashboard__vendor-code { gap: 7px; font-size: 19px; }
+    .b-order-dashboard__vendor-progress {
+      :deep(.b-order-delivery-state__steps) { padding: 15px 6px; }
+      :deep(.b-order-delivery-state__steps > li) { padding-inline: 2px; gap: 5px; }
+      :deep(.b-order-delivery-state__title) { font-size: 11px; line-height: 16px; overflow-wrap: anywhere; }
+      :deep(.b-order-delivery-state__detail) { display: none; }
+      :deep(.b-order-delivery-state__node) { width: 26px; height: 26px; flex-basis: 26px; }
+      :deep(.b-order-delivery-state__steps > li:not(:last-child)::after) { inset-block-start: 13px; }
+    }
   }
 }
 </style>

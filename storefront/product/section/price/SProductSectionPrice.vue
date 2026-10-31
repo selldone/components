@@ -14,7 +14,7 @@
 
 <template>
   <div
-    v-if="!isService || calculated_price"
+    v-if="!isService || calculated_price || (embedMode && !is_valid_embed_price)"
     :class="{ 'flex-column-reverse': revers_col }"
     class="s-product-section-price px-2 mt-2 d-flex flex-grow-0"
   >
@@ -70,8 +70,9 @@
       <!-- ............................................................... -->
       <!-- Price > ⛔ Invalid exchange rate -->
       <u-price-invalid
-        v-if="isNaN(calculated_price)   || calculated_price===null"
+        v-if="embedMode ? !is_valid_embed_price : isNaN(calculated_price) || calculated_price === null"
         :currency="$product.currency"
+        :embed-mode="embedMode"
       >
       </u-price-invalid>
 
@@ -81,7 +82,7 @@
         class="price-value font-weight-black single-line"
       ></u-price>
 
-      <small v-if="$product.unit" class="ms-2">/ {{ $product.unit }}</small>
+      <small v-if="$product.unit && (!embedMode || is_valid_embed_price)" class="ms-2">/ {{ $product.unit }}</small>
 
       <span v-if="price_label" class="mx-1">{{ price_label }}</span>
 
@@ -149,6 +150,7 @@ export default {
     },
   },
   props: {
+    embedMode: { type: Boolean, default: false },
     selectedVendorProduct: {},
     preferences: {},
   },
@@ -205,6 +207,10 @@ export default {
       return out;
     },
 
+    is_valid_embed_price() {
+      return Number.isFinite(this.calculated_price);
+    },
+
     //
 
     discount_value() {
@@ -216,6 +222,8 @@ export default {
     },
 
     discount_percent() {
+      // A missing embed conversion must render its unavailable state before discount calculation.
+      if (this.embedMode && !this.is_valid_embed_price) return 0;
       return this.discountProductPercent(
         this.$shop,
         this.$product,

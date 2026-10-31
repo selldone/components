@@ -1,18 +1,60 @@
 <template>
-  <v-card class="text-start h-100" flat>
+  <v-card
+    :class="
+      modern
+        ? 'b-listing-search sd-modern-content text-start'
+        : 'text-start h-100'
+    "
+    flat
+  >
     <u-loading-progress v-if="busy_save || busy_generate || busy_fields" />
 
-    <v-card-text class="text-start position-relative pt-6">
+    <v-card-text
+      :class="
+        modern
+          ? 'b-listing-search__body text-start position-relative'
+          : 'text-start position-relative pt-6'
+      "
+    >
       <!-- Overview -->
-      <div class="widget-box mb-5">
-        <u-widget-header :title="$t('shop_listing.search.title')" icon="search" />
+      <header v-if="modern" class="sd-modern-header b-listing-search__header">
+        <div class="sd-modern-title">
+          <v-icon
+            class="sd-modern-icon sd-modern-icon--plain"
+            size="25"
+            aria-hidden="true"
+            >manage_search</v-icon
+          >
+          <div>
+            <h1 class="sd-modern-title-text">
+              {{ $t("shop_listing.search.title") }}
+            </h1>
+            <p class="sd-modern-subtitle">
+              {{ $t("shop_listing.search.subtitle") }}
+            </p>
+          </div>
+        </div>
+      </header>
+      <div v-else class="widget-box mb-5">
+        <u-widget-header
+          :title="$t('shop_listing.search.title')"
+          icon="search"
+        />
         <v-list-subheader>
           {{ $t("shop_listing.search.subtitle") }}
         </v-list-subheader>
       </div>
 
+      <div
+        v-if="modern && error_text"
+        class="sd-modern-notice mb-4"
+        role="alert"
+      >
+        <v-icon size="20" aria-hidden="true">error_outline</v-icon>
+        <p>{{ error_text }}</p>
+      </div>
       <v-alert
-        v-if="error_text"
+        v-else-if="error_text"
         type="error"
         variant="tonal"
         border="start"
@@ -22,10 +64,17 @@
       </v-alert>
 
       <!-- Location -->
-      <div class="widget-box mb-5">
+      <div
+        :class="
+          modern
+            ? 'sd-modern-widget b-listing-search__widget mb-5'
+            : 'widget-box mb-5'
+        "
+      >
         <u-widget-header
           :title="$t('shop_listing.search.location_title')"
           icon="my_location"
+          :class="modern ? 'sd-modern-form-header' : undefined"
         />
         <v-list-subheader>
           {{ $t("shop_listing.search.location_subtitle") }}
@@ -38,6 +87,8 @@
           :true-description="$t('shop_listing.search.location_enabled_true')"
           :false-description="$t('shop_listing.search.location_enabled_false')"
           false-gray
+          :border="modern"
+          :class="modern ? 'sd-modern-smart-select' : undefined"
         />
 
         <div class="mt-4">
@@ -51,8 +102,8 @@
             :max="maxRadiusSafe"
             :step="1"
             thumb-label="always"
-            color="black"
-            track-color="grey-lighten-3"
+            :color="modern ? 'primary' : 'black'"
+            :track-color="modern ? undefined : 'grey-lighten-3'"
           />
 
           <small class="text-muted d-block">
@@ -65,6 +116,7 @@
             v-model="form.location.max_radius_km"
             type="number"
             variant="underlined"
+            :class="modern ? 'sd-modern-underlined-field' : undefined"
             :label="$t('shop_listing.search.radius_max')"
           />
           <small class="text-muted d-block">
@@ -75,6 +127,7 @@
         <div class="mt-4">
           <v-combobox
             v-model="form.location.options_km"
+            :class="modern ? 'sd-modern-underlined-field' : undefined"
             variant="underlined"
             multiple
             chips
@@ -85,25 +138,49 @@
             closableChips
           />
 
-          <v-alert type="info" variant="tonal" class="mt-2 mb-0">
-            Remove a chip to hide that radius option on the storefront search UI.
-            If you remove all options, the radius dropdown will be hidden.
+          <div v-if="modern" class="sd-modern-notice mt-2" role="status">
+            <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+            <p>{{ $t("shop_listing.modern.radius_options_help") }}</p>
+          </div>
+          <v-alert v-else type="info" variant="tonal" class="mt-2 mb-0">
+            Remove a chip to hide that radius option on the storefront search
+            UI. If you remove all options, the radius dropdown will be hidden.
           </v-alert>
         </div>
       </div>
 
       <!-- Filters -->
-      <div class="widget-box mb-5">
-        <u-widget-header :title="$t('shop_listing.search.filters_title')" icon="tune">
+      <div
+        :class="
+          modern
+            ? 'sd-modern-widget b-listing-search__widget mb-5'
+            : 'widget-box mb-5'
+        "
+      >
+        <u-widget-header
+          :title="$t('shop_listing.search.filters_title')"
+          icon="tune"
+          :class="modern ? 'sd-modern-form-header' : undefined"
+        >
           <template v-slot:actions>
-            <v-btn variant="text" size="small" @click="addFilter">
+            <v-btn
+              variant="text"
+              :class="
+                modern ? 'sd-modern-button sd-modern-button--inline' : undefined
+              "
+              :size="modern ? undefined : 'small'"
+              @click="addFilter"
+            >
               <v-icon start>add</v-icon>
               {{ $t("global.actions.add") }}
             </v-btn>
 
             <v-btn
               variant="text"
-              size="small"
+              :class="
+                modern ? 'sd-modern-button sd-modern-button--inline' : undefined
+              "
+              :size="modern ? undefined : 'small'"
               :loading="busy_generate"
               @click="autoGenerate"
             >
@@ -126,11 +203,14 @@
           :key="`f_${idx}`"
           class="search-filter"
         >
-          <div class="d-flex align-center justify-space-between gap-2 flex-wrap">
+          <div
+            class="d-flex align-center justify-space-between gap-2 flex-wrap"
+          >
             <v-select
               v-model="f.key"
               :items="availableFieldKeys"
               variant="underlined"
+              :class="modern ? 'sd-modern-underlined-field' : undefined"
               :label="$t('shop_listing.search.filter_field')"
               @update:modelValue="syncFilterFromField(idx)"
             />
@@ -138,19 +218,33 @@
             <v-btn
               icon
               variant="text"
+              :class="modern ? 'sd-modern-icon-button' : undefined"
+              :aria-label="
+                modern ? $t('shop_listing.modern.remove_filter') : undefined
+              "
               @click="removeFilter(idx)"
-              title="Remove this filter"
+              :title="modern ? undefined : 'Remove this filter'"
             >
               <v-icon>close</v-icon>
+              <v-tooltip
+                v-if="modern"
+                activator="parent"
+                location="top"
+                content-class="sd-modern-tooltip text-start"
+                >{{ $t("shop_listing.modern.remove_filter") }}</v-tooltip
+              >
             </v-btn>
           </div>
 
-          <div class="d-flex align-center justify-space-between gap-2 flex-wrap">
+          <div
+            class="d-flex align-center justify-space-between gap-2 flex-wrap"
+          >
             <v-text-field
               v-model="f.label"
               variant="underlined"
               :label="$t('shop_listing.search.filter_label')"
               class="max-w-320"
+              :class="modern ? 'sd-modern-underlined-field' : undefined"
             />
 
             <v-select
@@ -161,6 +255,7 @@
               variant="underlined"
               :label="$t('shop_listing.search.filter_type')"
               class="max-w-220"
+              :class="modern ? 'sd-modern-underlined-field' : undefined"
             />
 
             <u-smart-toggle
@@ -168,6 +263,8 @@
               :true-title="$t('shop_listing.search.multiple')"
               :false-title="$t('shop_listing.search.single')"
               false-gray
+              :border="modern"
+              :class="modern ? 'sd-modern-smart-select' : undefined"
               class="ms-auto"
             />
           </div>
@@ -181,12 +278,14 @@
               variant="underlined"
               :label="$t('shop_listing.search.kv_mode')"
               class="max-w-220"
+              :class="modern ? 'sd-modern-underlined-field' : undefined"
             />
           </div>
 
           <div v-if="f.type === 'select'" class="mt-3">
             <v-combobox
               v-model="f.options"
+              :class="modern ? 'sd-modern-underlined-field' : undefined"
               multiple
               chips
               clearable
@@ -198,20 +297,39 @@
             />
           </div>
 
-          <v-divider class="my-4" />
+          <v-divider v-if="!modern" class="my-4" />
         </div>
       </div>
 
-      <v-alert v-if="!IS_LISTING_ACTIVE" type="info" variant="tonal" border="start">
+      <div
+        v-if="modern && !IS_LISTING_ACTIVE"
+        class="sd-modern-notice"
+        role="status"
+      >
+        <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+        <p>{{ $t("shop_listing.search.requires_listing_active") }}</p>
+      </div>
+      <v-alert
+        v-else-if="!IS_LISTING_ACTIVE"
+        type="info"
+        variant="tonal"
+        border="start"
+      >
         {{ $t("shop_listing.search.requires_listing_active") }}
       </v-alert>
     </v-card-text>
 
-    <v-card-actions>
-      <s-widget-buttons :auto-fixed-position="true">
+    <v-card-actions :class="modern ? 'b-listing-search__actions' : undefined">
+      <s-widget-buttons
+        :auto-fixed-position="true"
+        :class="modern ? 'sd-modern-form-actions' : undefined"
+      >
         <v-btn
           color="primary"
-          size="x-large"
+          :size="modern ? undefined : 'x-large'"
+          :class="
+            modern ? 'sd-modern-button sd-modern-button--primary' : undefined
+          "
           variant="elevated"
           :loading="busy_save"
           :disabled="!shopId"
@@ -245,6 +363,8 @@ export default {
   name: "BShopListingSearchSettings",
   inject: ["$shop"],
   components: { SWidgetButtons, USmartToggle, UWidgetHeader },
+
+  props: { modern: Boolean },
 
   data: () => ({
     busy_save: false,
@@ -280,7 +400,7 @@ export default {
     },
 
     IS_LISTING_ACTIVE(): boolean {
-      return !!(this.shop?.listing?.is_active);
+      return !!this.shop?.listing?.is_active;
     },
 
     // Alias for template readability
@@ -333,7 +453,9 @@ export default {
     "form.location.max_radius_km": {
       handler() {
         const max = this.maxRadiusSafe;
-        const def = parseInt(String(this.form.location.default_radius_km ?? 10), 10) || 10;
+        const def =
+          parseInt(String(this.form.location.default_radius_km ?? 10), 10) ||
+          10;
         if (def > max) this.form.location.default_radius_km = max;
       },
     },
@@ -355,11 +477,14 @@ export default {
       if (!s || typeof s !== "object") return;
 
       const text = s.text && typeof s.text === "object" ? s.text : {};
-      const loc = s.location && typeof s.location === "object" ? s.location : {};
+      const loc =
+        s.location && typeof s.location === "object" ? s.location : {};
       const filters = Array.isArray(s.filters) ? s.filters : [];
 
       // IMPORTANT: keep [] as []
-      const opts = Array.isArray(loc.options_km) ? loc.options_km : [5, 10, 20, 50];
+      const opts = Array.isArray(loc.options_km)
+        ? loc.options_km
+        : [5, 10, 20, 50];
 
       this.search_settings = {
         text: {
@@ -379,7 +504,8 @@ export default {
     fetchAvailableFieldsOnce() {
       if (!this.shopId) return;
       if (this.busy_fields) return;
-      if (Array.isArray(this.available_fields) && this.available_fields.length) return;
+      if (Array.isArray(this.available_fields) && this.available_fields.length)
+        return;
 
       this.busy_fields = true;
 
@@ -388,7 +514,9 @@ export default {
         .get(window.API.GET_SHOP_LISTING_SEARCH(this.shopId))
         .then(({ data }) => {
           if (data?.error) return;
-          this.available_fields = Array.isArray(data.available_fields) ? data.available_fields : [];
+          this.available_fields = Array.isArray(data.available_fields)
+            ? data.available_fields
+            : [];
         })
         .catch((e) => {
           // silent; UI still works with manual keys
@@ -399,7 +527,9 @@ export default {
 
     normalizeRadiusOptions(): number[] {
       // Must always return array (may be empty)
-      let arr: any[] = Array.isArray(this.form.location.options_km) ? this.form.location.options_km : [];
+      let arr: any[] = Array.isArray(this.form.location.options_km)
+        ? this.form.location.options_km
+        : [];
 
       arr = arr
         .map((x: any) => parseInt(String(x), 10))
@@ -427,22 +557,28 @@ export default {
         if (!key) return;
 
         const typeRaw = String(f.type || "select").trim();
-        const type = (["select", "switch", "text", "key_value"].includes(typeRaw) ? typeRaw : "select") as any;
+        const type = (
+          ["select", "switch", "text", "key_value"].includes(typeRaw)
+            ? typeRaw
+            : "select"
+        ) as any;
 
         const kvRaw = String(f.kv_mode || "key").trim();
-        const kv_mode = (["key", "value"].includes(kvRaw) ? kvRaw : "key") as any;
+        const kv_mode = (
+          ["key", "value"].includes(kvRaw) ? kvRaw : "key"
+        ) as any;
 
         const label = String(f.label || "").trim();
         const multiple = !!f.multiple;
 
         const options = Array.isArray(f.options)
           ? Array.from(
-            new Set(
-              f.options
-                .map((x: any) => String(x ?? "").trim())
-                .filter((x: string) => x.length),
-            ),
-          )
+              new Set(
+                f.options
+                  .map((x: any) => String(x ?? "").trim())
+                  .filter((x: string) => x.length),
+              ),
+            )
           : [];
 
         out.push({
@@ -464,7 +600,11 @@ export default {
 
       const defaultRadius = Math.min(
         max,
-        Math.max(1, parseInt(String(this.form.location.default_radius_km ?? 10), 10) || 10),
+        Math.max(
+          1,
+          parseInt(String(this.form.location.default_radius_km ?? 10), 10) ||
+            10,
+        ),
       );
 
       const options_km = this.normalizeRadiusOptions(); // may be []
@@ -474,7 +614,8 @@ export default {
         search_settings: {
           text: {
             enabled: !!this.form.text.enabled,
-            placeholder: String(this.form.text.placeholder || "").trim() || null,
+            placeholder:
+              String(this.form.text.placeholder || "").trim() || null,
           },
 
           location: {
@@ -518,7 +659,9 @@ export default {
       const key = String(this.form.filters[index]?.key || "").trim();
       if (!key) return;
 
-      const field = (this.available_fields || []).find((x: any) => String(x?.key || "") === key);
+      const field = (this.available_fields || []).find(
+        (x: any) => String(x?.key || "") === key,
+      );
       if (!field) return;
 
       if (!this.form.filters[index].label) {
@@ -530,7 +673,10 @@ export default {
       if (t === "switch") this.form.filters[index].type = "switch";
       if (t === "key_value") this.form.filters[index].type = "key_value";
 
-      if (this.form.filters[index].multiple === null || this.form.filters[index].multiple === undefined) {
+      if (
+        this.form.filters[index].multiple === null ||
+        this.form.filters[index].multiple === undefined
+      ) {
         this.form.filters[index].multiple = !!field.multiple;
       }
     },
@@ -554,7 +700,8 @@ export default {
         .post(window.API.POST_SHOP_LISTING_SEARCH_SAVE(this.shopId), payload)
         .then(({ data }) => {
           if (data?.error) {
-            this.error_text = data.error_msg || "Failed to save search settings.";
+            this.error_text =
+              data.error_msg || "Failed to save search settings.";
             return;
           }
 
@@ -619,7 +766,64 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.max-w-320 { max-width: 320px; }
-.max-w-220 { max-width: 220px; }
-.search-filter { padding-top: 6px; }
+.max-w-320 {
+  max-width: 320px;
+}
+.max-w-220 {
+  max-width: 220px;
+}
+.search-filter {
+  padding-top: 6px;
+}
+.b-listing-search {
+  background: transparent;
+  overflow: visible;
+  &__body {
+    padding: 0;
+  }
+  &__header {
+    margin-block-end: 24px;
+  }
+  &__header .sd-modern-title-text {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 32px;
+    letter-spacing: -0.4px;
+  }
+  &__widget {
+    padding: 22px;
+    border-radius: 16px;
+  }
+  &__widget :deep(.v-list-subheader) {
+    padding-inline: 0;
+  }
+  &__actions {
+    padding: 0;
+  }
+  .search-filter {
+    padding-block: 20px;
+  }
+  .search-filter + .search-filter {
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  .gap-2 {
+    gap: 12px;
+  }
+  @media (max-width: 600px) {
+    &__widget {
+      padding-inline: 14px;
+    }
+    .max-w-320,
+    .max-w-220 {
+      max-width: 100%;
+      flex: 1 1 100%;
+    }
+    .search-filter > .d-flex > .v-input {
+      min-width: 0;
+    }
+    .search-filter .sd-modern-smart-select {
+      width: 100%;
+    }
+  }
+}
 </style>

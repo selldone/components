@@ -12,230 +12,354 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <u-pods-panel color="#fff">
-    <u-pod-node icon="credit_card" title="Another Wallet"></u-pod-node>
-    <u-pod-wire forward></u-pod-wire>
-
-    <u-pod-node is-selldone-icon title="This Wallet"></u-pod-node>
-  </u-pods-panel>
-
-  <!-- ------------------- Top-up Form From Wallet ------------------- -->
-
-  <b-account-input v-model="account_from" variant="outlined" label="From" ></b-account-input>
-
-  <u-price-input
-    v-model="amount"
-    :currency="currency"
-    :label="`${$t('account_page.deposit.form.amount_input')}*`"
-    :messages="`${FormatNumberCurrency(
-      amount,
-      account.currency,
-    )} ${GetUserSelectedCurrencyName(account.currency)}`"
-    class="strong-field"
-    required
-    suffix=""
-  >
-    <template v-slot:append-inner>
-      <u-currency-icon
-        :currency="currency"
-        flag
-        gradient
-        small
-      ></u-currency-icon>
-    </template>
-  </u-price-input>
-
-  <u-loading-progress v-if="busy_check"></u-loading-progress>
-  <div class="my-5 text-muted small">
-    <ul>
-      <li>
-        You can transfer funds from another one of your wallets. The system will
-        automatically calculate the exchange rate for you.
-      </li>
-      <li>
-        We don't charge any additional fees on exchange rates—it's completely
-        free!
-      </li>
-      <li v-if="!busy_check && account_from" class="d-inline-flex my-1">
-        Balance can be withdrawn from selected wallet:
-        <v-chip color="#000" class="ms-1" variant="flat" label density="compact">
-        <u-price
-          :amount="free_balance"
-          :currency="account_from.currency"></u-price>
-        </v-chip>
-      </li>
-
-      <li v-if="!busy_check && exchange_rate" class="d-inline-flex">
-
-       <span class="d-inline-flex align-center justify-center">
-          <u-currency-icon
-            :currency="currency_from"
-            flag
-            flag-only
-          ></u-currency-icon>
-         <v-icon class="mx-1">{{ $t("icons.chevron_next") }}</v-icon>
-        <u-currency-icon
-          :currency="currency_to"
-          flag
-          flag-only
-        ></u-currency-icon>
-         Exchange rate:
-       </span>
-        <v-chip color="#000" class="ms-1 font-weight-bold" variant="flat" label density="compact">{{exchange_rate}}</v-chip>
-      </li>
-    </ul>
-  </div>
-
-  <div class="widget-buttons">
-    <v-btn
-      :disabled="amount <=0  || !account_from"
-      color="primary"
-      rounded
-      size="x-large"
-      stacked
-      variant="elevated"
-      @click.stop="topUpWithAnotherWallet()"
-      :loading="busy_transfer"
-    >
-      <div>
-        {{ $t("account_page.deposit.form.charge_action") }}
-
-        <u-price
-          v-if="amount > 0"
-          :amount="amount"
-          :currency="account.currency"
-          class="ms-2"
+<template>
+  <div class="b-account-charge-method">
+    <div class="b-account-charge-method__fields">
+      <slot name="method" :busy="busy_transfer" />
+      <!-- ------------------- Top-up Form From Wallet ------------------- -->
+      <b-account-input
+        v-model="account_from"
+        :disabled="busy_transfer"
+        variant="underlined"
+        clearable
+        :label="$t('account_page.deposit.modern.source')"
+        :messages="$t('account_page.deposit.modern.source_help')"
+        class="sd-modern-underlined-field"
+      />
+      <div v-if="account_from" class="b-account-charge-method__source">
+        <button
+          v-copy="formatCard(account_from.account_number)"
+          type="button"
+          class="b-account-charge-method__copy"
+          :aria-label="$t('account_page.deposit.modern.copy')"
         >
-        </u-price>
+          <bdi dir="ltr">{{ formatCard(account_from.account_number) }}</bdi
+          ><v-icon size="13" aria-hidden="true">content_copy</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+            open-on-focus
+            >{{ $t("account_page.deposit.modern.copy") }}</v-tooltip
+          >
+        </button>
+        <div v-if="quote_ready" class="b-account-charge-method__note">
+          {{ $t("account_page.deposit.modern.source_available") }} ·
+          <u-price :amount="free_balance" :currency="account_from.currency" />
+        </div>
       </div>
-      <div v-if="!account_from" class="small mt-1">
-        ⚠ Please select a wallet to transfer funds from.
+      <div
+        v-if="busy_check"
+        class="b-account-charge-method__note"
+        role="status"
+      >
+        <v-progress-circular indeterminate size="14" width="2" class="me-2" />{{
+          $t("global.commons.loading")
+        }}
       </div>
-      <div v-else-if="amount <= 0" class="small mt-1">
-        ⚠ Please enter an amount to charge.
+      <div
+        v-if="quote_error"
+        class="b-account-charge-method__notice"
+        role="alert"
+      >
+        <v-icon size="16" aria-hidden="true">error_outline</v-icon>
+        <div>
+          {{ $t("account_page.deposit.modern.source_error")
+          }}<v-btn
+            v-if="
+              account_from &&
+              account_from.account_number !== account.account_number
+            "
+            variant="text"
+            class="sd-modern-button sd-modern-button--inline"
+            @click="checkAccount()"
+            >{{ $t("account_page.deposit.modern.retry") }}</v-btn
+          >
+        </div>
       </div>
-    </v-btn>
+      <div class="b-account-charge-method__amount">
+        <label
+          :for="`account-charge-wallet-${account.account_number}`"
+          class="b-account-charge-method__label"
+          >{{ $t("account_page.deposit.modern.amount")
+          }}<span aria-hidden="true">*</span></label
+        >
+        <u-price-input
+          :id="`account-charge-wallet-${account.account_number}`"
+          v-model="amount"
+          :decimal="currency.floats"
+          :disabled="busy_transfer"
+          :aria-label="$t('account_page.deposit.modern.amount')"
+          :aria-describedby="`account-charge-wallet-help-${account.account_number}`"
+          class="sd-modern-underlined-field"
+          required
+          hide-details
+          variant="underlined"
+          suffix=""
+          dir="ltr"
+          inputmode="decimal"
+          ><template #append-inner
+            ><span>{{ input_currency }}</span></template
+          ></u-price-input
+        >
+        <p
+          :id="`account-charge-wallet-help-${account.account_number}`"
+          class="b-account-charge-method__note"
+        >
+          {{
+            $t("account_page.deposit.modern.amount_help", {
+              currency: input_currency,
+            })
+          }}<span v-if="charge_amount > 0">
+            · <u-price :amount="charge_amount" :currency="account.currency"
+          /></span>
+        </p>
+      </div>
+      <div
+        v-if="quote_ready && currency_from !== currency_to"
+        class="b-account-charge-method__rate"
+      >
+        <span>{{ $t("account_page.deposit.modern.exchange_rate") }}</span>
+        <u-currency-icon
+          :currency="GetCurrency(currency_from)"
+          flag-only
+          small
+        />
+        <bdi dir="ltr"
+          >1 {{ currency_from }} = {{ exchange_rate }} {{ currency_to }}</bdi
+        >
+        <u-currency-icon :currency="GetCurrency(currency_to)" flag-only small />
+      </div>
+      <p class="b-account-charge-method__note">
+        {{ $t("account_page.deposit.modern.no_exchange_fee") }}
+      </p>
+    </div>
+    <aside class="b-account-charge-method__context">
+      <div class="b-account-charge-method__wallet"><slot name="account" /></div>
+      <div
+        class="b-account-charge-method__summary"
+        aria-live="polite"
+        :aria-busy="busy_check"
+      >
+        <h3>{{ $t("account_page.deposit.modern.summary") }}</h3>
+        <dl class="b-account-charge-method__facts">
+          <div>
+            <dt>{{ $t("account_page.deposit.modern.source_debit") }}</dt>
+            <dd>
+              <u-price
+                v-if="quote_ready"
+                :amount="source_debit"
+                :currency="account_from.currency"
+              /><span v-else>—</span>
+            </dd>
+          </div>
+          <div class="b-account-charge-method__total">
+            <dt>{{ $t("account_page.deposit.modern.wallet_credit") }}</dt>
+            <dd>
+              <u-price :amount="charge_amount" :currency="account.currency" />
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </aside>
+    <div class="b-account-charge-method__actions">
+      <div
+        v-if="quote_ready && source_debit > free_balance"
+        class="b-account-charge-method__notice"
+        role="alert"
+      >
+        <v-icon size="16" aria-hidden="true">error_outline</v-icon
+        >{{ $t("account_page.deposit.modern.insufficient") }}
+      </div>
+      <v-btn
+        :disabled="!can_transfer"
+        :loading="busy_transfer"
+        color="primary"
+        variant="elevated"
+        class="sd-modern-button sd-modern-button--primary"
+        prepend-icon="swap_vert"
+        @click.stop="topUpWithAnotherWallet()"
+        >{{ $t("account_page.deposit.modern.wallet_transfer") }}</v-btn
+      >
+      <p
+        v-if="!account_from || !charge_amount"
+        class="b-account-charge-method__note"
+      >
+        {{
+          $t(
+            !account_from
+              ? "account_page.deposit.modern.source_required"
+              : "account_page.deposit.modern.amount_required",
+          )
+        }}
+      </p>
+    </div>
   </div>
-
-
-
 </template>
 
 <script lang="ts">
 import UPriceInput from "../../../../../ui/price/input/UPriceInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
-import UPaymentForm from "../../../../../ui/payment/form/UPaymentForm.vue";
 import UCurrencyIcon from "../../../../../ui/currency/icon/UCurrencyIcon.vue";
-import UPodWire from "../../../../../ui/pod/wire/UPodWire.vue";
-import UPodsPanel from "../../../../../ui/pod/panel/UPodsPanel.vue";
-import UPodNode from "../../../../../ui/pod/node/UPodNode.vue";
-
-import BAccountTax from "../../../../account/tax/BAccountTax.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
-import BAccountInput from "@selldone/components-vue/backoffice/account/input/BAccountInput.vue";
+import AccountMixin from "@selldone/components-vue/mixin/account/AccountMixin.ts";
+import BAccountInput from "../../../input/BAccountInput.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 
 export default {
   name: "BAccountChargePaymentFromWallet",
-  mixins: [CurrencyMixin],
-  components: {
-    ULoadingProgress,
-    BAccountInput,
-    BAccountTax,
-
-    UPodNode,
-    UPodsPanel,
-    UPodWire,
-    UCurrencyIcon,
-    UPaymentForm,
-    UPriceInput,
-  },
-
+  mixins: [CurrencyMixin, AccountMixin],
+  components: { BAccountInput, UCurrencyIcon, UPriceInput },
   emits: ["request:refresh"],
-  props: {
-    account: {
-      required: true,
-      type: Object,
-    },
-  },
-
+  props: { account: { required: true, type: Object } },
   data: () => ({
     amount: 0,
     account_from: null,
     busy_transfer: false,
-
-
-    busy_check:false,
+    busy_check: false,
     exchange_rate: null,
-    currency_from:null,
+    currency_from: null,
     currency_to: null,
     free_balance: 0,
-    can_execute:false,
+    quote_request: 0,
+    quote_source: null,
+    quote_destination: null,
+    quote_error: false,
   }),
   computed: {
     currency() {
       return Currency[this.account.currency];
     },
-  },
-
-  watch: {
-    account_from(){
-      this.exchange_rate= null;
-      this.currency_from= null;
-      this.currency_to= null;
-      this.free_balance = 0;
+    input_currency() {
+      const name = this.$t(
+        this.account.currency === "IRR"
+          ? "transaction_form.modern.rial"
+          : this.currency.name,
+      );
+      return name === this.account.currency
+        ? name
+        : `${this.account.currency} · ${name}`;
     },
-
-    account_from(){
+    charge_amount() {
+      const amount = Number(this.amount);
+      return Number.isFinite(amount) && amount > 0 ? amount : 0;
+    },
+    quote_ready() {
+      return (
+        !!this.account_from &&
+        this.quote_source === this.account_from.account_number &&
+        this.quote_destination === this.account.account_number &&
+        this.currency_from === this.account_from.currency &&
+        this.currency_to === this.account.currency &&
+        Number.isFinite(this.exchange_rate) &&
+        this.exchange_rate > 0 &&
+        !this.busy_check &&
+        !this.quote_error
+      );
+    },
+    source_debit() {
+      if (!this.quote_ready || !this.charge_amount) return 0;
+      return Number(
+        (this.charge_amount / this.exchange_rate).toFixed(
+          Currency[this.account_from.currency].floats,
+        ),
+      );
+    },
+    can_transfer() {
+      return (
+        this.charge_amount > 0 &&
+        this.account_from?.account_number !== this.account.account_number &&
+        this.quote_ready &&
+        !this.busy_transfer &&
+        Number.isFinite(this.source_debit) &&
+        this.source_debit > 0 &&
+        this.source_debit <= this.free_balance
+      );
+    },
+  },
+  watch: {
+    account_from() {
       this.checkAccount();
-    }
+    },
   },
   created() {
-    if (this.$route.query.charge) this.amount = this.$route.query.charge;
+    const amount = Number(this.$route.query.charge);
+    if (Number.isFinite(amount) && amount > 0) this.amount = amount;
   },
-
+  beforeUnmount() {
+    this.quote_request++;
+  },
   methods: {
     checkAccount() {
-      if(!this.account)return;
-
+      const request = ++this.quote_request;
+      this.exchange_rate = null;
+      this.currency_from = null;
+      this.currency_to = null;
+      this.free_balance = 0;
+      this.quote_source = null;
+      this.quote_destination = null;
+      this.quote_error = false;
+      this.busy_check = false;
+      if (!this.account_from) return;
+      if (this.account_from.account_number === this.account.account_number) {
+        this.quote_error = true;
+        return;
+      }
+      const source = this.account_from.account_number;
+      const destination = this.account.account_number;
       this.busy_check = true;
-      axios
+      return axios
         .post(
-          window.API.POST_ACCOUNT_EXCHANGE_WITH_ANOTHER_WALLET_CHECK(this.account.account_number),
-          {
-            account_from: this.account_from.account_number,
-          },
+          window.API.POST_ACCOUNT_EXCHANGE_WITH_ANOTHER_WALLET_CHECK(
+            destination,
+          ),
+          { account_from: source },
         )
         .then(({ data }) => {
-          if (data.error) {
-            NotificationService.showErrorAlert(null, data.error_msg);
-          } else {
-            this.exchange_rate=data.exchange_rate;
-            this.free_balance=data.free_balance;
-            this.currency_from= data.from;
-            this.currency_to= data.to;
-
-
+          // A cleared or changed source must never reuse an older wallet's quote.
+          if (request !== this.quote_request) return;
+          const rate = Number(data.exchange_rate),
+            balance = Number(data.free_balance);
+          if (
+            data.error ||
+            !Number.isFinite(rate) ||
+            rate <= 0 ||
+            !Number.isFinite(balance) ||
+            balance < 0 ||
+            data.from !== this.account_from?.currency ||
+            data.to !== this.account.currency
+          ) {
+            this.quote_error = true;
+            if (data.error)
+              NotificationService.showErrorAlert(null, data.error_msg);
+            return;
           }
+          this.exchange_rate = rate;
+          this.free_balance = balance;
+          this.currency_from = data.from;
+          this.currency_to = data.to;
+          this.quote_source = source;
+          this.quote_destination = destination;
         })
         .catch((error) => {
+          if (request !== this.quote_request) return;
+          this.quote_error = true;
           NotificationService.showLaravelError(error);
         })
-
         .finally(() => {
-          this.busy_check = null;
+          if (request === this.quote_request) this.busy_check = false;
         });
     },
-
     topUpWithAnotherWallet() {
+      if (!this.can_transfer) return;
       this.busy_transfer = true;
-      axios
+      return axios
         .post(
-          window.API.POST_ACCOUNT_EXCHANGE_WITH_ANOTHER_WALLET(this.account.account_number),
+          window.API.POST_ACCOUNT_EXCHANGE_WITH_ANOTHER_WALLET(
+            this.account.account_number,
+          ),
           {
-            amount: this.amount,
+            amount: this.charge_amount,
             account_from: this.account_from.account_number,
           },
         )
@@ -243,24 +367,20 @@ export default {
           if (data.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
           } else {
-            this.amount=0;
+            this.amount = 0;
             this.$emit("request:refresh");
             NotificationService.showSuccessAlert(
               null,
-              `The funds have been successfully transferred from your wallet.`,
+              this.$t("account_page.deposit.modern.transferred"),
             );
+            this.checkAccount();
           }
         })
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
-
+        .catch((error) => NotificationService.showLaravelError(error))
         .finally(() => {
-          this.busy_transfer = null;
+          this.busy_transfer = false;
         });
     },
   },
 };
 </script>
-
-<style lang="scss" scoped></style>

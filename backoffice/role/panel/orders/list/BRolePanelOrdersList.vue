@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    class="b-role-orders-list text-start"
+    class="b-role-orders-list s-table-loading text-start"
     :class="modern ? 'b-role-orders-list--modern' : 'widget-box -large'"
     :aria-busy="busy_fetch"
   >
@@ -78,7 +78,7 @@
       @update:options="updateOptions"
       @click:row="(_, r) => selectOrder(r.item)"
     >
-      <template v-slot:loading>
+      <template v-if="!orders.length" v-slot:loading>
         <u-loading-ellipsis css-mode light></u-loading-ellipsis>
       </template>
 
@@ -543,8 +543,10 @@ export default {
       const roleScope = this.roleScope;
       this.page = page;
       this.$emit("scope-change");
-      this.orders = [];
-      this.loadedRoleScope = null;
+      if (this.loadedRoleScope !== roleScope) {
+        this.orders = [];
+        this.loadedRoleScope = null;
+      }
       // Keep the last page count while loading; a transient zero makes Vuetify reset to page 1.
       this.load_error = false;
       this.busy_fetch = true;
@@ -666,12 +668,12 @@ export default {
     }
     :deep(.v-table__wrapper > table > thead > tr > th) {
       height: 45px;
-      padding: 14px 7px !important;
+      padding: 14px 12px !important;
       white-space: normal;
     }
     :deep(.v-table__wrapper > table > tbody > tr > td) {
       height: 77px;
-      padding: 10px 7px;
+      padding: 10px 12px;
       font-family: inherit;
       font-size: 11px;
       line-height: 1.5;

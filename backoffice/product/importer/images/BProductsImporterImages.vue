@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div>
+  <div class="s-table-loading" :aria-busy="busy_fetch">
     <v-row no-gutters>
       <v-spacer></v-spacer>
 

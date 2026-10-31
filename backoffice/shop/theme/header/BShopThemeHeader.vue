@@ -14,10 +14,11 @@
 
 <template>
   <div class="b-shop-theme-header text-start">
-    <div class="sd-modern-widget">
+    <div class="sd-modern-widget b-shop-theme-header__modes">
       <u-smart-select
         class="sd-modern-smart-select"
         border
+        accessible
         :model-value="header_mode"
         :items="header_modes"
         item-value="id"
@@ -30,26 +31,9 @@
       ></u-smart-select>
     </div>
 
-    <template v-if="header_mode === 'custom'">
-      <div class="sd-modern-widget">
-        <u-widget-header
-          class="sd-modern-form-header"
-          icon="code"
-          :title="$t('shop_theme.studio.custom_header_title')"
-        ></u-widget-header>
-        <v-list-subheader class="sd-modern-subtitle b-shop-theme-header__subtitle">
-          {{ $t('shop_theme.studio.custom_header_description') }}
-        </v-list-subheader>
+    <slot v-if="header_mode === 'custom'" name="custom-code" />
 
-        <BShopHtmlEditor
-          :model-value="customCode"
-          @update:model-value="(code) => $emit('update:customCode', code)"
-          :readOnly="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-        ></BShopHtmlEditor>
-      </div>
-    </template>
-
-    <template v-else-if="header_mode === 'default'">
+    <div v-else-if="header_mode === 'default'" class="b-shop-theme-header__default">
       <div class="b-shop-theme-header__preview">
         <v-list-subheader class="sd-modern-eyebrow"
           >{{ $t("global.commons.preview") }}
@@ -93,15 +77,16 @@
         </v-toolbar>
       </div>
 
-      <div class="sd-modern-widget">
+      <div class="sd-modern-widget b-shop-theme-header__settings">
+      <section class="b-shop-theme-header__logo">
         <u-widget-header
           class="sd-modern-form-header"
           icon="photo"
           :title="$t('b_shop_theme_header.logo.title')"
         ></u-widget-header>
-        <v-list-subheader class="sd-modern-subtitle b-shop-theme-header__subtitle">
+        <p class="sd-modern-subtitle b-shop-theme-header__subtitle">
           {{ $t("b_shop_theme_header.logo.subtitle") }}
-        </v-list-subheader>
+        </p>
 
         <s-image-uploader
           :image="getShopImagePath(logo ? logo : $shop.icon)"
@@ -135,18 +120,18 @@
             ></u-dimension-input>
           </v-col>
         </v-row>
-      </div>
+      </section>
 
-      <div class="sd-modern-widget">
+      <section class="b-shop-theme-header__title">
         <u-widget-header
           class="sd-modern-form-header"
           icon="edit_square"
           :title="$t('b_shop_theme_header.header_title.title')"
         ></u-widget-header>
 
-        <v-list-subheader class="sd-modern-subtitle b-shop-theme-header__subtitle">
+        <p class="sd-modern-subtitle b-shop-theme-header__subtitle">
           {{ $t("b_shop_theme_header.header_title.subtitle") }}
-        </v-list-subheader>
+        </p>
 
         <v-text-field
           class="sd-modern-underlined-field"
@@ -174,8 +159,9 @@
             {{ $t("b_shop_theme_header.inputs.title.set_empty") }}
           </v-btn>
         </div>
+      </section>
       </div>
-    </template>
+    </div>
   </div>
 </template>
 
@@ -185,14 +171,12 @@ import SImageUploader from "@selldone/components-vue/ui/uploader/SImageUploader.
 import UDimensionInput from "@selldone/components-vue/ui/dimension/input/UDimensionInput.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions.ts";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
-import BShopHtmlEditor from "@selldone/components-vue/backoffice/shop/html/editor/BShopHtmlEditor.vue";
 import USmartSelect from "@selldone/components-vue/ui/smart/select/USmartSelect.vue";
 
 export default defineComponent({
   name: "BShopThemeHeader",
   components: {
     USmartSelect,
-    BShopHtmlEditor,
     UWidgetHeader,
     UDimensionInput,
     SImageUploader,
@@ -256,7 +240,7 @@ export default defineComponent({
       return (
         this.logo &&
         ((this.logoW && this.logoW !== "unset") ||
-          (this.lologoHo_h && this.logoH !== "unset"))
+          (this.logoH && this.logoH !== "unset"))
       );
     },
   },
@@ -316,6 +300,14 @@ export default defineComponent({
 
   &__subtitle { padding: 0; margin-block: 0 20px; min-height: 0; }
   &__store-title { font-size: 15px; font-weight: 500; line-height: 22px; }
+  &__modes, &__default { width: min(760px, 100%); margin-inline: auto; }
+  &__default { display: grid; gap: 22px; min-width: 0; }
+  &__settings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 28px; }
+  &__logo, &__title { min-width: 0; }
   &__preview { min-width: 0; }
+
+  @media (max-width: 700px) {
+    &__settings { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  }
 }
 </style>

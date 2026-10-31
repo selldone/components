@@ -21,6 +21,10 @@
     :show-engagement="showEngagement"
     :initial-expanded="initialExpanded"
     :is-sample="isSample"
+    :favorite="favorite"
+    :favorite-loading="favoriteLoading"
+    :favorite-disabled="favoriteDisabled"
+    @toggle-favorite="$emit('toggle-favorite')"
   />
   <router-link
     v-else
@@ -556,11 +560,15 @@ export default {
     BShopCardProducts,
     URibbon,
   },
+  emits: ["toggle-favorite"],
   props: {
     modern: Boolean,
     compact: Boolean,
     showEngagement: { type: Boolean, default: true },
     initialExpanded: Boolean,
+    favorite: { type: Boolean, default: null },
+    favoriteLoading: { type: Boolean, default: false },
+    favoriteDisabled: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,

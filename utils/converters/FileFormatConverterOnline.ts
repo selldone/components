@@ -19,7 +19,7 @@ export class FileFormatConverterOnline {
   static VendorConvertToCsv(vue, vendor_id, file, success) {
     const url = window.VAPI.POST_MY_VENDOR_CONVERTER_EXCEL_CSV(vendor_id);
 
-    UploadHelper.UploadFile(
+    return UploadHelper.UploadFile(
       vue,
       null,
       url,
@@ -42,7 +42,7 @@ export class FileFormatConverterOnline {
   static ConvertToCsv(vue, shop_id, file, success) {
     const url = window.API.POST_CONVERTER_EXCEL_CSV(shop_id);
 
-    UploadHelper.UploadFile(
+    return UploadHelper.UploadFile(
       vue,
       null,
       url,

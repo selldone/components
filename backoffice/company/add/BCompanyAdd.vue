@@ -15,7 +15,10 @@
 <template>
   <v-card
     class="b-company-add text-start"
-    :class="{ 'b-company-add--modern sd-modern-canvas': modern }"
+    :class="{
+      'b-company-add--modern sd-modern-canvas': modern,
+      'b-company-add--edit': isModernEdit,
+    }"
   >
     <v-card-title v-if="!company && !modern">
       <v-icon class="me-2">domain_add</v-icon>
@@ -23,17 +26,69 @@
     </v-card-title>
     <header v-if="modern" class="b-company-add__header">
       <div class="sd-modern-title">
-        <v-icon class="b-company-add__purpose" aria-hidden="true"
-          >business</v-icon
-        >
+        <v-icon class="b-company-add__purpose" aria-hidden="true">{{
+          isModernEdit ? "edit_note" : "business"
+        }}</v-icon>
         <div>
           <h1 class="sd-modern-title-text">
-            {{ $t("add_company.modern.title") }}
+            {{
+              $t(
+                isModernEdit
+                  ? "add_company.modern.edit_title"
+                  : "add_company.modern.title",
+              )
+            }}
           </h1>
           <p class="sd-modern-subtitle">
-            {{ $t("add_company.modern.subtitle") }}
+            {{
+              $t(
+                isModernEdit
+                  ? "add_company.modern.edit_subtitle"
+                  : "add_company.modern.subtitle",
+              )
+            }}
           </p>
         </div>
+      </div>
+      <div v-if="isModernEdit" class="b-company-add__lock">
+        <span>{{
+          $t(
+            lock
+              ? "add_company.modern.edit_locked"
+              : "add_company.modern.edit_unlocked",
+          )
+        }}</span>
+        <v-tooltip
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          open-on-focus
+        >
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              type="button"
+              class="sd-modern-icon-button"
+              :icon="lock ? 'lock' : 'lock_open'"
+              variant="text"
+              :disabled="busy"
+              :aria-label="
+                $t(
+                  lock
+                    ? 'add_company.modern.edit_unlock'
+                    : 'add_company.modern.edit_lock',
+                )
+              "
+              @click="toggleEditLock"
+            />
+          </template>
+          {{
+            $t(
+              lock
+                ? "add_company.modern.edit_unlock"
+                : "add_company.modern.edit_lock",
+            )
+          }}
+        </v-tooltip>
       </div>
       <v-tooltip
         v-if="hasBack"
@@ -226,15 +281,57 @@
             />
           </div>
 
-          <div v-if="company">
+          <div v-if="company" :class="{ 'b-company-add__logo': isModernEdit }">
             <s-image-uploader
+              :key="company.id"
               :image="getShopImagePath(company.logo)"
               :server="window.API.POST_UPLOAD_COMPANY_IMAGE(company.id, 'logo')"
+              :thumbnail="isModernEdit"
+              :modern="isModernEdit"
               auto-compact
-              label="Company logo"
+              :label="
+                isModernEdit
+                  ? $t('add_company.modern.logo_label')
+                  : 'Company logo'
+              "
+              :hint="
+                isModernEdit
+                  ? $t('add_company.modern.logo_upload_help')
+                  : undefined
+              "
+              :choose-label="
+                isModernEdit ? $t('add_company.modern.logo_edit') : undefined
+              "
+              :edit-label="
+                isModernEdit ? $t('add_company.modern.logo_edit') : undefined
+              "
               max-file-size="512KB"
-              @new-path="(path) => (company.logo = path)"
-            />
+              @new-path="setCompanyLogo($event, company.id)"
+            >
+              <template v-if="isModernEdit" #thumbnail-heading>
+                <div class="b-company-add__logo-heading">
+                  <span>{{ $t("add_company.modern.logo_label") }}</span>
+                  <v-tooltip
+                    location="top"
+                    content-class="sd-modern-tooltip text-start"
+                    open-on-focus
+                    open-on-click
+                  >
+                    <template #activator="{ props }">
+                      <v-btn
+                        v-bind="props"
+                        type="button"
+                        class="sd-modern-icon-button sd-modern-info-button"
+                        icon="info_outline"
+                        variant="text"
+                        :aria-label="$t('add_company.modern.logo_label')"
+                      />
+                    </template>
+                    {{ $t("add_company.modern.logo_file_help") }}
+                  </v-tooltip>
+                </div>
+              </template>
+            </s-image-uploader>
           </div>
         </section>
 
@@ -280,7 +377,13 @@
                       :aria-label="$t('add_company.modern.tax_help_label')"
                     />
                   </template>
-                  {{ $t("add_company.modern.tax_help") }}
+                  {{
+                    $t(
+                      isModernEdit
+                        ? "add_company.modern.edit_tax_help"
+                        : "add_company.modern.tax_help",
+                    )
+                  }}
                 </v-tooltip>
               </div>
             </div>
@@ -295,6 +398,14 @@
               :readonly="lock || (modern && busy)"
               :required="modern"
               :persistent-placeholder="modern"
+              :menu-props="
+                isModernEdit
+                  ? { contentClass: 'sd-modern-menu text-start' }
+                  : undefined
+              "
+              :list-props="
+                isModernEdit ? { class: 'sd-modern-menu__list' } : undefined
+              "
               item-value="alpha2"
               variant="underlined"
             ></s-country-select>
@@ -311,7 +422,7 @@
               :messages="
                 company
                   ? modern
-                    ? $t('add_company.modern.review_warning')
+                    ? undefined
                     : 'If you change it, your company needs to SD review and verify your business again.'
                   : undefined
               "
@@ -340,12 +451,19 @@
           </div>
           <p v-if="modern" class="b-company-add__documents">
             <v-icon size="15" aria-hidden="true">file_copy</v-icon>
-            <span>{{ $t("add_company.modern.documents_help") }}</span>
+            <span>{{
+              $t(
+                isModernEdit
+                  ? "add_company.modern.edit_documents_help"
+                  : "add_company.modern.documents_help",
+              )
+            }}</span>
           </p>
         </section>
         <u-smart-verify
           v-if="modern"
-          v-model="verify_check"
+          :model-value="verify_check"
+          @update:model-value="updateVerification"
           class="b-company-add__verification"
           :true-title="$t('add_company.modern.verify_title')"
           :true-description="$t('add_company.modern.verify_description')"
@@ -373,7 +491,9 @@
           <span class="sd-modern-notice__content">{{
             $t(
               requestError
-                ? "add_company.modern.load_error"
+                ? isModernEdit
+                  ? "add_company.modern.edit_load_error"
+                  : "add_company.modern.load_error"
                 : "add_company.modern.required_help",
             )
           }}</span>
@@ -392,6 +512,17 @@
       :class="{ 'sd-modern-form-actions b-company-add__footer': modern }"
     >
       <div class="widget-buttons" :class="{ 'b-company-add__actions': modern }">
+        <p v-if="isModernEdit" class="b-company-add__save-help">
+          {{
+            $t(
+              lock
+                ? "add_company.modern.edit_locked_help"
+                : !verify_check
+                  ? "add_company.modern.edit_verify_needed"
+                  : "add_company.modern.edit_save_help",
+            )
+          }}
+        </p>
         <v-btn
           v-if="hasBack"
           :size="modern ? undefined : 'x-large'"
@@ -422,7 +553,11 @@
           <v-icon start>{{ company ? "save" : "add" }}</v-icon>
           {{
             company
-              ? $t("add_company.edit_action")
+              ? $t(
+                  isModernEdit
+                    ? "global.actions.save_changes"
+                    : "add_company.edit_action",
+                )
               : $t("add_company.create_action")
           }}
         </v-btn>
@@ -469,6 +604,7 @@ export default {
     busy: false,
     formError: false,
     requestError: false,
+    editRevision: 0,
 
     verify_check: true,
 
@@ -487,6 +623,9 @@ export default {
   }),
 
   computed: {
+    isModernEdit() {
+      return this.modern && !!this.company;
+    },
     isEuropean() {
       return (
         this.country && Country.EuropeCountriesAlpha2.includes(this.country)
@@ -502,13 +641,23 @@ export default {
   created() {
     this.assignFromCompany();
   },
+  beforeUnmount() {
+    this.editRevision++;
+  },
 
   methods: {
     async submitCompany(validationEvent) {
       if (!this.modern || this.busy || this.lock || !this.verify_check) return;
+      const company = this.company;
+      const revision = this.editRevision;
       // VForm supplies its validation promise with the native submit event.
       const { valid } = await validationEvent;
       if (!this.modern || this.busy || this.lock || !this.verify_check) return;
+      if (
+        company &&
+        (company !== this.company || revision !== this.editRevision)
+      )
+        return;
       this.formError = !valid;
       this.requestError = false;
       if (!valid) {
@@ -559,11 +708,15 @@ export default {
     },
     editCompany() {
       if (this.modern && (this.busy || this.lock || !this.verify_check)) return;
+      const company = this.company;
+      const revision = this.editRevision;
+      const isCurrent = () =>
+        company === this.company && revision === this.editRevision;
       this.busy = true;
       this.requestError = false;
 
       return axios
-        .put(window.API.PUT_EDIT_COMPANY(this.company.id), {
+        .put(window.API.PUT_EDIT_COMPANY(company.id), {
           name: this.name,
           website: this.website,
           email: this.email,
@@ -574,6 +727,7 @@ export default {
           country: this.country,
         })
         .then(({ data }) => {
+          if (!isCurrent()) return;
           if (data.error) {
             this.requestError = this.modern;
             NotificationService.showErrorAlert(null, data.error_msg);
@@ -589,12 +743,28 @@ export default {
           }
         })
         .catch((error) => {
+          if (!isCurrent()) return;
           this.requestError = this.modern;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
-          this.busy = false;
+          if (isCurrent()) this.busy = false;
         });
+    },
+
+    toggleEditLock() {
+      if (!this.isModernEdit || this.busy) return;
+      this.lock = !this.lock;
+    },
+
+    updateVerification(value) {
+      if (this.company && (this.lock || this.busy)) return;
+      this.verify_check = value;
+    },
+
+    setCompanyLogo(path, companyId) {
+      if (this.company?.id !== companyId) return;
+      this.company.logo = path;
     },
 
     back() {
@@ -603,9 +773,15 @@ export default {
     },
 
     assignFromCompany() {
+      this.editRevision++;
       this.lock = false;
 
       if (!this.company) return;
+      if (this.modern) {
+        this.busy = false;
+        this.formError = false;
+        this.requestError = false;
+      }
       this.name = this.company.name;
       this.website = this.company.website;
       this.email = this.company.email;
@@ -893,6 +1069,318 @@ export default {
   @media (prefers-reduced-motion: reduce) {
     .b-company-add__verification :deep(.interactive-zoom-in) {
       animation: none;
+    }
+  }
+}
+
+.b-company-add--modern.b-company-add--edit.v-card {
+  width: 100%;
+  max-width: 760px;
+  height: auto;
+  margin-inline: auto;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 14px;
+  line-height: 22px;
+
+  .b-company-add__header {
+    gap: 20px;
+    padding: 0 0 24px;
+  }
+  .sd-modern-title {
+    min-width: 0;
+    gap: 12px;
+  }
+  .sd-modern-title-text {
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 30px;
+    letter-spacing: -0.4px;
+  }
+  .b-company-add__purpose {
+    flex-basis: 22px;
+    font-size: 22px;
+    margin-block-start: 4px;
+  }
+  .sd-modern-subtitle {
+    max-width: none;
+    font-size: 13px;
+    line-height: 21px;
+  }
+  .b-company-add__lock {
+    --sd-modern-icon-button-size: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding-block-start: 1px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 20px;
+  }
+  .b-company-add__lock :deep(.v-icon) {
+    font-size: 16px !important;
+  }
+  .b-company-add__lock .sd-modern-icon-button {
+    border-radius: 8px;
+  }
+  .b-company-add__body.v-card-text {
+    flex: none;
+    overflow: visible;
+  }
+  .b-company-add__form {
+    width: 100%;
+    padding: 0;
+  }
+  .b-company-add__widget.sd-modern-widget {
+    padding: 24px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 22px;
+  }
+  .b-company-add__widget-header {
+    margin-block-end: 24px;
+  }
+  .b-company-add__widget-header h2 {
+    font-size: 14px;
+    line-height: 22px;
+  }
+  .b-company-add__widget-header p {
+    font-size: 13px;
+    line-height: 21px;
+  }
+  .b-company-add__fields {
+    column-gap: 24px;
+    row-gap: 23px;
+  }
+  .sd-modern-underlined-field {
+    --sd-modern-field-height: 52px;
+  }
+  :deep(.b-company-add__fields .v-field-label),
+  :deep(.b-company-add__fields .v-field-label--floating) {
+    font-size: 12px !important;
+    font-weight: 400;
+    line-height: 18px !important;
+  }
+  :deep(.b-company-add__fields .v-field__input),
+  :deep(.b-company-add__fields .v-autocomplete__selection-text) {
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 22px !important;
+  }
+  :deep(.b-company-add__fields input.v-field__input),
+  :deep(.b-company-add__fields div.v-field__input) {
+    padding-block: 22px 8px;
+  }
+  :deep(.b-company-add__fields .v-field__append-inner),
+  :deep(.b-company-add__fields .v-field__prepend-inner) {
+    padding-block: 20px 4px;
+  }
+  :deep(.b-company-add__fields .v-input__details),
+  :deep(.b-company-add__fields .v-messages),
+  :deep(.b-company-add__fields .v-messages__message) {
+    font-size: 12px !important;
+    font-weight: 400;
+    line-height: 19px !important;
+  }
+  :deep(
+    .b-company-add__fields .v-input__details:not(:has(.v-messages__message))
+  ) {
+    display: none;
+  }
+  .b-company-add__contact {
+    margin: 1px 0 0;
+    padding-block-start: 5px;
+    border: 0;
+    font-size: 11px;
+    line-height: 17px;
+  }
+  .b-company-add__logo {
+    margin-block-start: 29px;
+    padding-block-start: 22px;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  .b-company-add__logo-heading {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail) {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr);
+    align-items: center;
+    column-gap: 15px;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-heading) {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 21px;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-pick) {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 58px;
+    height: 58px;
+    align-self: start;
+    padding: 4px;
+    box-shadow: none;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-well > img) {
+    object-fit: contain;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-caption) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 18px;
+    grid-column: 2;
+    grid-row: 2;
+    max-width: none;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-name) {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+    font-size: 12px;
+    line-height: 19px;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-hint) {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    font-size: 12px;
+    line-height: 19px;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-actions) {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    margin: 0;
+    align-self: center;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-edit.v-btn) {
+    min-height: 36px;
+    color: rgb(var(--v-theme-primary));
+    font-size: 13px;
+    line-height: 22px;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-edit .v-icon) {
+    font-size: 16px !important;
+  }
+  :deep(.b-company-add__logo .s-image-uploader__thumbnail-status) {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    line-height: 21px;
+  }
+  .b-company-add__documents {
+    margin-block-start: 21px;
+    font-size: 13px;
+    line-height: 21px;
+  }
+  .b-company-add__verification {
+    padding-block: 23px 20px;
+  }
+  :deep(.b-company-add__verification b) {
+    font-size: 13px;
+    line-height: 21px;
+  }
+  :deep(.b-company-add__verification .small) {
+    font-size: 12px;
+    line-height: 20px;
+  }
+  .b-company-add__footer {
+    border: 0;
+    background: transparent;
+  }
+  .b-company-add__actions.widget-buttons {
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 0;
+  }
+  .b-company-add__actions > .sd-modern-button {
+    flex: none;
+    min-height: 42px;
+    padding-inline: 16px;
+    border-radius: 9px;
+    font-size: 13px;
+    line-height: 22px;
+  }
+  :deep(.b-company-add__actions .v-btn__content) {
+    font-size: 13px;
+    line-height: 22px;
+  }
+  .b-company-add__actions :deep(.v-icon) {
+    font-size: 16px !important;
+  }
+  .b-company-add__save-help {
+    flex: 1 1 220px;
+    margin: 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 20px;
+  }
+  .b-company-add__error {
+    margin-block: 0 18px;
+    font-size: 13px;
+    line-height: 21px;
+  }
+
+  @media (max-width: 680px) {
+    .b-company-add__header {
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .b-company-add__lock {
+      margin-inline-start: 34px;
+    }
+    .b-company-add__widget.sd-modern-widget {
+      padding: 20px 18px;
+      border-radius: 18px;
+    }
+    .b-company-add__fields {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 21px;
+    }
+    :deep(.b-company-add__fields .v-field__input),
+    :deep(.b-company-add__fields .v-autocomplete__selection-text) {
+      font-size: 16px !important;
+      line-height: 24px !important;
+    }
+    :deep(.b-company-add__logo .s-image-uploader__thumbnail) {
+      column-gap: 13px;
+    }
+    :deep(.b-company-add__logo .s-image-uploader__thumbnail-caption) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    :deep(.b-company-add__logo .s-image-uploader__thumbnail-actions) {
+      grid-column: 1;
+      grid-row: 3;
+    }
+    :deep(.b-company-add__logo .s-image-uploader__thumbnail-edit.v-btn) {
+      min-height: 44px;
+    }
+    .b-company-add__actions.widget-buttons {
+      gap: 12px;
+    }
+    .b-company-add__actions > .sd-modern-button {
+      flex: 1 1 100%;
+      min-height: 44px;
+    }
+    .b-company-add__subtitle-help {
+      align-items: flex-start;
+    }
+  }
+  @media (pointer: coarse) {
+    :deep(.b-company-add__fields .v-field__input),
+    :deep(.b-company-add__fields .v-autocomplete__selection-text) {
+      font-size: 16px !important;
+    }
+    .b-company-add__actions > .sd-modern-button,
+    :deep(.b-company-add__logo .s-image-uploader__thumbnail-edit.v-btn) {
+      min-height: 44px;
     }
   }
 }

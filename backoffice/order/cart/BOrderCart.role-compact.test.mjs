@@ -145,6 +145,7 @@ const leaf = (name) =>
   });
 function dependency(name) {
   if (name === "vue") return Vue;
+  if (name.includes('NotificationService')) return { default: { showErrorAlert() {}, showLaravelError() {}, showSuccessAlert() {} } };
   if (name.endsWith(".svg")) return { default: name };
   if (name === "@selldone/core-js") return { Basket, BasketItemReturn };
   if (name.includes("ProductType")) return { ProductType };
@@ -331,7 +332,7 @@ const fixtures = [
     },
   },
 ];
-function mount(overrides = {}, data = {}) {
+function mount(overrides = {}, data = {}, route = { params: {}, matched: [] }, translate) {
   calls.length = 0;
   context.fixtureJson = JSON.stringify(fixtures);
   const items = vm.runInContext("JSON.parse(fixtureJson)", context);
@@ -383,8 +384,8 @@ function mount(overrides = {}, data = {}) {
     app.component(name, leaf(name));
   app.component("router-link", leaf("RouterLink"));
   Object.assign(app.config.globalProperties, {
-    $t: (key, values = {}) => key + (values.count ? ` ${values.count}` : ""),
-    $route: { params: {}, matched: [] },
+    $t: translate || ((key, values = {}) => key + (values.count ? ` ${values.count}` : "")),
+    $route: route,
     IMAGE_SIZE_SMALL: 64,
     getShopImagePath: (path) => path,
     isBoolean: (value) => typeof value === "boolean",
@@ -597,4 +598,104 @@ test("ordinary shop carts retain their existing row behavior and selection initi
     [31, 32],
   );
   mounted.app.unmount();
+});
+
+const vendorRoute = { params: { vendor_id: 9, vendor_order_id: 90 }, matched: [{ meta: { vendor: true } }] };
+
+test("vendor header captions follow a live locale switch without changing native columns or selection", async () => {
+  const locale = Vue.ref('en');
+  const captions = {
+    'product.title': ['product_name', 'Product', 'محصول'],
+    variant: ['variant', 'Variant', 'ویژگی'],
+    'product.original': ['warranty', 'Warranty', 'ضمانت'],
+    count: ['count', 'Quantity', 'تعداد'],
+    price: ['price', 'Price', 'قیمت'],
+  };
+  const translate = key => {
+    const caption = Object.values(captions).find(([name]) => key === `global.basket_list.table.${name}`);
+    return caption ? caption[locale.value === 'fa' ? 2 : 1] : key;
+  };
+  const mounted = mount({ isRolePanel: false }, {}, vendorRoute, translate);
+  try {
+    const columns = Array.from(mounted.instance.modern_headers, ({ value, sortable }) => ({ value, sortable }));
+    const selected = Array.from(mounted.instance.getCheckedItems(), ({ id }) => id);
+    const renderedCaption = key => mounted.target.querySelector(`.b-order-cart-role__cell--${key.replace('.', '-')} > .v-data-table__td-title`).textContent;
+    for (const [key, [, english]] of Object.entries(captions)) assert.equal(renderedCaption(key), english);
+    locale.value = 'fa';
+    await Vue.nextTick();
+    for (const [key, [, , persian]] of Object.entries(captions)) assert.equal(renderedCaption(key), persian);
+    assert.deepEqual(Array.from(mounted.instance.modern_headers, ({ value, sortable }) => ({ value, sortable })), columns);
+    assert.deepEqual(Array.from(mounted.instance.getCheckedItems(), ({ id }) => id), selected);
+  } finally {
+    mounted.app.unmount();
+  }
+});
+
+test("vendor availability retains zero selections, native metadata and the exact vendor amount", async () => {
+  const mounted = mount({ isRolePanel: false }, {}, vendorRoute);
+  assert.equal(mounted.instance.modernVendorPanel, true);
+  assert.ok(mounted.target.querySelector('.b-order-cart-table-modern--vendor'));
+  assert.match(mounted.target.textContent, /Complete product title/);
+  assert.match(mounted.target.textContent, /VARIANT-SKU/);
+  assert.ok(calls.some(({ name, attrs }) => name === 'u-price' && attrs.amount === fixtures[0].vendor_price && attrs.currency === 'BTC'));
+  await Vue.nextTick();
+  const selected = mounted.target.querySelector('[aria-pressed="true"]');
+  await click(selected);
+  assert.equal(mounted.instance.getCheckedItems().length, 0);
+  assert.ok(calls.some(({ name, attrs }) => name === 'BVendorOrderIcon' && attrs.name === 'circle'));
+  assert.equal(mounted.instance.items[0].vendor_price, fixtures[0].vendor_price);
+  mounted.app.unmount();
+});
+
+test("vendor signed quantity sheet preserves original/final quantities and its bounded VAPI payload", async () => {
+  const originalAxios = context.axios, originalWindow = context.window;
+  const writes = [];
+  context.window = { VAPI: { PUT_MY_VENDOR_ORDER_ITEM_SET_COUNT_ADJUSTMENT: (...ids) => `/test/vendors/${ids.join('/')}/quantity` } };
+  context.axios = { put: (url, body) => { writes.push({ url, body }); return Promise.resolve({ data: { item: { count_adjustment: body.count_adjustment } } }); } };
+  const mounted = mount({ isRolePanel: false }, {}, vendorRoute);
+  try {
+    const state = mounted.instance, item = state.items[0];
+    state.showCountAdjustmentDialog(item);
+    state.count_adjustment_input = -0.75;
+    await Vue.nextTick();
+    const values = calls.filter(({ name }) => name === 'UTextDecimal').map(({ attrs }) => attrs.value);
+    assert.ok(values.includes(2));
+    assert.ok(values.includes(-0.75));
+    assert.ok(values.includes(1.25));
+    assert.match(mounted.target.textContent, /vendor_fulfillment\.original_quantity/);
+    assert.match(mounted.target.textContent, /vendor_fulfillment\.final_quantity/);
+    assert.equal(calls.findLast(({ name }) => name === 'UNumberInput').attrs.min, -2);
+    state.setCountAdjustment();
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(writes.length, 1);
+    assert.equal(writes[0].url, '/test/vendors/9/90/31/quantity');
+    assert.equal(writes[0].body.count_adjustment, -0.75);
+    assert.equal(Object.keys(writes[0].body).length, 1);
+    assert.equal(item.vendor_price, fixtures[0].vendor_price);
+    assert.equal(item.count, 2);
+    assert.equal(item.count_adjustment, -0.75);
+  } finally {
+    mounted.app.unmount();
+    context.axios = originalAxios;
+    context.window = originalWindow;
+  }
+});
+
+test("vendor readonly, rejected, unpaid and sent states keep quantity writes unavailable", async () => {
+  for (const change of [{ readonly: true }, { basket: { reject: 'OTHER' } }, { basket: { status: 'Open' } }, { basket: { delivery_state: 'SentOrder' } }]) {
+    const overrides = { isRolePanel: false, ...change };
+    if (change.basket) overrides.basket = { id: 21, type: 'PHYSICAL', status: 'Payed', delivery_state: 'CheckQueue', ...change.basket };
+    const mounted = mount(overrides, {}, vendorRoute);
+    assert.equal(mounted.instance.can_set_count_adjustment, false);
+    mounted.instance.showCountAdjustmentDialog(mounted.instance.items[0]);
+    mounted.instance.setCountAdjustment();
+    assert.equal(mounted.instance.count_adjustment_dialog, false);
+    assert.equal(mounted.instance.busy_set_count_adjustment, false);
+    if (change.readonly) {
+      const initial = mounted.instance.getCheckedItems().length;
+      await click(mounted.target.querySelector('[aria-pressed]'));
+      assert.equal(mounted.instance.getCheckedItems().length, initial);
+    }
+    mounted.app.unmount();
+  }
 });

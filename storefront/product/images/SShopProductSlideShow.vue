@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ '-vertical': vertical }" class="s--product-images">
+  <div :class="{ '-vertical': vertical, 's--product-images--embed': embedMode }" class="s--product-images">
     <!--  ▃▃▃▃▃▃▃▃▃▃ Gallery > Thumbs Swiper ▃▃▃▃▃▃▃▃▃▃ -->
 
     <u-fade-scroll
@@ -22,7 +22,16 @@
       style="max-height: 600px"
     >
       <div class="gallery-thumbs-wrap">
-        <div v-for="(item, i) in images_list_embedded" :key="item.key">
+        <component
+          :is="embedMode ? 'button' : 'div'"
+          v-for="(item, i) in images_list_embedded"
+          :key="item.key"
+          :type="embedMode ? 'button' : undefined"
+          :class="{ 's-product-images__thumb': embedMode }"
+          :aria-label="embedMode ? $t('product_embed.select_media', { number: i + 1 }) : undefined"
+          :aria-pressed="embedMode ? index === i : undefined"
+          @click="embedMode && (index = i)"
+        >
           <!--  ▃▃▃▃▃▃▃▃▃▃ Thumbnails > Image ▃▃▃▃▃▃▃▃▃▃ -->
 
           <v-img
@@ -65,7 +74,7 @@
               <div>3D / AR</div>
             </div>
           </div>
-        </div>
+        </component>
       </div>
     </u-fade-scroll>
 
@@ -86,7 +95,7 @@
       height="100%"
       hide-delimiter-background
       hide-delimiters
-      show-arrows="hover"
+      :show-arrows="embedMode ? true : 'hover'"
     >
       <v-carousel-item
         v-for="item in images_list_embedded"
@@ -132,7 +141,12 @@
             eager
             height="auto"
             width="calc(100% - 8px)"
+            :role="embedMode ? 'button' : undefined"
+            :tabindex="embedMode ? 0 : undefined"
+            :aria-label="embedMode ? $t('product_embed.open_image') : undefined"
             @click="showFullscreen"
+            @keydown.enter="embedMode && showFullscreen($event)"
+            @keydown.space="embedMode && ($event.preventDefault(), showFullscreen($event))"
             @mouseleave="show_circle = false"
             @mousemove="updateCirclePosition"
           >
@@ -157,6 +171,7 @@
               width="100%"
             ></u-youtube-player>
             <video
+              v-if="!embedMode || item.type !== 'youtube'"
               controls
               height="100%"
               fullscreen
@@ -196,8 +211,19 @@
       </v-carousel-item>
 
       <template v-slot:prev="{ props }">
+        <v-btn
+          v-if="embedMode && prev_item"
+          v-bind="props"
+          type="button"
+          icon
+          variant="flat"
+          class="s-product-images__arrow"
+          :aria-label="$t('product_embed.previous_media')"
+        >
+          <v-icon aria-hidden="true">{{ $vuetify.locale.isRtl ? 'chevron_right' : 'chevron_left' }}</v-icon>
+        </v-btn>
         <v-avatar
-          v-if="prev_item"
+          v-else-if="prev_item"
           class="pp overflow-visible t-all-400"
           style="backdrop-filter: blur(8px)"
           color="#33333333"
@@ -220,8 +246,19 @@
         </v-avatar>
       </template>
       <template v-slot:next="{ props }">
+        <v-btn
+          v-if="embedMode && next_item"
+          v-bind="props"
+          type="button"
+          icon
+          variant="flat"
+          class="s-product-images__arrow"
+          :aria-label="$t('product_embed.next_media')"
+        >
+          <v-icon aria-hidden="true">{{ $vuetify.locale.isRtl ? 'chevron_left' : 'chevron_right' }}</v-icon>
+        </v-btn>
         <v-avatar
-          v-if="next_item"
+          v-else-if="next_item"
           class="pp overflow-visible t-all-400"
           style="backdrop-filter: blur(8px)"
           color="#33333333"
@@ -263,6 +300,7 @@ export default {
   inject: ["$shop", "$product"],
 
   props: {
+    embedMode: { type: Boolean, default: false },
     currentVariant: {},
 
     vertical: {
@@ -586,5 +624,44 @@ export default {
   background-color: rgba(0, 0, 0, 0.1);
   pointer-events: none; // Prevents the circle from interfering with other mouse events
   transition: none; // Optional: Adds smooth transition effect
+}
+</style>
+
+<style lang="scss" scoped>
+.s--product-images--embed {
+  --size-thumbnail: 48px;
+  --thumbnail-top-margin: 9px;
+  --gap-horizontal-thumbnail: 0px;
+  --gap-vertical-thumbnail: 0px;
+  --main-gallery-width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0;
+  min-width: 0;
+
+  .gallery-top { width: 100%; height: auto !important; aspect-ratio: 1; flex: none; border-radius: 9px; background: var(--embed-inset); transition: none; }
+  .gallery-top :deep(.v-window__container) { height: 100%; }
+  .gallery-top :deep(.swiper-slide-image) { width: 100% !important; height: 100% !important; margin: 0 !important; border-radius: 9px; }
+  .gallery-top :deep(.v-carousel-item) { height: 100%; }
+  .gallery-top :deep(.v-window__controls .s-product-images__arrow) { width: 40px !important; height: 40px !important; border: 1px solid var(--embed-line); border-radius: 8px; background: rgb(var(--v-theme-surface)) !important; color: rgb(var(--v-theme-on-surface)); box-shadow: none; }
+  .s-product-images__arrow :deep(.v-icon) { font-size: 20px; }
+  .gallery-top :deep(.v-window__controls .v-window__left), .gallery-top :deep(.v-window__controls .v-window__right) { position: absolute; top: 50%; margin: 0; transform: translateY(-50%) !important; }
+  .gallery-top :deep(.v-window__controls .v-window__left) { left: 8px; right: auto; }
+  .gallery-top :deep(.v-window__controls .v-window__right) { right: 8px; left: auto; }
+  .gallery-thumbs { max-height: none !important; margin-block-start: 9px; }
+  .gallery-thumbs :deep(.--scroll) { overflow: visible; }
+  .gallery-thumbs .gallery-thumbs-wrap { width: 100%; flex-direction: row; flex-wrap: wrap; gap: 7px; }
+  .s-product-images__thumb { display: block; position: relative; width: 48px; height: 48px; flex: 0 0 48px; padding: 3px; border: 1px solid var(--embed-line); border-radius: 7px; background: rgb(var(--v-theme-surface)); color: rgb(var(--v-theme-on-surface)); font-family: inherit; }
+  .s-product-images__thumb[aria-pressed="true"] { border-color: rgb(var(--v-theme-primary)); box-shadow: 0 0 0 1px rgb(var(--v-theme-primary)); }
+  .s-product-images__thumb:focus-visible, .swiper-slide-image:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  .gallery-thumbs .-slide { width: 100%; height: 100%; margin: 0; border: 0; border-radius: 4px; transition: none; }
+  .gallery-thumbs .-slide.-video, .gallery-thumbs .-slide.-ar { background: var(--embed-inset); color: inherit; font-size: 9px; line-height: 14px; }
+  .gallery-thumbs .-slide :deep(.v-icon) { font-size: 16px; color: inherit !important; margin-block-end: 0 !important; }
+}
+@media (max-width: 620px) {
+  .s--product-images--embed .gallery-top { aspect-ratio: 4 / 3; }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .s--product-images--embed .gallery-top :deep(.v-window__controls .s-product-images__arrow) { width: 44px !important; height: 44px !important; }
 }
 </style>

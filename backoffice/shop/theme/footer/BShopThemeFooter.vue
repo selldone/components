@@ -14,10 +14,11 @@
 
 <template>
   <div class="b-shop-theme-footer text-start">
-    <div class="sd-modern-widget">
+    <div class="sd-modern-widget b-shop-theme-footer__modes">
       <u-smart-select
         class="sd-modern-smart-select"
         border
+        accessible
         :model-value="footer_mode"
         :items="footer_modes"
         item-value="id"
@@ -30,42 +31,19 @@
       ></u-smart-select>
     </div>
 
-    <template v-if="footer_mode === 'custom'">
-      <div class="sd-modern-widget">
-        <u-widget-header
-          class="sd-modern-form-header"
-          icon="code"
-          :title="$t('shop_theme.studio.custom_footer_title')"
-        ></u-widget-header>
-        <v-list-subheader class="sd-modern-subtitle b-shop-theme-footer__subtitle">
-          {{ $t('shop_theme.studio.custom_footer_description') }}
-        </v-list-subheader>
-
-        <BShopHtmlEditor
-          :model-value="customCode"
-          @update:model-value="(code) => $emit('update:customCode', code)"
-          :readOnly="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-        ></BShopHtmlEditor>
-      </div>
-    </template>
-
-    <template v-else></template>
+    <slot v-if="footer_mode === 'custom'" name="custom-code" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions.ts";
-import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
-import BShopHtmlEditor from "@selldone/components-vue/backoffice/shop/html/editor/BShopHtmlEditor.vue";
 import USmartSelect from "@selldone/components-vue/ui/smart/select/USmartSelect.vue";
 
 export default defineComponent({
   name: "BShopThemeFooter",
   components: {
     USmartSelect,
-    BShopHtmlEditor,
-    UWidgetHeader,
   },
   inject: ["$shop"],
   emits: ["update:customCode"],
@@ -162,6 +140,6 @@ export default defineComponent({
   gap: 22px;
   min-width: 0;
 
-  &__subtitle { padding: 0; margin-block: 0 20px; min-height: 0; }
+  &__modes { width: min(760px, 100%); margin-inline: auto; }
 }
 </style>

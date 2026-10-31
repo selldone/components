@@ -19,9 +19,11 @@
       'pointer-pointer': !show,
       'hover-bg': !readonly && !forceShow,
       'is-show': show,
+      'basket-item-user-message-form--modern-readonly': modern && readonly && forceShow,
+      'py-3 px-2': !(modern && readonly && forceShow),
     }"
     :color="color"
-    class="py-3 px-2 position-relative text-start"
+    class="position-relative text-start"
     style="border-radius: 12px"
   >
     <template v-if="!forceShow">
@@ -50,6 +52,12 @@
       </v-icon>
     </template>
 
+    <div
+      v-if="forceShow && product.message"
+      :class="modern && readonly ? 'basket-item-user-message-form__instructions' : 'mb-3 me-5 typo-body'"
+      v-html="convertToHtml(product.message)"
+    ></div>
+
     <v-expand-transition>
       <div v-if="show">
         <s-basket-product-inputs
@@ -57,16 +65,17 @@
           v-model="message"
           v-model:files="files"
           :is-admin="isAdmin"
+          :modern="modern"
           :product="product"
           :readonly="readonly"
           :uploadedFiles="uploaded_files"
-          class="max-w-640 mx-auto py-5"
+          :class="modern && readonly && forceShow ? undefined : 'max-w-640 mx-auto py-5'"
           @onDeleteFile="onDeleteFile"
         ></s-basket-product-inputs>
       </div>
     </v-expand-transition>
 
-    <div class="widget-buttons">
+    <div v-if="!(modern && readonly && forceShow)" class="widget-buttons">
       <v-btn
         v-if="show && !readonly && has_fields"
         :loading="busy"
@@ -129,6 +138,10 @@ export default {
       default: false,
       type: Boolean,
     },
+    modern: {
+      default: false,
+      type: Boolean,
+    },
     isAdmin: {
       default: false,
       type: Boolean,
@@ -151,7 +164,7 @@ export default {
     inputs_length() {
       // Just editable fields
       return this.product.inputs?.filter((i) =>
-        ["text", "select", "switch", "file", null].includes(i.type),
+        ["text", "select", "switch", "file", null].includes(i.type ?? null),
       ).length;
     },
 
@@ -173,7 +186,9 @@ export default {
       return (
         this.corresponding_basket_item &&
         (this.product.message ||
-          (this.product.inputs && this.inputs_length > 0))
+          this.inputs_length > 0 ||
+          (this.forceShow &&
+            this.product.inputs?.some((input) => input.type === "note")))
       );
     },
 
@@ -195,9 +210,7 @@ export default {
     },
 
     uploaded_files() {
-      return (
-        this.corresponding_basket_item && this.corresponding_basket_item.files
-      );
+      return this.corresponding_basket_item?.files || [];
     },
   },
 
@@ -324,6 +337,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.basket-item-user-message-form--modern-readonly {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 21px;
+
+  .basket-item-user-message-form__instructions {
+    margin-block-end: 22px;
+    overflow-wrap: anywhere;
+  }
+}
+
 .hover-bg {
   border: #000 solid 2px !important;
   transition: box-shadow 0.5s;

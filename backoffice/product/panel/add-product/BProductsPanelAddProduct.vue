@@ -18,6 +18,7 @@
     @update:model-value="(val) => $emit('update:modelValue', val)"
     fullscreen
     scrollable
+    :theme="dialogTheme"
     transition="dialog-bottom-transition"
     close-on-back
   >
@@ -25,7 +26,22 @@
       :color="modern ? undefined : '#FFF'"
       :class="{ 'b-products-panel-add-product--modern sd-modern-canvas text-start': modern }"
     >
-      <v-card-title>
+      <v-card-title v-if="modern" class="b-products-panel-add-product__header">
+        <div class="b-products-panel-add-product__header-inner">
+          <v-icon class="b-products-panel-add-product__purpose" size="24" aria-hidden="true">add_box</v-icon>
+          <div class="b-products-panel-add-product__title">
+            <h1>{{ $t('add_product.title_new') }}</h1>
+            <p>{{ $t('add_product.flow.subtitle') }}</p>
+          </div>
+          <v-tooltip location="top" content-class="sd-modern-tooltip">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="sd-modern-icon-button" variant="text" icon="close" :aria-label="$t('global.actions.close')" @click="close" />
+            </template>
+            {{ $t('global.actions.close') }}
+          </v-tooltip>
+        </div>
+      </v-card-title>
+      <v-card-title v-else>
         <v-row no-gutters>
           <div class="body-title">
             <span class="text-primary pp" @click="close">
@@ -54,6 +70,7 @@
         </v-row>
       </v-card-title>
       <b-product-add-full
+        v-if="!modern || modelValue"
         :modern="modern"
         :shop="$shop"
         :vendor="$vendor"
@@ -69,7 +86,7 @@
       >
       </b-product-add-full>
 
-      <v-card-actions>
+      <v-card-actions v-if="!modern">
         <div class="widget-buttons">
           <v-btn
             :size="modern ? 'default' : 'x-large'"
@@ -143,6 +160,10 @@ export default defineComponent({
   }),
 
   computed: {
+    dialogTheme() {
+      // Fullscreen content is outside Shuttle's Smart invert window.
+      return this.modern && this.USER()?.preferences?.dark ? 'dark' : undefined;
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -173,16 +194,37 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .b-products-panel-add-product--modern {
-  > .v-card-title {
-    padding: 25px 24px 5px;
-    > .v-row { max-width: 1200px; margin-inline: auto; }
-    .body-title { font-family: inherit; font-size: 18px; font-weight: 500; line-height: 27px; }
-  }
-  > .v-card-actions {
-    padding: 14px 24px;
+  color: rgb(var(--v-theme-on-surface));
+
+  .b-products-panel-add-product__header {
+    flex: 0 0 auto;
+    padding: 22px 24px 20px;
     background: rgb(var(--v-theme-surface));
-    border-block-start: 1px solid var(--sd-modern-border);
-    .widget-buttons { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; max-width: 1200px; margin-inline: auto; }
+    border-block-end: 1px solid var(--sd-modern-border);
+    white-space: normal;
+  }
+
+  .b-products-panel-add-product__header-inner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    max-width: 1040px;
+    margin-inline: auto;
+  }
+
+  .b-products-panel-add-product__purpose { flex: 0 0 40px; color: var(--sd-modern-muted); }
+  .b-products-panel-add-product__title {
+    flex: 1;
+    min-width: 0;
+    h1 { margin: 0; font-family: inherit; font-size: 22px; font-weight: 500; line-height: 30px; letter-spacing: -0.4px; }
+    p { margin: 4px 0 0; color: var(--sd-modern-muted); font-size: 13px; font-weight: 400; line-height: 20px; }
+  }
+
+  @media (max-width: 620px) {
+    .b-products-panel-add-product__header { padding: 20px 18px; }
+    .b-products-panel-add-product__header-inner { gap: 8px; }
+    .b-products-panel-add-product__purpose { flex-basis: 28px; }
+    .b-products-panel-add-product__title h1 { font-size: 20px; }
   }
 }
 </style>

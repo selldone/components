@@ -798,7 +798,6 @@ export default {
     border-radius: 8px;
   }
   &__notice {
-    display: flex;
     flex-wrap: nowrap;
     align-items: flex-start;
     gap: 9px;

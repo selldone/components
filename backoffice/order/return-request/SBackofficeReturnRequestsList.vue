@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="b-return-requests-list" :class="{ 'b-return-requests-list--modern text-start': modern }">
+  <div class="b-return-requests-list s-table-loading" :class="{ 'b-return-requests-list--modern text-start': modern }" :aria-busy="busy_fetch">
     <u-loading-progress v-if="busy_fetch"></u-loading-progress>
     <v-data-table-server
       v-model:options="options"

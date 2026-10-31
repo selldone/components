@@ -1,0 +1,198 @@
+// Shared geometry for the two native wallet gift sheets; money and pickers stay native.
+.b-account-gift {
+  border-end-start-radius: 0 !important;
+  border-end-end-radius: 0 !important;
+  color: rgb(var(--v-theme-on-surface));
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 22px;
+  max-height: 90dvh;
+  overflow-y: auto;
+
+  &__header {
+    --sd-modern-icon-button-size: 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 22px 24px;
+    background: rgb(var(--v-theme-surface));
+
+    > div {
+      flex: 1;
+      min-width: 0;
+    }
+    > .v-icon {
+      margin-block-start: 2px;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 26px;
+      margin: 0;
+    }
+    p {
+      font-size: 13px;
+      line-height: 21px;
+      color: var(--sd-modern-muted);
+      margin: 4px 0 0;
+    }
+  }
+
+  &__body {
+    padding: 24px;
+  }
+  &__fields,
+  &__details {
+    padding: 20px;
+    border-radius: 18px;
+  }
+  &__fields {
+    display: grid;
+    gap: 24px;
+  }
+  &__fields :deep(.v-field__input),
+  &__fields :deep(.v-field-label) {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  &__fields :deep(.v-messages) {
+    font-size: 13px;
+    line-height: 20px;
+  }
+  &__fields :deep(.b-account-input .v-select__selection) {
+    min-width: 0;
+    max-width: 100%;
+  }
+  &__fields :deep(.b-account-input .text-subtitle-2) {
+    font-size: 13px !important;
+    font-weight: 500;
+  }
+  &__fields :deep(.b-account-input small) {
+    font-size: 11px;
+    line-height: 18px;
+  }
+  &__totals {
+    margin: 20px 4px;
+  }
+  &__totals > div,
+  &__facts > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-block: 8px;
+  }
+  &__totals dt,
+  &__facts dt {
+    color: var(--sd-modern-muted);
+  }
+  &__totals dd,
+  &__facts dd {
+    margin: 0;
+    text-align: end;
+    overflow-wrap: anywhere;
+  }
+  &__total {
+    font-weight: 500;
+    padding-block-start: 8px;
+  }
+  &__total dt {
+    color: inherit;
+  }
+  &__notice {
+    margin-block: 18px;
+    font-size: 13px;
+    line-height: 21px;
+  }
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-block-start: 22px;
+  }
+  &__actions :first-child {
+    margin-inline-end: auto;
+  }
+  &__program {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-block-end: 20px;
+  }
+  &__program > div {
+    min-width: 0;
+  }
+  &__program h3 {
+    font-size: 15px;
+    line-height: 23px;
+    font-weight: 500;
+  }
+  &__program p {
+    font-size: 13px;
+    line-height: 21px;
+    margin-block: 4px;
+    overflow-wrap: anywhere;
+  }
+  &__promotion {
+    flex: 0 0 auto;
+    margin: 0;
+  }
+  &__amount {
+    display: block;
+    font-size: 28px;
+    line-height: 36px;
+    font-weight: 500;
+  }
+  &__message {
+    background: var(--sd-modern-inset);
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 22px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    margin-block: 18px;
+  }
+  &__facts {
+    margin-block-start: 18px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+
+  @media (max-width: 600px) {
+    &__header {
+      --sd-modern-icon-button-size: 44px;
+    }
+    &__header {
+      padding: 20px 16px;
+    }
+    &__body {
+      padding: 20px 16px;
+    }
+    &__fields,
+    &__details {
+      padding: 16px;
+    }
+    &__program {
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    &__program > div {
+      flex: 1 1 160px;
+    }
+    &__facts > div {
+      flex-wrap: wrap;
+      gap: 2px 12px;
+    }
+    &__facts dd {
+      text-align: start;
+    }
+    &__actions {
+      flex-wrap: wrap;
+    }
+    &__actions > .v-btn {
+      min-height: 44px;
+    }
+  }
+}

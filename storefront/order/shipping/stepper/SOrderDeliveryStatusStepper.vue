@@ -52,15 +52,16 @@
           :caption="$t(item.name)"
           :class="{
             active: activeIndex >= index,
+            's-order-delivery-status-stepper__current': modernTooltips && activeIndex === index,
             'sub-caption b-16px -no-wrap': showCaption,
             '-black': showCaption && dark,
             '-hover': $vuetify.display.xs,
           }"
           :style="`width:${100 / length}%`"
-          :title="modernTooltips && _key !== 'ToCustomer' ? undefined : $t(item.name)"
+          :title="modernTooltips && (_key !== 'ToCustomer' || modernFinalTooltip) ? undefined : $t(item.name)"
         >
           <button
-            v-if="modernTooltips && _key !== 'ToCustomer'"
+            v-if="modernTooltips && (_key !== 'ToCustomer' || modernFinalTooltip)"
             type="button"
             class="s-order-delivery-status-stepper__help"
             :aria-label="$t(item.name)"
@@ -82,39 +83,47 @@
               </div>
             </v-tooltip>
           </button>
-          <v-icon
-            v-if="activeIndex > index"
-            class="hide-on-hover"
-            color="#fff"
-            size="14"
+          <slot
+            name="stage-icon"
+            :item="item"
+            :index="index"
+            :completed="activeIndex > index"
+            :current="activeIndex === index"
           >
-            check_circle
-          </v-icon>
+            <v-icon
+              v-if="activeIndex > index"
+              class="hide-on-hover"
+              color="#fff"
+              size="14"
+            >
+              check_circle
+            </v-icon>
 
-          <v-icon
-            v-else-if="activeIndex === index"
-            class="hide-on-hover"
-            color="#fff"
-            size="14"
-          >
-            {{ item.icon ? item.icon : "radio_button_unchecked" }}
-          </v-icon>
-          <v-icon
-            v-else-if="item.icon"
-            class="op-0-6 hide-on-hover"
-            color="#ccc"
-            size="14"
-          >
-            {{ item.icon }}
-          </v-icon>
+            <v-icon
+              v-else-if="activeIndex === index"
+              class="hide-on-hover"
+              color="#fff"
+              size="14"
+            >
+              {{ item.icon ? item.icon : "radio_button_unchecked" }}
+            </v-icon>
+            <v-icon
+              v-else-if="item.icon"
+              class="op-0-6 hide-on-hover"
+              color="#ccc"
+              size="14"
+            >
+              {{ item.icon }}
+            </v-icon>
 
-          <v-icon
-            :color="activeIndex >= index ? '#fff' : '#ccc'"
-            class="show-on-hover"
-            size="14"
-          >
-            {{ item.icon ? item.icon : "radio_button_unchecked" }}
-          </v-icon>
+            <v-icon
+              :color="activeIndex >= index ? '#fff' : '#ccc'"
+              class="show-on-hover"
+              size="14"
+            >
+              {{ item.icon ? item.icon : "radio_button_unchecked" }}
+            </v-icon>
+          </slot>
         </li>
       </ul>
 
@@ -151,6 +160,10 @@ export default {
 
   emits: ["mouseEnterToCustomer"],
   props: {
+    modernFinalTooltip: {
+      type: Boolean,
+      default: false,
+    },
     modernTooltips: {
       type: Boolean,
       default: false,

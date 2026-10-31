@@ -3,8 +3,9 @@
 The modern Backoffice timeline uses the approved Grouped layout: a bounded
 content column, category filters, separate pinned notes, local-date sections and
 expandable notification groups. `BOrderTimeline` remains the owner of the native
-fetch, note, pin, delete, email-preview and resend operations. Its `modern` opt-in
-is always disabled in vendor routes; legacy callers retain their original view.
+fetch, note, pin, delete, email-preview and resend operations. Dedicated order
+timeline pages use this presentation for shop and vendor routes. The shared
+`modern` option still defaults to `false` for other callers.
 
 ## Data and behavior
 
@@ -37,6 +38,12 @@ is always disabled in vendor routes; legacy callers retain their original view.
 
 `orderType` is presentation-only. Existing type flags and their API paths are
 unchanged, including legacy File/Service/Subscription flag conventions.
+Vendor routes retain the vendor ID and vendor-order ID in every native request;
+the parent basket ID is display-only. Their header shows the actual parent order
+when supplied beside the VND code. Only an exact `Vendor Order-{id}` reference
+resolves to that VND code; unrelated parent/order references stay verbatim.
+Vendor email preview keeps the current timeline ID, and resend stays unavailable.
+Note operations keep their existing server authorization and confirmations.
 
 ## Approved geometry
 
@@ -85,6 +92,8 @@ cache rebuild or production build is required.
 - `@selldone/translate/global/en.ts` and `fa.ts`: generic
   `global.actions.add_emoji` label.
 - `src/Applications/Backoffice/pages/order-physical/README.md`: feature link.
+- `.ai-agent/guides/selldone-product-ui-design.md`: the cross-order timeline
+  adoption rule, including supported vendor routes.
 - `src/Applications/Backoffice/pages/order-physical/timeline/BPageOrderTimeline.test.mjs`:
   main/vendor rendering, exact route gates and unchanged native API flags.
 - Parent/window and timeline wrapper pairs under

@@ -38,7 +38,11 @@
     prepend-inner-icon="wallet"
   >
     <template v-slot:item="{ item, props }">
-      <v-list-item class="text-start" density="compact" v-bind="props">
+      <v-list-item
+        class="text-start b-account-input__option"
+        density="compact"
+        v-bind="props"
+      >
         <template v-slot:prepend>
           <div class="text-center me-1">
             <u-currency-icon
@@ -49,11 +53,13 @@
         </template>
 
         <template v-slot:title>
-          <v-row no-gutters>
-            <v-col class="text-subtitle-2 px-2" cols="6">
-              {{ formatCard(item.raw.account_number) }}
+          <div class="b-account-input__option-body">
+            <div class="b-account-input__option-identity">
+              <bdi dir="ltr" class="b-account-input__option-number">{{
+                formatCard(item.raw.account_number)
+              }}</bdi>
 
-              <div class="mt-1">
+              <div class="b-account-input__option-name">
                 <flag
                   v-if="GetCurrency(item.raw.currency)"
                   :iso="GetCurrency(item.raw.currency).flag"
@@ -61,24 +67,27 @@
                   class="me-1"
                 />
 
-                {{ item.raw.account_name }}
+                <bdi>{{ item.raw.account_name }}</bdi>
               </div>
-            </v-col>
+            </div>
 
-            <v-col class="px-1" cols="6">
-              <small class="d-block">{{
-                $t("account_list.free_balance")
-              }}</small>
+            <div class="b-account-input__option-balance">
+              <small>{{ $t("account_list.free_balance") }}</small>
               <u-price
                 :amount="item.raw.balance - item.raw.locked"
                 :currency="item.raw.currency"
               ></u-price>
-            </v-col>
-          </v-row>
+            </div>
+          </div>
         </template>
 
         <template v-slot:append>
-          <v-icon v-if="item.raw.id === account_selected?.id" color="green">
+          <v-icon
+            v-if="item.raw.id === account_selected?.id"
+            color="green"
+            size="20"
+            aria-hidden="true"
+          >
             check
           </v-icon>
         </template>
@@ -266,6 +275,61 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.b-account-input__option {
+  padding: 8px 12px;
+  border-radius: 10px;
+
+  :deep(.v-list-item-title) {
+    overflow: visible;
+    white-space: normal;
+  }
+
+  :deep(.v-list-item__spacer) {
+    width: 8px;
+  }
+}
+
+.b-account-input__option-body {
+  display: grid;
+  // Stack by the space inside the popup, including the selected check column.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 172px), 1fr));
+  gap: 6px 12px;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.b-account-input__option-identity {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.b-account-input__option-number {
+  display: block;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.b-account-input__option-name {
+  margin-block-start: 2px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.b-account-input__option-balance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  small {
+    font-size: 11px;
+    line-height: 17px;
+  }
+}
+
 /* Rich wallet values need their full content height, including wrapped details. */
 .b-account-input.sd-modern-underlined-field {
   :deep(.v-field--variant-underlined div.v-field__input) {

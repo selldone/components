@@ -13,196 +13,383 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs" class="widget-box -large mb-5">
-    <u-widget-header
-      title="Reviews"
-      icon="rate_review"
-      :add-caption="$t('global.actions.refresh')"
-      @click:add="refresh"
-      addText
+  <div
+    v-bind="$attrs"
+    :class="
+      modern
+        ? 'b-listing-reviews sd-modern-content text-start'
+        : 'widget-box -large mb-5'
+    "
+  >
+    <header v-if="modern" class="sd-modern-header b-listing-reviews__header">
+      <div class="sd-modern-title">
+        <v-icon
+          class="sd-modern-icon sd-modern-icon--plain"
+          size="25"
+          aria-hidden="true"
+          >rate_review</v-icon
+        >
+        <div>
+          <h1 class="sd-modern-title-text">
+            {{ $t("shop_listing.modern.reviews_title") }}
+          </h1>
+          <p class="sd-modern-subtitle">
+            {{ $t("shop_listing.modern.reviews_subtitle") }}
+          </p>
+        </div>
+      </div>
+      <v-btn
+        variant="outlined"
+        class="sd-modern-button"
+        prepend-icon="refresh"
+        :loading="busy_fetch"
+        @click="refresh"
+        >{{ $t("global.actions.refresh") }}</v-btn
+      >
+    </header>
+    <template v-else>
+      <u-widget-header
+        title="Reviews"
+        icon="rate_review"
+        :add-caption="$t('global.actions.refresh')"
+        @click:add="refresh"
+        addText
+      >
+      </u-widget-header>
+
+      <v-list-subheader>
+        Manage listing reviews, reply as the owner/vendor, and remove spam.
+      </v-list-subheader>
+    </template>
+
+    <div
+      class="s-table-loading"
+      :class="modern ? 'sd-modern-widget b-listing-reviews__widget' : undefined"
+      :aria-busy="busy_fetch"
     >
+      <!-- Filters -->
+      <div
+        :class="
+          modern
+            ? 'sd-modern-list-toolbar b-listing-reviews__toolbar'
+            : 'd-flex flex-wrap align-center gap-2 mb-2'
+        "
+      >
+        <v-select
+          v-model="filter_status"
+          :items="statusOptions"
+          item-title="title"
+          item-value="value"
+          :label="modern ? $t('global.commons.status') : 'Status'"
+          :variant="modern ? 'plain' : 'solo'"
+          :single-line="modern"
+          bg-color="transparent"
+          density="comfortable"
+          hide-details
+          class="max-w-220"
+          clearable
+          flat
+        />
 
-    </u-widget-header>
+        <v-select
+          v-model="filter_has_answer"
+          :items="answerOptions"
+          item-title="title"
+          item-value="value"
+          :label="modern ? $t('shop_listing.modern.answer') : 'Answer'"
+          :variant="modern ? 'plain' : 'solo'"
+          :single-line="modern"
+          bg-color="transparent"
+          density="comfortable"
+          hide-details
+          class="max-w-220"
+          clearable
+          flat
+        />
 
-    <v-list-subheader>
-      Manage listing reviews, reply as the owner/vendor, and remove spam.
-    </v-list-subheader>
+        <v-text-field
+          v-model="search"
+          :placeholder="$t('global.commons.search')"
+          :prepend-icon="modern ? undefined : 'search'"
+          :prepend-inner-icon="modern ? 'search' : undefined"
+          :aria-label="$t('global.commons.search')"
+          :variant="modern ? 'plain' : 'solo'"
+          bg-color="transparent"
+          hide-details
+          :class="modern ? 'b-listing-reviews__search' : 'max-width-field-mini'"
+          clearable
+          flat
+          single-line
+        />
 
-    <!-- Filters -->
-    <div class="d-flex flex-wrap align-center gap-2 mb-2">
-      <v-select
-        v-model="filter_status"
-        :items="statusOptions"
-        item-title="title"
-        item-value="value"
-        label="Status"
-        variant="solo"
-        bg-color="transparent"
-        density="comfortable"
-        hide-details
-        class="max-w-220"
-        clearable
-        flat
-      />
+        <u-smart-menu
+          v-model:with-trashed="with_trashed"
+          :class="modern ? undefined : 'ms-auto'"
+          has-with-trashed
+          :modern="modern"
+        />
+      </div>
 
-      <v-select
-        v-model="filter_has_answer"
-        :items="answerOptions"
-        item-title="title"
-        item-value="value"
-        label="Answer"
-        variant="solo"
-        bg-color="transparent"
-        density="comfortable"
-        hide-details
-        class="max-w-220"
-        clearable
-        flat
-      />
+      <u-loading-progress v-if="busy_fetch" />
 
-      <v-text-field
-        v-model="search"
-        :placeholder="$t('global.commons.search')"
-        prepend-icon="search"
-        variant="solo"
-        bg-color="transparent"
-        hide-details
-        class="max-width-field-mini"
-        clearable
-        flat
-        single-line
-      />
-
-      <u-smart-menu
-        v-model:with-trashed="with_trashed"
-        class="ms-auto"
-        has-with-trashed
-      />
-    </div>
-
-    <u-loading-progress v-if="busy_fetch" />
-
-    <v-data-table-server
-      :mobile="$vuetify.display.xs"
-      v-model:options="options"
-      v-model:page="page"
-      v-model:sort-by="sortBy"
-      :headers="headers"
-      :items="reviews"
-      :items-length="totalItems"
-      :items-per-page="itemsPerPage"
-      class="bg-transparent mb-2 min-height-60vh"
-      density="compact"
-      hide-default-footer
-      @click:row="(_, r) => openDialog(r.item)"
-    >
-      <template v-slot:no-data>
-        <div v-if="!busy_fetch && !search" class="py-5 usn text-center fadeIn">
-          <v-icon size="64" class="op-0-3">rate_review</v-icon>
-          <h2 class="text-h5 font-weight-thin mt-2">No reviews</h2>
-          <div class="text-muted mt-2">
-            Reviews submitted by users will appear here.
+      <v-data-table-server
+        :mobile="modern ? $vuetify.display.smAndDown : $vuetify.display.xs"
+        :hide-default-header="modern && $vuetify.display.smAndDown"
+        v-model:options="options"
+        v-model:page="page"
+        v-model:sort-by="sortBy"
+        :headers="headers"
+        :items="reviews"
+        :items-length="totalItems"
+        :items-per-page="itemsPerPage"
+        :class="
+          modern
+            ? 'sd-modern-data-table b-listing-reviews__table'
+            : 'bg-transparent mb-2 min-height-60vh'
+        "
+        :loading="modern && busy_fetch"
+        :aria-busy="busy_fetch"
+        :row-props="
+          modern
+            ? ({ item }) => ({
+                class: 'sd-modern-clickable-item',
+                tabindex: 0,
+                onKeydown: (event) => {
+                  if (
+                    event.target === event.currentTarget &&
+                    ['Enter', ' '].includes(event.key)
+                  ) {
+                    event.preventDefault();
+                    openDialog(item);
+                  }
+                },
+              })
+            : undefined
+        "
+        density="compact"
+        hide-default-footer
+        @click:row="(_, r) => openDialog(r.item)"
+      >
+        <template v-slot:no-data>
+          <div
+            v-if="modern && !busy_fetch"
+            class="sd-modern-empty-state"
+            role="status"
+          >
+            <v-icon size="38" aria-hidden="true">rate_review</v-icon>
+            <h2>
+              {{
+                $t(
+                  search ||
+                    (filter_status && filter_status !== "all") ||
+                    filter_has_answer ||
+                    with_trashed
+                    ? "shop_listing.modern.no_results"
+                    : "shop_listing.modern.reviews_empty_title",
+                )
+              }}
+            </h2>
+            <p class="sd-modern-muted">
+              {{
+                $t(
+                  search ||
+                    (filter_status && filter_status !== "all") ||
+                    filter_has_answer ||
+                    with_trashed
+                    ? "shop_listing.modern.no_results_hint"
+                    : "shop_listing.modern.reviews_empty_hint",
+                )
+              }}
+            </p>
           </div>
-        </div>
+          <template v-else-if="!modern">
+            <div
+              v-if="!busy_fetch && !search"
+              class="py-5 usn text-center fadeIn"
+            >
+              <v-icon size="64" class="op-0-3">rate_review</v-icon>
+              <h2 class="text-h5 font-weight-thin mt-2">No reviews</h2>
+              <div class="text-muted mt-2">
+                Reviews submitted by users will appear here.
+              </div>
+            </div>
 
-        <div v-else class="text-center px-3 py-5 text-muted">
-          <v-icon class="me-1">sentiment_dissatisfied</v-icon>
-          {{ $t("global.commons.no_data") }}
-        </div>
-      </template>
+            <div v-else class="text-center px-3 py-5 text-muted">
+              <v-icon class="me-1">sentiment_dissatisfied</v-icon>
+              {{ $t("global.commons.no_data") }}
+            </div>
+          </template>
+        </template>
 
-      <!-- REVIEW COLUMN (with avatar) -->
-      <template v-slot:item.review="{ item }">
-        <div class="min-width-260 py-1">
-          <div class="d-flex align-start">
-            <v-avatar size="32" class="me-2 mt-1">
-              <img
-                v-if="getReviewUserId(item)"
-                :src="getUserAvatar(getReviewUserId(item))"
-                alt="avatar"
-              />
-              <v-icon v-else>person</v-icon>
-            </v-avatar>
+        <!-- REVIEW COLUMN (with avatar) -->
+        <template v-slot:item.review="{ item }">
+          <div class="min-width-260 py-1">
+            <div class="d-flex align-start">
+              <v-avatar size="32" class="me-2 mt-1">
+                <img
+                  v-if="getReviewUserId(item)"
+                  :src="getUserAvatar(getReviewUserId(item))"
+                  alt="avatar"
+                />
+                <v-icon v-else>person</v-icon>
+              </v-avatar>
 
-            <div class="flex-grow-1 min-w-0">
-              <div class="d-flex align-center justify-space-between gap-2">
-                <div class="font-weight-black text-truncate">
-                  {{ item.user?.name || "User" }}
+              <div class="flex-grow-1 min-w-0">
+                <div class="d-flex align-center justify-space-between gap-2">
+                  <div
+                    :class="
+                      modern
+                        ? 'font-weight-medium text-truncate'
+                        : 'font-weight-black text-truncate'
+                    "
+                  >
+                    {{ item.user?.name || "User" }}
+                  </div>
+
+                  <v-rating
+                    :model-value="Number(item.rating || 0)"
+                    readonly
+                    density="compact"
+                    half-increments
+                  />
                 </div>
 
-                <v-rating
-                  :model-value="Number(item.rating || 0)"
-                  readonly
-                  density="compact"
-                  half-increments
-                />
-              </div>
+                <div v-if="item.title" class="text-truncate mt-1">
+                  {{ item.title }}
+                </div>
 
-              <div v-if="item.title" class="text-truncate mt-1">
-                {{ item.title }}
+                <small class="d-block lhn text-muted">
+                  {{ (item.content || "").toString().limitWords(14) }}
+                </small>
               </div>
-
-              <small class="d-block lhn text-muted">
-                {{ (item.content || "").toString().limitWords(14) }}
-              </small>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
 
-      <template v-slot:item.item="{ item }">
-        <div class="min-width-240 py-1">
-          <div class="font-weight-black text-truncate">
-            {{ item.item?.title || `Item #${item.item_id}` }}
+        <template v-slot:item.item="{ item }">
+          <div class="min-width-240 py-1">
+            <div
+              :class="
+                modern
+                  ? 'font-weight-medium text-truncate'
+                  : 'font-weight-black text-truncate'
+              "
+            >
+              {{ item.item?.title || `Item #${item.item_id}` }}
+            </div>
+
+            <v-chip
+              v-if="item.item?.category?.title"
+              size="x-small"
+              variant="tonal"
+              label
+              class="mt-1"
+              :prepend-avatar="
+                item.item.category.icon
+                  ? getShopImagePath(item.item.category.icon)
+                  : undefined
+              "
+            >
+              {{ item.item.category.title }}
+            </v-chip>
           </div>
+        </template>
 
-          <v-chip
-            v-if="item.item?.category?.title"
-            size="x-small"
-            variant="tonal"
-            label
-            class="mt-1"
-            :prepend-avatar="item.item.category.icon ? getShopImagePath(item.item.category.icon) : undefined"
-          >
-            {{ item.item.category.title }}
-          </v-chip>
-        </div>
-      </template>
+        <template v-slot:item.status="{ item }">
+          <template v-if="modern">
+            <span class="sd-modern-status sd-modern-status--plain">
+              <span
+                class="sd-modern-status__dot"
+                :class="
+                  item.deleted_at
+                    ? 'sd-modern-status__dot--error'
+                    : item.is_approved
+                      ? 'sd-modern-status__dot--success'
+                      : 'sd-modern-status__dot--warning'
+                "
+                aria-hidden="true"
+              />
+              {{
+                item.deleted_at
+                  ? $t("global.commons.removed")
+                  : $t(
+                      item.is_approved
+                        ? "shop_listing.modern.statuses.approved"
+                        : "shop_listing.modern.statuses.pending",
+                    )
+              }}
+            </span>
+            <span
+              v-if="item.answer"
+              class="sd-modern-status sd-modern-status--plain d-flex mt-1"
+              ><span
+                class="sd-modern-status__dot sd-modern-status__dot--success"
+                aria-hidden="true"
+              />{{ $t("shop_listing.modern.replied") }}</span
+            >
+          </template>
+          <template v-else>
+            <v-chip
+              size="x-small"
+              label
+              :variant="item.deleted_at ? 'outlined' : 'tonal'"
+              :class="statusClass(item)"
+            >
+              {{
+                item.deleted_at
+                  ? "Removed"
+                  : item.is_approved
+                    ? "Approved"
+                    : "Pending"
+              }}
+            </v-chip>
 
-      <template v-slot:item.status="{ item }">
-        <v-chip
-          size="x-small"
-          label
-          :variant="item.deleted_at ? 'outlined' : 'tonal'"
-          :class="statusClass(item)"
-        >
-          {{ item.deleted_at ? "Removed" : (item.is_approved ? "Approved" : "Pending") }}
-        </v-chip>
+            <v-chip
+              v-if="item.answer"
+              size="x-small"
+              label
+              variant="tonal"
+              class="mt-1"
+            >
+              Replied
+            </v-chip>
+          </template>
+        </template>
 
-        <v-chip v-if="item.answer" size="x-small" label variant="tonal" class="mt-1">
-          Replied
-        </v-chip>
-      </template>
+        <template v-slot:item.created_at="{ item }">
+          <div class="min-width-180">
+            {{ getFromNowString(item.created_at) }}
+            <br />
+            <small class="text-muted">{{
+              getLocalTimeString(item.created_at)
+            }}</small>
+          </div>
+        </template>
 
-      <template v-slot:item.created_at="{ item }">
-        <div class="min-width-180">
-          {{ getFromNowString(item.created_at) }}
-          <br />
-          <small class="text-muted">{{ getLocalTimeString(item.created_at) }}</small>
-        </div>
-      </template>
+        <template v-slot:item.menu="{ item }">
+          <u-smart-menu
+            :loading="busy_action_id === item.id"
+            :items="menuItems(item)"
+            :modern="modern"
+          />
+        </template>
 
-      <template v-slot:item.menu="{ item }">
-        <u-smart-menu
-          :loading="busy_action_id === item.id"
-          :items="menuItems(item)"
-        />
-      </template>
-
-      <template v-slot:bottom>
-        <v-pagination v-model="page" :length="pageCount" rounded />
-      </template>
-    </v-data-table-server>
+        <template v-slot:bottom>
+          <div v-if="modern" class="sd-modern-table-footer">
+            <span class="sd-modern-page-summary"
+              >{{ $t("global.commons.total") }}: {{ $n(totalItems) }}</span
+            >
+            <v-pagination
+              v-model="page"
+              :length="Math.max(1, pageCount)"
+              :disabled="busy_fetch || !pageCount"
+              class="sd-modern-pagination"
+            />
+          </div>
+          <v-pagination v-else v-model="page" :length="pageCount" rounded />
+        </template>
+      </v-data-table-server>
+    </div>
 
     <!-- Dialog (also auto-switches API/VAPI) -->
     <b-shop-listing-review-dialog
@@ -230,6 +417,8 @@ export default {
     USmartMenu,
     BShopListingReviewDialog,
   },
+
+  props: { modern: Boolean },
 
   data: () => ({
     reviews: [] as any[],
@@ -267,14 +456,17 @@ export default {
       return (
         (this as any).$route?.params?.vendor_id &&
         // @ts-ignore
-        (this as any).$route?.matched?.some((record: any) => record?.meta?.vendor)
+        (this as any).$route?.matched?.some(
+          (record: any) => record?.meta?.vendor,
+        )
       );
     },
 
     VENDOR_ID_SAFE(): number | null {
       // @ts-ignore
       const raw = (this as any).$route?.params?.vendor_id;
-      const n = raw !== null && raw !== undefined ? parseInt(String(raw), 10) : 0;
+      const n =
+        raw !== null && raw !== undefined ? parseInt(String(raw), 10) : 0;
       return n > 0 ? n : null;
     },
 
@@ -284,26 +476,72 @@ export default {
 
     statusOptions(): any[] {
       return [
-        { title: "All", value: "all" },
-        { title: "Approved", value: "approved" },
-        { title: "Pending", value: "pending" },
+        {
+          title: this.modern ? this.$t("global.commons.all") : "All",
+          value: "all",
+        },
+        {
+          title: this.modern
+            ? this.$t("shop_listing.modern.statuses.approved")
+            : "Approved",
+          value: "approved",
+        },
+        {
+          title: this.modern
+            ? this.$t("shop_listing.modern.statuses.pending")
+            : "Pending",
+          value: "pending",
+        },
       ];
     },
 
     answerOptions(): any[] {
       return [
-        { title: "All", value: null },
-        { title: "Has reply", value: "true" },
-        { title: "No reply", value: "false" },
+        {
+          title: this.modern ? this.$t("global.commons.all") : "All",
+          value: null,
+        },
+        {
+          title: this.modern
+            ? this.$t("shop_listing.messages.has_reply_yes")
+            : "Has reply",
+          value: "true",
+        },
+        {
+          title: this.modern
+            ? this.$t("shop_listing.messages.has_reply_no")
+            : "No reply",
+          value: "false",
+        },
       ];
     },
 
     headers(): any[] {
       return [
-        { title: "Review", align: "start", sortable: false, value: "review" },
-        { title: "Item", align: "start", sortable: false, value: "item" },
-        { title: "Status", align: "center", sortable: true, value: "status" },
-        { title: "Created", align: "start", sortable: true, value: "created_at" },
+        {
+          title: this.modern ? this.$t("shop_listing.modern.review") : "Review",
+          align: "start",
+          sortable: false,
+          value: "review",
+        },
+        {
+          title: this.modern ? this.$t("shop_listing.messages.item") : "Item",
+          align: "start",
+          sortable: false,
+          value: "item",
+        },
+        {
+          title: this.modern ? this.$t("global.commons.status") : "Status",
+          align: "center",
+          sortable: true,
+          value: "status",
+        },
+        {
+          title: this.modern ? this.$t("global.sort.created_at") : "Created",
+          align: "start",
+          sortable: true,
+          value: "created_at",
+        },
         { title: "", align: "center", sortable: false, value: "menu" },
       ];
     },
@@ -320,10 +558,13 @@ export default {
       deep: true,
     },
 
-    search: throttle(function () {
-      this.page = 1;
-      this.refresh();
-    }, (window as any).SERACH_THROTTLE || 600),
+    search: throttle(
+      function () {
+        this.page = 1;
+        this.refresh();
+      },
+      (window as any).SERACH_THROTTLE || 600,
+    ),
 
     with_trashed() {
       this.page = 1;
@@ -369,10 +610,10 @@ export default {
       this.busy_fetch = true;
 
       const url = this.IS_VENDOR_PANEL
-        // ✅ Vendor endpoint
-        ? window.VAPI.GET_MY_VENDOR_LISTING_REVIEWS(vendorId)
-        // ✅ Backoffice endpoint
-        : window.API.GET_SHOP_LISTING_REVIEWS(shopId);
+        ? // ✅ Vendor endpoint
+          window.VAPI.GET_MY_VENDOR_LISTING_REVIEWS(vendorId)
+        : // ✅ Backoffice endpoint
+          window.API.GET_SHOP_LISTING_REVIEWS(shopId);
 
       axios
         .get(url, {
@@ -395,7 +636,8 @@ export default {
             return;
           }
           this.reviews = Array.isArray(data.reviews) ? data.reviews : [];
-          this.totalItems = parseInt(String(data.total || 0), 10) || this.reviews.length;
+          this.totalItems =
+            parseInt(String(data.total || 0), 10) || this.reviews.length;
         })
         .catch((error) => NotificationService.showLaravelError(error))
         .finally(() => (this.busy_fetch = false));
@@ -430,52 +672,69 @@ export default {
       // Vendor panel: no approve/reject moderation
       if (this.IS_VENDOR_PANEL) {
         return [
-          { title: "Open", icon: "visibility", click: () => this.openDialog(item) },
+          {
+            title: "Open",
+            icon: "visibility",
+            click: () => this.openDialog(item),
+          },
 
           ...(isDeleted
             ? [
+                {
+                  title: this.$t("global.actions.restore"),
+                  icon: "settings_backup_restore",
+                  click: () => this.restoreReview(item),
+                },
+              ]
+            : [
+                {
+                  title: "Reply",
+                  icon: "reply",
+                  click: () => this.openDialog(item),
+                },
+                {
+                  title: this.$t("global.actions.delete"),
+                  icon: "delete",
+                  click: () => this.deleteReview(item),
+                },
+              ]),
+        ];
+      }
+
+      // Backoffice: full actions
+      return [
+        {
+          title: "Open",
+          icon: "visibility",
+          click: () => this.openDialog(item),
+        },
+
+        ...(isDeleted
+          ? [
               {
                 title: this.$t("global.actions.restore"),
                 icon: "settings_backup_restore",
                 click: () => this.restoreReview(item),
               },
             ]
-            : [
-              { title: "Reply", icon: "reply", click: () => this.openDialog(item) },
+          : [
+              {
+                title: approved ? "Reject" : "Approve",
+                icon: "verified",
+                click: () =>
+                  approved ? this.rejectReview(item) : this.approveReview(item),
+              },
+              {
+                title: "Reply",
+                icon: "reply",
+                click: () => this.openDialog(item),
+              },
               {
                 title: this.$t("global.actions.delete"),
                 icon: "delete",
                 click: () => this.deleteReview(item),
               },
             ]),
-        ];
-      }
-
-      // Backoffice: full actions
-      return [
-        { title: "Open", icon: "visibility", click: () => this.openDialog(item) },
-
-        ...(isDeleted
-          ? [
-            {
-              title: this.$t("global.actions.restore"),
-              icon: "settings_backup_restore",
-              click: () => this.restoreReview(item),
-            },
-          ]
-          : [
-            {
-              title: approved ? "Reject" : "Approve",
-              icon: "verified",
-              click: () => (approved ? this.rejectReview(item) : this.approveReview(item)),
-            },
-            { title: "Reply", icon: "reply", click: () => this.openDialog(item) },
-            {
-              title: this.$t("global.actions.delete"),
-              icon: "delete",
-              click: () => this.deleteReview(item),
-            },
-          ]),
       ];
     },
 
@@ -591,5 +850,72 @@ export default {
 }
 .max-w-220 {
   max-width: 220px;
+}
+.b-listing-reviews {
+  width: 100%;
+}
+.b-listing-reviews__header {
+  margin-block-end: 24px;
+}
+.b-listing-reviews__header .sd-modern-title-text {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  letter-spacing: -0.4px;
+}
+.b-listing-reviews__widget {
+  padding: 16px 22px 0;
+  border-radius: 16px;
+}
+.b-listing-reviews__toolbar {
+  flex-wrap: wrap;
+}
+.b-listing-reviews__toolbar .max-w-220 {
+  flex: 0 1 155px;
+  max-width: 155px;
+  min-width: 0;
+}
+.b-listing-reviews__search {
+  flex: 0 1 190px;
+  max-width: 190px;
+  min-width: 0;
+  margin-inline-start: auto;
+}
+.b-listing-reviews__table :deep(.min-width-260) {
+  min-width: 210px;
+}
+.b-listing-reviews__table :deep(.min-width-240) {
+  min-width: 180px;
+}
+.b-listing-reviews__table :deep(.min-width-180) {
+  min-width: 150px;
+}
+.b-listing-reviews__table :deep(.sd-modern-empty-state) {
+  min-height: 290px;
+}
+.b-listing-reviews__table :deep(.sd-modern-empty-state h2) {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+@media (max-width: 600px) {
+  .b-listing-reviews__widget {
+    padding-inline: 14px;
+  }
+  .b-listing-reviews__toolbar .max-w-220 {
+    flex: 1 1 140px;
+    max-width: none;
+  }
+  .b-listing-reviews__search {
+    flex: 1 1 180px;
+    max-width: none;
+    margin-inline-start: 0;
+  }
+  .b-listing-reviews__table :deep(.min-width-260),
+  .b-listing-reviews__table :deep(.min-width-240),
+  .b-listing-reviews__table :deep(.min-width-180) {
+    min-width: 0 !important;
+    width: 100%;
+  }
 }
 </style>

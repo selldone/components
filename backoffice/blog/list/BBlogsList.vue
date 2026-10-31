@@ -14,7 +14,7 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    class="b-blogs-list text-start"
+    class="b-blogs-list s-table-loading text-start"
     :class="{ 'b-blogs-list--modern': modern }"
     :aria-busy="busy_fetch"
   >
@@ -596,7 +596,9 @@
             <span
               class="sd-modern-status__dot"
               :class="
-                item.published ? 'text-success' : 'b-blogs-list__draft-dot'
+                item.published
+                  ? 'sd-modern-status__dot--success'
+                  : 'sd-modern-status__dot--warning'
               "
               aria-hidden="true"
             />
@@ -1213,11 +1215,11 @@ export default {
 
     > thead > tr > th:first-child,
     > tbody > tr > td:first-child {
-      padding-inline-start: 0;
+      padding-inline-start: 12px;
     }
     > thead > tr > th:last-child,
     > tbody > tr > td:last-child {
-      padding-inline-end: 0;
+      padding-inline-end: 12px;
     }
     > thead > tr > th:last-child .v-data-table-header__content {
       font-size: 0;
@@ -1321,7 +1323,8 @@ export default {
     margin: 0 !important;
     flex: 0 0 27px;
   }
-  .b-blogs-list__author-identity :deep(> .flex-grow-1) {
+  // The nested email/phone columns must shrink too, so ellipsis stays clear of Edit.
+  .b-blogs-list__author-identity :deep(.flex-grow-1) {
     min-width: 0;
   }
   .b-blogs-list__author-identity :deep(b) {
@@ -1398,9 +1401,6 @@ export default {
     width: 5px;
     height: 5px;
     flex: 0 0 5px;
-  }
-  .b-blogs-list__draft-dot {
-    color: var(--sd-modern-muted);
   }
   .b-blogs-list__visibility {
     display: flex;

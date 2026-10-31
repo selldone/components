@@ -17,12 +17,12 @@
   <v-row
     v-if="has_no_vendor"
     align="center"
-    class="bg-red shadow-small"
+    :class="modern ? 'b-product-flow__alert' : 'bg-red shadow-small'"
     no-gutters
   >
     <v-list-item
       :title="$t('product_flow.vendor_errors.title')"
-      base-color="#fff"
+      :base-color="modern ? undefined : '#fff'"
       class="flex-grow-1"
       :subtitle="$t('product_flow.vendor_errors.subtitle')"
     >
@@ -36,6 +36,7 @@
         v-if="!IS_VENDOR_PANEL"
         :to="{ name: 'BPageProductVendors' }"
         class="tnt ma-1"
+        :class="{ 'sd-modern-button sd-modern-button--small': modern }"
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
@@ -56,7 +57,7 @@ export default defineComponent({
   components: {},
   inject: ["$shop", "$product"],
 
-  props: {},
+  props: { modern: { type: Boolean, default: false } },
   computed: {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/

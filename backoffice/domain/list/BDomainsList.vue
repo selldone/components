@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs" :class="{ 'b-domains-list--modern text-start': modern, 'b-domains-list--refined sd-modern-widget': refinedView }">
+  <div v-bind="$attrs" class="s-table-loading" :class="{ 'b-domains-list--modern text-start': modern, 'b-domains-list--refined sd-modern-widget': refinedView }" :aria-busy="busy_fetch">
     <template v-if="refinedView">
       <header v-if="showHeader" class="sd-modern-header b-domains-list__heading">
         <div class="sd-modern-title">
@@ -45,15 +45,16 @@
         :headers="refinedHeaders" :items="shop_domains" :items-length="totalItems" :items-per-page="itemsPerPage"
         :header-props="{ sortByText: $t('global.commons.sort_by') }" :mobile="$vuetify.display.width < 700"
         :hide-default-header="$vuetify.display.width < 700"
-        :row-props="() => ({ class: 'sd-modern-clickable-item' })" :loading="busy_fetch"
-        class="sd-modern-data-table b-domains-list__refined-table bg-transparent" density="compact" hide-default-footer item-value="url" expand-on-click
+        :row-props="({ item }) => ({ class: ['sd-modern-clickable-item', { 'b-domains-list__returned': domainKey(item) === String(HIGHLIGHT_ID) }] })" :loading="busy_fetch"
+        class="sd-modern-data-table b-domains-list__refined-table bg-transparent" density="compact" hide-default-footer item-value="url"
+        @click:row="openDomainRow"
       >
         <template #item.url="{ item }">
-          <div class="b-domains-list__address"><bdi dir="ltr">{{ item.url.replace(/^https?:\/\//, '') }}</bdi><BShopLicenseBlockIcon v-if="item.domain && !can_edit_domain(item.domain)" /></div>
+          <div class="b-domains-list__address"><router-link :to="domainRoute(item)" class="b-domains-list__domain-link" @click.stop="cacheRouteState(domainKey(item))"><bdi dir="ltr">{{ item.url.replace(/^https?:\/\//, '') }}</bdi></router-link><BShopLicenseBlockIcon v-if="item.domain && !can_edit_domain(item.domain)" /></div>
           <div class="b-domains-list__meta"><v-icon v-if="item.primary" size="13">star_border</v-icon>{{ item.primary ? $t('domains_modern.list.primary') : item.official === 'local' ? $t('domains_modern.list.store_address') : item.domain?.externally_hosted ? $t('admin_shop.dashboard.info.table.externally_hosted') : 'HTTPS' }}</div>
         </template>
         <template #item.home="{ item }">
-          <v-btn v-if="!item.official && !item.domain?.externally_hosted" class="b-domains-list__destination" variant="text" :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)" @click.stop="showSetHomeDialog(item.domain)">
+          <v-btn v-if="!item.official && !item.domain?.externally_hosted" class="b-domains-list__destination" variant="text" @click.stop="openDomain(item, 'BPageDomainStorefront')">
             <v-icon size="16">{{ item.primary || !item.domain.home ? 'home' : 'web' }}</v-icon>
             <span><span>{{ item.primary || !item.domain.home ? $t('domains_modern.list.store_default') : GetDomainHomeName(getCorrespondingHomePageValue(item)) }}</span><span class="b-domains-list__meta">{{ item.primary || !item.domain.home ? GetDomainHomeName(shop.home) : ('' + item.domain.home).startsWith('/') ? item.domain.home : $t('domains_modern.list.custom_home') }}</span></span>
           </v-btn>
@@ -69,27 +70,27 @@
         </template>
         <template #item.actions="{ item, internalItem, isExpanded, toggleExpand }">
           <div class="b-domains-list__row-actions">
-            <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t('domains_modern.list.copy')" @click.stop="copyToClipboard(item.url)"><v-icon size="16">content_copy</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.list.copy') }}</v-tooltip></v-btn>
-            <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t(isExpanded(internalItem) ? 'domains_modern.list.collapse' : 'domains_modern.list.expand')" :aria-expanded="isExpanded(internalItem)" @click.stop="toggleExpand(internalItem)"><v-icon size="16">{{ isExpanded(internalItem) ? 'expand_less' : 'expand_more' }}</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t(isExpanded(internalItem) ? 'domains_modern.list.collapse' : 'domains_modern.list.expand') }}</v-tooltip></v-btn>
+            <v-btn v-if="item.official !== 'local' && !item.url.includes('*')" :href="item.url" :disabled="!item.enable" target="_blank" rel="noopener noreferrer" icon variant="text" class="sd-modern-icon-button" :aria-label="$t('user_dashboard.shops.modern.open_in_new_tab')" @click.stop><v-icon size="16">north_east</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('user_dashboard.shops.modern.open_in_new_tab') }}</v-tooltip></v-btn>
+            <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t('domains_modern.workspace.openSettings')" @click.stop="openDomain(item)"><v-icon size="16">settings</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.workspace.openSettings') }}</v-tooltip></v-btn>
+            <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t(isExpanded(internalItem) ? 'domains_modern.workspace.hideDetails' : 'domains_modern.workspace.details')" :aria-expanded="isExpanded(internalItem)" @click.stop="toggleExpand(internalItem)"><v-icon size="16">{{ isExpanded(internalItem) ? 'expand_less' : 'expand_more' }}</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t(isExpanded(internalItem) ? 'domains_modern.workspace.hideDetails' : 'domains_modern.workspace.details') }}</v-tooltip></v-btn>
           </div>
         </template>
         <template #expanded-row="{ columns, item }">
           <tr class="b-domains-list__expanded"><td :colspan="columns.length">
             <section class="b-domains-list__details text-start">
-              <div class="sd-modern-list-header">{{ $t('domains_modern.list.settings') }}</div>
+              <div class="sd-modern-list-header">{{ $t('domains_modern.workspace.quickDetails') }}</div>
               <h3 class="b-domains-list__detail-title"><bdi dir="ltr">{{ item.domain?.domain || item.url }}</bdi></h3>
               <b-domain-flow-map
                 :item="item" :shop="shop"
-                :read-only="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+                :read-only="true"
                 :busy-update="busy_update"
                 :busy-repair="busy_add_client && add_client_code === (item.domain ? item.domain.id : item.official)"
-                @update-domain="updateFlowDomain(item, $event)"
-                @edit-domain="handleFlowAction(item, 'edit-domain')"
-                @settings="handleFlowAction(item, 'settings', $event)"
-                @home="handleFlowAction(item, 'home')"
-                @default-home="handleFlowAction(item, 'default-home')"
-                @sitemap="handleFlowAction(item, 'sitemap')"
-                @repair="handleFlowAction(item, 'repair')"
+                @edit-domain="openDomain(item, 'BPageDomainConnection')"
+                @settings="openDomain(item, $event === 'ssl' ? 'BPageDomainConnection' : 'BPageDomainSettings', $event)"
+                @home="openDomain(item, 'BPageDomainStorefront')"
+                @default-home="openDomain(item, 'BPageDomainStorefront')"
+                @sitemap="openDomain(item, 'BPageDomainSearch')"
+                @repair="openDomain(item, 'BPageDomainSettings', 'oauth')"
               />
               <div class="b-domains-list__scopes">
                 <v-tooltip v-for="scope in ['currencies', 'languages']" :key="scope"
@@ -97,8 +98,7 @@
                   <template #activator="{ props }">
                     <button v-bind="props" type="button" class="b-domains-list__scope-action"
                             :aria-label="$t(scope === 'currencies' ? 'domains_modern.map.currenciesLabel' : 'domains_modern.map.languagesLabel')"
-                            :aria-disabled="!item.domain || !writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-                            @click.stop="handleFlowAction(item, 'settings', scope)">
+                            @click.stop="openDomain(item, 'BPageDomainSettings', 'scope')">
                       <template v-if="scope === 'currencies'">
                         <span v-if="!item.domain?.currencies?.length">{{ $t('domains_modern.list.all_currencies') }}</span>
                         <span v-for="currency in item.domain?.currencies" :key="currency"><flag :iso="GetCurrency(currency)?.flag" :squared="false" /> {{ currency }}</span>
@@ -118,8 +118,8 @@
                 <summary>{{ $t(item.domain?.externally_hosted ? 'domains_modern.map.externalAdvanced' : 'domains_modern.map.advanced') }}</summary>
                 <div v-if="!item.domain?.externally_hosted && item.certificate" class="b-domains-list__certificate"><v-icon size="15">verified_user</v-icon><span>{{ item.certificate.Name }}</span><span>{{ getLocalDateString(item.certificate['Issue Date']) }} ~ {{ getLocalDateString(item.certificate['Expiry Date']) }}</span><span v-if="item.certificate['Expiry Date']?.convertToLocalDate(item.certificate['Expiry Date'])?.isBeforeToday()">{{ $t('domains_modern.list.expired') }}</span></div>
                 <div v-if="!item.domain?.externally_hosted && item.domain" class="b-domains-list__meta">{{ $t(item.domain.ssl_proxy ? 'domains_modern.list.selldone_ssl' : 'domains_modern.list.external_ssl') }}</div>
-                <details v-if="item.domain && writeShopAccess(ShopPermissionRegions.SETTINGS.code)" class="sd-modern-disclosure sd-modern-critical b-domains-list__critical"><summary>{{ $t('domains_modern.list.remove_title') }}</summary><p>{{ $t('domains_modern.list.remove_help') }}</p><v-btn :loading="busy_delete === item.domain.id" class="sd-modern-button sd-modern-button--danger" color="error" variant="elevated" prepend-icon="delete_outline" @click="deleteShopDomain(item.domain)">{{ $t('global.actions.delete') }}</v-btn></details>
               </details>
+              <v-btn class="sd-modern-button sd-modern-button--inline mt-3" variant="text" @click.stop="openDomain(item)">{{ $t('domains_modern.workspace.openSettings') }}<v-icon size="16" end>{{ $t('icons.chevron_next') }}</v-icon></v-btn>
             </section>
           </td></tr>
         </template>
@@ -941,8 +941,8 @@
   <v-dialog
     v-if="shop"
     v-model="dialog_set_domain"
-    :fullscreen="!refinedView"
-    :max-width="refinedView ? 760 : undefined"
+    :fullscreen="!refinedView || !selected_shop_domain?.id"
+    :max-width="refinedView && selected_shop_domain?.id ? 760 : undefined"
     scrollable
     transition="dialog-bottom-transition"
   >
@@ -1050,11 +1050,12 @@ import UMenuExpandable from "@selldone/components-vue/ui/menu/expandable/UMenuEx
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 import BDomainFlowMap from "./BDomainFlowMap.vue";
+import { RouteMixin } from "@selldone/components-vue/mixin/route/RouteMixin.ts";
 
 export default {
   name: "BDomainsList",
   emits: ['show-default-home'],
-  mixins: [DateMixin, DomainMixin, CurrencyMixin],
+  mixins: [DateMixin, DomainMixin, CurrencyMixin, RouteMixin],
 
   components: {
     BDomainFlowMap,
@@ -1135,11 +1136,11 @@ export default {
     },
     refinedHeaders() {
       return [
-        { title: this.$t('domains_modern.list.domain'), key: 'url', value: 'url', sortable: false, width: '34%' },
+        { title: this.$t('domains_modern.list.domain'), key: 'url', value: 'url', sortable: false },
         { title: this.$t('domains_modern.list.home'), key: 'home', value: 'home', sortable: false, width: '23%' },
         { title: this.$t('domains_modern.list.connection'), key: 'connection', value: 'connection', sortable: false, width: '18%' },
         { title: this.$t('domains_modern.list.visibility'), key: 'visibility', value: 'visibility', sortable: false, width: '15%' },
-        { title: '', key: 'actions', value: 'actions', sortable: false, width: '10%', align: 'end' },
+        { title: '', key: 'actions', value: 'actions', sortable: false, width: '168px', align: 'end' },
       ];
     },
     ShopPermissionRegions() {
@@ -1229,6 +1230,20 @@ export default {
   },
   mounted() {},
   methods: {
+    domainKey(item) {
+      return String(item.domain?.id || item.official);
+    },
+    domainRoute(item, name = 'BPageDomainOverview', section = null) {
+      return { name, params: { shop_id: this.shop.id, domain_key: this.domainKey(item) }, query: section ? { section } : {} };
+    },
+    openDomain(item, name = 'BPageDomainOverview', section = null) {
+      this.cacheRouteState(this.domainKey(item));
+      return this.$router.push(this.domainRoute(item, name, section));
+    },
+    openDomainRow(event, { item }) {
+      if (event.target?.closest('a,button,input,select,textarea,summary')) return;
+      this.openDomain(item);
+    },
     updateFlowDomain(item, change) {
       if (!this.writeShopAccess(ShopPermissionRegions.SETTINGS.code) || this.busy_update) return;
       if (!['enable', 'indexed', 'primary'].includes(change?.param) || typeof change.value !== 'boolean') return;
@@ -1502,10 +1517,8 @@ export default {
   .b-domains-list__refined-table { --v-table-header-height: 39px; width: 100%; }
   .b-domains-list__refined-table :deep(.v-table__wrapper) { overflow: visible; }
   .b-domains-list__refined-table :deep(table) { width: 100%; table-layout: fixed; }
-  .b-domains-list__refined-table :deep(thead th) { padding: 15px 8px 9px !important; }
-  .b-domains-list__refined-table :deep(tbody > tr:not(.b-domains-list__expanded) > td) { padding: 15px 8px !important; font-size: 12px; font-weight: 400; line-height: 19px; }
-  .b-domains-list__refined-table :deep(tbody > tr > td:first-child), .b-domains-list__refined-table :deep(thead th:first-child) { padding-inline-start: 0 !important; }
-  .b-domains-list__refined-table :deep(tbody > tr > td:last-child), .b-domains-list__refined-table :deep(thead th:last-child) { padding-inline-end: 0 !important; }
+  .b-domains-list__refined-table :deep(thead th) { padding: 15px 12px 9px !important; }
+  .b-domains-list__refined-table :deep(tbody > tr:not(.b-domains-list__expanded) > td) { padding: 15px 12px !important; font-size: 12px; font-weight: 400; line-height: 19px; }
   .b-domains-list__address { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; line-height: 20px; min-width: 0; overflow-wrap: anywhere; }
   .b-domains-list__meta { display: flex; align-items: center; gap: 5px; margin-block-start: 3px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; overflow-wrap: anywhere; }
   .b-domains-list__destination, .b-domains-list__destination-static { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; font-weight: 400; line-height: 19px; text-align: start; min-width: 0; }
@@ -1514,6 +1527,9 @@ export default {
   .b-domains-list__destination .v-icon, .b-domains-list__destination-static > .v-icon { margin-block-start: 2px; color: var(--sd-modern-muted); }
   .b-domains-list__connection { white-space: normal; }
   .b-domains-list__row-actions { --sd-modern-icon-button-size: 32px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+  .b-domains-list__domain-link { color: inherit; text-decoration: none; }
+  .b-domains-list__domain-link:hover { text-decoration: underline; }
+  .b-domains-list__returned { background: rgba(var(--v-theme-primary), .04); }
   .b-domains-list__expanded > td { padding: 0 !important; }
   .b-domains-list__details { max-width: 760px; margin: 8px auto; padding: 24px; background: rgb(var(--v-theme-surface)); border: 1px solid var(--sd-modern-border); border-radius: 20px; }
   .b-domains-list__detail-title { margin-block: 5px 0; font-size: 16px; font-weight: 500; line-height: 24px; overflow-wrap: anywhere; }
@@ -1537,6 +1553,7 @@ export default {
     .b-domains-list__refined-toolbar { flex-direction: column; align-items: stretch; }
     .b-domains-list__search { width: 100%; max-width: none; margin-inline-start: 0; }
     .b-domains-list__refined-table :deep(table) { table-layout: auto; }
+    .b-domains-list__refined-table :deep(.v-data-table__tr--mobile) { display: grid; grid-template-columns: minmax(0, 1fr); padding-inline: 12px; }
     .b-domains-list__refined-table :deep(tbody > tr:not(.b-domains-list__expanded) > td) { padding: 10px 0 !important; }
     .b-domains-list__refined-table :deep(.v-data-table__td-value) { min-width: 0; max-width: 100%; }
     .b-domains-list__details { padding: 18px 13px; border-radius: 16px; }

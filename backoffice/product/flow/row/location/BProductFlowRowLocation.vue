@@ -17,21 +17,22 @@
     <v-list-item
       :prepend-icon="locations_count ? 'mode_of_travel' : 'public'"
       :title="
-        $t('product_flow.location.title', {
+        $t(modern ? 'b_product_dashboard.flow.location_title' : 'product_flow.location.title', {
           status: locations_count
-            ? $t('product_flow.location.status.has_restriction', {
+            ? $t(modern ? 'b_product_dashboard.flow.location_custom' : 'product_flow.location.status.has_restriction', {
                 count: locations_count,
               })
-            : $t('product_flow.location.status.no_restriction'),
+            : $t(modern ? 'b_product_dashboard.flow.location_inherited' : 'product_flow.location.status.no_restriction'),
         })
       "
       class="flex-grow-1"
     >
       <v-list-item-subtitle v-if="shop_countries?.length">
-        <v-icon class="me-1" color="green">check_circle</v-icon>
+        <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true" />
+        <v-icon v-else class="me-1" color="green">check_circle</v-icon>
 
         {{
-          $t("product_flow.location.available_countries_msg", {
+          $t(modern ? 'b_product_dashboard.flow.store_countries' : "product_flow.location.available_countries_msg", {
             count: shop_countries.length,
             countries: shop_countries
               .map((i) => getCountryName(i))
@@ -41,7 +42,8 @@
         }}
       </v-list-item-subtitle>
       <v-list-item-subtitle v-else-if="shop_countries">
-        <v-icon class="me-1" color="red">cancel</v-icon>
+        <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--error" aria-hidden="true" />
+        <v-icon v-else class="me-1" color="red">cancel</v-icon>
         {{ $t("product_flow.location.disable_for_all_countries_msg") }}
       </v-list-item-subtitle>
 
@@ -49,7 +51,8 @@
         v-for="(zips, country) in locations"
         :key="country"
         class="ma-1"
-        color="#fafafa"
+        :color="modern ? undefined : '#fafafa'"
+        :class="{ 'b-product-flow__location': modern }"
         size="small"
         variant="flat"
       >
@@ -64,11 +67,11 @@
 
         <v-tooltip
           activator="parent"
-          content-class="text-start"
-          max-width="360"
-          location="bottom"
+          :content-class="modern ? 'sd-modern-tooltip text-start' : 'text-start'"
+          :max-width="modern ? undefined : 360"
+          :location="modern ? 'top' : 'bottom'"
         >
-          {{ `Available in ${zips.join(", ")}` }}
+          {{ modern ? $t('b_product_dashboard.flow.available_in', { locations: zips.join(', ') }) : `Available in ${zips.join(", ")}` }}
 
           <div v-if="!isValidLocation(country)" class="mt-2">
             <v-icon
@@ -95,6 +98,7 @@
         v-if="!IS_VENDOR_PANEL"
         :to="{ name: 'BPageShopSettingLocations' }"
         class="tnt ma-1"
+        :class="{ 'sd-modern-button sd-modern-button--small': modern }"
         color="primary"
         variant="text"
       >
@@ -110,6 +114,7 @@
             : 'BPageProductInventory',
         }"
         class="tnt ma-1"
+        :class="{ 'sd-modern-button sd-modern-button--small': modern }"
         color="primary"
         variant="text"
       >
@@ -128,7 +133,7 @@ export default {
   components: {},
   inject: ["$shop", "$product"],
 
-  props: {},
+  props: { modern: { type: Boolean, default: false } },
 
   data: function () {
     return {};

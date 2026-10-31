@@ -7,11 +7,11 @@
 <template>
   <v-card rounded="lg" variant="outlined" class="sld-bfb-iie">
     <v-card-title class="d-flex align-center py-2">
-      <div class="font-weight-black">Info items</div>
+      <div class="font-weight-black">{{ $t('shop_listing.form_builder.items') }}</div>
       <v-spacer />
-      <v-btn size="small" variant="text" @click="addItem">
+      <v-btn size="small" variant="text" :class="{ 'sd-modern-button sd-modern-button--inline': listingFormBuilderModern }" @click="addItem">
         <v-icon start>add</v-icon>
-        Add item
+        {{ $t('shop_listing.form_builder.add_item') }}
       </v-btn>
     </v-card-title>
 
@@ -19,7 +19,7 @@
 
     <v-card-text class="pa-2">
       <div v-if="!itemsLocal.length" class="text-muted pa-3">
-        No items yet. Click <b>Add item</b> to create an Airbnb-style list.
+        {{ $t('shop_listing.form_builder.no_items') }}
       </div>
 
       <draggable
@@ -37,12 +37,12 @@
           <v-card rounded="lg" variant="flat" class="sld-bfb-iie__row">
             <div class="sld-bfb-iie__row-top">
               <div class="d-flex align-center">
-                <span class="sld-bfb-iie__drag" title="Drag to reorder">
+                <span class="sld-bfb-iie__drag" :title="$t('shop_listing.form_builder.drag_reorder')">
                   <v-icon size="18">drag_indicator</v-icon>
                 </span>
 
                 <div class="ms-2 font-weight-black">
-                  Item {{ index + 1 }}
+                  {{ $t('shop_listing.form_builder.item', { number: index + 1 }) }}
                 </div>
 
                 <v-spacer />
@@ -51,10 +51,13 @@
                   icon
                   size="x-small"
                   variant="text"
-                  title="Remove"
+                  :class="{ 'sd-modern-icon-button': listingFormBuilderModern }"
+                  :aria-label="$t('shop_listing.form_builder.remove')"
+                  :title="$t('shop_listing.form_builder.remove')"
                   @click="removeItem(String(element.id))"
                 >
-                  <v-icon size="18">delete</v-icon>
+                  <v-icon size="18" aria-hidden="true">delete</v-icon>
+                  <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip">{{ $t('shop_listing.form_builder.remove') }}</v-tooltip>
                 </v-btn>
               </div>
             </div>
@@ -64,8 +67,8 @@
               <div class="sld-bfb-iie__col-image">
                 <b-listing-form-builder-image-uploader
                   :model-value="String(element.image || '')"
-                  label="Item image"
-                  hint="Optional. Appears on the right side of the row."
+                  :label="$t('shop_listing.form_builder.item_image')"
+                  :hint="$t('shop_listing.form_builder.item_image_hint')"
                   @update:modelValue="(v) => updateItem(String(element.id), { image: String(v || '') })"
                 />
               </div>
@@ -74,14 +77,14 @@
               <div class="sld-bfb-iie__col-text">
                 <v-text-field
                   :model-value="String(element.title || '')"
-                  label="Title"
+                  :label="$t('shop_listing.form_builder.title')"
                   variant="underlined"
                   @update:modelValue="(v) => updateItem(String(element.id), { title: String(v || '') })"
                 />
 
                 <v-textarea
                   :model-value="String(element.description || '')"
-                  label="Description"
+                  :label="$t('shop_listing.form_builder.description')"
                   variant="underlined"
                   rows="2"
                   auto-grow
@@ -102,6 +105,7 @@ import BListingFormBuilderImageUploader from "./BListingFormBuilderImageUploader
 
 export default {
   name: "BListingFormBuilderInfoItemsEditor",
+  inject: { listingFormBuilderModern: { default: false } },
 
   components: { draggable, BListingFormBuilderImageUploader },
 

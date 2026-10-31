@@ -14,7 +14,6 @@
 
 <template>
   <v-autocomplete
-    v-level.min="AppLevel.NOVICE"
     v-model:search="search"
     :customFilter="() => true"
     :hint="$t('google_product_category_input.hint')"
@@ -52,7 +51,6 @@
 
 <script lang="ts">
 import { throttle } from "lodash-es";
-import { User } from "@selldone/core-js";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -60,11 +58,6 @@ export default {
   name: "BProductGoogleCategoryInput",
   mixins:[],
   emits: ["update:modelValue"],
-  computed: {
-    AppLevel() {
-      return User.Preferences.AppLevel;
-    },
-  },
 
   props: {
     shop: {

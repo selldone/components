@@ -14,7 +14,92 @@
 
 <template>
   <section
-    v-if="modern"
+    v-if="productDashboard"
+    class="b-product-analytics b-product-feedback-modern sd-modern-widget text-start"
+  >
+    <header class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"
+          ><v-icon size="18" aria-hidden="true">forum</v-icon></span
+        >
+        <div>
+          <h2 class="sd-modern-title-text">
+            {{ $t("b_product_dashboard.analytics.engagement_title") }}
+          </h2>
+          <p class="sd-modern-subtitle">
+            {{ $t("b_product_dashboard.analytics.engagement_subtitle") }}
+          </p>
+        </div>
+      </div>
+    </header>
+    <div class="b-product-feedback-modern__histories">
+      <section v-for="item in types" :key="item.key">
+        <h3>
+          <span
+            ><i :class="item.icon" aria-hidden="true" />
+            {{ $t(item.name) }}</span
+          ><span>{{ numeralFormat(timeSeries.totalOf(item.key), "0,0") }}</span>
+        </h3>
+        <u-chart-bar
+          :colors="[item.color]"
+          :dataset="getArray(item.key)"
+          :start-date="daily_start_date"
+          :end-date="timeSeries.endDate"
+          :height="44"
+          :show-title="false"
+          dense
+          narrow
+          fit
+        />
+      </section>
+    </div>
+    <div class="b-product-feedback-modern__summary">
+      <h3>{{ $t("b_product_dashboard.analytics.activity_summary") }}</h3>
+      <v-btn-toggle
+        v-model="result_period"
+        mandatory
+        rounded="lg"
+        class="b-product-feedback-modern__period"
+        ><v-btn
+          v-for="period in ['day', 'week', 'month']"
+          :key="period"
+          :value="period"
+          >{{ $t(`global.commons.${period}`) }}</v-btn
+        ></v-btn-toggle
+      >
+    </div>
+    <p class="sd-modern-subtitle">
+      {{
+        $t(
+          result_period === "day"
+            ? "widgets.overview.report_today"
+            : result_period === "week"
+              ? "widgets.overview.report_last7days"
+              : "widgets.overview.report_last30days",
+        )
+      }}
+    </p>
+    <div class="b-product-feedback-modern__metrics">
+      <div v-for="item in types" :key="item.key">
+        <strong>{{
+          numeralFormat(selected_period_data?.[item.key] ?? 0, "0,0")
+        }}</strong>
+        <p>{{ $t(item.name) }}</p>
+        <span v-if="result_period !== 'month'"
+          ><up-down-icon :value="upDownState(item.key)" />{{
+            numeralFormat(upDownState(item.key), "0,0")
+          }}
+          {{
+            $t("global.commons.from_previous_n_days", {
+              days: result_period === "day" ? 1 : 7,
+            })
+          }}</span
+        >
+      </div>
+    </div>
+  </section>
+  <section
+    v-else-if="modern"
     class="b-dashboard-feedback-detail sd-modern-widget text-start"
   >
     <header class="sd-modern-header">
@@ -374,6 +459,7 @@ export default {
     SWidgetBox,
   },
   props: {
+    productDashboard: Boolean,
     modern: { type: Boolean, default: false },
     timeSeries: {
       required: true,
@@ -548,6 +634,98 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-product-feedback-modern {
+  &__histories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+    gap: 18px 24px;
+  }
+  &__histories > section {
+    min-width: 0;
+  }
+  &__histories h3 {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-block: 0 6px;
+    font-size: 12px;
+    line-height: 19px;
+    font-weight: 400;
+  }
+  &__histories :deep(.x--chart-bar) {
+    min-width: 0;
+    width: 100%;
+  }
+  &__histories :deep(small) {
+    font-size: 11px;
+  }
+  &__summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-block: 20px 8px;
+  }
+  &__summary h3 {
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 500;
+    margin: 0;
+  }
+  &__period {
+    flex-wrap: wrap;
+    max-width: 100%;
+    overflow: visible;
+    height: auto;
+    padding: 3px;
+    gap: 4px;
+    background: var(--sd-modern-inset);
+  }
+  &__period :deep(.v-btn) {
+    min-height: 30px;
+    padding: 6px 10px;
+    border-radius: 6px !important;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+  &__period :deep(.v-btn--active) {
+    background: rgb(var(--v-theme-surface));
+    box-shadow: 0 1px 5px #00000015;
+  }
+  &__period :deep(.v-btn__overlay) {
+    opacity: 0;
+  }
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px 8px;
+    text-align: center;
+    margin-block-start: 12px;
+  }
+  &__metrics strong {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 26px;
+  }
+  &__metrics p,
+  &__metrics > div > span {
+    font-size: 11px;
+    line-height: 18px;
+    color: var(--sd-modern-muted);
+    margin: 0;
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    &__period :deep(.v-btn) {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    &__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
 .b-dashboard-feedback-detail {
   font-family: inherit;
   min-width: 0;

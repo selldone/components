@@ -68,6 +68,25 @@ reference for how the pieces fit together.
 - **Useful directives and services** — `v-copy`, `v-track`, `v-dragscroll`, `v-size`, `v-dynamic-scripts`, `NotificationService`, `EventBus` and shared mixins.
 - **TypeScript source** — shipped as `.ts` and `.vue` source files for tree-shaking with modern bundlers such as Vite.
 
+## Funnel series identities
+
+`UChartFunnel` accepts an optional `series-identity` slot for a horizontal multi-series funnel.
+The slot receives `{ index, label, size }`, matching the original `subLabels` order. Render the
+canonical flag, image or icon at the supplied pixel size (20px); keep slot content noninteractive.
+Identities fit inside the broadest usable part of each native curved band, mirror with RTL, and
+are omitted for zero/thin bands or insufficient space. Keep the legend and exact-value help;
+these decorative identities do not replace accessible names or intercept chart interaction.
+They appear after any native path animation finishes; reduced-motion preference skips that motion.
+Resizing updates the native geometry and identity positions. Callers without the slot are unchanged.
+
+```vue
+<u-chart-funnel :values="values" :labels="dates" :sub-labels="series" :width="width" :height="160">
+  <template #series-identity="{ index, label, size }">
+    <img :src="seriesImages[index]" :alt="label" :width="size" :height="size" />
+  </template>
+</u-chart-funnel>
+```
+
 ## Quick start
 
 Install the package:

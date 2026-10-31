@@ -13,7 +13,18 @@
   -->
 
 <template>
-  <div >
+  <div v-if="modern" class="b-product-profile-location-preview text-start">
+    <div class="b-product-profile-location-preview__label">
+      <b-product-edit-info-icon name="PanelsTopLeft" :size="14" />
+      <span>{{ label }}</span>
+    </div>
+    <ol>
+      <li v-if="pre">{{ getName(pre) }}</li>
+      <li class="b-product-profile-location-preview__current">{{ title }}</li>
+      <li v-if="next">{{ getName(next) }}</li>
+    </ol>
+  </div>
+  <div v-else>
     <div
       class="border-bottom border-left border-right pa-1 border-top-0 rounded-b-lg"
       style="min-height: 20px; font-size: 10px; font-weight: 500;border-style: dashed !important;"
@@ -39,13 +50,17 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import BProductEditInfoIcon from "../../edit/info/BProductEditInfoIcon.vue";
 
 export default defineComponent({
   name: "BProductProfileLocationPreview",
+  components: { BProductEditInfoIcon },
   inject: ["$shop"],
   props: {
     title: String,
     orderKey: String,
+    modern: Boolean,
+    label: String,
   },
   computed: {
     order() {
@@ -69,4 +84,54 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.b-product-profile-location-preview {
+  .b-product-profile-location-preview__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    color: rgba(var(--v-theme-on-surface), .65);
+    font-size: 12px;
+    line-height: 18px;
+  }
+  ol { list-style: none; margin: 0; padding: 0; }
+  li {
+    position: relative;
+    padding: 6px 10px;
+    padding-inline-start: 28px;
+    color: rgba(var(--v-theme-on-surface), .65);
+    font-size: 12px;
+    line-height: 19px;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: 12px;
+      top: 13px;
+      width: 5px;
+      height: 5px;
+      border: 1px solid rgba(var(--v-theme-on-surface), .35);
+      border-radius: 50%;
+      background: rgb(var(--v-theme-surface));
+    }
+    &:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      inset-inline-start: 14px;
+      top: 19px;
+      bottom: -12px;
+      border-inline-start: 1px solid rgba(var(--v-theme-on-surface), .12);
+    }
+  }
+  .b-product-profile-location-preview__current {
+    border-radius: 6px;
+    background: rgba(var(--v-theme-on-surface), .035);
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 13px;
+    font-weight: 500;
+
+    &::before { border-color: currentColor; background: currentColor; }
+  }
+}
+</style>

@@ -1,5 +1,10 @@
 <template>
-  <div class="sld-bfb-step" :class="{ '-active': active }" @click="$emit('select')">
+  <button v-if="modern" type="button" class="sd-modern-section-nav__item sld-bfb-step--modern" :aria-current="active ? 'location' : undefined" @click="$emit('select')">
+    <span class="sld-bfb-drag-handle" :aria-label="$t('shop_listing.form_builder.drag_reorder')" @mousedown.stop @click.stop><v-icon size="16" aria-hidden="true">drag_indicator</v-icon></span>
+    <span class="sld-bfb-step--modern__num">{{ index + 1 }}</span>
+    <span>{{ titleSafe }}</span>
+  </button>
+  <div v-else class="sld-bfb-step" :class="{ '-active': active }" @click="$emit('select')">
     <!-- ✅ Drag handle (long drag / desktop drag) -->
     <div
       class="sld-bfb-step__drag sld-bfb-drag-handle"
@@ -61,6 +66,7 @@ export default {
     slide: { type: Object, required: true },
     index: { type: Number, required: true },
     active: { type: Boolean, default: false },
+    modern: { type: Boolean, default: false },
   },
 
   emits: ["select", "remove", "duplicate", "move-up", "move-down"],
@@ -68,7 +74,7 @@ export default {
   computed: {
     titleSafe(): string {
       const t = String((this as any).slide?.title || "").trim();
-      return t || "Untitled step";
+      return t || this.$t("shop_listing.form_builder.untitled_step");
     },
 
     layoutLabel(): string {
@@ -169,5 +175,21 @@ export default {
     align-items: center;
     gap: 2px;
   }
+}
+
+.sld-bfb-step--modern {
+  display: grid !important;
+  grid-template-columns: 16px 18px minmax(0, 1fr);
+  gap: 7px !important;
+  align-items: center;
+  padding: 10px !important;
+  min-height: 48px !important;
+  font-size: 12px !important;
+  line-height: 19px !important;
+  font-weight: 400 !important;
+  text-align: start;
+  overflow-wrap: anywhere;
+  .sld-bfb-drag-handle { display: flex; cursor: grab; color: var(--sd-modern-muted); }
+  &__num { color: var(--sd-modern-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
 }
 </style>

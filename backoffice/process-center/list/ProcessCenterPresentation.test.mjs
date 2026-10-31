@@ -54,18 +54,19 @@ test("stage help is opt-in, keeps five nodes and leaves receiver stage untouched
   const component = { ...evaluate(descriptor.script.content).default, mixins: [], render: evaluate(template.code, () => Vue).render };
   assert.equal(component.props.modernTooltips.default, false);
   const states = Object.fromEntries(["CheckQueue", "OrderConfirm", "PreparingOrder", "SentOrder", "ToCustomer"].map((code) => [code, { code, name: code, icon: "local_shipping" }]));
-  for (const modernTooltips of [false, true]) {
+  for (const [modernTooltips, modernFinalTooltip] of [[false, false], [true, false], [true, true]]) {
     const helps = [];
-    const app = Vue.createSSRApp(component, { states, state: "PreparingOrder", modernTooltips });
+    const app = Vue.createSSRApp(component, { states, state: "PreparingOrder", modernTooltips, modernFinalTooltip });
     app.component("v-icon", { setup: (_, { slots }) => () => Vue.h("i", slots.default?.()) });
     app.component("v-tooltip", { setup: (_, { attrs, slots }) => { helps.push(attrs); return () => Vue.h("aside", slots.default?.()); } });
     Object.assign(app.config.globalProperties, { $t: (key) => key, $vuetify: { display: { xs: false }, locale: { isRtl: false } }, ThemeColorDeepDark: "#222" });
     const html = await renderToString(app);
     assert.equal((html.match(/<li\b/g) || []).length, 5);
-    assert.equal(helps.length, modernTooltips ? 4 : 0);
-    assert.match(html, /title="ToCustomer"/);
+    assert.equal(helps.length, modernTooltips ? modernFinalTooltip ? 5 : 4 : 0);
+    if (modernFinalTooltip) assert.doesNotMatch(html, /title="ToCustomer"/);
+    else assert.match(html, /title="ToCustomer"/);
     if (modernTooltips) {
-      assert.equal((html.match(/<button\b/g) || []).length, 4);
+      assert.equal((html.match(/<button\b/g) || []).length, modernFinalTooltip ? 5 : 4);
       assert.match(html, /stages\.completed/);
       assert.match(html, /stages\.current/);
       assert.match(html, /stages\.upcoming/);

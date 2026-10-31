@@ -13,7 +13,54 @@
   -->
 
 <template>
+  <section
+    v-if="modern"
+    class="b-product-analytics b-product-expectations-modern sd-modern-widget text-start"
+  >
+    <header class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"
+          ><v-icon size="18" aria-hidden="true"
+            >notifications_active</v-icon
+          ></span
+        >
+        <div>
+          <h2 class="sd-modern-title-text">
+            {{ $t("b_product_dashboard.analytics.expectations_title") }}
+          </h2>
+          <p class="sd-modern-subtitle">
+            {{ $t("b_product_dashboard.analytics.expectations_subtitle") }}
+          </p>
+        </div>
+      </div>
+    </header>
+    <div
+      v-for="item in expectationLists"
+      :key="item.key"
+      class="b-product-expectations-modern__row"
+    >
+      <img :src="item.image" :alt="item.title" width="28" height="28" />
+      <div>
+        <h3>{{ item.title }}</h3>
+        <p>
+          {{ numeralFormat(item.count, "0,0") }}
+          {{ $t("product_admin.dashboard.inform.unit") }}
+        </p>
+      </div>
+      <v-btn
+        :href="item.href"
+        :disabled="!item.count"
+        target="_blank"
+        rel="noopener noreferrer"
+        variant="text"
+        class="sd-modern-button sd-modern-button--small"
+        ><v-icon size="16" class="me-1">download</v-icon
+        >{{ $t("b_product_dashboard.analytics.download_list") }}</v-btn
+      >
+    </div>
+  </section>
   <s-widget-box
+    v-else
     :sub-title="$t('product_admin.dashboard.inform.title_small')"
     :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mr-sm' style='font-size: 6px;'></span>  ${$t(
       'product_admin.dashboard.inform.title',
@@ -100,6 +147,7 @@ export default {
   name: "BProductMarketingAbstractView",
   components: { SWidgetBox },
   props: {
+    modern: Boolean,
     product: {
       required: true,
       type: Object,
@@ -113,6 +161,26 @@ export default {
   data: () => ({}),
 
   computed: {
+    expectationLists() {
+      return [
+        {
+          key: "sale",
+          title: this.$t("product_admin.dashboard.inform.waiting_for_auction"),
+          count: this.product.for_auction,
+          href: this.download_for_auction,
+          image: require("../../../../assets/icons/discounted-product.svg"),
+        },
+        {
+          key: "available",
+          title: this.$t(
+            "product_admin.dashboard.inform.waiting_for_available",
+          ),
+          count: this.product.for_available,
+          href: this.download_for_available,
+          image: require("../../../../assets/icons/available-product.svg"),
+        },
+      ];
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -152,4 +220,37 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.b-product-expectations-modern {
+  &__row {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding-block: 16px;
+    border-block-end: 1px solid var(--sd-modern-border);
+  }
+  &__row:last-child {
+    padding-block-end: 0;
+    border: 0;
+  }
+  &__row h3 {
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 500;
+    margin: 0;
+  }
+  &__row p {
+    font-size: 12px;
+    line-height: 19px;
+    color: var(--sd-modern-muted);
+    margin: 4px 0 0;
+  }
+  @media (max-width: 600px) {
+    &__row > .v-btn {
+      grid-column: 2 / -1;
+      justify-self: start;
+    }
+  }
+}
+</style>

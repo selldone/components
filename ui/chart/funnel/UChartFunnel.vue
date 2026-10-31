@@ -23,6 +23,7 @@
     <div class="u--chart-funnel-empty__stages">
       <div
         v-for="(label, index) in labels"
+        v-show="!sparseLabels || showLabel(index)"
         :key="index"
         class="u--chart-funnel-empty__stage"
       >
@@ -47,6 +48,7 @@
         '-dark': dark,
         '-rtl': $vuetify.locale.isRtl,
         '-dense': dense,
+        '-modern': modern,
       },
       chartClass,
     ]"
@@ -98,6 +100,17 @@
         ></path>
       </svg>
 
+      <div v-if="seriesIdentities.length" class="u-chart-funnel__identities" aria-hidden="true">
+        <span
+          v-for="identity in seriesIdentities"
+          :key="identity.index"
+          class="u-chart-funnel__identity"
+          :style="{ left: identity.x + 'px', top: identity.y + 'px', width: identity.size + 'px', height: identity.size + 'px' }"
+        >
+          <slot name="series-identity" :index="identity.index" :label="subLabels?.[identity.index]" :size="identity.size"></slot>
+        </span>
+      </div>
+
       <div
         class="--segment"
         :style="{
@@ -108,6 +121,9 @@
       >
         <div
           v-for="(value, index) in valuesFormatted"
+          :tabindex="modern ? 0 : undefined"
+          :role="modern ? 'button' : undefined"
+          :aria-label="modern ? labels[index] : undefined"
           :key="labels[index].toLowerCase().split(' ').join('-')"
           class="--segment-container"
           :style="
@@ -116,16 +132,27 @@
               : {}
           "
         >
-          <div v-if="labelValueCurrency" class="--label-value px-1 single-line">
+          <div
+            v-if="labelValueCurrency && (!sparseLabels || showLabel(index))"
+            class="--label-value px-1 single-line"
+          >
             <u-price
               :amount="value"
               :currency="labelValueCurrency"
               compact
             ></u-price>
           </div>
-          <div v-else class="--label-value px-1">{{ value }}</div>
+          <div
+            v-else-if="!sparseLabels || showLabel(index)"
+            class="--label-value px-1"
+          >
+            {{ value }}
+          </div>
 
-          <div v-if="labels" class="--label-title px-1">
+          <div
+            v-if="labels && (!sparseLabels || showLabel(index))"
+            class="--label-title px-1"
+          >
             {{ labels[index] }}
           </div>
           <div
@@ -138,6 +165,7 @@
           <u-chart-funnel-hover
             v-if="!noHoverDetails"
             :label="labels[index]"
+            :modern="modern"
             :vertical="is_vertical"
             :index="index"
             :labels="subLabels"
@@ -180,6 +208,7 @@ import TWEEN from "@tweenjs/tween.js";
 import numeral from "numeral";
 import FunnelGraph from "../../../ui/chart/funnel/core/js/main";
 import { generateLegendBackground, getDefaultColors } from "./core/js/graph.js";
+import { getFunnelIdentityPositions } from "./core/js/path.js";
 import UChartFunnelHover from "@selldone/components-vue/ui/chart/funnel/hover/UChartFunnelHover.vue";
 
 export default {
@@ -190,6 +219,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    sparseLabels: { type: Boolean, default: false },
     animated: {
       type: Boolean,
       default: false,
@@ -263,10 +293,17 @@ export default {
       prevPaths: [], // paths before update, used for animations
       graph: null,
       tween: null,
+      animating: false,
       defaultColors: getDefaultColors(10),
     };
   },
   computed: {
+    seriesIdentities() {
+      if (!this.$slots['series-identity'] || !this.graph || !this.is_horizontal || this.animating) return [];
+      return getFunnelIdentityPositions(this.graph.getMainAxisPoints(), this.graph.getCrossAxisPoints(), {
+        width: Number(this.width), height: Number(this.height), rtl: this.$vuetify.locale.isRtl,
+      });
+    },
     isPercentMode() {
       return this.subLabelValue === "percent";
     },
@@ -361,10 +398,21 @@ export default {
     },
   },
   methods: {
+    showLabel(index) {
+      const count = this.labels?.length || 0;
+      const slots = Math.max(2, Math.floor(Number(this.width) / 90));
+      const stride = Math.max(1, Math.ceil((count - 1) / (slots - 1)));
+      return (
+        index === 0 ||
+        index === count - 1 ||
+        (index % stride === 0 && count - 1 - index >= stride / 2)
+      );
+    },
     syncGraph() {
       // Zero counts have labels, but no positive flow geometry to normalize.
       if (this.modern && !this.has_valid_data) {
         this.tween?.stop();
+        this.animating = false;
         this.graph = null;
         this.paths = [];
         this.prevPaths = [];
@@ -382,7 +430,10 @@ export default {
       }
       this.drawPaths();
       try {
-        if (this.animated) this.makeAnimations();
+        if (this.animated && (
+          !this.$slots?.['series-identity'] || typeof window === 'undefined' ||
+          !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+        )) this.makeAnimations();
       } catch (e) {}
     },
     enterTransition(el, done) {
@@ -463,8 +514,11 @@ export default {
             // this.$set(this.paths, index, interpolators[index](position.value));
             this.paths[index] = interpolators[index](position.value);
           }
-        });
+        })
+        .onComplete(() => { this.animating = false; })
+        .onStop(() => { this.animating = false; });
 
+      this.animating = true;
       this.tween.start();
       animate();
     },
@@ -481,7 +535,24 @@ export default {
   created() {
     this.syncGraph();
   },
+  beforeUnmount() {
+    if (this.$slots['series-identity']) this.tween?.stop();
+  },
   watch: {
+    width() {
+      if (!this.$slots['series-identity'] || !this.graph) return;
+      this.tween?.stop();
+      this.animating = false;
+      this.graph.setWidth(this.width);
+      this.drawPaths();
+    },
+    height() {
+      if (!this.$slots['series-identity'] || !this.graph) return;
+      this.tween?.stop();
+      this.animating = false;
+      this.graph.setHeight(this.height);
+      this.drawPaths();
+    },
     values() {
       this.syncGraph();
     },
@@ -498,6 +569,75 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.u--chart-funnel {
+  .u-chart-funnel__identities { position: absolute; inset: 0; pointer-events: none; }
+  .u-chart-funnel__identity { position: absolute; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); pointer-events: none; }
+  .u-chart-funnel__identity :deep(img), .u-chart-funnel__identity :deep(svg) { max-width: 100%; max-height: 100%; object-fit: contain; }
+}
+.u--chart-funnel.-modern {
+  :deep(.--container) {
+    padding-block-end: 42px;
+    overflow: visible;
+  }
+  :deep(.--segment) {
+    height: calc(var(--height) + 42px) !important;
+    overflow: visible;
+  }
+  :deep(.--segment-container) {
+    border: 0 !important;
+  }
+  :deep(.--label-value),
+  :deep(.--label-title) {
+    position: absolute;
+    inset-inline-start: 50%;
+    width: max-content;
+    max-width: 90px;
+    transform: translateX(-50%);
+    padding-inline: 0;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgb(var(--v-theme-on-surface));
+  }
+  :deep(.--label-value) {
+    inset-block-end: 20px;
+  }
+  :deep(.--label-title) {
+    inset-block-end: 0;
+  }
+  :deep(.--segment-container:first-child .--label-value),
+  :deep(.--segment-container:first-child .--label-title) {
+    inset-inline-start: 0;
+    transform: none;
+    text-align: start;
+  }
+  :deep(.--segment-container:last-child .--label-value),
+  :deep(.--segment-container:last-child .--label-title) {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    transform: none;
+    text-align: end;
+  }
+  :deep(.--segment-container:focus-visible) {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+  :deep(.--l-item-title) {
+    font-size: 11px;
+    font-weight: 400;
+  }
+  &.-rtl {
+    :deep(.--label-value),
+    :deep(.--label-title) {
+      transform: translateX(50%);
+    }
+    :deep(.--segment-container:first-child .--label-value),
+    :deep(.--segment-container:first-child .--label-title),
+    :deep(.--segment-container:last-child .--label-value),
+    :deep(.--segment-container:last-child .--label-title) {
+      transform: none;
+    }
+  }
+}
 .u--chart-funnel-empty {
   display: flex;
   align-items: center;

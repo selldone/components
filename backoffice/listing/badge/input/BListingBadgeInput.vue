@@ -9,114 +9,203 @@
   -->
 
 <template>
-  <div class="text-start">
-    <!-- Header -->
-    <div class="d-flex align-center mb-2">
-      <div class="font-weight-bold">
-        {{ resolvedLabel }}
-      </div>
-
-      <v-spacer />
-
-      <v-chip v-if="selectedIds.length" size="x-small" label variant="tonal" class="me-2">
-        {{ selectedIds.length }} selected
-      </v-chip>
-
-      <v-btn
-        v-if="selectedIds.length"
-        size="small"
-        variant="text"
-        :disabled="disabled"
-        @click="clearAll"
-      >
-        <v-icon start>clear</v-icon>
-        Clear
-      </v-btn>
-    </div>
-
-    <!-- Selected chips -->
-    <div v-if="selectedIds.length" class="d-flex flex-wrap mb-2">
-      <v-chip
-        v-for="id in selectedIds"
-        :key="id"
-        size="small"
-        label
-        class="ma-1"
-        variant="tonal"
-        :disabled="disabled"
-        @click="removeById(id)"
-      >
-        <v-avatar v-if="getBadgeById(id)?.image" size="18" class="me-2">
-          <img :src="getShopImagePath(getBadgeById(id).image)" />
-        </v-avatar>
-
-        <v-icon v-else size="16" class="me-2">workspace_premium</v-icon>
-
-        {{ getBadgeById(id)?.title || `#${id}` }}
-
-        <v-icon size="16" class="ms-2">close</v-icon>
-      </v-chip>
-    </div>
-
-    <!-- Search -->
-    <v-text-field
-      v-model="search"
-      :label="searchLabel"
-      prepend-inner-icon="search"
+  <div class="text-start" :class="{ 'b-listing-badge-input--modern': modern }">
+    <v-autocomplete
+      v-if="modern"
+      class="b-listing-badge-input__control sd-modern-underlined-field v-input-auto-height"
+      :model-value="selectedIds"
+      :items="eligibleBadges"
+      item-title="title"
+      item-value="id"
+      :return-object="false"
+      :custom-filter="(_, query, item) => matchesSearch(item.raw, query)"
+      :label="resolvedLabel"
+      :placeholder="searchLabel"
+      :loading="busy"
+      :disabled="disabled"
+      :menu-props="{ maxHeight: 320, contentClass: 'text-start' }"
+      :no-data-text="$t('shop_listing.item_editor.badge_empty')"
       variant="underlined"
+      multiple
+      chips
+      closable-chips
       clearable
       hide-details
-      :disabled="disabled"
-    />
-
-    <u-loading-progress v-if="busy" />
-
-    <!-- Badge cards -->
-    <div v-if="filteredBadges.length" class="badge-grid mt-3">
-      <div
-        v-for="b in filteredBadges"
-        :key="b.id"
-        class="badge-tile"
-      >
-        <v-card
-          class="badge-card"
-          rounded="xl"
-          variant="flat"
-          :class="{ '-selected': isSelected(b.id), '-disabled': disabled }"
-          @click="toggle(b)"
+      @update:model-value="updateSelection"
+    >
+      <template v-if="$slots['append-inner']" #append-inner>
+        <slot name="append-inner" />
+      </template>
+      <template #chip="{ item, props }">
+        <v-chip
+          v-bind="props"
+          size="small"
+          label
+          class="b-listing-badge-input__chip"
         >
-          <div class="d-flex align-center">
-            <v-avatar size="34" class="rounded-lg me-2" color="#f6f6f6">
-              <img v-if="b.image" :src="getShopImagePath(b.image)" />
-              <v-icon v-else>workspace_premium</v-icon>
+          <v-avatar
+            v-if="getBadgeById(item.value)?.image"
+            size="18"
+            class="me-2 rounded-0"
+          >
+            <img
+              :src="getShopImagePath(getBadgeById(item.value).image)"
+              class="b-listing-badge-input__image"
+              alt=""
+            />
+          </v-avatar>
+          <span class="b-listing-badge-input__title">{{
+            getBadgeById(item.value)?.title || `#${item.value}`
+          }}</span>
+        </v-chip>
+      </template>
+      <template #item="{ item, props }">
+        <v-list-item
+          v-bind="props"
+          class="b-listing-badge-input__option text-start sd-modern-clickable-item"
+        >
+          <template #prepend>
+            <v-avatar size="24" class="me-3 rounded-0">
+              <img
+                v-if="item.raw.image"
+                :src="getShopImagePath(item.raw.image)"
+                class="b-listing-badge-input__image"
+                alt=""
+              />
+              <v-icon v-else size="20">workspace_premium</v-icon>
             </v-avatar>
+          </template>
+          <template #title>
+            <span class="b-listing-badge-input__title">{{ item.title }}</span>
+          </template>
+          <template v-if="item.raw.description" #subtitle>
+            {{ item.raw.description }}
+          </template>
+          <template #append="{ isSelected }">
+            <v-icon v-if="isSelected" size="18" aria-hidden="true"
+              >check</v-icon
+            >
+          </template>
+        </v-list-item>
+      </template>
+    </v-autocomplete>
+    <template v-else>
+      <!-- Header -->
+      <div class="d-flex align-center mb-2">
+        <div class="font-weight-bold">
+          {{ resolvedLabel }}
+        </div>
 
-            <div class="min-width-0">
-              <div class="font-weight-bold text-truncate">
-                {{ b.title }}
-              </div>
-              <small v-if="b.description" class="text-muted text-truncate d-block">
-                {{ b.description }}
-              </small>
-            </div>
+        <v-spacer />
 
-            <v-spacer />
+        <v-chip
+          v-if="selectedIds.length"
+          size="x-small"
+          label
+          variant="tonal"
+          class="me-2"
+        >
+          {{ selectedIds.length }} selected
+        </v-chip>
 
-            <v-icon v-if="isSelected(b.id)" class="text-success">check_circle</v-icon>
-            <v-icon v-else class="text-muted">add_circle_outline</v-icon>
-          </div>
-        </v-card>
+        <v-btn
+          v-if="selectedIds.length"
+          size="small"
+          variant="text"
+          :disabled="disabled"
+          @click="clearAll"
+        >
+          <v-icon start>clear</v-icon>
+          Clear
+        </v-btn>
       </div>
-    </div>
 
-    <div v-else class="text-center text-muted py-4">
-      <v-icon class="me-1">sentiment_dissatisfied</v-icon>
-      No badges found.
-    </div>
+      <!-- Selected chips -->
+      <div v-if="selectedIds.length" class="d-flex flex-wrap mb-2">
+        <v-chip
+          v-for="id in selectedIds"
+          :key="id"
+          size="small"
+          label
+          class="ma-1"
+          variant="tonal"
+          :disabled="disabled"
+          @click="removeById(id)"
+        >
+          <v-avatar v-if="getBadgeById(id)?.image" size="18" class="me-2">
+            <img :src="getShopImagePath(getBadgeById(id).image)" />
+          </v-avatar>
 
-    <small class="text-muted d-block mt-2">
-      Click a badge card to toggle selection. Selected badges will be highlighted with a green border.
-    </small>
+          <v-icon v-else size="16" class="me-2">workspace_premium</v-icon>
+
+          {{ getBadgeById(id)?.title || `#${id}` }}
+
+          <v-icon size="16" class="ms-2">close</v-icon>
+        </v-chip>
+      </div>
+
+      <!-- Search -->
+      <v-text-field
+        v-model="search"
+        :label="searchLabel"
+        prepend-inner-icon="search"
+        variant="underlined"
+        clearable
+        hide-details
+        :disabled="disabled"
+      />
+
+      <u-loading-progress v-if="busy" />
+
+      <!-- Badge cards -->
+      <div v-if="filteredBadges.length" class="badge-grid mt-3">
+        <div v-for="b in filteredBadges" :key="b.id" class="badge-tile">
+          <v-card
+            class="badge-card"
+            rounded="xl"
+            variant="flat"
+            :class="{ '-selected': isSelected(b.id), '-disabled': disabled }"
+            @click="toggle(b)"
+          >
+            <div class="d-flex align-center">
+              <v-avatar size="34" class="rounded-lg me-2" color="#f6f6f6">
+                <img v-if="b.image" :src="getShopImagePath(b.image)" />
+                <v-icon v-else>workspace_premium</v-icon>
+              </v-avatar>
+
+              <div class="min-width-0">
+                <div class="font-weight-bold text-truncate">
+                  {{ b.title }}
+                </div>
+                <small
+                  v-if="b.description"
+                  class="text-muted text-truncate d-block"
+                >
+                  {{ b.description }}
+                </small>
+              </div>
+
+              <v-spacer />
+
+              <v-icon v-if="isSelected(b.id)" class="text-success"
+                >check_circle</v-icon
+              >
+              <v-icon v-else class="text-muted">add_circle_outline</v-icon>
+            </div>
+          </v-card>
+        </div>
+      </div>
+
+      <div v-else class="text-center text-muted py-4">
+        <v-icon class="me-1">sentiment_dissatisfied</v-icon>
+        No badges found.
+      </div>
+
+      <small class="text-muted d-block mt-2">
+        Click a badge card to toggle selection. Selected badges will be
+        highlighted with a green border.
+      </small>
+    </template>
   </div>
 </template>
 
@@ -130,6 +219,7 @@ export default {
   inject: ["$shop"],
 
   props: {
+    modern: { type: Boolean, default: false },
     modelValue: { default: null },
 
     returnObject: { type: Boolean, default: false },
@@ -173,7 +263,8 @@ export default {
       if (!this.IS_VENDOR_PANEL) return null;
       // @ts-ignore
       const raw = this.$route?.params?.vendor_id;
-      const id = raw !== null && raw !== undefined ? parseInt(String(raw), 10) : 0;
+      const id =
+        raw !== null && raw !== undefined ? parseInt(String(raw), 10) : 0;
       return id > 0 ? id : null;
     },
 
@@ -190,12 +281,16 @@ export default {
     resolvedLabel(): string {
       if (this.label) return this.label;
       // @ts-ignore
-      return typeof this.$t === "function" ? this.$t("shop_listing.badges.title") : "Badges";
+      return typeof this.$t === "function"
+        ? this.$t("shop_listing.badges.title")
+        : "Badges";
     },
 
     searchLabel(): string {
       // @ts-ignore
-      return typeof this.$t === "function" ? this.$t("global.commons.search") : "Search";
+      return typeof this.$t === "function"
+        ? this.$t("global.commons.search")
+        : "Search";
     },
 
     selectedIds(): number[] {
@@ -218,7 +313,7 @@ export default {
       return [];
     },
 
-    filteredBadges(): any[] {
+    eligibleBadges(): any[] {
       let list = Array.isArray(this.badges) ? this.badges : [];
 
       if (this.activeOnly) {
@@ -229,14 +324,13 @@ export default {
         }
       }
 
-      const s = (this.search || "").trim().toLowerCase();
-      if (!s) return list;
+      return list;
+    },
 
-      return list.filter((b: any) => {
-        const t = String(b?.title || "").toLowerCase();
-        const d = String(b?.description || "").toLowerCase();
-        return t.includes(s) || d.includes(s);
-      });
+    filteredBadges(): any[] {
+      return this.eligibleBadges.filter((b: any) =>
+        this.matchesSearch(b, this.search),
+      );
     },
   },
 
@@ -259,6 +353,20 @@ export default {
   },
 
   methods: {
+    matchesSearch(badge: any, query: string): boolean {
+      const search = (query || "").trim().toLowerCase();
+      return [badge?.title, badge?.description].some((value) =>
+        String(value || "")
+          .toLowerCase()
+          .includes(search),
+      );
+    },
+
+    updateSelection(ids: number[] | null) {
+      if (this.disabled) return;
+      this.emitValueFromIds(ids || []);
+    },
+
     getBadgeById(id: number) {
       return (this.badges || []).find((b: any) => b?.id === id) || null;
     },
@@ -317,7 +425,10 @@ export default {
           .get(window.VAPI.GET_MY_VENDOR_LISTING_BADGES(vendorId), {
             params: {
               offset: 0,
-              limit: Math.min(Math.max(1, parseInt(String(this.limit || 100), 10) || 100), 100),
+              limit: Math.min(
+                Math.max(1, parseInt(String(this.limit || 100), 10) || 100),
+                100,
+              ),
               with_trashed: this.withTrashed ? "true" : "false",
               sortBy: "sort_order",
               sortDesc: "false",
@@ -351,7 +462,10 @@ export default {
         .get(window.API.GET_SHOP_LISTING_BADGES(shopId), {
           params: {
             offset: 0,
-            limit: Math.min(Math.max(1, parseInt(String(this.limit || 100), 10) || 100), 100),
+            limit: Math.min(
+              Math.max(1, parseInt(String(this.limit || 100), 10) || 100),
+              100,
+            ),
             with_trashed: this.withTrashed ? "true" : "false",
             sortBy: "sort_order",
             sortDesc: "false",
@@ -412,5 +526,35 @@ export default {
 .badge-card.-disabled {
   opacity: 0.6;
   pointer-events: none;
+}
+
+.b-listing-badge-input__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.b-listing-badge-input__chip {
+  max-width: 100%;
+  height: auto;
+  min-height: 28px;
+  padding-block: 4px;
+}
+.b-listing-badge-input__chip :deep(.v-chip__content) {
+  min-width: 0;
+  white-space: normal;
+}
+.b-listing-badge-input__title {
+  font-size: 13px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+.b-listing-badge-input__option {
+  min-height: 44px;
+  padding-inline: 12px;
+}
+.b-listing-badge-input__option :deep(.v-list-item-subtitle) {
+  font-size: 13px;
+  line-height: 20px;
 }
 </style>

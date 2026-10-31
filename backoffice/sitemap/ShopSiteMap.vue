@@ -13,7 +13,8 @@
   -->
 
 <template>
-  <div class="sitemap" dir="ltr">
+  <shop-site-map-modern v-if="modern" :shop="shop" :base-url="baseUrl" />
+  <div v-else class="sitemap" dir="ltr">
     <h1>
       <span v-copy>{{ baseUrl }}/sitemap</span>
     </h1>
@@ -153,14 +154,18 @@
 </template>
 
 <script lang="ts">
+import ShopSiteMapModern from "./ShopSiteMapModern.vue";
+
 export default {
   name: "ShopSiteMap",
+  components: { ShopSiteMapModern },
   props: {
     shop: {
       required: true,
       type: Object,
     },
     baseUrl: {},
+    modern: Boolean,
   },
 
   data: () => ({
@@ -187,7 +192,7 @@ export default {
     },
   },
   created() {
-    this.fetchData();
+    if (!this.modern) this.fetchData();
   },
 };
 </script>

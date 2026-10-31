@@ -13,8 +13,51 @@
   -->
 
 <template>
-  <div class="text-center">
-    <div :style="{ height: height }" class="exp-container">
+  <div
+    class="text-center"
+    :class="{
+      'b-extra-pricing-levels--modern': modern,
+      'b-extra-pricing-levels--workspace': workspaceMode,
+    }"
+  >
+    <ol
+      v-if="workspaceMode"
+      class="b-extra-pricing-levels__path text-start"
+      :aria-label="$t('add_product.pricing.workspace.quantity_title')"
+    >
+      <li v-for="item in sorted_list" :key="item.id ?? 'base'" tabindex="0">
+        <strong
+          ><u-price
+            :amount="item.price + item.commission - item.discount"
+            :currency="product.currency" /></strong
+        ><span>{{ numeralFormat(item.min, "0,0") }}+</span>
+        <v-tooltip
+          activator="parent"
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          open-on-focus
+          open-on-click
+        >
+          <div>
+            {{ $t("extra_pricing_levels.min_quantity") }}:
+            {{ numeralFormat(item.min, "0,0") }}
+          </div>
+          <div>
+            {{ $t("global.commons.price") }}:
+            <u-price :amount="item.price" :currency="product.currency" />
+          </div>
+          <div>
+            {{ $t("add_product.pricing.commission_input") }}:
+            <u-price :amount="item.commission" :currency="product.currency" />
+          </div>
+          <div>
+            {{ $t("global.commons.discount") }}:
+            <u-price :amount="item.discount" :currency="product.currency" />
+          </div>
+        </v-tooltip>
+      </li>
+    </ol>
+    <div v-else :style="{ height: height }" class="exp-container">
       <div
         v-for="(item, i) in sorted_list"
         :key="i"
@@ -32,12 +75,26 @@
               : getColor(i),
         }"
         class="exp-item"
+        :tabindex="modern ? 0 : undefined"
+        :role="modern ? 'img' : undefined"
+        :aria-label="
+          modern
+            ? $t('extra_pricing_levels.min_quantity') +
+              ': ' +
+              numeralFormat(item.min, '0.[0] a')
+            : undefined
+        "
       >
         <v-tooltip
           activator="parent"
-          max-width="360"
-          content-class="bg-black text-start"
-          location="bottom"
+          :max-width="modern ? undefined : 360"
+          :content-class="
+            modern ? 'sd-modern-tooltip text-start' : 'bg-black text-start'
+          "
+          :location="modern ? 'top' : 'bottom'"
+          :open-on-focus="modern ? true : undefined"
+          :open-on-click="modern ? true : undefined"
+          :persistent="modern ? false : undefined"
         >
           <div>
             {{ $t("extra_pricing_levels.min_quantity") }}:
@@ -48,12 +105,12 @@
 
             <template v-if="originalPricing">
               <u-price
-                  :amount="originalPricing.price"
-                  :currency="product.currency"
-                  class="ms-1"
+                :amount="originalPricing.price"
+                :currency="product.currency"
+                class="ms-1"
               ></u-price>
               <v-icon class="mx-2" size="small"
-              >{{ $t("icons.arrow_end") }}
+                >{{ $t("icons.arrow_end") }}
               </v-icon>
             </template>
 
@@ -62,18 +119,17 @@
               :currency="product.currency"
               class="ms-1"
             ></u-price>
-
           </div>
           <div>
             {{ $t("global.commons.discount") }}:
             <template v-if="originalPricing">
               <u-price
-                  :amount="originalPricing.discount"
-                  :currency="product.currency"
-                  class="ms-1"
+                :amount="originalPricing.discount"
+                :currency="product.currency"
+                class="ms-1"
               ></u-price>
               <v-icon class="mx-2" size="small"
-              >{{ $t("icons.arrow_end") }}
+                >{{ $t("icons.arrow_end") }}
               </v-icon>
             </template>
 
@@ -91,7 +147,14 @@
         </v-tooltip>
       </div>
     </div>
-    <small>
+    <small v-if="modern && !workspaceMode">{{
+      $t(
+        "add_product.pricing.modern.tier_count",
+        { count: extraPricings.length },
+        extraPricings.length,
+      )
+    }}</small>
+    <small v-else-if="!modern">
       <v-icon size="x-small">add</v-icon>
       {{ items.length }}
       {{ $t("extra_pricing_levels.extra_pricings") }}.</small
@@ -105,6 +168,8 @@ import { standardDesignColor } from "@selldone/core-js/helper/color/ColorGenerat
 export default {
   name: "ExtraPricingLevels",
   props: {
+    modern: { type: Boolean, default: false },
+    workspace: { type: Boolean, default: false },
     product: {
       required: true,
       type: Object,
@@ -124,6 +189,9 @@ export default {
     inventoryQuantity: { default: null }, // total quantity of item. If provided then gray not valid ranges!
   },
   computed: {
+    workspaceMode() {
+      return this.modern && this.workspace;
+    },
     sorted_list() {
       return this.items.sortByKey("min", true);
     },
@@ -172,6 +240,58 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-extra-pricing-levels--modern .exp-item:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 3px;
+}
+.b-extra-pricing-levels--workspace {
+  .b-extra-pricing-levels__path {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px 0;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px;
+  }
+  li {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding-inline-end: 9px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 18px;
+  }
+  li::before {
+    content: "";
+    height: 2px;
+    background: var(--sd-modern-border);
+    margin-block-end: 3px;
+  }
+  strong {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 19px;
+    color: rgb(var(--v-theme-on-surface));
+    overflow-wrap: anywhere;
+  }
+  :deep(.u--price) {
+    font-size: inherit;
+    line-height: inherit;
+  }
+  li:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 3px;
+  }
+  @media (max-width: 600px) {
+    li {
+      flex: 0 0 33.333%;
+    }
+  }
+}
+
 .exp-container {
   display: flex;
   align-items: flex-end;

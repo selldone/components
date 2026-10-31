@@ -15,18 +15,18 @@
           {{ quota.used }} / {{ quota.limit }}
         </span>
       </template>
-      <template #actions>
+      <template #append-actions>
         <v-btn :disabled="!can_add" :loading="busy_fetch" color="primary"
-               class="sd-modern-button sd-modern-button--primary" prepend-icon="add"
+               class="sd-modern-button sd-modern-button--primary b-shop-theme-fonts__add" prepend-icon="add"
                @click="openCreateDialog">
           {{ $t('b_shop_theme_typography.custom_fonts.actions.add') }}
         </v-btn>
       </template>
     </u-widget-header>
 
-    <v-list-subheader class="sd-modern-subtitle b-shop-theme-fonts__subtitle">
+    <p class="sd-modern-subtitle b-shop-theme-fonts__subtitle">
       {{ $t("b_shop_theme_typography.custom_fonts.subtitle") }}
-    </v-list-subheader>
+    </p>
     <p class="b-shop-theme-fonts__quota">
       {{ quota_caption }}
       <span v-if="!can_write"> · {{ $t('error.no_write_access') }}</span>
@@ -37,7 +37,7 @@
 
     <v-list
       v-else-if="fonts.length"
-      class="border-between-vertical bg-transparent"
+      class="b-shop-theme-fonts__list border-between-vertical bg-transparent"
       lines="three"
     >
       <v-list-item
@@ -58,13 +58,13 @@
 
         <template #title>
           <div class="d-flex align-center flex-wrap ga-1">
-            <b :style="fontPreviewStyle(font)">{{ font.name }}</b>
+            <span class="b-shop-theme-fonts__name">{{ font.name }}</span>
             <v-chip
               v-for="(face, faceIndex) in font.faces || []"
               :key="`${font.id}-${face.weight}-${face.style}-${faceIndex}`"
               label
               size="x-small"
-              variant="tonal"
+              variant="text"
             >
               {{ face.weight }}
               <span v-if="face.style && face.style !== 'normal'" class="ms-1">
@@ -75,26 +75,21 @@
         </template>
 
         <template #subtitle>
-          <div class="mt-1">
-            <code
-              v-copy="cssFamily(font.family, font.fallback)"
-              class="d-inline-block text-start"
-              dir="ltr"
-              @click.stop
-              >{{ cssFamily(font.family, font.fallback) }}</code
-            >
-
-            <div class="d-flex flex-wrap ga-1 mt-1">
-              <v-chip
-                v-for="format in fontFormats(font)"
-                :key="format"
-                label
-                size="x-small"
-              >
-                {{ format.toUpperCase() }}
-              </v-chip>
-            </div>
+          <div class="b-shop-theme-fonts__sample" :style="fontPreviewStyle(font)">
+            {{ $t('b_shop_theme_typography.main_font.preview_title') }}
           </div>
+          <div class="b-shop-theme-fonts__metadata">
+            <span v-for="format in fontFormats(font)" :key="format">
+              {{ format.toUpperCase() }}
+            </span>
+          </div>
+          <details class="b-shop-theme-fonts__css" @click.stop @keydown.stop>
+            <summary>{{ $t('b_shop_theme_typography.custom_fonts.css_name') }}</summary>
+            <p>{{ $t('b_shop_theme_typography.custom_fonts.css_name_hint') }}</p>
+            <code v-copy="cssFamily(font.family, font.fallback)" dir="ltr">
+              {{ cssFamily(font.family, font.fallback) }}
+            </code>
+          </details>
         </template>
 
         <template #append>
@@ -121,11 +116,14 @@
   <!-- █████████████████ Dialog > Add / Edit custom font █████████████████ -->
   <v-bottom-sheet
     v-model="dialog"
-    attach
     content-class="font-dialog-sheet"
-    max-width="780"
+    max-width="900"
+    :fullscreen="$vuetify.display.xs"
     scrollable
-    width="98vw"
+    width="100%"
+    aria-labelledby="custom-font-dialog-title"
+    aria-describedby="custom-font-dialog-description"
+    @after-leave="dialogTrigger?.focus()"
   >
     <v-card class="b-shop-theme-fonts-dialog font-dialog-card sd-modern-widget text-start" rounded="t-xl">
       <div class="font-dialog-header">
@@ -133,16 +131,16 @@
           <v-icon size="22">font_download</v-icon>
         </div>
         <div class="flex-grow-1 min-width-0">
-          <div class="font-dialog-title">
+          <h2 id="custom-font-dialog-title" class="font-dialog-title">
             {{
               editing
                 ? $t("b_shop_theme_typography.custom_fonts.dialog.edit_title")
                 : $t("b_shop_theme_typography.custom_fonts.dialog.add_title")
             }}
-          </div>
-          <div class="font-dialog-subtitle">
+          </h2>
+          <p id="custom-font-dialog-description" class="font-dialog-subtitle">
             {{ $t("b_shop_theme_typography.custom_fonts.dialog.subtitle") }}
-          </div>
+          </p>
         </div>
         <v-tooltip location="top" content-class="sd-modern-tooltip text-start">
           <template #activator="{ props }">
@@ -154,11 +152,12 @@
         </v-tooltip>
       </div>
 
-      <v-divider />
-
       <v-card-text class="font-dialog-body">
         <section class="font-dialog-section">
-          <v-row dense>
+          <h3 class="font-section-title font-family-heading">
+            {{ $t('b_shop_theme_typography.custom_fonts.dialog.family_title') }}
+          </h3>
+          <v-row class="font-family-controls" dense>
             <v-col cols="12" sm="7">
               <v-text-field
                 v-model="form.name"
@@ -199,44 +198,31 @@
             </v-col>
           </v-row>
 
-          <div v-if="form.family" class="font-css-token">
-            <div class="font-css-token__content min-width-0">
-              <div class="font-css-token__label">
-                {{ $t("b_shop_theme_typography.custom_fonts.css_name") }}
+          <details v-if="form.family" class="font-css-details">
+            <summary>{{ $t('b_shop_theme_typography.custom_fonts.css_name') }}</summary>
+            <p>{{ $t('b_shop_theme_typography.custom_fonts.css_name_hint') }}</p>
+            <div class="font-css-token">
+              <div class="font-css-token__content min-width-0">
+                <code dir="ltr">{{ cssFamily(form.family, form.fallback) }}</code>
               </div>
-              <code dir="ltr">{{ cssFamily(form.family, form.fallback) }}</code>
+              <v-tooltip location="top" content-class="sd-modern-tooltip text-start">
+                <template #activator="{ props }">
+                  <v-btn v-bind="props" v-copy="cssFamily(form.family, form.fallback)"
+                         class="sd-modern-icon-button" icon="content_copy" variant="text"
+                         :aria-label="$t('global.actions.copy')" />
+                </template>
+                {{ $t('global.actions.copy') }}
+              </v-tooltip>
             </div>
-            <v-tooltip location="top" content-class="sd-modern-tooltip text-start">
-              <template #activator="{ props }">
-                <v-btn v-bind="props" v-copy="cssFamily(form.family, form.fallback)"
-                       class="sd-modern-icon-button" icon="content_copy" variant="text"
-                       :aria-label="$t('global.actions.copy')" />
-              </template>
-              {{ $t('global.actions.copy') }}
-            </v-tooltip>
-          </div>
+          </details>
         </section>
-
-        <div class="font-upload-note">
-          <v-icon aria-hidden="true" size="19">info</v-icon>
-          <span>
-            {{
-              $t("b_shop_theme_typography.custom_fonts.file_hint", {
-                size: readableFileSize(max_file_size),
-                formats: allowed_formats
-                  .map((format) => format.toUpperCase())
-                  .join(", "),
-              })
-            }}
-          </span>
-        </div>
 
         <section class="font-dialog-section font-faces-section">
           <div class="font-faces-header">
             <div class="min-width-0">
-              <div class="font-section-title">
+              <h3 class="font-section-title">
                 {{ $t("b_shop_theme_typography.custom_fonts.faces.title") }}
-              </div>
+              </h3>
               <div class="font-section-subtitle">
                 {{ $t("b_shop_theme_typography.custom_fonts.faces.subtitle") }}
               </div>
@@ -255,16 +241,32 @@
             </v-btn>
           </div>
 
-          <div
+          <p class="font-upload-note">
+            <v-icon aria-hidden="true" size="18">upload_file</v-icon>
+            <span>
+              {{ $t('b_shop_theme_typography.custom_fonts.file_hint', {
+                size: readableFileSize(max_file_size),
+                formats: allowed_formats.map((format) => format.toUpperCase()).join(', '),
+              }) }}
+            </span>
+          </p>
+
+          <section
             v-for="(face, index) in form.faces"
             :key="face.key"
             class="font-face-row"
+            :aria-label="$t('b_shop_theme_typography.custom_fonts.faces.face', { index: index + 1 })"
           >
             <div class="font-face-row__header">
               <div class="d-flex align-center ga-2 min-width-0">
-                <span class="font-face-index">{{ index + 1 }}</span>
-                <div class="font-face-summary">
-                  {{ face.weight }} · {{ fontStyleTitle(face.style) }}
+                <span class="font-face-index" aria-hidden="true">Aa</span>
+                <div class="min-width-0">
+                  <h4 class="font-face-title">
+                    {{ $t('b_shop_theme_typography.custom_fonts.faces.face', { index: index + 1 }) }}
+                  </h4>
+                  <div class="font-face-summary">
+                    {{ face.weight }} · {{ fontStyleTitle(face.style) }}
+                  </div>
                 </div>
               </div>
               <v-tooltip location="top" content-class="sd-modern-tooltip text-start">
@@ -278,9 +280,13 @@
               </v-tooltip>
             </div>
 
-            <v-row align="start" dense>
-              <v-col cols="12" sm="5" md="3">
+            <div class="font-face-controls">
+              <div class="font-face-control">
+                <label :for="`font-weight-${face.key}`" class="font-control-label">
+                  {{ $t('b_shop_theme_typography.custom_fonts.inputs.weight') }}
+                </label>
                 <v-select
+                  :id="`font-weight-${face.key}`"
                   v-model="face.weight"
                   bg-color="surface"
                   class="font-weight-select"
@@ -288,7 +294,7 @@
                   :disabled="busy_save"
                   hide-details
                   :items="font_weights"
-                  :label="
+                  :aria-label="
                     $t('b_shop_theme_typography.custom_fonts.inputs.weight')
                   "
                   item-title="title"
@@ -302,12 +308,16 @@
                     <v-list-item v-bind="props" :prepend-icon="item.raw.icon" />
                   </template>
                 </v-select>
-              </v-col>
+              </div>
 
-              <v-col cols="12" sm="7" md="4">
-
+              <div class="font-face-control">
+                <div :id="`font-style-${face.key}`" class="font-control-label">
+                  {{ $t('b_shop_theme_typography.custom_fonts.inputs.style') }}
+                </div>
                 <v-btn-toggle
                   v-model="face.style"
+                  role="group"
+                  :aria-labelledby="`font-style-${face.key}`"
                   class="font-style-toggle"
                   density="compact"
                   :disabled="busy_save"
@@ -318,15 +328,16 @@
                     v-for="style in font_styles"
                     :key="style.value"
                     :value="style.value"
+                    :aria-pressed="face.style === style.value"
                     variant="text"
                   >
                     <v-icon start>{{ style.icon }}</v-icon>
                     {{ style.title }}
                   </v-btn>
                 </v-btn-toggle>
-              </v-col>
+              </div>
 
-              <v-col cols="12" md="5">
+              <div class="font-face-control font-face-files">
                 <v-file-input
                   :accept="file_accept"
                   bg-color="surface"
@@ -337,6 +348,8 @@
                   :label="
                     $t('b_shop_theme_typography.custom_fonts.inputs.files')
                   "
+                  :hint="$t('b_shop_theme_typography.custom_fonts.faces.files_hint')"
+                  persistent-hint
                   multiple
                   prepend-icon=""
                   prepend-inner-icon="attach_file"
@@ -345,32 +358,54 @@
                   variant="outlined"
                   :model-value="face.new_files"
                   @update:model-value="(files) => onFilesChanged(face, files)"
-                />
-              </v-col>
-            </v-row>
+                >
+                  <template #selection>
+                    <v-tooltip v-for="file in face.new_files" :key="file.name"
+                               location="top" content-class="sd-modern-tooltip text-start">
+                      <template #activator="{ props }">
+                        <v-chip v-bind="props" tabindex="0" size="small">
+                          {{ file.name }} ({{ readableFileSize(file.size) }})
+                        </v-chip>
+                      </template>
+                      {{ file.name }}
+                    </v-tooltip>
+                  </template>
+                </v-file-input>
+              </div>
+            </div>
 
             <div v-if="face.files.length" class="font-stored-files">
-              <v-chip
+              <v-tooltip
                 v-for="file in face.files"
                 :key="file.id"
-                :disabled="busy_save"
-                closable
-                label
-                size="small"
-                variant="outlined"
-                @click:close="removeStoredFile(face, file)"
+                location="top"
+                content-class="sd-modern-tooltip text-start"
               >
-                <v-icon size="small" start>description</v-icon>
+                <template #activator="{ props }">
+                  <v-chip
+                    v-bind="props"
+                    tabindex="0"
+                    :disabled="busy_save"
+                    closable
+                    label
+                    size="small"
+                    variant="outlined"
+                    @click:close="removeStoredFile(face, file)"
+                  >
+                    <v-icon size="small" start>description</v-icon>
+                    <span class="font-stored-file-name">{{ file.original_name || String(file.format).toUpperCase() }}</span>
+                    <small class="ms-1 text-medium-emphasis">
+                      {{ String(file.format || "").toUpperCase() }}
+                      <template v-if="file.size">
+                        · {{ readableFileSize(file.size) }}
+                      </template>
+                    </small>
+                  </v-chip>
+                </template>
                 {{ file.original_name || String(file.format).toUpperCase() }}
-                <small class="ms-1 text-medium-emphasis">
-                  {{ String(file.format || "").toUpperCase() }}
-                  <template v-if="file.size">
-                    · {{ readableFileSize(file.size) }}
-                  </template>
-                </small>
-              </v-chip>
+              </v-tooltip>
             </div>
-          </div>
+          </section>
         </section>
 
         <div
@@ -384,28 +419,31 @@
       </v-card-text>
 
       <div class="font-dialog-footer">
-        <v-btn
-          class="sd-modern-button"
-          :disabled="busy_save"
-          variant="text"
-          @click="dialog = false"
-        >
-          {{ $t("global.actions.cancel") }}
-        </v-btn>
-        <v-btn
-          class="sd-modern-button sd-modern-button--primary"
-          color="primary"
-          :loading="busy_save"
-          :prepend-icon="editing ? 'save' : 'add'"
-          variant="flat"
-          @click="saveFont"
-        >
-          {{
-            editing
-              ? $t("global.actions.save_changes")
-              : $t("global.actions.create")
-          }}
-        </v-btn>
+        <p>{{ $t('b_shop_theme_typography.custom_fonts.dialog.save_hint') }}</p>
+        <div class="font-dialog-actions">
+          <v-btn
+            class="sd-modern-button"
+            :disabled="busy_save"
+            variant="text"
+            @click="dialog = false"
+          >
+            {{ $t("global.actions.cancel") }}
+          </v-btn>
+          <v-btn
+            class="sd-modern-button sd-modern-button--primary"
+            color="primary"
+            :loading="busy_save"
+            :prepend-icon="editing ? 'save' : 'add'"
+            variant="flat"
+            @click="saveFont"
+          >
+            {{
+              editing
+                ? $t("global.actions.save_changes")
+                : $t("global.actions.create")
+            }}
+          </v-btn>
+        </div>
       </div>
     </v-card>
   </v-bottom-sheet>
@@ -470,6 +508,7 @@ export default defineComponent({
       busy_save: false,
       busy_delete: null as number | null,
       dialog: false,
+      dialogTrigger: null as HTMLElement | null,
       editing: false,
       form_error: null as string | null,
       form: {
@@ -609,6 +648,7 @@ export default defineComponent({
     },
     openCreateDialog() {
       if (!this.can_add) return;
+      this.dialogTrigger = typeof document === "undefined" ? null : document.activeElement as HTMLElement;
       this.editing = false;
       this.form_error = null;
       this.form = {
@@ -622,6 +662,7 @@ export default defineComponent({
     },
     openEditDialog(font: any) {
       if (!this.can_write) return;
+      this.dialogTrigger = typeof document === "undefined" ? null : document.activeElement as HTMLElement;
       this.editing = true;
       this.form_error = null;
       this.form = {
@@ -699,7 +740,7 @@ export default defineComponent({
         if (file.size > this.max_file_size) {
           return this.$t("b_shop_theme_typography.custom_fonts.errors.size", {
             name: file.name,
-            size: readableFileSize(this.max_file_size),
+            size: this.readableFileSize(this.max_file_size),
           });
         }
         if (formats.has(format)) {
@@ -799,7 +840,7 @@ export default defineComponent({
       return formData;
     },
     saveFont() {
-      if (!this.can_write || !this.validateForm()) return;
+      if (this.busy_save || !this.can_write || !this.validateForm()) return;
       this.busy_save = true;
       const formData = this.buildFormData();
       const request =
@@ -962,56 +1003,108 @@ export default defineComponent({
   min-width: 0;
   &__subtitle { padding: 0; margin: 0; min-height: 0; }
   &__quota { margin: 8px 0 20px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  &__list :deep(.v-list-item) { padding: 16px 12px; }
+  &__list :deep(.v-list-item-subtitle) { display: block; opacity: 1; -webkit-line-clamp: unset; }
+  &__name { font-size: 14px; font-weight: 500; line-height: 21px; overflow-wrap: anywhere; }
+  &__sample { margin-top: 6px; color: rgb(var(--v-theme-on-surface)); font-size: 18px; line-height: 28px; overflow-wrap: anywhere; }
+  &__metadata { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; }
+  &__css { margin-top: 4px; }
+  &__css > summary { width: fit-content; min-height: 32px; padding-block: 6px; cursor: pointer; color: var(--sd-modern-muted); font-size: 12px; line-height: 20px; }
+  &__css > summary:focus-visible { border-radius: 4px; outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  &__css p { margin: 4px 0 8px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  &__css code { display: block; padding: 8px 12px; color: inherit; background: var(--sd-modern-inset); border-radius: 8px; font-size: 12px; line-height: 20px; overflow-wrap: anywhere; white-space: normal; }
+
+  @media (max-width: 600px), (pointer: coarse) {
+    &__css > summary { min-height: 44px; padding-block: 12px; }
+  }
+  @media (max-width: 600px) { &__add { margin-block-start: 12px; } }
 }
 
 .b-shop-theme-fonts-dialog {
+  --sd-modern-border: rgba(var(--v-theme-on-surface), .09);
+  --sd-modern-muted: rgba(var(--v-theme-on-surface), .66);
   &.font-dialog-card {
+    display: grid !important;
+    flex: none !important;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    max-height: calc(100dvh - 24px) !important;
+    min-height: 0;
     overflow: hidden;
     padding: 0;
     color: rgb(var(--v-theme-on-surface));
     background: rgb(var(--v-theme-surface));
     border: 1px solid var(--sd-modern-border);
+    border-end-start-radius: 0 !important;
+    border-end-end-radius: 0 !important;
   }
-  .font-dialog-header { display: flex; align-items: center; gap: 12px; padding: 20px 24px; }
-  .font-dialog-icon { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; color: var(--sd-modern-muted); background: var(--sd-modern-inset); border-radius: 12px; }
-  .font-dialog-title { font-size: 18px; font-weight: 500; line-height: 25px; }
-  .font-dialog-subtitle, .font-section-subtitle { margin-top: 3px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
-  .font-dialog-body { padding: 24px !important; background: var(--sd-modern-inset); }
-  .font-dialog-section { padding: 18px; background: rgb(var(--v-theme-surface)); border: 1px solid var(--sd-modern-border); border-radius: 14px; }
-  .font-css-token { display: flex; align-items: center; gap: 12px; min-width: 0; margin-top: 10px; padding: 11px 12px; background: var(--sd-modern-inset); border-radius: 10px; }
+  .font-dialog-header { display: flex; align-items: flex-start; gap: 12px; padding: 22px 24px 20px; border-block-end: 1px solid var(--sd-modern-border); }
+  .font-dialog-icon { display: grid; flex: 0 0 24px; height: 27px; place-items: center; color: var(--sd-modern-muted); }
+  .font-dialog-title { margin: 0; font-family: inherit; font-size: 19px; font-weight: 500; line-height: 27px; }
+  .font-dialog-subtitle, .font-section-subtitle { margin: 6px 0 0; color: var(--sd-modern-muted); font-size: var(--sd-modern-font-small, 13px); line-height: 21px; white-space: normal; }
+  .font-dialog-body { min-height: 0; padding: 24px !important; overflow-y: auto !important; overscroll-behavior: contain; background: var(--sd-modern-inset); }
+  .font-dialog-section { min-width: 0; }
+  .font-section-title { margin: 0; font-family: inherit; font-size: 15px; font-weight: 500; line-height: 23px; }
+  .font-family-heading { margin-block-end: 18px; }
+  .font-family-controls { row-gap: 12px; }
+  .font-dialog-section :deep(.v-field__input), .font-dialog-section :deep(.v-field-label) { font-family: inherit; font-size: var(--sd-modern-font-body, 14px); line-height: 22px; }
+  .font-dialog-section :deep(.v-input__details) { padding-inline: 0; font-size: var(--sd-modern-font-small, 13px); line-height: 20px; }
+  .font-dialog-section :deep(.v-messages) { font-size: inherit; line-height: inherit; }
+  .font-dialog-section :deep(.v-messages__message) { line-height: 20px; }
+  .font-css-details { margin-top: 10px; }
+  .font-css-details > summary { width: fit-content; min-height: 44px; padding-block: 12px; cursor: pointer; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  .font-css-details > summary:focus-visible { border-radius: 4px; outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  .font-css-details > p { margin: 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
+  .font-css-token { display: flex; align-items: center; gap: 12px; min-width: 0; margin-top: 10px; padding: 11px 12px; background: rgb(var(--v-theme-surface)); border-radius: 10px; }
   .font-css-token__content { flex: 1 1 auto; }
-  .font-css-token__content code { display: block; color: inherit; font-size: 12px; overflow-wrap: anywhere; white-space: normal; }
-  .font-css-token__label, .font-control-label { margin-bottom: 4px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; }
-  .font-upload-note { display: flex; align-items: flex-start; gap: 9px; margin: 14px 0; padding: 11px 13px; color: inherit; font-size: 12px; line-height: 19px; background: var(--sd-modern-inset); border-radius: 11px; }
-  .font-upload-note .v-icon { margin-top: 1px; color: var(--sd-modern-muted); }
-  .font-faces-section { padding: 0; overflow: hidden; }
-  .font-faces-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; border-block-end: 1px solid var(--sd-modern-border); }
-  .font-section-title { font-size: 14px; font-weight: 500; line-height: 21px; }
-  .font-face-row { padding: 14px 18px 16px; background: rgb(var(--v-theme-surface)); border-block-end: 1px solid var(--sd-modern-border); }
-  .font-face-row:last-child { border-block-end: 0; }
-  .font-face-row__header { display: flex; align-items: center; justify-content: space-between; min-height: 32px; margin-bottom: 9px; }
-  .font-face-index { display: inline-grid; width: 23px; height: 23px; flex: 0 0 23px; place-items: center; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; background: var(--sd-modern-inset); border-radius: 7px; }
-  .font-face-summary { font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
-  .font-style-toggle { width: 100%; height: 40px !important; gap: 4px; padding: 3px; background: var(--sd-modern-inset); border: 1px solid var(--sd-modern-border); }
-  .font-style-toggle :deep(.v-btn) { min-width: 0; height: 32px !important; flex: 1 1 0; color: var(--sd-modern-muted); font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform: none; border-radius: 7px !important; }
+  .font-css-token__content code { display: block; color: inherit; font-size: 13px; overflow-wrap: anywhere; white-space: normal; }
+  .font-faces-section { margin-block-start: 28px; }
+  .font-faces-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .font-faces-header > .v-btn { flex-shrink: 0; }
+  .font-upload-note { display: flex; align-items: flex-start; gap: 8px; margin: 12px 0 18px; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
+  .font-upload-note > .v-icon { flex-shrink: 0; margin-top: 2px; }
+  .font-face-row { min-width: 0; margin-block-start: 12px; padding: 18px; background: rgb(var(--v-theme-surface)); border: 1px solid var(--sd-modern-border); border-radius: 12px; }
+  .font-face-row__header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .font-face-index { display: inline-grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; color: var(--sd-modern-muted); font-size: 17px; background: var(--sd-modern-inset); border-radius: 10px; }
+  .font-face-title { margin: 0; font-family: inherit; font-size: 14px; font-weight: 500; line-height: 22px; }
+  .font-face-summary { margin-top: 2px; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; overflow-wrap: anywhere; }
+  .font-face-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 20px; }
+  .font-face-control { min-width: 0; }
+  .font-control-label { display: block; margin-bottom: 8px; color: inherit; font-size: 13px; font-weight: 400; line-height: 20px; }
+  .font-face-files { grid-column: 1 / -1; }
+  .font-weight-select :deep(.v-field__input) { min-height: 44px; }
+  .font-style-toggle { width: 100%; height: 44px !important; gap: 4px; padding: 3px; background: var(--sd-modern-inset); border: 1px solid var(--sd-modern-border); }
+  .font-style-toggle :deep(.v-btn) { min-width: 0; height: 36px !important; flex: 1 1 0; color: var(--sd-modern-muted); font-family: inherit; font-size: 13px; font-weight: 400; letter-spacing: 0; text-transform: none; border-radius: 7px !important; }
   .font-style-toggle :deep(.v-btn--active) { color: rgb(var(--v-theme-on-surface)) !important; background: rgb(var(--v-theme-surface)) !important; box-shadow: var(--sd-modern-selected-shadow); --v-activated-opacity: 0; }
-  .font-stored-files { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .font-stored-files :deep(.v-chip) { max-width: 100%; color: inherit; background: var(--sd-modern-inset); border-color: var(--sd-modern-border); }
-  .font-dialog-footer { position: sticky; z-index: 2; inset-block-end: 0; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 13px 24px; background: rgb(var(--v-theme-surface)); border-block-start: 1px solid var(--sd-modern-border); }
+  .font-stored-files { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .font-stored-files :deep(.v-chip) { max-width: 100%; min-width: 0; color: inherit; background: var(--sd-modern-inset); border-color: var(--sd-modern-border); }
+  .font-stored-files :deep(.v-chip__content) { min-width: 0; }
+  .font-stored-files small { flex-shrink: 0; font-size: 13px; }
+  .font-stored-file-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .font-face-files :deep(.v-file-input .v-field__input) { min-width: 0; overflow: hidden; }
+  .font-face-files :deep(.v-chip) { max-width: 100%; }
+  .font-face-files :deep(.v-chip__content) { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .font-dialog-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 24px max(18px, env(safe-area-inset-bottom)); background: rgb(var(--v-theme-surface)); border-block-start: 1px solid var(--sd-modern-border); }
+  .font-dialog-footer > p { margin: 0; max-width: 390px; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
+  .font-dialog-actions { display: flex; flex: 0 0 auto; gap: 10px; }
+  .font-dialog-actions .sd-modern-button { min-height: 44px; margin: 0; padding-inline: 18px; font-size: 13px; }
   .min-width-0 { min-width: 0; }
 
   @media (max-width: 600px) {
-    .font-dialog-header, .font-dialog-body, .font-dialog-footer { padding-inline: 16px !important; }
-    .font-dialog-body { padding-block: 16px !important; }
-    .font-dialog-section { padding: 14px; }
-    .font-faces-section { padding: 0; }
-    .font-faces-header { align-items: flex-start; padding: 14px; flex-wrap: wrap; }
-    .font-face-row { padding-inline: 14px; }
-    .font-dialog-footer > .v-btn { flex: 1 1 0; }
+    &.font-dialog-card { height: 100dvh !important; max-height: 100dvh !important; }
+    .font-dialog-header { gap: 10px; padding: 18px 16px; }
+    .font-dialog-title { font-size: 17px; line-height: 25px; }
+    .font-dialog-body { padding: 20px 16px !important; }
+    .font-faces-header { flex-wrap: wrap; gap: 12px; }
+    .font-face-row { padding: 16px; }
+    .font-face-controls { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .font-dialog-footer { display: grid; grid-template-columns: minmax(0, 1fr); justify-content: stretch; gap: 12px; padding: 12px 16px max(12px, env(safe-area-inset-bottom)); }
+    .font-dialog-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
   }
   @media (max-width: 600px), (pointer: coarse) {
     .font-style-toggle { height: 52px !important; }
     .font-style-toggle :deep(.v-btn) { height: 44px !important; }
+    .font-weight-select :deep(.v-field__input) { min-height: 52px; }
+    .font-faces-header > .v-btn { min-height: 44px; }
   }
 }
 </style>

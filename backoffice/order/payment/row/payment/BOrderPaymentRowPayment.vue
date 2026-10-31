@@ -13,8 +13,77 @@
   -->
 
 <template>
+  <section v-if="isModernBills && payment" v-bind="$attrs" class="b-order-bill-payment text-start">
+    <header class="b-order-bill-payment__provider">
+      <img v-if="gateway?.icon || gateway?.logo" :src="getShopImagePath(gateway.icon || gateway.logo)" alt="" :width="gateway.icon ? 28 : 48" height="28" />
+      <div>
+        <div v-if="gateway?.name || gateway?.code">{{ gateway.name || gateway.code }}</div>
+        <p>{{ $t('process_center.payment_widget.user_payment') }}</p>
+      </div>
+      <u-smart-menu v-if="action_items?.length" :items="action_items" modern :title="$t('process_center.modern.payment_actions')" class="ms-auto" />
+    </header>
+
+    <div class="b-order-bill-payment__facts">
+      <section class="b-order-bill-payment__fact">
+        <h3 class="sd-modern-eyebrow">{{ $t('process_center.bills.recorded_payment') }}</h3>
+        <div class="b-order-bill-payment__amount"><u-price :amount="payment.amount" :currency="payment.currency" /><bdi>{{ payment.currency }}</bdi></div>
+        <span v-if="payment.status" class="sd-modern-status sd-modern-status--plain b-order-bill-payment__status" :aria-label="$t('process_center.bills.payment_status')">
+          <span class="sd-modern-status__dot" :class="billPaymentStatusClass" />
+          {{ billPaymentStatus ? $t(billPaymentStatus.name) : payment.status }}
+        </span>
+        <p v-if="payment.payment_at" class="b-order-bill-payment__date" :title="getFromNowString(payment.payment_at)">{{ getLocalTimeString(payment.payment_at) }}</p>
+        <div v-if="payment.unique_id" class="b-order-bill-payment__reference">
+          <span class="sd-modern-eyebrow">{{ $t('process_center.bills.payment_reference') }}</span><bdi>{{ payment.unique_id }}</bdi>
+        </div>
+        <p v-if="payment.fee" class="b-order-bill-payment__fee">{{ $t('process_center.bills.provider_fee') }}: <u-price :amount="-payment.fee" :currency="payment.currency" /></p>
+        <v-btn v-if="payment.track_id && payment.track_id.startsWith('http')" :href="payment.track_id" target="_blank" rel="noopener noreferrer" class="sd-modern-button sd-modern-button--compact sd-modern-button--inline b-order-bill-payment__receipt" variant="text" color="primary" @click.stop="">
+          {{ $t('process_center.bills.receipt') }}<v-icon size="16" class="ms-2" aria-hidden="true">north_east</v-icon>
+        </v-btn>
+      </section>
+
+      <section class="b-order-bill-payment__fact">
+        <h3 class="sd-modern-eyebrow">{{ $t('process_center.bills.payment_method') }}</h3>
+        <u-payment-card v-if="payment.card" :card="payment.card" :currency="payment.currency" :method="payment.method" horizontal class="b-order-bill-payment__method" />
+        <p v-else-if="payment.cod">{{ $t('process_center.payment_widget.cod') }}</p>
+        <p v-else-if="payment.method"><bdi>{{ payment.method }}</bdi></p>
+        <p v-else class="b-order-bill-payment__muted">{{ $t('global.commons.no_credit_card_info') }}</p>
+        <div v-if="payment.risk !== null && payment.risk !== undefined && payment.risk >= 0" class="b-order-bill-payment__risk">
+          <u-payment-risk-indicator :risk="payment.risk" small class="no-inv" />
+          <div><span class="sd-modern-eyebrow">{{ $t('process_center.payment_widget.risk') }}</span><p>{{ $t('process_center.modern.risk_review') }}</p></div>
+        </div>
+      </section>
+
+      <section v-if="payment.billing_details || payment.card?.country" class="b-order-bill-payment__fact">
+        <template v-if="payment.billing_details">
+          <h3 class="sd-modern-eyebrow">{{ $t('process_center.bills.billing_details') }}</h3>
+          <u-payment-billing-details :billing-detail="payment.billing_details" class="b-order-bill-payment__billing" />
+        </template>
+        <div v-if="payment.card?.country" class="b-order-bill-payment__country">
+          <h3 class="sd-modern-eyebrow">{{ $t('process_center.bills.card_country') }}</h3>
+          <u-map-countries-single :country="payment.card.country" />
+        </div>
+      </section>
+    </div>
+
+    <div v-if="canBillCapture" class="sd-modern-notice b-order-bill-payment__capture-notice">
+      <v-icon size="18" aria-hidden="true">info_outline</v-icon>
+      <div class="sd-modern-notice__content"><p>{{ $t('process_center.bills.capture_intro') }}</p>
+        <v-btn class="sd-modern-button sd-modern-button--compact sd-modern-button--inline" color="primary" variant="text" @click="dialog_capture = true"><v-icon size="17" start aria-hidden="true">done_all</v-icon>{{ $t('process_center.bills.capture_title') }}</v-btn>
+      </div>
+    </div>
+
+    <section v-if="payment.refunds?.length" class="b-order-bill-payment__refunds">
+      <h3><v-icon size="18" class="me-2" aria-hidden="true">keyboard_return</v-icon>{{ $t('global.commons.refund') }}</h3>
+      <div v-for="refund in payment.refunds" :key="refund.sd_unique_id" class="b-order-bill-payment__refund">
+        <u-price :amount="refund.amount" :currency="refund.currency" />
+        <div><span class="sd-modern-eyebrow">{{ $t('process_center.bills.refund_reference') }}</span><bdi>{{ refund.sd_unique_id }}</bdi></div>
+        <div><span class="sd-modern-eyebrow">{{ $t('process_center.bills.provider_reference') }}</span><bdi>{{ refund.ex_track_id }}</bdi></div>
+        <div><span class="sd-modern-eyebrow">{{ $t('global.commons.refund_date') }}</span><span>{{ getLocalTimeStringSmall(refund.refund_at) }}</span></div>
+      </div>
+    </section>
+  </section>
   <tr
-    v-if="payment"
+    v-else-if="payment"
     v-bind="$attrs"
     :class="{ 'flex-row': flexMode }"
     class="text-start"
@@ -241,7 +310,7 @@
   </tr>
 
   <!-- █████████████████████████ Refunds █████████████████████████ -->
-  <tr
+  <template v-if="!isModernBills"><tr
     v-for="refund in payment?.refunds"
     :key="refund.sd_unique_id"
     v-bind="$attrs"
@@ -282,18 +351,35 @@
         {{ getLocalTimeStringSmall(refund.refund_at) }}
       </div>
     </td>
-  </tr>
+  </tr></template>
 
   <!-- █████████████████████████ Dialog > Confirm Cash Payment (For bill only) █████████████████████████ -->
 
   <v-dialog
-    v-if="!readonly && is_require_capture"
+    v-if="!readonly && is_require_capture && (!isModernBills || canBillCapture)"
     v-model="dialog_capture"
-    fullscreen
+    :fullscreen="!isModernBills"
+    :max-width="isModernBills ? 520 : undefined"
+    :content-class="isModernBills ? 'b-order-bill-capture-dialog' : undefined"
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card class="text-start">
+    <v-card class="text-start" :class="{ 'sd-modern-widget b-order-bill-capture': isModernBills, 'b-order-bill-capture--inverted': isModernBillsDark }">
+      <template v-if="isModernBills">
+        <v-card-title class="b-order-bill-capture__header"><v-icon size="20" class="me-2" aria-hidden="true">price_check</v-icon>{{ $t('process_center.bills.capture_title') }}</v-card-title>
+        <v-card-text class="b-order-bill-capture__body">
+          <p>{{ $t('process_center.bills.capture_intro') }}</p>
+          <div class="b-order-bill-capture__authorized"><span>{{ $t('process_center.bills.authorized_amount') }}</span><u-price :amount="payment.amount" :currency="payment.currency" /></div>
+          <u-price-input v-model="capture_amount" :currency="payment.currency" :disabled="busy_capture" :label="$t('process_center.bills.capture_amount')" :rules="[() => isCaptureAmountValid || $t('process_center.bills.capture_amount_error')]" class="sd-modern-underlined-field b-order-bill-capture__amount" />
+          <div class="sd-modern-notice"><v-icon size="18" aria-hidden="true">info_outline</v-icon><p class="sd-modern-notice__content">{{ $t('process_center.bills.capture_consequences') }}</p></div>
+          <u-smart-verify v-model="accept_action" :true-title="$t('process_center.bills.capture_verify')" :disabled="busy_capture" class="b-order-bill-capture__verify" tabindex="0" role="checkbox" :aria-checked="accept_action" @keydown.space.prevent="!busy_capture && (accept_action = !accept_action)" @keydown.enter.prevent="!busy_capture && (accept_action = !accept_action)" />
+        </v-card-text>
+        <v-card-actions class="b-order-bill-capture__actions">
+          <v-btn class="sd-modern-button" variant="outlined" :disabled="busy_capture" @click="dialog_capture = false"><v-icon size="17" start aria-hidden="true">close</v-icon>{{ $t('global.actions.cancel') }}</v-btn>
+          <v-btn class="sd-modern-button sd-modern-button--primary" color="primary" variant="elevated" :disabled="!accept_action || !isCaptureAmountValid || busy_capture" :loading="busy_capture" @click="capturePayment"><v-icon size="17" start aria-hidden="true">done_all</v-icon>{{ $t('process_center.bills.capture_title') }}</v-btn>
+        </v-card-actions>
+      </template>
+      <template v-else>
       <v-card-title>
         <img
           :src="getShopImagePath(gateway?.icon)"
@@ -389,6 +475,7 @@
           </v-btn>
         </div>
       </v-card-actions>
+      </template>
     </v-card>
   </v-dialog>
 
@@ -453,6 +540,7 @@ export default {
     },
     flexMode: { default: false, type: Boolean },
     modern: { type: Boolean, default: false },
+    modernBills: { type: Boolean, default: false },
   },
 
   data: function () {
@@ -467,6 +555,29 @@ export default {
     };
   },
   computed: {
+    isModernBills() {
+      return this.modern && this.modernBills;
+    },
+    isModernBillsDark() {
+      return this.isModernBills && !!this.USER?.()?.preferences?.dark;
+    },
+    billPaymentStatus() {
+      return Object.values(TransactionStatus).find((status) => status.code === this.payment?.status);
+    },
+    billPaymentStatusClass() {
+      if (this.payment?.status === TransactionStatus.Succeeded.code) return "sd-modern-status__dot--success";
+      if (this.payment?.status === TransactionStatus.Canceled.code) return "sd-modern-status__dot--error";
+      if ([TransactionStatus.RequireAction.code, TransactionStatus.Processing.code, TransactionStatus.RequireCapture.code].includes(this.payment?.status)) return "sd-modern-status__dot--warning";
+      return undefined;
+    },
+    isCaptureAmountValid() {
+      const amount = Number(this.capture_amount);
+      return Number.isFinite(amount) && amount > 0 && amount <= Number(this.payment?.amount);
+    },
+    canBillCapture() {
+      return !this.readonly && !this.IS_VENDOR_PANEL && this.is_require_capture &&
+        Boolean(this.payment?.id && this.payment.shop_id && this.gateway?.code);
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -528,8 +639,22 @@ export default {
       const sign = change > 0 ? "+" : ""; // Add "+" for positive values
       return `${sign}${change.toFixed(2)}`; // Include the sign with the formatted value
     },
-
-
+  },
+  watch: {
+    payment() {
+      if (!this.isModernBills) return;
+      this.dialog_capture = false;
+      this.accept_action = false;
+      this.capture_amount = this.payment.amount;
+    },
+    dialog_capture(open) {
+      if (!this.isModernBills || !open) return;
+      this.accept_action = false;
+      this.capture_amount = this.payment.amount;
+    },
+    capture_amount() {
+      if (this.isModernBills) this.accept_action = false;
+    },
   },
   created() {
     this.capture_amount = this.payment.amount;
@@ -538,6 +663,9 @@ export default {
   methods: {
     capturePayment() {
       if (this.readonly) return;
+      if (this.isModernBills && (!this.canBillCapture || this.busy_capture || !this.accept_action || !this.isCaptureAmountValid)) return;
+      // A late capture response must update the submitted payment, not a newly selected bill.
+      const capturedPayment = this.isModernBills ? this.payment : null;
       this.busy_capture = true;
 
       axios
@@ -556,9 +684,10 @@ export default {
           if (data.error)
             return NotificationService.showErrorAlert(null, data.error_msg);
 
-          Object.assign(this.payment, data.payment);
-          this.$emit("payment-captured");
-          this.dialog_capture = false;
+          Object.assign(capturedPayment || this.payment, data.payment);
+          if (capturedPayment) this.$emit("payment-captured", capturedPayment);
+          else this.$emit("payment-captured");
+          if (!capturedPayment || this.payment === capturedPayment) this.dialog_capture = false;
 
           NotificationService.showSuccessAlert(
             null,
@@ -577,6 +706,103 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-order-bill-payment {
+  min-width: 0;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+
+  &__provider { display: flex; align-items: center; gap: 9px; margin-block-end: 20px; font-weight: 500; }
+  &__provider img { flex: none; object-fit: contain; }
+  &__provider p { margin: 1px 0 0; color: var(--sd-modern-muted); font-size: 12px; font-weight: 400; line-height: 18px; }
+  &__facts { display: grid; grid-template-columns: 1.1fr 1fr 1fr; border-block-start: 1px solid var(--sd-modern-border); padding-block-start: 20px; }
+  &__fact { min-width: 0; padding-inline: 18px; border-inline-start: 1px solid var(--sd-modern-border); overflow-wrap: anywhere; }
+  &__fact:first-child { border: 0; padding-inline-start: 0; }
+  &__fact:last-child { padding-inline-end: 0; }
+  .sd-modern-eyebrow { display: block; margin: 0 0 7px; font-size: 10px; font-weight: 400; line-height: 15px; letter-spacing: .65px; }
+  &__fact > p { margin: 7px 0 0; font-size: 13px; line-height: 20px; }
+  &__amount { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  &__amount > bdi { font-size: 12px; font-weight: 400; color: var(--sd-modern-muted); }
+  &__amount :deep(.small), &__fee :deep(.small) { font-size: inherit !important; }
+  &__status { margin-block-start: 7px; font-size: 13px; line-height: 20px; }
+  &__date { text-wrap: balance; }
+  &__reference { display: grid; gap: 3px; margin-block-start: 14px; overflow-wrap: anywhere; }
+  &__reference .sd-modern-eyebrow { margin: 0; }
+  &__receipt { margin-block-start: 9px; }
+  &__method { flex-wrap: wrap; gap: 6px; font-size: 13px; line-height: 20px; }
+  &__method :deep(.v-chip) { height: auto; padding: 0; background: transparent !important; font-size: 13px; line-height: 20px; }
+  &__method :deep(.v-chip__underlay) { display: none; }
+  &__method :deep(.small), &__method :deep(small) { font-size: 13px; line-height: 20px; }
+  &__risk { display: flex; align-items: center; gap: 8px; margin-block-start: 16px; }
+  &__risk > :deep(.v-avatar) { flex: none; }
+  &__risk .sd-modern-eyebrow { margin: 0 0 2px; }
+  &__risk p { margin: 0; font-size: 12px; line-height: 18px; color: var(--sd-modern-muted); }
+  &__billing { font-size: 13px; line-height: 20px; overflow-wrap: anywhere; }
+  &__billing :deep(small), &__billing :deep(.small) { font-size: 13px; line-height: 20px; }
+  &__country { margin-block-start: 16px; }
+  &__country:first-child { margin-block-start: 0; }
+  &__country :deep(.small) { font-size: 13px; line-height: 20px; }
+  &__muted { color: var(--sd-modern-muted); }
+  &__capture-notice { margin-block-start: 20px; font-size: 13px; line-height: 20px; }
+  &__capture-notice p { margin: 0 0 5px; }
+  &__refunds { margin-block-start: 20px; padding-block-start: 20px; border-block-start: 1px solid var(--sd-modern-border); }
+  &__refunds > h3 { display: flex; align-items: center; margin: 0 0 14px; font-size: 15px; font-weight: 500; line-height: 22px; }
+  &__refund { display: grid; grid-template-columns: .7fr 1fr 1fr 1fr; align-items: start; gap: 16px; padding-block: 12px; border-block-end: 1px solid var(--sd-modern-border); }
+  &__refund:last-child { border-block-end: 0; padding-block-end: 0; }
+  &__refund > div { min-width: 0; display: grid; gap: 3px; overflow-wrap: anywhere; }
+  &__refund .sd-modern-eyebrow { margin: 0; }
+
+  // Keep canonical map/card ink colored while the surrounding facts inherit dark conversion.
+  .smart-invert .s--card-window-content & :deep(.vue-world-map),
+  .smart-invert .s--card-window-content & .b-order-bill-payment__method :deep(.v-chip__content > .d-block) { filter: invert(1); }
+
+  @media (max-width: 700px) {
+    &__facts { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    &__fact { padding-inline: 0; border-inline-start: 0; }
+    &__fact + &__fact { border-block-start: 1px solid var(--sd-modern-border); padding-block-start: 20px; }
+    &__refund { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+}
+
+.b-order-bill-capture {
+  padding: 0;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: var(--sd-modern-font-body, 14px);
+  line-height: 22px;
+
+  &__header { display: flex; align-items: center; padding: 20px; white-space: normal; font-family: inherit; font-size: 18px; font-weight: 500; line-height: 24px; }
+  &__body { display: grid; gap: 18px; padding: 0 20px 20px !important; font-size: var(--sd-modern-font-body, 14px); line-height: 22px; }
+  &__body > p { margin: 0; }
+  &__authorized { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; font-size: var(--sd-modern-font-small, 13px); line-height: 20px; }
+  &__authorized :deep(.small) { font-size: inherit !important; }
+  &__amount :deep(.v-field__input) { font-size: var(--sd-modern-font-body, 14px); line-height: 22px; }
+  &__body .sd-modern-notice { font-size: var(--sd-modern-font-small, 13px); line-height: 20px; }
+  &__body .sd-modern-notice p { margin: 0; }
+  &__verify { font-size: var(--sd-modern-font-body, 14px); line-height: 22px; }
+  &__verify :deep(b) { font-weight: 400; }
+  &__verify :deep(.small) { font-size: var(--sd-modern-font-small, 13px); line-height: 20px; }
+  &__verify:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; border-radius: 8px; }
+  &__actions { justify-content: flex-end; flex-wrap: wrap; gap: 8px; padding: 16px 20px; border-block-start: 1px solid var(--sd-modern-border); }
+  &__actions > .v-btn { margin-inline-start: 0; }
+  &__actions :deep(.v-btn__content) { font-size: 14px; line-height: 20px; }
+
+  // The teleported capture dialog has its own conversion boundary outside the content window.
+  &--inverted {
+    filter: invert(1);
+
+    :deep(img), :deep(.no-inv), :deep(span.fi), :deep(.flag-icon),
+    :deep(.s--smart-verify__indicator), :deep(.s--smart-verify .v-avatar.avatar-gradient),
+    .sd-modern-button--primary:not(.v-btn--disabled, :disabled, [aria-disabled="true"]) { filter: invert(1); }
+
+    :deep(.no-inv img), :deep(.s--smart-verify .v-avatar.avatar-gradient img) { filter: none; }
+  }
+
+  @media (max-width: 600px), (pointer: coarse) {
+    &__amount :deep(.v-field__input) { font-size: 16px; }
+  }
+}
+
 .flex-row {
   display: flex;
   flex-direction: row;

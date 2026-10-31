@@ -14,23 +14,38 @@
 
 <template>
   <th
-    class="text-center"
-    :style="[is_variant ? 'box-shadow: inset 0 2px 0 0 #512DA8;background:#F8F5FF' : nyll,is_pricing?'box-shadow: inset 0 2px 0 0 #C2185B;background:#FFFAFC':null]"
+    :class="modern ? 'b-spreadsheet-header-column--modern sd-modern-list-header text-start' : 'text-center'"
+    :style="modern ? null : [is_variant ? 'box-shadow: inset 0 2px 0 0 #512DA8;background:#F8F5FF' : null,is_pricing?'box-shadow: inset 0 2px 0 0 #C2185B;background:#FFFAFC':null]"
+    scope="col"
   >
-    <v-icon class="me-1">{{ icon }}</v-icon>
+    <v-icon v-if="icon || !modern" class="me-1" :size="modern ? 16 : undefined" :aria-hidden="modern ? 'true' : undefined">{{ icon }}</v-icon>
     <span> {{ title }}</span>
 
     <template v-if="styler[header]?.tooltip">
-      <v-icon class="ms-1" size="12">info</v-icon>
+      <v-icon v-if="!modern" class="ms-1" size="12">info</v-icon>
       <v-tooltip
-        color="#000"
-        content-class="bg-black text-start rounded-xl"
-        location="bottom"
-        max-width="420"
-        activator="parent"
+        :color="modern ? undefined : '#000'"
+        :content-class="modern ? 'sd-modern-tooltip text-start' : 'bg-black text-start rounded-xl'"
+        :location="modern ? 'top' : 'bottom'"
+        :max-width="modern ? undefined : 420"
+        :activator="modern ? undefined : 'parent'"
+        :open-on-click="modern ? true : undefined"
+        :open-on-focus="modern ? true : undefined"
       >
-        <div class="py-2">
-          <h3 v-if="styler[header].tooltip.title" class="mb-2">
+        <template v-if="modern" #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            class="sd-modern-icon-button sd-modern-info-button b-spreadsheet-header-column__help"
+            variant="text"
+            icon="info_outline"
+            :aria-label="`${$t('global.commons.help')} · ${title}`"
+          />
+        </template>
+        <div :class="modern ? undefined : 'py-2'">
+          <span v-if="modern && styler[header].tooltip.title" class="sd-modern-tooltip__title">
+            {{ styler[header].tooltip.title }}
+          </span>
+          <h3 v-else-if="styler[header].tooltip.title" class="mb-2">
             {{ styler[header].tooltip.title }}
           </h3>
           <p
@@ -48,7 +63,7 @@
       </v-tooltip>
     </template>
 
-    <small v-if="is_variant" class="d-block op-0-6 mt-1">{{ header }}</small>
+    <small v-if="is_variant" :class="modern ? 'sd-modern-list-header b-spreadsheet-header-column__key' : 'd-block op-0-6 mt-1'">{{ header }}</small>
   </th>
 </template>
 
@@ -62,6 +77,7 @@ import {
 export default defineComponent({
   name: "BSpreadsheetHeaderColumn",
   props: {
+    modern: { type: Boolean, default: false },
     header: {
       required: true,
       type: String,
@@ -108,4 +124,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.b-spreadsheet-header-column--modern {
+  background: transparent;
+  box-shadow: none;
+
+  .b-spreadsheet-header-column__help { margin-inline-start: 4px; }
+  .b-spreadsheet-header-column__key { display: block; margin-block-start: 4px; }
+}
+</style>

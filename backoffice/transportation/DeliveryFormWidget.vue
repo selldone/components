@@ -754,7 +754,7 @@
             </v-list-subheader>
             <p v-if="modern && transportation.sod" class="sd-modern-notice mt-4">
               <v-icon size="18">info_outline</v-icon>
-              {{ $t('transportation_manage.settings.sod_rates_hint') }}
+              <span class="sd-modern-notice__content">{{ $t('transportation_manage.settings.sod_rates_hint') }}</span>
             </p>
           </div>
           </div>

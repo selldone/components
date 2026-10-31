@@ -12,128 +12,190 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <u-pods-panel color="#fff">
-    <u-pod-node icon="credit_card" title="My Bank"></u-pod-node>
-    <u-pod-wire forward></u-pod-wire>
-
-    <u-pod-node is-selldone-icon title="This Wallet"></u-pod-node>
-  </u-pods-panel>
-
-  <div v-if="!personal_information_verified" class="py-5">
-    <v-icon class="me-1" color="red">warning</v-icon>
-    Please, first complete your KYC,
-    <span class="text-muted"
-      ><v-icon size="small">fingerprint</v-icon> Identity information</span
-    >,
-    <router-link :to="{ name: 'BPageShuttleIdentity' }"
-      ><b>here</b></router-link
-    >
-    . It takes only 60 seconds.
-  </div>
-  <!-- ------------------- Deposit Form ------------------- -->
-
-  <u-price-input
-    v-model="amount"
-    :decimal="currency.floats"
-    :disabled="!personal_information_verified"
-    :label="`${$t('account_page.deposit.form.amount_input')}*`"
-    :messages="`${FormatNumberCurrency(
-      amount,
-      account.currency,
-    )} ${GetUserSelectedCurrencyName(account.currency)}`"
-    class="strong-field"
-    required
-    suffix=""
-  >
-    <template v-slot:append-inner>
-      <u-currency-icon :currency="currency" flag gradient></u-currency-icon>
-    </template>
-  </u-price-input>
-
-  <b-account-tax
-    v-if="personal_information_verified"
-    v-model="account.company_id"
-    v-model:vat-percent="vat_percent"
-    auto-collapse
-    has-vat-calculation
-    read-only
-  >
-    <template v-slot:append-inner>
-      <div>
-        <v-btn
-          :to="{
-            name: 'BPageAccountEdit',
-            params: { account_number: account.account_number },
-          }"
-          class="nbt"
-          >Change linked business profile
-          <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
-        </v-btn>
+<template>
+  <div class="b-account-charge-method">
+    <div class="b-account-charge-method__fields">
+      <slot name="method" :busy="busy_buy || showSelectGateway" />
+      <div
+        v-if="!personal_information_verified"
+        class="b-account-charge-method__notice"
+        role="status"
+      >
+        <v-icon size="18" aria-hidden="true">person_outline</v-icon>
+        <p>
+          {{ $t("account_page.deposit.modern.kyc_required") }}
+          <router-link :to="{ name: 'BPageShuttleIdentity' }">{{
+            $t("account_page.deposit.modern.verify_identity")
+          }}</router-link>
+        </p>
       </div>
-    </template>
-  </b-account-tax>
-
-  <div class="my-5 text-muted small">
-    <ul>
-      <li>
-        You can transfer funds between virtual accounts in Selldone. In this
-        case, you should have the virtual account number XXXX-XXXX-XXXX-XXXX.
-      </li>
-      <li>
-        You <b>can not</b> withdraw from your virtual wallets to bank account -
-        because of money laundering and legal issues.
-      </li>
-    </ul>
-  </div>
-
-  <div class="widget-buttons">
-    <v-btn
-      :disabled="!(amount > 0) || !is_available"
-      color="primary"
-      rounded
-      size="x-large"
-      stacked
-      variant="elevated"
-      @click.stop="showDialog()"
-    >
-      <div>
-        {{ $t("account_page.deposit.form.charge_action") }}
-
-        <u-price
-          v-if="amount > 0"
-          :amount="amount"
-          :currency="account.currency"
-          class="ms-2"
+      <!-- ------------------- Deposit Form ------------------- -->
+      <div class="b-account-charge-method__amount">
+        <label
+          :for="`account-charge-bank-${account.account_number}`"
+          class="b-account-charge-method__label"
+          >{{ $t("account_page.deposit.modern.amount")
+          }}<span aria-hidden="true">*</span></label
         >
-        </u-price>
-
-        <template v-if="vat > 0">
-          <span class="mx-2">+</span>
-          <u-price :amount="vat" :currency="account.currency" class="me-1">
-          </u-price>
-          <span class="small">VAT</span></template
+        <u-price-input
+          :id="`account-charge-bank-${account.account_number}`"
+          v-model="amount"
+          :decimal="currency.floats"
+          :disabled="
+            !personal_information_verified || busy_buy || showSelectGateway
+          "
+          :aria-label="$t('account_page.deposit.modern.amount')"
+          :aria-describedby="`account-charge-bank-help-${account.account_number}`"
+          class="sd-modern-underlined-field"
+          required
+          hide-details
+          variant="underlined"
+          suffix=""
+          dir="ltr"
+          inputmode="decimal"
         >
+          <template #append-inner
+            ><span>{{ input_currency }}</span></template
+          >
+        </u-price-input>
+        <p
+          :id="`account-charge-bank-help-${account.account_number}`"
+          class="b-account-charge-method__note"
+        >
+          {{
+            $t("account_page.deposit.modern.amount_help", {
+              currency: input_currency,
+            })
+          }}
+          <span v-if="charge_amount > 0">
+            · <u-price :amount="charge_amount" :currency="account.currency"
+          /></span>
+        </p>
       </div>
-      <div v-if="amount <= 0" class="small mt-1">
-        ⚠ Please enter an amount to charge.
+      <b-account-tax
+        v-if="personal_information_verified"
+        v-model="account.company_id"
+        v-model:vat-percent="vat_percent"
+        modern
+        auto-collapse
+        has-vat-calculation
+        read-only
+        @update:calculation-state="vat_state = $event"
+      >
+        <template #append-inner>
+          <v-btn
+            :to="{
+              name: 'BPageAccountEdit',
+              params: { account_number: account.account_number },
+            }"
+            variant="text"
+            color="primary"
+            class="sd-modern-button sd-modern-button--inline"
+          >
+            {{ $t("account_page.deposit.modern.company_change")
+            }}<v-icon size="16" class="ms-1" aria-hidden="true">{{
+              $t("icons.chevron_next")
+            }}</v-icon>
+          </v-btn>
+        </template>
+      </b-account-tax>
+    </div>
+    <aside class="b-account-charge-method__context">
+      <div class="b-account-charge-method__wallet"><slot name="account" /></div>
+      <div
+        class="b-account-charge-method__summary"
+        aria-live="polite"
+        :aria-busy="vat_state === 'loading'"
+      >
+        <h3>{{ $t("account_page.deposit.modern.summary") }}</h3>
+        <dl class="b-account-charge-method__facts">
+          <div>
+            <dt>{{ $t("account_page.deposit.modern.wallet_credit") }}</dt>
+            <dd>
+              <u-price :amount="charge_amount" :currency="account.currency" />
+            </dd>
+          </div>
+          <div>
+            <dt>
+              {{ $t("account_page.deposit.modern.vat") }}
+              <span v-if="vat_state === 'ready'">{{ vat_percent }}%</span>
+              <button
+                type="button"
+                class="sd-modern-info-button"
+                :aria-label="$t('account_page.deposit.modern.vat_help')"
+              >
+                <v-icon size="14" aria-hidden="true">info_outline</v-icon
+                ><v-tooltip
+                  activator="parent"
+                  location="top"
+                  content-class="sd-modern-tooltip text-start"
+                  open-on-focus
+                  open-on-click
+                  >{{ $t("account_page.deposit.modern.vat_help") }}</v-tooltip
+                >
+              </button>
+            </dt>
+            <dd>
+              <u-price
+                v-if="vat_state === 'ready'"
+                :amount="vat"
+                :currency="account.currency"
+              /><span v-else>—</span>
+            </dd>
+          </div>
+          <div class="b-account-charge-method__total">
+            <dt>{{ $t("account_page.deposit.modern.total") }}</dt>
+            <dd>
+              <u-price
+                v-if="vat_state === 'ready'"
+                :amount="bill.sum"
+                :currency="account.currency"
+              /><span v-else>—</span>
+            </dd>
+          </div>
+        </dl>
+        <p
+          v-if="personal_information_verified && vat_state !== 'ready'"
+          class="b-account-charge-method__note"
+        >
+          {{
+            $t(
+              vat_state === "loading"
+                ? "account_page.deposit.modern.vat_loading"
+                : "account_page.deposit.modern.vat_error",
+            )
+          }}
+        </p>
       </div>
-      <div v-if="!is_available" class="small mt-1">
-        ⚠ Unfortunately no payment gateway is available.
-      </div>
-    </v-btn>
-  </div>
-
-  <div class="small text-end mt-2 text-muted">
-    <v-icon color="green" size="x-small" style="vertical-align: text-top"
-      >shield
-    </v-icon>
-    Payments are secured by
-    <img
-      height="16"
-      src="../../../../../assets/trademark/stripe.svg"
-      alt="Stripe"
-    />
+    </aside>
+    <div class="b-account-charge-method__actions">
+      <p
+        v-if="!is_available"
+        class="b-account-charge-method__notice"
+        role="status"
+      >
+        {{ $t("account_page.deposit.modern.no_gateway") }}
+      </p>
+      <v-btn
+        :disabled="!can_pay"
+        :loading="busy_buy"
+        color="primary"
+        variant="elevated"
+        class="sd-modern-button sd-modern-button--primary"
+        prepend-icon="credit_card"
+        @click.stop="showDialog()"
+        >{{ $t("account_page.deposit.modern.continue_payment") }}</v-btn
+      >
+      <p class="b-account-charge-method__note">
+        {{
+          $t(
+            charge_amount > 0
+              ? "account_page.deposit.modern.provider_next"
+              : "account_page.deposit.modern.amount_required",
+          )
+        }}
+      </p>
+    </div>
   </div>
 
   <!-- ████████████████████████ PAYMENT > Start ████████████████████████ -->
@@ -164,7 +226,7 @@
       :mode="special_payment_mode"
       :order-url="order_url"
       :pack="pack"
-      :payment-amount="amount"
+      :payment-amount="charge_amount"
       :payment-fields="payment_fields"
       :payment-form-method="payment_form_method"
       :payment-form-url="payment_form_url"
@@ -204,10 +266,6 @@
 import UPriceInput from "../../../../../ui/price/input/UPriceInput.vue";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
 import UPaymentForm from "../../../../../ui/payment/form/UPaymentForm.vue";
-import UCurrencyIcon from "../../../../../ui/currency/icon/UCurrencyIcon.vue";
-import UPodWire from "../../../../../ui/pod/wire/UPodWire.vue";
-import UPodsPanel from "../../../../../ui/pod/panel/UPodsPanel.vue";
-import UPodNode from "../../../../../ui/pod/node/UPodNode.vue";
 
 import BAccountTax from "../../../../account/tax/BAccountTax.vue";
 import { delay } from "lodash-es";
@@ -221,10 +279,6 @@ export default {
   components: {
     BAccountTax,
 
-    UPodNode,
-    UPodsPanel,
-    UPodWire,
-    UCurrencyIcon,
     UPaymentForm,
     UPriceInput,
   },
@@ -251,6 +305,7 @@ export default {
 
     amount: 0,
     vat_percent: 0,
+    vat_state: "loading",
 
     showSelectGateway: false,
     exist_payment_form: false,
@@ -281,17 +336,45 @@ export default {
       return Currency[this.account.currency];
     },
 
+    input_currency() {
+      const name = this.$t(
+        this.account.currency === "IRR"
+          ? "transaction_form.modern.rial"
+          : this.currency.name,
+      );
+      return name === this.account.currency
+        ? name
+        : `${this.account.currency} · ${name}`;
+    },
+    charge_amount() {
+      const amount = Number(this.amount);
+      return Number.isFinite(amount) && amount > 0 ? amount : 0;
+    },
+
+    can_pay() {
+      return (
+        this.charge_amount > 0 &&
+        Number.isFinite(this.bill.sum) &&
+        this.personal_information_verified &&
+        this.is_available &&
+        this.vat_state === "ready" &&
+        !this.busy_buy &&
+        !this.exist_payment_form &&
+        !this.showSelectGateway
+      );
+    },
+
     vat() {
       /**
        * Calculated Selldone VAT
        */
-      return (this.amount * this.vat_percent) / 100;
+      return (this.charge_amount * this.vat_percent) / 100;
     },
 
     bill() {
       return {
-        items_price: this.amount,
-        sum: this.amount + this.vat,
+        items_price: this.charge_amount,
+        sum: this.charge_amount + this.vat,
         currency: this.account.currency,
         tax: this.vat,
         tax_included: this.vat > 0,
@@ -310,11 +393,13 @@ export default {
 
   watch: {},
   created() {
-    if (this.$route.query.charge) this.amount = this.$route.query.charge;
+    const amount = Number(this.$route.query.charge);
+    if (Number.isFinite(amount) && amount > 0) this.amount = amount;
   },
 
   methods: {
     showDialog() {
+      if (!this.can_pay) return;
       this.showSelectGateway = true;
       this.exist_payment_form = true;
     },
@@ -328,6 +413,15 @@ export default {
      * @param callback_paypal
      */
     depositToAccount({ gateway, params, callback_paypal }) {
+      if (
+        !this.charge_amount ||
+        !this.personal_information_verified ||
+        !this.is_available ||
+        this.vat_state !== "ready" ||
+        !Number.isFinite(this.bill.sum) ||
+        this.busy_buy
+      )
+        return;
       this.busy_buy = true;
 
       axios
@@ -337,8 +431,8 @@ export default {
             gateway,
           ),
           {
-            amount: this.amount,
             ...params,
+            amount: this.charge_amount,
           },
         )
         .then(({ data }) => {
@@ -453,7 +547,6 @@ export default {
     },
 
     onFinishCharge(data) {
-      console.log("on finish payment", data);
       this.$emit("request:refresh");
     },
 
@@ -462,8 +555,11 @@ export default {
 
       delay(() => {
         this.exist_payment_form = false;
-
+        // Billing stays mounted, so keep its latest calculation when resetting the payment draft.
+        const { vat_percent, vat_state } = this;
         this.resetToDefault(); // 🞇 Reset to default
+        this.vat_percent = vat_percent;
+        this.vat_state = vat_state;
       }, 500);
     },
 
@@ -493,6 +589,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

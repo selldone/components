@@ -1180,6 +1180,16 @@
                 prepend-icon="settings"
               >
                 {{ $t("email_builder.workspace.provider_settings") }}
+                <v-tooltip
+                  activator="parent"
+                  location="top"
+                  :open-on-focus="true"
+                  :persistent="false"
+                  content-class="sd-modern-tooltip text-start"
+                  >{{
+                    $t("email_builder.workspace.provider_settings_help")
+                  }}</v-tooltip
+                >
               </v-btn>
             </div>
             <p class="sd-modern-subtitle">
@@ -1204,6 +1214,7 @@
 
             <v-form
               ref="send_form"
+              class="b-email-editor__send-form"
               @submit.prevent="
                 !sendDisabled && email && SaveAndSendMail(!email.in_que)
               "
@@ -1286,7 +1297,7 @@
                     busy_save ||
                     busy_send
                   "
-                  class="sd-modern-smart-select b-email-editor__timing"
+                  class="sd-modern-smart-select sd-modern-smart-select--columns b-email-editor__timing"
                   border
                 />
                 <div
@@ -1401,6 +1412,16 @@
                   prepend-icon="settings"
                 >
                   {{ $t("email_builder.workspace.reviewer_settings") }}
+                  <v-tooltip
+                    activator="parent"
+                    location="top"
+                    :open-on-focus="true"
+                    :persistent="false"
+                    content-class="sd-modern-tooltip text-start"
+                    >{{
+                      $t("email_builder.workspace.reviewer_settings_help")
+                    }}</v-tooltip
+                  >
                 </v-btn>
               </div>
 
@@ -1611,8 +1632,18 @@
             variant="text"
             prepend-icon="settings"
             :to="{ name: 'BPageShopSettingEmail' }"
-            >{{ $t("email_builder.workspace.reviewer_settings") }}</v-btn
-          >
+            >{{ $t("email_builder.workspace.reviewer_settings") }}
+            <v-tooltip
+              activator="parent"
+              location="top"
+              :open-on-focus="true"
+              :persistent="false"
+              content-class="sd-modern-tooltip text-start"
+              >{{
+                $t("email_builder.workspace.reviewer_settings_help")
+              }}</v-tooltip
+            >
+          </v-btn>
         </div></v-card
       ></v-dialog
     >
@@ -2856,6 +2887,7 @@ export default {
   &__fields {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
     gap: 25px 23px;
   }
   &__field-full {
@@ -2865,6 +2897,9 @@ export default {
   &__fields.b-email-editor__send-fields {
     grid-template-columns: minmax(0, 1fr);
     gap: 20px;
+  }
+  &__send-form {
+    margin-block-start: 20px;
   }
   &__sender :deep(.v-text-field__suffix) {
     align-self: stretch;
@@ -3023,8 +3058,7 @@ export default {
     gap: 7px;
     padding: 11px 0;
   }
-  &__audience :deep(.b-customers-filter-design-modern__number),
-  &__audience :deep(.b-customers-filter-design-modern__handle) {
+  &__audience :deep(.b-customers-filter-design-modern__number) {
     display: none;
   }
   &__audience :deep(.b-customers-filter-design-modern__edit) {
@@ -3219,14 +3253,7 @@ export default {
   &__timing {
     margin-block-start: 16px;
   }
-  &__timing :deep(> .rounded-card) {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-  }
   &__timing :deep(> .rounded-card > .pp) {
-    min-width: 0;
-    border-block: 0 !important;
     padding: 16px 13px !important;
   }
   &__schedule-field {
@@ -3348,6 +3375,29 @@ export default {
     &__panel.sd-modern-widget {
       padding: 24px;
     }
+    &__audience :deep(.b-customers-filter-design-modern__row) {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+    &__audience :deep(.b-customers-filter-design-modern__handle),
+    &__audience :deep(.b-customers-filter-design-modern__handle--fixed) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    &__audience :deep(.b-customers-filter-design-modern__edit) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    &__audience
+      :deep(.b-customers-filter-design-modern__row > .sd-modern-info-button) {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    &__audience :deep(.b-customers-filter-design-modern__actions) {
+      grid-column: 2 / -1;
+      grid-row: 2;
+      margin-inline-start: 0;
+    }
   }
   @media (max-width: 510px) {
     padding: 22px 12px;
@@ -3362,9 +3412,6 @@ export default {
     &__fields,
     &__toggles {
       grid-template-columns: 1fr;
-    }
-    &__timing :deep(> .rounded-card) {
-      grid-template-columns: minmax(0, 1fr);
     }
     &__reviewer {
       display: grid;
@@ -3389,7 +3436,7 @@ export default {
       grid-column: 1;
       grid-row: 2;
     }
-    &__fields :deep(.v-field__input) {
+    &__fields :deep(.v-field.v-field--variant-underlined .v-field__input) {
       font-size: 16px;
     }
     .s-drop-zone {

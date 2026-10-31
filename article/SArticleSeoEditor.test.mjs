@@ -33,10 +33,10 @@ vm.runInNewContext(transpile(descriptor.script.content), {
 vm.runInNewContext(transpile(template.code), { exports: templateExports, require: () => Vue });
 const component = scriptExports.default;
 const plain = (value) => JSON.parse(JSON.stringify(value));
-function fixture({ workspace = false, disabled = false, image = "/article/cover.jpg", images = [] } = {}) {
+function fixture({ workspace = false, productWorkspace = false, disabled = false, image = "/article/cover.jpg", images = [] } = {}) {
   const events = [], scores = [], controls = [];
   const state = {
-    ...component.data(), workspace, disabled, images,
+    ...component.data(), workspace, productWorkspace, disabled, images,
     article: { title: "Article title", description: "Saved summary", slug: "saved-slug", page_title: "Saved page title", image },
     $emit: (...args) => events.push(args),
     $nextTick(callback) { callback.call(this); },
@@ -49,7 +49,7 @@ function fixture({ workspace = false, disabled = false, image = "/article/cover.
 async function render(f) {
   const data = Object.fromEntries(Object.keys(component.data()).map((key) => [key, f.state[key]]));
   const app = Vue.createSSRApp({ ...component, data: () => data, render: templateExports.render }, {
-    workspace: f.state.workspace, disabled: f.state.disabled, article: f.state.article, images: f.state.images,
+    workspace: f.state.workspace, productWorkspace: f.state.productWorkspace, disabled: f.state.disabled, article: f.state.article, images: f.state.images,
     onChange: () => f.events.push(["change"]),
   });
   app.config.globalProperties.$t = (key) => key;
@@ -109,6 +109,22 @@ test("workspace opens with search details, informational counters and no legacy 
   assert.deepEqual(plain(f.events), [["open-menu"]]);
   component.watch.images.call(f.state);
   assert.deepEqual(plain(f.events), [["open-menu"]], "An image refresh does not request images again");
+});
+
+test("Product metadata explains product URL and title semantics while Blog retains article guidance", async () => {
+  const product = fixture({ workspace: true, productWorkspace: true });
+  product.state.refresh();
+  const html = await render(product);
+  assert.match(html, /add_product.description_modern.description_slug_hint/);
+  assert.match(html, /add_product.description_modern.product_page_title_hint/);
+  assert.equal(product.controls[1].placeholder, undefined, "A product title fallback must not imply the description heading");
+  const blog = fixture({ workspace: true });
+  blog.state.refresh();
+  const blogHtml = await render(blog);
+  assert.match(blogHtml, /global.article.workspace.url_hint/);
+  assert.match(blogHtml, /global.article.workspace.page_title_hint/);
+  assert.equal(blog.controls[1].placeholder, "Article title");
+  assert.equal(component.props.productWorkspace.default, false);
 });
 
 test("workspace model updates change the article draft immediately without blur or a save request", async () => {

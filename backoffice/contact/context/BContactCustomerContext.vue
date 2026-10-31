@@ -243,6 +243,31 @@
             /></router-link>
           </div>
           <div
+            v-if="ordersCount !== null"
+            class="b-contact-customer-context__inline b-contact-customer-context__order-count"
+          >
+            <span>{{
+              $t("shop_contacts.modern.context.orders_count", {
+                count: $n(ordersCount),
+              })
+            }}</span>
+            <v-btn
+              icon
+              variant="text"
+              class="sd-modern-icon-button sd-modern-info-button"
+              :aria-label="$t('shop_contacts.modern.context.orders_count', { count: $n(ordersCount) })"
+            >
+              <v-icon icon="info_outline" aria-hidden="true" />
+              <v-tooltip
+                activator="parent"
+                location="top"
+                open-on-click
+                content-class="sd-modern-tooltip text-start"
+                >{{ $t("shop_contacts.modern.context.orders_count_help") }}</v-tooltip
+              >
+            </v-btn>
+          </div>
+          <div
             v-for="order in orders"
             :key="`${order.channel}-${order.id}`"
             class="b-contact-customer-context__order"
@@ -487,19 +512,37 @@ export default {
   name: "BContactCustomerContext",
   components: { UPrice },
   mixins: [DateMixin, OrderMixin],
-  emits: ["close"],
+  emits: ["close", "retry"],
   props: {
     shop: { type: Object, required: true },
     contact: { type: Object, default: null },
+    providedContext: { type: Object, default: undefined },
+    contextLoading: { type: Boolean, default: false },
+    contextError: { type: Boolean, default: false },
   },
   data: () => ({
-    context: null,
-    busy: false,
-    error: false,
+    loadedContext: null,
+    loading: false,
+    failed: false,
     currency: null,
     requestId: 0,
   }),
   computed: {
+    context() {
+      return this.providedContext !== undefined
+        ? this.providedContext
+        : this.loadedContext;
+    },
+    busy() {
+      return this.providedContext !== undefined
+        ? this.contextLoading
+        : this.loading;
+    },
+    error() {
+      return this.providedContext !== undefined
+        ? this.contextError
+        : this.failed;
+    },
     contextKey() {
       return `${this.shop?.id || ""}:${this.contact?.id || ""}`;
     },
@@ -535,6 +578,14 @@ export default {
       return this.context?.orders_state === "available"
         ? (this.context.orders || []).slice(0, 3)
         : [];
+    },
+    ordersCount() {
+      const count = this.context?.orders_count;
+      return ["available", "empty"].includes(this.context?.orders_state) &&
+        Number.isSafeInteger(count) &&
+        count >= 0
+        ? count
+        : null;
     },
     activity() {
       return this.context?.activity || { state: "unavailable" };
@@ -578,6 +629,13 @@ export default {
     },
   },
   watch: {
+    providedContext() {
+      if (this.providedContext === undefined) this.fetchContext();
+      else {
+        this.requestId++;
+        this.syncCurrency();
+      }
+    },
     contextKey: {
       immediate: true,
       handler() {
@@ -589,16 +647,29 @@ export default {
     this.requestId++;
   },
   methods: {
+    syncCurrency() {
+      if (!this.payments.some((payment) => payment.currency === this.currency))
+        this.currency = this.payments[0]?.currency || null;
+    },
     fetchContext(retry = false) {
       const requestId = ++this.requestId;
+      // Comments supply their own authorized projection; their IDs are not contact IDs.
+      if (this.providedContext !== undefined) {
+        this.loadedContext = null;
+        this.loading = false;
+        this.failed = false;
+        if (retry) this.$emit("retry");
+        else this.syncCurrency();
+        return;
+      }
       if (!retry) {
-        this.context = null;
+        this.loadedContext = null;
         this.currency = null;
       }
-      this.error = false;
-      this.busy = false;
+      this.failed = false;
+      this.loading = false;
       if (!this.shop?.id || !this.contact?.id) return;
-      this.busy = true;
+      this.loading = true;
       axios
         .get(
           window.API.GET_SHOP_CONTACT_CUSTOMER_CONTEXT(
@@ -609,26 +680,23 @@ export default {
         .then(({ data }) => {
           if (requestId !== this.requestId) return;
           if (data.error) {
-            this.context = null;
+            this.loadedContext = null;
             this.currency = null;
             throw new Error("Customer context unavailable");
           }
-          this.context = data;
-          if (
-            !this.payments.some((payment) => payment.currency === this.currency)
-          )
-            this.currency = this.payments[0]?.currency || null;
+          this.loadedContext = data;
+          this.syncCurrency();
         })
         .catch((error) => {
           if (requestId !== this.requestId) return;
           if ([401, 403, 404].includes(error.response?.status)) {
-            this.context = null;
+            this.loadedContext = null;
             this.currency = null;
           }
-          this.error = true;
+          this.failed = true;
         })
         .finally(() => {
-          if (requestId === this.requestId) this.busy = false;
+          if (requestId === this.requestId) this.loading = false;
         });
     },
     customerRoute(name) {
@@ -892,6 +960,11 @@ export default {
     color: var(--context-muted);
     font-size: 11px;
     margin-top: 2px !important;
+  }
+  &__order-count {
+    margin-bottom: 8px;
+    font-size: 12px;
+    line-height: 19px;
   }
   &__order-end {
     text-align: end;

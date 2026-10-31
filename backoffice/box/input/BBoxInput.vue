@@ -1,12 +1,14 @@
 <!-- BBoxInput.vue — minimal change: add a single virtual item when list is empty & search is empty -->
 <template>
   <v-combobox
+    :class="{ 'b-box-input-modern sd-modern-underlined-field': modern }"
     v-model:search="search"
     :customFilter="() => true"
     :items="itemsUi"
     :label="$t('transportation_boxes_input.select_box') || 'Select a box'"
     :loading="busy"
     :messages="descMessage"
+    :menu-props="menu_props"
     :model-value="modelValue"
     :variant="variant"
     clearable
@@ -18,11 +20,18 @@
   >
     <!-- Selected -->
     <template #selection="{ item }">
-      <b class="small me-1 flex-grow-1 line-height-normal">{{ item.raw.name }}</b>
+      <b class="small me-1 flex-grow-1 line-height-normal">{{
+        item.raw.name
+      }}</b>
       <v-chip color="primary" size="x-small" variant="flat">
         {{ dimsShort(item.raw) }}
       </v-chip>
-      <v-chip class="ms-1" v-if="item.raw.weight != null" size="x-small" variant="flat">
+      <v-chip
+        class="ms-1"
+        v-if="item.raw.weight != null"
+        size="x-small"
+        variant="flat"
+      >
         {{ fmtNum(item.raw.weight) }}{{ weightUnit }}
       </v-chip>
     </template>
@@ -33,15 +42,21 @@
         <template #prepend>
           <u-cube
             v-if="item.raw?.width && item.raw?.length && item.raw?.height"
-            :size="24" :x="item.raw?.width" :y="item.raw?.length" :z="item.raw?.height"
-            class="me-2" noAnimation
+            :size="24"
+            :x="item.raw?.width"
+            :y="item.raw?.length"
+            :z="item.raw?.height"
+            class="me-2"
+            noAnimation
           />
-          <v-icon v-else-if="item.raw.id === DEFINE_ID" class="me-2">open_in_new</v-icon>
+          <v-icon v-else-if="item.raw.id === DEFINE_ID" class="me-2"
+            >open_in_new</v-icon
+          >
         </template>
         <v-list-item-subtitle>
           <span v-if="hasDims(item.raw)">{{ dimsFull(item.raw) }}</span>
           <span v-if="item.raw.weight != null">
-            · {{ $t('global.commons.weight') || 'Weight' }}
+            · {{ $t("global.commons.weight") || "Weight" }}
             {{ fmtNum(item.raw.weight) }}{{ weightUnit }}
           </span>
         </v-list-item-subtitle>
@@ -51,26 +66,30 @@
     <!-- Append action when there ARE items -->
     <template #append-item>
       <v-divider class="my-1" />
-      <v-list-item class="text-start py-2"
-                   :title="defineLabel"
-                   role="button"
-                   append-icon="open_in_new"
-                   @click.stop.prevent="openDefinePage">
+      <v-list-item
+        class="text-start py-2"
+        :title="defineLabel"
+        role="button"
+        append-icon="open_in_new"
+        @click.stop.prevent="openDefinePage"
+      >
         <v-list-item-subtitle>
-          {{ $t('transportation_boxes_input.define_package_hint') }}
+          {{ $t("transportation_boxes_input.define_package_hint") }}
         </v-list-item-subtitle>
       </v-list-item>
     </template>
 
     <!-- When there are NO items, show the same action via no-data -->
     <template #no-data>
-      <v-list-item class="text-start py-2"
-                   :title="defineLabel"
-                   role="button"
-                   append-icon="open_in_new"
-                   @click.stop.prevent="openDefinePage">
+      <v-list-item
+        class="text-start py-2"
+        :title="defineLabel"
+        role="button"
+        append-icon="open_in_new"
+        @click.stop.prevent="openDefinePage"
+      >
         <v-list-item-subtitle>
-          {{ $t('transportation_boxes_input.define_package_hint_empty') }}
+          {{ $t("transportation_boxes_input.define_package_hint_empty") }}
         </v-list-item-subtitle>
       </v-list-item>
     </template>
@@ -101,6 +120,8 @@ export default defineComponent({
   inject: ["$shop", "$vendor"],
 
   props: {
+    modern: { type: Boolean, default: false },
+    menuProps: { type: Object, default: undefined },
     modelValue: { default: null },
     variant: { default: "underlined" },
     returnObject: { type: Boolean, default: true },
@@ -114,11 +135,17 @@ export default defineComponent({
       boxes: [] as BoxItem[],
       total: 0,
       busy: false,
+      has_fetched: false,
+      fetch_failed: false,
       search: null as string | null,
     };
   },
 
   computed: {
+    menu_props() {
+      if (!this.modern) return this.menuProps;
+      return { ...this.menuProps, contentClass: ['sd-modern-select-menu text-start', this.menuProps?.contentClass] };
+    },
     isVendor(): boolean {
       // Provided by host
       // @ts-ignore
@@ -134,16 +161,29 @@ export default defineComponent({
       return this.isVendor ? this.$vendor.id : this.$shop.id;
     },
     defineLabel(): string {
-      return (this.$t("transportation_boxes_input.define_package") as string);
+      return this.$t("transportation_boxes_input.define_package") as string;
     },
     descMessage(): string {
       const v = this.asObject(this.modelValue);
-      if (!v) return "";
+      if (!v) {
+        return this.modern &&
+          this.has_fetched &&
+          !this.busy &&
+          !this.fetch_failed &&
+          !this.search &&
+          !this.boxes.length
+          ? (this.$t(
+              "process_center.modern.subscription_packages_empty",
+            ) as string)
+          : "";
+      }
       const parts: string[] = [];
       const dims = this.dimsFull(v);
       if (dims) parts.push(dims);
       if (v.weight != null) {
-        parts.push(`${(this.$t("global.commons.weight") as string) || "Weight"} ${this.fmtNum(v.weight)}${this.weightUnit}`);
+        parts.push(
+          `${(this.$t("global.commons.weight") as string) || "Weight"} ${this.fmtNum(v.weight)}${this.weightUnit}`,
+        );
       }
       return parts.join(" · ");
     },
@@ -152,16 +192,21 @@ export default defineComponent({
       const empty = !this.boxes || this.boxes.length === 0;
       const noSearch = !this.search || String(this.search).trim() === "";
       if (empty && noSearch) {
-        return [{ id: DEFINE_ID, name: this.$t("global.commons.empty") }] as BoxItem[];
+        return [
+          { id: DEFINE_ID, name: this.$t("global.commons.empty") },
+        ] as BoxItem[];
       }
       return this.boxes;
     },
   },
 
   watch: {
-    search: throttle(function () {
-      this.getBoxes();
-    }, (window as any).SERACH_THROTTLE || 400),
+    search: throttle(
+      function () {
+        this.getBoxes();
+      },
+      (window as any).SERACH_THROTTLE || 400,
+    ),
   },
 
   created() {
@@ -231,8 +276,11 @@ export default defineComponent({
     // Navigation (target=_blank)
     openDefinePage() {
       const route = this.isVendor
-        ? { name: "VPageVendorShippingBoxes", params: { vendor_id: this.ownerId } }
-        : { name: "BPageShopLogisticBoxes",   params: { shop_id: this.ownerId } };
+        ? {
+            name: "VPageVendorShippingBoxes",
+            params: { vendor_id: this.ownerId },
+          }
+        : { name: "BPageShopLogisticBoxes", params: { shop_id: this.ownerId } };
 
       // @ts-ignore
       if (this.$router?.resolve) {
@@ -252,6 +300,7 @@ export default defineComponent({
 
     getBoxes() {
       this.busy = true;
+      this.fetch_failed = false;
       (window as any).axios
         .get(this.listUrl(), {
           params: {
@@ -265,12 +314,30 @@ export default defineComponent({
         .then(({ data }: any) => {
           this.boxes = (data?.boxes ?? []) as BoxItem[];
           this.total = data?.total ?? this.boxes.length;
+          this.has_fetched = Array.isArray(data?.boxes);
         })
-        .catch((e: any) => console.error(e))
+        .catch((e: any) => {
+          this.fetch_failed = true;
+          console.error(e);
+        })
         .finally(() => (this.busy = false));
     },
   },
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-box-input-modern {
+  :deep(.v-field__input) {
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 20px;
+  }
+  :deep(.v-messages) {
+    font-family: inherit;
+    font-size: 11px;
+    line-height: 17px;
+    color: var(--sd-modern-muted);
+  }
+}
+</style>

@@ -45,7 +45,11 @@
       <div>
         <dt>
           {{ $t("quota_importer.max_batch_msg") }}
-          <shop-license-view :shop="shop" small class="b-shop-quota-importer__license" />
+          <shop-license-view
+            :shop="shop"
+            small
+            class="b-shop-quota-importer__license"
+          />
         </dt>
         <dd>{{ numeralFormat(max_items_limit, "0a") }}</dd>
       </div>
@@ -63,12 +67,21 @@
       </div>
     </dl>
 
-    <div class="sd-modern-notice b-shop-quota-importer__usage" :role="valid_count ? 'status' : 'alert'">
+    <div
+      class="sd-modern-notice b-shop-quota-importer__usage"
+      :role="valid_count ? 'status' : 'alert'"
+    >
       <div class="b-shop-quota-importer__status">
-        <v-icon :color="valid_count ? 'success' : 'error'" size="18" aria-hidden="true">
+        <v-icon
+          :color="valid_count ? 'success' : 'error'"
+          size="18"
+          aria-hidden="true"
+        >
           {{ valid_count ? "check" : "error_outline" }}
         </v-icon>
-        <span>{{ $t(valid_count ? "global.commons.eligible" : "global.commons.invalid") }}</span>
+        <span>{{
+          $t(valid_count ? "global.commons.eligible" : "global.commons.invalid")
+        }}</span>
         <span class="b-shop-quota-importer__fraction">
           {{ $t("quota_importer.used_quota") }}:
           {{ numeralFormat(quota_usage, "0,0.[0]a") }} /
@@ -222,7 +235,14 @@
               ></u-check>
             </v-progress-circular>
 
-            <div class="ma-2 pa-2 rounded-lg text-white text-uppercase" style="background: #ffffff33;backdrop-filter: blur(6px);text-shadow: #00000055 0px 0px 6px;">
+            <div
+              class="ma-2 pa-2 rounded-lg text-white text-uppercase"
+              style="
+                background: #ffffff33;
+                backdrop-filter: blur(6px);
+                text-shadow: #00000055 0px 0px 6px;
+              "
+            >
               {{ $t("quota_importer.used_quota") }}:
               {{ numeralFormat(quota_usage, "0,0.[0]a") }} /
               {{ numeralFormat(quota_max + quota_extra, "0,0.[0]a") }}
@@ -311,11 +331,29 @@ export default defineComponent({
     gap: 12px;
   }
 
-  h3 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.4; }
-  p { margin: 4px 0 0; color: var(--sd-modern-muted); font-size: 12px; }
-  dd { margin: 0; font-variant-numeric: tabular-nums; }
-  &__shop { min-width: 0; color: var(--sd-modern-muted); }
-  &__shop > span { overflow-wrap: anywhere; }
+  h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+  p {
+    margin: 4px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  &__shop {
+    min-width: 0;
+    color: var(--sd-modern-muted);
+  }
+  &__shop > span {
+    overflow-wrap: anywhere;
+  }
 
   &__stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -323,8 +361,15 @@ export default defineComponent({
     padding-block: 20px;
     border-block-end: 1px solid var(--sd-modern-border);
 
-    dt { color: var(--sd-modern-muted); font-size: 12px; }
-    dd { margin-block-start: 4px; font-size: 21px; line-height: 1.35; }
+    dt {
+      color: var(--sd-modern-muted);
+      font-size: 13px;
+    }
+    dd {
+      margin-block-start: 5px;
+      font-size: 28px;
+      line-height: 1.3;
+    }
   }
 
   &__limits {
@@ -338,15 +383,19 @@ export default defineComponent({
       padding-block: 12px;
       border-block-end: 1px solid var(--sd-modern-border);
     }
-    > div:last-child { border: 0; }
-    dd { text-align: end; }
+    > div:last-child {
+      border: 0;
+    }
+    dd {
+      text-align: end;
+    }
   }
 
   &__license {
     display: block;
     width: fit-content;
     margin-block-start: 6px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500 !important;
   }
 
@@ -354,13 +403,25 @@ export default defineComponent({
     display: block;
     padding: 14px 16px;
     margin-block-start: 8px;
-    > p { color: inherit; }
+    > p {
+      color: inherit;
+    }
   }
-  &__status { flex-wrap: wrap; margin-block-end: 10px; font-size: 12px; }
-  &__fraction { margin-inline-start: auto; color: var(--sd-modern-muted); }
+  &__status {
+    flex-wrap: wrap;
+    margin-block-end: 10px;
+    font-size: 13px;
+  }
+  &__fraction {
+    margin-inline-start: auto;
+    color: var(--sd-modern-muted);
+  }
 
   @media (max-width: 599px) {
-    &__fraction { flex-basis: 100%; margin-inline-start: 0; }
+    &__fraction {
+      flex-basis: 100%;
+      margin-inline-start: 0;
+    }
   }
 }
 </style>

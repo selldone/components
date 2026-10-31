@@ -331,4 +331,10 @@ export default {
     height: var(--percent);
   }
 }
+
+.sd-modern-underlined-field .sd-modern-input-action-host .s-lang-completed {
+  inset: 4px auto;
+  inset-inline-end: 3px;
+  height: auto;
+}
 </style>

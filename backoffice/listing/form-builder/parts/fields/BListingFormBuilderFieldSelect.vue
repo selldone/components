@@ -8,25 +8,25 @@
   <div class="sld-bfb-select">
     <v-text-field
       :model-value="String(fieldProxy.title || '')"
-      label="Question"
+      :label="$t('shop_listing.form_builder.question')"
       variant="underlined"
       @update:modelValue="(v) => patchField({ title: String(v || '') })"
     />
 
     <v-text-field
       :model-value="String(fieldProxy.name || '')"
-      label="Key (stored in meta)"
+      :label="$t('shop_listing.form_builder.field_key')"
       variant="underlined"
-      hint="Use a stable key like: insurance, languages, practice_areas"
+      :hint="$t('shop_listing.form_builder.field_key_hint')"
       persistent-hint
       @update:modelValue="(v) => patchField({ name: String(v || '') })"
     />
 
-    <div class="d-flex align-center gap-2 flex-wrap mt-3">
+    <div class="sld-bfb-select__settings d-flex align-center gap-2 flex-wrap mt-3">
       <v-select
         :model-value="String(fieldProxy.variant || 'grid')"
         :items="variantOptions"
-        label="Style"
+        :label="$t('shop_listing.form_builder.style')"
         variant="underlined"
         class="max-w-220"
         @update:modelValue="onVariantChange"
@@ -35,17 +35,20 @@
       <v-select
         v-if="String(fieldProxy.variant || 'grid') === 'grid'"
         :model-value="Number(fieldProxy.columns || 3)"
-        :items="[2,3,4,5].map(n=>({title:`${n} columns`, value:n}))"
-        label="Columns"
+        :items="[2,3,4,5].map(n=>({title:$t('shop_listing.form_builder.columns_count', { count: n }), value:n}))"
+        :label="$t('shop_listing.form_builder.columns')"
         variant="underlined"
         class="max-w-220"
         @update:modelValue="(v) => patchField({ columns: toInt(v, 3) })"
       />
 
       <u-smart-toggle
+        accessible
+        :border="listingFormBuilderModern"
+        :class="{ 'sd-modern-smart-select': listingFormBuilderModern }"
         :model-value="!!fieldProxy.multiple"
-        true-title="Multiple"
-        false-title="Single"
+        :true-title="$t('shop_listing.form_builder.multiple')"
+        :false-title="$t('shop_listing.form_builder.single')"
         false-gray
         class="ms-auto"
         @update:modelValue="(v) => patchField({ multiple: !!v })"
@@ -56,7 +59,7 @@
 
     <!-- Options header -->
     <div class="d-flex align-center mb-2">
-      <div class="font-weight-black">Options</div>
+      <div class="font-weight-black">{{ $t('shop_listing.form_builder.options') }}</div>
       <v-spacer />
       <v-chip size="x-small" variant="tonal" label class="me-2">
         {{ optionsLocal.length }}
@@ -64,12 +67,12 @@
 
       <v-btn size="small" variant="text" @click="addOption">
         <v-icon start>add</v-icon>
-        Add
+        {{ $t('shop_listing.form_builder.add_option') }}
       </v-btn>
     </div>
 
     <div class="text-muted small mb-3">
-      Drag to reorder. Click an option to expand and edit.
+      {{ $t('shop_listing.form_builder.option_hint') }}
     </div>
 
     <div v-if="optionsLocal.length" class="sld-bfb-select__list">
@@ -86,12 +89,14 @@
         <template #item="{ element, index }">
           <div class="sld-bfb-opt" :class="{ '-open': isOpen(String(element.id)) }">
             <!-- Compact row -->
+            <div class="sld-bfb-opt__head-wrap">
             <button
               type="button"
               class="sld-bfb-opt__head"
+              :aria-expanded="isOpen(String(element.id))"
               @click="toggleOpen(String(element.id))"
             >
-              <span class="sld-bfb-opt__drag" title="Drag to reorder" @click.stop>
+              <span class="sld-bfb-opt__drag" :title="$t('shop_listing.form_builder.drag_reorder')" @click.stop>
                 <v-icon size="18">drag_indicator</v-icon>
               </span>
 
@@ -107,7 +112,7 @@
 
               <div class="sld-bfb-opt__text">
                 <div class="sld-bfb-opt__title">
-                  {{ String(element.title || '').trim() || `Option ${index + 1}` }}
+                  {{ String(element.title || '').trim() || $t('shop_listing.form_builder.option', { number: index + 1 }) }}
                 </div>
                 <div v-if="String(element.subtitle || '').trim()" class="sld-bfb-opt__subtitle">
                   {{ String(element.subtitle || '').trim() }}
@@ -133,18 +138,13 @@
                   expand_more
                 </v-icon>
 
-                <v-btn
-                  icon
-                  size="x-small"
-                  variant="text"
-                  title="Delete"
-                  :disabled="optionsLocal.length <= 1"
-                  @click.stop="removeOption(String(element.id))"
-                >
-                  <v-icon size="18">close</v-icon>
-                </v-btn>
               </div>
             </button>
+              <v-btn icon size="x-small" variant="text" :class="{ 'sd-modern-icon-button': listingFormBuilderModern }" :aria-label="$t('shop_listing.form_builder.remove')" :disabled="optionsLocal.length <= 1" @click="removeOption(String(element.id))">
+                <v-icon size="18" aria-hidden="true">close</v-icon>
+                <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip">{{ $t('shop_listing.form_builder.remove') }}</v-tooltip>
+              </v-btn>
+            </div>
 
             <!-- Expanded editor -->
             <v-expand-transition>
@@ -161,15 +161,18 @@
     </div>
 
     <div v-else class="text-muted pa-3">
-      No options yet. Click <b>Add</b> to create your first option.
+      {{ $t('shop_listing.form_builder.no_options') }}
     </div>
 
     <v-divider class="my-4" />
 
     <u-smart-toggle
+      accessible
+      :border="listingFormBuilderModern"
+      :class="{ 'sd-modern-smart-select': listingFormBuilderModern }"
       :model-value="!!fieldProxy.required"
-      true-title="Required"
-      false-title="Optional"
+      :true-title="$t('shop_listing.form_builder.required')"
+      :false-title="$t('shop_listing.form_builder.optional')"
       false-gray
       @update:modelValue="(v) => patchField({ required: !!v })"
     />
@@ -183,6 +186,7 @@ import BListingFormBuilderFieldSelectOption from "./BListingFormBuilderFieldSele
 
 export default {
   name: "BListingFormBuilderFieldSelect",
+  inject: { listingFormBuilderModern: { default: false } },
 
   components: { draggable, USmartToggle, BListingFormBuilderFieldSelectOption },
 
@@ -216,9 +220,9 @@ export default {
 
     variantOptions(): any[] {
       return [
-        { title: "Grid", value: "grid" },
-        { title: "List", value: "list" },
-        { title: "Chips", value: "chips" },
+        { title: this.$t("shop_listing.form_builder.grid"), value: "grid" },
+        { title: this.$t("shop_listing.form_builder.list"), value: "list" },
+        { title: this.$t("shop_listing.form_builder.chips"), value: "chips" },
       ];
     },
   },
@@ -410,6 +414,8 @@ export default {
   &--ghost {
     opacity: 0.6;
   }
+
+  &__head-wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
 
   &__head {
     width: 100%;

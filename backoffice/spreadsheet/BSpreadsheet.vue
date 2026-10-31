@@ -13,9 +13,46 @@
   -->
 
 <template>
-  <div class="s--spreadsheet" :class="{ 'b-spreadsheet--modern text-start': modern }">
-    <v-row align="start" class="my-3" no-gutters style="min-height: 80px">
-      <v-col cols="12" md="8" sm="6">
+  <div
+    class="s--spreadsheet"
+    :class="{ 'b-spreadsheet--modern text-start': modern }"
+  >
+    <header v-if="modern && items?.length" class="b-spreadsheet__heading">
+      <div>
+        <h3>{{ $t("importer.spreadsheet.preview_title") }}</h3>
+        <p>{{ $t("importer.spreadsheet.edit_help") }}</p>
+      </div>
+      <div class="b-spreadsheet__view-controls">
+        <span class="sd-modern-page-summary">
+          {{
+            $t("importer.spreadsheet.row_range", {
+              from: $n((page - 1) * item_per_page + 1),
+              to: $n(Math.min(page * item_per_page, items.length)),
+              total: $n(items.length),
+            })
+          }}
+        </span>
+        <u-smart-toggle
+          v-if="headers?.some((header) => !cols.includes(header))"
+          v-model="show_all"
+          accessible
+          :true-title="$t('importer.spreadsheet.show_all_columns')"
+          color="success"
+          false-gray
+        />
+      </div>
+    </header>
+    <v-row
+      v-if="
+        !modern ||
+        (items?.length && selected_row !== null && selected_col !== null)
+      "
+      align="start"
+      class="my-3 b-spreadsheet__toolbar"
+      no-gutters
+      :style="modern ? undefined : 'min-height: 80px'"
+    >
+      <v-col cols="12" :md="modern ? 12 : 8" :sm="modern ? 12 : 6">
         <b-spreadsheet-value-input
           v-if="paged_items?.length"
           :key="`i-${selected_row}-${selected_col}`"
@@ -26,15 +63,17 @@
           :row="selected_row"
           :rowValue="paged_items[selected_row]"
           :styler="styler"
+          :modern="modern"
           @update:model-value="
             (v) => (paged_items[selected_row][selected_col] = v)
           "
         ></b-spreadsheet-value-input>
       </v-col>
-      <v-col class="d-flex justify-end" cols="12" md="4" sm="6">
+      <v-col v-if="!modern" class="d-flex justify-end" cols="12" md="4" sm="6">
         <u-smart-toggle
           v-if="items && items.length"
           v-model="show_all"
+          :accessible="modern"
           :true-title="$t('global.actions.show_all')"
           color="success"
           false-gray
@@ -42,16 +81,32 @@
       </v-col>
     </v-row>
 
-    <v-table v-if="headers?.length" class="bordered-table" :class="{ 'sd-modern-table sd-modern-table--dense': modern }">
+    <v-table
+      v-if="headers?.length"
+      :class="
+        modern
+          ? 'sd-modern-table sd-modern-table--dense b-spreadsheet__table'
+          : 'bordered-table'
+      "
+    >
       <template v-slot:default>
+        <caption v-if="modern" class="b-spreadsheet__caption">
+          {{
+            $t("importer.spreadsheet.preview_title")
+          }}
+        </caption>
         <thead>
           <tr>
+            <th v-if="modern" scope="col" class="b-spreadsheet__row-number">
+              {{ $t("importer.spreadsheet.row") }}
+            </th>
             <b-spreadsheet-header-column
               v-for="(header, index) in headers"
               :key="index"
               :class="show_all || cols.includes(header) ? '' : 'no-display'"
               :styler="styler"
               :header="header"
+              :modern="modern"
             ></b-spreadsheet-header-column>
           </tr>
         </thead>
@@ -59,16 +114,36 @@
           <tr
             v-for="(item, row) in paged_items"
             :key="'r-' + row"
-            :class="{ 'border-top-2px': !isVariant(item) }"
+            :class="{ 'border-top-2px': !modern && !isVariant(item) }"
           >
+            <th v-if="modern" scope="row" class="b-spreadsheet__row-number">
+              {{ $n((page - 1) * item_per_page + row + 1) }}
+            </th>
             <td
               v-for="(val, col) in item"
               :key="'c-' + col"
               :class="{
                 'no-display': !show_all && !cols.includes(headers[col]),
                 'not-valid': !validate(row, col, val),
+                'b-spreadsheet__cell--selected':
+                  modern && selected_row === row && selected_col === col,
               }"
+              :tabindex="modern ? 0 : undefined"
+              :aria-label="
+                modern
+                  ? $t('importer.spreadsheet.cell_label', {
+                      column: headers[col],
+                      row: $n((page - 1) * item_per_page + row + 1),
+                    })
+                  : undefined
+              "
+              :aria-invalid="
+                modern && !validate(row, col, val) ? 'true' : undefined
+              "
+              :title="modern ? String(val ?? '') : undefined"
               @click="selectCell(row, col)"
+              @keydown.enter.self.prevent="modern && selectCell(row, col)"
+              @keydown.space.self.prevent="modern && selectCell(row, col)"
             >
               <b-spreadsheet-value-cell
                 v-model="paged_items[row][col]"
@@ -81,6 +156,15 @@
                 @show-structure-data="showStructureData"
                 @show-html="showHtml"
               ></b-spreadsheet-value-cell>
+              <span
+                v-if="modern && !validate(row, col, val)"
+                class="b-spreadsheet__invalid"
+              >
+                <v-icon size="14" color="error" aria-hidden="true"
+                  >error_outline</v-icon
+                >
+                {{ $t("importer.spreadsheet.invalid_value") }}
+              </span>
             </td>
           </tr>
         </tbody>
@@ -88,7 +172,10 @@
     </v-table>
 
     <div v-if="modern && pages_count > 1" class="sd-modern-table-footer my-5">
-      <span class="sd-modern-page-summary">{{ $t("global.commons.page") }} <bdi>{{ $n(page) }} / {{ $n(pages_count) }}</bdi></span>
+      <span class="sd-modern-page-summary"
+        >{{ $t("global.commons.page") }}
+        <bdi>{{ $n(page) }} / {{ $n(pages_count) }}</bdi></span
+      >
       <v-pagination
         v-model="page"
         :length="pages_count"
@@ -256,6 +343,18 @@ export default {
       return this.items ? Math.ceil(this.items.length / this.item_per_page) : 1;
     },
     input_label() {
+      if (
+        this.modern &&
+        this.selected_row !== null &&
+        this.selected_col !== null
+      ) {
+        return this.$t("importer.spreadsheet.cell_label", {
+          column: this.headers[this.selected_col],
+          row: this.$n(
+            (this.page - 1) * this.item_per_page + this.selected_row + 1,
+          ),
+        });
+      }
       return this.selected_row !== null &&
         this.selected_col !== null &&
         this.paged_items[this.selected_row] &&
@@ -435,16 +534,91 @@ export default {
     object-fit: cover;
   }
 }
+</style>
 
+<style lang="scss" scoped>
 .b-spreadsheet--modern {
   min-width: 0;
 
-  td:hover { background-color: var(--sd-modern-inset); }
-
+  .b-spreadsheet__heading,
+  .b-spreadsheet__view-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .b-spreadsheet__heading {
+    margin-block: 24px 12px;
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 22px;
+      letter-spacing: 0;
+    }
+    p {
+      margin: 3px 0 0;
+      color: var(--sd-modern-muted);
+      font-size: 13px;
+      line-height: 21px;
+    }
+  }
+  .b-spreadsheet__toolbar {
+    margin-block: 0 16px !important;
+  }
+  .b-spreadsheet__view-controls :deep(.s--smart-toggle b) {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  .b-spreadsheet__caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .b-spreadsheet__table :deep(table) {
+    min-width: 640px;
+  }
+  .b-spreadsheet__table :deep(thead > tr > th) {
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+  .b-spreadsheet__table :deep(tbody > tr > td),
+  .b-spreadsheet__table :deep(tbody > tr > th) {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 21px;
+  }
+  .b-spreadsheet__row-number {
+    width: 48px;
+    color: var(--sd-modern-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  td {
+    cursor: text;
+    &:hover {
+      background: var(--sd-modern-inset);
+    }
+    &:focus-visible,
+    &.b-spreadsheet__cell--selected {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: -2px;
+      background: var(--sd-modern-inset);
+    }
+  }
   .not-valid::after {
+    content: none;
+  }
+  .b-spreadsheet__invalid {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-block-start: 3px;
     color: rgb(var(--v-theme-on-surface));
-    background: rgba(var(--v-theme-surface), 0.96);
-    border: 1px solid rgba(var(--v-theme-error), 0.4);
+    font-size: 13px;
+    line-height: 20px;
   }
 }
 </style>

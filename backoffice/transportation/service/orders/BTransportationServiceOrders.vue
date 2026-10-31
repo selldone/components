@@ -14,8 +14,9 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
-    class="b-transportation-service-orders text-start"
+    class="b-transportation-service-orders s-table-loading text-start"
     :class="{ 'b-transportation-service-orders--modern': modern }"
+    :aria-busy="busy_fetch || busy_info_order"
   >
     <u-loading-progress
       v-if="busy_fetch || busy_info_order"
@@ -25,6 +26,9 @@
       class="sd-modern-list-toolbar b-transportation-service-orders__toolbar"
     >
       <span class="b-transportation-service-orders__secondary" role="status">
+        <span v-if="service" class="me-3">{{
+          $t("transportation_orders.service_records")
+        }}</span>
         {{
           busy_fetch || fetch_error
             ? "—"
@@ -32,7 +36,9 @@
         }}
       </span>
       <div class="b-transportation-service-orders__sort">
-        <label :for="sortControlId">{{ $t("transportation_orders.sort_by") }}</label>
+        <label :for="sortControlId">{{
+          $t("transportation_orders.sort_by")
+        }}</label>
         <select
           :id="sortControlId"
           :value="selectedSort"
@@ -85,12 +91,24 @@
       </div>
     </div>
     <div
+      v-if="modern && !canReadOrders"
+      class="sd-modern-notice b-transportation-service-orders__error"
+      role="status"
+    >
+      <v-icon aria-hidden="true">lock_outline</v-icon>
+      <span class="sd-modern-notice__content">{{
+        $t("transportation_orders.access_required")
+      }}</span>
+    </div>
+    <div
       v-if="modern && fetch_error"
       class="sd-modern-notice b-transportation-service-orders__error"
       role="alert"
     >
       <v-icon aria-hidden="true">error_outline</v-icon>
-      <span>{{ $t("transportation_orders.load_error") }}</span>
+      <span class="sd-modern-notice__content">{{
+        $t("transportation_orders.load_error")
+      }}</span>
       <v-btn class="sd-modern-button" variant="outlined" @click="fetchOrders()">
         {{ $t("transportation_orders.retry") }}
       </v-btn>
@@ -125,15 +143,23 @@
           class="b-transportation-service-orders__receiver text-start py-1"
           :class="{ 'min-width-200': !modern }"
         >
-          <div v-if="getOrder(item).customer">
+          <div
+            v-if="
+              getOrder(item).customer ||
+              (modern && getOrder(item).receiver_info?.name)
+            "
+          >
             <v-avatar :size="24" class="avatar-gradient -thin me-2">
               <v-img
-                v-if="getOrder(item).customer.user_id"
+                v-if="getOrder(item).customer?.user_id"
                 :src="getUserAvatar(getOrder(item).customer.user_id)"
               />
               <v-icon v-else>face</v-icon>
             </v-avatar>
-            <b class="me-2">{{ getOrder(item).customer.name }}</b>
+            <b class="me-2">{{
+              getOrder(item).customer?.name ||
+              getOrder(item).receiver_info?.name
+            }}</b>
           </div>
 
           <div class="mt-1" :class="{ 'single-line max-w-200': !modern }">
@@ -154,9 +180,19 @@
                 )
               "
               >{{
-                MapHelper.GenerateFullAddressFromMapInfo(
-                  getOrder(item).receiver_info,
-                )
+                modern
+                  ? [
+                      getOrder(item).receiver_info?.city,
+                      getOrder(item).receiver_info?.state,
+                    ]
+                      .filter(Boolean)
+                      .join(", ") ||
+                    MapHelper.GenerateFullAddressFromMapInfo(
+                      getOrder(item).receiver_info,
+                    )
+                  : MapHelper.GenerateFullAddressFromMapInfo(
+                      getOrder(item).receiver_info,
+                    )
               }}</span
             >
           </div>
@@ -186,7 +222,7 @@
               small
               text
               append-icon="north_east"
-              rel="noopener"
+              rel="noopener noreferrer"
               class="sd-modern-button sd-modern-button--inline"
             />
             <span
@@ -267,6 +303,39 @@
             :variant="modern ? 'text' : 'flat'"
             small
           ></b-order-button-basket>
+          <button
+            v-if="modern && item.uid"
+            v-copy="item.uid"
+            type="button"
+            class="b-transportation-service-orders__reference"
+            :aria-label="
+              $t('transportation_orders.shipment_reference') + ' · ' + item.uid
+            "
+          >
+            <bdi>{{ item.uid }}</bdi>
+          </button>
+          <v-btn
+            v-if="modern"
+            :id="detailsId(item) + '-button'"
+            variant="text"
+            class="sd-modern-button sd-modern-button--inline"
+            :aria-expanded="expanded.includes(item.id)"
+            :aria-controls="
+              expanded.includes(item.id) ? detailsId(item) : undefined
+            "
+            :prepend-icon="
+              expanded.includes(item.id) ? 'expand_less' : 'expand_more'
+            "
+            @click="toggleDetails(item)"
+          >
+            {{
+              $t(
+                expanded.includes(item.id)
+                  ? "transportation_orders.hide_details"
+                  : "transportation_orders.details",
+              )
+            }}
+          </v-btn>
         </div>
       </template>
 
@@ -302,7 +371,8 @@
             </v-avatar>
             <div>
               <span>{{
-                item.rate?.provider || $t("transportation_orders.delivery_service")
+                item.rate?.provider ||
+                $t("transportation_orders.delivery_service")
               }}</span>
               <span
                 class="b-transportation-service-orders__secondary d-block"
@@ -527,24 +597,30 @@
             v-if="item.status === 'PENDING'"
             class="d-flex align-items-center"
           >
-            <v-menu v-if="!modern || writeShopAccess(ShopPermissionRegions.LOGISTIC.code)">
+            <v-menu v-if="!modern || canChangeStatus">
               <template v-slot:activator="{ props }">
                 <v-btn
                   :loading="busy_transportation === item"
                   class="me-2"
                   :color="modern ? undefined : 'primary'"
-                  :variant="modern ? 'outlined' : undefined"
-                  :aria-label="modern ? $t('global.actions.change_state') + ' · ' + $t('global.commons.pending') : undefined"
+                  :variant="modern ? 'text' : undefined"
+                  :aria-label="
+                    modern
+                      ? $t('global.actions.change_state') +
+                        ' · ' +
+                        $t('global.commons.pending')
+                      : undefined
+                  "
                   v-bind="props"
                   :class="{
-                    'sd-modern-button': modern,
-                    disabled: !writeShopAccess(
-                      ShopPermissionRegions.LOGISTIC.code,
-                    ),
+                    'sd-modern-button sd-modern-button--inline': modern,
+                    disabled: !canChangeStatus,
                   }"
                 >
                   <template v-if="modern"
-                    ><span class="sd-modern-status__dot bg-primary"></span
+                    ><span
+                      class="sd-modern-status__dot sd-modern-status__dot--warning"
+                    ></span
                     >{{ $t("global.commons.pending") }}</template
                   >
                   <template v-else>{{
@@ -596,14 +672,17 @@
               </v-list>
             </v-menu>
             <span v-else class="sd-modern-status sd-modern-status--plain">
-              <span class="sd-modern-status__dot bg-primary"></span>{{ $t('global.commons.pending') }}
+              <span
+                class="sd-modern-status__dot sd-modern-status__dot--warning"
+              ></span
+              >{{ $t("global.commons.pending") }}
             </span>
 
             <delivery-service-fulfilled-button
-              v-if="service"
+              v-if="!modern && service"
               :deliveryService="service"
               :transportation-order="item"
-              has-refresh
+              :has-refresh="canReadOrders"
               @refresh="getOrderInfo(item)"
             >
             </delivery-service-fulfilled-button>
@@ -679,20 +758,6 @@
             v-if="modern"
             class="b-transportation-service-orders__row-actions"
           >
-            <v-btn
-              :id="detailsId(item) + '-button'"
-              variant="outlined"
-              class="sd-modern-button"
-              :aria-expanded="expanded.includes(item.id)"
-              :aria-controls="
-                expanded.includes(item.id) ? detailsId(item) : undefined
-              "
-              :append-icon="
-                expanded.includes(item.id) ? 'expand_less' : 'expand_more'
-              "
-              @click="toggleDetails(item)"
-              >{{ $t("transportation_orders.details") }}</v-btn
-            >
             <v-tooltip
               v-if="item.label"
               location="top"
@@ -705,16 +770,24 @@
                   v-bind="props"
                   :href="item.label"
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   icon
                   variant="text"
                   class="sd-modern-icon-button"
                   :aria-label="$t('transportation_orders.download_label')"
-                  ><v-icon>download</v-icon></v-btn
+                  ><v-icon>north_east</v-icon></v-btn
                 ></template
               >
               {{ $t("transportation_orders.download_label") }}
             </v-tooltip>
+            <delivery-service-fulfilled-button
+              v-if="item.service || service"
+              :delivery-service="item.service || service"
+              :transportation-order="item"
+              :has-refresh="canReadOrders && !!item.uid && !!item.service?.id"
+              modern
+              @refresh="getOrderInfo(item)"
+            />
           </div>
         </div>
       </template>
@@ -780,14 +853,14 @@
                     small
                     text
                     append-icon="north_east"
-                    rel="noopener"
+                    rel="noopener noreferrer"
                     class="sd-modern-button"
                   />
                   <v-btn
                     v-if="item.track"
                     :href="item.track"
                     target="_blank"
-                    rel="noopener"
+                    rel="noopener noreferrer"
                     variant="outlined"
                     class="sd-modern-button"
                     append-icon="north_east"
@@ -841,7 +914,7 @@
                     v-if="item.label"
                     :href="item.label"
                     target="_blank"
-                    rel="noopener"
+                    rel="noopener noreferrer"
                     variant="outlined"
                     class="sd-modern-button"
                     prepend-icon="download"
@@ -917,12 +990,13 @@
 
       <template v-if="modern" #no-data>
         <div
-          v-if="!busy_fetch && !fetch_error"
-          class="sd-modern-empty-state"
+          v-if="canReadOrders && !busy_fetch && !fetch_error"
+          class="sd-modern-empty-state b-transportation-service-orders__empty"
           role="status"
         >
-          <v-icon aria-hidden="true">local_mall</v-icon>
-          <p>{{ $t("transportation_orders.empty") }}</p>
+          <v-icon :size="37" aria-hidden="true">inventory_2</v-icon>
+          <h2>{{ $t("transportation_orders.empty") }}</h2>
+          <p v-if="service">{{ $t("transportation_orders.service_empty") }}</p>
         </div>
       </template>
       <template v-slot:bottom>
@@ -931,8 +1005,15 @@
           class="sd-modern-table-footer b-transportation-service-orders__footer"
         >
           <span class="sd-modern-page-summary">
-            {{ $t("global.commons.page") }}
-            <bdi>{{ $n(pageCount ? page : 0) }} / {{ $n(pageCount) }}</bdi>
+            {{
+              busy_fetch
+                ? "—"
+                : $t("transportation_orders.showing", {
+                    start: $n(totalItems ? (page - 1) * itemsPerPage + 1 : 0),
+                    end: $n(Math.min(page * itemsPerPage, totalItems)),
+                    total: $n(totalItems),
+                  })
+            }}
           </span>
           <v-pagination
             v-model="page"
@@ -958,6 +1039,7 @@ import UButtonWhatsapp from "../../../../ui/button/whatsapp/UButtonWhatsapp.vue"
 import ProductsDenseImagesCircles from "../../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
 import BTransportationServiceRate from "../../../transportation/service/rate/BTransportationServiceRate.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
+import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model";
 import UMapGeoButton from "@selldone/components-vue/ui/map/geo-button/UMapGeoButton.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
@@ -969,6 +1051,7 @@ import { useId } from "vue";
 export default {
   name: "BTransportationServiceOrders",
   mixins: [DateMixin, MapMixin],
+  inject: { $vendor: { default: null } },
   components: {
     UMapGeoButton,
     BTransportationServiceRate,
@@ -1004,6 +1087,8 @@ export default {
 
       busy_fetch: false,
       fetch_error: false,
+      fetchVersion: 0,
+      ordersActive: true,
 
       // Pagination:
       page: 1,
@@ -1036,6 +1121,48 @@ export default {
 
     ShopPermissionRegions() {
       return ShopPermissionRegions;
+    },
+    hasVendorContext() {
+      return !!(
+        this.$vendor?.id &&
+        String(this.$vendor.id) === String(this.$route.params.vendor_id) &&
+        String(this.$vendor.shop_id) === String(this.shop?.id)
+      );
+    },
+    canReadOrders() {
+      if (!this.ordersActive || !this.shop?.id || !this.transportation?.id)
+        return false;
+      return this.IS_VENDOR_PANEL
+        ? this.hasVendorContext &&
+            this.readVendorAccess(
+              this.$vendor,
+              VendorMemberTypes.VendorMemberRegionCode.SHIPPING,
+            )
+        : this.readShopAccess(ShopPermissionRegions.LOGISTIC.code);
+    },
+    canChangeStatus() {
+      if (!this.ordersActive || !this.shop?.id) return false;
+      return this.IS_VENDOR_PANEL
+        ? this.hasVendorContext &&
+            (this.writeVendorAccess(
+              this.$vendor,
+              VendorMemberTypes.VendorMemberRegionCode.SHIPPING,
+            ) ||
+              this.writeVendorAccess(
+                this.$vendor,
+                VendorMemberTypes.VendorMemberRegionCode.ORDERS,
+              ))
+        : this.writeShopAccess(ShopPermissionRegions.LOGISTIC.code);
+    },
+    ordersContextKey() {
+      return [
+        this.shop?.id,
+        this.IS_VENDOR_PANEL ? this.$route.params.vendor_id : "shop",
+        this.IS_VENDOR_PANEL ? this.$vendor?.id : "",
+        this.transportation?.id,
+        this.service?.id,
+        this.person?.id,
+      ].join(":");
     },
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
@@ -1070,7 +1197,7 @@ export default {
             align: "start",
             sortable: true,
             value: "basket_id",
-            width: "15%",
+            width: this.service || this.person ? "24%" : "15%",
           },
           {
             title: this.$t("transportation_orders.recipient_destination"),
@@ -1091,25 +1218,25 @@ export default {
               ]
             : []),
           {
-            title: this.$t("global.commons.shipping"),
+            title: this.$t("transportation_orders.shipping_charge"),
             align: "start",
             sortable: false,
             value: "delivery_price",
-            width: "15%",
+            width: this.service || this.person ? "13%" : "15%",
           },
           {
             title: this.$t("transportation_orders.shipped"),
             align: "start",
             sortable: true,
             value: "send_at",
-            width: "12%",
+            width: this.service || this.person ? "17%" : "12%",
           },
           {
             title: this.$t("transportation_orders.status_actions"),
             align: "start",
             sortable: true,
             value: "status",
-            width: "16%",
+            width: this.service || this.person ? "21%" : "16%",
           },
         ];
       }
@@ -1182,6 +1309,15 @@ export default {
   },
 
   watch: {
+    ordersContextKey() {
+      this.clearOrders();
+      if (this.page !== 1) this.page = 1;
+      else this.fetchOrders();
+    },
+    canReadOrders(allowed) {
+      if (allowed) this.fetchOrders();
+      else this.clearOrders();
+    },
     sortBy() {
       if (this.modern && this.page !== 1) {
         this.page = 1;
@@ -1198,8 +1334,35 @@ export default {
   created() {
     this.fetchOrders();
   },
+  beforeUnmount() {
+    this.ordersActive = false;
+    this.clearOrders();
+  },
 
   methods: {
+    clearOrders() {
+      this.fetchVersion++;
+      this.transportation_orders = [];
+      this.expanded = [];
+      this.totalItems = 0;
+      this.busy_fetch = false;
+      this.fetch_error = false;
+    },
+    isCurrentOrder(item) {
+      return !!(
+        this.canReadOrders &&
+        !this.busy_fetch &&
+        !this.fetch_error &&
+        this.transportation_orders.includes(item) &&
+        String(item.shop_id) === String(this.shop.id) &&
+        (!this.IS_VENDOR_PANEL ||
+          String(item.vendor_id) === String(this.$vendor.id)) &&
+        String(item.transportation_id) === String(this.transportation.id) &&
+        (!this.service ||
+          String(item.service_id) === String(this.service.id)) &&
+        (!this.person || String(item.person_id) === String(this.person.id))
+      );
+    },
     setSort(key) {
       if (!this.sortChoices.some((choice) => choice.key === key)) return;
       this.sortBy = [{ key, order: this.sortBy[0]?.order || "desc" }];
@@ -1247,6 +1410,16 @@ export default {
     //――――――――――――――――――――――― Fetch transportation orders ―――――――――――――――――――――――
 
     fetchOrders() {
+      if (!this.canReadOrders) {
+        this.clearOrders();
+        return;
+      }
+      const version = ++this.fetchVersion;
+      const context = this.ordersContextKey;
+      const isCurrent = () =>
+        version === this.fetchVersion &&
+        context === this.ordersContextKey &&
+        this.canReadOrders;
       this.busy_fetch = true;
       this.fetch_error = false;
       if (this.modern) this.expanded = [];
@@ -1273,27 +1446,41 @@ export default {
           },
         )
         .then(({ data }) => {
+          if (!isCurrent()) return;
+          if (data.error) {
+            this.fetch_error = true;
+            NotificationService.showErrorAlert(null, data.error_msg);
+            return;
+          }
           this.totalItems = data.total;
           this.transportation_orders = data.transportation_orders;
         })
         .catch((error) => {
+          if (!isCurrent()) return;
           this.fetch_error = true;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
-          this.busy_fetch = false;
+          if (isCurrent()) this.busy_fetch = false;
         });
     },
 
     //――――――――――――――――――――――― Update transportation status ―――――――――――――――――――――――
 
     updateTransportationOrderStatus(transportation_order, status) {
-      if (
-        this.modern &&
-        (!this.writeShopAccess(ShopPermissionRegions.LOGISTIC.code) ||
-          transportation_order.status !== "PENDING")
-      )
-        return;
+      const version = this.fetchVersion;
+      const context = this.ordersContextKey;
+      let submitted = false;
+      const canSubmit = () =>
+        !submitted &&
+        this.canChangeStatus &&
+        !this.busy_transportation &&
+        this.isCurrentOrder(transportation_order) &&
+        transportation_order.status === "PENDING" &&
+        ["DELIVERED", "RETURNED", "CANCELED"].includes(status) &&
+        version === this.fetchVersion &&
+        context === this.ordersContextKey;
+      if (!canSubmit()) return;
       NotificationService.openDangerAlert(
         this.modern
           ? this.$t("delivery_person.status_dialog.title", {
@@ -1309,12 +1496,8 @@ export default {
           ? this.$t("delivery_person.status_dialog.action")
           : "Yes, Set it!",
         () => {
-          if (
-            this.modern &&
-            (!this.writeShopAccess(ShopPermissionRegions.LOGISTIC.code) ||
-              transportation_order.status !== "PENDING")
-          )
-            return;
+          if (!canSubmit()) return;
+          submitted = true;
           this.busy_transportation = transportation_order;
           axios
             .post(
@@ -1334,6 +1517,12 @@ export default {
               },
             )
             .then(({ data }) => {
+              if (
+                version !== this.fetchVersion ||
+                context !== this.ordersContextKey ||
+                !this.isCurrentOrder(transportation_order)
+              )
+                return;
               if (data.error) {
                 NotificationService.showErrorAlert(null, data.error_msg);
               } else {
@@ -1345,7 +1534,12 @@ export default {
               }
             })
             .catch((error) => {
-              NotificationService.showLaravelError(error);
+              if (
+                version === this.fetchVersion &&
+                context === this.ordersContextKey &&
+                this.canReadOrders
+              )
+                NotificationService.showLaravelError(error);
             })
             .finally(() => {
               this.busy_transportation = null;
@@ -1356,39 +1550,74 @@ export default {
 
     // ⬬⬬⬬⬬⬬⬬⬬⬬⬬ Get Order Info ⬬⬬⬬⬬⬬⬬⬬⬬⬬
     getOrderInfo(transportation_order) {
-      this.busy_info_order = true;
-
-      axios
-        .get(
-          this.IS_VENDOR_PANEL
-            ? window.VAPI.GET_MY_VENDOR_DELIVERY_SERVICE_ORDER_INFO(
-                transportation_order.vendor_id,
-                transportation_order.transportation_id,
-                transportation_order.service.id,
-                transportation_order.uid,
-              )
-            : window.API.GET_DELIVERY_SERVICE_ORDER_INFO(
-                transportation_order.shop_id,
-                transportation_order.transportation_id,
-                transportation_order.service.id,
-                transportation_order.uid,
-              ),
-        )
-        .then(({ data }) => {
-          if (!data.error) {
-            if (data.changed) {
-              this.fetchOrders();
+      const version = this.fetchVersion;
+      const context = this.ordersContextKey;
+      let submitted = false;
+      // Provider tracking can synchronize the status; retain its native read permission.
+      const canRefresh = () =>
+        !submitted &&
+        !this.busy_info_order &&
+        this.isCurrentOrder(transportation_order) &&
+        transportation_order.uid &&
+        transportation_order.service?.id &&
+        String(transportation_order.service.id) ===
+          String(transportation_order.service_id) &&
+        version === this.fetchVersion &&
+        context === this.ordersContextKey;
+      if (!canRefresh()) return;
+      const refresh = () => {
+        if (!canRefresh()) return;
+        submitted = true;
+        this.busy_info_order = true;
+        axios
+          .get(
+            this.IS_VENDOR_PANEL
+              ? window.VAPI.GET_MY_VENDOR_DELIVERY_SERVICE_ORDER_INFO(
+                  this.$vendor.id,
+                  this.transportation.id,
+                  transportation_order.service.id,
+                  transportation_order.uid,
+                )
+              : window.API.GET_DELIVERY_SERVICE_ORDER_INFO(
+                  this.shop.id,
+                  this.transportation.id,
+                  transportation_order.service.id,
+                  transportation_order.uid,
+                ),
+          )
+          .then(({ data }) => {
+            if (
+              version !== this.fetchVersion ||
+              context !== this.ordersContextKey ||
+              !this.isCurrentOrder(transportation_order)
+            )
+              return;
+            if (!data.error) {
+              if (data.changed) this.fetchOrders();
+            } else {
+              NotificationService.showErrorAlert(null, data.error_msg);
             }
-          } else {
-            NotificationService.showErrorAlert(null, data.error_msg);
-          }
-        })
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_info_order = false;
-        });
+          })
+          .catch((error) => {
+            if (
+              version === this.fetchVersion &&
+              context === this.ordersContextKey &&
+              this.canReadOrders
+            )
+              NotificationService.showLaravelError(error);
+          })
+          .finally(() => {
+            this.busy_info_order = false;
+          });
+      };
+      if (this.modern) {
+        NotificationService.openDangerAlert(
+          this.$t("transportation_orders.refresh_provider"),
+          this.$t("transportation_orders.refresh_message"),
+          this.$t("global.actions.refresh"),
+          refresh,
+        );
+      } else refresh();
     },
 
     getProductsIDs(basket) {
@@ -1466,10 +1695,47 @@ export default {
     }
 
     :deep(.sd-modern-button) {
-      padding-inline: 0;
+      padding-inline: 4px;
       min-height: 28px;
       height: auto;
       max-width: 100%;
+    }
+  }
+
+  .b-transportation-service-orders__reference {
+    max-width: 100%;
+    padding: 0 4px;
+    overflow-wrap: anywhere;
+    font: inherit;
+    font-size: 11px;
+    line-height: 18px;
+    color: var(--sd-modern-muted);
+    text-align: start;
+    background: transparent;
+    border: 0;
+  }
+
+  .b-transportation-service-orders__empty {
+    min-height: 295px;
+    padding: 34px 18px;
+    align-content: center;
+    gap: 10px;
+    > .v-icon {
+      width: 37px;
+      height: 37px;
+      font-size: 37px;
+      margin-block-end: 6px;
+    }
+    h2 {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 24px;
+    }
+    p {
+      max-width: 410px;
+      margin-inline: auto;
+      font-size: 13px;
+      line-height: 21px;
     }
   }
 

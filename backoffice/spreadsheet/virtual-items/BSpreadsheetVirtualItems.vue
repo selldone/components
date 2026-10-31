@@ -13,15 +13,15 @@
   -->
 
 <template>
-  <div>
+  <div :aria-busy="converting_file">
     <v-file-input
       v-if="!converted_file"
       v-model="input_files"
       :disabled="!canSelectFile"
-      accept=".csv"
+      accept=".csv,.xls,.xlsx"
       prepend-icon=""
       hide-details
-      label="Select virtual items .csv file"
+      label="Select virtual items .csv / .xls / .xlsx file"
       show-size
       variant="solo"
       @update:model-value="selectFile"
@@ -37,7 +37,16 @@
       </template>
     </v-file-input>
 
+    <b-spreadsheet-conversion-progress
+
+      v-if="converting_file"
+
+      :filename="file?.name"
+
+    />
+
     <b-spreadsheet
+      v-show="!converting_file"
       ref="sheet"
       :cols="cols"
       :headers="headers"
@@ -132,7 +141,7 @@ export default {
      * successful completion of all data chunks.
      */
     async generateItemsJson(callback, chunk_size = 100, delay = 3000, onError) {
-      if (!this.items || !this.headers) {
+      if (this.converting_file || !this.items || !this.headers) {
         onError();
 
         return false;
@@ -194,8 +203,13 @@ export default {
      */
 
     parseFile() {
+      const selectedFile = this.file;
+      const version = this.conversion_version;
       const config = {
         complete: (results, file) => {
+          if (this.file !== selectedFile || this.conversion_version !== version) {
+            return;
+          }
           //  console.log("Parsing complete:", results, file);
           NotificationService.showSuccessAlert(null, "Load CSV file completed.");
           this.loadCsvToSheet(results);
@@ -205,6 +219,9 @@ export default {
           this.$emit("update:valid", valid);
         },
         error: () => {
+          if (this.file !== selectedFile || this.conversion_version !== version) {
+            return;
+          }
           NotificationService.showErrorAlert(null, "Parsing error!");
           this.$emit("update:valid", false);
         },

@@ -13,10 +13,38 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="s--sort-view">
+  <div class="s--sort-view" :class="{ 's-products-sort-view--modern': modern }">
     <!-- ███████████████████ Only available ███████████████████ -->
 
+    <v-btn-toggle
+      v-if="modern"
+      :model-value="onlyAvailable"
+      class="s-products-sort-view__availability-group"
+      selected-class="s-products-sort-view__availability--selected"
+      :aria-label="`${$t('global.commons.all')} / ${$t('sort.only_available')}`"
+      mandatory
+      border="0"
+      @update:model-value="(value) => $emit('update:only-available', value)"
+    >
+      <v-btn
+        v-for="available in [false, true]"
+        :key="String(available)"
+        :value="available"
+        :aria-label="$t(available ? 'sort.only_available' : 'global.commons.all')"
+        :aria-pressed="onlyAvailable === available"
+        class="s-products-sort-view__availability"
+        icon
+        variant="text"
+      >
+        <v-icon size="18" aria-hidden="true">{{ available ? "check_circle_outline" : "all_inclusive" }}</v-icon>
+        <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">
+          {{ $t(available ? "products_sort_view.modern.show_available" : "products_sort_view.modern.show_all") }}
+        </v-tooltip>
+      </v-btn>
+    </v-btn-toggle>
+
     <v-btn
+      v-else
       :size="smallSortButtons ? 'small' : undefined"
       class="tnt"
       height="46"
@@ -24,14 +52,8 @@
       variant="text"
       @click="$emit('update:only-available', !onlyAvailable)"
     >
-      <v-icon class="mb-1" size="24"
-        >{{ onlyAvailable ? "check_box" : "all_inclusive" }}
-      </v-icon>
-      <span class="small">
-        {{
-          onlyAvailable ? $t("sort.only_available") : $t("global.commons.all")
-        }}
-      </span>
+      <v-icon class="mb-1" size="24">{{ onlyAvailable ? "check_box" : "all_inclusive" }}</v-icon>
+      <span class="small">{{ onlyAvailable ? $t("sort.only_available") : $t("global.commons.all") }}</span>
     </v-btn>
 
     <!-- ███████████████████ View mode ███████████████████ -->
@@ -72,11 +94,18 @@
             $vuetify.display.mdAndDown || smallSortButtons ? 'small' : undefined
           "
           :value="item.val"
+          :aria-label="modern ? $t('products_sort_view.modern.sort_by', { sort: item.name }) : undefined"
           border="0"
           height="46"
           variant="text"
         >
           {{ item.name }}
+          <v-tooltip
+            v-if="modern"
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+          >{{ $t("products_sort_view.modern.sort_by", { sort: item.name }) }}</v-tooltip>
         </v-btn>
       </v-btn-toggle>
     </div>
@@ -100,11 +129,18 @@
           v-for="item in items"
           :key="item.val"
           :color="modelValue === item.val ? 'blue' : undefined"
+          :aria-label="modern ? $t('products_sort_view.modern.sort_by', { sort: item.name }) : undefined"
           exact
           rounded="xl"
           @click="(val) => $emit('update:modelValue', item.val)"
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
+          <v-tooltip
+            v-if="modern"
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+          >{{ $t("products_sort_view.modern.sort_by", { sort: item.name }) }}</v-tooltip>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -135,7 +171,7 @@
         single-line
         variant="solo"
       >
-        <template v-slot:append-inner>
+        <template v-if="!modern" v-slot:append-inner>
           <v-tooltip
             color="#000"
             content-class="bg-black rounded-xl"
@@ -161,6 +197,35 @@
           </v-tooltip>
         </template>
       </v-text-field>
+      <span v-if="modern" class="s-products-sort-view__search-help">
+        <v-btn
+          class="sd-modern-icon-button sd-modern-info-button"
+          icon
+          variant="text"
+          :aria-label="$t('products_sort_view.search_tips.title')"
+        >
+          <v-icon icon="info_outline" size="16" aria-hidden="true" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-click="true"
+            :open-on-focus="true"
+            interactive
+            content-class="sd-modern-tooltip text-start"
+          >
+            <div class="s-products-sort-view__search-tips">
+              <strong>{{ $t("products_sort_view.search_tips.title") }}</strong>
+              <ul>
+                <li v-html="$t('products_sort_view.search_tips.normal')"></li>
+                <li v-html="$t('products_sort_view.search_tips.product')"></li>
+                <li v-html="$t('products_sort_view.search_tips.quotes')"></li>
+                <li v-html="$t('products_sort_view.search_tips.tax')"></li>
+                <li v-html="$t('products_sort_view.search_tips.new_products')"></li>
+              </ul>
+            </div>
+          </v-tooltip>
+        </v-btn>
+      </span>
     </template>
   </div>
 </template>
@@ -172,9 +237,13 @@ import { throttle } from "lodash-es";
 export default {
   name: "SProductsSortView",
   components: {},
-  emits: ["update:modelValue", "update:search", "update:view-mode"],
+  emits: ["update:modelValue", "update:search", "update:view-mode", "update:only-available"],
 
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     modelValue: {
       required: false,
       type: String,
@@ -299,6 +368,62 @@ export default {
     max-width: 360px;
     flex-grow: 2;
     flex-basis: 120px;
+  }
+
+  &.s-products-sort-view--modern .s-products-sort-view__search-help {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    order: 10;
+  }
+}
+
+.s-products-sort-view__search-tips {
+  strong { font-weight: 500; }
+  ul { margin: 8px 0 0; padding-inline-start: 18px; }
+  li + li { margin-block-start: 6px; }
+  :deep(.text-green), :deep(.text-yellow) { color: inherit !important; }
+}
+
+.s-products-sort-view--modern .s-products-sort-view__availability-group.v-btn-toggle {
+  --availability-button-size: 32px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  height: auto;
+  padding: 2px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--sd-modern-canvas-color, rgba(var(--v-theme-on-surface), .055));
+  overflow: visible;
+
+  :deep(> .v-btn) {
+    width: var(--availability-button-size);
+    min-width: var(--availability-button-size);
+    max-width: var(--availability-button-size);
+    height: var(--availability-button-size);
+    min-height: var(--availability-button-size);
+    padding: 0;
+    border: 0;
+    border-radius: 6px !important;
+    background: transparent;
+    color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), .66));
+    box-shadow: none;
+  }
+
+  :deep(> .s-products-sort-view__availability--selected) {
+    --v-activated-opacity: 0;
+    background: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
+    box-shadow: var(--sd-modern-selected-shadow, 0 1px 4px rgba(var(--v-theme-on-surface), .15));
+  }
+
+  :deep(.v-icon) { color: inherit; }
+  :deep(> .v-btn:focus-visible) { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
+
+  @media (max-width: 600px), (pointer: coarse) {
+    --availability-button-size: 44px;
   }
 }
 </style>

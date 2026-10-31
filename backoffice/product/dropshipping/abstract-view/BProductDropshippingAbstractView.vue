@@ -13,7 +13,30 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+  <section v-if="modern" class="sd-modern-widget b-product-dropshipping-refined text-start">
+    <header class="sd-modern-header">
+      <div class="sd-modern-title">
+        <img src="../../../../assets/icons/dropshipping.svg" width="18" height="22" alt="" />
+        <div><h2 class="sd-modern-title-text">{{ $t('global.commons.drop_shipping') }}</h2><p class="sd-modern-subtitle">{{ $t('b_product_dashboard.identity.dropshipping_subtitle') }}</p></div>
+      </div>
+      <span class="sd-modern-status sd-modern-status--plain"><i class="sd-modern-status__dot" :class="parent_deleted || parent_closed ? 'sd-modern-status__dot--error' : parent.status === 'Open' ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--warning'"></i>{{ $t(parent_deleted ? 'global.commons.deleted' : parent_closed ? 'global.commons.inactive' : parent.status === 'Open' ? 'global.commons.active' : 'global.commons.pending') }}</span>
+    </header>
+    <div v-if="need_re_enable" class="sd-modern-notice b-product-dropshipping-refined__notice" role="status"><v-icon size="18">info_outline</v-icon><div><p>{{ $t('product_dropshipping.need_re_enable') }}</p><v-btn :loading="busy_enable" variant="outlined" class="sd-modern-button sd-modern-button--small" prepend-icon="done_all" @click="reEnable()">{{ $t('product_dropshipping.need_re_enable_action') }}</v-btn></div></div>
+    <div v-if="changed_value" class="sd-modern-notice b-product-dropshipping-refined__notice" role="status"><v-icon size="18">sync</v-icon><div><p>{{ $t('product_dropshipping.changed_value') }}</p><v-btn :loading="busy_enable" variant="outlined" class="sd-modern-button sd-modern-button--small" prepend-icon="done_all" @click="applyChanges()">{{ $t('product_dropshipping.changed_value_action') }}</v-btn></div></div>
+    <div v-if="parent_deleted" class="sd-modern-notice b-product-dropshipping-refined__notice" role="alert"><v-icon size="18" color="error">error_outline</v-icon><p>{{ $t('product_dropshipping.parent_deleted') }}</p></div>
+    <div v-if="parent_closed" class="sd-modern-notice b-product-dropshipping-refined__notice" role="status"><v-icon size="18" color="warning">warning_amber</v-icon><p>{{ $t('product_dropshipping.parent_closed') }}</p></div>
+    <div class="b-product-dropshipping-refined__seller">
+      <v-avatar size="36"><img :src="getShopImagePath(parent.shop.icon)" :alt="parent.shop.title" /></v-avatar>
+      <div><span class="sd-modern-muted">{{ $t('global.commons.main_seller') }}</span><a :href="ShopURLs.MainShopUrl(parent.shop)" target="_blank" rel="noopener noreferrer">{{ parent.shop.title }}<v-icon size="16">north_east</v-icon></a><p>{{ parent.shop.description }}</p></div>
+    </div>
+    <section v-if="has_variants" class="b-product-dropshipping-refined__variants">
+      <h3>{{ $t('global.commons.Variants') }}</h3>
+      <s-country-select v-model="selected_shipping_country" :filter="shipping_countries" class="max-width-field mb-3" dense hide-details item-value="alpha2" solo />
+      <b-product-variants-table :product="parent" :shipping-cost="parent.shipping ? parent.shipping[selected_shipping_country] : 0" :shop="parent.shop" modern view-only />
+    </section>
+  </section>
   <s-widget-box
+    v-else
     :active="true"
     :extended="has_variants"
     :src="require('../../../../assets/icons/dropshipping.svg')"
@@ -170,6 +193,7 @@ export default {
     SWidgetBox,
   },
   props: {
+    modern: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -330,4 +354,24 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-product-dropshipping-refined.sd-modern-widget {
+  padding: 22px;
+  border-radius: 15px;
+  .sd-modern-header { align-items: flex-start; margin-block-end: 18px; }
+  .sd-modern-title { gap: 10px; }
+  .sd-modern-title > img { flex-shrink: 0; }
+  .sd-modern-title-text { font-size: 16px; font-weight: 500; line-height: 24px; }
+  .sd-modern-subtitle { font-size: 12px; line-height: 19px; margin-block-start: 3px; }
+  .b-product-dropshipping-refined__notice { display: flex; align-items: flex-start; gap: 10px; margin-block-end: 14px; }
+  .b-product-dropshipping-refined__notice p { margin: 0; font-size: 14px; line-height: 22px; }
+  .b-product-dropshipping-refined__notice .v-btn { margin-block-start: 10px; }
+  .b-product-dropshipping-refined__seller { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; line-height: 19px; }
+  .b-product-dropshipping-refined__seller > div { min-width: 0; }
+  .b-product-dropshipping-refined__seller a { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+  .b-product-dropshipping-refined__seller p { margin-block: 6px 0; }
+  .b-product-dropshipping-refined__variants { margin-block-start: 22px; }
+  h3 { margin-block-end: 12px; font-size: 14px; font-weight: 500; line-height: 22px; }
+}
+@media (max-width: 560px) { .b-product-dropshipping-refined.sd-modern-widget { padding: 16px 12px; border-radius: 12px; } }
+</style>

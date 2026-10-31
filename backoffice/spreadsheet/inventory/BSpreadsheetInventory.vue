@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ 'b-spreadsheet-inventory--modern text-start': modern, 'b-spreadsheet-inventory--empty': modern && !items?.length }">
+  <div :class="{ 'b-spreadsheet-inventory--modern text-start': modern, 'b-spreadsheet-inventory--empty': modern && !items?.length }" :aria-busy="converting_file">
     <div class="b-spreadsheet-inventory__file-area">
       <template v-if="modern && !items?.length">
         <v-icon class="b-spreadsheet-inventory__upload-icon" size="28" aria-hidden="true">upload_file</v-icon>
@@ -48,8 +48,16 @@
     </v-file-input>
     </div>
 
+    <b-spreadsheet-conversion-progress
+
+      v-if="converting_file"
+
+      :filename="file?.name"
+
+    />
+
     <b-spreadsheet
-      v-show="!modern || !!headers?.length"
+      v-show="!converting_file && (!modern || !!headers?.length)"
       ref="sheet"
       :cols="cols"
       :headers="headers"
@@ -145,7 +153,7 @@ export default {
       delay = 3000,
       onError,
     ) {
-      if (!this.items || !this.headers) {
+      if (this.converting_file || !this.items || !this.headers) {
         onError();
 
         return false;
@@ -217,8 +225,13 @@ export default {
      * file content and format.
      */
     parseFile() {
+      const selectedFile = this.file;
+      const version = this.conversion_version;
       const config = {
         complete: (results, file) => {
+          if (this.file !== selectedFile || this.conversion_version !== version) {
+            return;
+          }
           //  console.log("Parsing complete:", results, file);
           NotificationService.showSuccessAlert(null, "Load CSV file completed.");
           this.loadCsvToSheet(results);
@@ -242,6 +255,9 @@ export default {
           this.$emit("update:valid", valid);
         },
         error: () => {
+          if (this.file !== selectedFile || this.conversion_version !== version) {
+            return;
+          }
           NotificationService.showErrorAlert(null, "Parsing error!");
           this.$emit("update:valid", false);
 

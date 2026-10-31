@@ -1453,7 +1453,6 @@ export default {
     margin-block: 8px 14px !important;
   }
   &__notice {
-    display: flex;
     align-items: flex-start;
     gap: 9px;
     padding: 12px 14px;

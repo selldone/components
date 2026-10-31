@@ -13,7 +13,62 @@
   -->
 
 <template>
-  <div>
+  <div v-if="modern && viewOnly" class="s--avocado-order-items-modern">
+    <div class="s--avocado-order-items-modern__toolbar">
+      <span class="sd-modern-list-header">{{ $t("process_center.modern.avocado_requested_items", { count: items.length }) }}</span>
+      <v-btn :aria-pressed="!show_all" size="small" variant="text" @click="show_all = !show_all">
+        <v-icon start size="16">filter_alt</v-icon>{{ show_all ? $t("avocado.show_accepted") : $t("avocado.show_all") }}
+      </v-btn>
+    </div>
+    <table class="sd-modern-table" :aria-label="$t('process_center.modern.avocado_request_title')">
+      <thead><tr>
+        <th>{{ $t("process_center.modern.avocado_item") }}</th>
+        <th>{{ $t("global.commons.status") }}</th>
+        <th class="text-end">{{ $t("global.commons.count") }}</th>
+        <th class="text-end">{{ $t("process_center.modern.avocado_unit_price") }}</th>
+        <th class="text-end">{{ $t("process_center.modern.avocado_line_total") }}</th>
+      </tr></thead>
+      <tbody>
+        <tr v-for="item in filtered_items" :key="item.id">
+          <td :data-label="$t('process_center.modern.avocado_item')">
+            <div class="s--avocado-order-items-modern__product">
+              <v-img
+                :src="item.image ? getShopImagePath(item.image) : require('../../../assets/icons/product-outline.svg')"
+                :alt="item.title"
+                :tabindex="item.image ? 0 : undefined"
+                :role="item.image ? 'button' : undefined"
+                :aria-label="item.image ? $t('process_center.modern.avocado_item_image') : undefined"
+                :class="{ 'pointer-zoom-in': item.image }"
+                width="44" height="44"
+                class="s--avocado-order-items-modern__image"
+                @click="item.image && showFullscreen($event)"
+                @keydown.enter.prevent="item.image && showFullscreen($event)"
+                @keydown.space.prevent="item.image && showFullscreen($event)"
+              />
+              <div>
+                <strong>{{ item.title }}</strong>
+                <p v-if="item.message">{{ item.message }}</p>
+                <v-btn v-if="item.link" :href="item.link" target="_blank" rel="noopener noreferrer" color="primary" variant="text" size="small">
+                  <v-icon start size="16">link</v-icon>{{ $t("process_center.modern.avocado_item_link") }}<v-icon end size="14">north_east</v-icon>
+                </v-btn>
+              </div>
+            </div>
+          </td>
+          <td :data-label="$t('global.commons.status')">
+            <span class="s--avocado-order-items-modern__status">
+              <i aria-hidden="true" :class="{ '-accepted': item.status === AvocadoItemStatus.ACCEPTED.code, '-pending': item.status === AvocadoItemStatus.PENDING.code, '-rejected': item.status === AvocadoItemStatus.REJECTED.code }" />
+              {{ AvocadoItemStatus[item.status] ? $t(AvocadoItemStatus[item.status].name) : '—' }}
+            </span>
+          </td>
+          <td class="text-end" :data-label="$t('global.commons.count')"><bdi>{{ item.count }}</bdi></td>
+          <td class="text-end" :data-label="$t('process_center.modern.avocado_unit_price')"><u-price :amount="item.price" :currency="item.currency" /></td>
+          <td class="text-end" :data-label="$t('process_center.modern.avocado_line_total')"><u-price :amount="item.price * item.count" :currency="item.currency" /></td>
+        </tr>
+        <tr v-if="!filtered_items.length"><td colspan="5" class="sd-modern-empty-state">{{ $t("process_center.modern.avocado_items_empty") }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div v-else>
     <v-fade-transition
       class="border-between-vertical"
       group
@@ -140,6 +195,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    modern: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data: () => ({
@@ -210,6 +269,42 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.s--avocado-order-items-modern {
+  font-size: 12px;
+  line-height: 18px;
+  &__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 12px 8px !important; text-align: start; vertical-align: middle; border-bottom: 1px solid var(--sd-modern-border); }
+  td { font-size: 12px; line-height: 18px; }
+  th:first-child, td:first-child { padding-inline-start: 0 !important; }
+  th:last-child, td:last-child { padding-inline-end: 0 !important; }
+  tbody tr:last-child td { border-bottom: 0; }
+  &__product { display: flex; align-items: center; gap: 12px; min-width: 170px; }
+  &__product > div:last-child { min-width: 0; }
+  &__product strong { display: block; font-weight: 500; overflow-wrap: anywhere; }
+  &__product p { color: var(--sd-modern-muted); margin: 2px 0 0; overflow-wrap: anywhere; white-space: pre-line; }
+  &__product .v-btn { margin-inline-start: -8px; }
+  &__image { flex: 0 0 44px; border-radius: 8px; border: 1px solid var(--sd-modern-border); }
+  &__image:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  &__status { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  &__status i { width: 6px; height: 6px; border-radius: 50%; background: #999; }
+  &__status .-accepted { background: rgb(var(--v-theme-success)); }
+  &__status .-pending { background: rgb(var(--v-theme-warning)); }
+  &__status .-rejected { background: rgb(var(--v-theme-error)); }
+  @media (max-width: 700px) {
+    thead { display: none; }
+    tbody, tr, td { display: block; }
+    tbody tr { padding: 12px 0; border-bottom: 1px solid var(--sd-modern-border); }
+    tbody tr:last-child { border-bottom: 0; }
+    td { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0 !important; border: 0 !important; text-align: end; }
+    td[data-label]::before { content: attr(data-label); flex-shrink: 0; text-align: start; }
+    td:first-child { display: block; text-align: start; }
+    td:first-child::before { display: none; }
+    &__product { min-width: 0; }
+    &__toolbar { align-items: flex-start; flex-direction: column; gap: 4px; }
+    &__toolbar .v-btn { margin-inline-start: -8px; }
+  }
+}
 /*
 ━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
  */

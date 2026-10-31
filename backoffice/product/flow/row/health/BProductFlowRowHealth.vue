@@ -22,18 +22,21 @@
   >
     <template v-slot:subtitle>
       <div v-if="$product.quantity > 0 && !isFile">
-        <v-icon class="me-1" color="green">check_circle</v-icon>
+        <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true" />
+        <v-icon v-else class="me-1" color="green">check_circle</v-icon>
 
         {{ $t("product_flow.health.available_in_stock_msg") }}
       </div>
       <div v-else-if="!isFile">
-        <v-icon class="me-1" color="red">cancel</v-icon>
+        <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--error" aria-hidden="true" />
+        <v-icon v-else class="me-1" color="red">cancel</v-icon>
 
         {{ $t("product_flow.health.out_of_stock_msg") }}
       </div>
       <div v-else-if="isFile">
         <template v-if="files_count">
-          <v-icon class="me-1" color="green">check_circle</v-icon>
+          <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true" />
+          <v-icon v-else class="me-1" color="green">check_circle</v-icon>
           {{
             $t("product_flow.health.file_count_msg", {
               files_count: files_count,
@@ -42,14 +45,16 @@
           }}
         </template>
         <template v-else>
-          <v-icon class="me-1" color="red">cancel</v-icon>
+          <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--error" aria-hidden="true" />
+          <v-icon v-else class="me-1" color="red">cancel</v-icon>
 
           {{ $t("product_flow.health.no_file_uploaded_msg") }}
         </template>
       </div>
 
       <div v-if="!$product.icon">
-        <v-icon class="me-1" color="red">cancel</v-icon>
+        <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--error" aria-hidden="true" />
+        <v-icon v-else class="me-1" color="red">cancel</v-icon>
         {{ $t("product_flow.health.no_image_uploaded_msg") }}
       </div>
     </template>
@@ -63,7 +68,7 @@ export default {
   name: "BProductFlowRowHealth",
   components: {},
   inject: ["$shop", "$product"],
-  props: {},
+  props: { modern: { type: Boolean, default: false } },
 
   data: function () {
     return {};

@@ -13,7 +13,52 @@
   -->
 
 <template>
+  <div
+    v-if="modern"
+    class="s--export-format-select s--export-format-select--modern"
+    :style="{ '--s-export-column-count': exportFormats.length }"
+    role="list"
+  >
+    <div
+      v-for="format in exportFormats"
+      :key="format.code"
+      class="s--export-format-select__format"
+      role="listitem"
+    >
+      <a
+        :href="disabled ? undefined : format.href"
+        :target="disabled ? undefined : '_blank'"
+        :rel="disabled ? undefined : 'noopener noreferrer'"
+        class="s--export-format-select__link"
+        :class="{ 'sd-modern-clickable-item': !disabled }"
+        :role="disabled ? 'link' : undefined"
+        :aria-disabled="disabled || undefined"
+        :tabindex="disabled ? -1 : undefined"
+        :aria-label="disabled ? format.label : `${format.label} · ${$t('exporter.formats.opens_new_tab')}`"
+        :aria-describedby="`${exportId}-${format.code}-purpose ${exportId}-${format.code}-description`"
+      >
+        <div class="s--export-format-select__heading">
+          <span class="s--export-format-select__icon">
+            <img :src="format.icon" alt="" width="30" height="34" />
+          </span>
+          <h3>{{ format.title }}</h3>
+        </div>
+        <div class="s--export-format-select__copy">
+          <h3 :id="`${exportId}-${format.code}-purpose`">{{ format.purpose }}</h3>
+          <p :id="`${exportId}-${format.code}-description`">{{ format.description }}</p>
+        </div>
+        <span
+          class="sd-modern-button sd-modern-button--inline s--export-format-select__download"
+          :class="{ 'text-primary': !disabled }"
+        >
+          {{ format.label }}
+          <v-icon size="18" aria-hidden="true">north_east</v-icon>
+        </span>
+      </a>
+    </div>
+  </div>
   <v-list
+    v-else
     :lines="!modern && !dense ? 'three' : undefined"
     class="s--export-format-select bg-transparent"
     :class="modern ? 's--export-format-select--modern' : 'border-between-vertical rounded-18px overflow-hidden'"
@@ -76,8 +121,11 @@
 </template>
 
 <script lang="ts">
+import { useId } from "vue";
+
 export default {
   name: "SExportFormatSelect",
+  setup: () => ({ exportId: `export-format-${useId()}` }),
   props: {
     pdf: { required: false },
     excel: { required: false },
@@ -86,63 +134,183 @@ export default {
     pdfMessage: { required: false },
     excelMessage: { required: false },
     csvMessage: { required: false },
+    pdfPurpose: { type: String, default: "" },
+    csvPurpose: { type: String, default: "" },
+    excelPurpose: { type: String, default: "" },
     dense: { default: false, type: Boolean },
     modern: { default: false, type: Boolean },
+    disabled: { default: false, type: Boolean },
+  },
+  computed: {
+    exportFormats() {
+      return [
+        {
+          code: "pdf", title: "PDF", href: this.pdf,
+          purpose: this.pdfPurpose, message: this.pdfMessage,
+          icon: require("../../../assets/icons/pdf.svg"),
+        },
+        {
+          code: "csv", title: "CSV", href: this.csv,
+          purpose: this.csvPurpose, message: this.csvMessage,
+          icon: require("../../../assets/file/csv.svg"),
+        },
+        {
+          code: "excel", title: "Excel", href: this.excel,
+          purpose: this.excelPurpose, message: this.excelMessage,
+          icon: require("../../../assets/file/excel.svg"),
+        },
+      ]
+        .filter((format) => format.href)
+        .map((format) => ({
+          ...format,
+          purpose: format.purpose || this.type,
+          description: format.message || this.$t(`exporter.formats.${format.code}_description`),
+          label: this.$t("exporter.formats.download", { format: format.title }),
+        }));
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .s--export-format-select--modern {
+  display: grid;
+  grid-template-columns: repeat(var(--s-export-column-count), minmax(0, 1fr));
   padding: 0;
+  border-block-start: 1px solid var(--sd-modern-border);
   border-radius: 0;
 
-  :deep(.v-list-item) {
-    min-height: 90px;
-    padding: 23px 14px;
-    border-radius: 8px;
-    border-block-end: 1px solid var(--sd-modern-border);
-    font-family: inherit;
+  .s--export-format-select__format {
+    min-width: 0;
+    padding: 8px;
+
+    + .s--export-format-select__format {
+      border-inline-start: 1px solid var(--sd-modern-border);
+    }
   }
 
-  :deep(.v-list-item:last-child) {
-    border-block-end: 0;
-  }
-
-  :deep(.v-list-item__prepend > .v-list-item__spacer) {
-    width: 16px;
-  }
-
-  :deep(.v-list-item-title) {
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 20px;
-    white-space: normal;
-  }
-
-  :deep(.v-list-item-subtitle) {
-    display: block;
-    margin-block-start: 6px;
-    color: var(--sd-modern-muted);
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 1.6;
-    white-space: normal;
-    opacity: 1;
-    -webkit-line-clamp: unset;
-  }
-
-  :deep(.v-list-item__append .v-icon) {
+  .s--export-format-select__link {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    height: 100%;
+    min-height: 238px;
+    padding: 16px;
+    border-radius: 12px;
     color: rgb(var(--v-theme-on-surface));
-    font-size: 18px;
-    opacity: 1;
+    font-family: inherit;
+    text-decoration: none;
+
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 3px;
+    }
+  }
+
+  .s--export-format-select__heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .s--export-format-select__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 46px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 10px;
+    background: var(--sd-modern-inset);
+
+    img {
+      display: block;
+      object-fit: contain;
+    }
+  }
+
+  .s--export-format-select__copy {
+    flex: 1;
+    min-width: 0;
+
+    p {
+      margin: 4px 0 0;
+      color: var(--sd-modern-muted);
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .s--export-format-select__download.sd-modern-button--inline {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 7px;
+    min-height: 36px;
+    height: auto;
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .s--export-format-select__download .v-icon {
+    color: inherit;
+  }
+
+  .s--export-format-select__link[aria-disabled="true"] .s--export-format-select__download {
+    color: var(--sd-modern-muted);
   }
 }
 
-@media (max-width: 599px) {
-  .s--export-format-select--modern :deep(.v-list-item) {
-    padding-block: 18px;
-    padding-inline: 10px;
+@media (max-width: 600px) {
+  .s--export-format-select--modern {
+    grid-template-columns: minmax(0, 1fr);
+
+    .s--export-format-select__format + .s--export-format-select__format {
+      border-inline-start: 0;
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+
+    .s--export-format-select__link {
+      min-height: 0;
+      padding: 14px 12px;
+    }
+
+    .s--export-format-select__download.sd-modern-button--inline {
+      min-height: 44px;
+    }
+  }
+}
+
+@media (max-width: 420px) {
+  .s--export-format-select--modern .s--export-format-select__icon {
+    flex-basis: 36px;
+    width: 36px;
+    height: 40px;
+    border-radius: 8px;
+
+    img {
+      width: 26px;
+      height: 30px;
+    }
+  }
+}
+
+@media (pointer: coarse) {
+  .s--export-format-select--modern .s--export-format-select__download.sd-modern-button--inline {
+    min-height: 44px;
   }
 }
 </style>

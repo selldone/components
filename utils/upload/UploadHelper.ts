@@ -75,7 +75,7 @@ export class UploadHelper {
     formData.append(file_key, file, file.name);
 
     // Making the actual upload request
-    axios
+    return axios
       .post(url, formData, config)
       .then(({ data }) => {
         if (!data.error) {

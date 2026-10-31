@@ -11,7 +11,11 @@
           name: 'BPageCustomerDashboard',
           params: { customer_id: item.customer_id },
         }"
-        title="Go to customer page"
+        :title="
+          item.customer_id && !isAffiliatePos
+            ? 'Go to customer page'
+            : undefined
+        "
         :aria-label="item.customer ? item.customer.name : item.buyer.name"
         @click.stop
       >
@@ -70,7 +74,9 @@
         size="28"
         variant="text"
         @click.stop="
-          copyToClipboard(item.customer ? item.customer.email : item.buyer.email)
+          copyToClipboard(
+            item.customer ? item.customer.email : item.buyer.email,
+          )
         "
       >
         <v-icon size="18">email</v-icon>
@@ -83,7 +89,9 @@
     class="b-process-center-customer d-flex align-center small mt-n1 text-start"
   >
     <v-icon class="me-1" size="small">account_circle</v-icon>
-    <b class="b-process-center-customer__name">{{ $t("global.commons.guest") }} </b>
+    <b class="b-process-center-customer__name"
+      >{{ $t("global.commons.guest") }}
+    </b>
   </div>
 </template>
 

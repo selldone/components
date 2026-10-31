@@ -13,7 +13,127 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="py-5">
+  <details
+    v-if="modern"
+    :open="!autoCollapse || !collapsed"
+    class="b-account-tax b-account-tax--modern text-start"
+    @toggle="collapsed = !$event.target.open"
+  >
+    <summary class="b-account-tax__summary">
+      <v-icon size="18" aria-hidden="true">receipt_long</v-icon>
+      <span class="b-account-tax__summary-copy">
+        <span>{{ $t("account_page.deposit.modern.billing") }}</span>
+        <span class="b-account-tax__caption">{{
+          $t(
+            `account_page.deposit.modern.${business ? "business" : "personal"}`,
+          )
+        }}</span>
+      </span>
+      <v-icon class="b-account-tax__chevron" size="18" aria-hidden="true"
+        >expand_more</v-icon
+      >
+    </summary>
+
+    <div class="b-account-tax__content">
+      <u-smart-switch
+        v-if="!readOnly"
+        v-model="business"
+        class="sd-modern-smart-select"
+        border
+        accessible
+        :aria-label="$t('account_page.deposit.modern.billing')"
+        :false-title="$t('account_page.deposit.modern.personal')"
+        :true-title="$t('account_page.deposit.modern.business')"
+        false-icon="person"
+        true-icon="business"
+      />
+
+      <b-company-input
+        v-if="business"
+        v-model="company_id"
+        :read-only="readOnly"
+        :return-object="false"
+        auto-select-first
+        has-add
+        class="b-account-tax__company"
+      />
+      <div v-else class="b-account-tax__person">
+        <v-avatar size="32" class="me-2">
+          <v-img :src="getUserAvatar(USER().id)" />
+        </v-avatar>
+        <div class="b-account-tax__identity">
+          <span>{{ USER().name }}</span>
+          <bdi class="b-account-tax__caption" dir="ltr">{{ USER().email }}</bdi>
+        </div>
+      </div>
+
+      <div
+        v-if="hasVatCalculation"
+        class="b-account-tax__calculation"
+        aria-live="polite"
+      >
+        <div
+          v-if="calculation_state === 'loading'"
+          class="sd-modern-notice sd-modern-notice--plain"
+          role="status"
+        >
+          <v-progress-circular
+            indeterminate
+            :size="16"
+            :width="2"
+            class="sd-modern-notice__icon"
+          />
+          <span class="sd-modern-notice__content">{{
+            $t("account_page.deposit.modern.vat_loading")
+          }}</span>
+        </div>
+        <div
+          v-else-if="calculation_state === 'error'"
+          class="sd-modern-notice"
+          role="alert"
+        >
+          <v-icon size="18" color="warning" aria-hidden="true"
+            >error_outline</v-icon
+          >
+          <span class="sd-modern-notice__content">{{
+            $t("account_page.deposit.modern.vat_error")
+          }}</span>
+          <v-btn
+            class="sd-modern-button sd-modern-button--inline"
+            variant="text"
+            @click="calculateVat()"
+          >
+            {{ $t("account_page.deposit.modern.retry") }}
+          </v-btn>
+        </div>
+        <template v-else-if="calculation_state === 'ready'">
+          <div class="b-account-tax__vat">
+            <span>{{ $t("account_page.deposit.modern.vat") }}</span>
+            <bdi dir="ltr">{{ calculated_vat_percent }}%</bdi>
+          </div>
+          <p class="b-account-tax__caption">
+            {{
+              $t(
+                `account_page.deposit.modern.${calculated_vat_percent > 0 ? "vat_collected" : "vat_not_collected"}`,
+              )
+            }}
+          </p>
+        </template>
+      </div>
+
+      <slot v-if="business" name="append-inner"></slot>
+      <v-btn
+        v-else
+        :to="{ name: 'BPageShuttleIdentity' }"
+        class="sd-modern-button sd-modern-button--inline"
+        color="primary"
+        variant="text"
+        prepend-icon="how_to_reg"
+        >{{ $t("account_page.deposit.modern.personal_edit") }}</v-btn
+      >
+    </div>
+  </details>
+  <div v-else class="py-5">
     <v-expand-transition>
       <div v-if="!collapsed || !autoCollapse">
         <u-smart-switch
@@ -143,13 +263,19 @@ export default {
   name: "BAccountTax",
   mixins: [],
   components: { USmartSwitch, BCompanyInput },
-  emits: ["update:modelValue", "update:business", "update:vatPercent"],
+  emits: [
+    "update:modelValue",
+    "update:business",
+    "update:vatPercent",
+    "update:calculationState",
+  ],
   props: {
     modelValue: {},
     hasVatCalculation: { type: Boolean },
     readOnly: { type: Boolean },
     vatPercent: { default: 0 },
     autoCollapse: { type: Boolean },
+    modern: Boolean,
   },
 
   data: () => ({
@@ -163,11 +289,16 @@ export default {
     calculated_vat_percent: null,
     busy: false,
     last_company_id: -1, // Force load first time and prevent duplicated calls!
+    calculation_state: "idle",
+    vat_request: 0,
   }),
 
   computed: {},
 
   watch: {
+    calculation_state(value) {
+      this.$emit("update:calculationState", value);
+    },
     business(business) {
       this.$emit("update:business", business);
 
@@ -192,34 +323,141 @@ export default {
     this.calculateVat();
   },
 
+  beforeUnmount() {
+    this.vat_request++;
+  },
+
   methods: {
     calculateVat() {
-      if (!this.hasVatCalculation || this.last_company_id === this.company_id)
+      if (
+        !this.hasVatCalculation ||
+        (this.last_company_id === this.company_id &&
+          this.calculation_state !== "error")
+      )
         return;
 
+      const request = ++this.vat_request;
       this.last_company_id = this.company_id;
       this.busy = true;
+      this.calculation_state = "loading";
       axios
         .post(window.API.POST_CALCULATE_SELLDONE_VAT(), {
           company_id: this.company_id,
         })
         .then(({ data }) => {
-          if (!data.error) {
+          if (request !== this.vat_request) return;
+          if (
+            !data.error &&
+            typeof data.percent === "number" &&
+            Number.isFinite(data.percent) &&
+            data.percent >= 0
+          ) {
             this.calculated_vat_percent = data.percent;
             this.$emit("update:vatPercent", data.percent);
+            this.calculation_state = "ready";
           } else {
+            this.calculation_state = "error";
             NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
+          if (request !== this.vat_request) return;
+          this.calculation_state = "error";
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
-          this.busy = false;
+          if (request === this.vat_request) this.busy = false;
         });
     },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-account-tax--modern {
+  margin-block: 20px;
+  font-size: 13px;
+  line-height: 20px;
+
+  .b-account-tax__summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 64px;
+    padding-block: 14px;
+    list-style: none;
+    cursor: pointer;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  .b-account-tax__summary-copy,
+  .b-account-tax__identity {
+    display: grid;
+    min-width: 0;
+  }
+  .b-account-tax__summary:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+  .b-account-tax__summary-copy {
+    flex: 1;
+  }
+  .b-account-tax__caption {
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    line-height: 20px;
+    overflow-wrap: anywhere;
+  }
+  .b-account-tax__content {
+    display: grid;
+    gap: 14px;
+    padding-block: 0 16px;
+  }
+  .b-account-tax__content > :deep(.v-btn) {
+    justify-self: start;
+  }
+  .b-account-tax__person {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+  .b-account-tax__identity {
+    overflow-wrap: anywhere;
+  }
+  .b-account-tax__vat {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-block-end: 4px;
+  }
+  .b-account-tax__calculation {
+    min-width: 0;
+  }
+  .b-account-tax__calculation p {
+    margin: 0;
+  }
+  .b-account-tax__chevron {
+    color: var(--sd-modern-muted);
+  }
+  &[open] > summary .b-account-tax__chevron {
+    transform: rotate(180deg);
+  }
+
+  .b-account-tax__company {
+    min-width: 0;
+    :deep(b) {
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 500;
+    }
+    :deep(.small) {
+      font-size: 13px;
+      line-height: 20px;
+      overflow-wrap: anywhere;
+    }
+  }
+}
+</style>

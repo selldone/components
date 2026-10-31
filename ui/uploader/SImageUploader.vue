@@ -277,7 +277,7 @@
             :imageResizeTargetWidth="imageResizeTargetWidth"
             :imageResizeUpscale="imageResizeUpscale"
             :label-idle="
-              (placeholderImage && !last_image
+              idleLabel || (placeholderImage && !last_image
                 ? `<img src='${placeholderImage}' class='placeholder'>`
                 : '') +
               `<p class='text-dark m-0'><i class='fa:fas fa-plus text-success ms-2'></i> ${$t(
@@ -371,6 +371,7 @@ export default {
     },
     thumbnail: { type: Boolean, default: false },
     modern: { type: Boolean, default: false },
+    idleLabel: String,
     chooseLabel: String,
     editLabel: String,
     removeLabel: String,

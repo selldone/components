@@ -256,6 +256,33 @@ test("current success emits bounded rows and selection remains controlled", asyn
   assert.deepEqual(plain(state.events.at(-1)), ["select", order]);
 });
 
+test("same-role refresh retains rows while pending and failed selections stay blocked", async () => {
+  const state = fixture();
+  const initial = state.fetchOrders(1);
+  requests.at(-1).resolve({ data: { total: 20, orders: [order] } });
+  await initial;
+  const pending = state.fetchOrders(2);
+  const older = requests.at(-1);
+  assert.deepEqual(plain(state.orders), [order]);
+  const current = state.fetchOrders(2, "price", false);
+  assert.deepEqual(plain(state.orders), [order], "overlapping refreshes retain the same role's rows");
+  state.selectOrder(order);
+  assert.equal(state.events.filter(([name]) => name === "select").length, 0);
+  older.resolve({ data: { total: 99, orders: [{ ...order, id: 999 }] } });
+  await pending;
+  assert.deepEqual(plain(state.orders), [order]);
+  requests.at(-1).reject(new Error("refresh failed"));
+  await current;
+  assert.deepEqual(plain(state.orders), [order]);
+  state.selectOrder(order);
+  assert.equal(state.events.filter(([name]) => name === "select").length, 0);
+  state.role = { id: 8, level: "packing" };
+  const switched = state.fetchOrders(1);
+  assert.deepEqual(plain(state.orders), [], "a different role must clear the previous role's rows immediately");
+  requests.at(-1).resolve({ data: { total: 0, orders: [] } });
+  await switched;
+});
+
 test("stale role and page responses cannot repopulate the list or change loading state", async () => {
   const state = fixture();
   const old = state.fetchOrders(1);
@@ -276,7 +303,7 @@ test("stale role and page responses cannot repopulate the list or change loading
   List.beforeUnmount.call(state);
   requests.at(-1).resolve({ data: { total: 99, orders: [{ id: 999 }] } });
   await unmounted;
-  assert.deepEqual(plain(state.orders), []);
+  assert.deepEqual(plain(state.orders), [order], "an unmounted read cannot replace retained rows");
 });
 
 test("failure is explicit, retry recovers, duplicate native options do not double fetch", async () => {

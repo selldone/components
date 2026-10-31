@@ -24,6 +24,7 @@
     :color="color"
     :density="dense ? 'compact' : undefined"
     :disable="disable"
+    :disabled="disabled"
     :filled="filled"
     :flat="flat"
     :hide-details="hideDetails"
@@ -366,6 +367,8 @@ export default {
   created() {},
   methods: {
     clear() {
+      if (this.disabled) return;
+
       this.$emit("update:modelValue", null);
       this.$nextTick(() => {
         this.$emit("change", null);
@@ -373,7 +376,7 @@ export default {
     },
 
     showDialog() {
-      if (this.disable) return;
+      if (this.disabled || this.disable) return;
 
       // Set initial value:
       if (this.modelValue) {

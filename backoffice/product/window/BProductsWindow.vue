@@ -16,11 +16,78 @@
   <!-- ------------------- Products List ------------------- -->
   <div
     :style="{ 'overflow-hidden': inDragState }"
-    :class="{ 'b-products-window--modern sd-modern-widget text-start': modern }"
+    :class="{
+      'b-products-window--modern text-start': modern && !isSpecImport,
+      'b-products-window--list': modern && !isSpecImport && !mini,
+      'b-products-window--products-only': list_products_only,
+      'b-products-window--spec-import text-start': isSpecImport,
+    }"
     class="s--backoffice-products-management-view"
     v-bind="$attrs"
     @contextmenu="showMenu($event, null, null)"
   >
+    <section v-if="isSpecImport" class="b-products-window__import text-start" :aria-busy="busy_fetch">
+      <div class="b-products-window__import-toolbar sd-modern-list-toolbar">
+        <v-text-field :model-value="search" class="b-products-window__import-search" :placeholder="$t('add_product.spec_import.search')" :aria-label="$t('add_product.spec_import.search')" variant="plain" single-line hide-details clearable @update:model-value="onImportSearch">
+          <template #prepend-inner><b-product-edit-info-icon name="Search" :size="18" /></template>
+        </v-text-field>
+        <select :value="sort || 'default'" class="b-products-window__import-sort" :aria-label="$t('add_product.spec_import.sort')" @change="sort = $event.target.value === 'default' ? null : $event.target.value; product_page = 1">
+          <option v-for="option in importSortOptions" :key="option.value" :value="option.value">{{ option.title }}</option>
+        </select>
+        <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="$t('add_product.spec_import.filters')" :aria-expanded="importFiltersOpen" @click="importFiltersOpen = !importFiltersOpen"><b-product-edit-info-icon name="SlidersHorizontal" :size="16" /><span v-if="filters.length || only_available || vendor_filter" class="b-products-window__import-filter-dot"></span><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('add_product.spec_import.filters') }}</v-tooltip></v-btn>
+        <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="$t(importGrid ? 'add_product.spec_import.list_view' : 'add_product.spec_import.grid_view')" @click="toggleImportView"><b-product-edit-info-icon :name="importGrid ? 'List' : 'LayoutGrid'" :size="16" /><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t(importGrid ? 'add_product.spec_import.list_view' : 'add_product.spec_import.grid_view') }}</v-tooltip></v-btn>
+      </div>
+      <div v-show="importFiltersOpen" class="b-products-window__import-filters">
+        <div class="b-products-window__import-filter-heading"><h2>{{ $t('add_product.spec_import.filters') }}</h2><v-btn class="sd-modern-button sd-modern-button--inline" variant="text" color="primary" @click="resetImportFilters">{{ $t('add_product.spec_import.clear_filters') }}</v-btn></div>
+        <div class="b-products-window__import-availability"><label><input v-model="only_available" type="checkbox" @change="product_page = 1" /><span>{{ $t('add_product.spec_import.available') }}</span></label><v-btn class="sd-modern-info-button sd-modern-icon-button" icon variant="text" :aria-label="$t('add_product.spec_import.available')"><b-product-edit-info-icon name="Info" :size="15" /><v-tooltip activator="parent" location="top" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t('add_product.spec_import.availability_help') }}</v-tooltip></v-btn></div>
+        <div class="b-products-window__import-filter-columns">
+          <fieldset><legend>{{ $t('global.commons.product_type') }}</legend><div><label v-for="type in ProductType" :key="type.code"><input v-model="filters" type="checkbox" :value="type.code" @change="onFilterChange" /><img :src="type.image" width="16" height="16" alt="" /><span>{{ $t(type.name) }}</span></label></div></fieldset>
+          <fieldset><legend>{{ $t('global.commons.status') }}</legend><div><label v-for="status in ProductStatus" :key="status.code"><input v-model="filters" type="checkbox" :value="status.code" @change="onFilterChange" /><span>{{ $t(status.name) }}</span></label></div></fieldset>
+        </div>
+        <b-vendor-input v-if="IS_MARKETPLACE && !IS_VENDOR_PANEL" v-model="vendor_filter" :shop="shop" class="b-products-window__import-vendor" :label="$t('global.commons.vendor')" clearable flat hide-details variant="plain" @change="product_page = 1; fetchData()" />
+      </div>
+      <div class="b-products-window__import-catalog">
+        <aside class="b-products-window__import-categories">
+          <h2>{{ $t('add_product.spec_import.categories') }}</h2>
+          <nav :aria-label="$t('add_product.spec_import.categories')">
+            <button type="button" :aria-current="!current_dir_id && !search ? 'location' : undefined" :disabled="busy_fetch" @click="selectFolder(null)"><b-product-edit-info-icon name="Store" :size="16" /><span>{{ $t('global.store') }}</span></button>
+            <button v-if="parent_folders" type="button" :disabled="busy_fetch" @click="selectFolder(parent_folders.parent)"><b-product-edit-info-icon name="ChevronLeft" :size="16" class="b-products-window__import-direction" /><span>{{ parent_folders.parent?.title || $t('global.store') }}</span></button>
+            <button v-for="category in folders.slice((folder_page - 1) * max_folders_per_page, folder_page * max_folders_per_page)" :key="category.id" type="button" :disabled="busy_fetch" @click="selectFolder(category)"><circle-image v-if="category.icon" :src="getShopImagePath(category.icon, IMAGE_SIZE_SMALL)" :size="20" class="hover-scale" /><b-product-edit-info-icon v-else name="Folder" :size="16" /><span>{{ category.title }}</span></button>
+          </nav>
+          <div v-if="folder_pages_count > 1" class="b-products-window__import-category-pager">
+            <v-btn class="sd-modern-icon-button" icon variant="text" :disabled="busy_fetch || folder_page <= 1" :aria-label="$t('add_product.spec_import.previous_categories')" @click="folder_page--"><b-product-edit-info-icon name="ChevronLeft" :size="16" class="b-products-window__import-direction" /><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('add_product.spec_import.previous_categories') }}</v-tooltip></v-btn>
+            <span><bdi dir="ltr">{{ $t('add_product.spec_import.category_page', { page: folder_page, pages: folder_pages_count }) }}</bdi></span>
+            <v-btn class="sd-modern-icon-button" icon variant="text" :disabled="busy_fetch || folder_page >= folder_pages_count" :aria-label="$t('add_product.spec_import.next_categories')" @click="folder_page++"><b-product-edit-info-icon name="ChevronRight" :size="16" class="b-products-window__import-direction" /><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('add_product.spec_import.next_categories') }}</v-tooltip></v-btn>
+          </div>
+        </aside>
+        <div class="b-products-window__import-products">
+          <div ref="breadcrumb_location" class="b-products-window__import-location">
+            <nav v-if="search" :aria-label="$t('add_product.spec_import.categories')"><b-product-edit-info-icon name="Search" :size="14" /><span>{{ $t('add_product.spec_import.search_results') }}</span></nav>
+            <nav v-else :aria-label="$t('add_product.spec_import.categories')"><template v-for="(crumb, index) in hierarchy_items" :key="index"><b-product-edit-info-icon v-if="index" name="ChevronRight" :size="13" class="b-products-window__import-direction" /><span v-if="crumb.disabled">{{ crumb.text }}</span><button v-else type="button" :disabled="busy_fetch" @click="selectFolder(crumb.to?.query?.dir ? { id: crumb.to.query.dir } : null)">{{ crumb.text }}</button></template></nav>
+            <span v-if="!importLoadError" role="status" aria-live="polite">{{ $t('add_product.spec_import.results', { count: products_count }) }}</span>
+          </div>
+          <div v-if="filters.length || only_available || vendor_filter" class="b-products-window__import-active">
+            <span v-for="filter in filters" :key="filter">{{ $t(ProductType[filter]?.name || ProductStatus[filter]?.name) }}</span><span v-if="only_available">{{ $t('add_product.spec_import.available') }}</span><v-btn class="sd-modern-button sd-modern-button--inline" variant="text" color="primary" @click="resetImportFilters">{{ $t('add_product.spec_import.clear_filters') }}</v-btn>
+          </div>
+          <div v-if="busy_fetch" class="b-products-window__import-skeletons" :class="{ 'b-products-window__import-grid': importGrid }"><v-skeleton-loader v-for="index in max_products_per_page" :key="index" type="list-item-avatar-two-line" /></div>
+          <div v-else-if="importLoadError" class="sd-modern-empty-state"><b-product-edit-info-icon name="Info" :size="24" /><h3>{{ $t('add_product.spec_import.load_error') }}</h3><v-btn class="sd-modern-button" variant="outlined" @click="fetchData(true)">{{ $t('add_product.spec_import.retry') }}</v-btn></div>
+          <div v-else-if="!products.length" class="sd-modern-empty-state"><b-product-edit-info-icon name="Search" :size="24" /><h3>{{ $t('add_product.spec_import.empty_title') }}</h3><p>{{ $t('add_product.spec_import.empty_help') }}</p><div class="sd-modern-actions justify-center"><v-btn v-if="search" class="sd-modern-button sd-modern-button--inline" variant="text" color="primary" @click="onImportSearch(null)">{{ $t('add_product.spec_import.clear_search') }}</v-btn><v-btn v-if="filters.length || only_available || vendor_filter" class="sd-modern-button sd-modern-button--inline" variant="text" color="primary" @click="resetImportFilters">{{ $t('add_product.spec_import.clear_filters') }}</v-btn></div></div>
+          <div v-else class="b-products-window__import-list" :class="{ 'b-products-window__import-grid': importGrid }">
+            <div v-for="product in products" :key="product.id" class="b-products-window__import-product-wrapper">
+              <button ref="importProduct" type="button" :data-product-id="product.id" class="b-products-window__import-product sd-modern-clickable-item" :aria-pressed="selectMode && isSelected(product.id)" :aria-label="$t('add_product.spec_import.source_action', { name: product.title })" @click="selectImportProduct(product)">
+                <circle-image v-if="product.icon" :src="getShopImagePath(product.icon, IMAGE_SIZE_SMALL)" :size="44" class="b-products-window__import-image hover-scale" />
+                <span v-else class="b-products-window__import-image b-products-window__import-fallback"><img :src="ProductType[product.type]?.image" width="24" height="24" alt="" /></span>
+                <span class="b-products-window__import-product-copy"><span class="b-products-window__import-product-name">{{ product.title }}</span><span v-if="product.title_en" class="b-products-window__import-product-subtitle">{{ product.title_en }}</span><span class="b-products-window__import-meta"><span class="b-products-window__import-type"><img :src="ProductType[product.type]?.image" width="14" height="14" alt="" />{{ $t(ProductType[product.type]?.name) }}</span><span aria-hidden="true">·</span><span class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="importStatusClass(product.status)"></span>{{ $t(ProductStatus[product.status]?.name) }}</span><span aria-hidden="true">·</span><bdi dir="ltr">P{{ product.id }}</bdi></span></span>
+                <b-product-edit-info-icon name="ChevronRight" :size="14" class="b-products-window__import-arrow b-products-window__import-direction" />
+              </button>
+            </div>
+          </div>
+          <footer v-if="!importLoadError" class="b-products-window__import-pagination sd-modern-table-footer"><span>{{ $t('add_product.spec_import.page_summary', { start: products_count ? (product_page - 1) * max_products_per_page + 1 : 0, end: Math.min(product_page * max_products_per_page, products_count), total: products_count }) }}</span><v-pagination v-model="product_page" class="sd-modern-pagination" :length="Math.max(1, product_pages_count)" :total-visible="$vuetify.display.xs ? 3 : 5" :disabled="busy_fetch || !products_count" /></footer>
+        </div>
+      </div>
+    </section>
+    <template v-else>
+    <div class="b-products-window__catalog" :class="{ 'sd-modern-widget': modern }">
     <!-- ⬬⬬⬬⬬ Breadcrumbs ⬬⬬⬬⬬ -->
 
     <div v-if="!modern" class="b-products-window__location">
@@ -149,6 +216,7 @@
       <s-products-sort-view
         v-model="sort"
         v-model:only-available="only_available"
+        :modern="modern"
         :loading="busy_fetch"
         class="w-100"
         :class="{ 'b-products-window__sort sd-modern-list-toolbar': modern }"
@@ -169,7 +237,7 @@
           variant="text"
           @click="toggleViewMode"
         >
-          <v-icon>{{ mini ? "folder" : "view_comfy" }}</v-icon>
+          <v-icon>{{ mini ? "folder" : modern ? "view_list" : "view_comfy" }}</v-icon>
           <v-tooltip
             v-if="modern"
             activator="parent"
@@ -321,13 +389,14 @@
         group
         hide-on-leave
         origin="center center"
-        :disabled="busy_fetch && product_page !== 1"
+        :disabled="modern || (busy_fetch && product_page !== 1)"
       >
         <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Spirit Container ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
         <v-col
           v-if="show_spirit_container"
           key="drop-box"
+          class="b-products-window__drop-box"
           cols="12"
           lg="3"
           md="4"
@@ -355,17 +424,48 @@
           </u-drop>
         </v-col>
 
+        <!-- Presentation groups keep the native drag targets and independent pagers. -->
+        <div key="category-list" class="b-products-window__categories b-products-window__list-background">
+        <div v-if="modern && !mini" class="b-products-window__list-heading">
+          <h2><b-product-window-section-icon kind="category" class="b-products-window__section-icon" />{{ $t('product_panel.workspace.list_view.categories') }} <span>{{ folders.length }}</span></h2>
+        </div>
+        <div
+          v-if="modern && !mini && (folder_pages_count > 1 || product_pages_count > 1)"
+          class="b-products-window__list-pagination sd-modern-table-footer"
+        >
+          <v-pagination
+            v-if="folder_pages_count > 1"
+            v-model="folder_page"
+            :aria-label="$t('product_panel.workspace.list_view.categories')"
+            class="sd-modern-pagination"
+            :length="folder_pages_count"
+            rounded
+          />
+        </div>
+
         <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Back Button ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
         <v-col
           v-if="parent_folders"
           key="back"
+          class="b-products-window__back-column"
           :cols="mini ? 4 : 12"
           :lg="mini ? 1 : 3"
           :md="mini ? 2 : 4"
           :sm="mini ? 3 : 6"
           :xl="mini ? 1 : 3"
         >
+          <button
+            v-if="modern && !mini"
+            type="button"
+            :disabled="busy_fetch"
+            class="b-products-window__back sd-modern-clickable-item"
+            @click="selectFolder(parent_folders.parent)"
+          >
+            <v-icon size="18">{{ $t('icons.chevron_back') }}</v-icon>
+            <span>{{ $t('product_panel.workspace.list_view.back_to', { title: parent_folders.parent?.title || $t('global.commons.home') }) }}</span>
+          </button>
           <div
+            v-else
             :class="{ disabled: busy_fetch, 'h-100': !mini }"
             :title="`Back to ${
               parent_folders.parent ? parent_folders.parent.title : 'Home'
@@ -408,17 +508,18 @@
         <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Folders ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
         <v-col
-          v-for="category in folders.slice(
+          v-for="(category, categoryIndex) in folders.slice(
             (folder_page - 1) * max_folders_per_page,
             folder_page * max_folders_per_page,
           )"
           :key="'f' + category.id"
+          :style="modern && !mini ? { '--b-products-list-row': categoryIndex + 4 } : undefined"
           :cols="mini ? 4 : 12"
           :lg="mini ? 1 : 3"
           :md="mini ? 2 : 4"
           :sm="mini ? 3 : 6"
           :xl="mini ? 1 : 3"
-          class="position-relative"
+          class="position-relative b-products-window__list-item"
           @contextmenu="showMenu($event, null, category)"
         >
           <u-drag
@@ -468,6 +569,7 @@
 
               <b-product-window-category-large
                 v-else
+                :modern-list="modern && !mini"
                 :category="category"
                 :class="{
                   'not-drop-able': current_dragged_folder === category,
@@ -479,10 +581,21 @@
                 class="item h-100"
                 @select="selectFolder(category)"
                 @click:edit="showEditCategory(category)"
+                @contextmenu="showMenu($event, null, category)"
                 :is-empty="
                   category.is_empty /*We use it only in the vendor panel*/
                 "
-              />
+              >
+                <template v-if="modern && !mini" #actions>
+                  <b-note-button
+                    v-if="showNotes || (category.note && category.note.length)"
+                    modern
+                    :active-color="showNotes ? undefined : '#333'"
+                    :note="category.note"
+                    @click.stop="showNoteCategory(category)"
+                  />
+                </template>
+              </b-product-window-category-large>
               <v-btn
                 v-if="selectMode && canSelectCategory"
                 :size="38"
@@ -502,19 +615,24 @@
 
           <!-- Add Note Button -->
           <b-note-button
-            v-if="showNotes || (category.note && category.note.length)"
+            v-if="!(modern && !mini) && (showNotes || (category.note && category.note.length))"
             :activeColor="showNotes ? undefined : '#333'"
             :note="category.note"
             class="absolute-top-start"
+            :class="{ 'b-products-window__folder-note': modern && mini }"
             style="top: 0; left: 0; z-index: 50"
             @click="showNoteCategory(category)"
           ></b-note-button>
         </v-col>
 
+        <p v-if="modern && !mini && !folders.length && !busy_fetch" class="b-products-window__list-empty">
+          {{ $t('product_panel.workspace.list_view.no_categories') }}
+        </p>
+
         <!-- ━━━━━━━━━━━━━━━━ Pagination > Categories ━━━━━━━━━━━━━━━━ -->
 
         <v-col
-          v-if="folder_pages_count > 1"
+          v-if="folder_pages_count > 1 && !(modern && !mini)"
           key="pagination-categories"
           cols="12"
         >
@@ -525,12 +643,55 @@
             rounded
           ></v-pagination>
         </v-col>
+        </div>
 
         <!-- ⬬⬬⬬⬬ ▞▞▞▞▞▞▞▞▞▞▞▞ Products ▞▞▞▞▞▞▞▞▞▞▞▞ ⬬⬬⬬⬬ -->
 
+        <div key="product-list" class="b-products-window__products b-products-window__list-background">
+        <div v-if="modern && !mini" class="b-products-window__list-heading b-products-window__product-heading">
+          <h2><b-product-window-section-icon kind="product" class="b-products-window__section-icon" />{{ $t('product_panel.workspace.list_view.products') }} <span>{{ products_count }}</span></h2>
+          <div v-if="multiSelectProducts && selected_products.length" class="b-products-window__selection">
+            <span aria-live="polite">{{ $t('product_panel.workspace.list_view.selected_count', { count: selected_products.length }) }}</span>
+            <v-btn variant="text" class="sd-modern-button" @click="selectAllProducts(false)">{{ $t('product_panel.workspace.list_view.clear_selection') }}</v-btn>
+          </div>
+        </div>
+        <div
+          v-if="modern && !mini && (folder_pages_count > 1 || product_pages_count > 1)"
+          class="b-products-window__list-pagination sd-modern-table-footer"
+        >
+          <v-pagination
+            v-if="product_pages_count > 1"
+            v-model="product_page"
+            :aria-label="$t('product_panel.workspace.list_view.products')"
+            class="sd-modern-pagination"
+            :length="product_pages_count"
+            :disabled="busy_fetch"
+            rounded
+          />
+        </div>
+        <div v-if="modern && !mini" class="b-products-window__list-columns sd-modern-list-header">
+          <label v-if="multiSelectProducts" class="b-products-window__select-page">
+            <input
+              type="checkbox"
+              :aria-label="$t('product_panel.workspace.list_view.select_page')"
+              :checked="products.length > 0 && products.every(p => selected_products.includes(p.id))"
+              :indeterminate="products.some(p => selected_products.includes(p.id)) && !products.every(p => selected_products.includes(p.id))"
+              :disabled="busy_fetch || arrange_folder_mode || !products.length"
+              @change="selectAllProducts($event.target.checked)"
+            />
+            <span class="b-products-window__select-page-label">{{ $t('product_panel.workspace.list_view.select_page') }}</span>
+          </label>
+          <span class="b-products-window__column-product">{{ $t('global.commons.product') }}</span>
+          <span v-if="showPrice" class="b-products-window__column-price">{{ $t('global.commons.price') }}</span>
+          <span v-if="showStatistics && !compactMode" class="b-products-window__column-stock">{{ $t('global.commons.quantity') }}</span>
+          <span v-if="showStatistics && !compactMode" class="b-products-window__column-activity">{{ $t('product_panel.workspace.list_view.activity') }}</span>
+          <span class="b-products-window__column-actions">{{ $t('global.commons.actions') }}</span>
+        </div>
+
         <v-col
-          v-for="product in products"
+          v-for="(product, productIndex) in products"
           :key="product.id"
+          :style="modern && !mini ? { '--b-products-list-row': productIndex + 4 } : undefined"
           :class="{
             'op-0-3': cut_product === product,
             'op-0-1 pen': arrange_folder_mode,
@@ -541,7 +702,7 @@
           :md="mini ? 2 : 4"
           :sm="mini ? 3 : 6"
           :xl="mini ? 1 : 3"
-          class="position-relative"
+          class="position-relative b-products-window__list-item"
           @contextmenu="showMenu($event, product, null)"
           @dragover="
             (e) => {
@@ -606,16 +767,19 @@
 
             <b-product-window-product-large
               v-else
+              :modern-list="modern && !mini"
+              :multi-select-products="multiSelectProducts"
               :class="{
                 'not-drop-able':
                   current_dragged_product || current_dragged_folder,
 
                 disabled: disableTypes?.includes(product.type),
+                'ma-2': !(modern && !mini),
               }"
               :color="dark ? '#000' : '#fff'"
               :compact-mode="compactMode"
               :dark="dark"
-              :deleting="product.id === busy_delete"
+              :deleting="product.id === busy_delete || (modern && busy_delete === 'selected' && selected_products.includes(product.id))"
               :i-selected="selected_products.includes(product.id)"
               :product="product"
               :restoring="product.id === busy_restore"
@@ -630,10 +794,11 @@
               :show-ratting="showRatting"
               :show-select="press_ctrl"
               :show-statistics="showStatistics"
-              class="item h-100 ma-2"
+              class="item h-100"
               @onSelect="toggleProductsSelect(product)"
               @onShowNote="showNoteProduct(product)"
               @select="$emit('select', product)"
+              @contextmenu="showMenu($event, product, null)"
               @click:image="
                 (e) => {
                   $router.push({
@@ -660,10 +825,15 @@
           </u-drag>
         </v-col>
 
+        <p v-if="modern && !mini && !products.length && !busy_fetch" class="b-products-window__list-empty">
+          {{ $t('product_panel.workspace.list_view.no_products') }}
+        </p>
+
         <div v-if="mini" key="spx" class="pen" style="flex-grow: 12"></div>
 
         <!-- ━━━━━━━━━━━━━━━━ Pagination > Products ━━━━━━━━━━━━━━━━ -->
         <v-col
+          v-if="!(modern && !mini)"
           v-show="product_pages_count > 1"
           key="pagination-products"
           cols="12"
@@ -680,9 +850,16 @@
             :disabled="busy_fetch"
           ></v-pagination>
         </v-col>
+        </div>
+
+      </v-fade-transition>
+    </v-row>
+    </div>
 
         <!-- ⬬⬬⬬ Add Mode ⬬⬬⬬ -->
-        <template
+        <v-row
+          dense
+          class="b-products-window__tool-row"
           v-if="
             CAN_ADD_PRODUCT &&
             addProductButton &&
@@ -690,7 +867,7 @@
             (!busy_fetch || products.length)
           "
         >
-          <div key="catalog-tools" class="b-products-window__tools">
+          <div key="catalog-tools" class="b-products-window__tools" :class="{ 'b-products-window__tools--vendor': modern && IS_VENDOR_PANEL }">
           <!-- ⬬⬬⬬ Force new line in mini mode ⬬⬬⬬ -->
 
           <v-col v-if="mini && !modern" key="spacer" cols="12"></v-col>
@@ -707,6 +884,25 @@
             sm="6"
             xl="3"
           >
+            <template v-if="modern && IS_VENDOR_PANEL">
+              <b-product-window-section-icon kind="create" :size="24" />
+              <h3>{{ $t('product_panel.workspace.vendor_tools.create') }}</h3>
+              <div class="b-products-window__vendor-create-actions">
+                <v-btn class="sd-modern-button" variant="outlined" @click="$emit('click:add')">
+                  <v-icon size="16">library_add</v-icon>
+                  {{ $t('product_panel.workspace.vendor_tools.new_product') }}
+                </v-btn>
+                <v-btn class="sd-modern-button" variant="outlined" @click="$emit('click:fast-add')">
+                  <v-icon size="16">flash_on</v-icon>
+                  {{ $t('products_select.modern.fast_mode') }}
+                </v-btn>
+                <v-btn class="sd-modern-button" variant="outlined" @click="$emit('click:ai-add')">
+                  <v-icon size="16">auto_fix_high</v-icon>
+                  {{ $t('product_panel.workspace.vendor_tools.ai_assistance') }}
+                </v-btn>
+              </div>
+            </template>
+            <template v-else>
             <u-button-add
               :caption="$t('add_product.title_new')"
               :fillHeight="false"
@@ -758,6 +954,7 @@
               @keydown.enter="modern && $emit('click:ai-add')"
               @keydown.space.prevent="modern && $emit('click:ai-add')"
             ></u-button-add>
+            </template>
           </v-col>
 
           <slot name="append-products"></slot>
@@ -784,71 +981,87 @@
               :class="modern ? 'sd-modern-widget b-products-window__feature' : 'dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative'"
             >
               <div>
-                <h3 v-if="current_filter">
-                  <v-icon class="me-1 zoomIn" color="green"
-                    >check_circle
-                  </v-icon>
+                <div class="b-products-window__feature-body">
+                  <h3 v-if="current_filter">
+                    <v-icon class="me-1 zoomIn" color="green"
+                      >check_circle
+                    </v-icon>
 
-                  {{
-                    parent_folders
-                      ? modern ? $t('products_select.modern.category_has_filter', { category: parent_folders.title }) : "This category has a filter."
-                      : $t("products_select.filter_box.has_root_filter_message")
-                  }}
-                </h3>
-                <h3 v-else>
-                  {{
-                    parent_folders
-                      ? modern ? $t('products_select.modern.category_no_filter', { category: parent_folders.title }) : "No filters have been defined!"
-                      : $t("products_select.filter_box.no_root_filter_message")
-                  }}
-                </h3>
+                    {{
+                      parent_folders
+                        ? modern ? $t('products_select.modern.category_has_filter', { category: parent_folders.title }) : "This category has a filter."
+                        : $t("products_select.filter_box.has_root_filter_message")
+                    }}
+                  </h3>
+                  <h3 v-else>
+                    {{
+                      parent_folders
+                        ? modern ? $t('products_select.modern.category_no_filter', { category: parent_folders.title }) : "No filters have been defined!"
+                        : $t("products_select.filter_box.no_root_filter_message")
+                    }}
+                  </h3>
 
-                <s-dense-images-circles
-                  :images="
-                    products?.map((p) =>
-                      getShopImagePath(p.icon, IMAGE_SIZE_SMALL),
-                    )
-                  "
-                  :limit="5"
-                  class="justify-center"
-                ></s-dense-images-circles>
+                  <s-dense-images-circles
+                    :images="
+                      products?.map((p) =>
+                        getShopImagePath(p.icon, IMAGE_SIZE_SMALL),
+                      )
+                    "
+                    :limit="5"
+                    class="justify-center"
+                  ></s-dense-images-circles>
 
-                <small class="d-block">{{
-                  $t("products_select.filter_box.set_filter_message")
-                }}</small>
+                  <small class="d-block">{{
+                    $t("products_select.filter_box.set_filter_message")
+                  }}</small>
+                </div>
 
-                <v-btn
-                  class="tnt ma-1"
-                  :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
-                  color="primary"
-                  size="small"
-                  @click="dialog_root_filter = true"
-                >
-                  <v-icon class="me-1" size="small">filter_alt</v-icon>
-
-                  {{
-                    parent_folders
-                      ? modern ? $t('products_select.modern.edit_category_filter', { category: parent_folders.title.limitWords(1) }) : `Edit ${parent_folders.title.limitWords(1)} Filter`
-                      : $t("products_select.filter_box.edit_action")
-                  }}
-                </v-btn>
-                <v-btn
-                  v-if="current_filter"
-                  :loading="busy_clear_root_filter"
-                  class="tnt ma-1"
-                  :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
-                  size="small"
-                  variant="outlined"
-                  @click="showClearRootFiltersDialog(parent_folders)"
-                >
-                  <v-icon class="me-1" size="small">filter_alt_off</v-icon>
-
-                  {{
-                    parent_folders
-                      ? modern ? $t('products_select.modern.clear_category_filter', { category: parent_folders.title.limitWords(1) }) : "Clear Category Filter"
-                      : $t("products_select.filter_box.clear_action")
-                  }}
-                </v-btn>
+                <div class="b-products-window__feature-actions">
+                  <v-btn
+                    class="tnt ma-1"
+                    :class="{ 'sd-modern-button sd-modern-button--small': modern }"
+                    :aria-label="modern ? parent_folders ? $t('products_select.modern.edit_category_filter', { category: parent_folders.title }) : $t('products_select.filter_box.edit_action') : undefined"
+                    color="primary"
+                    size="small"
+                    @click="dialog_root_filter = true"
+                  >
+                    <template v-if="modern">
+                      <v-avatar class="b-products-window__scope-avatar" size="20" aria-hidden="true">
+                        <img v-if="parent_folders?.icon" :src="getShopImagePath(parent_folders.icon, IMAGE_SIZE_SMALL)" alt="" />
+                        <v-icon v-else size="18">{{ parent_folders ? 'folder' : 'home' }}</v-icon>
+                      </v-avatar>
+                      <span class="b-products-window__action-label">{{ $t('products_select.modern.edit_filters') }}</span>
+                      <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="parent_folders ? parent_folders.title : $t('global.commons.root')" :open-on-focus="true" />
+                    </template>
+                    <template v-else>
+                      <v-icon class="me-1" size="small">filter_alt</v-icon>
+                      {{ parent_folders ? `Edit ${parent_folders.title.limitWords(1)} Filter` : $t('products_select.filter_box.edit_action') }}
+                    </template>
+                  </v-btn>
+                  <v-btn
+                    v-if="current_filter"
+                    :loading="busy_clear_root_filter"
+                    class="tnt ma-1"
+                    :class="{ 'sd-modern-button sd-modern-button--small': modern }"
+                    :aria-label="modern ? parent_folders ? $t('products_select.modern.clear_category_filter', { category: parent_folders.title }) : $t('products_select.filter_box.clear_action') : undefined"
+                    size="small"
+                    variant="outlined"
+                    @click="showClearRootFiltersDialog(parent_folders)"
+                  >
+                    <template v-if="modern">
+                      <v-avatar class="b-products-window__scope-avatar" size="20" aria-hidden="true">
+                        <img v-if="parent_folders?.icon" :src="getShopImagePath(parent_folders.icon, IMAGE_SIZE_SMALL)" alt="" />
+                        <v-icon v-else size="18">{{ parent_folders ? 'folder' : 'home' }}</v-icon>
+                      </v-avatar>
+                      <span class="b-products-window__action-label">{{ $t('products_select.modern.clear_filters') }}</span>
+                      <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="parent_folders ? parent_folders.title : $t('global.commons.root')" :open-on-focus="true" />
+                    </template>
+                    <template v-else>
+                      <v-icon class="me-1" size="small">filter_alt_off</v-icon>
+                      {{ parent_folders ? 'Clear Category Filter' : $t('products_select.filter_box.clear_action') }}
+                    </template>
+                  </v-btn>
+                </div>
               </div>
             </div>
           </v-col>
@@ -872,79 +1085,123 @@
               :class="modern ? 'sd-modern-widget b-products-window__feature' : 'dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative'"
             >
               <div>
-                <h3>{{ $t("products_select.engine.title") }}</h3>
+                <div class="b-products-window__feature-body">
+                  <b-product-window-section-icon v-if="modern && IS_VENDOR_PANEL" kind="engine" :size="24" />
+                  <h3>{{ $t("products_select.engine.title") }}</h3>
 
-                <template v-if="current_engine">
-                  <small class="d-block">
-                    {{ $t("products_select.engine.subtitle") }}
-                  </small>
+                  <template v-if="current_engine">
+                    <small class="d-block">
+                      {{ $t("products_select.engine.subtitle") }}
+                    </small>
 
-                  <b-category-engine-preview
-                    :category="
-                      parent_folders
-                        ? parent_folders
-                        : { id: 'root', title: $t('global.commons.home') }
-                    "
-                    :engine-categories="current_engine.categories"
-                    :engine-tags="current_engine.tags"
-                    class="my-2"
-                  >
-                  </b-category-engine-preview>
-                </template>
+                    <b-category-engine-preview
+                      :category="
+                        parent_folders
+                          ? parent_folders
+                          : { id: 'root', title: $t('global.commons.home') }
+                      "
+                      :engine-categories="current_engine.categories"
+                      :engine-tags="current_engine.tags"
+                      class="my-2"
+                    >
+                    </b-category-engine-preview>
+                  </template>
 
-                <v-icon v-else class="my-2" size="36"> devices_fold</v-icon>
+                  <v-icon v-else-if="!(modern && IS_VENDOR_PANEL)" class="my-2" size="36"> devices_fold</v-icon>
 
-                <div class="mt-2">
-                  <small class="d-block">
-                    {{
-                      $t("products_select.engine.load_in_tips", {
-                        category: parent_folders
-                          ? parent_folders.title
-                          : $t("global.commons.home"),
-                      })
-                    }}
-                  </small>
+                  <div class="mt-2">
+                    <small class="d-block">
+                      {{
+                        $t(modern && IS_VENDOR_PANEL ? 'product_panel.workspace.vendor_tools.engine_description' : 'products_select.engine.load_in_tips', {
+                          category: parent_folders
+                            ? parent_folders.title
+                            : $t("global.commons.home"),
+                        })
+                      }}
+                    </small>
+                  </div>
                 </div>
 
-                <v-btn
-                  class="tnt ma-1"
-                  :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
-                  color="primary"
-                  size="small"
-                  @click="dialog_root_engine = true"
-                >
-                  <v-icon class="me-1" size="small">auto_mode</v-icon>
-
-                  {{
-                    $t("products_select.engine.action", {
-                      category: parent_folders
-                        ? parent_folders.title.limitWords(1)
-                        : $t("global.commons.root"),
-                    })
-                  }}
-                </v-btn>
+                <div class="b-products-window__feature-actions">
+                  <span
+                    v-if="modern && IS_VENDOR_PANEL"
+                    class="b-products-window__managed-engine"
+                    tabindex="0"
+                    :aria-label="$t('product_panel.workspace.vendor_tools.engine_managed')"
+                  >
+                    <v-btn class="sd-modern-button sd-modern-button--small" variant="outlined" disabled>
+                      <v-icon size="16">lock_outline</v-icon>
+                      {{ $t('product_panel.workspace.vendor_tools.engine_managed') }}
+                    </v-btn>
+                    <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="$t('product_panel.workspace.vendor_tools.engine_managed_help')" :open-on-focus="true" />
+                  </span>
+                  <v-btn
+                    v-else
+                    class="tnt ma-1"
+                    :class="{ 'sd-modern-button sd-modern-button--small': modern }"
+                    :aria-label="modern ? $t('products_select.engine.action', { category: parent_folders ? parent_folders.title : $t('global.commons.root') }) : undefined"
+                    color="primary"
+                    size="small"
+                    @click="dialog_root_engine = true"
+                  >
+                    <template v-if="modern">
+                      <v-avatar class="b-products-window__scope-avatar" size="20" aria-hidden="true">
+                        <img v-if="parent_folders?.icon" :src="getShopImagePath(parent_folders.icon, IMAGE_SIZE_SMALL)" alt="" />
+                        <v-icon v-else size="18">{{ parent_folders ? 'folder' : 'home' }}</v-icon>
+                      </v-avatar>
+                      <span class="b-products-window__action-label">{{ $t('products_select.modern.edit_engine') }}</span>
+                      <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="parent_folders ? parent_folders.title : $t('global.commons.root')" :open-on-focus="true" />
+                    </template>
+                    <template v-else>
+                      <v-icon class="me-1" size="small">auto_mode</v-icon>
+                      {{ $t('products_select.engine.action', { category: parent_folders ? parent_folders.title.limitWords(1) : $t('global.commons.root') }) }}
+                    </template>
+                  </v-btn>
+                </div>
               </div>
             </div>
           </v-col>
           </div>
-        </template>
-      </v-fade-transition>
-    </v-row>
+        </v-row>
 
     <!-- ███████████████████████ Context Menu ███████████████████████ -->
     <v-menu
       v-model="showProductMenu"
       :target="[x, y]"
+      :width="modern ? 380 : undefined"
+      :max-width="modern ? 'calc(100vw - 24px)' : undefined"
+      :max-height="modern ? 'calc(100dvh - 24px)' : undefined"
       absolute
       transition="slide-y-transition"
     >
-      <v-sheet class="text-start v-menu-text-small" rounded="lg">
+      <v-sheet
+        class="text-start"
+        :class="modern ? 'b-products-window__context sd-modern-widget' : 'v-menu-text-small'"
+        :aria-label="modern ? $t('product_panel.workspace.context_menu.title') : undefined"
+        rounded="lg"
+      >
+        <header v-if="modern" class="b-products-window__context-heading">
+          <span class="b-products-window__context-identity">
+            <v-icon size="18">{{ menu_context.icon }}</v-icon>
+          </span>
+          <div class="b-products-window__context-copy">
+            <div class="b-products-window__context-kind">{{ menu_context.kind }}</div>
+            <h2>{{ menu_context.title }}</h2>
+          </div>
+          <span v-if="currentProductForMenu" class="b-products-window__context-state">
+            <template v-if="currentProductForMenu.deleted_at">{{ $t('global.commons.deleted') }}</template>
+            <template v-else>
+              <v-icon :color="ProductStatus[currentProductForMenu.status]?.color" size="6">circle</v-icon>
+              {{ $t(ProductStatus[currentProductForMenu.status]?.name) }}
+            </template>
+          </span>
+        </header>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For products (Right-click on a selected item) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <v-list
           v-if="is_menu_multi_select_product"
           class="py-0"
-          color="primary"
+          :color="modern ? undefined : 'primary'"
           density="compact"
         >
           <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Assign Vendor ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -962,7 +1219,7 @@
             </template>
             <v-list-item-title>
               {{ $t("marketplace.add_vendor") }}
-              <v-chip class="mx-2" color="#fff" label size="x-small"
+              <v-chip v-if="!modern" class="mx-2" color="#fff" label size="x-small"
                 >+ multi
               </v-chip>
             </v-list-item-title>
@@ -979,17 +1236,25 @@
               "
             >
               <template v-slot:prepend>
-                <v-icon size="small">nat</v-icon>
+              <v-icon size="small">{{ modern ? 'change_circle' : 'nat' }}</v-icon>
               </template>
               <v-list-item-title>
-                {{ $t("add_product.menu.change_status") }} |
+                {{ $t("add_product.menu.change_status") }}
+                <template v-if="!modern"> |
                 <v-icon
                   :color="ProductStatus[currentProductForMenu?.status]?.color"
                   size="x-small"
                   >circle
                 </v-icon>
                 {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
+                </template>
               </v-list-item-title>
+              <template v-if="modern" v-slot:append>
+                <span class="b-products-window__context-state">
+                  <v-icon :color="ProductStatus[currentProductForMenu?.status]?.color" size="6">circle</v-icon>
+                  {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
+                </span>
+              </template>
             </v-list-item>
           </template>
 
@@ -999,10 +1264,10 @@
 
           <v-list-item @click="deleteAllSelectedProduct(selected_products)">
             <template v-slot:prepend>
-              <v-icon color="red" size="small">fa:fas fa-trash</v-icon>
+              <v-icon :color="modern ? 'error' : 'red'" size="small">{{ modern ? 'delete_outline' : 'fa:fas fa-trash' }}</v-icon>
             </template>
             <v-list-item-title>
-              {{ $t("global.actions.delete_all") }}
+              {{ $t(modern ? 'product_panel.workspace.context_menu.delete_selected' : 'global.actions.delete_all') }}
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -1021,9 +1286,10 @@
                     Slugify.apply(currentProductForMenu.title),
                   )
                 "
-                base-color="#1976d2"
+                :base-color="modern ? undefined : '#1976d2'"
                 target="_blank"
-                theme="dark"
+                rel="noopener noreferrer"
+                :theme="modern ? undefined : 'dark'"
                 variant="flat"
               >
                 <template v-slot:prepend>
@@ -1036,7 +1302,9 @@
                     currentProductForMenu.title.limitWords(3)
                   }}
                 </v-list-item-title>
+                <template v-if="modern" v-slot:append><v-icon size="14">north_east</v-icon></template>
               </v-list-item>
+              <v-divider v-if="modern" />
             </template>
 
             <template
@@ -1050,8 +1318,8 @@
                   !IS_VENDOR_PANEL /*Only in marketplace panel*/ &&
                   !menu_add_vendor_error
                 "
-                base-color="#512da8"
-                theme="dark"
+                :base-color="modern ? undefined : '#512da8'"
+                :theme="modern ? undefined : 'dark'"
                 variant="flat"
                 @click="showAssignVendor(currentProductForMenu)"
               >
@@ -1064,7 +1332,7 @@
               </v-list-item>
               <small
                 v-else-if="menu_add_vendor_error"
-                class="max-w-250 mx-auto pa-2 d-block border-bottom"
+                :class="modern ? 'b-products-window__context-notice' : 'max-w-250 mx-auto pa-2 d-block border-bottom'"
               >
                 <v-icon class="me-1" size="small">add_business</v-icon>
                 {{ menu_add_vendor_error }}</small
@@ -1087,7 +1355,7 @@
                 <v-list-item-title>
                   {{ $t("global.actions.edit") }}
                 </v-list-item-title>
-                <template v-slot:append>
+                <template v-if="!modern" v-slot:append>
                   <v-avatar :key="currentProductForMenu.id" size="24">
                     <img
                       v-if="currentProductForMenu.icon"
@@ -1127,10 +1395,10 @@
                 }"
               >
                 <template v-slot:prepend>
-                  <v-icon size="small">fa:fas fa-boxes</v-icon>
+                  <v-icon size="small">{{ modern ? 'inventory_2' : 'fa:fas fa-boxes' }}</v-icon>
                 </template>
                 <v-list-item-title>
-                  {{ $t("products_select.product_menu.inventory") }}
+                  {{ $t(modern ? 'product_panel.workspace.context_menu.inventory' : 'products_select.product_menu.inventory') }}
                 </v-list-item-title>
               </v-list-item>
 
@@ -1146,7 +1414,7 @@
                 }"
               >
                 <template v-slot:prepend>
-                  <v-icon size="small">fa:fas fa-image</v-icon>
+                  <v-icon size="small">{{ modern ? 'image' : 'fa:fas fa-image' }}</v-icon>
                 </template>
                 <v-list-item-title>
                   {{ $t("add_product.menu.images") }}
@@ -1160,10 +1428,11 @@
                   @click="showChangeStatusProduct(currentProductForMenu)"
                 >
                   <template v-slot:prepend>
-                    <v-icon size="small">nat</v-icon>
+                    <v-icon size="small">{{ modern ? 'change_circle' : 'nat' }}</v-icon>
                   </template>
                   <v-list-item-title>
-                    {{ $t("add_product.menu.change_status") }} |
+                    {{ $t("add_product.menu.change_status") }}
+                    <template v-if="!modern"> |
                     <v-icon
                       :color="
                         ProductStatus[currentProductForMenu?.status]?.color
@@ -1172,7 +1441,14 @@
                       >circle
                     </v-icon>
                     {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
+                    </template>
                   </v-list-item-title>
+                  <template v-if="modern" v-slot:append>
+                    <span class="b-products-window__context-state">
+                      <v-icon :color="ProductStatus[currentProductForMenu?.status]?.color" size="6">circle</v-icon>
+                      {{ $t(ProductStatus[currentProductForMenu?.status]?.name) }}
+                    </span>
+                  </template>
                 </v-list-item>
               </template>
 
@@ -1183,7 +1459,7 @@
                   <v-icon size="small">edit_note</v-icon>
                 </template>
                 <v-list-item-title>
-                  {{ $t("notes.add_action") }}
+                  {{ $t(modern ? 'product_panel.workspace.context_menu.add_note' : 'notes.add_action') }}
                 </v-list-item-title>
               </v-list-item>
 
@@ -1194,7 +1470,7 @@
 
                 <v-list-item @click="deleteProduct(currentProductForMenu)">
                   <template v-slot:prepend>
-                    <v-icon color="red" size="small">fa:fas fa-trash</v-icon>
+                    <v-icon :color="modern ? 'error' : 'red'" size="small">{{ modern ? 'delete_outline' : 'fa:fas fa-trash' }}</v-icon>
                   </template>
                   <v-list-item-title>
                     {{ $t("global.actions.delete") }}
@@ -1210,8 +1486,8 @@
               @click="restoreProduct(currentProductForMenu)"
             >
               <template v-slot:prepend>
-                <v-icon color="green" size="small"
-                  >fa:fas fa-trash-restore
+                <v-icon :color="modern ? 'success' : 'green'" size="small"
+                  >{{ modern ? 'restore_from_trash' : 'fa:fas fa-trash-restore' }}
                 </v-icon>
               </template>
               <v-list-item-title>
@@ -1226,7 +1502,7 @@
 
               <v-list-item @click="cutProduct(currentProductForMenu)">
                 <template v-slot:prepend>
-                  <v-icon size="small">fa:fas fa-cut</v-icon>
+                  <v-icon size="small">{{ modern ? 'content_cut' : 'fa:fas fa-cut' }}</v-icon>
                 </template>
                 <v-list-item-title>
                   {{ $t("global.actions.cut") }}
@@ -1236,7 +1512,7 @@
 
               <v-list-item @click="copyProduct(currentProductForMenu)">
                 <template v-slot:prepend>
-                  <v-icon size="small">fa:fas fa-copy</v-icon>
+                  <v-icon size="small">{{ modern ? 'content_copy' : 'fa:fas fa-copy' }}</v-icon>
                 </template>
                 <v-list-item-title>
                   {{ $t("global.actions.copy") }}
@@ -1257,9 +1533,10 @@
               :href="
                 ShopURLs.GetCategoryLink(shop, currentCategoryForMenu.name)
               "
-              base-color="#1976d2"
+              :base-color="modern ? undefined : '#1976d2'"
               target="_blank"
-              theme="dark"
+              rel="noopener noreferrer"
+              :theme="modern ? undefined : 'dark'"
               variant="flat"
             >
               <template v-slot:prepend>
@@ -1272,11 +1549,12 @@
                   currentCategoryForMenu.title.limitWords(3)
                 }}
               </v-list-item-title>
+              <template v-if="modern" v-slot:append><v-icon size="14">north_east</v-icon></template>
             </v-list-item>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category Edit ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-            <v-list-item @click="showEditCategory(currentCategoryForMenu)">
+            <v-list-item v-if="!modern || showEditButton" @click="showEditCategory(currentCategoryForMenu)">
               <template v-slot:prepend>
                 <v-icon size="small">edit</v-icon>
               </template>
@@ -1285,7 +1563,7 @@
                 {{ $t("add_category.edit_action") }}
               </v-list-item-title>
 
-              <template v-slot:append>
+              <template v-if="!modern" v-slot:append>
                 <v-avatar :key="currentCategoryForMenu.id" size="24">
                   <img
                     v-if="currentCategoryForMenu.icon"
@@ -1298,13 +1576,13 @@
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Product Add Note ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
-            <template>
+            <template v-if="modern">
               <v-list-item @click="showNoteCategory(currentCategoryForMenu)">
                 <template v-slot:prepend>
                   <v-icon size="small">edit_note</v-icon>
                 </template>
                 <v-list-item-title>
-                  {{ $t("notes.add_action") }}
+                  {{ $t(modern ? 'product_panel.workspace.context_menu.add_note' : 'notes.add_action') }}
                 </v-list-item-title>
               </v-list-item>
             </template>
@@ -1322,11 +1600,11 @@
                 </template>
 
                 <v-list-item-title>
-                  {{ $t("products_select.menu.category_assign_profile") }}
+                  {{ $t(modern ? 'product_panel.workspace.context_menu.assign_profiles' : 'products_select.menu.category_assign_profile') }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   {{
-                    $t("products_select.menu.category_assign_profile_subtitle")
+                    $t(modern ? 'product_panel.workspace.context_menu.profiles_help' : 'products_select.menu.category_assign_profile_subtitle')
                   }}
                 </v-list-item-subtitle>
               </v-list-item>
@@ -1342,7 +1620,7 @@
                   {{ $t("products_select.menu.bulk_discount") }}
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  {{ $t("products_select.menu.bulk_discount_subtitle") }}
+                  {{ $t(modern ? 'product_panel.workspace.context_menu.discount_help' : 'products_select.menu.bulk_discount_subtitle') }}
                 </v-list-item-subtitle>
               </v-list-item>
             </template>
@@ -1362,56 +1640,62 @@
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Set root filter ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <v-list-item
-              append-icon="filter_alt"
+              :append-icon="modern ? undefined : 'filter_alt'"
               @click="dialog_root_filter = true"
             >
               <template v-slot:prepend>
                 <v-avatar
-                  v-if="parent_folders"
+                  v-if="parent_folders && !modern"
                   :image="getShopImagePath(parent_folders.icon, 64)"
                   :size="24"
                   class="avatar-gradient -thin -category"
                 ></v-avatar>
-                <v-icon v-else size="small">home</v-icon>
+                <v-icon v-else size="small">{{ modern ? 'filter_list' : 'home' }}</v-icon>
               </template>
 
-              <v-list-item-title v-if="parent_folders">
+              <v-list-item-title v-if="modern">
+                {{ $t(parent_folders ? 'product_panel.workspace.context_menu.category_filters' : 'product_panel.workspace.context_menu.root_filters') }}
+              </v-list-item-title>
+              <v-list-item-title v-else-if="parent_folders">
                 Set Filter: {{ parent_folders.title?.limitWords(3) }}
               </v-list-item-title>
               <v-list-item-title v-else> Set Root Filter</v-list-item-title>
 
               <v-list-item-subtitle>
-                Set filters of this category.
+                {{ modern ? $t('product_panel.workspace.context_menu.filter_help') : 'Set filters of this category.' }}
               </v-list-item-subtitle>
             </v-list-item>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Set root engine ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
             <v-list-item
-              append-icon="auto_mode"
+              :append-icon="modern ? undefined : 'auto_mode'"
               @click="dialog_root_engine = true"
             >
               <template v-slot:prepend>
                 <v-avatar
-                  v-if="parent_folders"
+                  v-if="parent_folders && !modern"
                   :image="getShopImagePath(parent_folders.icon, 64)"
                   :size="24"
                   class="avatar-gradient -thin -category"
                 ></v-avatar>
-                <v-icon v-else size="small">home</v-icon>
+                <v-icon v-else size="small">{{ modern ? 'auto_mode' : 'home' }}</v-icon>
               </template>
 
-              <v-list-item-title v-if="parent_folders">
+              <v-list-item-title v-if="modern">
+                {{ $t(parent_folders ? 'product_panel.workspace.context_menu.category_engine' : 'product_panel.workspace.context_menu.root_engine') }}
+              </v-list-item-title>
+              <v-list-item-title v-else-if="parent_folders">
                 Set Engine: {{ parent_folders.title?.limitWords(3) }}
               </v-list-item-title>
               <v-list-item-title v-else> Set Root Engine</v-list-item-title>
 
               <v-list-item-subtitle>
-                Load extra products from other categories or by tags.
+                {{ modern ? $t('product_panel.workspace.context_menu.engine_help') : 'Load extra products from other categories or by tags.' }}
               </v-list-item-subtitle>
             </v-list-item>
 
-            <v-divider></v-divider>
+            <v-divider v-if="!modern"></v-divider>
           </v-list>
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ For all ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
@@ -1422,7 +1706,7 @@
             <v-list-item v-if="copy_product" @click="pastProduct(copy_product)">
               <template v-slot:prepend>
                 <v-icon v-if="!copy_product || !copy_product.icon" size="small"
-                  >fa:fas fa-paste
+                  >{{ modern ? 'content_paste' : 'fa:fas fa-paste' }}
                 </v-icon>
                 <v-avatar v-else size="24"
                   ><img
@@ -1436,7 +1720,7 @@
                 {{ $t("global.actions.paste") }}
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{ copy_product.title }}
+                {{ modern ? $t('product_panel.workspace.context_menu.clipboard_destination', { product: copy_product.title, destination: parent_folders?.title || $t('global.store') }) : copy_product.title }}
               </v-list-item-subtitle>
             </v-list-item>
 
@@ -1453,7 +1737,7 @@
             >
               <template v-slot:prepend>
                 <v-icon v-if="!cut_product || !cut_product.icon" size="small"
-                  >fa:fas fa-paste
+                  >{{ modern ? 'drive_file_move' : 'fa:fas fa-paste' }}
                 </v-icon>
                 <v-avatar v-else class="me-3" size="24"
                   ><img
@@ -1461,14 +1745,15 @@
                 /></v-avatar>
               </template>
 
-              <v-list-item-title> Move here</v-list-item-title>
+              <v-list-item-title>{{ modern ? $t('product_panel.workspace.context_menu.move_here') : 'Move here' }}</v-list-item-title>
               <v-list-item-subtitle>
-                {{ cut_product.title }}
+                {{ modern ? $t('product_panel.workspace.context_menu.clipboard_destination', { product: cut_product.title, destination: parent_folders?.title || $t('global.store') }) : cut_product.title }}
               </v-list-item-subtitle>
             </v-list-item>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Select All Products ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
+            <v-divider v-if="modern && (copy_product || cut_product)" />
             <v-list-item @click="selectAllProducts(!all_products_selected)">
               <template v-slot:prepend>
                 <v-icon>highlight_alt</v-icon>
@@ -1477,10 +1762,11 @@
               <v-list-item-title>
                 {{
                   all_products_selected
-                    ? $t("products_select.menu.unselect")
+                    ? $t(modern ? 'product_panel.workspace.context_menu.clear_selection' : 'products_select.menu.unselect')
                     : $t("products_select.menu.select_all_products")
                 }}
               </v-list-item-title>
+              <v-tooltip v-if="modern" activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('product_panel.workspace.context_menu.selection_help') }}</v-tooltip>
             </v-list-item>
 
             <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ New Category ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
@@ -1494,32 +1780,39 @@
                 </template>
 
                 <v-list-item-title>
-                  {{ $t("admin_shop.categories.menu.add_new") }}
+                  {{ $t(modern ? 'product_panel.workspace.context_menu.new_category' : 'admin_shop.categories.menu.add_new') }}
                 </v-list-item-title>
               </v-list-item>
 
               <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Category Arrange Mode ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
               <!-- Enable / Disable Categories arrangement -->
-              <v-list-item @click="arrange_folder_mode = !arrange_folder_mode">
+              <v-list-item :role="modern ? 'button' : undefined" :aria-pressed="modern ? arrange_folder_mode : undefined" @click="arrange_folder_mode = !arrange_folder_mode">
                 <template v-slot:prepend>
                   <v-icon
-                    :color="arrange_folder_mode ? 'primary' : '#333'"
+                    :color="modern ? undefined : arrange_folder_mode ? 'primary' : '#333'"
                     size="small"
                     >{{
-                      arrange_folder_mode ? "circle" : "radio_button_unchecked"
+                      modern ? 'drag_indicator' : arrange_folder_mode ? "circle" : "radio_button_unchecked"
                     }}
                   </v-icon>
                 </template>
 
                 <v-list-item-title>
-                  {{ $t("products_select.menu.sort_categories") }}
+                  {{ $t(modern ? 'product_panel.workspace.context_menu.arrange_categories' : 'products_select.menu.sort_categories') }}
                 </v-list-item-title>
+                <template v-if="modern" v-slot:append>
+                  <span class="b-products-window__context-state">
+                    {{ $t(arrange_folder_mode ? 'product_panel.workspace.context_menu.arrange_on' : 'product_panel.workspace.context_menu.arrange_off') }}
+                    <v-icon v-if="arrange_folder_mode" size="14">check</v-icon>
+                  </span>
+                </template>
               </v-list-item>
             </template>
           </v-list>
         </template>
       </v-sheet>
     </v-menu>
+    </template>
   </div>
 
   <!-- ████████████████████ Dialog > Edit category ████████████████████ -->
@@ -1774,38 +2067,98 @@
 
   <!-- █████████████████████ Dialog > Product > Change Status █████████████████████ -->
 
-  <v-dialog v-model="status_product_dialog" max-width="640" scrollable>
-    <v-card v-if="status_product_items?.length" class="text-start" rounded="xl">
-      <v-card-title>
-        <v-icon class="me-2">nat</v-icon>
-        Change Product Status
+  <v-dialog
+    v-model="status_product_dialog"
+    :max-width="modern ? 560 : 640"
+    :width="modern ? 'calc(100% - 32px)' : undefined"
+    :aria-labelledby="modern ? `${$.uid}-status-title` : undefined"
+    :aria-describedby="modern ? `${$.uid}-status-help` : undefined"
+    scrollable
+  >
+    <v-card
+      v-if="status_product_items?.length"
+      class="text-start"
+      :class="{ 'b-products-window__status-dialog sd-modern-widget': modern }"
+      rounded="xl"
+    >
+      <v-card-title :class="{ 'b-products-window__status-heading': modern }">
+        <v-icon :class="{ 'me-2': !modern }">{{ modern ? 'sync' : 'nat' }}</v-icon>
+        <h2 v-if="modern" :id="`${$.uid}-status-title`">{{ $t('product_panel.workspace.status_dialog.title') }}</h2>
+        <template v-else>Change Product Status</template>
+        <v-btn
+          v-if="modern"
+          class="sd-modern-icon-button"
+          variant="text"
+          icon
+          :aria-label="$t('global.actions.close')"
+          @click="status_product_dialog = false"
+        >
+          <v-icon>close</v-icon>
+          <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('global.actions.close') }}</v-tooltip>
+        </v-btn>
       </v-card-title>
-      <v-card-text>
-        <products-dense-images-circles
-          :ids="status_product_items.map((p) => p.id)"
-        ></products-dense-images-circles>
+      <v-card-text :class="{ 'b-products-window__status-body': modern }">
+        <div :class="{ 'b-products-window__status-identity': modern }">
+          <products-dense-images-circles
+            :ids="status_product_items.map((p) => p.id)"
+            :size="modern ? status_product_items.length === 1 ? 38 : 30 : 32"
+            :class="{ 'b-products-window__status-images': modern }"
+          ></products-dense-images-circles>
+          <div v-if="modern" class="b-products-window__status-copy">
+            <div class="b-products-window__status-name">
+              {{ status_product_items.length === 1 ? status_product_items[0].title : $t('product_panel.workspace.status_dialog.selected_count', { count: status_product_items.length }) }}
+            </div>
+            <div class="b-products-window__status-summary">
+              <span>{{ $t('product_panel.workspace.status_dialog.current') }}:</span>
+              <span v-for="item in product_status_summary" :key="item.code" class="b-products-window__status-summary-item">
+                <span
+                  class="sd-modern-status__dot"
+                  :class="{
+                    'sd-modern-status__dot--success': item.code === 'Open',
+                    'sd-modern-status__dot--error': item.code === 'Close' || item.code === 'Rejected',
+                    'sd-modern-status__dot--warning': item.code === 'Pending',
+                  }"
+                ></span>
+                <span>{{ $t(item.name) }}<template v-if="status_product_items.length > 1"> ({{ item.count }})</template></span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <p v-if="modern" :id="`${$.uid}-status-help`" class="b-products-window__status-help">
+          <v-icon size="15">bolt</v-icon>
+          <span>{{ $t('product_panel.workspace.status_dialog.immediate') }}</span>
+        </p>
 
         <u-smart-select
           v-model="product_status_input"
-          :color="ProductStatus[status_product_items[0].status]?.color"
+          :color="modern ? 'primary' : ProductStatus[status_product_items[0].status]?.color"
           :items="status_list"
           :loading="status_busy"
-          class="my-8"
+          :accessible="modern"
+          :aria-label="modern ? $t('product_panel.workspace.status_dialog.title') : undefined"
+          :aria-describedby="modern ? `${$.uid}-status-help` : undefined"
+          :aria-busy="modern ? status_busy : undefined"
+          :class="modern ? 'sd-modern-smart-select b-products-window__status-options' : 'my-8'"
           force-show-all
           gray-unselected
-          item-description="description"
+          :item-description="modern ? (status) => $t(`product_panel.workspace.status_dialog.statuses.${status.code}.description`) : 'description'"
           item-icon="icon"
-          item-text="title"
+          :item-text="modern ? (status) => $t(status.name) : 'title'"
           item-value="code"
-          @change="(val) => setBulkProductStatus(val, status_product_items)"
+          @change="onProductStatusChange"
         >
+          <template v-if="modern" #append-title="{ item }">
+            <span v-if="status_product_items.length === 1 && status_product_items[0].status === item.code" class="b-products-window__status-current">{{ $t('product_panel.workspace.status_dialog.current') }}</span>
+          </template>
         </u-smart-select>
+        <span v-if="modern" class="b-products-window__status-announcement" role="status">{{ status_busy ? $t('product_panel.workspace.status_dialog.updating') : '' }}</span>
       </v-card-text>
-      <v-card-actions>
-        <div class="widget-buttons">
+      <v-card-actions :class="{ 'b-products-window__status-footer': modern }">
+        <div :class="modern ? 'b-products-window__status-actions' : 'widget-buttons'">
           <v-btn
-            size="x-large"
-            variant="text"
+            :size="modern ? undefined : 'x-large'"
+            :variant="modern ? 'outlined' : 'text'"
+            :class="{ 'sd-modern-button b-products-window__status-close': modern }"
             @click="status_product_dialog = false"
           >
             <v-icon start>close</v-icon>
@@ -1824,63 +2177,62 @@
     scrollable
     transition="dialog-bottom-transition"
   >
-    <v-card class="text-start" :class="{ 'sd-modern-canvas b-products-window__editor': modern }">
+    <v-card class="text-start sd-modern-canvas b-products-window__filter-editor">
       <v-card-title>
-        <v-avatar class="avatar-gradient -thin -shop me-2" size="38">
-          <img :src="getShopImagePath(shop.icon)" />
-        </v-avatar>
-
-        {{ shop.title }}
-        <b v-if="parent_folders" class="ms-1">
-          |
-
-          <u-avatar-folder
-            :border-size="5"
-            :size="36"
-            :src="getShopImagePath(parent_folders.icon, 64)"
-            class="mx-1"
-            is-amber
-            side-icon="folder"
-          ></u-avatar-folder>
-
-          {{ parent_folders.title }}
-        </b>
-      </v-card-title>
-      <v-card-text>
-        <b-category-filter-editor
-          :modern="modern"
-          @cancel="dialog_root_filter = false"
-          :category="
-            parent_folders
-              ? parent_folders
-              : {
-                  id: 'root',
-                  shop_id: shop.id,
-                  filters: shop.filters,
-                }
-          "
-          :shop="shop"
-          @edit-filters="
-            (_filters) => {
-              parent_folders
-                ? (parent_folders.filters = _filters)
-                : (shop.filters = _filters);
-            }
-          "
-        />
-      </v-card-text>
-      <v-card-actions v-if="!modern">
-        <div class="widget-buttons">
-          <v-btn
-            size="x-large"
-            variant="text"
-            @click="dialog_root_filter = false"
-          >
-            <v-icon start>close</v-icon>
-            {{ $t("global.actions.close") }}
-          </v-btn>
+        <div class="b-products-window__filter-heading">
+          <h2>{{ $t(parent_folders ? 'add_category.edit_filter.modern.category_title' : 'add_category.edit_filter.modern.root_title') }}</h2>
+          <nav :aria-label="$t('add_category.edit_filter.modern.path_label')">
+            <v-breadcrumbs :items="hierarchy_items" tag="ol" class="b-products-window__filter-breadcrumbs">
+              <template #item="{ item, index }">
+                <v-breadcrumbs-item :active="index === hierarchy_items.length - 1" class="b-products-window__filter-crumb">
+                  <span v-if="index" class="b-products-window__filter-divider" aria-hidden="true">/</span>
+                  <v-avatar size="32" class="b-products-window__filter-avatar">
+                    <img
+                      v-if="index === 0 ? shop.icon : item.image"
+                      :src="getShopImagePath(index === 0 ? shop.icon : item.image, 64)"
+                      alt=""
+                    />
+                    <v-icon v-else size="20" aria-hidden="true">{{ index === 0 ? 'storefront' : 'folder' }}</v-icon>
+                  </v-avatar>
+                  <span>{{ index === 0 ? shop.title : item.text }}</span>
+                </v-breadcrumbs-item>
+              </template>
+            </v-breadcrumbs>
+          </nav>
         </div>
-      </v-card-actions>
+        <v-btn
+          class="sd-modern-icon-button"
+          icon
+          variant="text"
+          :aria-label="$t('global.actions.close')"
+          @click="dialog_root_filter = false"
+        >
+          <v-icon aria-hidden="true">close</v-icon>
+          <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('global.actions.close') }}</v-tooltip>
+        </v-btn>
+      </v-card-title>
+      <b-category-filter-editor
+        hide-context
+        @cancel="dialog_root_filter = false"
+        :category="
+          parent_folders
+            ? parent_folders
+            : {
+                id: 'root',
+                shop_id: shop.id,
+                filters: shop.filters,
+              }
+        "
+        :shop="shop"
+        @edit-filters="
+          (_filters) => {
+            parent_folders
+              ? (parent_folders.filters = _filters)
+              : (shop.filters = _filters);
+            dialog_root_filter = false;
+          }
+        "
+      />
     </v-card>
   </v-dialog>
 
@@ -1933,6 +2285,7 @@
               parent_folders
                 ? (parent_folders.engine = _engine)
                 : (shop.engine = _engine);
+              dialog_root_engine = false;
             }
           "
           @edit-filters="
@@ -1981,6 +2334,8 @@ import USmartVerify from "../../../ui/smart/verify/USmartVerify.vue";
 import BNoteDialog from "../../note/dialog/BNoteDialog.vue";
 import BNoteButton from "../../note/button/BNoteButton.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import BProductEditInfoIcon from "../edit/info/BProductEditInfoIcon.vue";
+import BProductWindowSectionIcon from "./BProductWindowSectionIcon.vue";
 import BTaxProfileBox from "../../tax/profile/box/BTaxProfileBox.vue";
 import BCategoryBulkActionSetLogisticProfile from "../../category/bulk-action/set-logistic-profile/BCategoryBulkActionSetLogisticProfile.vue";
 import BInventoryBulkDiscount from "../../inventory/bulk/discount/BInventoryBulkDiscount.vue";
@@ -2023,6 +2378,8 @@ export default {
     "click:fast-add",
   ],
   components: {
+    BProductWindowSectionIcon,
+    BProductEditInfoIcon,
     BCategoryEnginePreview,
     BCategoryEngineEditor,
     UDrag,
@@ -2159,6 +2516,12 @@ export default {
   },
 
   data: () => ({
+    ProductType,
+    importGrid: false,
+    importFiltersOpen: false,
+    importLoadError: false,
+    importSearchTimer: null,
+    importRequestId: 0,
     Slugify: Slugify,
 
     Category: Category,
@@ -2269,6 +2632,7 @@ export default {
     status_product_dialog: false,
     status_busy: false,
     product_status_input: null,
+    status_last_choice: null,
 
     //━━━━━━━━━━━━━━━━ 🞧 Extra objects return by special search ━━━━━━━━━━━━
     tax_profile: null,
@@ -2284,7 +2648,25 @@ export default {
   }),
 
   computed: {
+    isSpecImport() {
+      return this.modern && this.set === 'spec';
+    },
+    list_products_only() {
+      return this.modern && !this.isSpecImport && !this.mini && !this.folders.length;
+    },
+    importSortOptions() {
+      return [
+        { value: 'default', title: this.$t('add_product.spec_import.default_sort') },
+        { value: 'most_visited', title: this.$t('sort.most_views') },
+        { value: 'most_popular', title: this.$t('sort.most_likes') },
+        { value: 'newest', title: this.$t('sort.most_recent') },
+        { value: 'bestselling', title: this.$t('sort.most_sell') },
+        { value: 'cheapest', title: this.$t('sort.cheapest') },
+        { value: 'most_expensive', title: this.$t('sort.most_expensive') },
+      ];
+    },
     route_types() {
+      if (this.isSpecImport) return [];
       if (this.$route.name !== "BPageShopProductsList") return [];
       const selected = [this.$route.query.types].flat();
       return Object.values(ProductType)
@@ -2340,7 +2722,7 @@ export default {
     },
 
     hierarchy_items() {
-      return BProductBreadcrumbsHelper.GenerateCategoryHierarchy(
+      const items = BProductBreadcrumbsHelper.GenerateCategoryHierarchy(
         this.$t("global.store"),
         this.parent_folders,
         undefined,
@@ -2349,6 +2731,12 @@ export default {
         null,
         this.IS_VENDOR_PANEL,
       );
+      if (this.modern) {
+        items.forEach((item) => {
+          item.to.query["no-scroll"] = true;
+        });
+      }
+      return items;
     },
 
     copy_product() {
@@ -2394,6 +2782,22 @@ export default {
       );
     },
 
+    menu_context() {
+      if (this.is_menu_multi_select_product) {
+        return {
+          icon: 'checklist',
+          kind: this.$t('product_panel.workspace.context_menu.selection'),
+          title: this.$t('product_panel.workspace.context_menu.selected_count', { count: this.selected_products.length }),
+        };
+      }
+      const item = this.currentProductForMenu || this.currentCategoryForMenu;
+      return {
+        icon: this.currentProductForMenu ? 'inventory_2' : this.currentCategoryForMenu || this.parent_folders ? 'folder' : 'storefront',
+        kind: this.$t(this.currentProductForMenu ? 'global.commons.product' : this.currentCategoryForMenu ? 'global.commons.category' : 'product_panel.workspace.context_menu.current_folder'),
+        title: item?.title || this.parent_folders?.title || this.$t('global.store'),
+      };
+    },
+
     //-------------------------- Marketplace --------------------------
     marketplace_has_verification_step() {
       return this.shop.marketplace?.need_verify;
@@ -2406,6 +2810,15 @@ export default {
           ? [ProductStatus.Pending, ProductStatus.Rejected]
           : []),
       ];
+    },
+    product_status_summary() {
+      return Object.values(ProductStatus)
+        .map((status) => ({
+          code: status.code,
+          name: status.name,
+          count: this.status_product_items?.filter((product) => product.status === status.code).length || 0,
+        }))
+        .filter((status) => status.count);
     },
 
     folder_pages_count() {
@@ -2438,6 +2851,7 @@ export default {
     },
 
     max_folders_per_page() {
+      if (this.isSpecImport) return 4;
       if (this.mini) {
         if (this.$vuetify.display.lgAndUp) {
           return 4 * 12;
@@ -2452,6 +2866,7 @@ export default {
       }
     },
     max_products_per_page() {
+      if (this.isSpecImport) return this.importGrid ? (this.$vuetify.display.width >= 940 ? 6 : 4) : 6;
       if (this.mini) {
         if (this.$vuetify.display.lgAndUp) {
           return 4 * 12;
@@ -2468,6 +2883,7 @@ export default {
   },
   watch: {
     "$route.query"(query) {
+      if (this.isSpecImport) return;
       this.current_dir_id = query.dir ? parseInt(query.dir) : null;
       this.search = query.search;
       this.applyRouteTypes();
@@ -2498,16 +2914,17 @@ export default {
       this.fetchData();
     },
     current_dir_id() {
+      if (this.isSpecImport || this.modern) return;
       this.$nextTick(() => {
-        ScrollHelper.scrollToElement(
-          this.modern ? (this.$refs.breadcrumb_location as HTMLElement) : "#sort_tools",
-          this.modern ? 10 : 0,
-          "smooth",
-        );
+        ScrollHelper.scrollToElement("#sort_tools", 0, "smooth");
       });
     },
   },
   created() {
+    if (this.isSpecImport) {
+      this.fetchData();
+      return;
+    }
     // Load search query:
     this.search = this.$route.query.search;
     this.applyRouteTypes();
@@ -2524,6 +2941,8 @@ export default {
   },
 
   mounted() {
+    // The import dialog owns native controls; hidden Browse must not consume document shortcuts.
+    if (this.isSpecImport) return;
     this.key_listener_keydown = (event) => {
       // Back press (go back)
       if (event.key === "Backspace") {
@@ -2564,11 +2983,43 @@ export default {
   },
 
   beforeUnmount() {
+    clearTimeout(this.importSearchTimer);
+    this.importRequestId++;
     document.removeEventListener("keydown", this.key_listener_keydown);
     document.removeEventListener("keyup", this.key_listener_up);
   },
 
   methods: {
+    onImportSearch(value) {
+      this.search = value;
+      clearTimeout(this.importSearchTimer);
+      this.importSearchTimer = setTimeout(() => {
+        this.product_page = 1;
+        this.fetchData();
+      }, window.SERACH_THROTTLE || 300);
+    },
+    toggleImportView() {
+      this.importGrid = !this.importGrid;
+      this.product_page = 1;
+    },
+    resetImportFilters() {
+      clearTimeout(this.importSearchTimer);
+      this.filters = [];
+      this.only_available = false;
+      this.vendor_filter = null;
+      this.product_page = 1;
+      this.fetchData();
+    },
+    selectImportProduct(product) {
+      if (!this.isSpecImport || this.busy_fetch) return;
+      this.$emit('select', product);
+    },
+    focusSelectedProduct(productId) {
+      this.$nextTick(() => this.$refs.importProduct?.find((button) => button.dataset.productId === String(productId))?.focus());
+    },
+    importStatusClass(status) {
+      return status === 'Open' ? 'sd-modern-status__dot--success' : status === 'Pending' ? 'sd-modern-status__dot--warning' : ['Close', 'Rejected'].includes(status) ? 'sd-modern-status__dot--error' : '';
+    },
     //------------------------------ External methods ------------------------------
     /**
      * Call when main image changed by drag & drop image in products list management
@@ -2835,6 +3286,15 @@ export default {
     },
 
     selectFolder(category) {
+      if (this.isSpecImport) {
+        clearTimeout(this.importSearchTimer);
+        this.current_dir_id = category?.id || null;
+        this.search = null;
+        this.folder_page = 1;
+        this.product_page = 1;
+        this.fetchData();
+        return;
+      }
       this.loading_cat = category;
       this.$router.push({
         /*hash: this.hash,*/ query: { dir: category?.id, "no-scroll": true },
@@ -2842,6 +3302,11 @@ export default {
     },
 
     onFilterChange() {
+      if (this.isSpecImport) {
+        this.product_page = 1;
+        this.fetchData();
+        return;
+      }
       if (this.$route.name === "BPageShopProductsList") {
         const types = Object.values(ProductType)
           .map((type) => type.code)
@@ -2861,6 +3326,7 @@ export default {
     },
 
     applyRouteTypes() {
+      if (this.isSpecImport) return;
       if (this.$route.name !== "BPageShopProductsList") return;
       this.filters = [
         ...(this.filters || []).filter(
@@ -2912,8 +3378,11 @@ export default {
         return;
       }
       this.LAST_QUERY_PARAMS = params;
+      // Import searches cancel older reads; only the latest browse request owns the view.
+      const importRequestId = this.isSpecImport ? ++this.importRequestId : null;
 
       this.busy_fetch = true;
+      if (this.isSpecImport) this.importLoadError = false;
 
       const handleSuccessResponse = ({
         folders,
@@ -2924,6 +3393,7 @@ export default {
         valuation,
         time_filter,
       }) => {
+        if (importRequestId !== null && importRequestId !== this.importRequestId) return;
         this.products_count = total;
 
         this.products = products;
@@ -2958,18 +3428,25 @@ export default {
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
+          if (importRequestId !== null && (importRequestId !== this.importRequestId || error === undefined)) return;
+          if (this.isSpecImport) this.importLoadError = true;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (importRequestId !== null && importRequestId !== this.importRequestId) return;
           this.busy_fetch = false;
         });
     },
 
     //-------------------- Context Menu -------------------------
     showMenu(e, product, category) {
+      if (this.isSpecImport) return;
       //console.log('show',e)
 
-      if (!product && !category && e.target.id !== "manage-panel") {
+      if (
+        !product && !category && e.target.id !== "manage-panel" &&
+        !(this.modern && !this.mini && e.target.classList?.contains("b-products-window__list-background"))
+      ) {
         // Prevent conflicts with product context menu
         return;
       }
@@ -2979,8 +3456,11 @@ export default {
 
       e.preventDefault();
       this.showProductMenu = false;
-      this.x = e.clientX;
-      this.y = e.clientY;
+      const anchor = e.type === "click" && !e.clientX && !e.clientY
+        ? e.currentTarget?.getBoundingClientRect()
+        : null;
+      this.x = anchor ? anchor.x + anchor.width / 2 : e.clientX;
+      this.y = anchor ? anchor.bottom : e.clientY;
       this.$nextTick(() => {
         this.showProductMenu = true;
       });
@@ -3360,7 +3840,14 @@ export default {
       this.status_product_items = products;
       this.product_status_input =
         products?.length === 1 ? products[0].status : null;
+      this.status_last_choice = this.product_status_input;
       this.status_product_dialog = true;
+    },
+    onProductStatusChange(status) {
+      // The accessible selector can activate its checked row; keep that choice a no-op.
+      if (this.modern && status === this.status_last_choice) return;
+      this.status_last_choice = status;
+      this.setBulkProductStatus(status, this.status_product_items);
     },
     setBulkProductStatus(status, products) {
       this.status_busy = true;
@@ -3474,16 +3961,355 @@ export default {
 
 <style lang="scss" scoped>
 .b-products-window__location,
-.b-products-window__tools {
+.b-products-window__catalog,
+.b-products-window__categories,
+.b-products-window__products,
+.b-products-window__tools,
+.b-products-window__feature-body,
+.b-products-window__feature-actions {
   display: contents;
 }
 
+.b-products-window--list {
+  container: b-products-workspace / inline-size;
+  .b-products-window__catalog { container: b-products-workspace / inline-size; }
+  #manage-panel {
+    container: b-products-catalog / inline-size;
+    display: grid;
+    grid-template-columns: 246px minmax(0, 1fr);
+    gap: 0 20px;
+    align-items: start;
+    margin: 0;
+  }
+
+  .b-products-window__categories,
+  .b-products-window__products {
+    display: block;
+    min-width: 0;
+    > .v-col, > [class*="v-col-"] { width: 100%; max-width: none; flex: none; padding: 0; }
+  }
+  .b-products-window__categories { grid-column: 1; align-self: stretch; }
+  .b-products-window__products {
+    position: relative;
+    grid-column: 2;
+    align-self: stretch;
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: -10px;
+      border-inline-start: 1px solid var(--sd-modern-border);
+      pointer-events: none;
+    }
+  }
+  .b-products-window__drop-box { grid-column: 1 / -1; width: 100%; max-width: none; }
+
+  .b-products-window__list-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    min-height: 43px;
+    padding: 4px 10px 12px;
+    h2 { display: flex; align-items: center; gap: 7px; margin: 0; font-family: inherit; font-size: 14px; font-weight: 500; line-height: 21px; letter-spacing: 0; }
+    h2 > .b-products-window__section-icon { display: block; flex-shrink: 0; color: var(--sd-modern-muted); }
+    span { color: var(--sd-modern-muted); font-size: 13px; font-weight: 400; line-height: 20px; }
+    h2 > span { margin-inline-start: 2px; }
+  }
+  .b-products-window__product-heading { padding-inline: 12px; }
+  .b-products-window__list-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 42px;
+    padding: 0 10px 10px;
+    margin: 0;
+    border: 0;
+    > :deep(.v-pagination) { min-width: 0; }
+  }
+  .b-products-window__selection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    > .v-btn { min-height: 28px; height: auto; padding: 3px 6px; font-size: 13px; font-weight: 500; line-height: 20px; }
+  }
+  .b-products-window__back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 12px;
+    margin-block-end: 4px;
+    border-radius: 8px;
+    color: rgb(var(--v-theme-on-surface));
+    text-align: start;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+    > span { min-width: 0; overflow-wrap: anywhere; }
+    > .v-icon { flex-shrink: 0; }
+    &:disabled { opacity: .5; pointer-events: none; }
+  }
+  .b-products-window__list-columns {
+    display: grid;
+    grid-template-columns: 24px minmax(140px, 1fr) 88px 72px 100px 146px;
+    align-items: center;
+    gap: 10px;
+    min-height: 32px;
+    padding: 0 12px 8px;
+  }
+  .b-products-window__select-page {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    cursor: pointer;
+    > input { width: 16px; height: 16px; accent-color: rgb(var(--v-theme-primary)); cursor: pointer; }
+    > input:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  }
+  .b-products-window__select-page-label { display: none; }
+  .b-products-window__column-product { grid-column: 2; }
+  .b-products-window__column-price { grid-column: 3; text-align: end; }
+  .b-products-window__column-stock { grid-column: 4; }
+  .b-products-window__column-activity { grid-column: 5; }
+  .b-products-window__column-actions { grid-column: 6; text-align: end; }
+  .b-products-window__list-empty { padding: 18px 12px; margin: 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+
+  @container b-products-workspace (width > 760px) {
+    &:not(.b-products-window--products-only) {
+      // Native pages share three header tracks and eight natural item tracks; unused tracks collapse.
+      #manage-panel { grid-template-rows: repeat(3, auto) repeat(8, auto); }
+      .b-products-window__categories,
+      .b-products-window__products {
+        --b-products-list-row-min-height: 72px;
+        --b-products-list-item-height: 100%;
+        display: grid;
+        grid-template-rows: subgrid;
+        grid-row: span 11;
+      }
+      .b-products-window__list-heading { grid-row: 1; }
+      .b-products-window__list-pagination { grid-row: 2; }
+      .b-products-window__back-column,
+      .b-products-window__list-columns { grid-row: 3; }
+      .b-products-window__list-columns { padding-block: 8px; }
+      .b-products-window__back-column { display: flex; }
+      .b-products-window__back { flex: 1; margin-block-end: 0; }
+      .b-products-window__list-item { grid-row: var(--b-products-list-row); min-width: 0; }
+      .b-products-window__categories > .b-products-window__list-item :deep(.f-anim) { height: 100%; }
+      .b-products-window__list-empty { grid-row: 4; border-block-start: 1px solid var(--sd-modern-border); }
+    }
+  }
+
+  @container b-products-catalog (max-width: 1060px) {
+    .b-products-window__categories { width: 210px; }
+    .b-products-window__products::before { inset-inline-start: -7px; }
+    .b-products-window__list-columns { grid-template-columns: 24px minmax(130px, 1fr) 83px 70px 100px 108px; gap: 9px; }
+  }
+  @container b-products-catalog (max-width: 850px) {
+    .b-products-window__list-columns { grid-template-columns: 24px minmax(130px, 1fr) 83px 70px 108px; }
+    .b-products-window__column-activity { display: none; }
+    .b-products-window__column-actions { grid-column: 5; }
+  }
+  @container b-products-catalog (max-width: 760px) {
+    .b-products-window__categories { width: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; }
+    .b-products-window__categories > .b-products-window__list-heading,
+    .b-products-window__categories > .sd-modern-table-footer,
+    .b-products-window__categories > .v-col:first-of-type:has(> .b-products-window__back),
+    .b-products-window__categories > .b-products-window__list-empty { grid-column: 1 / -1; }
+    .b-products-window__products { grid-column: 1 / -1; margin-block-start: 20px; }
+    .b-products-window__products::before { content: none; }
+    .b-products-window__list-pagination:empty { display: none; }
+    .b-products-window__list-columns { grid-template-columns: 24px minmax(130px, 1fr) 83px 70px 146px; }
+  }
+  @container b-products-catalog (max-width: 530px) {
+    .b-products-window__categories { display: block; }
+    .b-products-window__list-columns { display: block; min-height: 0; padding: 0; }
+    .b-products-window__list-columns > span { display: none; }
+    .b-products-window__select-page { justify-content: flex-start; gap: 10px; min-height: 44px; padding-inline: 14px; font-size: 13px; font-weight: 400; line-height: 20px; letter-spacing: 0; text-transform: none; }
+    .b-products-window__select-page-label { display: inline; }
+    .b-products-window__selection > .v-btn { min-height: 44px; }
+    .b-products-window__back { min-height: 44px; }
+  }
+  @container b-products-workspace (max-width: 1060px) { #manage-panel { grid-template-columns: 210px minmax(0, 1fr); gap: 0 14px; } }
+  @container b-products-workspace (max-width: 760px) { #manage-panel { grid-template-columns: minmax(0, 1fr); } .b-products-window__categories { grid-column: 1 / -1; } }
+}
+
+.b-products-window--list.b-products-window--products-only {
+  #manage-panel { grid-template-columns: minmax(0, 1fr); }
+  .b-products-window__categories {
+    // Keep the native parent-folder action in the flow when there are no category rows.
+    display: contents;
+    > .b-products-window__list-heading,
+    > .b-products-window__list-pagination,
+    > .b-products-window__list-empty { display: none; }
+  }
+  .b-products-window__products { grid-column: 1 / -1; margin-block-start: 0; }
+  .b-products-window__products::before { content: none; }
+}
+
+.b-products-window__status-dialog {
+  padding: 0 !important;
+  border: 1px solid var(--sd-modern-border);
+  border-radius: 16px !important;
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
+  box-shadow: 0 10px 34px rgba(var(--v-theme-on-surface), .11) !important;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+
+  .b-products-window__status-heading { display: flex; align-items: center; gap: 11px; padding: 18px 22px 16px; white-space: normal; }
+  .b-products-window__status-heading > .v-icon { flex-shrink: 0; color: var(--sd-modern-muted); font-size: 22px !important; }
+  .b-products-window__status-heading h2 { flex: 1; min-width: 0; margin: 0; font-family: inherit; font-size: 18px; font-weight: 500; line-height: 25px; letter-spacing: -.2px; }
+  .b-products-window__status-heading > .sd-modern-icon-button { flex-shrink: 0; width: 32px !important; min-width: 32px !important; height: 32px !important; min-height: 32px !important; }
+  .b-products-window__status-heading > .sd-modern-icon-button :deep(.v-icon) { font-size: 18px !important; }
+  .b-products-window__status-body { padding: 0 22px 18px !important; letter-spacing: normal; }
+  .b-products-window__status-identity { display: flex; align-items: center; gap: 12px; min-width: 0; padding-block: 13px 17px; border-block-start: 1px solid var(--sd-modern-border); }
+  .b-products-window__status-images { flex: 0 1 auto; min-width: 0; max-width: 240px; padding: 0 !important; }
+  .b-products-window__status-images :deep(.citm) { flex-shrink: 0; margin-inline-end: 0 !important; }
+  .b-products-window__status-images :deep(.citm:not(:first-child)) { margin-left: 0 !important; margin-right: 0 !important; margin-inline-start: -6px !important; }
+  .b-products-window__status-copy { flex: 1; min-width: 0; }
+  .b-products-window__status-name { font-size: 14px; font-weight: 500; line-height: 21px; overflow-wrap: anywhere; }
+  .b-products-window__status-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-block-start: 3px; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  .b-products-window__status-summary-item { display: inline-flex; align-items: center; gap: 5px; margin-inline-end: 5px; white-space: nowrap; }
+  .b-products-window__status-summary-item > .sd-modern-status__dot { width: 5px; height: 5px; }
+  .b-products-window__status-help { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 12px; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  .b-products-window__status-help > .v-icon { flex-shrink: 0; margin-block-start: 2px; font-size: 15px !important; }
+  .b-products-window__status-announcement { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .b-products-window__status-current { margin-inline-start: 8px; color: var(--sd-modern-muted); font-family: inherit; font-size: 11px; font-weight: 400; line-height: 16px; }
+  .b-products-window__status-options { margin: 0; }
+  .b-products-window__status-options :deep(> .rounded-card) { border: 1px solid var(--sd-modern-border); border-radius: 12px !important; }
+  .b-products-window__status-options :deep(> .rounded-card > .pp) { min-height: 68px; padding: 12px 14px !important; border-color: var(--sd-modern-border) !important; }
+  .b-products-window__status-options :deep(.mnh) { gap: 12px; min-height: 42px; }
+  .b-products-window__status-options :deep(.mnh > .flex-grow-0) { flex: 0 0 22px; width: 22px; margin: 0 !important; padding: 0; background: transparent !important; }
+  .b-products-window__status-options :deep(.mnh > .flex-grow-0 > .text-center) { width: 22px !important; }
+  .b-products-window__status-options :deep(.mnh > .flex-grow-0 .v-icon) { color: var(--sd-modern-muted) !important; font-size: 20px !important; }
+  .b-products-window__status-options :deep(.circle-check) { width: 18px; height: 18px; margin: 2px; animation: none; }
+  .b-products-window__status-options :deep(.circle-check .v-progress-circular) { width: 12px !important; height: 12px !important; }
+  .b-products-window__status-options :deep(.mnh > .flex-grow-1 > b) { font-family: inherit; font-size: 14px; font-weight: 500; line-height: 21px; }
+  .b-products-window__status-options :deep(.mnh > .flex-grow-1 > .small) { margin-block-start: 2px; color: var(--sd-modern-muted); font-family: inherit; font-size: 13px; font-weight: 400; line-height: 20px; opacity: 1 !important; }
+  .b-products-window__status-options :deep(.mnh > .v-icon) { flex-shrink: 0; margin: 0 !important; color: inherit; font-size: 18px !important; opacity: .65; }
+  .b-products-window__status-options :deep(.pp[aria-checked="true"]) { background: rgba(var(--v-theme-on-surface), .035) !important; }
+  .b-products-window__status-footer { min-height: 0; padding: 13px 22px 16px; border-block-start: 1px solid var(--sd-modern-border); }
+  .b-products-window__status-actions { display: flex; justify-content: flex-end; width: 100%; }
+  .b-products-window__status-close { min-height: 42px; height: auto; padding: 8px 15px; border-color: var(--sd-modern-border); font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; letter-spacing: 0; text-transform: none; }
+  .b-products-window__status-close :deep(.v-icon) { font-size: 18px !important; }
+
+  @media (max-width: 450px) {
+    .b-products-window__status-heading { padding: 15px 16px 13px; gap: 9px; }
+    .b-products-window__status-heading h2 { font-size: 17px; line-height: 24px; }
+    .b-products-window__status-body { padding: 0 16px 16px !important; }
+    .b-products-window__status-identity { flex-wrap: wrap; gap: 9px; }
+    .b-products-window__status-images { max-width: 100%; flex-wrap: wrap; }
+    .b-products-window__status-copy { flex-basis: 160px; }
+    .b-products-window__status-options :deep(> .rounded-card > .pp) { padding: 12px !important; }
+    .b-products-window__status-options :deep(.mnh) { gap: 10px; }
+    .b-products-window__status-options :deep(.mnh > .v-icon) { max-width: 20px; white-space: normal; }
+    .b-products-window__status-footer { padding: 12px 16px 14px; }
+  }
+  @media (max-width: 599px), (pointer: coarse) {
+    .b-products-window__status-heading > .sd-modern-icon-button { width: 44px !important; min-width: 44px !important; height: 44px !important; min-height: 44px !important; }
+    .b-products-window__status-close { min-height: 44px; }
+  }
+}
+
+.b-products-window__context {
+  width: 100%;
+  padding: 0 !important;
+  max-height: inherit;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: rgb(var(--v-theme-on-surface));
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid var(--sd-modern-border);
+  border-radius: 13px !important;
+  box-shadow: 0 10px 34px rgba(var(--v-theme-on-surface), .11) !important;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 19.5px;
+
+  .b-products-window__context-heading { display: flex; align-items: center; gap: 10px; padding: 13px 15px; border-block-end: 1px solid var(--sd-modern-border); }
+  .b-products-window__context-identity { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px; color: var(--sd-modern-muted); background: rgba(var(--v-theme-on-surface), .035); }
+  .b-products-window__context-copy { flex: 1; min-width: 0; }
+  .b-products-window__context-kind { color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 16px; }
+  .b-products-window__context-heading h2 { margin: 0; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; letter-spacing: 0; overflow-wrap: anywhere; }
+  .b-products-window__context-state { display: inline-flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 5px; max-width: 100px; color: var(--sd-modern-muted); font-family: inherit; font-size: 11px; font-weight: 400; line-height: 16px; }
+  > .v-list { padding: 5px 6px !important; color: inherit; background: transparent; }
+  > .v-list + .v-list { border-block-start: 1px solid var(--sd-modern-border); }
+  .v-list-item { min-height: 36px; padding: 7px 9px; border-radius: 7px; color: inherit; }
+  .v-list-item:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: -2px; }
+  :deep(.v-list-item-title) { font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; letter-spacing: 0; white-space: normal; overflow-wrap: anywhere; }
+  :deep(.v-list-item-subtitle) { margin-block-start: 1px; color: var(--sd-modern-muted); font-family: inherit; font-size: 11px; font-weight: 400; line-height: 16px; letter-spacing: 0; white-space: normal; overflow: visible; overflow-wrap: anywhere; opacity: 1; -webkit-line-clamp: unset; }
+  :deep(.v-list-item__prepend > .v-icon) { font-size: 17px !important; opacity: 1; color: var(--sd-modern-muted); }
+  :deep(.v-list-item__prepend > .v-list-item__spacer) { width: 10px; }
+  :deep(.v-list-item__append > .v-icon) { opacity: 1; color: var(--sd-modern-muted); }
+  :deep(.v-list-item__append > .v-list-item__spacer) { width: 8px; }
+  :deep(.v-list-item__prepend > .v-avatar) { margin-inline-end: 0 !important; }
+  .v-divider { margin: 5px -6px !important; border-color: var(--sd-modern-border); opacity: 1; }
+  .b-products-window__context-notice { display: flex; align-items: flex-start; gap: 8px; margin: 3px 9px 5px; padding: 9px 10px; border-radius: 7px; background: rgba(var(--v-theme-on-surface), .035); color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; }
+  .b-products-window__context-notice > .v-icon { flex-shrink: 0; margin: 1px 0 0 !important; font-size: 15px !important; }
+
+  @media (max-width: 599px), (pointer: coarse) {
+    .v-list-item { min-height: 44px; }
+  }
+}
+
 .b-products-window--modern {
-  padding: 15px 17px 0;
+  padding: 0;
   border: 0;
-  border-radius: 17px;
   font-size: 13px;
   line-height: 1.5;
+
+  .b-products-window__catalog {
+    display: block;
+    padding: 15px 17px 17px;
+    border: 0;
+    border-radius: 17px;
+    font-size: inherit;
+    line-height: inherit;
+  }
+  .b-products-window__tool-row { margin: 18px 0 0; }
+
+  #manage-panel .item { transition: none; }
+
+  #manage-panel :deep(.b-product-window-product-mini__note) {
+    display: inline-flex;
+    top: -14px !important;
+    left: auto !important;
+    right: auto !important;
+    inset-inline-start: -8px !important;
+  }
+  #manage-panel :deep(.b-product-window-product-mini__note > .v-btn),
+  #manage-panel :deep(.b-products-window__folder-note > .v-btn) {
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0;
+  }
+  #manage-panel :deep(.b-product-window-product-mini__note > .v-btn > .v-btn__content > .v-icon),
+  #manage-panel :deep(.b-products-window__folder-note > .v-btn > .v-btn__content > .v-icon) {
+    font-size: 16px !important;
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    // Move the larger touch target outward to keep the visible marker in the same place.
+    #manage-panel :deep(.b-product-window-product-mini__note) {
+      top: -18px !important;
+      inset-inline-start: -12px !important;
+    }
+    #manage-panel :deep(.b-product-window-product-mini__note > .v-btn),
+    #manage-panel :deep(.b-products-window__folder-note > .v-btn) {
+      width: 44px !important;
+      min-width: 44px !important;
+      height: 44px !important;
+      min-height: 44px !important;
+    }
+  }
 
   .b-products-window__location {
     display: flex;
@@ -3513,6 +4339,7 @@ export default {
 
     :deep(> .v-spacer) { display: none; }
     :deep(> div:has(> .v-btn-toggle)) { order: 2; flex: 1; }
+    :deep(> .s-products-sort-view__availability-group) { order: 1; }
     :deep(> .v-btn:first-child) { order: 1; }
     :deep(> .show-on-small-900) { order: 2; margin-inline-end: auto; }
     :deep(> .v-btn:not(.b-products-window__view-button)) {
@@ -3525,8 +4352,8 @@ export default {
       letter-spacing: 0;
     }
     :deep(> .v-btn .v-icon) { font-size: 18px !important; margin-block: 0 !important; }
-    :deep(.v-btn-toggle) { height: 36px; gap: 5px; }
-    :deep(.v-btn-toggle > .v-btn) {
+    :deep(.v-btn-toggle:not(.s-products-sort-view__availability-group)) { height: 36px; gap: 5px; }
+    :deep(.v-btn-toggle:not(.s-products-sort-view__availability-group) > .v-btn) {
       height: 36px !important;
       min-height: 36px;
       border-radius: 7px;
@@ -3537,7 +4364,7 @@ export default {
       line-height: 15px;
       letter-spacing: 0;
     }
-    :deep(.v-btn-toggle > .dark-flat) {
+    :deep(.v-btn-toggle:not(.s-products-sort-view__availability-group) > .dark-flat) {
       color: rgb(var(--v-theme-on-surface)) !important;
       background: var(--sd-modern-canvas-color) !important;
     }
@@ -3563,32 +4390,60 @@ export default {
   .b-products-window__inventory-filter { order: 7; flex: 0 1 230px; }
   .b-products-window__vendor-filter { order: 8; flex: 0 1 230px; }
 
-  // Extend the lower canvas through the workspace inset without changing legacy row flow.
   .b-products-window__tools {
+    --tool-outer-radius: 12px;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
-    flex: 0 0 calc(100% + 26px);
-    width: calc(100% + 26px);
-    margin-inline: -13px;
-    margin-block-start: 18px;
-    padding-block-start: 18px;
-    background: var(--sd-modern-canvas-color);
+    grid-auto-rows: minmax(min-content, 1fr) max-content;
+    gap: 5px;
+    flex: 0 0 100%;
+    width: 100%;
+    margin: 0;
     align-items: stretch;
 
     > :deep([class*="v-col-"]) {
+      --tool-start-start: 2px;
+      --tool-start-end: 2px;
+      --tool-end-start: 2px;
+      --tool-end-end: 2px;
       width: auto;
       max-width: none;
       min-width: 0;
       flex: none;
+      grid-row: span 2;
       padding: 0 !important;
+    }
+
+    > :deep([class*="v-col-"]:not(.b-products-window__creation-stack)) {
+      display: grid !important;
+      grid-template-rows: subgrid;
+    }
+
+    &:not(:has(> :nth-child(4))) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    > :deep(:first-child) {
+      --tool-start-start: var(--tool-outer-radius);
+      --tool-end-start: var(--tool-outer-radius);
+    }
+    > :deep(:last-child) {
+      --tool-start-end: var(--tool-outer-radius);
+      --tool-end-end: var(--tool-outer-radius);
     }
   }
 
   .b-products-window__creation-stack {
+    --tool-outer-radius: 10px;
     display: grid !important;
     grid-template-rows: repeat(3, minmax(100px, 1fr));
     gap: 5px;
+
+    .b-products-window__create:not(:first-child) {
+      border-start-start-radius: 2px !important;
+      border-start-end-radius: 2px !important;
+    }
+    .b-products-window__create:not(:last-child) {
+      border-end-start-radius: 2px !important;
+      border-end-end-radius: 2px !important;
+    }
   }
 
   .b-products-window__create {
@@ -3596,7 +4451,10 @@ export default {
     min-height: 100px;
     height: auto !important;
     border: 1px solid var(--sd-modern-border);
-    border-radius: 10px !important;
+    border-start-start-radius: var(--tool-start-start, 10px) !important;
+    border-start-end-radius: var(--tool-start-end, 10px) !important;
+    border-end-start-radius: var(--tool-end-start, 10px) !important;
+    border-end-end-radius: var(--tool-end-end, 10px) !important;
     box-shadow: none !important;
     color: rgb(var(--v-theme-on-surface));
 
@@ -3626,37 +4484,261 @@ export default {
   }
 
   .b-products-window__feature {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    grid-row: span 2;
+    grid-template-rows: subgrid;
     height: 100%;
-    padding: 20px 13px;
-    border-radius: 12px;
+    padding: 12px 13px;
+    border-start-start-radius: var(--tool-start-start, 12px);
+    border-start-end-radius: var(--tool-start-end, 12px);
+    border-end-start-radius: var(--tool-end-start, 12px);
+    border-end-end-radius: var(--tool-end-end, 12px);
     text-align: center;
 
-    > div { min-width: 0; width: 100%; }
-    h3 { font-family: inherit; font-size: 14px; font-weight: 500; line-height: 20px; margin-block-end: 10px; }
+    > div { display: contents; }
+    h3 { font-family: inherit; font-size: 14px; font-weight: 500; line-height: 20px; margin-block-end: 6px; }
     small { font-family: inherit; font-size: 11px; font-weight: 400; line-height: 18px; color: var(--sd-modern-muted); }
     .sd-modern-button { margin: 4px !important; }
   }
 
-  @media (max-width: 1199px) {
-    .b-products-window__tools { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .b-products-window__feature-body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; }
+  .b-products-window__feature-actions { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; gap: 8px; min-width: 0; }
+  .b-products-window__feature-actions .sd-modern-button {
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 !important;
+    :deep(.v-btn__content) { display: flex; gap: 6px; min-width: 0; max-width: 100%; }
+  }
+  .b-products-window__filter-tile .b-products-window__feature-actions {
+    flex-wrap: nowrap;
+    gap: 6px;
+    .sd-modern-button {
+      flex: 1 1 0;
+      padding-inline: 8px;
+      &:only-child { flex: 0 1 auto; }
+    }
+  }
+  .b-products-window__action-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .b-products-window__scope-avatar {
+    flex-shrink: 0;
+    img { width: 100%; height: 100%; object-fit: cover; }
+    :deep(.v-icon) { margin: 0; }
+  }
+  .b-products-window__engine-tile .b-products-window__feature-body > .my-2 { margin-block: 0 !important; }
+
+  @media (min-width: 600px) and (max-width: 1199px) {
+    .b-products-window__tools {
+      &, &:not(:has(> :nth-child(4))) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      > :deep(:first-child) { --tool-end-start: 2px; }
+      > :deep(:last-child) { --tool-start-end: 2px; }
+      > :deep(:nth-child(2)) { --tool-start-end: var(--tool-outer-radius); }
+      > :deep(:nth-child(2n + 1):nth-last-child(-n + 2)) { --tool-end-start: var(--tool-outer-radius); }
+      > :deep(:last-child:nth-child(2n + 1)) { grid-column: 1 / -1; }
+    }
   }
   @media (max-width: 599px) {
-    .b-products-window__tools { grid-template-columns: minmax(0, 1fr); }
+    .b-products-window__tools {
+      grid-auto-rows: auto;
+      &, &:not(:has(> :nth-child(4))) { grid-template-columns: minmax(0, 1fr); }
+      > :deep(:first-child) { --tool-start-end: var(--tool-outer-radius); --tool-end-start: 2px; }
+      > :deep(:last-child) { --tool-start-end: 2px; --tool-end-start: var(--tool-outer-radius); }
+    }
     .b-products-window__sort :deep(.search-box) { flex: 1 1 180px; max-width: none; }
     .b-products-window__inventory-filter { flex: 1 1 180px; }
-    .b-products-window__feature { min-height: 270px; padding-block: 25px; }
+    .b-products-window__feature { min-height: 0; }
   }
   @media (max-width: 599px), (pointer: coarse) {
     .b-products-window__sort :deep(.v-input .v-field__input),
     .b-products-window__sort :deep(.v-select .v-field__input > input) { font-size: 16px; min-height: 44px; }
   }
+
+  // Vendor tools share the native actions, with the approved compact three-tile layout.
+  &:has(.b-products-window__tools--vendor) { container: b-products-workspace / inline-size; }
+  .b-products-window__tools--vendor {
+    &, &:not(:has(> :nth-child(4))) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    grid-auto-rows: auto;
+    gap: 5px;
+    margin-block-start: 0;
+    padding-block-start: 0;
+    border-radius: 12px;
+    overflow: hidden;
+
+    > :deep([class*="v-col-"]) { grid-row: auto; border-radius: 2px; }
+    > :deep([class*="v-col-"]:not(.b-products-window__creation-stack)) { display: flex !important; }
+    > .b-products-window__creation-stack {
+      display: flex !important;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 20px !important;
+      background: rgb(var(--v-theme-surface));
+    }
+    h3 { margin: 0; font-size: 14px; font-weight: 500; line-height: 21px; }
+    .b-products-window__feature {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+      padding: 20px;
+      border: 0;
+      border-radius: 2px;
+      text-align: start;
+      > div { display: contents; }
+      small { font-size: 12px; line-height: 19px; }
+    }
+    .b-products-window__feature-body { align-items: flex-start; justify-content: flex-start; gap: 12px; }
+    .b-products-window__feature-body > .mt-2 { margin-block-start: 0 !important; }
+    .b-products-window__feature-actions { margin-block-start: auto; justify-content: flex-start; }
+    .b-products-window__managed-engine { display: inline-flex; min-width: 0; max-width: 100%; border-radius: 9px; }
+    .b-products-window__managed-engine:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
+    .b-products-window__vendor-create-actions { display: flex; flex: 1; flex-direction: column; gap: 8px; width: 100%; }
+    .b-products-window__vendor-create-actions .sd-modern-button { justify-content: flex-start; }
+    .sd-modern-button { height: auto; min-height: 36px; padding: 8px 13px; border-color: var(--sd-modern-border); border-radius: 9px; font-size: 13px; font-weight: 500; line-height: 20px; }
+    .sd-modern-button :deep(.v-btn__content) { gap: 8px; white-space: normal; font-size: 13px; font-weight: 500; line-height: 20px; text-align: start; }
+    .sd-modern-button :deep(.v-icon) { width: 16px; height: 16px; font-size: 16px; margin: 0 !important; }
+    .sd-modern-button:focus-visible { outline-offset: -3px; }
+  }
+  @container b-products-workspace (max-width: 850px) {
+    .b-products-window__tools--vendor {
+      &, &:not(:has(> :nth-child(4))) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      > :deep(:last-child) { grid-column: 1 / -1; }
+    }
+  }
+  @container b-products-workspace (max-width: 560px) {
+    .b-products-window__tools--vendor {
+      &, &:not(:has(> :nth-child(4))) { grid-template-columns: minmax(0, 1fr); }
+      > :deep(:last-child) { grid-column: auto; }
+    }
+  }
+  @media (max-width: 599px), (pointer: coarse) {
+    .b-products-window__tools--vendor .sd-modern-button { min-height: 44px; }
+  }
+}
+
+.b-products-window__filter-editor {
+  > .v-card-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 24px; background: rgb(var(--v-theme-surface)); border-block-end: 1px solid var(--sd-modern-border); font-size: 18px; font-weight: 500; line-height: 26px; white-space: normal; overflow-wrap: anywhere; }
+  .b-products-window__filter-heading { flex: 1 1 auto; min-width: 0; }
+  .b-products-window__filter-heading h2 { margin: 0; font-family: inherit; font-size: 18px; font-weight: 500; line-height: 26px; }
+  .b-products-window__filter-breadcrumbs { flex-wrap: wrap; gap: 8px 0; margin-block-start: 8px; padding: 0; color: var(--sd-modern-muted); font-size: 13px; font-weight: 400; line-height: 20px; }
+  .b-products-window__filter-crumb { min-width: 0; max-width: 100%; gap: 8px; padding: 0; white-space: normal; }
+  .b-products-window__filter-crumb > span { min-width: 0; overflow-wrap: anywhere; }
+  .b-products-window__filter-divider { flex: 0 0 auto; }
+  .b-products-window__filter-avatar { flex: 0 0 auto; background: var(--sd-modern-inset); }
+  .b-products-window__filter-avatar > img { width: 100%; height: 100%; object-fit: cover; }
+  .b-products-window__filter-avatar :deep(.v-icon) { margin: 0; }
+  .b-products-window__filter-breadcrumbs :deep(.v-breadcrumbs-divider) { display: none; }
+  .sd-modern-icon-button { flex-shrink: 0; }
+
+  @media (max-width: 600px) { > .v-card-title { padding: 16px; } }
 }
 
 .b-products-window__editor {
   > .v-card-title { padding: 22px 24px; font-size: 18px; font-weight: 500; }
   > .v-card-text { padding: 0 24px 24px; }
+}
+</style>
+
+<style lang="scss" scoped>
+.b-products-window--spec-import {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  .b-products-window__import { min-width: 0; font-size: 14px; line-height: 21px; }
+  .b-products-window__import-toolbar { display: flex; align-items: center; gap: 12px; margin: 0; padding: 0 0 15px; border-bottom: 1px solid var(--sd-modern-border); }
+  .b-products-window__import-search { flex: 1; min-width: 100px; }
+  .b-products-window__import-search :deep(.v-field) { align-items: center; }
+  .b-products-window__import-search :deep(.v-field__input) { box-sizing: border-box; min-height: 36px; height: 36px; padding-block: 0; font-size: 13px; line-height: 20px; }
+  .b-products-window__import-search :deep(.v-field__prepend-inner),
+  .b-products-window__import-search :deep(.v-field__append-inner),
+  .b-products-window__import-search :deep(.v-field__clearable) { padding-top: 0; align-items: center; }
+  .b-products-window__import-search :deep(.v-field__prepend-inner) { padding-inline-end: 8px; }
+  .b-products-window__import-sort { min-width: 0; max-width: 170px; height: 36px; font: inherit; font-size: 13px; line-height: 20px; color: inherit; background: transparent; padding-inline-end: 18px; appearance: auto; }
+  .b-products-window__import-sort option { color: rgb(var(--v-theme-on-surface)); background: rgb(var(--v-theme-surface)); }
+  .b-products-window__import-filter-dot { position: absolute; inset-block-start: 3px; inset-inline-end: 3px; width: 5px; height: 5px; border-radius: 50%; background: rgb(var(--v-theme-primary)); }
+  .b-products-window__import-filters { padding-block: 18px 20px; border-bottom: 1px solid var(--sd-modern-border); }
+  .b-products-window__import-filter-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  h2 { margin: 0; font-size: 14px; font-weight: 500; line-height: 22px; }
+  .b-products-window__import-availability { display: flex; align-items: center; gap: 6px; }
+  label { display: flex; align-items: center; gap: 8px; min-height: 32px; padding-block: 3px; font-size: 12px; line-height: 18px; cursor: pointer; }
+  input[type='checkbox'] { width: 15px; height: 15px; margin: 0; accent-color: rgb(var(--v-theme-primary)); flex-shrink: 0; }
+  .b-products-window__import-filter-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 14px; }
+  fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+  legend { margin-bottom: 6px; padding: 0; font-size: 12px; font-weight: 500; line-height: 18px; }
+  fieldset > div { display: flex; flex-wrap: wrap; gap: 0 18px; }
+  .b-products-window__import-vendor { max-width: 320px; margin-top: 14px; }
+  .b-products-window__import-catalog { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: 22px; padding-top: 19px; }
+  .b-products-window__import-categories { min-width: 0; }
+  .b-products-window__import-categories h2 { margin-bottom: 12px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; }
+  .b-products-window__import-categories nav { display: grid; gap: 4px; }
+  .b-products-window__import-categories nav button { display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 39px; width: 100%; padding: 8px 9px; border: 0; border-radius: 8px; background: transparent; color: var(--sd-modern-muted); font: inherit; font-size: 12px; line-height: 18px; text-align: start; }
+  .b-products-window__import-categories nav button > span { min-width: 0; overflow-wrap: anywhere; }
+  .b-products-window__import-categories nav button > svg { flex-shrink: 0; }
+  .b-products-window__import-categories nav button[aria-current],
+  .b-products-window__import-categories nav button:hover { color: inherit; background: rgb(var(--v-theme-surface)); box-shadow: 0 2px 5px rgba(var(--v-theme-on-surface), .07); }
+  .b-products-window__import-category-pager { display: flex; align-items: center; gap: 4px; margin-top: 15px; }
+  .b-products-window__import-category-pager > span { flex: 1; text-align: center; font-size: 10px; color: var(--sd-modern-muted); }
+  .b-products-window__import-products { min-width: 0; }
+  .b-products-window__import-location { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; min-height: 23px; margin-bottom: 14px; }
+  .b-products-window__import-location nav { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; min-width: 0; font-size: 12px; line-height: 18px; }
+  .b-products-window__import-location nav button { min-height: 24px; padding: 0; color: var(--sd-modern-muted); text-align: start; }
+  .b-products-window__import-location > span { padding-top: 3px; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; white-space: nowrap; }
+  .b-products-window__import-active { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 11px; color: var(--sd-modern-muted); }
+  .b-products-window__import-active > span { padding: 5px 7px; border-radius: 5px; background: rgb(var(--v-theme-surface)); }
+  .b-products-window__import-list, .b-products-window__import-skeletons { display: grid; gap: 6px; min-width: 0; }
+  .b-products-window__import-product-wrapper { min-width: 0; }
+  .b-products-window__import-product { box-sizing: border-box; display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; min-height: 76px; padding: 12px; border: 1px solid transparent; border-radius: 10px; background: rgb(var(--v-theme-surface)); color: inherit; text-align: start; }
+  .b-products-window__import-product[aria-pressed='true'] { border-color: rgb(var(--v-theme-primary)); background: color-mix(in srgb, rgb(var(--v-theme-primary)) 6%, rgb(var(--v-theme-surface))); }
+  .b-products-window__import-image { width: 44px; height: 44px; flex: 0 0 44px; }
+  .b-products-window__import-fallback { display: grid; place-items: center; border-radius: 9px; background: var(--sd-modern-inset); }
+  .b-products-window__import-product-copy { flex: 1; min-width: 0; }
+  .b-products-window__import-product-name { display: block; font-size: 13px; font-weight: 500; line-height: 20px; overflow-wrap: anywhere; }
+  .b-products-window__import-product-subtitle { display: block; margin-top: 2px; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; overflow-wrap: anywhere; }
+  .b-products-window__import-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; }
+  .b-products-window__import-meta .sd-modern-status { font-size: inherit; line-height: inherit; }
+  .b-products-window__import-type { display: inline-flex; align-items: center; gap: 5px; }
+  .b-products-window__import-arrow { flex-shrink: 0; color: var(--sd-modern-muted); }
+  .b-products-window__import-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .b-products-window__import-grid .b-products-window__import-product { position: relative; align-items: flex-start; flex-wrap: wrap; gap: 10px; height: 100%; }
+  .b-products-window__import-grid .b-products-window__import-product-copy { flex-basis: 100%; }
+  .b-products-window__import-grid .b-products-window__import-arrow { position: absolute; inset-inline-end: 12px; inset-block-start: 25px; }
+  .b-products-window__import-pagination { margin: 0; padding: 17px 0 0; font-size: 11px; color: var(--sd-modern-muted); background: transparent; }
+  .sd-modern-empty-state { background: transparent; }
+  .sd-modern-empty-state h3 { margin-block: 12px 6px; font-size: 14px; font-weight: 500; line-height: 22px; }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  button:disabled { opacity: .45; cursor: default; }
+  :dir(rtl) .b-products-window__import-direction { transform: scaleX(-1); }
+
+  @media (min-width: 940px) {
+    .b-products-window__import-catalog { grid-template-columns: 184px minmax(0, 1fr); gap: 28px; }
+    .b-products-window__import-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 600px) {
+    .b-products-window__import-toolbar { flex-wrap: wrap; gap: 9px; }
+    .b-products-window__import-search { flex-basis: 100%; }
+    .b-products-window__import-sort { flex: 1; max-width: none; }
+    .b-products-window__import-catalog { display: block; padding-top: 17px; }
+    .b-products-window__import-categories { margin-bottom: 20px; }
+    .b-products-window__import-categories h2 { margin-bottom: 7px; }
+    .b-products-window__import-categories nav { display: flex; flex-wrap: wrap; }
+    .b-products-window__import-categories nav button { width: auto; }
+    .b-products-window__import-category-pager { justify-content: flex-end; margin-top: 7px; }
+    .b-products-window__import-category-pager > span { flex: 0 1 auto; margin-inline: 6px; }
+    .b-products-window__import-location { align-items: center; margin-bottom: 9px; }
+    .b-products-window__import-location nav button { min-height: 44px; }
+    .b-products-window__import-filter-columns { gap: 15px; }
+    fieldset > div { display: block; }
+    .b-products-window__import-product { gap: 10px; }
+    .b-products-window__import-grid .b-products-window__import-product { padding: 10px 12px; }
+  }
+  @media (max-width: 380px) {
+    .b-products-window__import-filter-columns { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 680px), (pointer: coarse) {
+    .b-products-window__import-sort { height: 44px; font-size: 16px; }
+    .b-products-window__import-search :deep(.v-field__input) { min-height: 44px; height: 44px; font-size: 16px; }
+    label, .b-products-window__import-categories nav button { min-height: 44px; }
+  }
 }
 </style>

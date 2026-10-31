@@ -81,8 +81,15 @@
             </v-list-item>
           </v-list>
 
+          <b-spreadsheet-conversion-progress
+            v-if="converting_file && converting_filename"
+            :filename="converting_filename"
+          />
           <b-spreadsheet-vendors
+            v-show="!converting_filename"
             ref="spreadsheet"
+            :can-select-file="!busy_send && !converting_filename"
+            @update:converting="converting_file = $event"
             v-model:totalItems="total_items"
             class="mb-3"
             @update:valid="(val) => (is_valid = val)"
@@ -98,11 +105,11 @@
 
           <div class="widget-buttons mt-4">
             <v-btn
-              :disabled="!is_valid || !personal_information_verified"
+              :disabled="!is_valid || converting_file || busy_send || !personal_information_verified"
               color="primary"
               size="x-large"
               variant="elevated"
-              @click="step = 2"
+              @click="!converting_file && !busy_send && is_valid && personal_information_verified && (step = 2)"
             >
               {{ $t("global.actions.continue") }}
               <v-icon class="ms-1">{{ $t("icons.chevron_next") }}</v-icon>
@@ -146,6 +153,7 @@
                 variant="elevated"
                 size="x-large"
                 @click="postToServer()"
+                :disabled="converting_file || !is_valid"
               >
                 <v-icon class="me-2 blink-me" size="small"
                   >fiber_manual_record
@@ -242,6 +250,7 @@
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
+import BSpreadsheetConversionProgress from "@selldone/components-vue/backoffice/spreadsheet/conversion/BSpreadsheetConversionProgress.vue";
 import { FileFormatConverterOnline } from "@selldone/components-vue/utils/converters/FileFormatConverterOnline.ts";
 import { Eligible } from "@selldone/core-js/enums/shop/ShopLicense";
 import BSpreadsheetVendors from "../../spreadsheet/vendors/BSpreadsheetVendors.vue";
@@ -254,6 +263,7 @@ export default {
   name: "BVendorsImporter",
   mixins: [],
   components: {
+    BSpreadsheetConversionProgress,
     BShopQuotaImporter,
     BSpreadsheetVendors,
   },
@@ -269,6 +279,8 @@ export default {
 
     step: 1,
     is_valid: false,
+    converting_file: false,
+    converting_filename: "",
 
     progress: 0,
     busy_send: false,
@@ -296,8 +308,14 @@ export default {
     },
   },
 
+  beforeUnmount() {
+    this.converting_file = false;
+    this.converting_filename = "";
+  },
+
   methods: {
     postToServer() {
+      if (this.converting_file || this.busy_send || !this.is_valid) return;
       this.busy_send = true;
       this.progress = 0;
 
@@ -366,6 +384,10 @@ export default {
       this.show_drop = false;
     },
     dragover(event) {
+      if (this.converting_file || this.busy_send || this.step !== 1) {
+        event.preventDefault();
+        return;
+      }
       event.preventDefault();
 
       // CSV File:
@@ -380,7 +402,11 @@ export default {
       // Default file drop:
     },
 
-    drop(event) {
+    async drop(event) {
+      if (this.converting_file || this.busy_send || this.step !== 1) {
+        event.preventDefault();
+        return;
+      }
       if (!this.show_drop) return;
 
       this.show_drop = false;
@@ -399,14 +425,35 @@ export default {
           file.name.toLowerCase().endsWith(".xlsx")
         ) {
           // Online convert excel to csv:
-          FileFormatConverterOnline.ConvertToCsv(
-            this,
-            this.$route.params.shop_id,
-            file,
-            (data) => {
-              this.loadCsvImport(data, true);
-            },
-          );
+          const shopId = this.shop.id;
+          const routeShopId = this.$route.params.shop_id;
+          this.$refs.spreadsheet?.resetToDefault();
+          this.is_valid = false;
+          this.total_items = 0;
+          this.converting_file = true;
+          this.converting_filename = file.name;
+          try {
+            await FileFormatConverterOnline.ConvertToCsv(
+              this,
+              routeShopId,
+              file,
+              (data) => {
+                if (
+                  !this.converting_file ||
+                  this.converting_filename !== file.name ||
+                  this.shop.id !== shopId ||
+                  this.$route.params.shop_id !== routeShopId
+                ) return;
+                this.loadCsvImport(data, true);
+              },
+            );
+          } catch (error) {
+            // Upload failures are handled by UploadHelper; report unexpected failures too.
+            NotificationService.showLaravelError(error);
+          } finally {
+            this.converting_file = false;
+            this.converting_filename = "";
+          }
 
           return;
         }

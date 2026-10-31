@@ -13,52 +13,119 @@
   -->
 
 <template>
-  <s-widget-box
+  <component
+    :is="modern ? 'section' : 's-widget-box'"
+    :class="{
+      'b-product-analytics b-product-ratings-modern sd-modern-widget text-start':
+        modern,
+    }"
     :icon-to="{
       name: IS_VENDOR_PANEL ? 'Vendor_AddProduct' : 'BPageProductEdit',
       params: { product_id: product.id },
       hash: '#rating',
     }"
-    :sub-title="$t('product_admin.dashboard.survey.title_small')"
-    :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mr-sm' style='font-size: 6px;'></span>  ${$t(
-      'product_admin.dashboard.survey.title',
-    )}  </h5>`"
-    icon="fa:fas fa-poll"
+    :sub-title="
+      modern ? undefined : $t('product_admin.dashboard.survey.title_small')
+    "
+    :title="
+      modern
+        ? undefined
+        : `<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mr-sm' style='font-size: 6px;'></span>  ${$t(
+            'product_admin.dashboard.survey.title',
+          )}  </h5>`
+    "
+    :icon="modern ? undefined : 'fa:fas fa-poll'"
   >
-    <template v-slot:actions>
+    <header v-if="modern" class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"
+          ><v-icon size="18" aria-hidden="true">star_outline</v-icon></span
+        >
+        <div>
+          <h2 class="sd-modern-title-text">
+            {{ $t("b_product_dashboard.analytics.ratings_title") }}
+          </h2>
+          <p class="sd-modern-subtitle">
+            {{ $t("b_product_dashboard.analytics.ratings_subtitle") }}
+            <v-btn
+              icon
+              variant="text"
+              class="sd-modern-info-button"
+              :aria-label="$t('b_product_dashboard.analytics.recorded_score')"
+              ><v-icon size="14">info_outline</v-icon
+              ><v-tooltip
+                activator="parent"
+                location="top"
+                open-on-focus
+                open-on-click
+                content-class="sd-modern-tooltip text-start"
+                >{{
+                  $t("b_product_dashboard.analytics.rating_score_scope")
+                }}</v-tooltip
+              ></v-btn
+            >
+          </p>
+        </div>
+      </div>
+      <v-btn
+        :to="{
+          name: IS_VENDOR_PANEL ? 'Vendor_AddProduct' : 'BPageProductEdit',
+          params: { product_id: product.id },
+          hash: '#rating',
+        }"
+        variant="text"
+        class="sd-modern-button sd-modern-button--small"
+        >{{ $t("b_product_dashboard.analytics.rating_criteria") }}</v-btn
+      >
+    </header>
+    <div :class="{ 'b-product-ratings-modern__criteria': modern }">
       <template v-if="product_ratings_wit_value?.length">
         <s-shop-product-rating-view :product="product" class="mb-3" view-only />
 
         <apexchart
-          :options="radar_chart_options"
-          :series="radar_series"
+          :options="modern ? modernRadarOptions : radar_chart_options"
+          :series="modern ? modernRadarSeries : radar_series"
+          :height="modern ? 250 : undefined"
           type="radar"
+          dir="ltr"
         ></apexchart>
       </template>
       <div v-else class="pa-3 text-muted text-center">
         {{ $t("product_admin.dashboard.survey.users_not_rated_msg") }}
       </div>
-    </template>
+    </div>
 
     <v-spacer></v-spacer>
-    <v-container class="text-center" fluid>
+    <v-container
+      :class="modern ? 'b-product-ratings-modern__stats pa-0' : 'text-center'"
+      fluid
+    >
       <v-row align="start">
         <v-col cols="12" sm="4">
-          <div class="text-h4 mt-7">
+          <div
+            :class="modern ? 'b-product-ratings-modern__value' : 'text-h4 mt-7'"
+          >
             {{ numeralFormat(product.rate_count, "0,0.[0]a") }}
           </div>
           <small>
             <i class="fas fa-users" />
             {{ $t("product_admin.dashboard.survey.total_participation") }}
           </small>
-          <v-tooltip activator="parent" max-width="360">
-            {{ $t("product_admin.dashboard.survey.total_participation_tooltip") }}
-
+          <v-tooltip
+            activator="parent"
+            location="top"
+            open-on-focus
+            content-class="sd-modern-tooltip text-start"
+          >
+            {{
+              $t("product_admin.dashboard.survey.total_participation_tooltip")
+            }}
           </v-tooltip>
         </v-col>
 
         <v-col cols="12" sm="4">
           <v-rating
+            v-if="!modern"
             v-model="todayData.rating_star"
             :readonly="true"
             active-color="yellow-darken-3"
@@ -71,17 +138,22 @@
             size="small"
           />
 
-          <div class="text-h4">
+          <div :class="modern ? 'b-product-ratings-modern__value' : 'text-h4'">
             {{ numeralFormat(todayData.ratings, "0,0.[0]a") }}
           </div>
           <small>
             <i class="fas fa-calendar-day" />
             {{ $t("product_admin.dashboard.survey.today_participation") }}
           </small>
+          <p v-if="modern && todayData.ratings" class="sd-modern-subtitle">
+            {{ $t("b_product_dashboard.analytics.recorded_score") }}:
+            {{ numeralFormat(todayData.rating_star, "0.[00]") }}
+          </p>
         </v-col>
 
         <v-col cols="12" sm="4">
           <v-rating
+            v-if="!modern"
             v-model="lastWeekData.rating_star"
             :readonly="true"
             active-color="yellow-darken-3"
@@ -94,27 +166,31 @@
             size="small"
           />
 
-          <div class="text-h4">
+          <div :class="modern ? 'b-product-ratings-modern__value' : 'text-h4'">
             {{ numeralFormat(lastWeekData.ratings, "0,0.[0]a") }}
           </div>
           <small>
             <i class="fas fa-calendar-week" />
             {{ $t("product_admin.dashboard.survey.last7days_participation") }}
           </small>
+          <p v-if="modern && lastWeekData.ratings" class="sd-modern-subtitle">
+            {{ $t("b_product_dashboard.analytics.recorded_score") }}:
+            {{ numeralFormat(lastWeekData.rating_star, "0.[00]") }}
+          </p>
         </v-col>
       </v-row>
     </v-container>
 
     <apexchart
       :options="options"
-      :series="series"
-      class="mt-1 mx-n6 mx-sm-0"
+      :series="modern ? modernSeries : series"
+      :class="modern ? '' : 'mt-1 mx-n6 mx-sm-0'"
       dir="ltr"
       height="200"
       type="line"
       width="100%"
     />
-  </s-widget-box>
+  </component>
 </template>
 
 <script lang="ts">
@@ -128,6 +204,7 @@ export default {
   name: "BProductRatingCharts",
   components: { SShopProductRatingView, SWidgetBox },
   props: {
+    modern: Boolean,
     product: {
       required: true,
       type: Object,
@@ -201,6 +278,64 @@ export default {
   }),
 
   computed: {
+    modernRadarSeries() {
+      return [
+        {
+          name: this.$t("b_product_dashboard.analytics.rating_criteria"),
+          data: this.product_ratings_wit_value.map(
+            (item) => (item.value / item.count) * 20,
+          ),
+        },
+      ];
+    },
+    modernRadarOptions() {
+      return {
+        chart: {
+          fontFamily: "var(--font)",
+          toolbar: { show: false },
+          zoom: { enabled: false },
+        },
+        colors: ["#1685e6"],
+        stroke: { width: 2 },
+        fill: { opacity: 0.12 },
+        markers: { size: 2 },
+        plotOptions: { radar: { size: this.$vuetify.display.xs ? 58 : 80 } },
+        xaxis: {
+          categories: this.product_ratings_wit_value.map((item) => item.name),
+          labels: {
+            show: !this.$vuetify.display.xs,
+            style: { fontSize: "11px" },
+          },
+        },
+        yaxis: { min: 0, max: 100, tickAmount: 4, show: false },
+        dataLabels: { enabled: false },
+        tooltip: {
+          y: {
+            formatter: (value) => numeral(value).format("0.[0]") + " / 100",
+          },
+        },
+      };
+    },
+    modernSeries() {
+      return [
+        {
+          type: "column",
+          name: this.$t("product_admin.dashboard.survey.chart.participate"),
+          data: this.timeSeries.raw_data.map((row) => [
+            DateConverter.convertToLocalTime(row.created_at, true)?.getTime(),
+            row.ratings,
+          ]),
+        },
+        {
+          type: "line",
+          name: this.$t("b_product_dashboard.analytics.recorded_score"),
+          data: this.timeSeries.raw_data.map((row) => [
+            DateConverter.convertToLocalTime(row.created_at, true)?.getTime(),
+            row.ratings > 0 ? row.rating_star : null,
+          ]),
+        },
+      ];
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -220,6 +355,76 @@ export default {
     },
 
     options() {
+      if (this.modern)
+        return {
+          chart: {
+            background: "transparent",
+            fontFamily: "var(--font)",
+            stacked: false,
+            zoom: { enabled: false },
+            toolbar: { show: false },
+          },
+          colors: ["#ffb11c", "#456071"],
+          stroke: { width: [0, 2], curve: "straight" },
+          markers: { size: [0, 2] },
+          fill: { type: "solid", opacity: [0.8, 1] },
+          dataLabels: { enabled: false },
+          plotOptions: { bar: { columnWidth: "55%", borderRadius: 1 } },
+          legend: { position: "bottom", fontSize: "11px", fontWeight: 400 },
+          xaxis: {
+            type: "datetime",
+            tickAmount: 3,
+            labels: {
+              style: { fontSize: "11px" },
+              formatter: (value) =>
+                DateConverter.ConvertTimestampToShortString(value),
+            },
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+          },
+          yaxis: [
+            {
+              seriesName: this.$t(
+                "product_admin.dashboard.survey.chart.participate",
+              ),
+              min: 0,
+              labels: {
+                style: { fontSize: "11px" },
+                formatter: (value) => numeral(value).format("0,0"),
+              },
+            },
+            {
+              seriesName: this.$t(
+                "b_product_dashboard.analytics.recorded_score",
+              ),
+              opposite: true,
+              min: 0,
+              max: Math.max(
+                5,
+                ...this.timeSeries.raw_data.map(
+                  (row) => Number(row.rating_star) || 0,
+                ),
+              ),
+              labels: {
+                style: { fontSize: "11px" },
+                formatter: (value) => numeral(value).format("0.[0]"),
+              },
+            },
+          ],
+          tooltip: {
+            shared: true,
+            intersect: false,
+            x: {
+              formatter: (value) =>
+                DateConverter.ConvertTimestampToShortString(value),
+            },
+            y: {
+              formatter: (value) =>
+                value == null ? "—" : numeral(value).format("0,0.[00]"),
+            },
+          },
+          grid: { borderColor: "rgba(128,128,128,.18)", strokeDashArray: 4 },
+        };
       return {
         colors: ["#345", "#FFA000"],
 
@@ -376,7 +581,7 @@ export default {
     },
 
     product_ratings() {
-      return this.product.ratings;
+      return this.product.ratings || [];
     },
     product_ratings_wit_value() {
       return this.product_ratings.filter((item) => item.count > 0);
@@ -423,4 +628,32 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.b-product-ratings-modern {
+  &__criteria {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    align-items: center;
+  }
+  &__criteria > * {
+    min-width: 0;
+  }
+  &__stats {
+    margin-block: 16px;
+  }
+  &__value {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 30px;
+  }
+  small {
+    font-size: 12px;
+    color: var(--sd-modern-muted);
+    line-height: 19px;
+  }
+  :deep(.u--rating-bar) {
+    font-size: 12px;
+  }
+}
+</style>

@@ -1,0 +1,18 @@
+// A local overlay owns progress while the native table keeps its loading semantics.
+.s-table-loading {
+  position: relative;
+
+  > .loader-to-bar {
+    pointer-events: none;
+  }
+
+  > .v-data-table > .v-table__wrapper > table > thead > .v-data-table-progress {
+    display: none;
+  }
+}
+
+// Progress is absolute; its host must never inherit ordinary header-cell spacing.
+.v-data-table.v-table > .v-table__wrapper > table > thead.v-data-table__thead > tr.v-data-table-progress > th {
+  height: 0 !important;
+  padding: 0 !important;
+}

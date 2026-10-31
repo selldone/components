@@ -132,7 +132,7 @@ export default {
   gap: 12px;
   align-items: center;
   min-height: 74px;
-  padding: 13px 8px;
+  padding: 13px 12px;
   color: rgb(var(--v-theme-on-surface));
   border-block-end: 1px solid var(--sd-modern-border);
 

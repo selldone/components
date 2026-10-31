@@ -6,8 +6,10 @@ import ts from "typescript";
 import * as Vue from "vue";
 import { renderToString } from "vue/server-renderer";
 import { JSDOM } from "jsdom";
+import { select } from "d3-selection";
 import { parse, compileTemplate, compileStyleAsync } from "@vue/compiler-sfc";
 import createSankey from "../../../../ui/chart/sankey/svg/sankey.js";
+import createChartFrame from "../../../../ui/chart/sankey/util/chartFrame.js";
 
 // Exercise the real presentation model and currency mixin without a shop connection.
 const repository = new URL("../../../../../", import.meta.url);
@@ -97,7 +99,7 @@ const component = evaluate(descriptor.script.content, (path) => {
     };
   return { default: {} };
 }).default;
-function fixture(overrides = {}, modern = true) {
+function fixture(overrides = {}, modern = true, translate = (key) => key === "global.currency.IRR_alt" ? "Toman" : key) {
   const order = {
     price: 100,
     discount: 0,
@@ -120,7 +122,8 @@ function fixture(overrides = {}, modern = true) {
     modern,
     order,
     shop: {},
-    $t: (key) => (key === "global.currency.IRR_alt" ? "Toman" : key),
+    $vuetify: { display: { xs: false } },
+    $t: translate,
     ...objectHelpers,
   };
   for (const mixin of component.mixins) {
@@ -245,6 +248,154 @@ const bills = fixture({
 });
 assert.equal(bills.total_payed, 110);
 assert.equal(node(bills.payment_sankey_chart_data, "payment").amount, 110);
+
+// Historical POS records can contain a payment in a different currency.
+const posMixedAmounts = {
+  type: "POS",
+  currency: "IRR",
+  price: 11779000,
+  discount: 1221000,
+  tax: 0,
+  payment: { amount: 100.5, currency: "GBP", risk: 0, livemode: true },
+  discount_order: { amount_discount: 650000 },
+  coupon_order: { amount_discount: 51000 },
+  club_order: { amount_discount: 520000 },
+};
+const posMixed = fixture(posMixedAmounts);
+assert.equal(posMixed.has_payment_currency_mismatch, true);
+assert.equal(posMixed.total_payed, null, "Never add amounts across recorded currencies");
+const composition = posMixed.payment_sankey_chart_data;
+assert.equal(node(composition, "items").amount, 13000000);
+assert.equal(node(composition, "incentives").amount, 1221000);
+assert.equal(composition.nodes.find((item) => item.name === "process_center.modern.flow_order_total").amount, 11779000);
+assert.equal(node(composition, "payment"), undefined);
+assert.equal(node(composition, "you"), undefined);
+assert.deepEqual(numericLinks(composition), [
+  { source: name("items"), target: "process_center.modern.flow_order_total", value: 11779000 },
+  { source: name("items"), target: name("incentives"), value: 1221000 },
+  { source: name("incentives"), target: name("discount_code"), value: 650000 },
+  { source: name("incentives"), target: name("coupon"), value: 51000 },
+  { source: name("incentives"), target: name("club"), value: 520000 },
+]);
+assert.equal(posMixed.formatSankeyAmount(node(composition, "items").amount), "Toman1,300,000");
+assert.equal(posMixed.order.payment.amount, 100.5);
+assert.equal(posMixed.order.payment.currency, "GBP", "Keep the actual payment currency and amount untouched");
+for (const values of [
+  { payment: { amount: 0, currency: "GBP" } },
+  { gift_cards: [{ amount: 1, currency: "EUR" }] },
+  { bills: [{ payment: { amount: 1, currency: "GBP" } }] },
+  { payment: { amount: 1, currency: "GBP" }, bills: [{ payment: { amount: 100, currency: "USD" } }] },
+  { bills: [{ gift_cards: [{ amount: 1, currency: "GBP" }] }] },
+]) {
+  const mixed = fixture(values);
+  assert.equal(mixed.has_payment_currency_mismatch, true);
+  assert.equal(mixed.total_payed, null);
+  assert.equal(node(mixed.payment_sankey_chart_data, "payment"), undefined);
+}
+assert.equal(fixture({ payment: { amount: 100, currency: "USD" }, gift_cards: [{ amount: 2, currency: "USD" }] }).total_payed, 102);
+const taxedMixed = fixture({ payment: { amount: 1, currency: "GBP" }, tax: 5, tax_shipping: 2 });
+assert.equal(taxedMixed.payment_sankey_chart_data.nodes.find((item) => item.name === "process_center.modern.flow_order_total").amount, 107);
+assert.equal(node(taxedMixed.payment_sankey_chart_data, "tax").amount, 5);
+assert.equal(node(taxedMixed.payment_sankey_chart_data, "shipping_tax").amount, 2);
+assert.equal(node(fixture({ payment: { amount: 1, currency: "GBP" }, tax_included: true }).payment_sankey_chart_data, "tax"), undefined);
+
+// Height follows the visible fan-in/fan-out, never money or purchased-unit counts.
+const simpleFlow = fixture({ tax: 0 });
+assert.equal(simpleFlow.payment_sankey_height, 120);
+assert.equal(fixture().payment_sankey_height, 152);
+assert.equal(fixture({ payment: { amount: 10 }, tax: 20 }).payment_sankey_height, 120,
+  "A zero-value You branch removed by the renderer needs no extra space");
+assert.equal(fixture(incentives).payment_sankey_height, 408);
+assert.equal(fixture({ ...incentives, payment: null }).payment_sankey_height, 408,
+  "Unpaid input branches need the same room as paid output branches");
+assert.equal(fixture({ payment: { amount: 1000000 }, tax: 0, items: [{ count: 10000 }] }).payment_sankey_height, 120);
+assert.equal(simpleFlow.payment_sankey_chart_data.size.height, 76,
+  "D3 receives the target plot height independently of Vue's style-patch timing");
+simpleFlow.$vuetify.display.xs = true;
+assert.equal(simpleFlow.payment_sankey_height, 144);
+assert.equal(simpleFlow.payment_sankey_chart_data.size.height, 100);
+const manyBranches = fixture();
+manyBranches.payment_sankey_data = {
+  nodes: [{ name: "root" }, ...Array.from({ length: 20 }, (_, i) => ({ name: `branch-${i}` }))],
+  links: Array.from({ length: 20 }, (_, i) => ({ source: "root", target: `branch-${i}`, value: 1 })),
+};
+assert.equal(manyBranches.payment_sankey_height, 420, "Keep embedded charts bounded");
+assert.equal(fixture({}, false).payment_sankey_chart_data.size, undefined);
+
+// Resize the native frame and SVG while the DOM still reports its old size.
+const flowDom = new JSDOM('<div id="flow"></div>', { pretendToBeVisual: true });
+flowDom.window.HTMLElement.prototype.getBoundingClientRect = () => ({ width: 600, height: 999 });
+const flowRoot = flowDom.window.document.getElementById("flow");
+const flowFrame = createChartFrame().legendEnabled(false).breadcrumbsEnabled(false)
+  .padding(0).chartPadding(0).size((data) => data.size);
+const flowRenderer = createSankey();
+fixture().configurePaymentSankey({ sankey: () => flowRenderer });
+for (const values of [incentives, { tax: 0 }, {}, { ...incentives, payment: null }, posMixedAmounts]) {
+  const flow = fixture(values);
+  select(flowRoot).datum(flow.payment_sankey_chart_data).call(flowFrame);
+  const graphRoot = flowRoot.querySelector('.d2b-chart-container');
+  select(graphRoot).datum(flow.payment_sankey_chart_data)
+    .call(flowRenderer.size(graphRoot.__size__));
+  assert.equal(flowRoot.querySelector('.d2b-chart-frame').style.height,
+    `${flow.payment_sankey_height - 44}px`);
+  const renderedNodes = [...flowRoot.querySelectorAll('.d2b-sankey-node')];
+  assert(renderedNodes.length > 0);
+  for (const renderedNode of renderedNodes) {
+    assert(Number.isFinite(renderedNode.__data__.y0));
+    assert(renderedNode.__data__.y1 <= flow.payment_sankey_height - 44 + 0.001);
+    assert(renderedNode.__data__.y1 - renderedNode.__data__.y0 <= 76.001,
+      "Main bands stay compact while new branches receive their own spacing");
+  }
+  const columns = Map.groupBy(renderedNodes, (node) => node.__data__.x0);
+  for (const column of columns.values()) {
+    const centers = column.map(({ __data__: node }) => (node.y0 + node.y1) / 2)
+      .sort((a, b) => a - b);
+    for (let i = 1; i < centers.length; i++) {
+      assert(centers[i] - centers[i - 1] >= 28,
+        "Adjacent branch labels and values retain readable vertical separation");
+    }
+  }
+}
+
+// A 219px mobile plot uses two columns while the exact disclosure retains the subtotal.
+const englishComposition = {
+  "global.commons.items": "Items",
+  "global.commons.incentives": "Incentives",
+  "global.commons.discount_code": "Discount code",
+  "global.commons.coupon": "Coupon",
+  "global.commons.club": "Club",
+  "process_center.modern.flow_order_total": "Order total",
+  "global.currency.IRR_alt": "Toman",
+};
+const narrowMixed = fixture(posMixedAmounts, true, (key) => englishComposition[key] || key);
+narrowMixed.$vuetify.display.xs = true;
+const narrowData = narrowMixed.payment_sankey_chart_data;
+assert(narrowMixed.payment_sankey_data.nodes.some((item) => item.name === "Incentives"));
+assert(narrowData.valueNodes.some((item) => item.name === "Incentives" && item.amount === 1221000));
+assert.equal(narrowData.nodes.some((item) => item.name === "Incentives"), false);
+assert(narrowData.links.every((item) => item.source === "Items"));
+const narrowRoot = flowDom.window.document.createElement("div");
+const narrowRenderer = createSankey();
+narrowMixed.configurePaymentSankey({ sankey: () => narrowRenderer });
+select(narrowRoot).datum(narrowData).call(narrowRenderer.size({ width: 219, height: narrowMixed.payment_sankey_height - 44 }));
+const narrowNodes = [...narrowRoot.querySelectorAll(".d2b-sankey-node")];
+assert.equal(new Set(narrowNodes.map((item) => item.__data__.x0)).size, 2);
+const labelBoxes = narrowNodes.map((element) => {
+  const datum = element.__data__;
+  const text = element.querySelector("text");
+  const x = datum.x0 + Number(text.getAttribute("x"));
+  // A conservative 7px character advance at the native 11px label size.
+  const width = datum.label.length * 7;
+  return { x: x - (text.classList.contains("d2b-text-anchor-end") ? width : 0),
+    y: datum.y0 + Number(text.getAttribute("y")), width };
+});
+for (let i = 0; i < labelBoxes.length; i++) {
+  for (let j = i + 1; j < labelBoxes.length; j++) {
+    const a = labelBoxes[i], b = labelBoxes[j];
+    assert(Math.abs(a.y - b.y) >= 20 || a.x + a.width <= b.x || b.x + b.width <= a.x,
+      "Mobile branch labels occupy separate rows or non-overlapping columns");
+  }
+}
 
 // Real CurrencyMixin precision, symbols, alternative units and merchant placement rules.
 const money = fixture();
@@ -396,7 +547,7 @@ async function paymentScreen(
       params: vendor ? { vendor_id: 9 } : {},
       matched: [{ meta: { vendor } }],
     },
-    $vuetify: { display: { smAndDown: false } },
+    $vuetify: { display: { smAndDown: false, xs: false } },
     require: () => "/static/user.svg",
     ...objectHelpers,
   });
@@ -551,6 +702,20 @@ assert.equal(
   oldScreen.body.textContent.includes("process_center.modern.risk_review"),
   false,
 );
+const posScreen = await paymentScreen({
+  ...posMixedAmounts,
+  payment: { ...posMixedAmounts.payment, gateway: { ...gateway, cash: true, currency: "GBP" } },
+});
+assert(posScreen.querySelector(".b-order-payment--pos"));
+assert(posScreen.querySelector(".b-order-payment__recorded-payment").textContent.includes("GBP"));
+assert(posScreen.querySelector(".b-order-payment__recorded-payment [currency='GBP'][amount='100.5']"),
+  "The recorded payment fact uses the payment currency, independently of the order currency");
+assert(posScreen.querySelector(".b-order-payment__currency-notice").textContent.includes("process_center.modern.payment_currency_mismatch"));
+assert(posScreen.querySelector(".b-order-payment__flow-heading h3").textContent.includes("process_center.modern.order_composition"));
+assert(posScreen.body.textContent.includes("process_center.modern.pos_payment_review"));
+assert.equal(posScreen.querySelectorAll(".b-order-payment__check").length, 0,
+  "Cash records without a transaction identifier do not get a Check action");
+assert.equal(full.querySelectorAll(".b-order-payment__currency-notice").length, 0);
 console.log(
-  "Payment: Sankey/currency preservation, gated buyer/customer/guest routes, avatar fallbacks, optional gateway metadata and zero/missing risk passed.",
+  "Payment: adaptive Sankey/currency formatting, separate mixed-currency order composition, gated identities, cash metadata and zero/missing risk passed.",
 );

@@ -13,8 +13,67 @@
   -->
 
 <template>
-  <div :class="{ '-activated': in_this_step }" class="widget shadow m-3">
-    <v-expansion-panels class="mb-5 rounded-18px overflow-hidden text-start" >
+  <div
+    :class="
+      modern
+        ? 'sd-modern-widget b-order-service-billing-modern'
+        : { '-activated': in_this_step, 'widget shadow m-3': true }
+    "
+    class="text-start"
+  >
+    <u-widget-header
+      v-if="modern"
+      icon="design_services"
+      :title="$t('process_center.modern.service_details_title')"
+      class="sd-modern-form-header b-order-service-billing-modern__header"
+    >
+      <template #append-actions>
+        <v-btn
+          variant="text"
+          color="primary"
+          class="sd-modern-button sd-modern-button--inline"
+          @click="copyToClipboard(customer_order_page)"
+        >
+          <v-icon start size="16" aria-hidden="true">content_copy</v-icon
+          >{{ $t("process_center.modern.service_customer_order_link") }}
+          <v-tooltip
+            activator="parent"
+            location="top"
+            :open-on-focus="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{
+              $t("process_center.modern.service_customer_order_link_help")
+            }}</v-tooltip
+          >
+        </v-btn>
+      </template>
+    </u-widget-header>
+    <p
+      v-if="modern"
+      class="sd-modern-subtitle b-order-service-billing-modern__subtitle"
+    >
+      <span>{{ $t("process_center.modern.service_details_subtitle") }}</span>
+      <v-tooltip
+        location="top"
+        :open-on-focus="true"
+        :open-on-click="true"
+        content-class="sd-modern-tooltip text-start"
+      >
+        <template #activator="{ props }"
+          ><v-btn
+            v-bind="props"
+            icon="info_outline"
+            variant="text"
+            class="sd-modern-icon-button sd-modern-info-button"
+            :aria-label="$t('process_center.modern.service_details_title')"
+        /></template>
+        {{ $t("process_center.modern.service_details_help") }}
+      </v-tooltip>
+    </p>
+    <v-expansion-panels
+      v-else
+      class="mb-5 rounded-18px overflow-hidden text-start"
+    >
       <v-expansion-panel elevation="0">
         <v-expansion-panel-title>
           <div>
@@ -51,7 +110,13 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <div class="border-between-vertical">
+    <div
+      :class="
+        modern
+          ? 'b-order-service-billing-modern__items'
+          : 'border-between-vertical'
+      "
+    >
       <service-billing-item
         v-for="item in items"
         :key="item.id"
@@ -60,6 +125,7 @@
         :item="item"
         :product="item.product"
         :shop="shop"
+        :modern="modern"
         editing
         view-only-progress
       ></service-billing-item>
@@ -69,12 +135,14 @@
 
 <script lang="ts">
 import ServiceBillingItem from "../../../../storefront/order/billing/ServiceBillingItem.vue";
-import {Basket, ShopURLs} from "@selldone/core-js";
+import { Basket, ShopURLs } from "@selldone/core-js";
+import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 
 export default {
   name: "BOrderDashboardServiceBilling",
-  components: { ServiceBillingItem },
+  components: { ServiceBillingItem, UWidgetHeader },
   props: {
+    modern: { type: Boolean, default: false },
     shop: {
       require: true,
       type: Object,
@@ -113,7 +181,7 @@ export default {
 
     customer_order_page() {
       return (
-          ShopURLs.MainShopUrl(this.shop) +
+        ShopURLs.MainShopUrl(this.shop) +
         `/orders/service/${this.getBasketOrderCode(this.basket)}`
       );
     },
@@ -123,4 +191,42 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-order-service-billing-modern {
+  &.sd-modern-widget {
+    padding: 20px;
+    margin-block-end: 18px;
+    border-radius: 16px;
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 18px;
+  }
+  &__header {
+    margin-block-end: 0;
+  }
+  &__header :deep(h2) {
+    font-family: inherit;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 500;
+  }
+  &__subtitle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 4px 0 20px;
+    font-size: 12px;
+    line-height: 18px;
+  }
+  &__items {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 600px) {
+    &.sd-modern-widget {
+      padding: 17px 13px;
+    }
+  }
+}
+</style>

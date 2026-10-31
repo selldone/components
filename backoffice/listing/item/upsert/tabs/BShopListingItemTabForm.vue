@@ -1,11 +1,47 @@
 <template>
-  <div class="text-start">
+  <div
+    class="text-start"
+    :class="modern ? 'b-listing-custom-form sd-modern-widget' : undefined"
+  >
     <!-- Header -->
-    <div class="widget-box -large mb-5">
-      <u-widget-header :title="resolvedTitle" :icon="icon" />
-      <v-list-subheader v-if="subtitle">{{ subtitle }}</v-list-subheader>
+    <div
+      :class="
+        modern ? 'b-listing-custom-form__header' : 'widget-box -large mb-5'
+      "
+    >
+      <header v-if="modern" class="sd-modern-header">
+        <div class="sd-modern-title">
+          <v-icon
+            class="sd-modern-icon sd-modern-icon--plain"
+            size="22"
+            aria-hidden="true"
+            >{{ icon }}</v-icon
+          >
+          <div>
+            <h2 class="sd-modern-title-text">{{ resolvedTitle }}</h2>
+            <p v-if="subtitle" class="sd-modern-subtitle">{{ subtitle }}</p>
+          </div>
+        </div>
+      </header>
+      <u-widget-header v-else :title="resolvedTitle" :icon="icon" />
+      <v-list-subheader v-if="subtitle && !modern">{{
+        subtitle
+      }}</v-list-subheader>
 
-      <v-alert v-if="!schemaSafe.length" type="info" variant="tonal" class="mb-0">
+      <div
+        v-if="modern && !schemaSafe.length"
+        class="sd-modern-empty-state"
+        role="status"
+      >
+        <v-icon size="28" aria-hidden="true">data_object</v-icon>
+        <p>{{ $t("shop_listing.item_editor.no_custom_fields") }}</p>
+      </div>
+      <v-alert
+        v-if="!modern && !schemaSafe.length"
+        type="info"
+        variant="tonal"
+        class="mb-0"
+      >
         No custom fields defined.
       </v-alert>
     </div>
@@ -14,35 +50,65 @@
       <!-- NOTE -->
       <div
         v-if="fieldType(field) === 'note'"
-        class="mb-4 widget-box -large sld-note"
-        style="--background: #fff"
+        :class="
+          modern
+            ? 'sd-modern-notice b-listing-custom-form__note'
+            : 'mb-4 widget-box -large sld-note'
+        "
+        :style="modern ? undefined : '--background: #fff'"
       >
         <v-icon class="me-1">info_outline</v-icon>
-        {{ fieldTitle(field) }}
+        <span :class="{ 'sd-modern-notice__content': modern }">{{
+          fieldTitle(field)
+        }}</span>
       </div>
 
       <!-- Field -->
-      <div v-else class="widget-box -large mb-4 sld-field">
-        <u-widget-header :title="fieldTitle(field)" icon="input">
+      <div
+        v-else
+        :class="
+          modern
+            ? 'b-listing-custom-form__field'
+            : 'widget-box -large mb-4 sld-field'
+        "
+      >
+        <u-widget-header
+          :class="
+            modern
+              ? 'sd-modern-form-header b-listing-custom-form__field-header'
+              : undefined
+          "
+          :title="fieldTitle(field)"
+          icon="input"
+        >
           <template v-slot:actions>
-            <small v-if="showKey && fieldName(field)" class="text-muted d-block mt-2">
-              Key: <b>{{ fieldName(field) }}</b>
+            <small
+              v-if="showKey && fieldName(field)"
+              class="text-muted d-block mt-2"
+              :class="{ 'b-listing-custom-form__key': modern }"
+            >
+              {{ modern ? $t("shop_listing.item_editor.field_key") : "Key" }}:
+              <b>{{ fieldName(field) }}</b>
             </small>
 
             <v-btn
-              v-if="fieldType(field) === 'key_value'"
+              v-if="!modern && fieldType(field) === 'key_value'"
               size="small"
               variant="text"
-              class="me-2"
+              :class="
+                modern
+                  ? 'sd-modern-button sd-modern-button--inline me-2'
+                  : 'me-2'
+              "
               :disabled="disabled"
               @click.stop="addKeyValueRow(fieldName(field))"
             >
               <v-icon start>add</v-icon>
-              Add
+              {{ modern ? $t("global.actions.add") : "Add" }}
             </v-btn>
 
             <v-chip
-              v-if="isRequired(field)"
+              v-if="isRequired(field) && !modern"
               label
               size="x-small"
               color="#000"
@@ -50,10 +116,18 @@
             >
               {{ $t("global.commons.required") }}
             </v-chip>
+            <span
+              v-if="isRequired(field) && modern"
+              class="b-listing-custom-form__required"
+              >{{ $t("global.commons.required") }}</span
+            >
           </template>
         </u-widget-header>
 
-        <v-list-subheader v-if="fieldHint(field)">
+        <p v-if="modern && fieldHint(field)" class="sd-modern-subtitle mb-4">
+          {{ fieldHint(field) }}
+        </p>
+        <v-list-subheader v-if="!modern && fieldHint(field)">
           {{ fieldHint(field) }}
         </v-list-subheader>
 
@@ -70,19 +144,37 @@
                 :disabled="disabled"
                 :label="`${fieldKeyLabel(field)} #${ri + 1}`"
                 variant="underlined"
-                class="flex-grow-1"
-                @update:modelValue="setKeyValueRowKey(fieldName(field), ri, $event)"
+                :class="
+                  modern
+                    ? 'flex-grow-1 sd-modern-underlined-field'
+                    : 'flex-grow-1'
+                "
+                @update:modelValue="
+                  setKeyValueRowKey(fieldName(field), ri, $event)
+                "
                 @blur="$emit('changed')"
               />
 
               <v-btn
                 icon
                 variant="text"
-                class="ms-2"
-                :disabled="disabled || keyValueList(fieldName(field)).length <= 1"
+                :class="modern ? 'ms-2 sd-modern-icon-button' : 'ms-2'"
+                :aria-label="
+                  modern ? $t('shop_listing.item_editor.remove_row') : undefined
+                "
+                :disabled="
+                  disabled || keyValueList(fieldName(field)).length <= 1
+                "
                 @click.stop="removeKeyValueRow(fieldName(field), ri)"
               >
-                <v-icon>close</v-icon>
+                <v-icon>close</v-icon
+                ><v-tooltip
+                  v-if="modern"
+                  activator="parent"
+                  location="top"
+                  content-class="sd-modern-tooltip text-start"
+                  >{{ $t("shop_listing.item_editor.remove_row") }}</v-tooltip
+                >
               </v-btn>
             </div>
 
@@ -90,22 +182,32 @@
               :model-value="rowValue(row)"
               :disabled="disabled"
               :label="fieldValueLabel(field)"
+              :class="modern ? 'sd-modern-underlined-field' : undefined"
               variant="underlined"
               auto-grow
               rows="3"
-              @update:modelValue="setKeyValueRowValue(fieldName(field), ri, $event)"
+              @update:modelValue="
+                setKeyValueRowValue(fieldName(field), ri, $event)
+              "
               @blur="$emit('changed')"
             />
           </div>
 
           <v-btn
             size="small"
+            :class="
+              modern ? 'sd-modern-button sd-modern-button--inline' : undefined
+            "
             variant="text"
             :disabled="disabled"
             @click.stop="addKeyValueRow(fieldName(field))"
           >
             <v-icon start>add</v-icon>
-            Add another
+            {{
+              modern
+                ? $t("shop_listing.item_editor.add_another")
+                : "Add another"
+            }}
           </v-btn>
         </div>
 
@@ -115,6 +217,7 @@
           :model-value="valueOf(fieldName(field))"
           :disabled="disabled"
           :label="fieldValueLabel(field)"
+          :class="modern ? 'sd-modern-underlined-field' : undefined"
           variant="underlined"
           auto-grow
           rows="3"
@@ -131,11 +234,47 @@
           :label="fieldValueLabel(field)"
           :multiple="!!field?.multiple"
           :chips="!!field?.multiple"
+          :class="modern ? 'sd-modern-underlined-field' : undefined"
           variant="underlined"
           clearable
           @update:modelValue="setFieldValue(fieldName(field), $event)"
           @blur="$emit('changed')"
-        />
+        >
+          <template v-if="modern" #chip="{ item, props }">
+            <v-chip
+              v-bind="props"
+              size="small"
+              label
+              class="b-listing-custom-form__chip"
+            >
+              <span
+                v-overflow-check="
+                  (clipped) =>
+                    (clippedSelections[`${index}:${item.value}`] = clipped)
+                "
+                class="b-listing-custom-form__selection"
+                :tabindex="
+                  clippedSelections[`${index}:${item.value}`] ? 0 : undefined
+                "
+                @click="
+                  clippedSelections[`${index}:${item.value}`] &&
+                  $event.stopPropagation()
+                "
+              >
+                {{ item.title }}
+                <v-tooltip
+                  activator="parent"
+                  :disabled="!clippedSelections[`${index}:${item.value}`]"
+                  location="top"
+                  open-on-focus
+                  open-on-click
+                  content-class="sd-modern-tooltip text-start"
+                  >{{ item.title }}</v-tooltip
+                >
+              </span>
+            </v-chip>
+          </template>
+        </v-select>
 
         <!-- switch -->
         <u-smart-toggle
@@ -162,7 +301,33 @@ export default {
 
   components: { USmartToggle },
 
+  directives: {
+    overflowCheck: {
+      mounted(element, binding) {
+        const state = { notify: binding.value, observer: null, measure: null };
+        state.measure = () =>
+          state.notify(element.scrollWidth > element.clientWidth + 1);
+        state.observer = new ResizeObserver(state.measure);
+        state.observer.observe(element);
+        element._listingSelectionOverflow = state;
+        state.measure();
+      },
+      updated(element, binding) {
+        const state = element._listingSelectionOverflow;
+        state.notify = binding.value;
+        state.measure();
+      },
+      beforeUnmount(element) {
+        element._listingSelectionOverflow.observer.disconnect();
+        delete element._listingSelectionOverflow;
+      },
+    },
+  },
+
+  data: () => ({ clippedSelections: {} as Record<string, boolean> }),
+
   props: {
+    modern: { type: Boolean, default: false },
     title: { type: String, default: null },
     subtitle: { type: String, default: "" },
     icon: { type: String, default: "data_object" },
@@ -212,12 +377,15 @@ export default {
     fieldKey(field: any, index: number) {
       const n = field?.name ? String(field.name) : "";
       const t = field?.type ? String(field.type) : "text";
-      return (n ? `${t}_${n}` : `${t}__field_${index}`);
+      return n ? `${t}_${n}` : `${t}__field_${index}`;
     },
 
     fieldType(field: any): string {
       const raw = field?.type;
-      const t = raw === null || raw === undefined || raw === "" ? "text" : String(raw).trim();
+      const t =
+        raw === null || raw === undefined || raw === ""
+          ? "text"
+          : String(raw).trim();
 
       if (t === "note") return "note";
       if (t === "switch") return "switch";
@@ -233,7 +401,9 @@ export default {
     fieldTitle(field: any): string {
       if (field?.title) return String(field.title);
       const n = this.fieldName(field);
-      return n || "Note";
+      return (
+        n || (this.modern ? this.$t("shop_listing.item_editor.note") : "Note")
+      );
     },
 
     fieldHint(field: any): string {
@@ -241,7 +411,11 @@ export default {
     },
 
     fieldHintTrue(field: any): string {
-      return field?.hint_true ? String(field.hint_true) : "Enabled";
+      return field?.hint_true
+        ? String(field.hint_true)
+        : this.modern
+          ? this.$t("shop_listing.item_editor.enabled")
+          : "Enabled";
     },
 
     fieldHintFalse(field: any): string {
@@ -249,7 +423,9 @@ export default {
     },
 
     fieldTrueTitle(_field: any): string {
-      return "Enabled";
+      return this.modern
+        ? this.$t("shop_listing.item_editor.enabled")
+        : "Enabled";
     },
 
     fieldSelects(field: any): any[] {
@@ -257,11 +433,19 @@ export default {
     },
 
     fieldKeyLabel(field: any): string {
-      return field?.key_label ? String(field.key_label) : "Key";
+      return field?.key_label
+        ? String(field.key_label)
+        : this.modern
+          ? this.$t("shop_listing.item_editor.key_label")
+          : "Key";
     },
 
     fieldValueLabel(field: any): string {
-      return field?.value_label ? String(field.value_label) : "Value";
+      return field?.value_label
+        ? String(field.value_label)
+        : this.modern
+          ? this.$t("shop_listing.item_editor.value_label")
+          : "Value";
     },
 
     isRequired(field: any): boolean {
@@ -277,7 +461,9 @@ export default {
       if (!name) return;
 
       const current: any =
-        this.metaFields && typeof this.metaFields === "object" ? this.metaFields : {};
+        this.metaFields && typeof this.metaFields === "object"
+          ? this.metaFields
+          : {};
 
       this.$emit("update:metaFields", { ...current, [name]: value });
       this.$emit("changed");
@@ -413,5 +599,85 @@ export default {
 .sld-field {
   border: 1px solid rgba(20, 20, 20, 0.08);
   background: rgba(0, 0, 0, 0.01);
+}
+
+.b-listing-custom-form {
+  padding: 24px;
+  border: 0;
+  border-radius: 16px;
+  box-shadow: none;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.b-listing-custom-form .sd-modern-title-text {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 28px;
+}
+.b-listing-custom-form .sd-modern-subtitle {
+  margin-block-start: 5px;
+  font-size: 13px;
+  line-height: 21px;
+}
+.b-listing-custom-form__field {
+  margin-block-start: 28px;
+}
+.b-listing-custom-form__field:first-child {
+  margin-block-start: 0;
+}
+.b-listing-custom-form__field small {
+  font-size: 13px;
+  font-weight: 400;
+}
+.b-listing-custom-form__field-header {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.b-listing-custom-form__field-header :deep(> .flex-grow-1) {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.b-listing-custom-form__field-header :deep(h2) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.b-listing-custom-form__field-header :deep(.--icon) {
+  flex-shrink: 0;
+}
+.b-listing-custom-form__key {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.b-listing-custom-form .sd-modern-subtitle,
+.b-listing-custom-form__note {
+  overflow-wrap: anywhere;
+}
+.b-listing-custom-form__chip {
+  max-width: 100%;
+}
+.b-listing-custom-form__chip :deep(.v-chip__content) {
+  min-width: 0;
+}
+.b-listing-custom-form__selection {
+  display: block;
+  min-width: 0;
+  max-width: 32ch;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.b-listing-custom-form__required {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--sd-modern-muted);
+}
+.b-listing-custom-form__note {
+  margin-block: 20px;
+}
+@media (max-width: 600px) {
+  .b-listing-custom-form {
+    padding: 18px;
+  }
 }
 </style>

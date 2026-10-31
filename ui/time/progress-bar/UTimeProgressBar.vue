@@ -20,8 +20,11 @@
 
     <v-tooltip
       v-if="has_progress_to_end"
-      dark
-      location="bottom"
+      :dark="!modern"
+      :location="modern ? 'top' : 'bottom'"
+      :content-class="modern ? 'sd-modern-tooltip text-start' : undefined"
+      :open-on-focus="modern"
+      :open-on-click="modern"
     >
       <template v-slot:activator="{ props }">
         <v-progress-linear
@@ -34,20 +37,26 @@
           rounded-bar
           striped
           v-bind="props"
+          :tabindex="modern ? 0 : undefined"
         />
       </template>
       <p class="font-weight-bold">{{ title }}</p>
       <p v-if="!no_start_end" class="text-center small m-0">
         <span class="mx-2"> {{ getFromNowString(startTime) }}</span>
-        <v-icon class="flip-image-rtl" color="#fff">forward</v-icon>
+        <v-icon class="flip-image-rtl" :color="modern ? undefined : '#fff'"
+          >forward</v-icon
+        >
         <span class="mx-2"> {{ getFromNowString(endTime) }}</span>
       </p>
     </v-tooltip>
 
     <v-tooltip
       v-if="has_progress_to_start"
-      dark
-      location="bottom"
+      :dark="!modern"
+      :location="modern ? 'top' : 'bottom'"
+      :content-class="modern ? 'sd-modern-tooltip text-start' : undefined"
+      :open-on-focus="modern"
+      :open-on-click="modern"
     >
       <template v-slot:activator="{ props }">
         <v-progress-linear
@@ -60,12 +69,15 @@
           rounded-bar
           striped
           v-bind="props"
+          :tabindex="modern ? 0 : undefined"
         />
       </template>
       <p class="font-weight-bold">{{ title }}</p>
       <p v-if="!no_start_end" class="text-center small ma-0">
         <span class="mx-2"> {{ getFromNowString(startTime) }}</span>
-        <v-icon class="flip-image-rtl" color="#fff">forward</v-icon>
+        <v-icon class="flip-image-rtl" :color="modern ? undefined : '#fff'"
+          >forward</v-icon
+        >
         <span class="mx-2"> {{ getFromNowString(endTime) }}</span>
       </p>
     </v-tooltip>
@@ -87,6 +99,7 @@ export default {
   mixins: [DateMixin],
 
   props: {
+    modern: Boolean,
     createdTime: {},
     startTime: {},
     endTime: {},

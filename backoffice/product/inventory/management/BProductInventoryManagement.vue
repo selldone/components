@@ -18,11 +18,14 @@
 
     <b-product-inventory-management-physical
       v-if="isPhysical"
+      :ref="(editor) => (physicalEditor = editor)"
       :for-studio="forStudio"
       :product="product"
       :shop="shop"
       :vendor="vendor"
       :withTrashed="withTrashed"
+      :modern="modern"
+      :product-workspace="productWorkspace"
       @update:withTrashed="(val) => $emit('update:withTrashed', val)"
     ></b-product-inventory-management-physical>
 
@@ -90,6 +93,11 @@ export default {
     BProductInventoryManagementVirtual,
   },
   props: {
+    productWorkspace: { type: Boolean, default: false },
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     shop: {
       required: true,
       type: Object,
@@ -112,10 +120,16 @@ export default {
     },
   },
   data() {
-    return {};
+    return { physicalEditor: null };
   },
 
   computed: {
+    workspaceBusy() {
+      return !!this.physicalEditor?.workspaceBusy;
+    },
+    saveBlocked() {
+      return !!this.physicalEditor?.saveBlocked;
+    },
     isPhysical() {
       return this.product && this.product.type === ProductType.PHYSICAL.code;
     },

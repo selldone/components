@@ -13,106 +13,197 @@
   -->
 
 <template>
-  <s-widget-box
+  <component
+    :is="modern ? 'section' : 's-widget-box'"
+    :class="{
+      'b-product-analytics b-product-finance-modern sd-modern-widget text-start':
+        modern,
+    }"
     :icon-to="{
       name: IS_VENDOR_PANEL ? 'Vendor_AddProduct' : 'BPageProductEdit',
       params: { product_id: product.id },
       hash: '#price',
     }"
     :sub-title="
-      $t('product_admin.dashboard.finance.title_small', {
-        start: getLocalDateString(timeSeries.startDate),
-        end: getLocalDateString(timeSeries.endDate),
-      })
+      modern
+        ? undefined
+        : $t('product_admin.dashboard.finance.title_small', {
+            start: getLocalDateString(timeSeries.startDate),
+            end: getLocalDateString(timeSeries.endDate),
+          })
     "
-    :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mr-sm' style='font-size: 6px;'></span>  ${$t(
-      'product_admin.dashboard.finance.title',
-    )} </h5>`"
-    icon="fa:fas fa-cash-register"
+    :title="
+      modern
+        ? undefined
+        : `<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mr-sm' style='font-size: 6px;'></span>  ${$t(
+            'product_admin.dashboard.finance.title',
+          )} </h5>`
+    "
+    :icon="modern ? undefined : 'fa:fas fa-cash-register'"
   >
-    <v-card
-      v-for="(total, currency) in totalPayAmountFor30days"
-      :key="currency"
-      class="my-2 shadow-paper rounded-2rem"
-    >
-      <u-currency-icon
-        :currency="currency"
-        :title="$t('product_admin.dashboard.finance.currency_unit')"
-        class="absolute-top-end m-2"
-        flag
-        small
-      ></u-currency-icon>
-
-      <div class="p-2 d-flex border-between text-center">
-        <div class="flex-grow-1">
-          <u-price
-            :amount="GetFinanceValueByCurrency(todayData, currency, 'pay')"
-            :currency="currency"
-            :large="$vuetify.display.smAndUp"
-            class="font-weight-black d-block"
-          ></u-price>
-          <small>{{ $t("commons.pay_today") }}</small>
-        </div>
-
-        <div class="flex-grow-1 hide-on-small-600">
-          <u-price
-            :amount="GetFinanceValueByCurrency(yesterdayData, currency, 'pay')"
-            :currency="currency"
-            :large="$vuetify.display.smAndUp"
-            class="font-weight-black d-block"
-          ></u-price>
-          <small>{{ $t("commons.pay_yesterday") }}</small>
-        </div>
-
-        <div class="flex-grow-1">
-          <u-price
-            :amount="total"
-            :currency="currency"
-            :large="$vuetify.display.smAndUp"
-            class="font-weight-black d-block"
-          ></u-price>
-          <small>{{ $t("commons.pay_last30days") }}</small>
+    <header v-if="modern" class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"
+          ><v-icon size="18" aria-hidden="true">payments</v-icon></span
+        >
+        <div>
+          <h2 class="sd-modern-title-text">
+            {{ $t("b_product_dashboard.analytics.finance_title") }}
+          </h2>
+          <p class="sd-modern-subtitle">
+            {{ $t("b_product_dashboard.analytics.finance_subtitle") }}
+          </p>
         </div>
       </div>
-
-      <v-card-subtitle class="py-0">
-        {{ $t("product_admin.dashboard.finance.sell_daily") }}:
-      </v-card-subtitle>
-      <v-card-text>
-        <finance-inline-chart
-          :colors="GetCurrency(currency).gradient"
+      <v-btn
+        :to="{
+          name: IS_VENDOR_PANEL ? 'Vendor_AddProduct' : 'BPageProductEdit',
+          params: { product_id: product.id },
+          hash: '#price',
+        }"
+        variant="text"
+        class="sd-modern-button sd-modern-button--small"
+        >{{ $t("b_product_dashboard.analytics.price_settings") }}</v-btn
+      >
+    </header>
+    <div :class="{ 'b-product-finance-modern__currencies': modern }">
+      <v-card
+        v-for="(total, currency) in totalPayAmountFor30days"
+        :key="currency"
+        :class="
+          modern
+            ? 'b-product-finance-modern__currency'
+            : 'my-2 shadow-paper rounded-2rem'
+        "
+        :elevation="modern ? 0 : undefined"
+      >
+        <u-currency-icon
           :currency="currency"
-          :days="timeSeries.days"
-          :finance-keys="['sell', 'pay']"
-          :timeSeries="timeSeries"
-          :value-titles="[
-            $t('admin_shop.dashboard.finance.table.sell'),
-            $t('admin_shop.dashboard.finance.table.pay'),
-          ]"
-          height="68"
-        ></finance-inline-chart>
-      </v-card-text>
-    </v-card>
+          :title="$t('product_admin.dashboard.finance.currency_unit')"
+          :class="modern ? 'me-2' : 'absolute-top-end m-2'"
+          flag
+          small
+        ></u-currency-icon>
+        <span v-if="modern" class="b-product-finance-modern__code">{{
+          currency
+        }}</span>
 
-    <v-row class="mt-8" no-gutters>
-      <v-col cols="12" sm="6">
+        <div
+          :class="
+            modern
+              ? 'b-product-finance-modern__summary'
+              : 'p-2 d-flex border-between text-center'
+          "
+        >
+          <div class="flex-grow-1">
+            <u-price
+              :amount="GetFinanceValueByCurrency(todayData, currency, 'pay')"
+              :currency="currency"
+              :large="!modern && $vuetify.display.smAndUp"
+              :class="
+                modern
+                  ? 'b-product-finance-modern__amount d-block'
+                  : 'font-weight-black d-block'
+              "
+            ></u-price>
+            <small>{{ $t("commons.pay_today") }}</small>
+          </div>
+
+          <div
+            :class="modern ? 'flex-grow-1' : 'flex-grow-1 hide-on-small-600'"
+          >
+            <u-price
+              :amount="
+                GetFinanceValueByCurrency(yesterdayData, currency, 'pay')
+              "
+              :currency="currency"
+              :large="!modern && $vuetify.display.smAndUp"
+              :class="
+                modern
+                  ? 'b-product-finance-modern__amount d-block'
+                  : 'font-weight-black d-block'
+              "
+            ></u-price>
+            <small>{{ $t("commons.pay_yesterday") }}</small>
+          </div>
+
+          <div class="flex-grow-1">
+            <u-price
+              :amount="total"
+              :currency="currency"
+              :large="!modern && $vuetify.display.smAndUp"
+              :class="
+                modern
+                  ? 'b-product-finance-modern__amount d-block'
+                  : 'font-weight-black d-block'
+              "
+            ></u-price>
+            <small>{{
+              $t(
+                modern
+                  ? "b_product_dashboard.analytics.period_paid"
+                  : "commons.pay_last30days",
+              )
+            }}</small>
+          </div>
+        </div>
+
+        <v-card-subtitle v-if="!modern" class="py-0">
+          {{ $t("product_admin.dashboard.finance.sell_daily") }}:
+        </v-card-subtitle>
+        <v-card-text :class="{ 'pa-0': modern }">
+          <finance-inline-chart
+            :colors="GetCurrency(currency).gradient"
+            :currency="currency"
+            :days="timeSeries.days"
+            :finance-keys="['sell', 'pay']"
+            :timeSeries="timeSeries"
+            :modern="modern"
+            :value-titles="[
+              $t('admin_shop.dashboard.finance.table.sell'),
+              $t('admin_shop.dashboard.finance.table.pay'),
+            ]"
+            :height="modern ? 170 : 68"
+          ></finance-inline-chart>
+        </v-card-text>
+      </v-card>
+    </div>
+    <p
+      v-if="modern && !Object.keys(totalPayAmountFor30days).length"
+      class="sd-modern-subtitle"
+    >
+      {{ $t("b_product_dashboard.analytics.no_finance") }}
+    </p>
+
+    <v-row :class="modern ? 'mt-6' : 'mt-8'" no-gutters>
+      <v-col cols="12" :sm="modern ? 12 : 6">
+        <h3 v-if="modern" class="b-product-finance-modern__composition">
+          {{ $t(`b_product_dashboard.analytics.currency_${finance_key}_title`) }}
+        </h3>
         <v-btn-toggle
           v-model="finance_key"
           :title="$t('product_admin.dashboard.finance.select_mode_title')"
           mandatory
+          :class="{ 'b-product-finance-modern__modes sd-modern-button-group': modern }"
           rounded="xl"
-          style="height: 64px"
+          :style="{ height: modern ? 'auto' : '64px' }"
         >
           <v-btn
             v-for="item in finance_keys"
             :key="item.val"
             :value="item.val"
             size="small"
-            stacked
+            :stacked="!modern"
           >
-            <img :src="item.image" height="24" />
+            <img
+              :src="item.image"
+              :height="modern ? 16 : 24"
+              :alt="item.title"
+            />
 
-            <div class="mt-1 tnt">{{ item.title }}</div>
+            <div :class="modern ? 'ms-2 tnt' : 'mt-1 tnt'">
+              {{ item.title }}
+            </div>
           </v-btn>
         </v-btn-toggle>
       </v-col>
@@ -122,11 +213,12 @@
       :finance-key="finance_key"
       :shop="shop"
       :timeSeries="timeSeries"
-      bordered
+      :modern="modern"
+      :bordered="!modern"
       class="mt-5"
       style="min-height: 160px"
     ></s-chart-funnel-finance>
-  </s-widget-box>
+  </component>
 </template>
 
 <script lang="ts">
@@ -148,6 +240,7 @@ export default {
     SWidgetBox,
   },
   props: {
+    modern: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -212,4 +305,69 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.b-product-finance-modern {
+  &__currencies {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  &__currency {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+  }
+  &__code {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  &__summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-block: 12px;
+  }
+  &__summary > div {
+    min-width: 0;
+  }
+  &__currency > .v-card-text {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  &__summary small {
+    display: block;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 18px;
+  }
+  &__amount {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 28px;
+  }
+  &__composition {
+    margin-block: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+  }
+  &__modes {
+    max-width: 100%;
+  }
+  @media (max-width: 700px) {
+    &__currencies {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 400px) {
+    &__summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+</style>

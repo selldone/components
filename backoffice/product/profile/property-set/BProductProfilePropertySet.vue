@@ -18,16 +18,22 @@
   <v-list-item
     v-if="isPhysical || isVirtual"
     v-bind="$attrs"
-    class="row-hover"
-    prepend-icon="hive"
+    :class="modern ? 'b-product-profile-property-set--modern sd-modern-clickable-item text-start' : 'row-hover'"
+    :prepend-icon="modern ? undefined : 'hive'"
     @click="showEdit()"
     slim
   >
+    <template v-if="modern" #prepend>
+      <b-product-edit-info-icon class="me-3" name="Layers" />
+    </template>
     <v-list-item-title>
       <b>{{ $t("product_property_set.profile.title") }} </b>
     </v-list-item-title>
 
     <v-list-item-subtitle>
+      <span v-if="modern" class="b-product-profile-property-set__name">
+        {{ product.property_set?.name || product.property_set?.title || (product.property_set_id ? $t('add_product.edit_info.modern.assigned_profile', { id: product.property_set_id }) : $t('add_product.edit_info.modern.not_assigned')) }}
+      </span>
       <template v-if="property_set">
         <template v-if="property_set.variants">
           <v-chip
@@ -39,12 +45,12 @@
             color="#fff"
             variant="flat"
           >
-            {{ $t(GetVariantNameByCode(it.code, { property_set: item })) }}
+            {{ $t(GetVariantNameByCode(it.code, { property_set })) }}
           </v-chip>
         </template>
         <small v-else>{{ $t("global.commons.empty") }}</small>
       </template>
-      <template v-else>
+      <template v-else-if="!modern">
         {{ $t("product_property_set.profile.subtitle") }}
       </template>
     </v-list-item-subtitle>
@@ -52,6 +58,14 @@
     <template v-slot:append>
       <v-list-item-action end>
         <v-btn
+          v-if="modern"
+          class="sd-modern-button sd-modern-button--inline"
+          color="primary"
+          variant="text"
+          @click.stop="showEdit()"
+        >{{ $t(product.property_set_id ? 'global.actions.change' : 'add_product.edit_info.modern.assign') }}</v-btn>
+        <v-btn
+          v-else
           :color="property_set ? 'success' : 'primary'"
           icon
           variant="text"
@@ -139,15 +153,18 @@ import {
 import BPropertySetInput from "@selldone/components-vue/backoffice/property-set/input/BPropertySetInput.vue";
 import BProductPropertySetPreview from "@selldone/components-vue/backoffice/property-set/preview/BProductPropertySetPreview.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
+import BProductEditInfoIcon from "../../edit/info/BProductEditInfoIcon.vue";
 
 export default {
   name: "BProductProfilePropertySet",
   mixins: [],
   components: {
+    BProductEditInfoIcon,
     BProductPropertySetPreview,
     BPropertySetInput,
   },
   props: {
+    modern: { type: Boolean, default: false },
     product: {
       required: true,
       type: Object,
@@ -194,6 +211,9 @@ export default {
     product() {
       this.property_set = this.product.property_set;
     },
+    "product.property_set"(value) {
+      if (this.modern && !this.assign_dialog) this.property_set = value;
+    },
   },
 
   created() {
@@ -215,4 +235,15 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-product-profile-property-set--modern {
+  min-height: 62px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  :deep(.v-list-item-title), :deep(.v-list-item-title b) { font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; letter-spacing: 0; white-space: normal; }
+  :deep(.v-list-item-subtitle) { margin-top: 2px; color: var(--sd-modern-muted); font-size: 12px; font-weight: 400; line-height: 19px; opacity: 1; white-space: normal; overflow-wrap: anywhere; }
+  :deep(.v-list-item__append) { padding-inline-start: 12px; }
+  .b-product-profile-property-set__name { display: block; margin-bottom: 2px; }
+  .b-product-edit-info-icon { color: var(--sd-modern-muted); }
+}
+</style>

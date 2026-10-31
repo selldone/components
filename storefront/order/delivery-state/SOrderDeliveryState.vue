@@ -21,12 +21,22 @@
         :class="{ 'is-current': stage.current, 'is-complete': stage.complete }"
         :aria-current="stage.current ? 'step' : undefined"
       >
-        <span class="b-order-delivery-state__node" aria-hidden="true"><v-icon size="14">{{ stage.complete ? 'check' : stage.icon }}</v-icon></span>
+        <span class="b-order-delivery-state__node" aria-hidden="true"><slot name="stage-icon" :stage="stage"><v-icon size="14">{{ stage.complete ? 'check' : stage.icon }}</v-icon></slot></span>
         <span class="b-order-delivery-state__caption">
           <span class="b-order-delivery-state__title">{{ stage.title }}</span>
-          <small v-if="stage.code === 'CheckQueue' && basket.reserved_at">{{ getLocalTimeString(basket.reserved_at, false) }}</small>
-          <small v-else-if="stage.code === 'ToCustomer' && basket.delivery_at">{{ getLocalTimeString(basket.delivery_at, false) }}</small>
-          <small v-else-if="stage.caption">{{ $t(stage.caption) }}</small>
+          <span class="b-order-delivery-state__detail">
+            <slot name="stage-detail" :stage="stage">
+            <small v-if="stage.code === 'CheckQueue' && basket.reserved_at">{{ getLocalTimeString(basket.reserved_at, false) }}</small>
+            <small v-else-if="stage.code === 'ToCustomer' && basket.delivery_at">{{ getLocalTimeString(basket.delivery_at, false) }}</small>
+            <small v-else-if="stage.caption">{{ $t(stage.caption) }}</small>
+            <v-tooltip v-if="stage.help" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true" :open-on-click="true">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" icon="info_outline" variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="$t(isAvocado ? 'process_center.modern.avocado_stage_help_label' : 'process_center.modern.file_delivery_help_label')" />
+              </template>
+              {{ $t(stage.help) }}
+            </v-tooltip>
+            </slot>
+          </span>
         </span>
       </li>
     </ol>
@@ -239,7 +249,7 @@
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UCountDown from "../../../ui/count-down/UCountDown.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import { Order } from "@selldone/core-js";
+import { Basket, Order } from "@selldone/core-js";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
@@ -275,19 +285,32 @@ export default {
   computed: {
     modernStages() {
       const isVirtual = this.basket.type === ProductType.VIRTUAL.code;
+      const isFile = this.basket.type === ProductType.FILE.code && !this.isFulfillment && !this.isAvocado;
+      const isService = this.basket.type === ProductType.SERVICE.code && !this.isFulfillment && !this.isAvocado;
+      const noAvocadoDelivery = this.isAvocado && !this.basket.delivery;
       const stages = {
-        CheckQueue: { step: 1, icon: "shopping_basket" },
-        OrderConfirm: { step: 2, icon: "check" , caption: "process_center.modern.stage_confirmation" },
-        PreparingOrder: { step: 3, icon: "inventory_2", caption: isVirtual ? "process_center.modern.virtual_stage_preparation" : "process_center.modern.stage_preparation" },
-        SentOrder: { step: 4, icon: "local_shipping", caption: "process_center.modern.stage_delivery" },
-        ToCustomer: { step: 5, icon: "done_all", caption: isVirtual ? "process_center.modern.virtual_stage_completion" : "process_center.modern.stage_delivered" },
+        CheckQueue: { step: 1, icon: "shopping_basket", help: this.isAvocado ? "process_center.modern.avocado_stage_review_help" : undefined },
+        OrderConfirm: { step: 2, icon: "check" , caption: this.isAvocado ? (this.basket.status === Basket.Status.Reserved.code ? "process_center.modern.avocado_awaiting_payment" : "process_center.modern.avocado_stage_confirmation") : isService ? "process_center.modern.service_stage_confirmation" : "process_center.modern.stage_confirmation", help: this.isAvocado ? "process_center.modern.avocado_stage_confirmation_help" : undefined },
+        PreparingOrder: {
+          step: 3,
+          icon: noAvocadoDelivery ? "remove" : isFile ? "link" : isService ? "checklist" : "inventory_2",
+          caption: noAvocadoDelivery ? "process_center.modern.avocado_no_delivery" : isFile ? "process_center.modern.file_stage_preparation" : isVirtual ? "process_center.modern.virtual_stage_preparation" : isService ? "process_center.modern.service_stage_preparation" : "process_center.modern.stage_preparation",
+          help: this.isAvocado ? "process_center.modern.avocado_stage_delivery_help" : undefined,
+        },
+        SentOrder: { step: 4, icon: noAvocadoDelivery ? "remove" : "local_shipping", caption: noAvocadoDelivery ? "process_center.modern.avocado_no_delivery" : "process_center.modern.stage_delivery", help: this.isAvocado ? "process_center.modern.avocado_stage_delivery_help" : undefined },
+        ToCustomer: {
+          step: 5,
+          icon: isFile ? "cloud_download" : "done_all",
+          caption: noAvocadoDelivery ? "process_center.modern.avocado_stage_finish" : isFile ? "process_center.modern.file_stage_delivered" : isVirtual ? "process_center.modern.virtual_stage_completion" : isService ? "process_center.modern.service_stage_delivered" : "process_center.modern.stage_delivered",
+          help: this.isAvocado ? "process_center.modern.avocado_stage_finish_help" : isFile ? "process_center.modern.file_delivery_help" : undefined,
+        },
       };
       return this.list.map((code) => ({
         ...stages[code],
         code,
         title: this.$t(`global.basket_delivery_state.step_${stages[code].step}`),
         current: this.delivery_step === this.getStepIndex(code),
-        complete: this.delivery_step > this.getStepIndex(code),
+        complete: this.delivery_step > this.getStepIndex(code) && !(noAvocadoDelivery && ["PreparingOrder", "SentOrder"].includes(code)),
       }));
     },
     CheckQueue() {
@@ -460,7 +483,8 @@ export default {
   }
   .b-order-delivery-state__caption { min-width: 0; }
   .b-order-delivery-state__title { display: block; }
-  .b-order-delivery-state__caption > small { display: block; margin-top: 2px; font-size: 11px; font-weight: 400; line-height: 16px; text-wrap: balance; overflow-wrap: anywhere; }
+  .b-order-delivery-state__detail { display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+  .b-order-delivery-state__detail > small { display: block; font-size: 11px; font-weight: 400; line-height: 16px; text-wrap: balance; overflow-wrap: anywhere; }
   .is-current { color: rgb(var(--v-theme-on-surface)) !important; }
   .is-current .b-order-delivery-state__title { font-weight: 500; }
   .is-current .b-order-delivery-state__node,

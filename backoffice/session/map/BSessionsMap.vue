@@ -1665,7 +1665,7 @@ export default {
   .b-sessions-map__country {
     width: 100%;
     min-height: 44px;
-    padding-inline: 8px;
+    padding-inline: 12px;
     color: inherit;
     background: transparent;
     border: 0;
@@ -1686,8 +1686,9 @@ export default {
     }
   }
 
-  .b-sessions-map__country-head {
-    padding-inline: 8px;
+  .b-sessions-map__country-head,
+  .b-sessions-map__device-row {
+    padding-inline: 12px;
   }
 
   .b-sessions-map__scope {
@@ -1880,7 +1881,7 @@ export default {
   .b-sessions-map__country {
     width: 100%;
     min-height: 40px;
-    padding: 7px 0;
+    padding: 7px 12px;
     color: inherit;
     background: transparent;
     border: 0;
@@ -1894,6 +1895,11 @@ export default {
 
   .b-sessions-map__country[aria-pressed="true"] {
     background: var(--sd-modern-inset);
+  }
+
+  .b-sessions-map__country-head,
+  .b-sessions-map__device-row {
+    padding-inline: 12px;
   }
 
   .b-sessions-map__country:focus-visible {

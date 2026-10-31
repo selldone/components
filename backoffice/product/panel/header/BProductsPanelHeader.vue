@@ -29,7 +29,29 @@
     <div v-if="modern" class="b-products-panel-header__heading sd-modern-title">
       <v-icon class="b-products-panel-header__purpose" aria-hidden="true">inventory_2</v-icon>
       <div>
-        <h1 class="sd-modern-title-text">{{ $t('global.commons.products') }}</h1>
+        <div class="b-products-panel-header__title-row">
+          <h1 class="sd-modern-title-text">{{ $t('global.commons.products') }}</h1>
+          <b-products-workspace-help v-model="workspace_help">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                class="sd-modern-button sd-modern-button--compact b-products-panel-header__help"
+                color="primary"
+                variant="text"
+                prepend-icon="help_outline"
+              >
+                {{ $t('product_panel.workspace.help.open') }}
+                <v-tooltip
+                  activator="parent"
+                  location="top"
+                  content-class="sd-modern-tooltip text-start"
+                  :open-on-focus="true"
+                  :text="$t('product_panel.workspace.help.tooltip')"
+                />
+              </v-btn>
+            </template>
+          </b-products-workspace-help>
+        </div>
         <p class="sd-modern-subtitle">{{ $t('product_panel.workspace.subtitle') }}</p>
       </div>
     </div>
@@ -100,161 +122,208 @@
           :open-on-focus="true"
         />
 
-        <v-menu activator="parent">
+        <v-menu
+          v-model="tools_menu"
+          activator="parent"
+          :location="modern ? 'bottom end' : undefined"
+          :offset="modern ? 8 : undefined"
+          :width="modern ? 620 : undefined"
+          :max-width="modern ? 'calc(100vw - 24px)' : undefined"
+          :max-height="modern ? 'calc(100dvh - 24px)' : undefined"
+          :close-on-content-click="!modern"
+        >
           <v-list
             class="text-start pa-0"
-            :class="{ 'b-products-panel-header__popover': modern }"
+            :class="modern ? 'b-products-panel-header__popover sd-modern-widget' : undefined"
             slim
             rounded="lg"
+            @keydown.enter="modern && $event.stopPropagation()"
           >
-            <v-list-item
-              :to="{
-                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                  ? 'VPageVendorProducts'
-                  : 'BPageShopProductsList',
-              }"
-              exact
-              prepend-icon="shelves"
-            >
-              <v-list-item-title
-                >{{ $t("admin_shop.products.menu_products_list") }}
-              </v-list-item-title>
-            </v-list-item>
-
-            <v-list-item
-              :to="{
-                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                  ? 'VendorProducts_Exporter'
-                  : 'BPageShopProductsExporter',
-              }"
-              exact
-              prepend-icon="file_download"
-            >
-              <v-list-item-title>
-                {{ $t("admin_shop.products.menu_export") }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item
-              :to="{
-                name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                  ? 'VendorProducts_Importer'
-                  : 'BPageShopProductsImporter',
-              }"
-              exact
-              prepend-icon="system_update_alt"
-            >
-              <v-list-item-title
-                >{{ $t("admin_shop.products.menu_import") }}
-              </v-list-item-title>
-            </v-list-item>
-
-            <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ RSS ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <v-list-item
-              v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
-              exact
-              prepend-icon="rss_feed"
-              :subtitle="$t('admin_shop.products.products_rss.subtitle')"
-              @click="rss_dialog = true"
-            >
-              <template v-slot:title>
-                {{ $t("admin_shop.products.products_rss.title") }}
-
-                <img
-                  class="mx-1"
-                  height="22"
-                  src="./../../../../assets/trademark/google.svg"
-                  width="22"
-                />
-                <img
-                  class="mx-1"
-                  height="22"
-                  src="./../../../../assets/trademark/meta.png"
-                  width="22"
-                />
-              </template>
-            </v-list-item>
-
-            <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ API ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-            <v-list-item
-              v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
-              exact
-              prepend-icon="api"
-              :subtitle="$t('admin_shop.products.products_api.subtitle')"
-              @click="api_dialog = true"
-            >
-              <template v-slot:title>
-                {{ $t("admin_shop.products.products_api.title") }}
-
-                <img
-                  v-for="i in available_api_feeds.limit(3)"
-                  :key="i.driver"
-                  :src="i.logo"
-                  class="mx-1"
-                  height="22"
-                  width="22"
-                />
-              </template>
-            </v-list-item>
-
-            <template v-if="!IS_VENDOR_PANEL">
-              <v-divider class="my-1"></v-divider>
-
-              <v-list-item
-                prepend-icon="settings_suggest"
-                @click="showAdvancedOptions"
-              >
-                <v-list-item-title>
-                  {{ $t("admin_shop.products.menu_advanced_options") }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  {{
-                    $t("admin_shop.products.menu_advanced_options_description")
-                  }}
-                </v-list-item-subtitle>
-              </v-list-item>
-            </template>
-
-            <v-divider class="my-2" thickness="2" opacity="1"></v-divider>
-
-            <div class="text-center px-1 d-flex flex-column align-center" :class="{ 'b-products-panel-header__toggles': modern }">
-              <div v-for="(toggle, index) in toggles" :key="index">
-                <v-icon class="me-2">{{ toggle.icon }}</v-icon>
-                <v-btn-toggle
-                  :model-value="$props[toggle.modelValue]"
-                  @update:model-value="
-                    (v) => $emit(`update:${toggle.emitKey}`, v)
-                  "
-                  selected-class="black-flat"
-                  class="mb-1"
-                  divided
-                  mandatory
-                  rounded="lg"
+            <header v-if="modern" class="b-products-panel-header__popover-heading">
+              <h2>{{ $t('product_panel.workspace.tools') }}</h2>
+              <v-icon size="16" aria-hidden="true">tune</v-icon>
+            </header>
+            <div class="b-products-panel-header__menu-columns">
+              <div class="b-products-panel-header__catalog" :aria-label="modern ? $t('product_panel.workspace.catalog') : undefined">
+                <h3 v-if="modern" class="b-products-panel-header__menu-eyebrow">{{ $t('product_panel.workspace.catalog') }}</h3>
+                <v-list-item
+                  :to="{
+                    name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                      ? 'VPageVendorProducts'
+                      : 'BPageShopProductsList',
+                  }"
+                  exact
+                  prepend-icon="shelves"
+                  :append-icon="modern ? $t('icons.chevron_next') : undefined"
+                  :active="modern ? false : undefined"
+                  @click="tools_menu = false"
                 >
-                  <v-btn
-                    :value="true"
-                    stacked
-                    size="small"
-                    width="200"
-                    max-width="200"
-                    height="auto"
+                  <v-list-item-title
+                    >{{ $t("admin_shop.products.menu_products_list") }}
+                  </v-list-item-title>
+                </v-list-item>
+
+                <v-list-item
+                  :to="{
+                    name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                      ? 'VendorProducts_Exporter'
+                      : 'BPageShopProductsExporter',
+                  }"
+                  exact
+                  prepend-icon="file_download"
+                  :append-icon="modern ? $t('icons.chevron_next') : undefined"
+                  :active="modern ? false : undefined"
+                  @click="tools_menu = false"
+                >
+                  <v-list-item-title>
+                    {{ $t("admin_shop.products.menu_export") }}
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  :to="{
+                    name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                      ? 'VendorProducts_Importer'
+                      : 'BPageShopProductsImporter',
+                  }"
+                  exact
+                  prepend-icon="system_update_alt"
+                  :append-icon="modern ? $t('icons.chevron_next') : undefined"
+                  :active="modern ? false : undefined"
+                  @click="tools_menu = false"
+                >
+                  <v-list-item-title
+                    >{{ $t("admin_shop.products.menu_import") }}
+                  </v-list-item-title>
+                </v-list-item>
+
+                <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ RSS ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+                <v-list-item
+                  v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
+                  exact
+                  prepend-icon="rss_feed"
+                  :subtitle="$t('admin_shop.products.products_rss.subtitle')"
+                  :append-icon="modern ? $t('icons.chevron_next') : undefined"
+                  @click="tools_menu = false; rss_dialog = true"
+                >
+                  <template v-slot:title>
+                    {{ $t("admin_shop.products.products_rss.title") }}
+
+                    <img
+                      class="mx-1"
+                      :height="modern ? 14 : 22"
+                      src="./../../../../assets/trademark/google.svg"
+                      :width="modern ? 14 : 22"
+                      alt="Google"
+                    />
+                    <img
+                      class="mx-1"
+                      :height="modern ? 14 : 22"
+                      src="./../../../../assets/trademark/meta.png"
+                      :width="modern ? 14 : 22"
+                      alt="Meta"
+                    />
+                  </template>
+                </v-list-item>
+
+                <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ API ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+                <v-list-item
+                  v-if="!IS_VENDOR_PANEL /*🟢 Not Vendor Panel 🟢*/"
+                  exact
+                  prepend-icon="api"
+                  :subtitle="$t('admin_shop.products.products_api.subtitle')"
+                  :append-icon="modern ? $t('icons.chevron_next') : undefined"
+                  @click="tools_menu = false; api_dialog = true"
+                >
+                  <template v-slot:title>
+                    {{ $t("admin_shop.products.products_api.title") }}
+
+                    <img
+                      v-for="i in available_api_feeds.limit(3)"
+                      :key="i.driver"
+                      :src="i.logo"
+                      class="mx-1"
+                      :height="modern ? 14 : 22"
+                      :width="modern ? 14 : 22"
+                      :alt="i.title"
+                    />
+                  </template>
+                </v-list-item>
+
+                <template v-if="!IS_VENDOR_PANEL">
+                  <v-divider v-if="!modern" class="my-1"></v-divider>
+
+                  <v-list-item
+                    prepend-icon="settings_suggest"
+                    :append-icon="modern ? $t('icons.chevron_next') : undefined"
+                    @click="tools_menu = false; showAdvancedOptions()"
+                  >
+                    <v-list-item-title>
+                      {{ $t("admin_shop.products.menu_advanced_options") }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      {{
+                        $t("admin_shop.products.menu_advanced_options_description")
+                      }}
+                    </v-list-item-subtitle>
+                  </v-list-item>
+                </template>
+                </div>
+
+              <v-divider v-if="!modern" class="my-2" thickness="2" opacity="1"></v-divider>
+
+              <div :class="modern ? 'b-products-panel-header__toggles' : 'text-center px-1 d-flex flex-column align-center'">
+                <h3 v-if="modern" class="b-products-panel-header__menu-eyebrow">{{ $t('product_panel.workspace.display') }}</h3>
+                <div
+                  v-for="(toggle, index) in toggles"
+                  :key="index"
+                  :class="modern ? 'b-products-panel-header__preference' : undefined"
+                >
+                  <div v-if="modern" class="b-products-panel-header__preference-label" :class="{ 'b-products-panel-header__preference-label--mode': toggle.modelValue === 'tableMode' }">
+                    <v-icon size="16" aria-hidden="true">{{ toggle.icon }}</v-icon>
+                    {{ $t(toggle.label) }}
+                  </div>
+                  <v-icon v-else class="me-2">{{ toggle.icon }}</v-icon>
+                  <v-btn-toggle
+                    :model-value="$props[toggle.modelValue]"
+                    @update:model-value="
+                      (v) => $emit(`update:${toggle.emitKey}`, v)
+                    "
+                    :selected-class="modern ? 'b-products-panel-header__choice--selected' : 'black-flat'"
+                    :class="modern ? 'b-products-panel-header__choices' : 'mb-1'"
+                    :aria-label="modern ? $t(toggle.label) : undefined"
+                    :aria-keyshortcuts="modern && toggle.shortcut ? `Control+${toggle.shortcut} Meta+${toggle.shortcut}` : undefined"
+                    divided
+                    mandatory
                     rounded="lg"
                   >
-                    {{ $t(toggle.trueTitle) }}
-                    <small class="tnt">{{ $t(toggle.trueDescription) }}</small>
-                  </v-btn>
-                  <v-btn
-                    :value="false"
-                    stacked
-                    size="small"
-                    width="200"
-                    max-width="200"
-                    height="auto"
-                    rounded="lg"
-                  >
-                    {{ $t(toggle.falseTitle) }}
-                    <small class="tnt">{{ $t(toggle.falseDescription) }}</small>
-                  </v-btn>
-                </v-btn-toggle>
+                    <v-btn
+                      v-for="value in modern && toggle.modelValue === 'tableMode' ? [false, true] : [true, false]"
+                      :key="String(value)"
+                      :value="value"
+                      :stacked="!modern"
+                      size="small"
+                      :width="modern ? undefined : 200"
+                      :max-width="modern ? undefined : 200"
+                      :height="modern ? undefined : 'auto'"
+                      :rounded="modern ? undefined : 'lg'"
+                      :aria-label="modern ? $t(value ? toggle.trueTitle : toggle.falseTitle) : undefined"
+                      :aria-pressed="modern ? $props[toggle.modelValue] === value : undefined"
+                    >
+                      <v-icon v-if="modern && toggle.modelValue === 'tableMode'" size="14" class="me-1" aria-hidden="true">{{ value ? 'view_list' : 'folder_open' }}</v-icon>
+                      {{ $t(modern ? value ? toggle.compactTrueTitle : toggle.compactFalseTitle : value ? toggle.trueTitle : toggle.falseTitle) }}
+                      <small v-if="!modern" class="tnt">{{ $t(value ? toggle.trueDescription : toggle.falseDescription) }}</small>
+                      <v-tooltip
+                        v-if="modern && toggle.modelValue !== 'tableMode'"
+                        activator="parent"
+                        location="top"
+                        content-class="sd-modern-tooltip text-start"
+                        :open-on-focus="true"
+                        :text="$t(value ? toggle.trueHelp : toggle.falseHelp) + (toggle.shortcut ? ` · ⌘/Ctrl + ${toggle.shortcut}` : '')"
+                      />
+                    </v-btn>
+                  </v-btn-toggle>
+                  <p v-if="modern && toggle.modelValue === 'tableMode'" class="b-products-panel-header__mode-description">{{ $t(tableMode ? toggle.trueDescription : toggle.falseDescription) }}</p>
+                </div>
               </div>
             </div>
           </v-list>
@@ -425,10 +494,12 @@ import { SetupService } from "@selldone/core-js/server/SetupService";
 import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 import { ShopURLs } from "@selldone/core-js/helper";
+import BProductsWorkspaceHelp from "../help/BProductsWorkspaceHelp.vue";
 
 export default {
   name: "BProductsPanelHeader",
   components: {
+    BProductsWorkspaceHelp,
     UTextCopyBox,
     BProductsAdvancedOptions,
 
@@ -459,6 +530,9 @@ export default {
   },
 
   data: () => ({
+
+    tools_menu: false,
+    workspace_help: false,
 
     dialog_advanced: false,
 
@@ -540,6 +614,9 @@ export default {
           falseTitle: "admin_shop.products.table_mode.false_title",
           falseDescription: "admin_shop.products.table_mode.false_description",
           icon: "view_list",
+          label: "product_panel.workspace.view_mode",
+          compactTrueTitle: "product_panel.workspace.table",
+          compactFalseTitle: "product_panel.workspace.drag_drop",
         },
 
         {
@@ -551,6 +628,11 @@ export default {
           falseDescription:
             "admin_shop.products.show_deletes.false_description",
           icon: "delete_outline",
+          label: "product_panel.workspace.deleted_products",
+          compactTrueTitle: "global.commons.show",
+          compactFalseTitle: "global.commons.hide",
+          trueHelp: "product_panel.workspace.deleted_show_help",
+          falseHelp: "product_panel.workspace.deleted_hide_help",
         },
         ...(this.IS_MARKETPLACE && !this.IS_VENDOR_PANEL
           ? [
@@ -565,6 +647,12 @@ export default {
                   "admin_shop.products.show_vendors.false_description",
                 condition: "IS_MARKETPLACE && !IS_VENDOR_PANEL",
                 icon: "storefront",
+                label: "product_panel.workspace.vendor_identities",
+                compactTrueTitle: "global.commons.show",
+                compactFalseTitle: "global.commons.hide",
+                trueHelp: "product_panel.workspace.vendors_show_help",
+                falseHelp: "product_panel.workspace.vendors_hide_help",
+                shortcut: "1",
               },
             ]
           : []),
@@ -577,6 +665,12 @@ export default {
           falseTitle: "admin_shop.products.show_notes.false_title",
           falseDescription: "admin_shop.products.show_notes.false_description",
           icon: "sticky_note_2",
+          label: "product_panel.workspace.notes",
+          compactTrueTitle: "global.actions.show_all",
+          compactFalseTitle: "product_panel.workspace.hide_empty_notes",
+          trueHelp: "product_panel.workspace.notes_show_help",
+          falseHelp: "product_panel.workspace.notes_hide_help",
+          shortcut: "2",
         },
       ];
     },
@@ -615,6 +709,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-products-panel-header__menu-columns,
+.b-products-panel-header__catalog { display: contents; }
+
 .b-products-panel-header--modern {
   overflow: visible;
   background: transparent !important;
@@ -637,6 +734,8 @@ export default {
   }
 
   .b-products-panel-header__purpose { font-size: 26px; }
+  .b-products-panel-header__title-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+  .b-products-panel-header__help { flex: 0 0 auto; }
   .sd-modern-title-text { font-size: 25px; font-weight: 500; line-height: 31.25px; letter-spacing: -.55px; }
   .sd-modern-subtitle { margin-block: 5px 0; font-size: 12px; font-weight: 400; line-height: 18px; }
   .b-products-panel-header__actions { gap: 8px; }
@@ -646,24 +745,62 @@ export default {
 }
 
 .b-products-panel-header__popover {
-  width: min(440px, calc(100vw - 32px));
-  max-width: calc(100vw - 32px);
+  width: 100%;
+  max-height: inherit;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--sd-modern-border);
+  border-radius: 14px !important;
   color: rgb(var(--v-theme-on-surface));
   background: rgb(var(--v-theme-surface));
+  box-shadow: 0 10px 36px rgba(var(--v-theme-on-surface), .11);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 19.5px;
 
-  :deep(.v-list-item-title) { font-size: 13px; font-weight: 500; line-height: 20px; }
-  :deep(.v-list-item-subtitle) { font-size: 12px; line-height: 18px; white-space: normal; }
-}
+  .b-products-panel-header__popover-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px 13px; border-block-end: 1px solid var(--sd-modern-border); }
+  .b-products-panel-header__popover-heading h2 { margin: 0; font-family: inherit; font-size: 14px; font-weight: 500; line-height: 21px; }
+  .b-products-panel-header__popover-heading > .v-icon { color: var(--sd-modern-muted); }
+  .b-products-panel-header__menu-columns { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
+  .b-products-panel-header__catalog { display: block; min-width: 0; padding: 0 7px 7px; }
+  .b-products-panel-header__menu-eyebrow { margin: 0; padding: 10px 9px 5px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 500; line-height: 16.5px; letter-spacing: .6px; text-transform: uppercase; }
+  &:dir(rtl) .b-products-panel-header__menu-eyebrow { letter-spacing: 0; }
+  .b-products-panel-header__catalog > .v-list-item { min-height: 49px; padding: 8px 10px; border-radius: 7px; }
+  :deep(.v-list-item__prepend > .v-icon) { font-size: 18px; opacity: 1; color: var(--sd-modern-muted); }
+  :deep(.v-list-item__prepend > .v-list-item__spacer) { width: 11px; }
+  :deep(.v-list-item__append > .v-icon) { font-size: 14px; opacity: 1; color: var(--sd-modern-muted); }
+  :deep(.v-list-item__append > .v-list-item__spacer) { width: 8px; }
+  :deep(.v-list-item-title) { display: flex; flex-wrap: wrap; align-items: center; min-width: 0; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 19.5px; letter-spacing: 0; white-space: normal; }
+  :deep(.v-list-item-subtitle) { display: block; margin-block-start: 2px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 16px; letter-spacing: 0; white-space: normal; overflow: visible; opacity: 1; -webkit-line-clamp: unset; }
 
-.b-products-panel-header__toggles {
-  align-items: stretch !important;
-  padding: 8px 12px 12px !important;
+  .b-products-panel-header__toggles { min-width: 0; padding: 0 14px 12px; border-inline-start: 1px solid var(--sd-modern-border); }
+  .b-products-panel-header__toggles > .b-products-panel-header__menu-eyebrow { padding-inline: 0; }
+  .b-products-panel-header__preference { min-width: 0; padding-block: 8px; }
+  .b-products-panel-header__preference-label { display: flex; align-items: center; gap: 9px; margin-block-end: 7px; font-size: 12px; font-weight: 400; line-height: 18px; }
+  .b-products-panel-header__preference-label > .v-icon { color: var(--sd-modern-muted); }
+  .b-products-panel-header__preference-label--mode { display: none; }
+  .b-products-panel-header__choices { display: flex; width: 100%; height: auto; padding: 3px; gap: 2px; border-radius: 8px; background: rgba(var(--v-theme-on-surface), .045); }
+  .b-products-panel-header__choices > .v-btn { flex: 1 1 0; width: auto; max-width: none; min-width: 0; height: auto; min-height: 30px; padding: 4px 10px; border: 0; border-radius: 5px !important; background: transparent; color: var(--sd-modern-muted); font-family: inherit; font-size: 11px; font-weight: 400; line-height: 16.5px; letter-spacing: 0; text-transform: none; }
+  .b-products-panel-header__choices > .b-products-panel-header__choice--selected { background: rgb(var(--v-theme-surface)); color: rgb(var(--v-theme-on-surface)); box-shadow: 0 1px 3px rgba(var(--v-theme-on-surface), .09); font-weight: 500; }
+  .b-products-panel-header__choice--selected :deep(.v-btn__overlay) { opacity: 0 !important; }
+  .b-products-panel-header__choices :deep(.v-btn__content) { white-space: normal; }
+  .b-products-panel-header__preference:has(.b-products-panel-header__preference-label--mode) .v-btn { min-height: 34px; font-size: 12px; line-height: 18px; }
+  .v-btn:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 1px; }
+  .b-products-panel-header__mode-description { margin: 3px 0 0; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 16px; }
 
-  > div { display: flex; align-items: center; gap: 8px; min-width: 0; }
-  :deep(.v-btn-toggle) { flex: 1; height: auto; min-width: 0; padding-block: 4px; gap: 4px; }
-  :deep(.v-btn) { flex: 1 1 0; width: auto !important; max-width: none !important; min-width: 0; min-height: 52px; padding: 8px; font-size: 12px; letter-spacing: 0; }
-  :deep(.v-btn__content) { white-space: normal; }
-  :deep(.v-btn small) { font-size: 11px; font-weight: 400; }
+  @media (max-width: 599px) {
+    .b-products-panel-header__menu-columns { grid-template-columns: minmax(0, 1fr); }
+    .b-products-panel-header__toggles { border-inline-start: 0; border-block-start: 1px solid var(--sd-modern-border); }
+    .b-products-panel-header__preference { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+    .b-products-panel-header__preference:has(.b-products-panel-header__preference-label--mode) { display: block; }
+    .b-products-panel-header__preference-label { margin: 0; }
+    .b-products-panel-header__preference > .b-products-panel-header__choices { width: auto; max-width: 100%; }
+    .b-products-panel-header__preference:has(.b-products-panel-header__preference-label--mode) > .b-products-panel-header__choices { width: 100%; }
+  }
+  @media (max-width: 599px), (pointer: coarse) {
+    .b-products-panel-header__choices > .v-btn,
+    .b-products-panel-header__preference:has(.b-products-panel-header__preference-label--mode) .v-btn { min-height: 44px; }
+  }
 }
 
 @media (max-width: 600px) {

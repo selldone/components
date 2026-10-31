@@ -54,17 +54,20 @@
             @click.stop="importing_collapse = false"
           >
             <span v-if="importing" class="me-2">
-              <v-icon class="me-1">fa:fas fa-box</v-icon>
+              <b-shop-products-import-processing-icon v-if="modern" name="package" class="me-1" />
+              <v-icon v-else class="me-1">fa:fas fa-box</v-icon>
               {{ $t("global.commons.products") }} |
               {{ numeralFormat(importing, "0.[0] a") }}</span
             >
             <span v-if="images_que" class="me-2">
-              <v-icon class="me-1">fa:fas fa-image</v-icon
+              <b-shop-products-import-processing-icon v-if="modern" name="image" class="me-1" />
+              <v-icon v-else class="me-1">fa:fas fa-image</v-icon
               >{{ $t("global.commons.images") }} |
               {{ numeralFormat(images_que, "0.[0] a") }}</span
             >
             {{ modern ? $t('product_panel.workspace.importing') : 'Importing...' }}
-            <v-icon :class="{ 'rotate-180': !importing_collapse }" end
+            <b-shop-products-import-processing-icon v-if="modern" name="chevron-down" :class="{ 'rotate-180': !importing_collapse }" />
+            <v-icon v-else :class="{ 'rotate-180': !importing_collapse }" end
               >expand_more
             </v-icon>
             <v-tooltip v-if="modern" activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="$t('product_panel.workspace.expand_import')" :open-on-focus="true" />
@@ -73,24 +76,31 @@
       </template>
     </b-products-panel-header>
 
+    <v-dialog :model-value="converting_file" persistent max-width="520" content-class="text-start">
+      <v-card rounded="lg" class="text-start">
+        <b-spreadsheet-conversion-progress :filename="converting_filename" />
+      </v-card>
+    </v-dialog>
+
     <!-- ███████████████████████████ Importing Products Que ███████████████████████████ -->
 
     <v-expand-transition>
-      <div v-if="!importing_collapse">
+      <div v-if="!importing_collapse" class="b-products-panel__import-transition">
         <b-shop-products-import-processing
           :shop="shop"
+          :modern="modern"
           class="position-relative"
         >
           <v-btn
-            class="absolute-top-end"
             icon
             :title="modern ? undefined : 'Collapse'"
             :aria-label="modern ? $t('product_panel.workspace.collapse_import') : undefined"
-            :class="{ 'sd-modern-icon-button': modern }"
+            :class="modern ? 'sd-modern-icon-button' : 'absolute-top-end'"
             variant="text"
             @click="importing_collapse = true"
           >
-            <v-icon :class="{ 'rotate-180': !importing_collapse }"
+            <b-shop-products-import-processing-icon v-if="modern" name="chevron-down" :class="{ 'rotate-180': !importing_collapse }" />
+            <v-icon v-else :class="{ 'rotate-180': !importing_collapse }"
               >expand_more
             </v-icon>
             <v-tooltip v-if="modern" activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="$t('product_panel.workspace.collapse_import')" :open-on-focus="true" />
@@ -168,52 +178,73 @@
       <template v-if="CAN_ADD_PRODUCT" v-slot:append-products>
         <v-col key="importer" :class="modern ? 'b-products-panel__import-tile' : 'p-2'" cols="12" lg="3" md="4" sm="6" xl="3">
           <div
-            :class="modern ? 'b-products-panel__import-content sd-modern-widget' : 'dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative'"
+            :class="modern ? ['b-products-panel__import-content sd-modern-widget', { 'b-products-panel__import-content--vendor': IS_VENDOR_PANEL }] : 'dashed rounded-8px d-flex align-center justify-center pa-3 bg-white min-h-100 position-relative'"
           >
             <div>
-
-
-              <img
-                alt="Excel"
-                class="mb-3"
-                height="36"
-                src="../../../assets/file/excel.svg"
-                width="36"
-              />
-              <h3>{{ $t("product_panel.excel_import.title") }}</h3>
-              <small class="me-2">{{ $t("global.commons.or") }}</small>
-              <v-btn
-                :to="{
-                  name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                    ? 'VendorProducts_Importer'
-                    : 'BPageShopProductsImporter',
-                }"
-                :class="modern ? 'sd-modern-button sd-modern-button--small sd-modern-button--primary' : 'tnt m-1'"
-                color="primary"
-                exact
-                size="small"
-              >
-                <v-icon class="me-1" size="small">file_upload</v-icon>
-
-                {{ $t("product_panel.excel_import.select_file") }}
-              </v-btn>
-
-              <small class="d-block">
-                {{ $t("product_panel.excel_import.max_file") }}</small
-              >
-
-              <div>
-                <hr />
+              <div class="b-products-panel__import-body">
+                <img
+                  v-if="!(modern && IS_VENDOR_PANEL)"
+                  alt="Excel"
+                  class="mb-3"
+                  height="36"
+                  src="../../../assets/file/excel.svg"
+                  width="36"
+                />
+                <b-product-window-section-icon v-else kind="import" :size="24" />
+                <h3>{{ $t(modern && IS_VENDOR_PANEL ? 'product_panel.workspace.vendor_tools.import_title' : 'product_panel.excel_import.title') }}</h3>
+                <div v-if="modern" class="b-products-panel__import-footer">
+                  <small class="d-block">{{ $t(IS_VENDOR_PANEL ? 'product_panel.workspace.vendor_tools.import_description' : 'product_panel.excel_import.max_file') }}</small>
+                  <v-btn
+                    class="sd-modern-button sd-modern-button--small"
+                    color="primary"
+                    size="small"
+                    variant="text"
+                    @click="dialog_sample = true"
+                  >
+                    <v-icon v-if="!IS_VENDOR_PANEL" class="me-1" size="small">download</v-icon>
+                    {{ $t("product_panel.excel_import.download_sample") }}
+                  </v-btn>
+                </div>
+              </div>
+              <div class="b-products-panel__import-actions">
+                <small v-if="!(modern && IS_VENDOR_PANEL)" class="me-2">{{ $t("global.commons.or") }}</small>
                 <v-btn
-                  :class="modern ? 'sd-modern-button sd-modern-button--small' : 'tnt m-1'"
-                  color="primary"
+                  :to="{
+                    name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                      ? 'VendorProducts_Importer'
+                      : 'BPageShopProductsImporter',
+                  }"
+                  :class="modern ? ['sd-modern-button sd-modern-button--small', { 'sd-modern-button--primary': !IS_VENDOR_PANEL }] : 'tnt m-1'"
+                  :color="modern && IS_VENDOR_PANEL ? undefined : 'primary'"
+                  :variant="modern && IS_VENDOR_PANEL ? 'outlined' : undefined"
+                  exact
                   size="small"
-                  variant="text"
-                  @click="dialog_sample = true"
                 >
-                  <v-icon class="me-1" size="small">download</v-icon>
-                  {{ $t("product_panel.excel_import.download_sample") }}
+                  <v-icon class="me-1" size="small">file_upload</v-icon>
+
+                  {{ $t("product_panel.excel_import.select_file") }}
+                  <v-tooltip v-if="modern && IS_VENDOR_PANEL" activator="parent" location="top" content-class="sd-modern-tooltip text-start" :text="$t('product_panel.excel_import.max_file')" :open-on-focus="true" />
                 </v-btn>
+              </div>
+
+              <div v-if="!modern" class="b-products-panel__import-footer">
+                <small class="d-block">
+                  {{ $t("product_panel.excel_import.max_file") }}</small
+                >
+
+                <div>
+                  <hr />
+                  <v-btn
+                    :class="modern ? 'sd-modern-button sd-modern-button--small' : 'tnt m-1'"
+                    color="primary"
+                    size="small"
+                    variant="text"
+                    @click="dialog_sample = true"
+                  >
+                    <v-icon class="me-1" size="small">download</v-icon>
+                    {{ $t("product_panel.excel_import.download_sample") }}
+                  </v-btn>
+                </div>
               </div>
             </div>
           </div>
@@ -427,6 +458,7 @@
 
 <script lang="ts">
 import BProductsWindow from "../../product/window/BProductsWindow.vue";
+import BProductWindowSectionIcon from "../../product/window/BProductWindowSectionIcon.vue";
 import BProductAddStudio from "../add/studio/BProductAddStudio.vue";
 import BCategoryAdd from "../../category/add/BCategoryAdd.vue";
 import { UploadHelper } from "@selldone/components-vue/utils/upload/UploadHelper.ts";
@@ -439,6 +471,7 @@ import { throttle } from "lodash-es";
 import BProductAddAi from "../../product/add/ai/BProductAddAi.vue";
 import { TemporaryDataHelper } from "../../../utils/temporary-data/TemporaryDataHelper";
 import BShopProductsImportProcessing from "../../product/importer/processing/BShopProductsImportProcessing.vue";
+import BShopProductsImportProcessingIcon from "../../product/importer/processing/BShopProductsImportProcessingIcon.vue";
 import BProductsPanelHeader from "../../product/panel/header/BProductsPanelHeader.vue";
 import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_member.model.ts";
 import BProductsPanelAddProduct from "@selldone/components-vue/backoffice/product/panel/add-product/BProductsPanelAddProduct.vue";
@@ -447,15 +480,19 @@ import { ShopURLs } from "@selldone/core-js/helper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import BProductsList from "@selldone/components-vue/backoffice/product/list/BProductsList.vue";
+import BSpreadsheetConversionProgress from "../../spreadsheet/conversion/BSpreadsheetConversionProgress.vue";
 
 export default {
   name: "BProductsPanel",
   mixins: [],
   components: {
+    BSpreadsheetConversionProgress,
+    BProductWindowSectionIcon,
     BProductsList,
     BProductsPanelAddProduct,
     BProductsPanelHeader,
     BShopProductsImportProcessing,
+    BShopProductsImportProcessingIcon,
     BProductAddAi,
     UTextCopyBox,
 
@@ -490,6 +527,8 @@ export default {
     parent_folders: null,
 
     show_drop: false,
+    converting_file: false,
+    converting_filename: "",
     dragged_external: false,
 
     show_deletes: window.show_deletes?window.show_deletes:false,
@@ -630,6 +669,8 @@ export default {
   },
 
   beforeUnmount() {
+    this.converting_file = false;
+    this.converting_filename = "";
     document.removeEventListener("keydown", this.key_listener_keydown);
   },
   methods: {
@@ -674,6 +715,10 @@ export default {
     //--------------------------------------------------------------------------------------
 
     dragover(event) {
+      if (this.converting_file) {
+        event.preventDefault();
+        return;
+      }
       if (!this.$refs.products_list || this.$refs.products_list.inDragState) {
         return;
       }
@@ -746,7 +791,8 @@ export default {
       this.dragged_external = false;
       this.show_drop = false;
     },
-    drop(event) {
+    async drop(event) {
+      if (this.converting_file) { event.preventDefault(); return; }
       if (!this.$refs.products_list) return;
       // Clean up
       this.overDropImage();
@@ -850,25 +896,29 @@ export default {
         ) {
           // Online convert excel to csv:
 
-          /*🟢 Vendor Panel 🟢*/
-          if (this.IS_VENDOR_PANEL) {
-            FileFormatConverterOnline.VendorConvertToCsv(
-              this,
-              this.vendor.id,
-              file,
-              (data) => {
-                this.loadCsvImport(data, true);
-              },
-            );
-          } else {
-            FileFormatConverterOnline.ConvertToCsv(
-              this,
-              this.shop.id,
-              file,
-              (data) => {
-                this.loadCsvImport(data, true);
-              },
-            );
+          const shopId = this.shop.id;
+          const vendorId = this.IS_VENDOR_PANEL ? this.vendor.id : null;
+          this.converting_file = true;
+          this.converting_filename = file.name;
+          const converted = (data) => {
+            if (
+              !this.converting_file ||
+              this.converting_filename !== file.name ||
+              this.shop.id !== shopId ||
+              (this.IS_VENDOR_PANEL ? this.vendor.id : null) !== vendorId
+            ) return;
+            this.loadCsvImport(data, true);
+          };
+          try {
+            /*🟢 Vendor Panel 🟢*/
+            if (vendorId) await FileFormatConverterOnline.VendorConvertToCsv(this, vendorId, file, converted);
+            else await FileFormatConverterOnline.ConvertToCsv(this, shopId, file, converted);
+          } catch (error) {
+            // Upload failures are handled by UploadHelper; report unexpected failures too.
+            NotificationService.showLaravelError(error);
+          } finally {
+            this.converting_file = false;
+            this.converting_filename = "";
           }
 
           return;
@@ -926,6 +976,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-products-panel__import-body,
+.b-products-panel__import-actions,
+.b-products-panel__import-footer {
+  display: contents;
+}
+
+.b-products-panel__import-transition {
+  // Keep the card's bottom gap inside the height measured by VExpandTransition.
+  display: flow-root;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-height: 0;
+}
+
 .b-products-panel--modern {
   width: calc(100% - 48px);
   max-width: 1400px;
@@ -937,19 +1002,50 @@ export default {
   .b-products-panel__import-tile { min-width: 0; }
   .b-products-panel__import-content {
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 13px;
+    display: grid;
+    grid-row: span 2;
+    grid-template-rows: subgrid;
+    padding: 12px 13px;
     text-align: center;
     border: 1px solid var(--sd-modern-border);
-    border-radius: 12px;
+    border-start-start-radius: var(--tool-start-start, 12px);
+    border-start-end-radius: var(--tool-start-end, 12px);
+    border-end-start-radius: var(--tool-end-start, 12px);
+    border-end-end-radius: var(--tool-end-end, 12px);
   }
-  .b-products-panel__import-content > div { min-width: 0; width: 100%; }
-  .b-products-panel__import-content h3 { font-size: 14px; font-weight: 500; line-height: 20px; margin-block-end: 10px; }
+  .b-products-panel__import-content > div { display: contents; }
+  .b-products-panel__import-body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; }
+  .b-products-panel__import-actions { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
+  .b-products-panel__import-actions > small { margin-inline-end: 0 !important; }
+  .b-products-panel__import-content .b-products-panel__import-actions .sd-modern-button { margin: 0; }
+  .b-products-panel__import-footer { display: block; min-width: 0; }
+  .b-products-panel__import-content h3 { font-size: 14px; font-weight: 500; line-height: 20px; margin-block-end: 6px; }
   .b-products-panel__import-content small { font-size: 11px; line-height: 18px; color: var(--sd-modern-muted); }
-  .b-products-panel__import-content .sd-modern-button { margin-block: 8px; }
-  .b-products-panel__import-content hr { margin-block: 14px 4px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
+  .b-products-panel__import-content .sd-modern-button { margin-block: 4px; }
+
+  .b-products-panel__import-content--vendor {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 20px;
+    border: 0;
+    border-radius: 2px;
+    text-align: start;
+    .b-products-panel__import-body { align-items: flex-start; justify-content: flex-start; gap: 12px; }
+    .b-products-panel__import-footer { display: contents; }
+    .b-products-panel__import-actions { margin-block-start: auto; justify-content: flex-start; }
+    h3 { margin: 0; font-size: 14px; font-weight: 500; line-height: 21px; }
+    small { font-size: 12px; line-height: 19px; }
+    .sd-modern-button { height: auto; min-height: 36px; margin: 0; padding: 8px 13px; border-color: var(--sd-modern-border); border-radius: 9px; font-size: 13px; font-weight: 500; line-height: 20px; }
+    .sd-modern-button :deep(.v-btn__content) { gap: 8px; white-space: normal; font-size: 13px; font-weight: 500; line-height: 20px; text-align: start; }
+    .sd-modern-button :deep(.v-icon) { width: 16px; height: 16px; font-size: 16px; margin: 0 !important; }
+    .v-btn--variant-text { padding-inline: 0; border: 0; }
+  }
+  @media (max-width: 599px), (pointer: coarse) {
+    .b-products-panel__import-content--vendor .sd-modern-button { min-height: 44px; }
+  }
 }
 
 .b-products-panel__creation {

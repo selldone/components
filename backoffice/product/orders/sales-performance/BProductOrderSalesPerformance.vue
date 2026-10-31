@@ -13,61 +13,118 @@
   -->
 
 <template>
-  <s-widget-box
+  <component
+    :is="modern ? 'section' : 's-widget-box'"
+    :class="{
+      'b-product-analytics b-product-sales-modern sd-modern-widget text-start':
+        modern,
+    }"
     :active="true"
     :icon-to="IS_VENDOR_PANEL ? undefined : { name: 'BPageProductOrders' }"
-    :title="`<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mx-sm' style='font-size: 6px;'></span> ${$t(
-      'product_sell_widget.title',
-    )}  </h5>`"
-    icon="shopping_basket"
+    :title="
+      modern
+        ? undefined
+        : `<h5 class='align-items-center pb-1'>    <span class='circle bg-primary mx-sm' style='font-size: 6px;'></span> ${$t(
+            'product_sell_widget.title',
+          )}  </h5>`
+    "
+    :icon="modern ? undefined : 'shopping_basket'"
   >
-    <template v-slot:actions>
-      <v-row>
-        <v-col cols="12" lg="10" md="9" order-lg="2">
-          <apexchart
-            :options="options"
-            :series="series"
-            class="mt-3 mx-n4 mx-sm-0"
-            height="180"
-            type="area"
-            width="100%"
-          />
-        </v-col>
-
-        <v-col
-          class="d-flex flex-wrap text-center"
-          cols="12"
-          lg="2"
-          md="3"
-          order-lg="1"
+    <header v-if="modern" class="sd-modern-header">
+      <div class="sd-modern-title">
+        <span class="sd-modern-icon sd-modern-icon--plain"
+          ><v-icon size="18" aria-hidden="true">show_chart</v-icon></span
         >
-          <div class="flex-grow-1 min-width-150">
-            <h3 class="text-h3 font-weight-black">
-              {{ numeralFormat(all_views, "0.[00] a") }}
-            </h3>
-            <p class="small m-0">{{ $t("global.commons.total_views") }}</p>
-            <p class="small m-0 op-0-8 text-truncate">
-              <up-down-icon :value="all_views_grow_week"></up-down-icon>
-              {{ numeralFormat(all_views_grow_week, "0.[0]a") }}%
-              {{ $t("global.commons.from_previous_n_days", { days: 7 }) }}
-            </p>
-          </div>
+        <div>
+          <h2 class="sd-modern-title-text">
+            {{ $t("b_product_dashboard.analytics.sales_title") }}
+          </h2>
+          <p class="sd-modern-subtitle">
+            {{ $t("b_product_dashboard.analytics.sales_subtitle") }}
+          </p>
+        </div>
+      </div>
+      <v-btn
+        v-if="!IS_VENDOR_PANEL"
+        :to="{ name: 'BPageProductOrders' }"
+        variant="text"
+        class="sd-modern-button sd-modern-button--small"
+        >{{ $t("global.commons.orders")
+        }}<v-icon size="16" class="ms-1">arrow_forward</v-icon></v-btn
+      >
+    </header>
+    <div v-if="modern" class="b-product-sales-modern__metrics">
+      <div v-for="metric in modernMetrics" :key="metric.key">
+        <p>{{ metric.label }}</p>
+        <strong>{{ numeralFormat(metric.value, "0,0") }}</strong>
+        <p
+          v-if="metric.comparison.available && metric.comparison.value !== null"
+        >
+          <up-down-icon :value="metric.comparison.value" />
+          {{ numeralFormat(metric.comparison.value, "0.[0]") }}%
+          {{
+            $t("global.commons.from_previous_n_days", {
+              days: metric.comparison.days,
+            })
+          }}
+        </p>
+      </div>
+    </div>
+    <v-row :class="{ 'b-product-sales-modern__chart': modern }">
+      <v-col
+        cols="12"
+        :lg="modern ? 12 : 10"
+        :md="modern ? 12 : 9"
+        order-lg="2"
+      >
+        <apexchart
+          :options="options"
+          :series="series"
+          :class="modern ? '' : 'mt-3 mx-n4 mx-sm-0'"
+          :height="modern ? 220 : 180"
+          :type="modern ? 'line' : 'area'"
+          dir="ltr"
+          width="100%"
+        />
+      </v-col>
 
-          <div class="flex-grow-1 min-width-150">
-            <h3 class="text-h3 mt-2 font-weight-black">
-              {{ numeralFormat(all_sells, "0.[00] a") }}
-            </h3>
-            <p class="small m-0">{{ $t("global.commons.total_sales") }}</p>
-            <p class="small m-0 op-0-8 text-truncate">
-              <up-down-icon :value="all_sells_grow_week"></up-down-icon>
-              {{ numeralFormat(all_sells_grow_week, "0.[0]a") }}%
-              {{ $t("global.commons.from_previous_n_days", { days: 7 }) }}
-            </p>
-          </div>
-        </v-col>
-      </v-row>
-    </template>
-  </s-widget-box>
+      <v-col
+        v-if="!modern"
+        class="d-flex flex-wrap text-center"
+        cols="12"
+        lg="2"
+        md="3"
+        order-lg="1"
+      >
+        <div class="flex-grow-1 min-width-150">
+          <h3 class="text-h3 font-weight-black">
+            {{ numeralFormat(all_views, "0.[00] a") }}
+          </h3>
+          <p class="small m-0">{{ $t("global.commons.total_views") }}</p>
+          <p class="small m-0 op-0-8 text-truncate">
+            <up-down-icon :value="all_views_grow_week"></up-down-icon>
+            {{ numeralFormat(all_views_grow_week, "0.[0]a") }}%
+            {{ $t("global.commons.from_previous_n_days", { days: 7 }) }}
+          </p>
+        </div>
+
+        <div class="flex-grow-1 min-width-150">
+          <h3 class="text-h3 mt-2 font-weight-black">
+            {{ numeralFormat(all_sells, "0.[00] a") }}
+          </h3>
+          <p class="small m-0">{{ $t("global.commons.total_sales") }}</p>
+          <p class="small m-0 op-0-8 text-truncate">
+            <up-down-icon :value="all_sells_grow_week"></up-down-icon>
+            {{ numeralFormat(all_sells_grow_week, "0.[0]a") }}%
+            {{ $t("global.commons.from_previous_n_days", { days: 7 }) }}
+          </p>
+        </div>
+      </v-col>
+    </v-row>
+    <p v-if="modern" class="sd-modern-subtitle">
+      {{ $t("b_product_dashboard.analytics.sales_scope") }}
+    </p>
+  </component>
 </template>
 
 <script lang="ts">
@@ -76,11 +133,13 @@ import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
 import numeral from "numeral";
 import UpDownIcon from "../../../../ui/icon/UpDownIcon.vue";
+import { getPeriodComparison } from "../../../dashboard/shop/performance/periodComparison";
 
 export default {
   name: "BProductOrderSalesPerformance",
   components: { UpDownIcon, SWidgetBox },
   props: {
+    modern: Boolean,
     product: {
       required: true,
       type: Object,
@@ -97,6 +156,22 @@ export default {
   }),
 
   computed: {
+    modernMetrics() {
+      return [
+        {
+          key: "views",
+          label: this.$t("global.commons.total_views"),
+          value: this.all_views,
+          comparison: getPeriodComparison(this.timeSeries, (row) => row.views),
+        },
+        {
+          key: "sell",
+          label: this.$t("global.commons.total_sales"),
+          value: this.all_sells,
+          comparison: getPeriodComparison(this.timeSeries, (row) => row.sell),
+        },
+      ];
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -114,18 +189,21 @@ export default {
 
         chart: {
           //  height: 200,
-          type: "area",
-          stacked: true,
+          type: this.modern ? "line" : "area",
+          stacked: !this.modern,
           background: "transparent",
           fontFamily: "var(--font)",
+          ...(this.modern
+            ? { toolbar: { show: false }, zoom: { enabled: false } }
+            : {}),
         },
         colors: ["#388E3C", "#FFA000"],
         dataLabels: {
           enabled: false,
         },
         stroke: {
-          show: false,
-          width: 3,
+          show: this.modern,
+          width: this.modern ? 2 : 3,
           curve: "straight",
         },
         markers: {
@@ -134,7 +212,7 @@ export default {
 
         fill: {
           type: "solid",
-          opacity: 0.7,
+          opacity: this.modern ? 1 : 0.7,
           /* gradient: {
             opacityFrom: 0.75,
             opacityTo: 0.8,
@@ -165,7 +243,7 @@ export default {
 
           y: {
             formatter: function (value, timestamp, index) {
-              return numeral(value).format("0.[0]a");
+              return numeral(value).format("0,0.[00]");
             },
           },
         },
@@ -249,6 +327,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-product-sales-modern {
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-block-end: 12px;
+  }
+  &__metrics p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 19px;
+    color: var(--sd-modern-muted);
+  }
+  &__metrics strong {
+    display: block;
+    margin-block: 4px;
+    font-size: 26px;
+    font-weight: 500;
+    line-height: 36px;
+  }
+  &__chart {
+    margin: 0;
+  }
+  &__chart > .v-col {
+    padding: 0;
+  }
+}
 h6 {
   font-size: 1.5rem;
   font-weight: 400;

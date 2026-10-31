@@ -17,13 +17,13 @@
   <v-row
     v-if="no_location_error || invalid_location_error"
     align="center"
-    class="bg-red shadow-small"
+    :class="modern ? 'b-product-flow__alert' : 'bg-red shadow-small'"
     no-gutters
   >
     <v-list-item
       :subtitle="subtitle"
       :title="$t('product_flow.location_errors.title')"
-      base-color="#fff"
+      :base-color="modern ? undefined : '#fff'"
       class="flex-grow-1"
     >
       <template v-slot:prepend>
@@ -40,6 +40,7 @@
             : 'BPageProductInventory',
         }"
         class="tnt ma-1"
+        :class="{ 'sd-modern-button sd-modern-button--small': modern }"
         variant="text"
       >
         <v-avatar class="avatar-gradient -thin -product me-1" size="24">
@@ -60,7 +61,7 @@ export default defineComponent({
   components: {},
   inject: ["$shop", "$product"],
 
-  props: {},
+  props: { modern: { type: Boolean, default: false } },
   computed: {
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
@@ -72,9 +73,9 @@ export default defineComponent({
 
     subtitle() {
       return this.no_location_error
-        ? $t("product_flow.location_errors.no_location_error_subtitle")
+        ? this.$t("product_flow.location_errors.no_location_error_subtitle")
         : this.invalid_location_error
-          ? $t("product_flow.invalid_location_error_subtitle")
+          ? this.$t("product_flow.location_errors.invalid_location_error_subtitle")
           : "";
     },
 

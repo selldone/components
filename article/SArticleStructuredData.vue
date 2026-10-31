@@ -624,7 +624,7 @@ export default {
   .s-article-structures-refined__dialog-foot > p { margin: 0; max-width: 280px; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
   .s-article-structures-refined__actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
   .s-article-structures-refined__dialog-foot .s-article-structures-refined__actions { margin-inline-start: auto; }
-  .s-article-structures-refined__type { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 0; border: 0; border-bottom: 1px solid var(--sd-modern-border); background: transparent; text-align: start; color: inherit; }
+  .s-article-structures-refined__type { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 12px; border: 0; border-bottom: 1px solid var(--sd-modern-border); background: transparent; text-align: start; color: inherit; }
   .s-article-structures-refined__type:last-child { border-bottom: 0; }
   .s-article-structures-refined__type > span:nth-child(2) { flex: 1; }
   .s-article-structures-refined__type strong { display: block; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; }

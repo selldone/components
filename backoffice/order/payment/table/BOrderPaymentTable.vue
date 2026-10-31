@@ -13,9 +13,9 @@
   -->
 
 <template>
-  <v-table v-bind="$attrs" :class="{ 'sd-modern-table b-order-payment-table--modern': modern }">
+  <v-table v-bind="$attrs" :class="{ 'sd-modern-table b-order-payment-table--modern': modern, 'b-order-payment-table--bills': modern && billDisplay === 'only' }">
     <template v-slot:default>
-      <thead>
+      <thead v-if="billDisplay !== 'only'">
         <tr>
           <th class="text-start min-width-200">
             {{ $t("process_center.payment_widget.table.title") }}
@@ -32,6 +32,7 @@
         </tr>
       </thead>
       <tbody>
+        <template v-if="billDisplay !== 'only'">
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 🛕 ROW ▶ Total price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <tr class="text-start">
@@ -43,15 +44,15 @@
               width="24"
               alt="Total Price"
             />
-            {{ $t("process_center.payment_widget.total_price") }}
+            {{ $t(isFulfillment ? 'process_center.modern.fulfillment_merchandise' : "process_center.payment_widget.total_price") }}
           </td>
           <td class="text-left">
             <u-price
               :amount="
-                order.price +
+                isFulfillment ? order.price : order.price +
                 wallet_paid +
                 order.discount -
-                (order.delivery_price > 0 ? order.delivery_price : 0)
+                (order.delivery_price > 0 && (!modern || !isAvocado || order.delivery) ? order.delivery_price : 0)
               "
               :currency="order.currency"
             ></u-price>
@@ -62,7 +63,7 @@
 
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 🛕 ROW ▶ Items discount (Products discount) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
-        <tr v-if="items_discount" class="text-start">
+        <tr v-if="isFulfillment ? order.discount != null : items_discount" class="text-start">
           <td>
             <img
               class="mx-2"
@@ -71,11 +72,11 @@
               width="24"
               alt="Items Discount"
             />
-            {{ $t("process_center.payment_widget.total_items_discount") }}
+            {{ $t(isFulfillment ? 'global.commons.discount' : "process_center.payment_widget.total_items_discount") }}
           </td>
           <td class="text-left">
             <u-price
-              :amount="-items_discount"
+              :amount="isFulfillment ? order.discount : -items_discount"
               :currency="order.currency"
             ></u-price>
           </td>
@@ -423,7 +424,7 @@
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 🛕 ROW ▶ Shipping ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <tr
-          v-if="isPhysical || (isAvocado && order.delivery)"
+          v-if="isFulfillment ? order.delivery_price != null : isPhysical || (isAvocado && order.delivery)"
           class="text-start"
         >
           <td>
@@ -587,15 +588,17 @@
         >
         </b-order-payment-row-pending>
 
+        </template>
+        <template v-if="billDisplay !== 'none'">
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 🛕 ROW ▶ Bills > More than limit items ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-        <tr v-if="bills_count > 3" key="more-bills" class="text-start pen">
+        <tr v-if="modern && isSubscription ? remainingBillsCount > 0 : bills_count > 3" key="more-bills" class="text-start pen">
           <td class="py-2 font-weight-bold text-end" colspan="4">
             <router-link
               :to="
                 isRolePanel
                   ? {}
                   : {
-                      name: isSubscribed
+                      name: (modern && isSubscription) || isSubscribed
                         ? 'BPageOrderSubscriptionBills'
                         : 'BPageOrderServiceBills',
                     }
@@ -604,7 +607,8 @@
             >
               <v-icon class="me-1" color="primary">more_horiz</v-icon>
 
-              View old bills ({{ bills_count - 3 }})
+              <template v-if="modern && isSubscription">{{ $t('process_center.modern.subscription_older_bills', { count: remainingBillsCount }) }}</template>
+              <template v-else>View old bills ({{ bills_count - 3 }})</template>
             </router-link>
           </td>
         </tr>
@@ -614,11 +618,12 @@
         <template v-for="(bill, index) in bills" :key="'bl-' + bill.id">
           <tr
             :class="{
-              'border-start-blue': bill.status === BillStatus.PENDING.code,
+              'border-start-blue': !(modern && isSubscription) && bill.status === BillStatus.PENDING.code,
               'border-start-green no-border-bottom-tr':
-                bill.status === BillStatus.PAYED.code,
-              'border-start-red': bill.status === BillStatus.CANCELED.code,
+                !(modern && isSubscription) && bill.status === BillStatus.PAYED.code,
+              'border-start-red': !(modern && isSubscription) && bill.status === BillStatus.CANCELED.code,
               'row-hover': bill.payment || bill.gift_cards?.length,
+              'sd-modern-clickable-item b-order-payment-table__bill-row': modern && isSubscription && (bill.payment || bill.gift_cards?.length),
             }"
             class="text-start"
             @click="expanded_bill = expanded_bill === bill.id ? null : bill.id"
@@ -643,7 +648,7 @@
                   >
                     {{ getLocalDateString(bill.payment.payment_at) }}
                   </small>
-                  <small v-else class="d-block">Not paid yet!</small>
+                  <small v-else class="d-block">{{ modern && isSubscription ? $t('process_center.modern.subscription_bill_not_paid') : 'Not paid yet!' }}</small>
                 </div>
 
                 <i
@@ -779,14 +784,31 @@
                 </template>
                 <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Bill > Subscription only ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
                 <template v-if="isSubscription">
-                  <small>● Recurring payment.</small>
+                  <span v-if="modern" class="b-order-payment-table__bill-state">
+                    <span class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="bill.status === BillStatus.PAYED.code ? 'sd-modern-status__dot--success' : bill.status === BillStatus.PENDING.code ? 'sd-modern-status__dot--warning' : bill.status === BillStatus.CANCELED.code ? 'sd-modern-status__dot--error' : undefined" />{{ billStatusLabel(bill) }}</span>
+                    <small>{{ $t('process_center.modern.subscription_recurring_payment') }}</small>
+                  </span>
+                  <small v-else>● Recurring payment.</small>
                 </template>
 
                 <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Bill > Expand more button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
                 <v-spacer></v-spacer>
 
+                <v-btn
+                  v-if="modern && isSubscription && (bill.gift_cards?.length || bill.payment)"
+                  type="button"
+                  icon
+                  variant="text"
+                  class="sd-modern-icon-button b-order-payment-table__bill-toggle"
+                  :aria-label="$t('process_center.modern.subscription_bill_details')"
+                  :aria-expanded="expanded_bill === bill.id"
+                  @click.stop="expanded_bill = expanded_bill === bill.id ? null : bill.id"
+                >
+                  <v-icon :class="{ 'rotate-180': expanded_bill === bill.id }" size="18" aria-hidden="true">expand_more</v-icon>
+                  <v-tooltip activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">{{ $t('process_center.modern.subscription_bill_details') }}</v-tooltip>
+                </v-btn>
                 <v-icon
-                  v-if="bill.gift_cards?.length || bill.payment"
+                  v-else-if="bill.gift_cards?.length || bill.payment"
                   :class="{ 'rotate-180': expanded_bill !== bill.id }"
                   >expand_more
                 </v-icon>
@@ -826,6 +848,9 @@
           </template>
         </template>
 
+        </template>
+        <template v-if="billDisplay !== 'only'">
+
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ 🛕 ROW ▶ Bills > Add Bill (Service) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
         <tr
@@ -844,7 +869,16 @@
               <v-icon start>add</v-icon>
               {{ $t("process_center.payment_widget.add_transaction") }}
             </v-btn>
-            <p class="mb-0 mt-1 text-subtitle-2">
+            <div v-if="modern" class="b-order-payment-table__bill-help">
+              <p>{{ $t(bills_remains <= 0 ? 'process_center.modern.service_bill_unavailable' : 'process_center.modern.service_bill_guidance') }}</p>
+              <v-tooltip location="top" content-class="sd-modern-tooltip text-start" :open-on-click="true">
+                <template #activator="{ props }">
+                  <v-btn v-bind="props" icon="info_outline" variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="$t('process_center.modern.service_bill_help_label')" />
+                </template>
+                {{ $t('process_center.modern.service_bill_help') }}
+              </v-tooltip>
+            </div>
+            <p v-else class="mb-0 mt-1 text-subtitle-2">
               {{ $t("process_center.payment_widget.add_transactions_message") }}
             </p>
           </td>
@@ -1076,6 +1110,7 @@
           :modern="modern"
         />
         <!-- ╺╺╺╺╺╺╺╺╺ 💸 End Selldone Fee Cashback · Payment Ledger Row ╺╺╺╺╺╺╺╺╺ -->
+        </template>
       </tbody>
     </template>
   </v-table>
@@ -1458,7 +1493,13 @@ export default {
       default: false,
     },
     isRolePanel: Boolean,
+    isFulfillment: Boolean,
     modern: { type: Boolean, default: false },
+    billDisplay: {
+      type: String,
+      default: 'inline',
+      validator: (value: string) => ['inline', 'none', 'only'].includes(value),
+    },
   },
 
   data: function () {
@@ -1836,6 +1877,9 @@ export default {
     bills_count() {
       return this.order.bills_count;
     },
+    remainingBillsCount() {
+      return Math.max(0, (this.bills_count || 0) - (this.bills?.length || 0));
+    },
 
     //------------------- Tax -------------------
     has_tax_detail() {
@@ -1876,6 +1920,10 @@ export default {
     },
   },
   methods: {
+    billStatusLabel(bill) {
+      const status = Object.values(this.BillStatus).find((item) => item.code === bill.status);
+      return status ? this.$t(status.title) : bill.status || this.$t('process_center.modern.subscription_status_unknown');
+    },
     //――――――――――――――――――――――― Check payment status ―――――――――――――――――――――――
 
     showConfirmPaymentDir() {
@@ -2208,6 +2256,10 @@ export default {
   :deep(> .v-table__wrapper > table > tbody > tr > td:nth-child(4)) { text-align: start !important; }
   :deep(.sd-modern-button--inline) { margin: 0 !important; box-shadow: none; }
   .b-order-payment-table__fee-rate { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; line-height: 18px; font-weight: 400; }
+  .b-order-payment-table__bill-help { display: flex; align-items: center; gap: 4px; color: var(--sd-modern-muted); }
+  .b-order-payment-table__bill-help p { margin: 0; font-size: 11px; line-height: 17px; }
+  .b-order-payment-table__bill-state { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .b-order-payment-table__bill-toggle { margin-inline-start: 10px; }
   :deep(> .v-table__wrapper > table > tbody > tr > td:first-child > img),
   :deep(> .v-table__wrapper > table > tbody > tr > td:first-child > div > img) { width: 21px; height: 21px; margin-inline: 0 9px !important; }
   :deep(.v-btn:not(.sd-modern-icon-button)) { font-family: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0; text-indent: 0; }
@@ -2220,6 +2272,17 @@ export default {
   :deep(.u--price .small) { font-size: inherit !important; font-weight: 400; }
   :deep(.border-top-medium > td) { border-block-start: 1px solid rgba(var(--v-theme-on-surface), .6); }
   :deep(.sd-modern-info-button) { vertical-align: middle; }
+
+  &.b-order-payment-table--bills {
+    :deep(> .v-table__wrapper > table > tbody > tr.b-order-payment-table__bill-row > td:first-child) { width: 33%; }
+    :deep(> .v-table__wrapper > table > tbody > tr.b-order-payment-table__bill-row > td:nth-child(2)) { width: 15%; }
+    :deep(> .v-table__wrapper > table > tbody > tr.b-order-payment-table__bill-row > td:nth-child(3)) { width: 27%; }
+    :deep(> .v-table__wrapper > table > tbody > tr.b-order-payment-table__bill-row > td:nth-child(4)) { width: 25%; }
+    :deep(> .v-table__wrapper > table > tbody > tr.b-order-payment-table__bill-row > td:first-child b) { font-size: 12px; line-height: 18px; font-weight: 500; }
+    @media (max-width: 680px) {
+      :deep(> .v-table__wrapper > table > tbody > tr.b-order-payment-table__bill-row > td) { width: auto !important; }
+    }
+  }
 
   @media (min-width: 801px) {
     &.b-order-payment-table--workspace {
@@ -2236,9 +2299,16 @@ export default {
       :deep(.u--price) { font-size: 12px; }
     }
   }
+  @media (min-width: 681px) {
+    :deep(> .v-table__wrapper > table > thead > tr > th:first-child),
+    :deep(> .v-table__wrapper > table > tbody > .b-order-payment-table__bill-row > td:first-child) { padding-inline-start: 12px !important; }
+    :deep(> .v-table__wrapper > table > thead > tr > th:last-child),
+    :deep(> .v-table__wrapper > table > tbody > .b-order-payment-table__bill-row > td:last-child) { padding-inline-end: 12px !important; }
+  }
   @media (max-width: 680px) {
     :deep(> .v-table__wrapper > table > thead) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
     :deep(> .v-table__wrapper > table > tbody > tr) { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 9px; padding-block: 12px; border-block-end: 1px solid var(--sd-modern-border); }
+    :deep(> .v-table__wrapper > table > tbody > .b-order-payment-table__bill-row) { padding-inline: 12px; }
     :deep(> .v-table__wrapper > table > tbody > tr > td) { padding: 0 !important; border: 0 !important; min-width: 0; max-width: 100%; font-size: 12px; }
     :deep(> .v-table__wrapper > table > tbody > tr > td:first-child) { grid-column: 1; grid-row: 1; }
     :deep(> .v-table__wrapper > table > tbody > tr > td:nth-child(2)) { grid-column: 2; grid-row: 1; text-align: end !important; }

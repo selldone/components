@@ -15,14 +15,21 @@
   <!-- ⛔ UPriceInvalid -->
   <v-tooltip
     v-if="!is_valid_amount"
-    activator="parent"
-    content-class="text-start bg-black"
-    location="bottom"
+    :activator="embedMode ? undefined : 'parent'"
+    :content-class="embedMode ? 'text-start' : 'text-start bg-black'"
+    :location="embedMode ? 'top' : 'bottom'"
+    :open-on-click="embedMode"
     max-width="320"
   >
 
-<template v-slot:activator>
-  <b class="text-red d-inline-flex align-center" :class="{ 'x-small': small }">
+<template v-slot:activator="{ props }">
+  <component
+    :is="embedMode ? 'button' : 'b'"
+    :type="embedMode ? 'button' : undefined"
+    v-bind="embedMode ? props : {}"
+    class="d-inline-flex align-center"
+    :class="{ 'x-small': small, 'text-red': !embedMode, 'u-price-invalid--embed': embedMode }"
+  >
     <u-currency-icon
       v-if="currency"
       :currency="currency"
@@ -39,11 +46,17 @@
       class="ms-n3"
     ></u-currency-icon>
 
-    {{ $t("global.commons.invalid") }}
-  </b>
+    {{ $t(embedMode ? 'product_embed.price_unavailable' : 'global.commons.invalid') }}
+    <v-icon v-if="embedMode" size="15" class="ms-1" aria-hidden="true">info_outline</v-icon>
+  </component>
 </template>
 
 
+    <template v-if="embedMode">
+      <p class="mb-2">{{ $t('product_embed.price_unavailable_help') }}</p>
+      <bdi>{{ currency }}<template v-if="current_currency && current_currency !== currency"> → {{ current_currency }}</template></bdi>
+    </template>
+    <template v-else>
     <b>Invalid amount!</b> <br />
     {{
       `⚡ To address the issue, navigate to Shop > Accounting > Exchange > Add Exchange Rate.`
@@ -54,6 +67,7 @@
       <br>
       To Currency: <b>{{ current_currency }}</b>
     </div>
+    </template>
   </v-tooltip>
 
 </template>
@@ -72,6 +86,7 @@ export default defineComponent({
       required: true,
     },
     small: Boolean,
+    embedMode: { type: Boolean, default: false },
   },
   computed: {
     current_currency() {
@@ -81,4 +96,24 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.u-price-invalid--embed {
+  min-width: 0;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgb(var(--v-theme-on-surface));
+  font: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  text-align: start;
+  white-space: normal;
+  &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; border-radius: 4px; }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .u-price-invalid--embed { min-height: 44px; }
+}
+</style>

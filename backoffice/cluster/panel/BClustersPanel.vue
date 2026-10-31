@@ -15,6 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="b--cluster-panel">
     <v-btn
+      v-if="!hideActivator"
       :color="ThemeColorDark"
       class="b--cluster-panel-button tnt"
       @click="dialog = true"
@@ -291,6 +292,7 @@ export default {
 
   components: { BClusterResource, BClusterFolder },
   props: {
+    hideActivator: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -363,9 +365,11 @@ export default {
           return;
         }
 
-        if (this.current_cluster?.id !== cluster?.id) this.fetchResources(); // Fetch only if current cluster change!
-
-        this.current_cluster = cluster;
+        const changed = this.current_cluster?.id !== cluster?.id;
+        if (changed) {
+          this.current_cluster = cluster;
+          this.fetchResources(); // Fetch the requested cluster; preserve already loaded data for the same cluster.
+        }
         this.dialog = true;
       },
     );

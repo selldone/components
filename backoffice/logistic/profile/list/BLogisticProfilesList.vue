@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div :class="{ 'b-logistic-profiles-list--modern text-start': modern }">
+  <div class="s-table-loading" :class="{ 'b-logistic-profiles-list--modern text-start': modern }" :aria-busy="busy_fetch">
     <v-row :class="{ 'b-logistic-profiles-list__toolbar': modern }" no-gutters>
       <v-spacer></v-spacer>
       <v-text-field
@@ -111,6 +111,42 @@
         </div>
       </template>
 
+      <template v-if="modern" v-slot:item.actions="{ item }">
+        <div class="b-logistic-profiles-list__actions" @click.stop>
+          <v-btn
+            class="sd-modern-icon-button"
+            icon
+            variant="text"
+            :aria-label="$t('shop_logistic_profiles.assigned_products')"
+            @click.stop="$emit('show-products', item)"
+          >
+            <v-icon aria-hidden="true">inventory_2</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="top"
+              :open-on-focus="true"
+              content-class="sd-modern-tooltip text-start"
+            >{{ $t('shop_logistic_profiles.assigned_products') }}</v-tooltip>
+          </v-btn>
+          <v-btn
+            class="sd-modern-icon-button"
+            icon
+            variant="text"
+            :aria-label="$t('global.actions.edit')"
+            :to="{ name: 'LogisticProfilePage_Setting', params: { profile_id: item.id } }"
+            @click.stop
+          >
+            <v-icon aria-hidden="true">edit</v-icon>
+            <v-tooltip
+              activator="parent"
+              location="top"
+              :open-on-focus="true"
+              content-class="sd-modern-tooltip text-start"
+            >{{ $t('global.actions.edit') }}</v-tooltip>
+          </v-btn>
+        </div>
+      </template>
+
       <template v-slot:bottom>
         <div :class="{ 'sd-modern-table-footer b-logistic-profiles-list__footer': modern }">
           <span v-if="modern" class="sd-modern-page-summary">{{ $t("global.commons.page") }} <bdi>{{ $n(pageCount ? page : 0) }} / {{ $n(pageCount) }}</bdi></span>
@@ -130,6 +166,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BLogisticProfilesList",
+  emits: ["show-products"],
   mixins: [DateMixin ],
   components: {},
   props: {
@@ -197,6 +234,15 @@ export default {
           value: "updated_at",
           sortable: true,
         },
+        ...(this.modern
+          ? [{
+              title: this.$t("global.commons.actions"),
+              align: "end",
+              value: "actions",
+              sortable: false,
+              width: 104,
+            }]
+          : []),
       ];
     },
   },
@@ -270,6 +316,7 @@ export default {
   .b-logistic-profiles-list__toolbar { margin: 0; padding: 12px 18px; border-block-end: 1px solid var(--sd-modern-border); }
   .b-logistic-profiles-list__footer { justify-content: flex-end; padding: 14px 18px; }
   .b-logistic-profiles-list__updated { min-width: 150px; }
+  .b-logistic-profiles-list__actions { display: flex !important; flex-wrap: nowrap; align-items: center; justify-content: flex-end; gap: 8px; }
   .b-logistic-profiles-list__name { color: inherit; font-weight: 500; text-decoration: none; }
   .b-logistic-profiles-list__name:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 4px; }
   .b-logistic-profiles-list__empty-title { max-width: 540px; margin: 0; font-size: 14px; font-weight: 400; line-height: 1.6; }

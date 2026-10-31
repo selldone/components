@@ -1,16 +1,20 @@
 <template>
-  <div class="sld-bfb-fcfg">
-    <v-text-field v-model="nameProxy" label="Field key (name)" variant="outlined" density="comfortable" />
-    <v-text-field v-model="titleProxy" label="Label" variant="outlined" density="comfortable" />
-    <v-textarea v-model="hintTrueProxy" label="Hint (when ON)" variant="outlined" density="comfortable" rows="2" auto-grow />
-    <v-textarea v-model="hintFalseProxy" label="Hint (when OFF)" variant="outlined" density="comfortable" rows="2" auto-grow />
-    <v-switch v-model="defaultProxy" label="Default ON" inset />
+  <div class="sld-bfb-fcfg" :class="{ 'sd-modern-underlined-field': listingFormBuilderModern }">
+    <v-text-field v-model="nameProxy" :label="$t('shop_listing.form_builder.field_key')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
+    <v-text-field v-model="titleProxy" :label="$t('shop_listing.form_builder.label')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" />
+    <v-textarea v-model="hintTrueProxy" :label="$t('shop_listing.form_builder.hint_on')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" rows="2" auto-grow />
+    <v-textarea v-model="hintFalseProxy" :label="$t('shop_listing.form_builder.hint_off')" :variant="listingFormBuilderModern ? 'underlined' : 'outlined'" density="comfortable" rows="2" auto-grow />
+    <u-smart-toggle v-if="listingFormBuilderModern" v-model="defaultProxy" accessible border false-gray class="sd-modern-smart-select" :true-title="$t('shop_listing.form_builder.default_on')" :false-title="$t('shop_listing.form_builder.default_on')" />
+    <v-switch v-else v-model="defaultProxy" :label="$t('shop_listing.form_builder.default_on')" inset />
   </div>
 </template>
 
 <script lang="ts">
+import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 export default {
   name: "BListingFormBuilderFieldSwitch",
+  components: { USmartToggle },
+  inject: { listingFormBuilderModern: { default: false } },
   props: { modelValue: { type: Object, required: true } },
   emits: ["update:modelValue"],
 
@@ -70,5 +74,7 @@ export default {
 .sld-bfb-fcfg {
   display: grid;
   gap: 10px;
+  min-width: 0;
 }
+.sld-bfb-fcfg.sd-modern-underlined-field { gap: 26px; }
 </style>

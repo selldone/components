@@ -15,8 +15,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="text-start">
     <v-list-subheader>
-      Allocate tags to blog articles or products to easily locate or filter them
-      in various areas, such as the page builder, to showcase specific articles.
+      {{ $t('global.article_tags.instructions') }}
     </v-list-subheader>
     <v-combobox
       :counter="5"
@@ -44,7 +43,7 @@
           <v-icon
             class="hover-scale-small"
             start
-            title="Edit tag"
+            :title="$t('global.article_tags.edit')"
             @click.prevent="showEditTag(item.raw)"
             >edit
           </v-icon>
@@ -63,22 +62,21 @@
       <v-card rounded="t-xl">
         <v-card-title>
           <v-icon class="me-1" color="#111">edit</v-icon>
-          Edit tag
+          {{ $t('global.article_tags.edit') }}
           {{ editing_tag }}
         </v-card-title>
 
         <v-card-text class="text-start">
           <div class="widget-box my-5">
             <u-widget-header
-              :title="`Old Tag: ${editing_tag_new}`"
+              :title="$t('global.article_tags.old_tag', { tag: editing_tag })"
               icon="label"
             ></u-widget-header>
             <v-list-subheader>
-              Please proceed to modify this tag name. Be aware: The rest of the
-              article tags will be automatically updated!
+              {{ $t('global.article_tags.rename_warning') }}
             </v-list-subheader>
 
-            <v-text-field v-model="editing_tag_new" label="New tag name">
+            <v-text-field v-model="editing_tag_new" :label="$t('global.article_tags.new_tag_name')">
             </v-text-field>
           </div>
         </v-card-text>

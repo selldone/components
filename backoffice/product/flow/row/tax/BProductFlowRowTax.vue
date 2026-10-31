@@ -29,7 +29,16 @@
       class="flex-grow-1"
     >
       <template v-slot:subtitle>
-        <v-icon class="me-1" color="green">check_circle</v-icon>
+        <span
+          v-if="modern"
+          class="sd-modern-status__dot"
+          :class="{
+            'sd-modern-status__dot--success': taxEnabled === true,
+            'sd-modern-status__dot--error': taxEnabled === false,
+          }"
+          aria-hidden="true"
+        />
+        <v-icon v-else class="me-1" color="green">check_circle</v-icon>
         <span v-html="tax_profile_desc"></span>
       </template>
     </v-list-item>
@@ -39,6 +48,7 @@
         v-if="!IS_VENDOR_PANEL"
         :to="{ name: 'BPageShopFinanceTax' }"
         class="tnt ma-1"
+        :class="{ 'sd-modern-button sd-modern-button--small': modern }"
         color="primary"
         variant="text"
       >
@@ -60,7 +70,7 @@ export default {
   components: {},
   inject: ["$shop", "$product"],
 
-  props: {},
+  props: { modern: { type: Boolean, default: false } },
 
   data: function () {
     return {};
@@ -73,6 +83,10 @@ export default {
         this.$route.params.vendor_id &&
         this.$route.matched.some((record) => record.meta.vendor)
       );
+    },
+
+    taxEnabled() {
+      return this.isSubscription ? undefined : (this.current_tax_profile || this.$shop.tax)?.enable;
     },
 
     tax_profiles() {

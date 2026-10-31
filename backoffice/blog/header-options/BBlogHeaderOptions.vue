@@ -17,7 +17,7 @@
   <s-article-category-shop-blog-input
     :model-value="categoryId"
     :shop="shop"
-    :class="modern ? 'sd-modern-underlined-field' : 'm-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white'"
+    :class="modern ? 'sd-modern-underlined-field b-blog-header-options__category' : 'm-2 max-width-field s--shadow-no-padding rounded-28px pb-1 ps-1 bg-white'"
     clearable
     :disabled="disabled"
     flat
@@ -66,4 +66,10 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.b-blog-header-options__category {
+  :deep(.v-select__selection) { min-width: 0; max-width: 100%; }
+  :deep(.v-select__selection .text-subtitle-2) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  :deep(.v-select__selection .small) { display: none; }
+}
+</style>

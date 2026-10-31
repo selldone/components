@@ -15,12 +15,12 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
     class="b-shop-add position-relative"
-    :class="{ 'b-shop-add--modern sd-modern-form text-start': modern }"
+    :class="{ 'b-shop-add--modern sd-modern-form text-start': modern, 'b-shop-add--guided': guided }"
   >
 
 
     <u-progress-stepper
-      v-if="showStepper"
+      v-if="showStepper && !guided"
       :gradient="`linear-gradient(to ${
         $vuetify.locale.isRtl ? 'right' : 'left'
       }, #00796B 0%, #00796B 10%,  #009688 50%,#AFB42B 75%,#CDDC39 90%,#CDDC39 100%)`"
@@ -35,8 +35,30 @@
       @next="goNext"
       @previous="goPrevious"
     />
+    <div ref="workspace" :class="{ 'b-shop-add__workspace': guided }">
+    <nav
+      v-if="guided"
+      class="sd-modern-section-nav b-shop-add__steps"
+      :aria-label="$t('add_shop.guided.dialog_title')"
+    >
+      <button
+        v-for="tab in tabs.slice(0, shop ? 5 : 2)"
+        :key="tab.value"
+        type="button"
+        class="sd-modern-section-nav__item b-shop-add__step"
+        :aria-current="step === tab.value ? 'location' : undefined"
+        :disabled="busy_add_shop || busy_edit_shop || (!shop && tab.value === 1 && (!title.trim() || !language))"
+        @click="!shop && tab.value === 1 && step === 0 ? goNext() : goTo(tab.value)"
+      >
+        <span class="b-shop-add__step-number" aria-hidden="true">
+          <v-icon v-if="!shop && tab.value < step" size="13" color="success">check</v-icon>
+          <span v-else>{{ tab.value + 1 }}</span>
+        </span>
+        <span>{{ tab.value === 0 ? $t('add_shop.guided.business_step') : tab.title }}</span>
+      </button>
+    </nav>
     <v-tabs
-      v-if="modern"
+      v-else-if="modern"
       v-model="step"
       :aria-label="$t('admin_shop.edit.menu.info')"
       class="b-shop-add__tabs"
@@ -73,6 +95,87 @@
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Title & State ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
+    <div :class="{ 'b-shop-add__content': guided }">
+    <section v-if="guided && !shop && step < 2 && (creation_fee?.charged_from_wallet || creation_fee_error)" class="b-shop-add__fee" :aria-label="$t('add_shop.guided.fee_title')" aria-live="polite" :aria-busy="busy_creation_fee">
+      <div class="b-shop-add__fee-heading">
+        <div class="b-shop-add__fee-label">
+          <span>{{ $t('add_shop.guided.fee_title') }}</span>
+          <v-tooltip v-if="creation_fee_matches_wallet && !busy_creation_fee && !creation_fee_error" location="top" content-class="sd-modern-tooltip text-start" open-on-focus open-on-click>
+            <template #activator="{ props }">
+              <v-btn v-bind="props" class="sd-modern-icon-button sd-modern-info-button" icon type="button" variant="text" :aria-label="$t('add_shop.guided.fee_help')">
+                <v-icon aria-hidden="true">info_outline</v-icon>
+              </v-btn>
+            </template>
+            <div class="b-shop-add__fee-help-amount"><u-price :amount="creation_fee.fee" :currency="creation_fee.currency" /></div>
+            <span>{{ $t('add_shop.guided.fee_wallet_help', { currency: creation_fee.currency }) }}</span>
+          </v-tooltip>
+        </div>
+        <span v-if="creation_fee_matches_wallet && !busy_creation_fee && !creation_fee_error" class="b-shop-add__fee-amount">
+          <u-price :amount="creation_fee.fee" :currency="creation_fee.currency" />
+        </span>
+        <v-progress-circular v-else-if="busy_creation_fee" indeterminate size="16" width="2" color="primary" aria-hidden="true" />
+      </div>
+      <template v-if="creation_fee?.charged_from_wallet">
+        <v-select
+          :model-value="creation_account"
+          :items="creation_wallets"
+          :label="$t('add_shop.guided.wallet_label')"
+          :placeholder="$t('add_shop.guided.wallet_choose')"
+          :item-title="account => `${account.currency} · ${account.account_name || account.account_number}`"
+          item-value="account_number"
+          return-object
+          variant="underlined"
+          class="sd-modern-underlined-field b-shop-add__wallet-input"
+          :loading="busy_creation_wallets"
+          :disabled="busy_add_shop || busy_creation_wallets"
+          :no-data-text="$t(creation_wallets_error ? 'add_shop.guided.wallet_error' : 'add_shop.guided.wallet_empty')"
+          hide-details
+          @update:model-value="onCreationWalletChange"
+        >
+          <template #selection="{ item }">
+            <span class="b-shop-add__wallet-value">
+              <u-currency-icon :currency="GetCurrency(item.raw.currency)" small />
+              <span dir="ltr">{{ item.raw.currency }} · {{ item.raw.account_number }}</span>
+              <span class="b-shop-add__wallet-name">{{ item.raw.account_name }}</span>
+            </span>
+          </template>
+          <template #item="{ item, props }">
+            <v-list-item v-bind="props" class="text-start">
+              <template #prepend><u-currency-icon :currency="GetCurrency(item.raw.currency)" small class="me-3" /></template>
+              <template #subtitle>
+                <span dir="ltr">{{ item.raw.account_number }}</span>
+                <span class="d-block">{{ $t('add_shop.guided.wallet_balance') }}: <u-price :amount="item.raw.balance - item.raw.locked" :currency="item.raw.currency" /></span>
+              </template>
+            </v-list-item>
+          </template>
+        </v-select>
+        <p v-if="busy_creation_wallets" class="b-shop-add__fee-message" role="status">{{ $t('add_shop.guided.wallet_loading') }}</p>
+        <div v-else-if="creation_wallets_error" class="b-shop-add__fee-message" role="alert">
+          <span>{{ $t('add_shop.guided.wallet_error') }}</span>
+          <v-btn class="sd-modern-button sd-modern-button--compact" color="primary" variant="text" @click="fetchCreationWallets">{{ $t('add_shop.guided.retry') }}</v-btn>
+        </div>
+        <p v-else-if="!creation_wallets.length" class="b-shop-add__fee-message">{{ $t('add_shop.guided.wallet_empty') }}</p>
+        <p v-else-if="!creation_account" class="b-shop-add__fee-message">{{ $t('add_shop.guided.wallet_choose') }}</p>
+      </template>
+      <p v-if="busy_creation_fee" class="b-shop-add__fee-message">{{ $t('add_shop.guided.fee_loading') }}</p>
+      <template v-else-if="creation_fee_error">
+        <p class="b-shop-add__fee-message b-shop-add__fee-error" role="alert"><v-icon size="16" color="error" aria-hidden="true">error_outline</v-icon><span>{{ $t(creation_conversion_unavailable ? 'add_shop.guided.wallet_quote_error' : 'add_shop.guided.fee_error') }}</span></p>
+        <v-btn class="sd-modern-button sd-modern-button--compact" color="primary" variant="text" @click="getCreationFee">
+          <v-icon start aria-hidden="true">refresh</v-icon>{{ $t('add_shop.guided.retry') }}
+        </v-btn>
+      </template>
+      <template v-else-if="creation_fee_matches_wallet">
+        <p class="b-shop-add__fee-message">{{ $t('add_shop.guided.fee_wallet', { currency: creation_fee.currency }) }}</p>
+        <p class="b-shop-add__fee-message">
+          {{ $t('add_shop.guided.wallet_balance') }}: <u-price :amount="creation_fee.available_balance" :currency="creation_fee.currency" />
+        </p>
+        <p v-if="!creation_fee.can_pay" class="b-shop-add__fee-message b-shop-add__fee-error" role="alert"><v-icon size="16" color="warning" aria-hidden="true">account_balance_wallet</v-icon><span>{{ $t('add_shop.guided.wallet_insufficient') }}</span></p>
+      </template>
+      <p v-if="creation_quote_changed" class="b-shop-add__fee-message" role="alert">{{ $t('add_shop.guided.quote_changed') }}</p>
+      <v-btn v-if="creation_fee?.charged_from_wallet" :to="{ name: 'BPageShuttleWalletAccounts' }" target="_blank" rel="noopener noreferrer" variant="text" color="primary" class="sd-modern-button sd-modern-button--inline b-shop-add__wallet-manage">
+        {{ $t('add_shop.guided.wallet_manage') }}<v-icon end size="15" aria-hidden="true">north_east</v-icon>
+      </v-btn>
+    </section>
     <div
       v-if="step === 0"
       key="slide-0"
@@ -80,7 +183,7 @@
     >
       <div :class="{ 'sd-modern-title b-shop-add__heading': modern }">
         <span v-if="modern" class="sd-modern-icon sd-modern-icon--plain">
-          <v-icon aria-hidden="true">store_mall_directory</v-icon>
+          <v-icon aria-hidden="true">{{ guided ? 'business_center' : 'store_mall_directory' }}</v-icon>
         </span>
         <div>
           <u-widget-header
@@ -89,7 +192,7 @@
             :icon="modern ? undefined : 'store_mall_directory'"
           />
           <v-list-subheader :class="{ 'b-shop-add__subtitle': modern }">
-            <span>{{ $t("admin_shop.edit.info.title_tab.subtitle") }}</span>
+            <span>{{ $t(guided ? 'add_shop.guided.title_subtitle' : 'admin_shop.edit.info.title_tab.subtitle') }}</span>
             <u-tooltip-tips
               v-if="modern"
               class="sd-modern-icon-button sd-modern-info-button"
@@ -104,9 +207,10 @@
       <v-text-field
         v-model="title"
         :counter="30"
-        :label="`${$t('add_shop.title_input')}*`"
-        :hint="$t('admin_shop.edit.info.title_input_message')"
-        placeholder="e.g. Serenity Spa & Wellness"
+        :label="`${$t(guided ? 'add_shop.guided.business_name_label' : 'add_shop.title_input')}*`"
+        :hint="guided ? undefined : $t('admin_shop.edit.info.title_input_message')"
+        :messages="guided ? $t('add_shop.guided.title_message') : undefined"
+        :placeholder="guided ? $t('add_shop.guided.title_placeholder') : 'e.g. Serenity Spa & Wellness'"
         required
         variant="underlined"
         :persistent-placeholder="modern"
@@ -128,7 +232,8 @@
 
       <u-language-input
         v-model="language"
-        :messages="$t('add_shop.language_input_message')"
+        :label="guided ? $t('add_shop.guided.language_label') : undefined"
+        :messages="$t(guided ? 'add_shop.guided.language_message' : 'add_shop.language_input_message')"
         max-width="unset"
         :persistent-placeholder="modern"
         :class="{ 'sd-modern-underlined-field': modern }"
@@ -136,8 +241,6 @@
       >
       </u-language-input>
       </div>
-
-      <div v-if="modern" class="b-shop-add__divider" />
 
       <u-smart-switch
         v-model="active"
@@ -227,7 +330,7 @@
             {{ $t("admin_shop.edit.info.name_tab.title") }}
           </h2>
           <v-list-subheader :class="{ 'b-shop-add__subtitle': modern }">
-            <span>{{ $t("admin_shop.edit.info.name_tab.subtitle") }}</span>
+            <span>{{ $t(guided ? 'add_shop.guided.name_subtitle' : 'admin_shop.edit.info.name_tab.subtitle') }}</span>
             <u-tooltip-tips
               v-if="modern"
               class="sd-modern-icon-button sd-modern-info-button"
@@ -321,12 +424,16 @@
           type="button"
           variant="plain"
         >
-          <v-icon> fa:fas fa-copy</v-icon>
+          <v-icon>{{ guided ? 'content_copy' : 'fa:fas fa-copy' }}</v-icon>
           <v-tooltip v-if="modern" activator="parent" content-class="sd-modern-tooltip text-start" location="top">
             {{ $t('global.actions.copy') }}
           </v-tooltip>
         </v-btn>
       </div>
+      <p v-if="guided" class="b-shop-add__domain-message">
+        <v-icon size="15" aria-hidden="true">info_outline</v-icon>
+        <span>{{ $t('add_shop.guided.domain_message') }}</span>
+      </p>
     </div>
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Description ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
@@ -611,6 +718,9 @@
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Buttons ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
     <div v-if="!readOnly" :class="{ 'sd-modern-form-actions b-shop-add__form-actions': modern }">
+    <p v-if="guided && (shop || step === 0)" class="b-shop-add__step-note">
+      {{ $t('add_shop.guided.step_label', { step: step + 1, total: shop ? 5 : 2 }) }}
+    </p>
     <div class="widget-buttons">
       <v-btn
         v-if="step !== 0 || hasFirstBack"
@@ -621,7 +731,7 @@
         @click="back()"
       >
         <v-icon class="me-2">{{ $t("icons.chevron_back") }}</v-icon>
-        {{ $t("global.actions.back") }}
+        {{ $t(guided && step === 0 ? 'global.actions.cancel' : 'global.actions.back') }}
       </v-btn>
 
       <v-btn
@@ -633,11 +743,12 @@
         variant="elevated"
         @click="editShop()"
       >
+        <v-icon v-if="guided" start aria-hidden="true">save</v-icon>
         {{
           step === 4 ? $t("global.actions.finish") : $t("global.actions.save")
         }}
 
-        <v-icon v-if="step !== 4" class="ms-2" size="small">
+        <v-icon v-if="!guided && step !== 4" class="ms-2" size="small">
           {{ $t("icons.arrow_end") }}
         </v-icon>
       </v-btn>
@@ -645,25 +756,28 @@
         v-if="!shop && step > 0"
         :class="{ disabled: !name || !title || !language, 'sd-modern-button sd-modern-button--form b-shop-add__save': modern, 'm-2': !modern }"
         :loading="busy_add_shop"
+        :disabled="guided && (!name || !title.trim() || !language || busy_add_shop || !can_create_with_fee)"
         color="primary"
         size="x-large"
         variant="elevated"
         @click="addShop()"
       >
-        <v-icon class="me-2"> check</v-icon>
+        <v-icon class="me-2" aria-hidden="true">{{ guided ? 'add' : 'check' }}</v-icon>
         {{ $t("add_shop.create_shop_action") }}
       </v-btn>
       <v-btn
         v-if="!shop && step === 0"
         :class="{ disabled: !title || !language, 'sd-modern-button sd-modern-button--form b-shop-add__save': modern, 'm-2': !modern }"
+        :disabled="guided && (!title.trim() || !language)"
         color="primary"
         size="x-large"
         variant="elevated"
         @click="goNext()"
       >
-        {{ $t("global.actions.next") }}
+        <v-icon v-if="guided" start aria-hidden="true">{{ $t('icons.arrow_end') }}</v-icon>
+        {{ $t(guided ? 'add_shop.guided.continue_action' : 'global.actions.next') }}
 
-        <v-icon class="ms-2" size="small">
+        <v-icon v-if="!guided" class="ms-2" size="small">
           {{ $t("icons.arrow_end") }}
         </v-icon>
       </v-btn>
@@ -672,6 +786,7 @@
 
     <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Google search preview ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
+    <div :class="{ 'b-shop-add__preview-layout': guided }">
     <div
       :class="modern ? 'b-shop-add__seo text-start' : 'widget-box my-16 text-start'"
       :style="modern ? undefined : '--background: #fff'"
@@ -682,8 +797,8 @@
             <v-icon aria-hidden="true">search</v-icon>
           </span>
           <div>
-            <h2 class="sd-modern-title-text">{{ $t('global.commons.seo_preview') }}</h2>
-            <p class="b-shop-add__subtitle">{{ $t('admin_shop.edit.info.seo_preview_subtitle') }}</p>
+            <h2 class="sd-modern-title-text">{{ $t(guided ? 'add_shop.guided.search_title' : 'global.commons.seo_preview') }}</h2>
+            <p v-if="!guided" class="b-shop-add__subtitle">{{ $t('admin_shop.edit.info.seo_preview_subtitle') }}</p>
           </div>
         </div>
         <v-btn
@@ -709,8 +824,19 @@
         @click:add="getRenderedOnGoogle"
       ></u-widget-header>
 
+      <div v-if="guided && !shop" class="b-shop-add__search-result">
+        <div class="b-shop-add__search-identity">
+          <span class="b-shop-add__search-initial" aria-hidden="true">{{ title.trim().charAt(0).toUpperCase() || 'S' }}</span>
+          <div>
+            <div>{{ title || $t('add_shop.guided.search_placeholder_title') }}</div>
+            <div class="b-shop-add__search-url" dir="ltr">{{ main_service_url }}/@{{ name }}</div>
+          </div>
+        </div>
+        <div class="b-shop-add__search-title">{{ title || $t('add_shop.guided.search_placeholder_title') }}</div>
+        <p class="b-shop-add__search-description">{{ description || $t('add_shop.guided.search_placeholder_description') }}</p>
+      </div>
       <div
-        v-if="canShowGooglePreview"
+        v-else-if="canShowGooglePreview"
         :class="{ blurred: busy_render_google, 'my-5': !modern }"
         class="seo-preview"
         v-html="rendered_on_google"
@@ -723,6 +849,10 @@
         :url="`${main_service_url}/@${name}`"
         :class="modern ? undefined : 'mx-auto my-5'"
       />
+      <p v-if="guided" class="b-shop-add__preview-message">{{ $t('add_shop.guided.search_message') }}</p>
+    </div>
+    </div>
+    </div>
     </div>
   </div>
 
@@ -761,6 +891,10 @@
 
 <script lang="ts">
 import UProgressStepper from "../../../ui/progress/stepper/UProgressStepper.vue";
+import UPrice from "../../../ui/price/UPrice.vue";
+import UCurrencyIcon from "../../../ui/currency/icon/UCurrencyIcon.vue";
+import CurrencyMixin from "../../../mixin/currency/CurrencyMixin.ts";
+import { AccountStatus } from "@selldone/core-js/enums/wallet/AccountStatus";
 
 import { throttle } from "lodash-es";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
@@ -791,8 +925,10 @@ import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 
 export default {
   name: "BShopAdd",
-  mixins: [UMixinConfetti, TemplateMixin, DateMixin ],
+  mixins: [UMixinConfetti, TemplateMixin, DateMixin, CurrencyMixin ],
   components: {
+    UPrice,
+    UCurrencyIcon,
     UMapView,
     UWidgetHeader,
     BTranslationButtonShop,
@@ -822,6 +958,7 @@ export default {
 
     readOnly: Boolean,
     modern: Boolean,
+    guided: Boolean,
   },
 
   data: () => ({
@@ -868,6 +1005,19 @@ export default {
     busy_add_shop: false,
     busy_edit_shop: false,
 
+    creation_fee: null,
+    busy_creation_fee: false,
+    creation_fee_error: false,
+    creation_conversion_unavailable: false,
+    creation_fee_request_id: 0,
+    creation_account: null,
+    creation_wallets: [],
+    creation_wallets_loaded: false,
+    creation_wallets_request_id: 0,
+    busy_creation_wallets: false,
+    creation_wallets_error: false,
+    creation_quote_changed: false,
+
     //-------- Temporary access ----------
     force: false,
     temp_access: null,
@@ -875,6 +1025,17 @@ export default {
   }),
 
   computed: {
+    creation_fee_matches_wallet() {
+      return !!this.creation_fee && (this.creation_fee.is_free || (
+        !!this.creation_account &&
+        this.creation_fee.account_number === this.creation_account.account_number &&
+        this.creation_fee.currency === this.creation_account.currency
+      ));
+    },
+    can_create_with_fee() {
+      return !this.busy_creation_fee && !this.creation_fee_error && this.creation_fee_matches_wallet &&
+        (this.creation_fee.is_free || this.creation_fee.can_pay === true);
+    },
     ShopURLs() {
       return ShopURLs
     },
@@ -948,14 +1109,103 @@ export default {
     }, 1000),
 
     step() {
+      if (this.guided) {
+        // The creation sheet scrolls independently of the application page.
+        this.$nextTick(() => this.$refs.workspace?.scrollIntoView({ block: 'start' }));
+        return;
+      }
       ScrollHelper.scrollToTop();
     },
   },
   created() {
     this.reassignShopInfo();
+    if (this.guided && !this.shop) this.getCreationFee();
+  },
+
+  beforeUnmount() {
+    this.creation_fee_request_id++;
+    this.creation_wallets_request_id++;
   },
 
   methods: {
+    async getCreationFee() {
+      if (!this.guided || this.shop) return;
+      const requestId = ++this.creation_fee_request_id;
+      const account = this.creation_account;
+      this.creation_fee_error = false;
+      this.creation_conversion_unavailable = false;
+      this.busy_creation_fee = true;
+
+      try {
+        const { data } = await axios.get(window.API.GET_SHOP_CREATION_FEE(), {
+          params: account ? { account_number: account.account_number } : {},
+        });
+        if (requestId !== this.creation_fee_request_id || this.shop || !this.guided) return;
+        if (
+          data?.success !== true || data.error ||
+          typeof data.fee !== 'number' || !Number.isFinite(data.fee) || data.fee < 0 ||
+          typeof data.currency !== 'string' || !this.GetCurrency(data.currency) ||
+          data.is_free !== (data.fee === 0) || data.charged_from_wallet !== (data.fee > 0) ||
+          (!data.is_free && account && (
+            data.account_number !== account.account_number || data.currency !== account.currency ||
+            typeof data.available_balance !== 'number' || !Number.isFinite(data.available_balance) ||
+            data.can_pay !== (data.available_balance >= data.fee)
+          ))
+        ) {
+          this.creation_fee_error = true;
+          this.creation_conversion_unavailable = data?.code === 'shop_creation_conversion_unavailable';
+          return;
+        }
+        this.creation_fee = {
+          fee: data.fee,
+          currency: data.currency,
+          is_free: data.is_free,
+          charged_from_wallet: data.charged_from_wallet,
+          reason: data.reason,
+          account_number: data.account_number,
+          available_balance: data.available_balance,
+          can_pay: data.can_pay,
+        };
+        if (data.charged_from_wallet && !this.creation_wallets_loaded && !this.busy_creation_wallets) this.fetchCreationWallets();
+      } catch {
+        if (requestId === this.creation_fee_request_id && !this.shop && this.guided) this.creation_fee_error = true;
+      } finally {
+        if (requestId === this.creation_fee_request_id && !this.shop && this.guided) this.busy_creation_fee = false;
+      }
+    },
+
+    async fetchCreationWallets() {
+      if (!this.guided || this.shop || this.busy_creation_wallets) return;
+      const requestId = ++this.creation_wallets_request_id;
+      this.creation_wallets_error = false;
+      this.busy_creation_wallets = true;
+      try {
+        const { data } = await axios.get(window.API.GET_ACTIVE_ACCOUNT_LIST('*'), { params: { offset: 0, limit: 100 } });
+        if (this.shop || !this.guided || requestId !== this.creation_wallets_request_id) return;
+        if (data?.error || !Array.isArray(data?.accounts)) throw new Error('Invalid wallet list');
+        const accounts = data.accounts.filter(account => account.status === AccountStatus.Approved.code);
+        if (accounts.some(account => typeof account.account_number !== 'string' || !account.account_number ||
+          typeof account.currency !== 'string' || !this.GetCurrency(account.currency) ||
+          !Number.isFinite(Number(account.balance)) || !Number.isFinite(Number(account.locked)))) throw new Error('Invalid wallet');
+        this.creation_wallets = accounts;
+        this.creation_wallets_loaded = true;
+        if (!this.creation_account && accounts.length && this.creation_fee?.charged_from_wallet) {
+          this.onCreationWalletChange(accounts.find(account => account.currency === 'USD') ||
+            accounts.find(account => account.currency === 'EUR') || accounts[0]);
+        }
+      } catch {
+        if (requestId === this.creation_wallets_request_id && !this.shop && this.guided) this.creation_wallets_error = true;
+      } finally {
+        if (requestId === this.creation_wallets_request_id && !this.shop && this.guided) this.busy_creation_wallets = false;
+      }
+    },
+
+    onCreationWalletChange(account) {
+      this.creation_account = account;
+      this.creation_quote_changed = false;
+      this.getCreationFee();
+    },
+
     onClickSetLocation(info) {
       console.log(info);
       this.center = Object.assign({}, info.location);
@@ -1069,6 +1319,7 @@ export default {
 
     goTo(step) {
       this.step = step;
+      if (this.guided && !this.shop && step === 1) this.getCreationFee();
     },
 
     handleProcessIcon(path) {
@@ -1104,6 +1355,7 @@ export default {
     },
 
     addShop() {
+      if (this.guided && (!this.can_create_with_fee || this.busy_add_shop)) return;
       this.busy_add_shop = true;
       axios
         .post(window.API.POST_ADD_SHOP(), {
@@ -1113,10 +1365,19 @@ export default {
           name: this.name,
           active: this.active,
           info: this.info,
+          ...(this.guided ? {
+            expected_fee: this.creation_fee.fee,
+            expected_currency: this.creation_fee.currency,
+            ...(this.creation_fee.charged_from_wallet ? { account_number: this.creation_account.account_number } : {}),
+          } : {}),
         })
         .then(({ data }) => {
           if (data.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
+            if (this.guided && data.quote_changed) {
+              this.creation_quote_changed = true;
+              this.getCreationFee();
+            }
           } else {
             NotificationService.showSuccessAlert(
               null,
@@ -1383,13 +1644,9 @@ export default {
     grid-template-columns: 1.3fr 1fr;
   }
 
-  .b-shop-add__divider {
-    margin-block: 24px;
-    border-block-start: 1px solid var(--sd-modern-border);
-  }
-
   .b-shop-add__active {
     margin: 0;
+    margin-block-start: 24px;
 
     :deep(.row-hover) {
       color: rgb(var(--v-theme-on-surface));
@@ -1619,6 +1876,250 @@ export default {
       --v-btn-height: 44px;
       min-height: 44px;
     }
+  }
+}
+
+.b-shop-add--guided {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+
+  .b-shop-add__workspace {
+    display: grid;
+    grid-template-columns: 145px minmax(0, 1fr);
+    align-items: start;
+    gap: 22px;
+    padding: 22px 20px 26px;
+  }
+
+  .b-shop-add__steps {
+    gap: 6px;
+    padding: 0;
+  }
+
+  .b-shop-add__step {
+    min-height: 44px;
+    font-size: 13px;
+    line-height: 20px;
+
+    &:disabled { opacity: 0.6; }
+
+    &[aria-current="location"] .b-shop-add__step-number {
+      color: rgb(var(--v-theme-primary));
+      border-color: rgb(var(--v-theme-primary));
+    }
+  }
+
+  .b-shop-add__step-number {
+    display: grid;
+    place-items: center;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .b-shop-add__content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .b-shop-add__panel {
+    min-height: 0;
+    margin: 0;
+    padding: 24px;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .b-shop-add__heading {
+    gap: 9px;
+    margin-block-end: 25px;
+
+    :deep(h2) {
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 24px;
+      letter-spacing: -0.15px;
+    }
+
+    > .sd-modern-icon { color: var(--sd-modern-muted); }
+  }
+
+  .b-shop-add__subtitle { line-height: 20px; }
+
+  .b-shop-add__identity-fields {
+    grid-template-columns: 1fr;
+    gap: 21px;
+  }
+
+  .b-shop-add__active {
+    margin-block-start: 22px;
+
+    :deep(.row-hover) {
+      padding-inline: 0;
+      background: transparent !important;
+    }
+  }
+
+  .b-shop-add__preview-layout {
+    order: 1;
+    min-width: 0;
+    margin-block-start: 26px;
+    padding-inline: 5px;
+  }
+
+  .b-shop-add__seo { min-width: 0; margin: 0; }
+
+  .b-shop-add__seo-heading {
+    margin-block-end: 12px;
+
+    .sd-modern-title { align-items: center; gap: 7px; }
+    .sd-modern-title-text { font-size: 13px; font-weight: 500; line-height: 20px; }
+    .sd-modern-icon { width: 15px; height: 20px; }
+    .v-icon { font-size: 15px; }
+  }
+
+  .b-shop-add__search-result {
+    padding: 17px;
+    background: rgb(var(--v-theme-surface));
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 13px;
+    overflow-wrap: anywhere;
+  }
+
+  .b-shop-add__search-identity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-block-end: 12px;
+    font-size: 12px;
+    line-height: 18px;
+
+    > div { min-width: 0; }
+  }
+
+  .b-shop-add__search-initial {
+    display: grid;
+    place-items: center;
+    flex: 0 0 27px;
+    height: 27px;
+    background: var(--sd-modern-inset);
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .b-shop-add__search-url {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 16px;
+    word-break: break-all;
+  }
+
+  .b-shop-add__search-title {
+    margin-block-end: 5px;
+    color: rgb(var(--v-theme-primary));
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 23px;
+    letter-spacing: -0.15px;
+  }
+
+  .b-shop-add__search-description,
+  .b-shop-add__preview-message,
+  .b-shop-add__domain-message,
+  .b-shop-add__step-note {
+    margin: 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .b-shop-add__preview-message { margin-block-start: 7px; }
+  .b-shop-add__domain-message { display: flex; align-items: start; gap: 8px; margin-block-start: 18px; }
+
+  .b-shop-add__fee { margin-block-end: 18px; padding-inline: 5px; }
+
+  .b-shop-add__fee-label { display: flex; align-items: center; gap: 6px; }
+
+  .b-shop-add__fee-help-amount { margin-block-end: 8px; font-size: 16px; }
+
+  .b-shop-add__wallet-input {
+    margin-block-start: 12px;
+    // Rich wallet values need their full height below the floating label.
+    :deep(.v-field--variant-underlined div.v-field__input) { height: auto; min-height: var(--sd-modern-field-height); }
+    :deep(.v-select__selection) { width: 100%; max-width: 100%; height: auto; }
+  }
+  .b-shop-add__wallet-value { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; min-width: 0; }
+  .b-shop-add__wallet-name { color: var(--sd-modern-muted); font-size: 12px; overflow-wrap: anywhere; }
+  .b-shop-add__wallet-manage { margin-block-start: 8px; }
+
+  .b-shop-add__fee-heading {
+    display: flex;
+    min-height: 36px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  .b-shop-add__fee-amount {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .b-shop-add__fee-message {
+    margin: 7px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .b-shop-add__fee-error {
+    display: flex;
+    align-items: start;
+    gap: 8px;
+    color: rgb(var(--v-theme-on-surface));
+
+    .v-icon { margin-block-start: 2px; }
+  }
+
+  .b-shop-add__form-actions {
+    order: 2;
+    margin-block: 24px 0;
+
+    .widget-buttons { display: flex; flex-wrap: nowrap; justify-content: start; gap: 14px; }
+    .b-shop-add__save { min-width: 0; margin-inline-start: auto; }
+    .b-shop-add__step-note { margin-block-end: 10px; font-size: 12px; line-height: 18px; }
+    :deep(.sd-modern-button) { min-height: 42px; padding-inline: 16px; font-size: 13px; line-height: 20px; border-radius: 11px; }
+  }
+
+  @media (max-width: 640px) {
+    .b-shop-add__workspace { grid-template-columns: 1fr; padding: 18px; }
+    .b-shop-add__steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .b-shop-add__panel { padding: 22px; }
+  }
+
+  @media (max-width: 640px), (pointer: coarse) {
+    .b-shop-add__form-actions :deep(.sd-modern-button) { min-height: 44px; }
+    .b-shop-add__fee-heading { min-height: 44px; }
+  }
+
+  @media (max-width: 390px) {
+    .b-shop-add__workspace { padding: 16px 12px 20px; }
+    .b-shop-add__panel { padding: 19px 17px; }
+    .b-shop-add__form-actions .widget-buttons { flex-wrap: wrap; gap: 8px; }
   }
 }
 

@@ -13,10 +13,37 @@
   -->
 
 <template>
-  <div>
-    <div v-for="(item, index) in product.inputs" :key="item.name">
+  <div :class="{ 's-basket-product-inputs--modern-readonly': isModernReadonly }">
+    <div
+      v-for="(item, index) in product.inputs"
+      :key="item.name"
+      :class="{
+        's-basket-product-inputs__field': isModernReadonly,
+        's-basket-product-inputs__field--wide': isModernReadonly && ['note', 'file'].includes(item.type),
+        's-basket-product-inputs__field--empty': isModernReadonly && item.type === 'file' && !getFiles(item.name).length,
+      }"
+    >
+      <template v-if="isModernReadonly && (!item.type || ['text', 'select', 'switch'].includes(item.type))">
+        <div class="s-basket-product-inputs__label">{{ item.title || item.name }}</div>
+        <div class="s-basket-product-inputs__value">
+          <template v-if="hasAnswer(item)">
+            <v-icon
+              v-if="item.type === 'switch' && typeof message[item.name] === 'boolean'"
+              size="18"
+              aria-hidden="true"
+            >{{ message[item.name] ? "check" : "close" }}</v-icon>
+            <button
+              v-copy
+              type="button"
+              class="s-basket-product-inputs__copy"
+              :aria-label="$t('global.actions.copy') + ': ' + answerText(item)"
+            ><bdi>{{ answerText(item) }}</bdi></button>
+          </template>
+          <span v-else class="s-basket-product-inputs__missing">{{ $t("order_input.not_provided") }}</span>
+        </div>
+      </template>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Note ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-      <div v-if="item.type === 'note'" v-html="convertToHtml(item.title)"></div>
+      <div v-else-if="item.type === 'note'" v-html="convertToHtml(item.title)"></div>
 
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Normal ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
@@ -69,6 +96,11 @@
       >
       </u-smart-switch>
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ File ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+      <div
+        v-else-if="isModernReadonly && item.type === 'file' && getFiles(item.name).length"
+        class="s-basket-product-inputs__label"
+      >{{ item.title || item.name }}</div>
 
       <v-file-input
         v-else-if="
@@ -183,6 +215,10 @@ export default {
       default: false,
       type: Boolean,
     },
+    modern: {
+      default: false,
+      type: Boolean,
+    },
     isAdmin: {
       default: false,
       type: Boolean,
@@ -198,6 +234,12 @@ export default {
     busy_download: null,
   }),
 
+  computed: {
+    isModernReadonly() {
+      return this.modern && this.readonly;
+    },
+  },
+
   watch: {
     modelValue() {
       this.message = this.modelValue;
@@ -212,7 +254,7 @@ export default {
     // Set default values:
     try {
       this.product.inputs.forEach((input) => {
-        if (input.default && this.message[input.name] === undefined) {
+        if (!this.isModernReadonly && input.default && this.message[input.name] === undefined) {
           this.message[input.name] = input.default;
         }
         // Initial files:
@@ -228,6 +270,17 @@ export default {
   },
 
   methods: {
+    hasAnswer(item) {
+      const value = this.message[item.name];
+      return value !== undefined && value !== null && value !== "" &&
+        (!Array.isArray(value) || value.length > 0);
+    },
+    answerText(item) {
+      const value = this.message[item.name];
+      if (item.type === "switch" && typeof value === "boolean")
+        return this.$t(value ? "global.actions.yes" : "global.actions.no");
+      return Array.isArray(value) ? value.join(", ") : String(value);
+    },
     getFiles(key) {
       if (!this.uploadedFiles) return [];
       return (
@@ -300,4 +353,45 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.s-basket-product-inputs--modern-readonly {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 30px;
+  color: rgb(var(--v-theme-on-surface));
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 21px;
+
+  .s-basket-product-inputs__field { min-width: 0; overflow-wrap: anywhere; }
+  .s-basket-product-inputs__field--wide { grid-column: 1 / -1; }
+  .s-basket-product-inputs__field--empty { display: none; }
+  .s-basket-product-inputs__label {
+    margin-block-end: 7px;
+    color: rgba(var(--v-theme-on-surface), 0.66);
+    font-size: 12px;
+    line-height: 18px;
+  }
+  .s-basket-product-inputs__value {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 34px;
+    padding-block-end: 8px;
+    border-block-end: 1px solid var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+    font-size: 14px;
+    line-height: 21px;
+  }
+  .s-basket-product-inputs__missing { color: rgba(var(--v-theme-on-surface), 0.66); }
+  .s-basket-product-inputs__copy { min-width: 0; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: start; overflow-wrap: anywhere; cursor: pointer; }
+  .s-basket-product-inputs__copy:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; border-radius: 3px; }
+  .s-basket-product-inputs__value bdi { min-width: 0; overflow-wrap: anywhere; }
+
+  @media (max-width: 600px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    .s-basket-product-inputs__copy { min-height: 44px; }
+  }
+}
+</style>

@@ -189,7 +189,7 @@
         </v-expansion-panel>
       </v-expansion-panels>
       <div class="b-dashboard-products-summary__imports">
-        <b-shop-products-import-processing :shop="shop" />
+        <b-shop-products-import-processing :shop="shop" modern />
       </div>
     </template>
   </section>
@@ -518,31 +518,8 @@ export default {
     font-size: 13px;
     font-weight: 400;
   }
-  &__imports :deep(> .widget-box) {
-    padding: 16px 0 0;
+  &__imports :deep(> .b-shop-products-import-processing--modern) {
     margin-block: 16px 0 !important;
-    box-shadow: none;
-    border: 0;
-    border-block-start: 1px solid var(--sd-modern-border);
-    background: transparent;
-  }
-  &__imports :deep(.font-weight-black),
-  &__imports :deep(b) {
-    font-weight: 400 !important;
-  }
-  &__imports :deep(.widget-buttons) {
-    padding-inline: 0;
-    margin: 0;
-  }
-  &__imports :deep(.widget-buttons > .v-btn) {
-    min-height: 44px;
-    padding: 8px 12px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 400;
-    text-transform: none;
-    background: var(--sd-modern-inset);
-    border-radius: 8px;
   }
   @media (max-width: 600px) {
     &__history-grid {

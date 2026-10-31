@@ -24,16 +24,19 @@
         ></span>
 
         <div v-if="connect.enable">
-          <v-icon class="me-1" color="green">check_circle</v-icon>
+          <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true" />
+          <v-icon v-else class="me-1" color="green">check_circle</v-icon>
           {{ $t("product_flow.connect.enable_msg") }}
         </div>
         <div v-else>
-          <v-icon class="me-1" color="red">cancel</v-icon>
+          <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--error" aria-hidden="true" />
+          <v-icon v-else class="me-1" color="red">cancel</v-icon>
           {{ $t("product_flow.connect.disable_msg") }}
         </div>
 
         <div v-if="connect.shipping">
-          <v-icon class="me-1" color="green">check_circle</v-icon>
+          <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true" />
+          <v-icon v-else class="me-1" color="green">check_circle</v-icon>
           {{
             $t("product_flow.connect.has_shipping_msg", { name: connect.name })
           }}
@@ -46,6 +49,7 @@
         v-if="!IS_VENDOR_PANEL"
         :to="{ name: 'BPageShopChannelConnect' }"
         class="tnt ma-1"
+        :class="{ 'sd-modern-button sd-modern-button--small': modern }"
         color="primary"
         variant="text"
       >
@@ -69,7 +73,7 @@ export default {
   name: "BProductFlowRowConnect",
   components: {},
   inject: ["$shop", "$product"],
-  props: {},
+  props: { modern: { type: Boolean, default: false } },
 
   data: function () {
     return {};

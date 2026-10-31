@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ 's-article-editor--workspace': workspace }">
+  <div :class="{ 's-article-editor--workspace': workspace, 's-article-editor--product-workspace text-start': productWorkspace }">
     <!-- ――――――――――――――――――――――― Article ――――――――――――――――――――――― -->
     <div
       :id="MASTER_ID"
@@ -29,10 +29,14 @@
         @dragover="dragover"
       >
         <div>
+          <p v-if="productWorkspace && enableTitle" :id="`${EDITABLE_TITLE_ID}-label`" class="s-article-editor__title-label">
+            {{ $t('add_product.description_modern.title_label') }}
+          </p>
           <div
             v-if="enableTitle"
             :id="EDITABLE_TITLE_ID"
             ref="editable_title"
+            :aria-labelledby="productWorkspace ? `${EDITABLE_TITLE_ID}-label` : undefined"
             :data-placeholder="$t('global.article.editor.title_placeholder')"
             class="h1 fw-semi-bold s-article-editor__title"
             style="user-select: text; min-height: 84px"
@@ -46,6 +50,7 @@
             v-if="enableBody"
             :id="EDITABLE_BODY_ID"
             ref="editable_body"
+            :aria-label="productWorkspace ? $t('add_product.description_modern.body_label') : undefined"
             :data-placeholder="$t('global.article.editor.body_placeholder')"
             class="can-edit-medium-insert u-article-body-edit s-article-editor__body"
             style="user-select: text; min-height: 284px"
@@ -53,6 +58,17 @@
             v-html="rendered_body"
           />
         </div>
+
+        <v-btn
+          v-if="productWorkspace && enableBody && !noMediumInsert"
+          class="sd-modern-button sd-modern-button--compact sd-modern-button--inline s-article-editor__insert"
+          variant="text"
+          :disabled="!active || word_import_busy"
+          @click="showProductInsert"
+        >
+          <b-product-edit-info-icon name="CirclePlus" :size="17" />
+          {{ $t('add_product.description_modern.insert_content') }}
+        </v-btn>
 
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ Drop Zone ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -120,6 +136,11 @@
       </div>
     </div>
 
+    <div v-if="productWorkspace" class="s-article-editor__product-meta">
+      <span>{{ $t('add_product.description_modern.words', { count: numeralFormat(productWordCount, '0,0') }) }}</span>
+      <span v-if="language">{{ $t('add_product.description_modern.language_description', { language: productLanguageName }) }}</span>
+    </div>
+
     <slot name="end" v-bind:edit="edit"></slot>
 
     <!-- ――――――――――――――――――――――― 💡 Mega Replacer ――――――――――――――――――――――― -->
@@ -145,7 +166,7 @@
       @change="onSelectWordFile"
     />
     <v-dialog
-      v-if="workspace"
+      v-if="workspace && active"
       v-model="word_import_dialog"
       :persistent="word_import_busy"
       max-width="520"
@@ -213,6 +234,7 @@ import { debounce } from "lodash-es";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
+import BProductEditInfoIcon from "@selldone/components-vue/backoffice/product/edit/info/BProductEditInfoIcon.vue";
 
 window.MediumInsert = MediumInsert;
 
@@ -365,17 +387,21 @@ const OPTIONS_BODY = {
 export default defineComponent({
   name: "SArticleEditor",
   mixins: [ImageMixin],
-  emits: ["change", "update:title", "update:body", "update:images", "workspace-busy"],
+  emits: ["change", "update:title", "update:body", "update:images", "workspace-busy", "workspace-pending"],
 
   components: {
     SArticleTableOfContents,
     AAddonComparisonDialog,
     AAddonCatalogDialog,
     AAddonCodeEditorDialog,
+    BProductEditInfoIcon,
   },
 
   props: {
     workspace: { type: Boolean, default: false },
+    productWorkspace: { type: Boolean, default: false },
+    active: { type: Boolean, default: true },
+    language: { type: String, default: "" },
     onlyView: {
       required: false,
       default: false,
@@ -452,6 +478,7 @@ export default defineComponent({
       options_body: OPTIONS_BODY,
 
       state: "no-change", //changed    saving   no-change
+      product_body_revision: 0,
 
       //----------------------------
       show_table_of_content: false,
@@ -476,17 +503,26 @@ export default defineComponent({
 
     edit() {
       if (this.workspace && !this.edit) this.resetWordImport();
+      if (this.productWorkspace && !this.edit) this.hideProductTools();
+    },
+    active(value) {
+      if (this.workspace && !value) this.resetWordImport();
+      if (this.productWorkspace && !value) this.hideProductTools();
     },
     workspace(value, previous) {
       if (previous && this.word_import_busy) this.$emit("workspace-busy", false);
+      if (previous && this.word_import_dialog) this.$emit("workspace-pending", false);
       this.resetWordImport();
     },
     wordConverterUrl() { if (this.workspace) this.resetWordImport(); },
     suffixId() { if (this.workspace) this.resetWordImport(); },
+    language() { if (this.productWorkspace) this.setDirection(); },
     word_import_busy(value) { if (this.workspace) this.$emit("workspace-busy", value); },
+    word_import_dialog(value) { if (this.workspace) this.$emit("workspace-pending", value); },
 
     rendered_body() {
       this.processAfterChangeBody();
+      if (this.productWorkspace) this.$nextTick(() => this.product_body_revision++);
     },
   },
 
@@ -512,6 +548,7 @@ export default defineComponent({
     clearTimeout(this._addonRenderTimer);
     this.pruneAddonApps(true);
     if (this.workspace && this.word_import_busy) this.$emit("workspace-busy", false);
+    if (this.workspace && this.word_import_dialog) this.$emit("workspace-pending", false);
     this.resetWordImport();
     // Purge all excess elements:
 
@@ -525,7 +562,21 @@ export default defineComponent({
 
   computed: {
     canImportWord() {
-      return this.workspace && this.edit && !this.onlyView && !!this.wordConverterUrl;
+      return this.workspace && this.active && this.edit && !this.onlyView && !!this.wordConverterUrl;
+    },
+    productWordCount() {
+      if (!this.productWorkspace) return 0;
+      const editedBody = this.product_body_revision && this.edit ? this.$refs.editable_body?.innerHTML : null;
+      const body = typeof editedBody === "string" ? editedBody : this.body;
+      if (!body) return 0;
+      // Inert template contents do not load images or execute article scripts.
+      const fragment = document.createElement("template");
+      fragment.innerHTML = body.replace(/<\/(?:p|div|li|h[1-6]|blockquote|pre)>|<br\s*\/?\s*>/gi, "$& ");
+      fragment.content.querySelectorAll("script,style,.medium-insert-buttons,.medium-editor-toolbar,.medium-insert-images-toolbar,.medium-insert-embeds-toolbar,code-editor,.code-editor,images-compare,.images-compare,flip-book,.flip-book,image-overlay-canvas,.image-overlay-canvas").forEach((element) => element.remove());
+      return (fragment.content.textContent || "").trim().split(/\s+/u).filter(Boolean).length;
+    },
+    productLanguageName() {
+      return typeof this.getLanguageName === "function" ? this.getLanguageName(this.language) : this.language;
     },
     //------------------ Multiple Article In One-Page Support (Landing builder) ------------------
     MASTER_ID() {
@@ -588,6 +639,40 @@ export default defineComponent({
   },
 
   methods: {
+    hideProductTools() {
+      const body = this.$refs.editable_body;
+      const insert = body ? $(body).data("plugin_mediumInsert") : null;
+      insert?.hideButtons();
+      insert?.hideAddons();
+      for (const editor of [this.editor_body, this.editable_title])
+        editor?.getExtensionByName?.("toolbar")?.hideToolbar();
+    },
+    showProductInsert() {
+      if (!this.productWorkspace || !this.active || !this.edit || this.onlyView || this.noMediumInsert || this.word_import_busy) return;
+      const body = this.$refs.editable_body;
+      const insert = body ? $(body).data("plugin_mediumInsert") : null;
+      if (!insert) return;
+
+      // Open the native palette at a trailing empty line; existing rich blocks stay intact.
+      const children = Array.from(body.children).filter((element) => !element.classList.contains("medium-insert-buttons"));
+      let paragraph = children[children.length - 1];
+      if (paragraph?.tagName !== "P" || paragraph.textContent.trim() || paragraph.querySelector("img,video,iframe,canvas,code-editor,images-compare,flip-book,image-overlay-canvas")) {
+        paragraph = document.createElement("p");
+        paragraph.append(document.createElement("br"));
+        body.insertBefore(paragraph, body.querySelector(".medium-insert-buttons"));
+      }
+      insert.addButtons();
+      $(body).find(".medium-insert-active").removeClass("medium-insert-active");
+      $(body).find(".medium-insert-buttons").removeAttr("data-active-addon");
+      $(paragraph).addClass("medium-insert-active");
+      body.focus();
+      insert.moveCaret($(paragraph), 0);
+      insert.positionButtons();
+      insert.showButtons();
+      insert.hideAddons();
+      insert.toggleAddons();
+      $(body).find(".medium-insert-buttons-addons").stop(true, true).find("button").first().trigger("focus");
+    },
     resetWordImport() {
       this.word_import_request++;
       this.word_import_dialog = false;
@@ -1094,6 +1179,7 @@ export default defineComponent({
 
     onEdited() {
       this.pruneAddonApps();
+      if (this.productWorkspace) this.product_body_revision++;
       // Resource navigation must see a changed draft before the next click.
       if (this.workspace) {
         if (this.edit) this.state = "changed";
@@ -1715,6 +1801,7 @@ export default defineComponent({
 
       //console.log("doc= "+doc)
       let isRTL = doc && this.isUnicode(doc);
+      if (this.productWorkspace && !doc.trim()) isRTL = this.getLanguageObject?.(this.language)?.dir === 'rtl';
       this.isRTL = isRTL;
 
       if (element.style.direction === (isRTL ? "rtl" : "ltr")) return;
@@ -2887,6 +2974,156 @@ p iframe {
     background: var(--sd-modern-inset);
     border: 1px solid var(--sd-modern-border);
     p { margin: 8px 0 0; font-size: 13px; line-height: 20px; }
+  }
+}
+.s-article-editor--product-workspace {
+  $content-tools: '.medium-insert-buttons *, .medium-insert-images *, .medium-insert-embeds *, .medium-insert-embed *, .code-editor *, .images-compare *, .flip-book *, .image-overlay-canvas *';
+  min-width: 0;
+  font-family: inherit;
+  color: rgb(var(--v-theme-on-surface));
+
+  .s-article-editor__title-label {
+    margin: 0 0 8px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+  .s-article-editor__title {
+    min-height: 55px !important;
+    margin: 0 0 22px;
+    padding-block-end: 18px;
+    border-block-end: 1px solid var(--sd-modern-border);
+    font-size: 26px !important;
+    font-weight: 500 !important;
+    line-height: 36px;
+    letter-spacing: -.5px;
+    overflow-wrap: anywhere;
+  }
+  .s-article-editor__body {
+    min-width: 0;
+    min-height: 70px !important;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 26px;
+    overflow-wrap: anywhere;
+    :deep(p) { margin-block: 0 18px; }
+    // Legacy article heading rules also declare their font size with !important.
+    :deep(h2) { margin-block: 24px 10px; font-family: inherit; font-size: 18px !important; font-weight: 500; line-height: 27px; }
+    :deep(h3) { margin-block: 22px 9px; font-family: inherit; font-size: 16px !important; font-weight: 500; line-height: 24px; }
+    :deep(ul:not(:where(#{$content-tools}))), :deep(ol:not(:where(#{$content-tools}))) {
+      margin-block: 0 18px;
+      padding-inline: 22px 0;
+    }
+    :deep(ul:not(:where(#{$content-tools}))) { list-style: disc; }
+    :deep(ol:not(:where(#{$content-tools}))) { list-style: decimal; }
+    :deep(li:not(:where(#{$content-tools}))) {
+      display: list-item;
+      margin-block: 6px 0;
+      padding-inline: 3px 0;
+      color: inherit;
+      &:before { content: none !important; }
+    }
+  }
+  .review-style { padding-inline: 0 !important; }
+  .s-article-editor__insert {
+    min-height: 34px;
+    margin-block-start: 18px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    :deep(.v-btn__content) { gap: 8px; }
+  }
+  .s-article-editor__product-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 15px;
+    margin-block-start: 22px;
+    padding-block-start: 14px;
+    border-block-start: 1px solid var(--sd-modern-border);
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+
+  // Keep native insert operations, with an in-flow menu that fits the product card.
+  .s-article-editor__body :deep(.medium-insert-buttons) {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+  }
+  .s-article-editor__body :deep(.medium-insert-buttons-show) {
+    position: relative;
+    inset: auto;
+    width: 32px !important;
+    height: 32px !important;
+    border: 1px solid var(--sd-modern-border) !important;
+    border-radius: 8px !important;
+    background: rgb(var(--v-theme-surface)) !important;
+    color: rgb(var(--v-theme-on-surface)) !important;
+    transform: none !important;
+    transition: none;
+  }
+  .s-article-editor__body :deep(.medium-insert-buttons-addons) {
+    position: relative;
+    inset: auto;
+    width: min(100%, 340px);
+    max-width: 100%;
+    margin: 8px 0 !important;
+    padding: 6px !important;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 12px;
+    background: rgb(var(--v-theme-surface));
+    color: rgb(var(--v-theme-on-surface));
+    font-family: inherit;
+    direction: inherit;
+    text-align: start;
+    list-style: none;
+    > li {
+      display: block;
+      margin: 0;
+      padding: 0 !important;
+      border-radius: 8px;
+      background: transparent !important;
+      &:before { content: none !important; }
+    }
+  }
+  .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-action) {
+    width: 100% !important;
+    min-height: 42px;
+    height: auto;
+    padding: 10px 12px !important;
+    border: 0 !important;
+    border-radius: 8px;
+    background: transparent !important;
+    color: rgb(var(--v-theme-on-surface)) !important;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 21px;
+    white-space: normal;
+    text-align: start;
+    &:hover, &:focus-visible { background: var(--sd-modern-inset) !important; }
+  }
+}
+@media (max-width: 600px) {
+  .s-article-editor--product-workspace {
+    .s-article-editor__title { min-height: 53px !important; font-size: 24px !important; line-height: 34px; letter-spacing: -.3px; }
+    .s-article-editor__body { font-size: 16px; line-height: 28px; }
+    .s-article-editor__insert { min-height: 44px; }
+    .s-article-editor__body :deep(.medium-insert-buttons-show) { width: 44px !important; height: 44px !important; }
+    .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-action) { min-height: 44px; }
+  }
+}
+@media (pointer: coarse) {
+  .s-article-editor--product-workspace {
+    .s-article-editor__insert { min-height: 44px; }
+    .s-article-editor__body :deep(.medium-insert-buttons-show) { width: 44px !important; height: 44px !important; }
+    .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-action) { min-height: 44px; }
   }
 }
 .s-article-word-import {
