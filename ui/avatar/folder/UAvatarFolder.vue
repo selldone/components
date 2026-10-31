@@ -18,17 +18,15 @@
     :size="size"
     :style="{
       backgroundImage: bg,
-      'border-radius': `${border_radius}px`,
+      '--folder-border-inset': borderSize == null ? null : `${borderSize}px`,
     }"
     class="s---category"
   >
     <v-avatar
       :color="!src && text_avatar_color ? text_avatar_color : '#fff'"
-      :size="size - borderSize"
-      :style="{ 'border-radius': `${border_radius - 2}px` }"
       cover
       :class="{ 'elevation-3': elevated }"
-      class="hover-scale force-top"
+      class="s---category__image hover-scale force-top"
     >
       <v-img v-if="src" :src="getShopImagePath(src)" :alt="text_avatar_value">
         <template v-slot:placeholder>
@@ -42,32 +40,30 @@
 
       <span
         v-else-if="textAvatar"
-        :style="{ 'font-size': size * 0.32 + 'px' }"
-        class="text-uppercase pen usn"
+        class="s---category__text text-uppercase pen usn"
         >{{ text_avatar_value }}</span
       >
-      <v-icon v-else>{{ placeholderIcon }}</v-icon>
+      <v-icon v-else size="min(38.71cqi, 24px)">{{ placeholderIcon }}</v-icon>
     </v-avatar>
 
     <div
       v-if="!hideSideIcon"
-      :style="{ backgroundImage: bg }"
-      class="absolute-bottom-end-0 rounded-ts-circle h-auto w-auto pe-2 pb-2 pen"
-      style="background-size: 300% 300%; line-height: 0; padding: 6px"
+      :style="{ backgroundImage: bg, '--folder-side-scale': smallSideIcon ? 0.5 : 1 }"
+      class="s---category__side absolute-bottom-end-0 rounded-ts-circle pen"
     >
       <img
         v-if="sideImage"
+        class="s---category__side-icon"
         :class="{
           'rounded rounded-ts-circle rounded-be-circle': side_image_rounded,
         }"
-        :height="side_size / (smallSideIcon ? 2 : 1)"
         :src="sideImage"
-        :width="side_size / (smallSideIcon ? 2 : 1)"
         alt="Side Icon"
       />
       <v-icon
         v-else
-        :size="side_size / (smallSideIcon ? 2 : 1)"
+        class="s---category__side-icon"
+        size="var(--folder-side-size)"
         :color="sideIconColor"
       >
         {{ sideIcon }}
@@ -118,7 +114,7 @@ export default defineComponent({
       type: Number,
     },
     borderSize: {
-      default: 10,
+      // The default inset scales; explicit values retain their pixel size.
       type: Number,
     },
     sideIcon: {
@@ -153,9 +149,6 @@ export default defineComponent({
       return !this.sideImage?.endsWith(".svg");
     },
 
-    side_size() {
-      return Math.round(Math.min(this.size / 4, 24));
-    },
     bg() {
       return `linear-gradient(45deg, ${this.color1}, ${this.color2})`;
     },
@@ -220,7 +213,33 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .s---category {
+  --folder-border-inset: min(10px, 16.129cqi);
   position: relative;
+  container-type: inline-size;
+  border-radius: min(30.303%, 24px);
+
+  &__image {
+    width: calc(100% - var(--folder-border-inset));
+    height: calc(100% - var(--folder-border-inset));
+    border-radius: max(0px, calc(min(30.303cqi, 24px) - min(3.226cqi, 2px)));
+  }
+
+  &__text { font-size: 32cqi; }
+
+  &__side {
+    --folder-side-size: calc(min(25cqi, 24px) * var(--folder-side-scale));
+    background-size: 300% 300%;
+    line-height: 0;
+    padding: min(9.677cqi, 6px);
+    padding-inline-end: min(12.903cqi, 8px);
+    padding-block-end: min(12.903cqi, 8px);
+  }
+
+  &__side-icon {
+    width: var(--folder-side-size);
+    height: var(--folder-side-size);
+    font-size: var(--folder-side-size);
+  }
 
   .s---title {
     position: absolute;
