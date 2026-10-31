@@ -238,7 +238,6 @@ export default defineComponent({
   &__side-icon {
     width: var(--folder-side-size);
     height: var(--folder-side-size);
-    font-size: var(--folder-side-size);
   }
 
   .s---title {
