@@ -736,6 +736,22 @@ const messageContext = (values = {}) => {
 };
 assert.equal(share.props.modern.default, false);
 assert.equal(messageComponent.props.modern.default, false);
+for (const modern of [false, true]) {
+  state = shareContext({
+    modern,
+    $t: (key) => `Order app: ${key}`,
+  });
+  state.createSecureLink();
+  calls.at(-1).resolve({ url: "fixture-localized-guest-access" });
+  await tick();
+  assert.deepEqual(alerts.at(-1), [
+    "showSuccessAlert",
+    null,
+    "Order app: b_order_share.notifications.secure_link_created",
+  ], "Secure-link confirmation uses the order app translator, not global $t");
+  assert.equal(state.secure_link, "fixture-localized-guest-access");
+  assert.equal(Boolean(state.busy_secure_link), false);
+}
 for (const [definition, make, method, busy, response] of [
   [
     share,

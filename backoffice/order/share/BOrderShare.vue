@@ -382,7 +382,7 @@ export default defineComponent({
             this.dialog_guest = false;
             NotificationService.showSuccessAlert(
               null,
-              $t("b_order_share.notifications.secure_link_created"),
+              this.$t("b_order_share.notifications.secure_link_created"),
             );
           }
         })

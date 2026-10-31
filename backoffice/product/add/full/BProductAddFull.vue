@@ -256,7 +256,7 @@
           <p v-if="modern" class="b-product-add-full__context">{{ $t($product.id ? 'add_product.flow.created_hint' : 'add_product.flow.create_hint') }}</p>
           <div v-if="$product.id" class="b-product-add-full__product">
             <p class="b-product-add-full__completion"><b-product-edit-info-icon name="CircleCheck" :size="14" />{{ $t('add_product.completed') }} · {{ series[0] }}%</p>
-            <b-product-breadcrumbs :image-size="20" :product="$product" :shop="shop" />
+            <b-product-breadcrumbs class="b-product-add-full__hierarchy" :image-size="20" :product="$product" :shop="shop" />
             <v-btn class="sd-modern-button sd-modern-button--inline" variant="text" :disabled="flowBusy" @click="dialogDeleteProduct = true">
               <template #prepend><b-product-edit-info-icon name="Trash2" :size="16" /></template>
               {{ $t('global.actions.delete') }}
@@ -1921,6 +1921,29 @@ not need!
   .b-product-add-full__product { margin: 22px 10px 0; overflow-wrap: anywhere; }
   .b-product-add-full__completion { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; color: var(--sd-modern-muted); font-size: 12px; }
   .b-product-add-full__product :deep(.body-title) { font-size: 12px; }
+  .b-product-add-full__hierarchy { min-width: 0; }
+  .b-product-add-full__hierarchy :deep(.v-breadcrumbs) {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    line-height: 20px;
+    white-space: normal;
+  }
+  .b-product-add-full__hierarchy :deep(.v-breadcrumbs-divider) { display: none; }
+  .b-product-add-full__hierarchy :deep(.v-breadcrumbs-item) { min-width: 0; padding: 0; }
+  .b-product-add-full__hierarchy :deep(.v-breadcrumbs-item ~ .v-breadcrumbs-item) {
+    margin-inline-start: 9px;
+    padding-inline-start: 10px;
+    border-inline-start: 1px solid var(--sd-modern-border);
+  }
+  .b-product-add-full__hierarchy :deep(.v-breadcrumbs-item > a) { display: block; width: 100%; min-width: 0; padding-block: 4px; }
+  .b-product-add-full__hierarchy :deep(.v-breadcrumbs-item > a > span) { display: flex; align-items: flex-start; min-width: 0; }
+  .b-product-add-full__hierarchy :deep(.v-avatar),
+  .b-product-add-full__hierarchy :deep(.v-icon) { flex-shrink: 0; }
+  .b-product-add-full__hierarchy :deep(.link-dash) { min-width: 0; overflow-wrap: anywhere; }
+  .b-product-add-full__hierarchy :deep(a:focus-visible) { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; border-radius: 3px; }
   .b-product-add-full__preview-tools { margin: 22px 10px 0; }
   .b-product-add-full__preview-tools > hr { margin: 0 0 14px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
   .b-product-add-full__preview-launcher { width: 100%; height: auto; min-height: 42px; justify-content: flex-start; text-align: start; }
@@ -2013,6 +2036,7 @@ not need!
   }
   @media (pointer: coarse) {
     .b-product-add-full__mobile-nav select { font-size: 16px; }
+    .b-product-add-full__hierarchy :deep(.v-breadcrumbs-item > a) { min-height: 44px; display: flex; align-items: center; }
   }
   @media (max-width: 380px) {
     .b-product-add-full__general-actions .b-product-add-full__actions { display: grid; grid-template-columns: minmax(0, 1fr); }

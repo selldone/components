@@ -85,7 +85,15 @@
           </div>
           <div class="flex-grow-1">
             <slot :item="task" name="prepend-title"></slot>
-            <b v-html="title(task)"> </b>
+            <b
+              v-html="
+                !itemText
+                  ? task
+                  : isFunction(itemText)
+                    ? itemText(task)
+                    : $t(task[itemText])
+              "
+            > </b>
             <slot :item="task" name="append-title"></slot>
             <div v-if="itemDescription" class="op-0-7 small">
               {{
@@ -193,14 +201,6 @@ export default {
       return props.itemValue ? task[props.itemValue] : task;
     };
 
-    const title = (task) => {
-      return !props.itemText
-        ? task
-        : typeof props.itemText === "function"
-          ? props.itemText(task)
-          : $t(task[props.itemText]);
-    };
-
     const nullable = computed(() => {
       return props.items.some((item) => val(item) === null);
     });
@@ -252,7 +252,6 @@ export default {
       localModelValue,
       items_show,
       val,
-      title,
       isUnset,
       onClickItem,
       tabStopItem,

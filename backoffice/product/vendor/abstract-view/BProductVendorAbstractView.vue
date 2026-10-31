@@ -17,7 +17,7 @@
     <header class="sd-modern-header">
       <div class="sd-modern-title">
         <span class="sd-modern-icon sd-modern-icon--plain"><v-icon>storefront</v-icon></span>
-        <div><h2 class="sd-modern-title-text">{{ $t(vendor ? 'global.commons.vendor' : 'global.commons.vendors') }}</h2><p class="sd-modern-subtitle">{{ $t(vendor ? 'product_vendor_profile.vendor.subtitle' : 'product_vendor_profile.vendors.subtitle') }}</p></div>
+        <div><h2 class="sd-modern-title-text">{{ $t(vendor ? 'global.commons.vendor' : 'global.commons.vendors') }}</h2><p class="sd-modern-subtitle">{{ $t(vendor ? 'b_product_dashboard.identity.vendor_subtitle' : 'b_product_dashboard.identity.vendors_subtitle') }}</p></div>
       </div>
     </header>
     <b-product-vendor-abstract-view-item v-if="vendor" :shop="shop" :vendor="vendor" modern is-owner />

@@ -105,7 +105,7 @@ export default {
 
   computed: {
     colorsMap(): Record<string, string> {
-      const map = (window as any)?.$tm?.("global.colors") || {};
+      const map = this.$tm?.("global.colors") || {};
       return map && typeof map === "object" ? map : {};
     },
 
