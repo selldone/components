@@ -15,19 +15,21 @@
 <template>
   <div>
     <v-expand-transition>
-      <div v-if="has_list" v-intersect="onIntersect" class="s--table-content">
-        <h2>{{ $t("global.commons.table_of_contents") }}</h2>
+      <component :is="collapsible ? 'details' : 'div'" v-if="has_list" v-intersect="onIntersect" class="s--table-content" :class="{ 's--table-content--collapsible': collapsible }" :open="collapsible ? true : undefined">
+        <summary v-if="collapsible">{{ $t("global.commons.table_of_contents") }}<v-icon icon="expand_more" size="14" aria-hidden="true" /></summary>
+        <h2 v-else>{{ $t("global.commons.table_of_contents") }}</h2>
         <ul>
           <li
             v-for="item in items"
             :key="item.id"
             :class="{ '-small': item.tag === 'h3' }"
-            @click="goTo(item)"
+            @click="!collapsible && goTo(item)"
           >
-            {{ item.title }}
+            <button v-if="collapsible" type="button" :aria-current="activeItem === item.id ? 'location' : undefined" @click.stop="goTo(item)">{{ item.title }}</button>
+            <template v-else>{{ item.title }}</template>
           </li>
         </ul>
-      </div>
+      </component>
     </v-expand-transition>
 
     <v-expand-transition>
@@ -67,16 +69,19 @@ export default {
   props: {
     target: { require: true },
     html: {},
+    minHeadings: { type: Number, default: 3 },
+    collapsible: { type: Boolean, default: false },
   },
   data: () => ({
     items: [],
     isIntersecting: true,
     isElementInView: false, // Variable to track whether the target element is in view
+    activeItem: null,
   }),
 
   computed: {
     has_list() {
-      return this.items?.length >= 3;
+      return this.items?.length >= this.minHeadings;
     },
   },
 
@@ -87,6 +92,12 @@ export default {
   },
 
   mounted() {
+    if (this.collapsible) {
+      this.gen();
+      // Rich blocks can mount their headings after the initial body HTML.
+      this.contentsObserver = new MutationObserver(() => this.gen());
+      this.contentsObserver.observe(this.target, { childList: true, subtree: true, characterData: true });
+    }
     /* setTimeout(() => {
       this.gen();
     }, 3000);*/
@@ -106,6 +117,7 @@ export default {
     this.observer.observe(this.target);
   },
   beforeUnmount() {
+    this.contentsObserver?.disconnect();
     // Disconnect the observer when the component is destroyed
     if (this.observer) {
       this.observer.disconnect();
@@ -121,6 +133,7 @@ export default {
       this.items.sort(function (a, b) {
         return a.offset - b.offset;
       });
+      if (!this.items.some(item => item.id === this.activeItem)) this.activeItem = this.items[0]?.id || null;
 
       console.log("📒 Generate table of contents...");
     },
@@ -165,6 +178,7 @@ export default {
     },
 
     goTo(item) {
+      this.activeItem = item.id;
       const currentScrollY =
         window.scrollY ||
         window.pageYOffset ||
@@ -174,7 +188,7 @@ export default {
       ScrollHelper.scrollToElement(
         `#${item.id}`,
         120 /*to safe full view on top fix header!*/,
-        "smooth",
+        this.collapsible && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
       );
 
       /*
@@ -248,6 +262,13 @@ export default {
       }
     }
   }
+}
+
+.s--table-content--collapsible {
+  summary { display: flex; align-items: center; justify-content: space-between; cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  li button { width: 100%; text-align: start; color: inherit; font: inherit; cursor: pointer; }
+  button:focus-visible, summary:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
 }
 
 .s--stick-table-content {

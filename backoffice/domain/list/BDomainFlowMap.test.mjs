@@ -15,6 +15,7 @@ function fixture(file) {
   const dependency = name => {
     if (name === 'lodash-es') return { throttle: fn => fn };
     if (name === 'vue') return { defineComponent: value => value };
+    if (name.includes('/ShopLicense')) return { Eligible: { CanEditDomain: () => true } };
     return { __esModule: true, default: {}, ShopPermissionRegions: { SETTINGS: { code: 'SETTINGS' } } };
   };
   const compiled = ts.transpileModule(descriptor.script.content, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;

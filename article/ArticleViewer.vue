@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="master-article-container" :class="{ 's-article-workspace text-start': workspace, 's-article-workspace--product': product_workspace, 's-article-workspace--metadata': workspace && !product_workspace && ['seo', 'faq'].includes(workspaceSection) }">
+  <div class="master-article-container" :class="{ 's-article-viewer--editing': in_edit_mode, 's-article-workspace text-start': workspace, 's-article-workspace--product': product_workspace, 's-article-workspace--metadata': workspace && !product_workspace && ['seo', 'faq'].includes(workspaceSection) }">
     <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Loading animation ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
     <u-loading-progress v-if="inLoading" />
@@ -81,7 +81,7 @@
             <v-btn v-if="workspaceSection === 'article' && !isNew" class="sd-modern-button sd-modern-button--compact" variant="text" :to="workspace_storefront" target="_blank" rel="noopener noreferrer">
               {{ $t('global.article.workspace.preview') }}<v-icon end size="16">north_east</v-icon>
             </v-btn>
-            <v-btn v-if="workspace_can_write && ['edit', 'seo', 'faq'].includes(workspaceSection)" class="sd-modern-button sd-modern-button--compact" color="primary" variant="flat" :loading="state === 'saving'" :disabled="workspace_busy || workspace_pending_changes" prepend-icon="save" @click="saveChange()">
+            <v-btn v-if="workspace_can_write && ['edit', 'seo', 'faq'].includes(workspaceSection)" class="sd-modern-button sd-modern-button--compact" color="primary" variant="flat" :loading="state === 'saving'" :disabled="saveBlocked" prepend-icon="save" aria-keyshortcuts="Control+s" @click="saveChange()" v-ctrl.s="saveWorkspaceShortcut">
               {{ $t(workspace_save_action) }}
             </v-btn>
             <v-btn v-else-if="workspace_can_write && workspaceSection === 'article'" class="sd-modern-button sd-modern-button--compact" color="primary" variant="flat" :disabled="workspace_busy" @click="$emit('workspace-edit')">{{ $t('global.actions.edit') }}</v-btn>
@@ -271,8 +271,10 @@
         <slot name="help-editor-languages" v-bind="helpReaderSlot" />
       </section>
 
+      <slot v-if="readerToolbarActive && USER() && can_edit && canEdit" name="reader-toolbar" :reader="readerSlot" />
+
       <v-toolbar
-        v-if="!workspace && !helpReaderActive && USER() && can_edit && canEdit"
+        v-if="!workspace && !helpReaderActive && !readerToolbarActive && USER() && can_edit && canEdit"
         extended
         :height="62"
         class="overflow-x-auto"
@@ -642,6 +644,8 @@
         <component
           :is="'div'"
           v-if="!workspace && !helpReaderActive && in_edit_mode"
+          v-show="!readerToolbarActive || reader_settings_open"
+          class="s-article-viewer__settings"
         >
           <v-container>
             <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Article Edit Top Menu ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
@@ -960,7 +964,7 @@
           :edit="in_edit_mode && (workspace ? workspace_can_write : !helpReaderActive || helpReaderSlot.canEdit)"
           :enable-title="showTitle"
           :has-table-of-content="hasTableOfContent"
-          :hide-title="hideTitle"
+          :hide-title="hideTitle || hasReaderHeading"
           :only-view="workspace ? !workspace_can_write : !canEdit"
           :workspace="workspace"
           :immediate-change="helpReaderActive"
@@ -980,8 +984,9 @@
           @workspace-pending="workspace_import_pending = $event"
           @pending-change="flowchart_pending = $event"
         >
-          <template v-if="workspace && !product_workspace && workspaceSection === 'article'" #before-title>
-            <div class="s-article-workspace__metadata" role="group" :aria-label="$t('global.article.workspace.details')">
+          <template #before-title>
+            <slot v-if="hasReaderHeading" name="reader-heading" v-bind="{ article, user, authorName: author_name, authorAvatar: author_avatar, category: category_obj, readingTime: reading_time }" />
+            <div v-if="workspace && !product_workspace && workspaceSection === 'article'" class="s-article-workspace__metadata" role="group" :aria-label="$t('global.article.workspace.details')">
               <dl class="s-article-workspace__metadata-fields">
                 <div v-for="field in workspace_metadata" :key="field.key" :data-metadata="field.key">
                   <dt class="d-sr-only">{{ field.label }}</dt>
@@ -1005,13 +1010,20 @@
               <span v-if="isNew || workspace_dirty" class="s-article-workspace__metadata-note">{{ $t('global.article.workspace.unsaved') }}</span>
             </div>
           </template>
+          <template v-if="hasReaderHeading && $slots['reader-edit-before-title']" #edit-before-title>
+            <slot name="reader-edit-before-title" :reader="readerSlot" />
+          </template>
           <template #edit-after-title>
+            <slot v-if="hasReaderHeading" name="reader-edit-after-title" :reader="readerSlot" />
             <slot v-if="helpReaderActive && in_edit_mode" name="help-editor-introduction" v-bind="helpReaderSlot" />
+          </template>
+          <template v-if="hasReaderHeading && $slots['reader-rail']" #reader-rail-after>
+            <slot name="reader-rail" :reader="readerSlot" />
           </template>
           <template v-slot:after-title>
             <!-- ――――――――――――――――――――― Author Info Small Top ――――――――――――――――――――― -->
 
-            <p v-if="showAuthorInfo && (!workspace || workspaceSection === 'article')" class="text-start small m-0">
+            <p v-if="showAuthorInfo && !hasReaderHeading && (!workspace || workspaceSection === 'article')" class="text-start small m-0">
               <v-avatar
                 class="avatar-gradient -thin hover-scale force-top"
                 size="32"
@@ -1063,7 +1075,7 @@
             </p>
 
             <p
-              v-if="showAuthorInfo && reading_time && (!workspace || workspaceSection === 'article')"
+              v-if="showAuthorInfo && !hasReaderHeading && reading_time && (!workspace || workspaceSection === 'article')"
               class="text-start ms-10 mt-1 reading-time"
             >
               <v-icon class="me-1" size="small">timelapse</v-icon>
@@ -1088,6 +1100,7 @@
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Structured Data ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
             <s-article-structured-data
               v-if="!workspace && !helpReaderActive && in_edit_mode"
+              v-show="!readerToolbarActive || reader_settings_open"
               v-model="article.structures"
               :editMode="edit"
             ></s-article-structured-data>
@@ -1099,10 +1112,9 @@
 
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article > Like / Star ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-        <div v-if="!workspace && showUserFeedbackButtons && !isNew" style="min-height: 64px;" class="text-end">
-
-
-
+        <div v-if="!workspace && showUserFeedbackButtons && !isNew" style="min-height: 64px;" class="s-article-viewer__feedback text-end">
+          <slot v-if="hasReaderHeading && $slots['reader-feedback']" name="reader-feedback" :reader="readerSlot" />
+          <template v-else>
           <v-chip
             v-if="!isNew"
             :class="{
@@ -1159,6 +1171,7 @@
           >
             {{$t('global.commons.favorite')}}
           </v-chip>
+          </template>
         </div>
       </div>
       <template v-if="product_workspace && article">
@@ -1192,7 +1205,7 @@
       <v-sheet
         v-if="!workspace && showAuthorInfo && article?.user_id > 0"
         color="#eee"
-        class="my-5 pa-2 overflow-hidden mx-auto"
+        class="s-article-viewer__author my-5 pa-2 overflow-hidden mx-auto"
         rounded="xl"
         max-width="1160"
       >
@@ -1203,15 +1216,37 @@
             :article="article"
           >
           </s-article-author-box>
+          <slot v-if="hasReaderHeading" name="reader-author-after" :reader="readerSlot" />
         </v-sheet>
       </v-sheet>
 
+      <!-- Reader conversation precedes related stories in DOM and keyboard order. -->
+      <v-container v-if="!workspace && hasReaderHeading && !isNew && showComments && article" class="s-article-viewer__comments">
+        <slot name="reader-comments-before" :reader="readerSlot" />
+        <s-article-comments
+          v-if="!isNew"
+          :article-id="article.id"
+          :article-user-id="article.user_id"
+          :for-product="!!productId"
+          :is-selldone="['blog', 'help'].includes(articleType)"
+          :is-shop="!!$shop?.id"
+          class="pt-3"
+        >
+          <template v-slot:login>
+            <slot name="login"></slot>
+          </template>
+        </s-article-comments>
+      </v-container>
+
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Relative Articles ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
+      <div v-if="hasRelatedArticles && hasReaderHeading && relatives?.length && $slots['reader-related-before']" class="s-article-viewer__related-heading">
+        <slot name="reader-related-before" :reader="readerSlot" />
+      </div>
       <v-row
-        v-if="hasRelatedArticles"
+        v-if="hasRelatedArticles && (!hasReaderHeading || relatives?.length)"
         align="stretch"
-        class="mx-0 my-12"
+        class="s-article-viewer__related mx-0 my-12"
         justify="space-between"
       >
         <v-col v-for="it in relatives" :key="it.id" cols="12" md="5" sm="6">
@@ -1274,7 +1309,7 @@
       </s-article-workspace-comments>
       </slot>
 
-      <v-container v-if="!workspace && !isNew && showComments && article">
+      <v-container v-if="!workspace && !hasReaderHeading && !isNew && showComments && article" class="s-article-viewer__comments">
         <s-article-comments
           v-if="!isNew"
           :article-id="article.id"
@@ -1372,9 +1407,11 @@ import {Slugify} from "@selldone/core-js/utils/slugify/slugify.ts";
 import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
 import BProductEditInfoIcon from "../backoffice/product/edit/info/BProductEditInfoIcon.vue";
+import DirectiveCtrlKeydown from "../directives/keyboard/DirectiveCtrlKeydown";
 
 export default {
   name: "ArticleViewer",
+  directives: { ctrl: DirectiveCtrlKeydown },
   mixins: [DateMixin,AuthMixin ],
   components: {
     BProductEditInfoIcon,
@@ -1631,10 +1668,48 @@ export default {
       workspace_import_pending: false,
       workspace_saved_schedule: null,
       product_panels: { seo: false, faq: false, schema: false },
+      reader_settings_open: false,
     };
   },
 
   computed: {
+    hasReaderHeading() {
+      return !this.workspace && !this.helpReaderActive && !!this.$slots?.['reader-heading'];
+    },
+    readerToolbarActive() {
+      return this.hasReaderHeading && !!this.$slots?.['reader-toolbar'];
+    },
+    readerBusy() {
+      return this.inLoading || this.state === 'saving' || this.busy_fix || this.auto_generate_busy || !!this.$refs.editorContainer?.word_import_busy;
+    },
+    readerSaveBlocked() {
+      return !this.active || !this.showContent || !this.USER() || !this.can_edit || !this.canEdit || !this.in_edit_mode || this.readerBusy || this.flowchart_pending
+        || (this.state === 'no-change' && this.published_state === this.article.published && this.isPrivate === this.article.private);
+    },
+    readerSlot() {
+      const context = this.captureReaderContext();
+      const action = (name) => () => this.invokeReaderAction(name, context);
+      return {
+        article: this.article, user: this.user, authorName: this.author_name, authorAvatar: this.author_avatar,
+        category: this.category_obj, readingTime: this.reading_time, editing: this.in_edit_mode,
+        published: this.published_state, private: this.isPrivate, language: this.article.lang,
+        canChangeLanguage: this.can_change_article_language, scheduleAt: this.schedule_at, state: this.state,
+        settingsOpen: this.reader_settings_open, canEdit: !!this.USER() && !!this.can_edit && !!this.canEdit,
+        canSearch: !this.isNew && !!this.article?.id && !this.IS_VENDOR_PANEL,
+        canAutoFix: this.in_edit_mode && (!!this.article?.body?.trim() || this.$refs.editorContainer?.state === 'changed'),
+        canDelete: !this.isNew && !!this.article?.id,
+        busy: this.readerBusy, pending: this.flowchart_pending, saveBlocked: this.readerSaveBlocked, isNew: this.isNew,
+        clapped: this.catch_power, powerBusy: this.power_busy,
+        relatedCount: this.relatives?.length || 0,
+        edit: action('edit'), preview: action('preview'), save: action('save'), importWord: action('word'),
+        saveShortcut: this.saveReaderShortcut,
+        openSearch: action('search'), openTimeline: action('timeline'), toggleSettings: action('settings'),
+        autoFix: action('autoFix'), delete: action('delete'), clap: action('clap'),
+        setPublished: (value) => this.setReaderField('published', value, context),
+        setPrivate: (value) => this.setReaderField('private', value, context),
+        setLanguage: (value) => this.setReaderField('language', value, context),
+      };
+    },
     helpReaderActive() {
       return !this.workspace && this.articleType === Article.Types.SelldoneHelp.code && !!this.$slots?.['help-reader'];
     },
@@ -1960,6 +2035,79 @@ export default {
   beforeUnmount() { this._workspaceGeneration++; },
 
   methods: {
+    saveReaderShortcut() {
+      if (!this.readerToolbarActive || document.querySelector('.v-overlay--active:not(.v-tooltip)')) return false;
+      return this.invokeReaderAction('save', this.captureReaderContext());
+    },
+    captureReaderContext() {
+      return this.hasReaderHeading ? { generation: this._workspaceGeneration, article: this.article, targetId: this.targetId, type: this.articleType, authorId: this.article?.user_id, userId: this.USER_ID() } : null;
+    },
+    readerContextCurrent(context) {
+      return this.hasReaderHeading && !!context && context.generation === this._workspaceGeneration && context.article === this.article
+        && context.targetId === this.targetId && context.type === this.articleType && context.authorId === this.article?.user_id && context.userId === this.USER_ID();
+    },
+    readerContextValid(context) {
+      // Deferred slot actions must still belong to the current authorized article.
+      return this.readerContextCurrent(context) && this.active && this.showContent && !this.readerBusy && !!this.USER() && this.can_edit && this.canEdit;
+    },
+    invokeReaderAction(action, context) {
+      if (action === 'clap') {
+        if (!this.readerContextCurrent(context) || !this.active || !this.showContent || this.isNew || !this.article?.id || this.catch_power || this.power_busy) return false;
+        this.getPower();
+        return true;
+      }
+      if (!this.readerContextValid(context) || this.flowchart_pending) return false;
+      if (action === 'edit') this.render_state = 'editing';
+      else if (action === 'preview') {
+        if (!this.in_edit_mode || !this.$refs.editorContainer) return false;
+        if (this.$refs.editorContainer.state === 'changed') {
+          this.article.title = this.$refs.editorContainer.purifyTitle();
+          this.article.body = this.$refs.editorContainer.purifyBody();
+          this.state = 'changed';
+        }
+        this.render_state = 'review';
+      } else if (action === 'save') {
+        if (this.readerSaveBlocked || !this.$refs.editorContainer) return false;
+        this.saveChange();
+      } else if (action === 'word') {
+        if (!this.$refs.editorContainer) return false;
+        this.render_state = 'editing';
+        this.$nextTick(() => {
+          if (this.readerContextValid(context) && this.in_edit_mode && !this.flowchart_pending) this.$refs.editorContainer?.showSelectWord();
+        });
+      } else if (action === 'search') {
+        if (this.isNew || !this.article?.id || this.IS_VENDOR_PANEL) return false;
+        this.showGoogleSearch();
+      } else if (action === 'timeline') {
+        if (this.isNew || !this.article?.id) return false;
+        this.showTimeline();
+      } else if (action === 'settings') {
+        if (!this.in_edit_mode) return false;
+        this.reader_settings_open = !this.reader_settings_open;
+        if (this.reader_settings_open) this.$nextTick(() => {
+          if (this.readerContextValid(context) && this.reader_settings_open) this.$refs.editorContainer?.findAllImages();
+        });
+      } else if (action === 'autoFix') {
+        if (!this.in_edit_mode || (!this.article?.body?.trim() && this.$refs.editorContainer?.state !== 'changed')) return false;
+        this.autoFixArticle();
+      } else if (action === 'delete') {
+        if (this.isNew || !this.article?.id) return false;
+        this.openDeleteArticleAlert();
+      } else return false;
+      return true;
+    },
+    setReaderField(field, value, context) {
+      if (!this.readerContextValid(context) || !this.in_edit_mode || this.flowchart_pending) return false;
+      if (field === 'language') {
+        if (!this.can_change_article_language || typeof value !== 'string' || !/^[a-z]{2,3}(?:-[a-z0-9]{2,8})?$/i.test(value)) return false;
+        if (this.article.lang !== value) { this.article.lang = value; this.onChangeNote(); }
+      } else if (['published', 'private'].includes(field) && typeof value === 'boolean') {
+        if (field === 'published' && this.schedule_at) return false;
+        const key = field === 'published' ? 'published_state' : 'isPrivate';
+        if (this[key] !== value) { this[key] = value; this.onChangeNote(); }
+      } else return false;
+      return true;
+    },
     captureHelpReaderContext() {
       return this.helpReaderActive ? { generation: this._workspaceGeneration, article: this.article, targetId: this.targetId, type: this.articleType, routeId: String(this.$route.params.help_id || this.targetId).split('-')[0], userId: this.USER_ID() } : null;
     },
@@ -2157,7 +2305,7 @@ export default {
     calculateReadTime() {
       let text = "";
       try {
-        let text = $(this.article.body).text();
+        text = $(this.article.body).text();
       } catch (e) {
         console.warn(
           "Invalid article body. Auto-fix applied by SD.",
@@ -2167,9 +2315,7 @@ export default {
         this.article.body = "<p>" + this.article.body + "</p>";
       }
 
-      let time = Math.floor(text.length / 600);
-      if (time < 0) time = 0;
-      this.reading_time = time;
+      this.reading_time = text.trim() ? Math.ceil(text.trim().length / 600) : 0;
     },
 
     showTimeline() {
@@ -2187,12 +2333,20 @@ export default {
       this.images_in_article = images;
     },
 
+    saveWorkspaceShortcut() {
+      if (!this.workspace || this.product_workspace || !["edit", "seo", "faq"].includes(this.workspaceSection) || this.saveBlocked) return;
+      // Open menus and dialogs own their local draft; tooltips do not block saving.
+      if (document.querySelector(".v-overlay--active:not(.v-tooltip)")) return;
+      this.saveChange();
+    },
     saveChange(callback_success = null) {
       if (this.workspace && (this.saveBlocked || !this.$refs.editorContainer)) return;
       if (this.flowchart_pending) return;
       if (this.helpReaderActive && (!this.helpReaderContextValid(this.captureHelpReaderContext()) || !this.in_edit_mode || this.helpReaderPending || !this.$refs.editorContainer)) return;
+      if (this.hasReaderHeading && (!this.readerContextValid(this.captureReaderContext()) || !this.in_edit_mode || !this.$refs.editorContainer)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article, shopId = this.shop_id;
       const helpContext = this.captureHelpReaderContext();
+      const readerContext = this.captureReaderContext();
       if (!this.article.description)
         this.article.description = this.$refs.editorContainer.gist();
 
@@ -2201,7 +2355,7 @@ export default {
 
       // ==================== Purify Body ==================
 
-      const readEditor = this.helpReaderActive ? this.$refs.editorContainer.state === 'changed' : !this.workspace || (this.workspaceSection === "edit" && (!this.product_workspace || this.in_edit_mode));
+      const readEditor = this.helpReaderActive || readerContext ? this.$refs.editorContainer.state === 'changed' : !this.workspace || (this.workspaceSection === "edit" && (!this.product_workspace || this.in_edit_mode));
       let pure_title = readEditor ? this.$refs.editorContainer.purifyTitle() : this.article.title;
       if (!pure_title) {
         return NotificationService.showErrorAlert(null, this.workspace ? this.$t("global.article.workspace.missing_title") : "Title can not be empty!");
@@ -2274,6 +2428,10 @@ export default {
         )
         .then(({ data }) => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article || shopId !== this.shop_id)) return;
+          if (readerContext) {
+            if (!this.readerContextCurrent(readerContext)) return;
+            if (!this.active || !this.can_edit || !this.canEdit) { this.state = "changed"; return; }
+          }
           if (helpContext) {
             if (!this.helpReaderContextCurrent(helpContext)) return;
             if (!this.can_edit || !this.canEdit) { this.state = "changed"; return; }
@@ -2333,6 +2491,7 @@ export default {
         })
         .catch((error) => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article || shopId !== this.shop_id)) return;
+          if (readerContext && !this.readerContextCurrent(readerContext)) return;
           if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           this.state = "changed";
           NotificationService.showLaravelError(error);
@@ -2351,6 +2510,7 @@ export default {
       // 🞇 Reset to default
       this.resetToDefault();
       const helpContext = this.captureHelpReaderContext();
+      const readerContext = this.captureReaderContext();
 
       if (!force && this.initialArticlePack) {
         this.onGetArticlePackData(this.initialArticlePack);
@@ -2380,6 +2540,7 @@ export default {
           })
           .then(({ data }) => {
             if (this.workspace && generation !== this._workspaceGeneration) return;
+            if (readerContext && !this.readerContextCurrent(readerContext)) return;
             if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
             if (data.error) {
               this.error_msg = data.error_msg;
@@ -2396,6 +2557,7 @@ export default {
 
           .catch((error) => {
             if (this.workspace && generation !== this._workspaceGeneration) return;
+            if (readerContext && !this.readerContextCurrent(readerContext)) return;
             if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
             this.NOT_FOUND_ARTICLE = true;
 
@@ -2403,6 +2565,7 @@ export default {
           })
           .finally(() => {
             if (this.workspace && generation !== this._workspaceGeneration) return;
+            if (readerContext && !this.readerContextCurrent(readerContext)) return;
             if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
             this.inLoading = false;
           });
@@ -2590,10 +2753,12 @@ export default {
       }
 
       this.power_busy = true;
+      const readerContext = this.captureReaderContext();
 
       axios
         .post(window.ARTICLE_API.POST_CLAPS_OF_ARTICLE(this.article.id), {})
         .then(({ data }) => {
+          if (readerContext && !this.readerContextCurrent(readerContext)) return;
           if (!data.error) {
             this.catch_power = true;
             if (data.add) {
@@ -2602,9 +2767,11 @@ export default {
           }
         })
         .catch((error) => {
+          if (readerContext && !this.readerContextCurrent(readerContext)) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (readerContext && !this.readerContextCurrent(readerContext)) return;
           this.power_busy = false;
         });
     },
@@ -2629,12 +2796,14 @@ export default {
       if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy || this.isNew)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article;
       const helpContext = this.captureHelpReaderContext();
+      const readerContext = this.captureReaderContext();
       NotificationService.openDangerAlert(
         this.$t("global.article.alert.delete_article.title"),
         this.$t("global.article.alert.delete_article.message"),
         this.$t("global.article.alert.delete_article.action"),
         () => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article)) return;
+          if (readerContext && !this.readerContextValid(readerContext)) return;
           if (helpContext && !this.helpReaderContextValid(helpContext)) return;
           this.deleteArticle();
         },
@@ -2644,6 +2813,8 @@ export default {
     deleteArticle() {
       if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy || this.isNew)) return;
       const helpContext = this.captureHelpReaderContext();
+      const readerContext = this.captureReaderContext();
+      if (readerContext && (!this.readerContextValid(readerContext) || this.isNew)) return;
       if (helpContext && (!this.helpReaderContextValid(helpContext) || this.isNew)) return;
       axios
         .delete(
@@ -2659,6 +2830,7 @@ export default {
               ),
         )
         .then(({ data }) => {
+          if (readerContext && !this.readerContextCurrent(readerContext)) return;
           if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           if (data.error) {
             // Error!
@@ -2675,6 +2847,7 @@ export default {
           if (!this.noReturnBackOnDelete) this.$router.go(-1);
         })
         .catch((e) => {
+          if (readerContext && !this.readerContextCurrent(readerContext)) return;
           if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           NotificationService.showLaravelError(e);
         });
@@ -2685,13 +2858,15 @@ export default {
       if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article;
       const helpContext = this.captureHelpReaderContext();
+      const readerContext = this.captureReaderContext();
+      if (readerContext && (!this.readerContextValid(readerContext) || !this.in_edit_mode || this.flowchart_pending)) return;
       if (helpContext && (!this.helpReaderContextValid(helpContext) || !this.in_edit_mode || this.helpReaderPending)) return;
-      if (helpContext && this.$refs.editorContainer?.state === 'changed') {
+      if ((helpContext || readerContext) && this.$refs.editorContainer?.state === 'changed') {
         this.article.title = this.$refs.editorContainer.purifyTitle();
         this.article.body = this.$refs.editorContainer.purifyBody();
       }
       if (this.workspace && this.$refs.editorContainer && (!this.product_workspace || this.in_edit_mode)) this.article.body = this.$refs.editorContainer.purifyBody();
-      if ((this.workspace || helpContext) && !this.article.body?.trim()) return;
+      if ((this.workspace || helpContext || readerContext) && !this.article.body?.trim()) return;
       this.busy_fix = true;
       axios
         .post(
@@ -2704,6 +2879,7 @@ export default {
         )
         .then(({ data }) => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article || !this.workspace_can_write)) return;
+          if (readerContext && (!this.readerContextCurrent(readerContext) || !this.can_edit || !this.canEdit)) return;
           if (helpContext && (!this.helpReaderContextCurrent(helpContext) || !this.can_edit || !this.canEdit)) return;
           if (data.error) {
             // Error!
@@ -2717,11 +2893,13 @@ export default {
         })
         .catch((e) => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article)) return;
+          if (readerContext && !this.readerContextCurrent(readerContext)) return;
           if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           NotificationService.showLaravelError(e);
         })
         .finally(() => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article)) return;
+          if (readerContext && !this.readerContextCurrent(readerContext)) return;
           if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           this.busy_fix = false;
         });
@@ -2756,7 +2934,9 @@ export default {
       if (this.product_workspace && (!this.active || !this.canEdit || this.IS_VENDOR_PANEL || !this.article?.id || this.workspace_busy)) return;
       if (this.product_workspace && this.productSectionTabs && (this.workspaceSection !== 'seo' || (!this.$shop?.search_console && !this.$shop?.search_console_sample))) return;
       this.first_load_seo_audit = true;
+      const readerContext = this.captureReaderContext();
       this.$nextTick(() => {
+        if (readerContext && !this.readerContextValid(readerContext)) return;
         this.show_google_tank = !this.show_google_tank;
       });
     },

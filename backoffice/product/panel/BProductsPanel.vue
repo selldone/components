@@ -418,32 +418,36 @@
       </v-card>
     </v-bottom-sheet>
 
-    <!-- ███████████████████████████ Dialog > Add Product > Add Studio (fast) ███████████████████████████ -->
+    <!-- ███████████████████████████ Bottom Sheet > Add Product > Add Studio (fast) ███████████████████████████ -->
 
-    <v-dialog
+    <v-bottom-sheet
       v-model="add_product_studio_dialog"
-      fullscreen
-      transition="dialog-bottom-transition"
+      :max-width="modern ? 820 : undefined"
+      :persistent="studio_busy"
+      content-class="rounded-t-xl"
+      scrollable
     >
-      <v-card :color="modern ? undefined : '#FFF'" :class="{ 'b-products-panel__creation sd-modern-canvas text-start': modern }">
+      <v-card rounded="0" class="rounded-t-xl" :color="modern ? undefined : '#FFF'" :class="{ 'b-products-panel__creation b-products-panel__studio sd-modern-canvas text-start': modern }">
         <v-card-text :class="{ 'b-products-panel__creation-content': modern }">
           <b-product-add-studio
+            v-if="add_product_studio_dialog"
             :shop="shop"
             :vendor="vendor"
-            class="fadeIn"
             :dark="!modern"
             :modern="modern"
             @add="(p) => $refs.products_list?.onAddOrUpdateProduct(p)"
+            @busy="studio_busy = $event"
             @finish="add_product_studio_dialog = false"
           >
           </b-product-add-studio>
         </v-card-text>
 
-        <v-card-actions>
+        <v-card-actions v-if="!modern">
           <div class="widget-buttons">
             <v-btn
               size="x-large"
               variant="text"
+              :disabled="studio_busy"
               @click="add_product_studio_dialog = false"
             >
               <v-icon start>close</v-icon>
@@ -452,7 +456,7 @@
           </div>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-bottom-sheet>
   </div>
 </template>
 
@@ -523,6 +527,7 @@ export default {
     ai_dialog_pre: false,
 
     add_product_studio_dialog: false,
+    studio_busy: false,
 
     parent_folders: null,
 
@@ -1051,6 +1056,10 @@ export default {
 .b-products-panel__creation {
   .b-products-panel__creation-title { padding: 24px; gap: 8px; font-size: 20px; font-weight: 500; line-height: 28px; flex-wrap: wrap; }
   .b-products-panel__creation-content { width: min(1040px, 100%); margin-inline: auto; padding: 24px; }
+}
+
+.b-products-panel__studio.sd-modern-canvas .b-products-panel__creation-content {
+  padding: 0;
 }
 
 @media (max-width: 760px) {

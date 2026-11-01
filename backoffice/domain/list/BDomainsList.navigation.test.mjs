@@ -5,6 +5,7 @@ import test from "node:test";
 
 const require = createRequire(new URL("../../../../../package.json", import.meta.url));
 const { parse, compileScript, compileTemplate } = require("@vue/compiler-sfc");
+const { compile } = require("@vue/compiler-dom");
 const ts = require("typescript");
 const Vue = require("vue");
 const { renderToString } = require("vue/server-renderer");
@@ -21,6 +22,11 @@ const template = compileTemplate({
   compilerOptions: { bindingMetadata: script.bindings },
 });
 assert.deepEqual(template.errors, []);
+const renderTree = new Function("Vue", compile(descriptor.template.content, {
+  mode: "function", prefixIdentifiers: true,
+}).code)({ ...Vue, resolveComponent: name => ({ name }) });
+const descendants = node => Array.isArray(node) ? node.flatMap(descendants) :
+  node && typeof node === "object" ? [node, ...(Array.isArray(node.children) ? node.children.flatMap(descendants) : [])] : [];
 
 const entries = {
   custom: { official: false, url: "https://store.example.test", enable: true, indexed: true, ssl: true, domain: { id: 24, domain: "store.example.test", home: "blog", currencies: [], languages: [] } },
@@ -37,7 +43,7 @@ function leaf(name) {
   };
 }
 
-function fixture(items = Object.values(entries)) {
+function fixture(items = Object.values(entries), config = {}) {
   const pushes = [], order = [], win = { SERACH_THROTTLE: 0, __STATE: null, __RETURN: null };
   const routeExports = {};
   new Function("require", "exports", "window", transpile(readFileSync(new URL("../../../mixin/route/RouteMixin.ts", import.meta.url), "utf8")))(
@@ -49,13 +55,15 @@ function fixture(items = Object.values(entries)) {
     if (name === "lodash-es") return { throttle: callback => callback };
     if (name.endsWith("/RouteMixin.ts")) return { RouteMixin };
     if (name.includes("/DomainsHelper")) return { DomainsHelper: { GetShopDomains: () => items } };
-    if (name.includes("/ShopLicense")) return { Eligible: { CanEditDomain: () => true } };
+    if (name.includes("/ShopLicense")) return { Eligible: { CanEditDomain: () => config.eligible !== false } };
     if (name.includes("/ShopPermissions")) return { ShopPermissionRegions: { SETTINGS: { code: "SETTINGS" } } };
+    if (name.includes("/NotificationService")) return { default: config.notification || {} };
     if (name.endsWith(".vue")) return { default: leaf(name.split("/").at(-1).replace(".vue", "")) };
     return { default: {} };
   };
   const exports = {};
-  const network = new Proxy({}, { get() { throw Error("Navigation tests must never make a request"); } });
+  const network = config.http || new Proxy({}, { get() { throw Error("Navigation tests must never make a request"); } });
+  win.API = { PUT_EDIT_DOMAIN: (shop, domain, param) => `fixture:${shop}:${domain}:${param}` };
   new Function("require", "exports", "window", "axios", transpile(script.content))(dependency, exports, win, network);
   const component = exports.default;
   const data = { ...RouteMixin.data(), ...component.data(), page: 3, search: "fixture search", options: { page: 3, sortBy: [{ key: "domain", order: "asc" }] } };
@@ -65,9 +73,9 @@ function fixture(items = Object.values(entries)) {
     $route: { name: "BPageShopSettingDomain", params: { shop_id: "999" } },
     $router: { push: route => { order.push("push"); pushes.push(route); return route; } },
     $t: key => key, $n: value => String(value), $nextTick: callback => callback?.(),
-    $refs: {}, $emit() {},
+    $refs: {}, $attrs: {}, $emit() {},
     $vuetify: { display: { width: 1200 }, locale: { isRtl: false } },
-    writeShopAccess: () => true, GetDomainHomeName: value => `home:${value}`,
+    writeShopAccess: () => config.permitted !== false, GetDomainHomeName: value => `home:${value}`,
     GetCurrency: () => ({ flag: "gb" }), getLanguageName: value => value,
   };
   const state = { ...globals, $data: data };
@@ -76,7 +84,8 @@ function fixture(items = Object.values(entries)) {
   for (const [key, computed] of Object.entries(component.computed)) Object.defineProperty(state, key, { get: () => computed.call(state), configurable: true });
   const cache = state.cacheRouteState;
   state.cacheRouteState = key => { order.push("cache"); return cache(key); };
-  return { component, RouteMixin, state, globals, data, dependency, win, pushes, order, items };
+  const cell = (key, item) => descendants(renderTree(state, [])).find(node => node.type?.name === "v-data-table-server").children[`item.${key}`]({ item });
+  return { component, RouteMixin, state, globals, data, dependency, win, pushes, order, items, cell };
 }
 
 async function renderRefined() {
@@ -179,4 +188,128 @@ test("the rendered refined row keeps native address navigation without a copy bo
   assert.deepEqual(f.pushes, [{ name: "BPageDomainOverview", params: { shop_id: 71, domain_key: "24" }, query: {} }]);
   assert.equal(f.win.__RETURN.HIGHLIGHT_ID, "24");
   assert.equal(stopped, 3);
+});
+
+const visibilityButton = (f, item) => descendants(f.cell("visibility", item)).find(node => node.type === "button");
+const connectionLink = (f, item) => descendants(f.cell("connection", item)).find(node => node.type?.name === "router-link");
+
+test("inline visibility is a named plain toggle only for supported, permitted addresses", () => {
+  const external = { ...entries.custom, domain: { ...entries.custom.domain, externally_hosted: true } };
+  for (const item of [...Object.values(entries), external]) {
+    const f = fixture([item]);
+    const button = visibilityButton(f, item);
+    assert.equal(button.props.type, "button");
+    assert.equal(button.props["aria-pressed"], true);
+    assert.ok(button.props["aria-label"].includes("domains_modern.list.disable_action"));
+    assert.ok(button.props["aria-label"].includes(item.domain?.domain || item.url));
+    assert.equal(button.props.disabled, false);
+    assert.equal(descendants(renderTree(f.state, [])).filter(node => node.type?.name === "u-loading-progress").length, 0);
+    for (const field of ["busy_fetch", "busy_update"]) {
+      f.state[field] = true;
+      assert.equal(visibilityButton(f, item).props.disabled, true);
+      assert.equal(descendants(renderTree(f.state, [])).filter(node => node.type?.name === "u-loading-progress").length, field === "busy_update" ? 1 : 0);
+      f.state[field] = false;
+    }
+  }
+  const off = { ...entries.custom, enable: false };
+  assert.ok(visibilityButton(fixture([off]), off).props["aria-label"].includes("domains_modern.list.enable_action"));
+  for (const config of [{ permitted: false }, { eligible: false }]) {
+    const f = fixture([entries.custom], config);
+    assert.equal(visibilityButton(f, entries.custom), undefined);
+    f.state.updateFlowDomain(entries.custom, { param: "enable", value: false });
+    assert.equal(f.state.busy_update, false, "denied intents cannot reach the HTTP method");
+  }
+  for (const item of [{ ...entries.custom, domain: undefined }, { ...entries.local, official: "unknown" }, { ...entries.custom, enable: undefined }]) {
+    const f = fixture([item]);
+    assert.equal(visibilityButton(f, item), undefined);
+    f.state.updateFlowDomain(item, { param: "enable", value: false });
+    assert.equal(f.state.busy_update, false);
+  }
+});
+
+function writeFixture(item, handler) {
+  const requests = [], notices = [];
+  const f = fixture([item], {
+    http: { put: (url, payload) => { requests.push([url, payload]); return handler(); } },
+    notification: Object.fromEntries(["showSuccessAlert", "showErrorAlert", "showLaravelError"].map(name => [name, (...args) => notices.push([name, ...args])])),
+  });
+  f.state.shop.domains = item.domain ? [{ ...item.domain, enable: item.enable }] : [];
+  f.state.domains = [...f.state.shop.domains];
+  if (item.official) f.state.shop[item.official] = { enable: item.enable };
+  const accept = (items, value) => {
+    const index = items.findIndex(entry => entry.id === value.id);
+    if (index < 0) items.push(value); else items[index] = value;
+  };
+  f.state.AddOrUpdateItemByID = accept;
+  f.state.UpdateItemByID = accept;
+  return { ...f, requests, notices };
+}
+
+test("inline toggle submits once and applies only the server-confirmed custom, local or subdomain result", async () => {
+  for (const source of [...Object.values(entries), { ...entries.custom, domain: { ...entries.custom.domain, externally_hosted: true } }]) {
+    for (const enabled of [false, true]) {
+      const item = structuredClone({ ...source, enable: enabled });
+      let resolve;
+      const pending = new Promise(done => { resolve = done; });
+      const f = writeFixture(item, () => pending);
+      const button = visibilityButton(f, item);
+      let stopped = 0;
+      const event = { stopPropagation() { stopped++; } };
+      const saving = button.props.onClick(event);
+      assert.equal(stopped, 1);
+      assert.equal(f.state.busy_update, true);
+      assert.equal(item.enable, enabled, "no optimistic update before confirmation");
+      assert.equal(visibilityButton(f, item).props["aria-busy"], true);
+      button.props.onClick(event);
+      assert.deepEqual(f.requests, [[`fixture:71:${item.domain?.domain || item.official}:enable`, { value: !enabled }]]);
+      const saved = item.domain ? { ...item.domain, enable: !enabled, primary: false } : { enable: !enabled };
+      resolve({ data: item.domain ? { domain: saved } : { [item.official]: saved } });
+      await saving;
+      assert.equal(f.state.busy_update, false);
+      assert.equal(f.state.busy_update_param, null);
+      if (item.domain) {
+        assert.deepEqual(f.state.domains[0], saved);
+        assert.deepEqual(f.state.shop.domains[0], saved);
+      } else assert.deepEqual(f.state.shop[item.official], saved);
+      assert.equal(f.notices[0][0], "showSuccessAlert");
+      assert.deepEqual(f.pushes, [], "visibility never opens the row overview");
+    }
+  }
+});
+
+test("failed visibility changes retain saved state, release pending state and permit retry", async () => {
+  for (const failure of [() => Promise.resolve({ data: { error: true, error_msg: "Fixture denied" } }), () => Promise.reject(new Error("Fixture offline"))]) {
+    const item = structuredClone(entries.custom);
+    let attempt = 0;
+    const saved = { ...item.domain, enable: false };
+    const f = writeFixture(item, () => ++attempt === 1 ? failure() : Promise.resolve({ data: { domain: saved } }));
+    const before = structuredClone(f.state.domains);
+    await visibilityButton(f, item).props.onClick({ stopPropagation() {} });
+    assert.deepEqual(f.state.domains, before);
+    assert.equal(f.state.busy_update, false);
+    assert.equal(f.state.busy_update_param, null);
+    assert.notEqual(f.notices[0][0], "showSuccessAlert");
+    await visibilityButton(f, item).props.onClick({ stopPropagation() {} });
+    assert.equal(f.requests.length, 2);
+    assert.deepEqual(f.state.domains[0], saved);
+  }
+});
+
+test("attention links retain read access and focus the same address's HTTPS details without a request", () => {
+  for (const issue of [{ ssl: false }, { ssl: true, error: "Fixture connection failed" }]) {
+    const item = { ...entries.custom, approved: true, ...issue };
+    const f = fixture([item], { permitted: false, eligible: false });
+    const link = connectionLink(f, item);
+    assert.deepEqual(link.props.to, { name: "BPageDomainConnection", params: { shop_id: 71, domain_key: "24" }, query: { section: "ssl" } });
+    assert.ok(link.props["aria-label"].includes("domains_modern.list.connection_details"));
+    let stopped = 0;
+    link.props.onClick({ stopPropagation() { stopped++; } });
+    assert.equal(stopped, 1);
+    assert.equal(f.win.__RETURN.HIGHLIGHT_ID, "24");
+    assert.equal(f.win.__RETURN.search, "fixture search");
+    assert.deepEqual(f.pushes, [], "the native RouterLink owns navigation");
+  }
+  for (const item of [entries.custom, entries.local, entries.sub, { ...entries.custom, ssl: false, error: "External", domain: { ...entries.custom.domain, externally_hosted: true } }]) {
+    assert.equal(connectionLink(fixture([item]), item), undefined, "healthy and externally managed statuses remain plain");
+  }
 });

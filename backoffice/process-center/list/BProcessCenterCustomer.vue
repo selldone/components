@@ -9,7 +9,8 @@
         :is="item.customer_id && !isAffiliatePos ? 'router-link' : 'span'"
         :to="{
           name: 'BPageCustomerDashboard',
-          params: { customer_id: item.customer_id },
+          params: { customer_id: item.customer_id, ...(posReturn ? { shop_id: shop.id } : {}) },
+          ...(posReturn ? { query: { pos_return: 'register' } } : {}),
         }"
         :title="
           item.customer_id && !isAffiliatePos
@@ -106,6 +107,7 @@ export default {
     item: { type: Object, required: true },
     shop: { type: Object, required: true },
     isAffiliatePos: { type: Boolean, default: false },
+    posReturn: { type: Boolean, default: false },
   },
 };
 </script>

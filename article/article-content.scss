@@ -1,0 +1,205 @@
+// Shared authored prose only. Rich blocks and editor controls own their typography.
+$article-content-tools: ".medium-insert-buttons, .medium-insert-images, .medium-insert-images-safe, .medium-insert-embeds, .medium-insert-embed, .embed-raw-html, .code-editor, .images-compare, .flip-book, .image-overlay-canvas, article-flowchart, .a-article-addon-tools, .filepond--root, .link-preview, .link-preview-big, .s--link-preview, .s--link-preview-card, table, pre, .twitter-tweet, .instagram-media, .tiktok-embed, .reddit-embed-bq";
+$article-prose: ":not(:where(#{$article-content-tools}, :is(#{$article-content-tools}) *))";
+
+.s--article-editor-container .s-article-editor__body {
+  // The host controls the font family, body size, ink and reading line height.
+  min-width: 0;
+  overflow-wrap: anywhere;
+
+  p#{$article-prose} {
+    margin-block: 0 1.25em;
+  }
+
+  :is(a, u)#{$article-prose} {
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.065em;
+    text-underline-offset: 0.18em;
+    text-decoration-skip-ink: auto;
+  }
+
+  // Override legacy article links within prose without changing embedded controls.
+  a#{$article-prose} {
+    padding: 0 !important;
+    margin: 0;
+    color: inherit !important;
+    background: transparent !important;
+    border-radius: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    text-decoration-color: color-mix(in srgb, currentColor 65%, transparent);
+
+    &:visited {
+      color: inherit !important;
+    }
+
+    &:hover {
+      color: inherit !important;
+      background: transparent !important;
+      font-weight: inherit;
+      text-decoration: underline;
+      text-decoration-color: currentColor;
+    }
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 3px;
+    }
+  }
+
+  u#{$article-prose} {
+    background: none;
+    transition: none;
+
+    &:hover {
+      background: none;
+    }
+  }
+
+  :is(h2, h3, h4, h5)#{$article-prose} {
+    margin-block: 1.8em 0.65em;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  h2#{$article-prose} {
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  h3#{$article-prose} {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  // Native markers retain start, reversed, li[value] and ol[type] semantics.
+  :is(ol, ul)#{$article-prose} {
+    margin-block: 1.2em;
+    margin-inline: 0;
+    padding-inline: 1.6em 0;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+
+    :is(ol, ul)#{$article-prose} {
+      margin-block: 0.5em;
+    }
+  }
+
+  li#{$article-prose} {
+    display: list-item;
+    margin-block: 0.4em;
+    padding-inline-start: 0.2em;
+    color: inherit;
+    line-height: inherit;
+
+    > p#{$article-prose} {
+      margin-block: 0.5em;
+    }
+
+    > :first-child#{$article-prose} {
+      margin-block-start: 0;
+    }
+
+    > :last-child#{$article-prose} {
+      margin-block-end: 0;
+    }
+  }
+
+  hr#{$article-prose} {
+    margin-block: 1.75em;
+    border: 0;
+    border-block-start: 1px solid
+      color-mix(in srgb, currentColor 18%, transparent);
+  }
+
+  // Preserve the approved transparent editorial quotation and its logical-start mark.
+  blockquote#{$article-prose} {
+    display: flow-root;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    margin: 1.6em 0;
+    padding: 22px 24px;
+    padding-inline-start: 65px;
+    border: 0;
+    border-inline-start: 3px solid
+      color-mix(in srgb, currentColor 36%, transparent);
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font-size: 1.05em;
+    font-weight: 400;
+    line-height: inherit;
+    text-align: start;
+    overflow-wrap: anywhere;
+
+    &::before {
+      content: "\f10d" / "";
+      position: absolute;
+      inset-block-start: 26px;
+      inset-inline-start: 24px;
+      width: 25px;
+      height: 25px;
+      font-family: "Font Awesome 7 Free";
+      font-weight: 900;
+      font-size: 25px;
+      line-height: 25px;
+      color: color-mix(in srgb, currentColor 62%, transparent);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    > :first-child#{$article-prose} {
+      margin-block-start: 0;
+    }
+
+    > :last-child#{$article-prose} {
+      margin-block-end: 0;
+    }
+
+    a#{$article-prose},
+    a:visited#{$article-prose},
+    a:hover#{$article-prose} {
+      color: inherit !important;
+      background: transparent !important;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    cite#{$article-prose} {
+      display: block;
+      margin-block-start: 10px;
+      color: inherit;
+      font-size: 0.75em;
+      font-style: normal;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 540px) {
+      padding: 18px 16px;
+      padding-inline-start: 46px;
+      font-size: inherit;
+
+      &::before {
+        inset-block-start: 22px;
+        inset-inline-start: 16px;
+        width: 20px;
+        height: 20px;
+        font-size: 20px;
+        line-height: 20px;
+      }
+    }
+  }
+
+  @media (max-width: 1000px) {
+    h2#{$article-prose} {
+      font-size: 1.6rem;
+    }
+
+    h3#{$article-prose} {
+      font-size: 1.4rem;
+    }
+  }
+}

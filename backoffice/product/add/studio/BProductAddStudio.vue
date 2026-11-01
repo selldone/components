@@ -12,63 +12,138 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-sheet :class="{ 'b-product-add-studio--modern sd-modern-canvas text-start': modern }">
-    <v-row align="center" class="body-title" no-gutters>
-      <a class="pointer-pointer text-primary" @click="finish()">
-        <v-icon class="me-1" size="small">view_module</v-icon>
-        <span>{{ $t("admin_shop.products.title") }}</span>
-      </a>
+<template>
+  <v-sheet class="b-product-add-studio sd-modern-canvas text-start">
+    <div class="b-product-add-studio__workspace">
+      <header class="b-product-add-studio__header">
+        <b-product-edit-info-icon
+          :name="product ? 'CircleCheck' : 'PackageOpen'"
+          :size="23"
+        />
+        <div class="b-product-add-studio__heading">
+          <h2>
+            {{
+              $t(
+                product
+                  ? "product_studio.fast.completion_title"
+                  : "product_studio.fast.title",
+              )
+            }}
+          </h2>
+          <p>
+            {{ product ? product.title : $t("product_studio.fast.subtitle") }}
+          </p>
+        </div>
+        <v-btn
+          class="sd-modern-icon-button"
+          icon
+          variant="text"
+          :disabled="completionBusy"
+          :aria-label="$t('global.actions.close')"
+          @click="finish()"
+        >
+          <b-product-edit-info-icon name="X" :size="18" />
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip"
+            >{{ $t("global.actions.close") }}</v-tooltip
+          >
+        </v-btn>
+      </header>
 
-      <v-icon class="mx-1" size="small">{{ $t("icons.angle_next") }}</v-icon>
-
-      <a
-        :class="{ disabled: !type || tab_product !== 1 }"
-        @click="tab_product === 1 ? (type = null) : undefined"
+      <v-form
+        v-if="!product"
+        ref="form"
+        :disabled="busy_add"
+        @submit.prevent="addProduct(false)"
       >
-        {{ $t("add_product.title_new") }}
-      </a>
+        <div class="b-product-add-studio__body">
+          <!-- Type and essentials share the existing creation request. -->
+          <section class="sd-modern-widget b-product-add-studio__essentials">
+            <h3>{{ $t("global.commons.product_type") }}</h3>
+            <b-product-edit-type
+              :shop="shop"
+              modern
+              compact
+              :selected-type="type?.code"
+              :disabled="busy_add"
+              has-add-connect-os
+              has-add-dropshipping
+              has-add-sku
+              @select="setType"
+            />
+            <p v-if="type" class="b-product-add-studio__type-help">
+              {{ $t(type.description) }}
+            </p>
+            <v-text-field
+              v-model="title"
+              :counter="120"
+              maxlength="120"
+              :label="$t('add_product.edit_info.product_name')"
+              :placeholder="
+                $t('add_product.edit_info.product_name_placeholder')
+              "
+              :rules="[GlobalRules.required(), GlobalRules.counter(120)]"
+              class="sd-modern-underlined-field b-product-add-studio__name"
+              variant="underlined"
+            />
+            <div
+              class="b-product-add-studio__price-grid"
+              :class="{ '-with-stock': hasQuantity }"
+            >
+              <u-price-input
+                v-model="price"
+                :currency="currency"
+                :disabled="busy_add || !currency"
+                :label="$t('add_product.pricing.price_input')"
+                :dark="$vuetify.theme.current.dark"
+                class="sd-modern-underlined-field"
+                placeholder="0.00"
+              />
+              <u-currency-input
+                v-model="currency"
+                :active-currencies="shop.currencies"
+                :disabled="busy_add"
+                :label="$t('add_product.pricing.currency_input')"
+                :dark="$vuetify.theme.current.dark"
+                class="sd-modern-underlined-field"
+              />
+              <u-number-input
+                v-if="hasQuantity"
+                v-model="quantity"
+                :disabled="busy_add"
+                :label="$t('product_admin.inventory.variants.count_input')"
+                :min="0"
+                class="sd-modern-underlined-field"
+              />
+            </div>
+            <details class="b-product-add-studio__optional">
+              <summary>
+                <b-product-edit-info-icon name="ChevronDown" :size="16" />{{
+                  $t("product_studio.fast.optional_details")
+                }}
+              </summary>
+              <v-text-field
+                v-model="brand"
+                :label="$t('add_product.edit_info.brand.label')"
+                :placeholder="$t('add_product.edit_info.brand.placeholder')"
+                variant="underlined"
+                class="sd-modern-underlined-field"
+              />
+            </details>
+            <p v-if="$route.query.dir" class="b-product-add-studio__context">
+              <b-product-edit-info-icon name="Folder" :size="14" />{{
+                $t("product_studio.add_in_current_category")
+              }}
+            </p>
+          </section>
 
-      <span v-if="type">
-        <v-icon class="mx-1" size="small">{{ $t("icons.angle_next") }}</v-icon>
-
-        <img :src="type.image" class="me-1" height="18" width="18" />
-        {{ $t(type.name) }}
-      </span>
-
-      <v-spacer />
-    </v-row>
-
-    <div v-if="tab_mode === TAB_PRODUCT">
-      <!-- --------------------- Select Product Type --------------------- -->
-
-      <div v-if="!type" class="max-width-container-1280px mx-auto" :class="{ 'sd-modern-widget b-product-add-studio__type': modern }">
-        <!-- ██████████████████████ Select type ██████████████████████ -->
-
-        <u-widget-header
-          :title="$t('global.commons.product_type')"
-          icon="workspaces"
-          :icon-color="modern ? undefined : '#333'"
-          :class="{ 'sd-modern-form-header': modern }"
-        ></u-widget-header>
-        <v-list-subheader>
-          {{ $t("add_product.select_type.title") }}
-        </v-list-subheader>
-
-        <b-product-edit-type
-          :shop="shop"
-          has-add-connect-os
-          has-add-dropshipping
-          has-add-sku
-          @select="(item) => setType(item)"
-        ></b-product-edit-type>
-      </div>
-
-      <div v-else>
-        <v-container v-if="tab_product === 1" :class="{ 'sd-modern-form b-product-add-studio__form': modern }">
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Marketplace Settings ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-          <div v-if="is_marketplace" class="widget-box mb-5 mt-5" :class="{ 'sd-modern-widget': modern }">
+          <!-- Marketplace ownership keeps its native vendor-panel restrictions. -->
+          <div
+            v-if="is_marketplace"
+            class="sd-modern-widget b-product-add-studio__marketplace"
+          >
             <u-widget-header
               :title="$t('global.commons.vendor')"
               icon="storefront"
@@ -119,10 +194,10 @@
 
               <b-vendor-input
                 v-model="selected_vendor_id"
-                :disabled="!!vendor"
+                :disabled="!!vendor || busy_add"
                 :shop="shop"
                 flat
-                label="Vendor*"
+                :label="$t('global.commons.vendor')"
                 solo
                 clearable
               ></b-vendor-input>
@@ -158,11 +233,11 @@
                 <div v-if="single_vendor">
                   <b-vendor-input
                     v-model="selected_vendor_id"
-                    :disabled="!!vendor"
+                    :disabled="!!vendor || busy_add"
                     :shop="shop"
                     class="mt-5"
                     flat
-                    label="Vendor"
+                    :label="$t('global.commons.vendor')"
                     solo
                     clearable
                     @change="$forceUpdate()"
@@ -172,196 +247,178 @@
             </template>
           </div>
 
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ General ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+          <p
+            v-if="create_error"
+            role="alert"
+            class="b-product-add-studio__error"
+          >
+            {{ create_error }}
+          </p>
+        </div>
+        <div class="b-product-add-studio__actions">
+          <v-btn
+            type="submit"
+            color="primary"
+            variant="elevated"
+            class="sd-modern-button sd-modern-button--primary"
+            :disabled="!can_add || busy_add"
+            :loading="busy_add && !complete_after_add"
+          >
+            <template #prepend
+              ><b-product-edit-info-icon name="Plus" :size="16" /></template
+            >{{ $t("product_studio.fast.add_finish") }}
+          </v-btn>
+          <v-tooltip
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+          >
+            <template #activator="{ props }">
+              <span
+                v-bind="props"
+                class="b-product-add-studio__complete"
+                @focusin="props.onFocus"
+                @focusout="props.onBlur"
+              >
+                <v-btn
+                  type="button"
+                  variant="outlined"
+                  class="sd-modern-button"
+                  :aria-describedby="props['aria-describedby']"
+                  :disabled="!can_add || busy_add"
+                  :loading="busy_add && complete_after_add"
+                  @click="addProduct(true)"
+                >
+                  {{ $t("product_studio.fast.add_complete") }}
+                  <template #append
+                    ><b-product-edit-info-icon
+                      :name="$vuetify.locale.isRtl ? 'ArrowLeft' : 'ArrowRight'"
+                      :size="16"
+                  /></template>
+                </v-btn>
+              </span>
+            </template>
+            {{ $t("product_studio.fast.add_images_help") }}
+          </v-tooltip>
+        </div>
+      </v-form>
 
-          <div class="widget-box mb-5" :class="{ 'sd-modern-widget': modern }">
-            <u-widget-header
-              :title="$t('global.commons.info')"
-              icon="info"
-            ></u-widget-header>
-            <v-list-subheader
-              >{{ $t("product_studio.info.subtitle") }}
-            </v-list-subheader>
-
-            <v-text-field
-              v-model="title"
-              :counter="120"
-              :label="$t('add_product.edit_info.product_name')"
-              :placeholder="
-                $t('add_product.edit_info.product_name_placeholder')
-              "
-              :rules="[GlobalRules.required(), GlobalRules.counter(120)]"
-              class="m-2"
-              variant="underlined"
-            ></v-text-field>
-            <v-text-field
-              v-model="brand"
-              :label="$t('add_product.edit_info.brand.label')"
-              :placeholder="$t('add_product.edit_info.brand.placeholder')"
-              class="m-2"
-              variant="underlined"
-            ></v-text-field>
-            <u-number-input
-              v-if="!isSubscription && !isVirtual && !isFile"
-              v-model="quantity"
-              :label="$t('product_admin.inventory.variants.count_input')"
-              :min="0"
-              append-icon="inventory"
-              class="m-2 strong-field"
-            >
-            </u-number-input>
-          </div>
-
-          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Price ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-          <div class="widget-box mb-5" :class="{ 'sd-modern-widget': modern }">
-            <u-widget-header
-              :title="$t('global.commons.price')"
-              icon="monetization_on"
-            ></u-widget-header>
-            <v-list-subheader>
-              {{ $t("product_studio.price.subtitle") }}
-            </v-list-subheader>
-
-            <u-currency-input
-              v-model="currency"
-              :activeCurrencies="shop.currencies"
-              :label="$t('add_product.pricing.currency_input')"
-              :messages="$t('add_product.pricing.currency_input_messages')"
-              class="m-2"
-            />
-
-            <u-price-input
-              v-model="price"
-              :currency="currency"
-              :disabled="!currency"
-              :label="$t('add_product.pricing.price_input')"
-              :rules="[GlobalRules.required()]"
-              class="m-2 strong-field"
-              placeholder="0.00"
-            />
-          </div>
-
-          <s-widget-buttons auto-fixed-position :class="{ 'sd-modern-form-actions': modern }">
+      <template v-else>
+        <div class="b-product-add-studio__body">
+          <p class="b-product-add-studio__saved" role="status">
+            {{ $t("product_studio.fast.saved_notice") }}
+          </p>
+          <div
+            class="b-product-add-studio__completion-nav"
+            role="group"
+            :aria-label="$t('product_studio.fast.completion_title')"
+          >
             <v-btn
-              :disabled="!can_add"
-              :loading="busy_add"
-              color="primary"
-              :size="modern ? 'default' : 'x-large'"
-              :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
-              variant="elevated"
-              @click="addProduct()"
-            >
-              <v-icon start>add</v-icon>
-              {{ $t("global.actions.add") }}
-            </v-btn>
-          </s-widget-buttons>
-        </v-container>
-
-        <div v-if="tab_product === 2">
-          <!-- ---------------------  Images --------------------- -->
-
-          <b-product-edit-images v-if="product" :product="product" for-studio>
-          </b-product-edit-images>
-
-          <s-widget-buttons auto-fixed-position :class="{ 'sd-modern-form-actions': modern }">
-            <v-btn
-              :size="modern ? 'default' : 'x-large'"
-              :class="{ 'sd-modern-button': modern }"
               variant="text"
-              @click="
-                () => {
-                  tab_product = 3;
-                  GoToTopPage();
-                }
-              "
+              class="sd-modern-button"
+              :class="{ '-selected': tab_product === 2 }"
+              :aria-pressed="tab_product === 2"
+              :disabled="completionBusy"
+              @click="selectCompletion(2)"
+              ><template #prepend
+                ><b-product-edit-info-icon name="Image" :size="16" /></template
+              >{{ $t("product_studio.fast.images") }}</v-btn
             >
-              <v-icon start>add</v-icon>
-              {{ $t("product_studio.add_mode") }}
-            </v-btn>
             <v-btn
-              color="primary"
-              :size="modern ? 'default' : 'x-large'"
-              :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
-              variant="elevated"
-              @click="finish()"
+              variant="text"
+              class="sd-modern-button"
+              :class="{ '-selected': tab_product === 3 }"
+              :aria-pressed="tab_product === 3"
+              :disabled="completionBusy"
+              @click="selectCompletion(3)"
+              ><template #prepend
+                ><b-product-edit-info-icon
+                  :name="detailIcon"
+                  :size="16" /></template
+              >{{ $t(detailTitle) }}</v-btn
             >
-              <v-icon start>done</v-icon>
-              {{ $t("global.actions.finish") }}
-            </v-btn>
-          </s-widget-buttons>
+          </div>
+          <!-- Mount on first visit; retain native drafts when switching sections. -->
+          <div v-if="visitedImages" v-show="tab_product === 2">
+            <b-product-edit-images
+              :ref="(editor) => (imagesEditor = editor)"
+              :product="product"
+              :modern="modern"
+              for-studio
+            />
+          </div>
+          <div v-if="visitedDetails" v-show="tab_product === 3">
+            <b-product-inventory-management
+              :ref="(editor) => (inventoryEditor = editor)"
+              :product="product"
+              :shop="shop"
+              :vendor="vendor"
+              :modern="modern"
+              :product-workspace="modern"
+              for-studio
+            />
+          </div>
         </div>
-
-        <div v-if="tab_product === 3">
-          <!-- ---------------------  Variants --------------------- -->
-          <b-product-inventory-management
-            v-if="product"
-            :product="product"
-            :shop="shop"
-            :vendor="vendor"
-            class="my-10"
-            for-studio
-          />
-
-          <s-widget-buttons auto-fixed-position :class="{ 'sd-modern-form-actions': modern }">
-            <v-btn
-              color="primary"
-              :size="modern ? 'default' : 'x-large'"
-              :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
-              variant="elevated"
-              @click="finish()"
-            >
-              <v-icon start>done</v-icon>
-              {{ $t("global.actions.finish") }}
-            </v-btn>
-          </s-widget-buttons>
+        <div class="b-product-add-studio__actions">
+          <v-btn
+            color="primary"
+            variant="elevated"
+            class="sd-modern-button sd-modern-button--primary"
+            :disabled="completionBusy"
+            @click="finish()"
+            ><template #prepend
+              ><b-product-edit-info-icon name="Check" :size="16" /></template
+            >{{ $t("global.actions.finish") }}</v-btn
+          >
+          <v-btn
+            variant="text"
+            class="sd-modern-button"
+            :disabled="completionBusy"
+            @click="startNextProduct()"
+            >{{ $t("product_studio.fast.add_another") }}</v-btn
+          >
         </div>
-      </div>
+      </template>
     </div>
-
-    <!-- ================================ CATEGORY ================================ -->
-    <div v-else-if="tab_mode === TAB_CATEGORY"></div>
   </v-sheet>
 </template>
-
 <script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import BProductInventoryManagement from "../../inventory/management/BProductInventoryManagement.vue";
+import { defineAsyncComponent } from "vue";
 import { ProductCondition } from "@selldone/core-js/enums/product/ProductCondition";
 import UNumberInput from "../../../../ui/number/input/UNumberInput.vue";
 import UPriceInput from "../../../../ui/price/input/UPriceInput.vue";
 import UCurrencyInput from "../../../../ui/currency/input/UCurrencyInput.vue";
-import BProductEditImages from "../../../product/edit/images/BProductEditImages.vue";
+import BProductEditInfoIcon from "../../edit/info/BProductEditInfoIcon.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import BVendorInput from "../../../vendor/input/BVendorInput.vue";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import USmartSwitch from "../../../../ui/smart/switch/USmartSwitch.vue";
 import BProductEditType from "../../../product/edit/type/BProductEditType.vue";
-import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
-import { Article } from "@selldone/core-js";
 import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-
-const TAB_PRODUCT = 1;
-const TAB_CATEGORY = 2;
 
 export default {
   name: "BProductAddStudio",
   mixins: [],
   components: {
-    SWidgetButtons,
+    BProductEditInfoIcon,
     BProductEditType,
     USmartSwitch,
     BVendorInput,
-    BProductEditImages,
+    BProductEditImages: defineAsyncComponent(
+      () => import("../../edit/images/BProductEditImages.vue"),
+    ),
     UCurrencyInput,
     UPriceInput,
     UNumberInput,
 
-    BProductInventoryManagement,
+    BProductInventoryManagement: defineAsyncComponent(
+      () =>
+        import("../../inventory/management/BProductInventoryManagement.vue"),
+    ),
   },
-  emits: ["add", "finish"],
+  emits: ["add", "finish", "busy"],
   props: {
     modern: { type: Boolean, default: false },
     shop: {
@@ -377,20 +434,6 @@ export default {
     return {
       ProductType: ProductType,
 
-      show_article: true, // For refresh article!
-
-      article_type: Article.Types.Product,
-
-      TAB_PRODUCT: TAB_PRODUCT,
-      TAB_CATEGORY: TAB_CATEGORY,
-
-
-      //-------- Google Preview ----------
-      busy_render_google: false,
-      rendered_on_google: "",
-
-      tab_mode: TAB_PRODUCT,
-
       //-------- Product ----------
       tab_product: 1,
       type: null,
@@ -401,6 +444,13 @@ export default {
       quantity: 0,
 
       product: null,
+      visitedImages: false,
+      visitedDetails: false,
+      imagesEditor: null,
+      inventoryEditor: null,
+      complete_after_add: false,
+      create_error: "",
+      disposed: false,
 
       selected_vendor_id: null,
       //---------------------------
@@ -430,7 +480,57 @@ export default {
     },
 
     can_add() {
-      return this.type && this.title && this.price >= 0 && this.currency;
+      return !!(
+        this.available_types.some(
+          (item) => item.enable && item.code === this.type?.code,
+        ) &&
+        this.title?.trim() &&
+        this.title.length <= 120 &&
+        this.price !== null &&
+        this.price !== "" &&
+        Number.isFinite(Number(this.price)) &&
+        this.price >= 0 &&
+        this.shop.currencies.includes(this.currency) &&
+        (!this.hasQuantity ||
+          (Number.isFinite(Number(this.quantity)) && this.quantity >= 0)) &&
+        (!this.is_marketplace ||
+          !this.isSubscription ||
+          this.selected_vendor_id)
+      );
+    },
+    hasQuantity() {
+      return (
+        this.type?.code === ProductType.PHYSICAL.code ||
+        this.type?.code === ProductType.SERVICE.code
+      );
+    },
+    detailTitle() {
+      const kind = {
+        PHYSICAL: "physical",
+        VIRTUAL: "virtual",
+        FILE: "file",
+        SERVICE: "service",
+        SUBSCRIPTION: "subscription",
+      }[this.type?.code];
+      return "product_studio.fast." + kind + "_details";
+    },
+    detailIcon() {
+      return {
+        PHYSICAL: "PackageOpen",
+        VIRTUAL: "Globe",
+        FILE: "Files",
+        SERVICE: "ClipboardCheck",
+        SUBSCRIPTION: "RotateCcw",
+      }[this.type?.code];
+    },
+    completionBusy() {
+      return (
+        this.busy_add ||
+        !!this.imagesEditor?.mediaBusy ||
+        !!this.imagesEditor?.saveBlocked ||
+        !!this.inventoryEditor?.workspaceBusy ||
+        !!this.inventoryEditor?.saveBlocked
+      );
     },
 
     isFile() {
@@ -447,6 +547,12 @@ export default {
     },
   },
   watch: {
+    completionBusy: {
+      immediate: true,
+      handler(busy) {
+        this.$emit("busy", busy);
+      },
+    },
     type(type) {
       window.sessionStorage.setItem(
         "temp-studio-type",
@@ -458,28 +564,63 @@ export default {
     },
   },
   created() {
-    if (window.sessionStorage.getItem("temp-studio-type") && false)
-      this.type =
-        ProductType[window.sessionStorage.getItem("temp-studio-type")];
-
-    if (window.sessionStorage.getItem("temp-studio-currency"))
-      this.currency = window.sessionStorage.getItem("temp-studio-currency");
-    else if (this.shop.currencies.length > 0)
-      this.currency = this.shop.currencies[0];
+    const savedCurrency = window.sessionStorage.getItem("temp-studio-currency");
+    this.currency = this.shop.currencies.includes(savedCurrency)
+      ? savedCurrency
+      : this.shop.currencies[0] || null;
 
     // Assign vendor (used in subscription products)
     this.selected_vendor_id = this.vendor?.id;
   },
 
+  beforeUnmount() {
+    this.disposed = true;
+    this.$emit("busy", false);
+  },
   methods: {
     setType(type) {
+      if (
+        this.busy_add ||
+        this.product ||
+        !this.available_types.some(
+          (item) => item.enable && item.code === type?.code,
+        )
+      )
+        return;
       this.type = type;
     },
-    addProduct() {
+    selectCompletion(tab) {
+      if (!this.product || this.completionBusy || ![2, 3].includes(tab)) return;
+      this.tab_product = tab;
+      if (tab === 2) this.visitedImages = true;
+      else this.visitedDetails = true;
+    },
+    startNextProduct() {
+      if (this.completionBusy) return;
+      this.product = null;
+      this.type = null;
+      this.title = null;
+      this.brand = null;
+      this.price = 0;
+      this.quantity = 0;
+      this.tab_product = 1;
+      this.visitedImages = false;
+      this.visitedDetails = false;
+      this.create_error = "";
+      this.single_vendor = false;
+      this.selected_vendor_id = this.vendor?.id || null;
+    },
+    async addProduct(complete = false) {
+      if (this.busy_add || this.product || !this.can_add || this.disposed)
+        return;
       this.busy_add = true;
-
-      axios
-        .post(
+      this.complete_after_add = complete;
+      this.create_error = "";
+      try {
+        const validation = await this.$refs.form?.validate();
+        if (validation?.valid === false || this.disposed || !this.can_add)
+          return;
+        const { data } = await axios.post(
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.POST_MY_VENDOR_ADD_PRODUCT(this.vendor.id)
             : window.API.POST_ADD_PRODUCT(this.shop.id),
@@ -490,7 +631,7 @@ export default {
 
             type: this.type.code,
 
-            title: this.title,
+            title: this.title.trim(),
             condition: ProductCondition.NEW.code,
 
             price: this.price,
@@ -518,30 +659,35 @@ export default {
               ? 1 /*Subscription default available!*/
               : this.quantity,
           },
-        )
-        .then(({ data }) => {
-          if (data.error) {
-            NotificationService.showErrorAlert(null, data.error_msg);
-          } else {
-            this.product = data.product;
-
-            NotificationService.showSuccessAlert(null, "The product added to the list.");
-            this.$emit("add", data.product);
-
-            this.tab_product = 2;
-            this.GoToTopPage();
-          }
-        })
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
+        );
+        if (this.disposed) return;
+        if (data.error || !data.product) {
+          this.create_error =
+            data.error_msg || this.$t("product_studio.fast.create_error");
+          NotificationService.showErrorAlert(null, this.create_error);
+          return;
+        }
+        this.product = data.product;
+        this.$emit("add", data.product);
+        if (complete) {
+          this.tab_product = 2;
+          this.visitedImages = true;
+          this.GoToTopPage();
+        } else {
           this.busy_add = false;
-        });
+          this.finish();
+        }
+      } catch (error) {
+        if (this.disposed) return;
+        this.create_error = this.$t("product_studio.fast.create_error");
+        NotificationService.showLaravelError(error);
+      } finally {
+        this.busy_add = false;
+      }
     },
 
     finish() {
-      this.$emit("finish");
+      if (!this.completionBusy) this.$emit("finish");
     },
 
     //―――――――――――――――――――――― Page Scroll Helper ――――――――――――――――――――
@@ -557,23 +703,169 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.b-product-add-studio--modern {
-  padding: 24px;
+.b-product-add-studio {
   font-family: inherit;
   font-size: 13px;
   line-height: 1.6;
-  > .body-title { max-width: 1040px; margin: 0 auto 24px; font-family: inherit; font-size: 18px; font-weight: 500; line-height: 27px; }
-  .b-product-add-studio__type { max-width: 1040px; padding: 24px; }
-  .b-product-add-studio__form { max-width: 760px; padding: 0; }
-  .sd-modern-widget { --background: rgb(var(--v-theme-surface)); padding: 24px; }
-  .sd-modern-widget > :deep(.s--widget-header h2) { font-family: inherit; font-size: 17px; font-weight: 500; line-height: 25px; }
-  .sd-modern-widget > :deep(.s--widget-header .--icon) { font-size: 20px !important; }
-  .sd-modern-widget > .v-list-subheader { font-size: 12px; font-weight: 400; line-height: 19px; color: var(--sd-modern-muted); }
-
+  padding: 0;
+  .b-product-add-studio__workspace {
+    max-width: 760px;
+    margin-inline: auto;
+  }
+  .b-product-add-studio__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px;
+  }
+  .b-product-add-studio__header > svg {
+    flex-shrink: 0;
+    color: var(--sd-modern-muted);
+  }
+  .b-product-add-studio__heading {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  h2 {
+    font: inherit;
+    font-size: 19px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .b-product-add-studio__heading p {
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    margin: 3px 0 0;
+  }
+  .b-product-add-studio__body {
+    padding: 0 24px 20px;
+  }
+  .sd-modern-widget {
+    --background: rgb(var(--v-theme-surface));
+    padding: 22px;
+    margin: 0;
+  }
+  .b-product-add-studio__essentials > h3 {
+    font: inherit;
+    font-weight: 500;
+    margin: 0 0 10px;
+  }
+  .b-product-add-studio__type-help {
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    margin: 12px 0 0;
+  }
+  .b-product-add-studio__name {
+    margin-top: 20px;
+  }
+  .b-product-add-studio__price-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 12px;
+  }
+  .b-product-add-studio__price-grid.-with-stock {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .b-product-add-studio__optional {
+    margin-top: 16px;
+  }
+  .b-product-add-studio__optional summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    color: var(--sd-modern-muted);
+    list-style: none;
+    cursor: pointer;
+  }
+  .b-product-add-studio__optional summary::-webkit-details-marker {
+    display: none;
+  }
+  .b-product-add-studio__optional[open] summary > svg {
+    transform: rotate(180deg);
+  }
+  .b-product-add-studio__optional :deep(.v-input) {
+    margin-top: 10px;
+  }
+  .b-product-add-studio__context {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 12px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+  }
+  .b-product-add-studio__marketplace {
+    margin-top: 16px;
+  }
+  .b-product-add-studio__marketplace > :deep(.s--widget-header h2) {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .b-product-add-studio__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 24px;
+    background: var(--sd-modern-canvas-color);
+    border-top: 1px solid var(--sd-modern-border);
+  }
+  .b-product-add-studio__actions > .v-btn {
+    max-width: 100%;
+  }
+  .b-product-add-studio__complete {
+    display: inline-flex;
+    max-width: 100%;
+  }
+  .b-product-add-studio__saved {
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    margin: 0 0 16px;
+  }
+  .b-product-add-studio__completion-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .b-product-add-studio__completion-nav .-selected {
+    background: rgb(var(--v-theme-surface));
+    box-shadow: 0 1px 5px rgba(var(--v-theme-on-surface), 0.08);
+  }
+  .b-product-add-studio__error {
+    color: rgb(var(--v-theme-error));
+    margin: 14px 0 0;
+  }
   @media (max-width: 599px) {
-    padding: 20px 12px;
-    .sd-modern-widget, .b-product-add-studio__type { padding: 20px 16px; }
-    > .body-title { font-size: 16px; line-height: 24px; }
+    .b-product-add-studio__header {
+      padding: 20px 16px;
+    }
+    .b-product-add-studio__body {
+      padding: 0 16px 18px;
+    }
+    .sd-modern-widget {
+      padding: 18px 16px;
+    }
+    .b-product-add-studio__price-grid,
+    .b-product-add-studio__price-grid.-with-stock {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .b-product-add-studio__actions {
+      padding: 16px;
+    }
+  }
+  @media (max-width: 599px), (pointer: coarse) {
+    .b-product-add-studio__optional summary {
+      min-height: 44px;
+    }
+    :deep(input) {
+      font-size: 16px;
+    }
   }
 }
 </style>

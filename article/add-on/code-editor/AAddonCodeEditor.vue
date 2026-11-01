@@ -16,7 +16,7 @@
   <div
     :class="{ '-dark': dark, 'a-article-addon--editable': editable }"
     :data="json_data"
-    class="code-editor editor-window"
+    class="code-editor editor-window a-article-code-surface text-start"
     spellcheck="false"
   >
     <a-addon-toolbar
@@ -26,46 +26,54 @@
       @click:edit="showEdit()"
     ></a-addon-toolbar>
 
-    <div class="text-left py-1 d-flex align-center" dir="ltr">
-      <v-btn-toggle
+    <div class="a-article-code__header">
+      <div
         v-if="tabs_active?.length || editable"
-        v-model="selected_lang"
-        class="widget-toggle flex-grow-0"
-        density="compact"
-        mandatory
-        rounded
-        selected-class="blue-flat"
+        class="a-article-code__languages"
+        role="group"
+        :aria-label="$t('global.article.code_editor.language')"
       >
-        <v-btn
+        <button
           v-for="lang in tabs_active"
           :key="lang"
-          :value="lang"
-          variant="flat"
-          @click="setLanguageCode(lang)"
+          type="button"
+          dir="ltr"
+          class="a-article-code__language"
+          :aria-pressed="selected_lang === lang"
+          @click="selected_lang = lang"
         >
           {{ lang.toUpperCase() }}
-        </v-btn>
-      </v-btn-toggle>
-      <v-spacer></v-spacer>
-      <v-btn class="mx-1" :class="{ 'sd-modern-icon-button': editable }" icon variant="text" :aria-label="$t('global.article.inline_tools.code_theme')" @click="dark = !dark">
-        <v-slide-y-reverse-transition leave-absolute>
-          <v-icon v-if="dark" key="1" color="blue">dark_mode</v-icon>
-          <v-icon v-else key="2" color="amber">light_mode</v-icon>
-        </v-slide-y-reverse-transition>
-        <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip">{{ $t('global.article.inline_tools.code_theme') }}</v-tooltip>
+        </button>
+      </div>
+      <v-btn
+        class="a-article-code__theme sd-modern-icon-button"
+        icon
+        variant="text"
+        :aria-label="$t('global.article.inline_tools.code_theme')"
+        :aria-pressed="dark"
+        @click="dark = !dark"
+      >
+        <v-icon>{{ dark ? "dark_mode" : "light_mode" }}</v-icon>
+        <v-tooltip
+          activator="parent"
+          location="top"
+          content-class="sd-modern-tooltip"
+          >{{ $t("global.article.inline_tools.code_theme") }}</v-tooltip
+        >
       </v-btn>
     </div>
 
-    <div class="hover-open-edit-dialog" @click="showEdit()">
+    <div class="a-article-code__body" @click="showEdit()">
       <prism-editor
-        v-model="codes[selected_lang]"
-        :class="{ 'light-code': !dark, 'prism-dark dark-code-theme': dark }"
+        :model-value="codes[selected_lang] || ''"
         :highlight="highlighter"
         :language="selected_lang"
-        class="scrollable-element-light"
+        :aria-label="$t('global.article.code_editor.code_label')"
+        class="a-article-code__prism scrollable-element-light"
         contenteditable="false"
         line-numbers
         readonly
+        @vue:mounted="labelCodeInput"
       />
     </div>
   </div>
@@ -73,7 +81,6 @@
 
 <script lang="ts">
 //―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
-import "prismjs";
 import "prismjs/themes/prism.css";
 
 import { PrismEditor } from "vue-prism-editor";
@@ -84,6 +91,7 @@ import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { articleAddonContext } from "../toolbar/article-addon-context";
+import { highlightArticleCode } from "./article-code-highlight";
 
 export default {
   name: "AAddonCodeEditor",
@@ -102,21 +110,10 @@ export default {
 
   data() {
     return {
-      selected_lang: null,
-
-      loaded: true,
-      lang_code: null,
+      selected_lang: "html",
 
       tabs: ["html", "js", "css", "c", "C++", "php", "python"],
 
-      languages_pack: {
-        html: "markup",
-        js: "js",
-        css: "css",
-        "C++": "cpp",
-        php: "php",
-        python: "python",
-      },
       //---------------
       time: null,
 
@@ -127,18 +124,12 @@ export default {
   },
   computed: {
     tabs_active() {
-      if (this.editable) {
-        return this.tabs;
-      }
-
-      let out = [];
-      this.tabs.forEach((item) => {
-        if (this.codes[item]) {
-          out.push(item);
-        }
-      });
-
-      return out;
+      const authored = Object.keys(this.codes).filter((key) => this.codes[key]);
+      return this.editable
+        ? [...new Set([...this.tabs, ...authored])]
+        : [...new Set([...this.tabs, ...authored])].filter(
+            (key) => this.codes[key],
+          );
     },
 
     json_data() {
@@ -148,45 +139,31 @@ export default {
     },
   },
 
-  created() {
-    // Fix bug: (important)
-    /*  if (!this.$vuetify.theme) this.$vuetify.theme = {};
-    if (!this.$vuetify.icons) this.$vuetify.icons = {};
-    if (!this.$vuetify.display) this.$vuetify.display = {};*/
-  },
   mounted() {
     this.element = this.$el;
-
-    if (!this.lang_code && this.tabs_active.length > 0)
-      this.lang_code = this.tabs_active[0];
-
     const available = Object.keys(this.codes).find((x) => this.codes[x]);
-    // console.log("available", available, this.selected_lang, this.codes);
-    if (available) {
-      this.lang_code = available;
-      this.selected_lang = available;
-    } else {
-      this.selected_lang = this.tabs[0];
-    }
+    this.selected_lang = available || this.tabs[0];
   },
   methods: {
-    setLanguageCode(lang_code) {
-      this.lang_code = lang_code;
+    labelCodeInput(vnode) {
+      vnode.el
+        .querySelector("textarea")
+        ?.setAttribute(
+          "aria-label",
+          this.$t("global.article.code_editor.code_label"),
+        );
     },
     highlighter(code) {
-      //console.log('-------------------highlighter--------------------',code)
-      // js highlight example
-      return Prism.highlight(
-        code,
-        Prism.languages.js,
-        this.lang ? this.lang : "js",
-      );
+      return highlightArticleCode(code, this.selected_lang);
     },
 
     showEdit() {
       if (!this.editable || !articleAddonContext(this.element)) return;
       if (!this.selected_lang) {
-        NotificationService.showErrorAlert(null, "Please select a language to edit code!");
+        NotificationService.showErrorAlert(
+          null,
+          "Please select a language to edit code!",
+        );
         return;
       }
       const selectedLanguage = this.selected_lang;
@@ -297,3 +274,5 @@ export default {
   }
 }
 </style>
+
+<style lang="scss" scoped src="./article-code-editor.scss"></style>

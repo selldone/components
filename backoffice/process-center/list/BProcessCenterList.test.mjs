@@ -16,7 +16,8 @@ const leaf = (name) => Vue.defineComponent({
   name,
   inheritAttrs: false,
   setup: (_, { attrs, slots }) => () => {
-    calls.push({ name, attrs });
+    const call = { name, attrs };
+    calls.push(call);
     const content = name === "v-data-table-server"
       ? attrs.loading && !attrs.items.length ? slots.loading?.() : [
         ...attrs.items.flatMap((item) => attrs.headers.flatMap((header) => slots[`item.${header.value}`]?.({ item }) ?? [])),
@@ -29,6 +30,7 @@ const leaf = (name) => Vue.defineComponent({
           return slots["stage-icon"]({ item, index, completed: index < current, current: index === current });
         })
         : slots.default?.();
+    if (name === "v-data-table-server") call.content = content;
     return Vue.h(name === "RouterLink" ? "a" : "div", { "data-leaf": name }, content);
   },
 });
@@ -52,14 +54,31 @@ const ProductType = Object.fromEntries(["PHYSICAL", "VIRTUAL", "FILE", "SERVICE"
 }]));
 const notifications = { showErrorAlert() {}, showLaravelError() {} };
 const presentation = evaluate(readFileSync(new URL('./ProcessCenterPresentation.ts', import.meta.url), 'utf8'));
+const dateWindow = { $language: { full_locale: 'en-US', calendar: { calendar: 'gregory' } } };
+const { Calendar } = evaluate(readFileSync(new URL('../../../../core-js/enums/language/Calendar.ts', import.meta.url), 'utf8'));
+const { DateConverter } = evaluate(readFileSync(new URL('../../../../core-js/helper/date/DateConverter.ts', import.meta.url), 'utf8'), {
+  require: () => ({ Calendar }), window: dateWindow,
+});
+const DateMixin = evaluate(readFileSync(new URL('../../../mixin/date/DateMixin.ts', import.meta.url), 'utf8'), {
+  require: () => ({ DateConverter }), window: dateWindow,
+}).default;
+const OrderMixin = evaluate(readFileSync(new URL('../../../mixin/order/OrderMixin.ts', import.meta.url), 'utf8'), {
+  require: () => ({ Basket, BasketItemReturn: { States: {} } }),
+}).default;
+const { RouteMixin } = evaluate(readFileSync(new URL('../../../mixin/route/RouteMixin.ts', import.meta.url), 'utf8'), {
+  require: name => name === 'vue' ? Vue : { delay: fn => fn() }, window: dateWindow,
+});
 let Customer;
 function dependency(name) {
   if (name === "vue") return Vue;
+  if (name.includes('/mixin/date/DateMixin')) return { default: DateMixin };
+  if (name.includes('/mixin/order/OrderMixin')) return { default: OrderMixin };
+  if (name.includes('/mixin/route/RouteMixin')) return { RouteMixin };
   if (name.endsWith("BListEmptyState.vue")) return { default: BListEmptyState };
   if (name.endsWith("BListLoadingState.vue")) return { default: BListLoadingState };
   if (name.includes('ProcessCenterPresentation')) return presentation;
   if (name.endsWith("BProcessCenterCustomer.vue")) return { default: Vue.defineComponent({
-    props: ["item", "shop", "isAffiliatePos"],
+    props: ["item", "shop", "isAffiliatePos", "posReturn"],
     setup(props) {
       return () => {
         calls.push({ name: "BProcessCenterCustomer", attrs: { ...props } });
@@ -112,7 +131,8 @@ function fixture(modern = false) {
 }
 async function render(component, props, rows = [], data = {}) {
   calls.length = 0;
-  const app = Vue.createSSRApp(component === List ? { ...List, mixins: [], watch: {}, created: undefined, data: () => ({ ...List.data(), orders: rows, emptyStateLoaded: true, ...data }) } : component, props);
+  const focusedPos = component === List && props.modern && props.isPos && route.name === 'BPagePosOrders';
+  const app = Vue.createSSRApp(component === List ? { ...List, mixins: focusedPos ? List.mixins : [], watch: {}, created: focusedPos ? () => {} : undefined, data: () => ({ ...List.data(), orders: rows, emptyStateLoaded: true, ...data }) } : component, props);
   for (const name of ["v-row", "v-text-field", "v-data-table-server", "v-img", "v-avatar", "v-icon", "v-btn", "v-btn-toggle", "v-spacer", "v-chip", "v-tooltip", "v-progress-linear", "v-badge", "v-pagination", "v-menu", "v-list", "v-list-item", "v-list-item-title", "v-sheet", "v-dialog", "v-card", "v-card-title", "v-card-text", "v-card-actions", "u-loading-progress", "u-price", "flag"]) app.component(name, leaf(name));
   app.component("router-link", leaf("RouterLink"));
   Object.assign(app.config.globalProperties, {
@@ -125,6 +145,11 @@ async function render(component, props, rows = [], data = {}) {
     getLocalDateString: (date) => date,
     getCountryName: (country) => country,
   });
+  if (focusedPos) {
+    // Missing optional helpers must fail instead of being supplied by test globals.
+    for (const name of ['getDeliveryStateString', 'getFromNowString', 'getLocalTimeString', 'getLocalDateString', 'cacheRouteState', 'HIGHLIGHT_ID']) delete app.config.globalProperties[name];
+    app.config.warnHandler = message => { throw new Error(message); };
+  }
   return renderToString(app);
 }
 
@@ -863,5 +888,213 @@ test("bound vendor filters only modern marketplace requests and cannot broaden o
     other.fetchOrdersNow(1);
     await new Promise(resolve => setImmediate(resolve));
     assert.equal(Object.hasOwn(requests.at(-1)[1].params, 'vendor_id'), false);
+  }
+});
+
+test('focused POS Orders preserves native filters, routing, money and request states', async t => {
+  const previousName = route.name;
+  route.name = 'BPagePosOrders';
+  const props = { modern: true, isPos: true, type: undefined, shop: { id: 7 } };
+  const row = { id: 438, label: 'POS-438', status: 'Payed', currency: 'EUR', price: 50.60, delivery_price: 0, items: [], created_at: '2025-09-01T12:00:00Z', reserved_at: '2026-10-02T14:30:00Z', payment: null };
+  try {
+    await t.test('only the dedicated route opts in, with five backend columns and all payment choices', async () => {
+      const state = fixture(true);
+      Object.assign(state, { isPos: true, type: undefined });
+      assert.equal(state.modernPos, true);
+      assert.equal(state.has_cod, true);
+      assert.deepEqual(plain(state.headers.map(header => header.value)), ['id', 'customer', 'price', 'status', 'reserved_at']);
+      assert.equal(state.headers.find(header => header.value === 'customer').sortable, false);
+      assert.deepEqual(plain(state.marketplaceStatuses.map(status => status.code)), ['Open', 'Reserved', 'Payed', 'COD', 'Canceled']);
+      assert.deepEqual(plain(state.status), ['Payed', 'COD']);
+      for (const name of ['BPageShopOrdersPos', 'BPageCustomerOrders', 'VendorOrders']) {
+        route.name = name;
+        assert.equal(state.modernPos, false);
+        assert.equal(Object.hasOwn(state.createRouteTo(row), 'query'), false);
+      }
+      route.name = 'BPagePosOrders';
+      const legacy = fixture(false);
+      legacy.isPos = true;
+      assert.equal(legacy.modernPos, false);
+      const html = await render(List, props, [row]);
+      assert.match(html, /b-process-center-list--pos/);
+      const toggle = calls.find(call => call.name === 'v-btn-toggle').attrs;
+      assert.ok(Object.hasOwn(toggle, 'multiple'));
+      assert.ok(Object.hasOwn(toggle, 'mandatory'));
+      assert.equal(toggle['aria-label'], 'cash_register.orders.selected_states');
+      assert.deepEqual(plain(calls.filter(call => call.name === 'v-btn' && call.attrs.value).map(call => call.attrs.value)), ['Open', 'Reserved', 'Payed', 'COD', 'Canceled']);
+      assert.equal(calls.some(call => call.name === 'SOrderStatusesSelect'), false);
+      assert.equal(calls.find(call => call.name === 'v-text-field').attrs['aria-label'], 'cash_register.orders.search_help');
+      assert.equal(calls.find(call => call.name === 'v-data-table-server').attrs['items-per-page'], 10);
+    });
+
+    await t.test('GET pagination and status arrays remain scoped and direct order links retain a fixed return marker', async () => {
+      const state = fixture(true);
+      Object.assign(state, { isPos: true, type: undefined, search: 'buyer@example.test', $route: { name: 'BPagePosOrders', params: { shop_id: 7 }, query: { pos_return: 'untrusted', return: 'https://example.test' }, matched: [] } });
+      for (const statuses of [['Open', 'Reserved', 'Payed', 'COD', 'Canceled'], ['COD'], ['Reserved']]) {
+        state.status = statuses;
+        state.fetchOrdersNow(3, 'reserved_at', false);
+        await new Promise(resolve => setImmediate(resolve));
+        const [url, { params }] = plain(requests.at(-1));
+        assert.equal(url, '/test/shops/7/orders/POS');
+        assert.equal(params.offset, 20);
+        assert.equal(params.limit, 10);
+        assert.equal(params.buyer, true);
+        assert.equal(params.search, 'buyer@example.test');
+        assert.deepEqual(params.statuses, statuses);
+        assert.equal(params.sortBy, 'reserved_at');
+        assert.equal(params.sortDesc, false);
+        assert.deepEqual(params.with, ['buyer', 'payment-compact']);
+        assert.equal(Object.hasOwn(params, 'updated_at'), false);
+      }
+      assert.deepEqual(plain(state.createRouteTo(row)), { name: 'BPageOrderPosDashboard', params: { shop_id: 7, basket_id: 438 }, query: { pos_return: 'register' } });
+      state.fetchOrders = () => {};
+      for (const key of ['id', 'price', 'status', 'reserved_at']) {
+        state.page = 3;
+        state.sortMarketplace(key);
+        assert.equal(state.page, 1);
+        assert.equal(state.sortBy[0].key, key);
+      }
+      const html = await render(List, props, [row]);
+      assert.match(html, /POS-438/);
+      const link = calls.find(call => call.name === 'RouterLink' && call.attrs.class === 'b-process-center-list__code').attrs;
+      assert.deepEqual(plain(link.to), { name: 'BPageOrderPosDashboard', params: { shop_id: 7, basket_id: 438 }, query: { pos_return: 'register' } });
+      assert.notEqual(link.target, '_blank');
+      assert.equal(link['aria-label'], 'cash_register.orders.open_order');
+      link.onClick({ stopPropagation() {} });
+      assert.equal(dateWindow.__RETURN.ROUTE_NAME, 'BPagePosOrders');
+      assert.equal(dateWindow.__RETURN.HIGHLIGHT_ID, row.id);
+      dateWindow.__RETURN = null;
+    });
+
+    await t.test('original currencies and order dates survive presentation; missing dates remain unknown', async () => {
+      const euro = Object.freeze({ ...row, payment_at: '2099-01-01T00:00:00Z' });
+      const dollar = Object.freeze({ ...row, id: 437, label: 'POS-437', currency: 'USD', price: 406.56, reserved_at: null, created_at: '2024-03-04T10:00:00Z' });
+      const missing = Object.freeze({ ...row, id: 436, label: 'POS-436', reserved_at: null, created_at: null });
+      const before = JSON.stringify([euro, dollar, missing]);
+      const html = await render(List, props, [euro, dollar, missing]);
+      for (const order of [euro, dollar]) {
+        assert.ok(calls.some(call => call.name === 'u-price' && call.attrs.amount === order.price && call.attrs.currency === order.currency));
+        assert.ok(calls.some(call => call.name === 'UCurrencyIcon' && call.attrs.currency === order.currency));
+      }
+      assert.match(html, /datetime="2026-10-02T14:30:00Z"/);
+      assert.match(html, /datetime="2024-03-04T10:00:00Z"/);
+      assert.doesNotMatch(html, /2099|1970|undefined/);
+      assert.match(html, /b-process-center-list__pos-date"><span>—<\/span>/);
+      assert.equal(JSON.stringify([euro, dollar, missing]), before);
+      const state = fixture(true);
+      Object.assign(state, { isPos: true, page: 3, totalItems: 23 });
+      assert.deepEqual(plain(state.marketplaceRange), { start: 21, end: 23, total: 23 });
+      state.totalItems = 0;
+      assert.deepEqual(plain(state.marketplaceRange), { start: 0, end: 0, total: 0 });
+      assert.match(html, /cash_register\.orders\.range/);
+    });
+
+    await t.test('linked customers retain explicit shop scope and a fixed POS return without changing ordinary customer links', async () => {
+      assert.equal(Customer.props.posReturn.default, false);
+      const customer = { ...row, customer_id: 11, customer: { name: 'POS Customer' } };
+      await render(List, props, [customer]);
+      assert.equal(calls.find(call => call.name === 'BProcessCenterCustomer').attrs.posReturn, true);
+      const link = calls.find(call => call.name === 'RouterLink' && call.attrs.to?.name === 'BPageCustomerDashboard').attrs;
+      assert.deepEqual(plain(link.to), { name: 'BPageCustomerDashboard', params: { customer_id: 11, shop_id: 7 }, query: { pos_return: 'register' } });
+      await render(Customer, { item: customer, shop: { id: 7 } });
+      const ordinary = calls.find(call => call.name === 'RouterLink').attrs;
+      assert.deepEqual(plain(ordinary.to), { name: 'BPageCustomerDashboard', params: { customer_id: 11 } });
+    });
+
+    await t.test('known payment states use native metadata and special payment states keep the native detail view', async () => {
+      for (const [status, dot] of [['Open', 'warning'], ['Reserved', 'warning'], ['Payed', 'success'], ['COD', 'warning'], ['Canceled', 'error']]) {
+        const html = await render(List, props, [{ ...row, status }]);
+        assert.match(html, /b-process-center-list__marketplace-payment/);
+        assert.ok(html.includes(Basket.Status[status].title));
+        assert.ok(html.includes(`sd-modern-status__dot--${dot}`));
+        assert.equal(calls.some(call => call.name === 'SOrderStatusView'), false);
+        if (status === 'COD') assert.match(html, /cash_register\.orders\.cod_help/);
+        if (status === 'COD' || status === 'Payed') {
+          const cell = calls.find(call => call.name === 'v-data-table-server').content.find(node => node.props?.class === 'b-process-center-list__payment');
+          const label = cell.children.find(node => node.props?.class?.includes('b-process-center-list__marketplace-payment'));
+          let stopped = 0;
+          label.props.onClick({ stopPropagation: () => stopped++ });
+          assert.equal(stopped, status === 'COD' ? 1 : 0, 'COD help stays on the list; Paid keeps native row navigation');
+        }
+      }
+      for (const details of [{ status: 'Unknown' }, { payment: { status: 'RequireCapture' } }, { payment: { card: { brand: 'visa', card_no: '****4242', country: 'US' } } }, { gateway_processing: true }]) {
+        const order = { ...row, ...details };
+        const html = await render(List, props, [order]);
+        assert.doesNotMatch(html, /b-process-center-list__marketplace-payment/);
+        const native = calls.find(call => call.name === 'SOrderStatusView').attrs;
+        assert.equal(native.status, order.status);
+        assert.equal(native['gateway-processing'], order.gateway_processing);
+        assert.equal(native['payment-require-capture'], order.payment?.status === 'RequireCapture');
+        assert.deepEqual(plain(native.payment ?? null), order.payment ?? null);
+      }
+    });
+
+    await t.test('empty, unready, filtered, pending and failed reads expose distinct recovery states', async () => {
+      assert.match(await render(List, props), /cash_register\.orders\.empty_title/);
+      assert.doesNotMatch(await render(List, props, [], { emptyStateLoaded: false }), /cash_register\.orders\.empty_title/);
+      assert.match(await render(List, props, [], { search: 'missing' }), /cash_register\.orders\.no_results_title/);
+      assert.match(await render(List, props, [], { search: 'missing' }), /cash_register\.orders\.clear_search/);
+      const pending = await render(List, props, [], { busy_fetch: true });
+      assert.match(pending, /b-list-loading-state/);
+      assert.doesNotMatch(pending, /cash_register\.orders\.empty_title/);
+      const failed = await render(List, props, [], { fetch_error: true, search: 'kept' });
+      assert.match(failed, /role="alert"/);
+      assert.match(failed, /cash_register\.orders\.error_body/);
+      assert.match(failed, /cash_register\.orders\.retry/);
+      assert.doesNotMatch(failed, /cash_register\.orders\.(empty_title|no_results_title)/);
+      const refresh = await render(List, props, [row], { fetch_error: true });
+      assert.match(refresh, /POS-438/);
+      assert.match(refresh, /cash_register\.orders\.error_body/);
+    });
+
+    await t.test('failed refreshes preserve filters and rows while stale success and failure cannot replace newer results', async () => {
+      const originalGet = isolated.axios.get;
+      const pending = [];
+      isolated.axios.get = () => new Promise((resolve, reject) => pending.push({ resolve, reject }));
+      const settle = () => new Promise(resolve => setImmediate(resolve));
+      try {
+        const state = fixture(true);
+        Object.assign(state, { isPos: true, type: undefined, search: 'kept', status: ['Reserved', 'COD'], orders: [row], totalItems: 1 });
+        state.fetchOrdersNow(2);
+        pending[0].reject(new Error('Offline'));
+        await settle();
+        assert.equal(state.fetch_error, true);
+        assert.equal(state.busy_fetch, false);
+        assert.equal(state.search, 'kept');
+        assert.deepEqual(plain(state.status), ['Reserved', 'COD']);
+        assert.deepEqual(plain(state.orders), [row]);
+        state.fetchOrdersNow(2);
+        assert.equal(state.fetch_error, false);
+        pending[1].resolve({ data: { error: true, error_msg: 'Unavailable' } });
+        await settle();
+        assert.equal(state.fetch_error, true);
+        state.fetchOrdersNow(1);
+        state.search = 'latest';
+        state.fetchOrdersNow(1);
+        pending[2].reject(new Error('Stale failure'));
+        await settle();
+        assert.equal(state.fetch_error, false);
+        assert.equal(state.busy_fetch, true);
+        pending[3].resolve({ data: { total: 1, orders: [{ ...row, id: 999 }] } });
+        await settle();
+        assert.equal(state.busy_fetch, false);
+        assert.equal(state.orders[0].id, 999);
+        state.fetchOrdersNow(1);
+        state.fetchOrdersNow(1);
+        pending[5].resolve({ data: { total: 0, orders: [] } });
+        await settle();
+        pending[4].resolve({ data: { total: 99, orders: [row] } });
+        await settle();
+        assert.equal(state.fetch_error, false);
+        assert.equal(state.emptyStateLoaded, true);
+        assert.equal(state.totalItems, 0);
+        assert.deepEqual(plain(state.orders), []);
+      } finally {
+        isolated.axios.get = originalGet;
+      }
+    });
+  } finally {
+    if (previousName === undefined) delete route.name;
+    else route.name = previousName;
   }
 });

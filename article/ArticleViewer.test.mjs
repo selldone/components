@@ -24,6 +24,7 @@ const transpile = (source) => ts.transpileModule(source, {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const script = transpile(descriptor.script.content), templateExports = {};
+const shortcutScript = transpile(readFileSync(new URL('../directives/keyboard/DirectiveCtrlKeydown.ts', import.meta.url), 'utf8'));
 vm.runInNewContext(transpile(template.code), { exports: templateExports, require: (path) => path === "vue" ? Vue : { default: path } });
 const types = Object.fromEntries([["Blog", "shop-blog"], ["Product", "product"],
   ["SelldoneBlog", "blog"], ["SelldoneHelp", "help"]].map(([key, code]) => [key, { code }]));
@@ -37,7 +38,7 @@ const pack = (id = 12, extra = {}) => ({
   can_edit: true, category: 7,
 });
 
-function fixture(props = {}) {
+function fixture(props = {}, browser = {}) {
   const requests = [], notices = [], events = [], ticks = [], permissionChecks = [];
   const exports = {};
   const request = (method, url, payload) => {
@@ -47,13 +48,16 @@ function fixture(props = {}) {
     return promise;
   };
   const endpoints = new Proxy({}, { get: (_, key) => (...args) => `/${String(key)}/${args.join("/")}` });
-  const window = { ARTICLE_API: endpoints, VAPI: endpoints, XAPI: endpoints, GAPI: endpoints,
-    API: endpoints, ADMIN_API: endpoints, $storefront: { routes: { SHOP_BLOG_PAGE: "ShopBlog" } } };
+  const window = Object.assign(browser.window || {}, { ARTICLE_API: endpoints, VAPI: endpoints, XAPI: endpoints, GAPI: endpoints,
+    API: endpoints, ADMIN_API: endpoints, $storefront: { routes: { SHOP_BLOG_PAGE: "ShopBlog" } } });
+  const shortcut = {};
+  vm.runInNewContext(shortcutScript, { exports: shortcut, window, document: browser.document });
   vm.runInNewContext(script, {
-    exports, window, console: { warn() {}, log() {} },
-    $: () => ({ text: () => "Saved body", focus() {}, blur() {}, click() {} }),
+    exports, window, document: browser.document, console: { warn() {}, log() {} },
+    $: () => ({ text: () => browser.articleText ?? "Saved body", focus() {}, blur() {}, click() {} }),
     axios: Object.fromEntries(["get", "post", "delete"].map((method) => [method, (...args) => request(method, ...args)])),
     require(name) {
+      if (name.includes('DirectiveCtrlKeydown')) return shortcut;
       if (name === "@selldone/core-js") return { Article: { Types: types } };
       if (name.includes("ShopPermissions")) return { ShopPermissionRegions: { BLOG: { code: "blog" } } };
       if (name.includes("NotificationService")) return { default: {
@@ -62,7 +66,7 @@ function fixture(props = {}) {
         showLaravelError: (...args) => notices.push(["laravel", ...args]),
         openDangerAlert: (...args) => notices.push(["confirm", ...args]),
       } };
-      if (name.includes("Slugify")) return { Slugify: { apply: (value) => value } };
+      if (name.includes("Slugify") || name.includes("/slugify/")) return { Slugify: { apply: (value) => value } };
       if (name.includes("ShopOptionsHelper")) return { ShopOptionsHelper: { GetLanguages: () => ["en"] } };
       if (name === "lodash-es") return { delay: (callback) => callback() };
       return { default: passthrough };
@@ -83,6 +87,7 @@ function fixture(props = {}) {
     permitted: true,
     writeShopAccess(region) { permissionChecks.push(region); return this.permitted; },
     getCurrentLanguage: () => ({ code: "en" }),
+    getUserAvatar: () => "/avatar.png",
     getLanguageName: (code) => ({ en: "English", fa: "فارسی" })[code] || code,
     convertUTCStringToLocalTimeString: (value) => value ? `local:${value}` : null,
     convertLocalTimeStringToUTCString: (value) => value ? `utc:${value}` : null,
@@ -146,6 +151,7 @@ function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp, c
     $t: (key) => key, USER: f.state.USER, USER_ID: f.state.USER_ID,
     writeShopAccess: () => f.state.permitted, getCurrentLanguage: f.state.getCurrentLanguage,
     getLanguageName: f.state.getLanguageName,
+    numeralFormat: value => String(value ?? 0),
     getShop: () => null, getUserAvatar: () => "/avatar.png", getLocalTimeString: (value) => value || "", getFromNowString: f.state.getFromNowString,
     $route: f.state.$route, $vuetify: { display: { smAndDown: false, mdAndUp: true }, locale: { isRtl: false } }, window: f.window,
   });
@@ -805,6 +811,8 @@ test("Blog Details stays mounted across toggles and SEO while preserving selecti
     },
   });
   const f = fixture({ workspace_ready: true, render_state: "editing" });
+  // This layout-only host has no DOM; the real shortcut lifecycle is covered in JSDOM below.
+  f.component.directives.ctrl = {};
   f.state = Vue.reactive(f.state);
   const app = renderApp(f, { "extra-header-options": (values) => Vue.h(Options, values) }, null, renderer.createApp);
   const container = node("root"), root = app.mount(container), viewer = root.$refs.viewer;
@@ -1012,6 +1020,97 @@ test("save validates content and blocks every busy operation without a request",
     assert.equal(f.requests.length, 0);
     assert.equal(f.notices[0][0], "error");
     assert.equal(f.state.state, "no-change");
+  }
+});
+
+function workspaceShortcutFixture(t) {
+  const dom = new JSDOM('<!doctype html><body><div contenteditable="true" tabindex="0">Article draft</div><button class="v-btn" type="button"><span class="v-btn__content">Save changes</span></button></body>');
+  const f = fixture({ state: 'changed' }, { window: dom.window, document: dom.window.document });
+  const directive = f.component.directives.ctrl, button = dom.window.document.querySelector('button');
+  directive.mounted(button, { modifiers: { s: true }, value: f.state.saveWorkspaceShortcut });
+  t.after(() => { directive.beforeUnmount(button); dom.window.close(); });
+  const editor = dom.window.document.querySelector('[contenteditable]');
+  const press = (options = {}, target = editor) => {
+    target.focus();
+    const event = new dom.window.KeyboardEvent('keydown', { code: 'KeyS', key: 's', ctrlKey: true, bubbles: true, cancelable: true, ...options });
+    target.dispatchEvent(event);
+    return event;
+  };
+  return { ...f, dom, directive, button, press };
+}
+
+test('the registered Ctrl+S directive saves the native article draft once and keeps its standard inline hint', async t => {
+  const f = workspaceShortcutFixture(t);
+  const hint = f.button.querySelector(':scope > .sd-modern-save-shortcut__hint');
+  assert.equal(hint.textContent, 'Ctrl + S');
+  assert.equal(hint.getAttribute('aria-hidden'), 'true');
+  assert.equal(hint.querySelector('bdi').getAttribute('dir'), 'ltr');
+  assert.equal(f.button.getAttribute('aria-keyshortcuts'), 'Control+s');
+  assert.equal(f.button.querySelector('.v-btn__content').textContent, 'Save changes');
+  assert.equal(f.press({ key: 'س' }).defaultPrevented, true, 'The existing physical-key shortcut also works while typing Persian');
+  assert.equal(f.requests.length, 1);
+  assert.equal(f.requests[0].method, 'post');
+  assert.equal(f.requests[0].url, '/POST_ADD_EDIT_ARTICLE/shop-blog');
+  assert.equal(f.requests[0].payload.title, 'Purified title');
+  assert.equal(f.requests[0].payload.body, '<p>Purified body</p>');
+  assert.equal(f.state.state, 'saving');
+  f.press({ repeat: true }); f.press();
+  assert.equal(f.requests.length, 1, 'A held or quickly repeated shortcut cannot start another pending save');
+  f.requests[0].resolve({ data: { error: true, error_msg: 'Retry this draft' } }); await settle();
+  assert.equal(f.state.state, 'changed');
+  f.press(); assert.equal(f.requests.length, 2, 'The same draft can retry after the existing save path reports failure');
+  f.directive.beforeUnmount(f.button);
+  assert.equal(f.press().defaultPrevented, false);
+  assert.equal(f.requests.length, 2, 'Unmount removes the article shortcut listener');
+});
+
+test('article Ctrl+S rechecks write access, active scope, unapplied drafts and current busy state', t => {
+  for (const mutate of [
+    state => { state.permitted = false; }, state => { state.can_edit = false; },
+    state => { state.active = false; }, state => { state.inLoading = true; },
+    state => { state.state = 'saving'; }, state => { state.busy_fix = true; },
+    state => { state.workspace_importing = true; }, state => { state.workspace_import_pending = true; },
+    state => { state.workspace_schema_pending = true; }, state => { state.workspace_faq_pending = true; },
+    state => { state.workspace_setting = 'language'; }, state => { state.workspace_schedule = true; },
+    state => { state.workspace_tools = true; }, state => { state.dialog_timeline = true; },
+    state => { state.flowchart_pending = true; }, state => { state.$refs.editorContainer = null; },
+    state => { state.workspace = false; }, state => { state.articleType = 'product'; },
+    state => { state.workspaceSection = 'comments'; }, state => { state.workspaceSection = 'article'; },
+  ]) {
+    const f = workspaceShortcutFixture(t);
+    mutate(f.state); f.press();
+    assert.equal(f.requests.length, 0);
+    assert.equal(f.notices.length, 0);
+  }
+});
+
+test('an open child editor sheet or unrelated menu owns its draft while ordinary tooltip help permits saving', t => {
+  const f = workspaceShortcutFixture(t), document = f.dom.window.document;
+  const overlay = document.createElement('div'); overlay.innerHTML = '<textarea>Unconfirmed code draft</textarea>';
+  document.body.append(overlay);
+  for (const kind of ['v-bottom-sheet', 'v-menu']) {
+    overlay.className = `v-overlay v-overlay--active ${kind}`;
+    f.press({}, overlay.querySelector('textarea'));
+    assert.equal(f.requests.length, 0, 'A child editor or search menu must not save the underlying article');
+    assert.equal(f.state.article.body, '<p>Saved body</p>');
+  }
+  overlay.className = 'v-overlay v-overlay--active v-tooltip';
+  f.press(); assert.equal(f.requests.length, 1);
+});
+
+test('only the non-Product workspace Save button advertises the article shortcut', async () => {
+  for (const section of ['edit', 'seo', 'faq']) {
+    const f = fixture({ workspaceSection: section });
+    const document = new JSDOM(await render(f)).window.document;
+    const button = document.querySelector('.s-article-workspace__header button[aria-keyshortcuts="Control+s"]');
+    assert.ok(button, section); assert.equal(button.disabled, false);
+    f.state.active = false;
+    const inactive = new JSDOM(await render(f)).window.document;
+    assert.equal(inactive.querySelector('.s-article-workspace__header button[aria-keyshortcuts="Control+s"]').disabled, true);
+  }
+  for (const props of [{ workspace: false }, { articleType: 'product' }, { workspaceSection: 'comments' }, { workspaceSection: 'article' }, { can_edit: false }]) {
+    const f = fixture(props), document = new JSDOM(await render(f)).window.document;
+    assert.equal(document.querySelector('button[aria-keyshortcuts="Control+s"]'), null, 'Product parent shortcuts and unrelated readers keep their existing ownership');
   }
 });
 
@@ -1671,4 +1770,395 @@ test("Auto fix reads new inline content before checking an empty saved body", ()
   f.state.autoFixArticle();
   assert.equal(f.requests.length, 1);
   assert.equal(f.requests[0].payload.body, "<p>Purified body</p>");
+});
+
+function nativeTitleEditor() {
+  const filename = fileURLToPath(new URL("./SArticleEditor.vue", import.meta.url));
+  const { descriptor, errors } = parse(readFileSync(filename, "utf8"), { filename });
+  assert.deepEqual(errors, []);
+  const scriptExports = {}, renderExports = {};
+  vm.runInNewContext(transpile(descriptor.script.content), {
+    exports: scriptExports, window: {}, require: (name) => {
+      if (name === "vue") return Vue;
+      if (name === "lodash-es") return { debounce: (callback) => callback };
+      return { default: {} };
+    },
+  });
+  const script = compileScript(descriptor, { id: "reader-heading-editor" });
+  const template = compileTemplate({ source: descriptor.template.content, filename,
+    id: "reader-heading-editor", compilerOptions: { bindingMetadata: script.bindings } });
+  assert.deepEqual(template.errors, []);
+  vm.runInNewContext(transpile(template.code), { exports: renderExports, require: () => Vue });
+  const component = scriptExports.default;
+  const inert = { render() { return null; } };
+  return { ...component, mixins: [], created: undefined, mounted: undefined, updated: undefined,
+    beforeUnmount: undefined, watch: {},
+    components: Object.fromEntries(Object.keys(component.components).map((name) => [name, inert])),
+    computed: { ...component.computed, rendered_body() { return this.body; },
+      rendered_body_view() { return this.body; }, flowchartAllowed() { return false; } },
+    render: renderExports.render };
+}
+
+test("an optional reader heading receives the actual article identity and replaces only native review metadata", async () => {
+  const article = pack(27, { user: { id: 3, name: "Ada Writer", profile: { name: "Ada Profile" } } }).article;
+  const f = fixture({ workspace: false, articleType: "blog", article, reading_time: 7,
+    category_obj: { id: 4, category: "Business" }, render_state: "review" });
+  let received;
+  const slots = { "reader-heading": (scope) => {
+    received = scope;
+    return Vue.h("header", { "data-reader-heading": "true" }, Vue.h("h1", scope.article.title));
+  } };
+  const html = await renderToString(renderApp(f, slots, null, Vue.createSSRApp, {
+    SArticleEditor: nativeTitleEditor(), SArticleAuthorBox: {
+      props: ["article"], render() { return Vue.h("section", { "data-full-author": this.article.user_id }); },
+    },
+  }));
+  const document = new JSDOM(html).window.document;
+  assert.equal(received.article.id, 27);
+  assert.equal(received.user.name, "Ada Writer");
+  assert.equal(received.authorName, "Ada Profile");
+  assert.equal(received.authorAvatar, "/avatar.png");
+  assert.equal(received.category.category, "Business");
+  assert.equal(received.readingTime, 7);
+  assert.equal(document.querySelector('[data-reader-heading] h1').textContent, "Article 27");
+  assert(document.querySelector('#review_title').classList.contains('d-none'));
+  assert.equal(document.querySelector('.review-style .reading-time'), null);
+  assert.equal(document.querySelector('.review-style .avatar-gradient'), null);
+  assert.equal(document.querySelector('[data-full-author]').getAttribute('data-full-author'), '3');
+  assert.equal(document.querySelector('#editable_title').textContent, "Article 27");
+  assert.equal(f.requests.length, 0);
+});
+
+test("native review title and byline remain without the opt-in while edit state keeps the real title editor", async () => {
+  const article = pack(28, { user: { id: 3, name: "Ada Writer", profile: null } }).article;
+  const legacy = fixture({ workspace: false, articleType: "blog", article, reading_time: 4, render_state: "review" });
+  const editor = nativeTitleEditor();
+  const html = await renderToString(renderApp(legacy, {}, null, Vue.createSSRApp, { SArticleEditor: editor }));
+  const document = new JSDOM(html).window.document;
+  assert.equal(document.querySelector('#review_title').textContent, "Article 28");
+  assert.equal(document.querySelector('#review_title').classList.contains('d-none'), false);
+  assert.match(document.querySelector('.review-style').textContent, /Ada Writer/);
+  assert(document.querySelector('.review-style .reading-time'));
+  assert.match(document.querySelector('.review-style').textContent, /global.article.read_time\s*:\s*4/);
+  assert.equal(document.querySelector('.master-article-container').classList.contains('s-article-viewer--editing'), false);
+
+  const editing = fixture({ workspace: false, articleType: "blog", article, render_state: "editing" });
+  const edited = new JSDOM(await renderToString(renderApp(editing,
+    { "reader-heading": (scope) => Vue.h("h1", scope.article.title) }, null,
+    Vue.createSSRApp, { SArticleEditor: editor }))).window.document;
+  assert(edited.querySelector('.master-article-container').classList.contains('s-article-viewer--editing'));
+  assert.equal(edited.querySelector('#editable_title').textContent, "Article 28");
+  assert.equal(edited.querySelector('.review-style').style.display, 'none');
+  assert.equal(editing.requests.length, 0);
+});
+
+const officialReaderFixture = (props = {}, browser = {}) => fixture({ workspace: false, articleType: "blog", targetId: 94,
+  $slots: { "reader-heading": () => [], "reader-toolbar": () => [] }, ...props }, browser);
+
+test("the optional reader toolbar preserves native fallback, public reading and mounted native settings", async () => {
+  const slots = {
+    "reader-heading": ({ article }) => Vue.h("h1", article.title),
+    "reader-toolbar": ({ reader }) => Vue.h("header", { "data-reader-tools": reader.editing }, reader.article.title),
+    "reader-comments-before": () => Vue.h("h2", "Conversation"),
+    "reader-related-before": () => Vue.h("h2", "Related stories"),
+    "reader-author-after": () => Vue.h("a", { href: "/author" }, "More from this author"),
+  };
+  const f = officialReaderFixture({ render_state: "editing", showComments: true, hasRelatedArticles: true, relatives: [] });
+  let document = new JSDOM(await render(f, slots)).window.document;
+  assert(document.querySelector('[data-reader-tools="true"]'));
+  assert.equal(document.querySelector('.overflow-x-auto'), null);
+  assert.equal(document.querySelector('.s-article-viewer__settings').style.display, 'none');
+  assert(document.querySelector('.s-article-viewer__comments h2'));
+  assert.match(document.querySelector('.s-article-viewer__author').textContent, /More from this author/);
+  assert.equal(document.querySelector('.s-article-viewer__related'), null);
+  assert.equal(document.querySelector('.s-article-viewer__related-heading'), null);
+  assert.equal(f.state.readerSlot.relatedCount, 0);
+  assert.equal(f.state.readerSlot.toggleSettings(), true); f.flush();
+  document = new JSDOM(await render(f, slots)).window.document;
+  assert.equal(document.querySelector('.s-article-viewer__settings').style.display, '');
+  const guest = officialReaderFixture({ can_edit: false });
+  document = new JSDOM(await render(guest, slots)).window.document;
+  assert(document.querySelector('h1'));
+  assert.equal(document.querySelector('[data-reader-tools]'), null);
+  assert.match(await render(fixture({ workspace: false, articleType: 'blog' })), /overflow-x-auto/);
+  const help = helpReaderFixture();
+  assert.equal(help.state.readerToolbarActive, false);
+});
+
+test("reader actions recheck article, author, user, permission, active and busy context", () => {
+  const mutations = [
+    state => { state.can_edit = false; }, state => { state.USER = () => null; },
+    state => { state.active = false; }, state => { state.inLoading = true; },
+    state => { state.state = 'saving'; }, state => { state.busy_fix = true; },
+    state => { state.$refs.editorContainer.word_import_busy = true; },
+    state => { state.flowchart_pending = true; }, state => { state.article = { ...state.article }; },
+    state => { state.article.user_id = 90; }, state => { state.targetId = 95; },
+    state => { state.articleType = 'help'; }, state => { state.USER_ID = () => 9; },
+    state => { state._workspaceGeneration++; },
+  ];
+  for (const mutate of mutations) {
+    const f = officialReaderFixture({ render_state: 'editing', state: 'changed' });
+    const reader = f.state.readerSlot;
+    mutate(f.state);
+    for (const action of ['edit', 'preview', 'save', 'importWord', 'openSearch', 'openTimeline', 'toggleSettings', 'autoFix', 'delete']) assert.equal(reader[action](), false, action);
+    assert.equal(reader.setPublished(true), false);
+    assert.equal(reader.setPrivate(true), false);
+    assert.equal(reader.setLanguage('fa'), false);
+    assert.equal(f.requests.length, 0);
+    assert.equal(f.notices.length, 0);
+  }
+});
+
+test("reader metadata validates values, keeps schedules locked and does not dirty unchanged selections", () => {
+  const f = officialReaderFixture({ render_state: 'editing' });
+  const reader = f.state.readerSlot;
+  assert.equal(reader.setPublished(false), true);
+  assert.equal(reader.setPrivate(false), true);
+  assert.equal(reader.setLanguage('en'), true);
+  assert.equal(f.state.state, 'no-change');
+  for (const value of ['true', null, 1]) assert.equal(reader.setPrivate(value), false);
+  assert.equal(reader.setLanguage('invalid code'), false);
+  assert.equal(reader.setPrivate(true), true);
+  assert.equal(f.state.state, 'changed');
+  f.state.schedule_at = '2026-11-02T12:00:00Z';
+  assert.equal(reader.setPublished(true), false);
+  f.state.article.id = null; f.state.isNew = true;
+  assert.equal(f.state.readerSlot.canSearch, false);
+  assert.equal(f.state.readerSlot.openSearch(), false);
+  assert.equal(f.state.readerSlot.openTimeline(), false);
+  assert.equal(f.state.readerSlot.delete(), false);
+  assert.equal(f.requests.length, 0);
+});
+
+test("reader preview and metadata saves preserve untouched rich blocks and save real body edits", async () => {
+  for (const edited of [false, true]) {
+    const f = officialReaderFixture({ render_state: 'editing', state: 'changed' });
+    const body = '<figure data-block="flowchart"><script type="application/json">{"nodes":[]}</script></figure>';
+    f.state.article.body = body;
+    f.state.$refs.editorContainer.state = edited ? 'changed' : 'no-change';
+    if (!edited) {
+      f.state.$refs.editorContainer.purifyTitle = () => { throw Error('Do not serialize untouched title'); };
+      f.state.$refs.editorContainer.purifyBody = () => { throw Error('Do not serialize mounted rich blocks'); };
+    }
+    assert.equal(f.state.readerSlot.preview(), true);
+    assert.equal(f.state.article.body, edited ? '<p>Purified body</p>' : body);
+    assert.equal(f.state.readerSlot.edit(), true);
+    assert.equal(f.state.readerSlot.save(), true);
+    assert.equal(f.requests[0].payload.body, edited ? '<p>Purified body</p>' : body);
+    f.requests[0].resolve({ data: { id: 12 } }); await settle();
+    assert.equal(f.state.state, 'no-change');
+    assert.equal(f.state.render_state, 'editing');
+  }
+});
+
+test("reader Word import rechecks deferred context and native confirmation actions stay scoped", () => {
+  const f = officialReaderFixture();
+  let opened = 0;
+  f.state.$refs.editorContainer.showSelectWord = () => { opened++; };
+  assert.equal(f.state.readerSlot.importWord(), true);
+  assert.equal(f.state.render_state, 'editing');
+  f.state.targetId = 99; f.flush();
+  assert.equal(opened, 0);
+  f.state.readerSlot.importWord(); f.flush();
+  assert.equal(opened, 1);
+  f.state.readerSlot.delete();
+  const confirm = f.notices.find(([kind]) => kind === 'confirm').at(-1);
+  f.state.article = { ...f.state.article, id: 88 };
+  confirm();
+  assert.equal(f.requests.length, 0);
+});
+
+test("reader saves and claps cannot apply deferred responses to another article", async () => {
+  const saving = officialReaderFixture({ render_state: 'editing', state: 'changed' });
+  saving.state.$refs.editorContainer.state = 'no-change';
+  saving.state.readerSlot.save();
+  saving.state.article = { ...pack(88).article };
+  saving.requests[0].resolve({ data: { id: 12, article: { title: 'Stale saved title' } } }); await settle();
+  assert.equal(saving.state.article.title, 'Article 88');
+  const clapping = officialReaderFixture();
+  clapping.state.readerSlot.clap();
+  assert.equal(clapping.requests.length, 1);
+  assert.equal(clapping.state.readerSlot.clap(), false);
+  clapping.state.article = { ...pack(89).article, power: 4 };
+  clapping.requests[0].resolve({ data: { add: true, power: 99 } }); await settle();
+  assert.equal(clapping.state.article.power, 4);
+  const guest = officialReaderFixture();
+  guest.state.USER = () => null; guest.state.USER_ID = () => null;
+  let login = 0;
+  guest.state.NeedLogin = () => { login++; };
+  assert.equal(guest.state.readerSlot.clap(), true);
+  assert.equal(login, 1);
+  assert.equal(guest.requests.length, 0);
+});
+
+test("reader edit and rail slots retain the real title and body without creating another editor", async () => {
+  const f = officialReaderFixture({ render_state: 'editing' });
+  const slots = { 'reader-heading': ({ article }) => Vue.h('h1', article.title),
+    'reader-edit-before-title': () => Vue.h('span', { 'data-edit-edition': '' }, 'Edition'),
+    'reader-edit-after-title': () => Vue.h('span', { 'data-edit-meta': '' }, 'Metadata'),
+    'reader-rail': () => Vue.h('button', { 'data-rail-claps': '' }, 'Clap'),
+  };
+  const document = new JSDOM(await renderToString(renderApp(f, slots, null, Vue.createSSRApp, { SArticleEditor: nativeTitleEditor() }))).window.document;
+  assert.equal(document.querySelectorAll('#editable_title').length, 1);
+  assert.equal(document.querySelectorAll('#editable_body').length, 1);
+  assert.equal(document.querySelectorAll('#review_body').length, 1);
+  assert(document.querySelector('.s-article-editor__edit [data-edit-edition]'));
+  assert(document.querySelector('.s-article-editor__edit [data-edit-meta]'));
+  assert(document.querySelector('.s-article-editor__edit-title #editable_title'));
+  assert(document.querySelector('.s-article-editor__edit-body #editable_body'));
+  assert.equal(document.querySelectorAll('.s-article-editor__rail [data-rail-claps]').length, 1);
+  assert.equal(f.requests.length, 0);
+});
+
+test("reading time uses extracted text instead of an empty shadowed variable", () => {
+  const articleText = 'Useful article content. '.repeat(100);
+  const f = fixture({}, { articleText });
+  f.state.article.body = '<p>Article body is extracted by the existing text helper.</p>';
+  f.state.calculateReadTime();
+  assert.equal(f.state.reading_time, Math.ceil(articleText.trim().length / 600));
+  assert(f.state.reading_time > 0);
+  const short = fixture({}, { articleText: 'Short article.' });
+  short.state.calculateReadTime(); assert.equal(short.state.reading_time, 1);
+  const empty = fixture({}, { articleText: '  \n ' });
+  empty.state.calculateReadTime(); assert.equal(empty.state.reading_time, 0);
+});
+
+test("the native contents opt-in shows one heading as keyboard links while retaining the legacy threshold and scroll helper", async () => {
+  const filename = fileURLToPath(new URL('./widgets/SArticleTableOfContents.vue', import.meta.url));
+  const { descriptor } = parse(readFileSync(filename, 'utf8'), { filename });
+  const exports = {}, renderExports = {}, scrolls = [];
+  const dom = new JSDOM('<article><h2>First section</h2><p>Body</p></article>');
+  const target = dom.window.document.querySelector('article');
+  Object.defineProperty(target.querySelector('h2'), 'innerText', { value: 'First section' });
+  vm.runInNewContext(transpile(descriptor.script.content), { exports,
+    window: { scrollY: 0, matchMedia: () => ({ matches: true }) }, document: dom.window.document,
+    console: { log() {} }, require: (name) => name === 'lodash-es'
+      ? { throttle: callback => callback } : { default: { scrollToElement: (...args) => scrolls.push(args) } },
+  });
+  const component = exports.default;
+  assert.equal(component.props.minHeadings.default, 3);
+  assert.equal(component.props.collapsible.default, false);
+  const state = { ...component.data(), target, minHeadings: 1, collapsible: true };
+  for (const [key, method] of Object.entries(component.methods)) state[key] = method.bind(state);
+  state.gen();
+  assert.equal(state.items.length, 1);
+  assert.equal(component.computed.has_list.call(state), true);
+  assert.equal(component.computed.has_list.call({ ...state, minHeadings: 3 }), false);
+  const template = compileTemplate({ source: descriptor.template.content, filename, id: 'reader-native-contents' });
+  assert.deepEqual(template.errors, []);
+  vm.runInNewContext(transpile(template.code), { exports: renderExports, require: () => Vue });
+  const app = Vue.createSSRApp({ ...component, mounted: undefined, beforeUnmount: undefined,
+    data: () => ({ ...component.data(), items: state.items, activeItem: state.items[0].id }), render: renderExports.render,
+  }, { target, minHeadings: 1, collapsible: true });
+  app.config.globalProperties.$t = key => key;
+  app.config.warnHandler = message => { throw Error(message); };
+  app.directive('intersect', {}); app.component('v-icon', passthrough); app.component('v-expand-transition', passthrough);
+  const document = new JSDOM(await renderToString(app)).window.document;
+  assert(document.querySelector('details[open] > summary'));
+  assert.equal(document.querySelector('li button').textContent, 'First section');
+  assert.equal(document.querySelector('li button').getAttribute('aria-current'), 'location');
+  state.goTo(state.items[0]);
+  assert.deepEqual(plain(scrolls[0]), ['#h_h20', 120, 'auto']);
+  dom.window.close();
+});
+
+test("the reader shortcut captures the current article and lets active child overlays own their drafts", () => {
+  const dom = new JSDOM('<body><div class="v-overlay--active v-tooltip"></div></body>');
+  const f = officialReaderFixture({ render_state: 'editing', state: 'changed' }, { document: dom.window.document });
+  const shortcut = f.state.readerSlot.saveShortcut;
+  f.state.article = { ...pack(73).article };
+  f.state.$refs.editorContainer.state = 'no-change';
+  const overlay = dom.window.document.createElement('div');
+  overlay.className = 'v-overlay--active v-dialog'; dom.window.document.body.append(overlay);
+  assert.equal(shortcut(), false);
+  assert.equal(f.requests.length, 0);
+  overlay.remove();
+  assert.equal(shortcut(), true);
+  assert.equal(f.requests[0].payload.article_id, 73);
+  f.state.state = 'changed'; f.state.can_edit = false;
+  assert.equal(shortcut(), false);
+  assert.equal(f.requests.length, 1);
+  dom.window.close();
+});
+
+test("the opted-in contents discovers initial and late rich-block headings before intersection and disconnects its observer", async () => {
+  const filename = fileURLToPath(new URL('./widgets/SArticleTableOfContents.vue', import.meta.url));
+  const { descriptor } = parse(readFileSync(filename, 'utf8'), { filename });
+  const exports = {}, dom = new JSDOM('<article><h2>Initial section</h2></article>');
+  Object.defineProperty(dom.window.HTMLElement.prototype, 'innerText', { get() { return this.textContent; } });
+  let contentDisconnects = 0, intersectionDisconnects = 0;
+  class ContentsObserver extends dom.window.MutationObserver {
+    disconnect() { contentDisconnects++; super.disconnect(); }
+  }
+  vm.runInNewContext(transpile(descriptor.script.content), { exports, console: { log() {} },
+    MutationObserver: ContentsObserver,
+    IntersectionObserver: class { observe() {} disconnect() { intersectionDisconnects++; } },
+    require: name => name === 'lodash-es' ? { throttle: callback => callback } : { default: {} },
+  });
+  const component = exports.default, target = dom.window.document.querySelector('article');
+  const state = { ...component.data(), target, minHeadings: 1, collapsible: true };
+  for (const [key, method] of Object.entries(component.methods)) state[key] = method.bind(state);
+  component.mounted.call(state);
+  assert.equal(state.items.length, 1);
+  assert.equal(state.items[0].title, 'Initial section');
+  const richBlock = dom.window.document.createElement('figure');
+  richBlock.innerHTML = '<div><h2>Async flowchart section</h2></div>';
+  target.append(richBlock); await settle();
+  assert.deepEqual(Array.from(state.items, item => item.title), ['Initial section', 'Async flowchart section']);
+  richBlock.querySelector('h2').firstChild.data = 'Updated flowchart title'; await settle();
+  assert.equal(state.items[1].title, 'Updated flowchart title');
+  richBlock.remove(); await settle();
+  assert.equal(state.items.length, 1);
+  component.beforeUnmount.call(state);
+  assert.equal(contentDisconnects, 1); assert.equal(intersectionDisconnects, 1);
+  target.append(richBlock); await settle();
+  assert.equal(state.items.length, 1);
+  const legacy = { ...component.data(), target, minHeadings: 3, collapsible: false,
+    gen() { throw Error('Legacy contents remains intersection-driven'); } };
+  component.mounted.call(legacy); component.beforeUnmount.call(legacy);
+  assert.equal(contentDisconnects, 1);
+  dom.window.close();
+});
+
+test("official reader comments precede related stories in DOM while legacy callers retain their original order", async () => {
+  const relatives = [{ id: 55, article: { slug: 'related-story', title: 'Related story', description: 'A useful related story.' } }];
+  const props = { workspace: false, articleType: 'blog', showComments: true, hasRelatedArticles: true, relatives };
+  for (const official of [true, false]) {
+    const slots = { login: () => Vue.h('button', { 'data-comment-login': '' }, 'Sign in'),
+      ...(official ? { 'reader-heading': ({ article }) => Vue.h('h1', article.title),
+        'reader-comments-before': () => Vue.h('h2', { 'data-conversation-title': '' }, 'Conversation'),
+        'reader-related-before': () => Vue.h('h2', 'Related stories') } : {}) };
+    const document = new JSDOM(await render(fixture(props), slots)).window.document;
+    const comments = document.querySelector('.s-article-viewer__comments');
+    const related = document.querySelector('.s-article-viewer__related');
+    assert.equal(document.querySelectorAll('[data-public-comments]').length, 1);
+    assert.equal(document.querySelectorAll('[data-comment-login]').length, 1);
+    assert.equal(document.querySelectorAll('[data-conversation-title]').length, official ? 1 : 0);
+    assert.equal(!!(comments.compareDocumentPosition(related) & document.defaultView.Node.DOCUMENT_POSITION_FOLLOWING), official);
+    assert.equal(document.querySelector('[data-public-comments]').getAttribute('article-id'), '12');
+    assert.equal(document.querySelector('[data-public-comments]').getAttribute('article-user-id'), '3');
+  }
+});
+
+test("the optional reader feedback bar replaces only opted-in feedback while native like and favorite fallback remains", async () => {
+  const props = { workspace: false, articleType: 'blog', showUserFeedbackButtons: true, hasLike: true, hasFavorite: true };
+  let received;
+  const feedback = ({ reader }) => {
+    received = reader;
+    return Vue.h('nav', { 'data-article-end': '' }, ['Claps', 'Comments', 'Share'].map(label => Vue.h('button', label)));
+  };
+  const official = { 'reader-heading': ({ article }) => Vue.h('h1', article.title), 'reader-feedback': feedback };
+  let document = new JSDOM(await render(fixture(props), official)).window.document;
+  assert.equal(document.querySelectorAll('.s-article-viewer__feedback [data-article-end]').length, 1);
+  assert.equal(document.querySelectorAll('[data-article-end] button').length, 3);
+  assert.equal(document.querySelector('.s-article-viewer__feedback [prepend-icon]'), null);
+  assert.equal(received.article.id, 12);
+  assert.equal(typeof received.clap, 'function');
+  for (const slots of [{}, { 'reader-feedback': feedback }]) {
+    document = new JSDOM(await render(fixture(props), slots)).window.document;
+    assert.equal(document.querySelectorAll('.s-article-viewer__feedback [prepend-icon]').length, 3);
+    assert.equal(document.querySelector('[data-article-end]'), null);
+  }
+  document = new JSDOM(await render(fixture({ ...props, isNew: true }), official)).window.document;
+  assert.equal(document.querySelector('.s-article-viewer__feedback'), null);
 });

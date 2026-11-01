@@ -33,6 +33,17 @@
             {{ author_name }}
           </router-link>
 
+          <v-icon
+            v-if="user?.profile?.verified"
+            class="ms-1"
+            color="primary"
+            size="14"
+            role="img"
+            :aria-hidden="false"
+            :aria-label="$t('global.commons.verified_user')"
+            >verified</v-icon
+          >
+
           <v-btn
             v-if="canFollow"
             :color="isFollow ? 'success' : 'default'"

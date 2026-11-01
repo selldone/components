@@ -26,9 +26,11 @@
         v-if="!onlyView"
         v-show="edit"
         :class="{ 'position-relative': show_drop, 'px-2': !workspace }"
+        class="s-article-editor__edit"
         @dragover="dragover"
       >
-        <div>
+        <slot name="edit-before-title"></slot>
+        <div class="s-article-editor__edit-title">
           <p v-if="productWorkspace && enableTitle" :id="`${EDITABLE_TITLE_ID}-label`" class="s-article-editor__title-label">
             {{ $t('add_product.description_modern.title_label') }}
           </p>
@@ -47,7 +49,7 @@
 
         <slot name="edit-after-title"></slot>
 
-        <div>
+        <div class="s-article-editor__edit-body">
           <div
             v-if="enableBody"
             :id="EDITABLE_BODY_ID"
@@ -110,8 +112,18 @@
         <slot name="after-title"></slot>
 
         <!----------------------- Help Headlines ------------------------>
+        <div v-if="$slots['reader-rail-after']" class="s-article-editor__rail">
+          <s-article-table-of-contents
+            v-if="hasTableOfContent && show_table_of_content && $refs.review_body"
+            :html="rendered_body_view"
+            :target="$refs.review_body"
+            :min-headings="1"
+            collapsible
+          ></s-article-table-of-contents>
+          <slot name="reader-rail-after"></slot>
+        </div>
         <s-article-table-of-contents
-          v-if="hasTableOfContent && show_table_of_content && $refs.review_body"
+          v-else-if="hasTableOfContent && show_table_of_content && $refs.review_body"
           :html="rendered_body_view"
           :target="$refs.review_body"
         ></s-article-table-of-contents>
