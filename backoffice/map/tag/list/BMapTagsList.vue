@@ -49,11 +49,12 @@
       />
     </div>
     <v-data-table-server
+      :aria-busy="busy_fetch"
       v-model:page="page"
       v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
-      :items="busy_fetch || load_failed ? [] : map_tags"
+      :items="load_failed ? [] : map_tags"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :loading="busy_fetch"
@@ -66,6 +67,10 @@
       item-value="id"
       @click:row="(_, row) => showEdit(row.item)"
     >
+      <template v-if="!map_tags?.length" #loading>
+        <b-list-loading-state kind="location" />
+      </template>
+
       <template #item.lat="{ item }">
         <div class="b-map-tags-list__identity">
           <button
@@ -169,67 +174,19 @@
       </template>
       <!-- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty and recovery states ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template #no-data>
-        <div
-          v-if="!busy_fetch"
-          class="sd-modern-empty-state b-map-tags-list__empty"
-          role="status"
-        >
-          <v-icon size="28" aria-hidden="true">{{
-            load_failed
-              ? "error_outline"
-              : appliedSearch
-                ? "search_off"
-                : "add_location_alt"
-          }}</v-icon>
-          <h3>
-            {{
-              $t(
-                load_failed
-                  ? "map_channel.locations_error"
-                  : appliedSearch
-                    ? "map_channel.locations_search_empty"
-                    : "map_channel.locations_empty_title",
-              )
-            }}
-          </h3>
-          <p>
-            {{
-              $t(
-                load_failed
-                  ? "map_channel.locations_error_message"
-                  : appliedSearch
-                    ? "map_channel.locations_search_empty_message"
-                    : "map_channel.locations_empty_message",
-              )
-            }}
-          </p>
-          <v-btn
-            v-if="load_failed"
-            class="sd-modern-button"
-            variant="outlined"
-            @click="fetchLocations"
-            ><v-icon start size="18" aria-hidden="true">refresh</v-icon
-            >{{ $t("map_channel.retry") }}</v-btn
-          >
-          <v-btn
-            v-else-if="appliedSearch"
-            class="sd-modern-button"
-            variant="text"
-            color="primary"
-            @click="clearSearch"
-            >{{ $t("map_channel.clear_search") }}</v-btn
-          >
-          <v-btn
-            v-else-if="writeShopAccess(ShopPermissionRegions.CHANNELS.code)"
-            class="sd-modern-button sd-modern-button--primary"
-            variant="flat"
-            color="primary"
-            @click="showAdd"
-            ><v-icon start size="18" aria-hidden="true">add</v-icon
-            >{{ $t("map_channel.add_location") }}</v-btn
-          >
-        </div>
-      </template>
+  <b-list-empty-state v-if="emptyStateLoaded && !busy_fetch && !load_failed" kind="location" class="b-map-tags-list__empty"
+    :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(appliedSearch ? 'map_channel.locations_search_empty' : 'map_channel.locations_empty_title'))"
+    :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(appliedSearch ? 'map_channel.locations_search_empty_message' : 'map_channel.locations_empty_message'))">
+    <v-btn v-if="appliedSearch" class="sd-modern-button" variant="text" color="primary" @click="clearSearch">{{ $t('map_channel.clear_search') }}</v-btn>
+    <v-btn v-else-if="writeShopAccess(ShopPermissionRegions.CHANNELS.code)" class="sd-modern-button sd-modern-button--primary" variant="flat" color="primary" @click="showAdd"><v-icon start size="18" aria-hidden="true">add</v-icon>{{ $t('map_channel.add_location') }}</v-btn>
+  </b-list-empty-state>
+  <div v-else-if="!busy_fetch && load_failed" class="sd-modern-empty-state b-map-tags-list__empty" role="alert">
+    <v-icon size="28" aria-hidden="true">error_outline</v-icon>
+    <h3>{{ $t('map_channel.locations_error') }}</h3>
+    <p>{{ $t('map_channel.locations_error_message') }}</p>
+    <v-btn class="sd-modern-button" variant="outlined" @click="fetchLocations"><v-icon start size="18" aria-hidden="true">refresh</v-icon>{{ $t('map_channel.retry') }}</v-btn>
+  </div>
+</template>
       <template #bottom>
         <footer class="sd-modern-table-footer b-map-tags-list__footer">
           <span role="status">{{
@@ -261,6 +218,8 @@
   />
 </template>
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
 import { throttle } from "lodash-es";
@@ -271,11 +230,14 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 export default {
   name: "BMapTagsList",
   mixins: [DateMixin],
-  components: { BMapTagAdd },
+  components: {
+    BListLoadingState,
+    BListEmptyState, BMapTagAdd },
   props: { shop: { required: true, type: Object } },
   data: () => ({
     // ―――――――― 🗘 Sync locations list ――――――――
     busy_fetch: false,
+    emptyStateLoaded: false,
     load_failed: false,
     map_tags: [],
     search: "",
@@ -430,6 +392,7 @@ export default {
       this.search = "";
     },
     async fetchLocations() {
+      this.emptyStateLoaded = false;
       const shopId = this.shop.id;
       if (!shopId) return;
       const key = this.requestKey,
@@ -466,6 +429,7 @@ export default {
           return;
         }
         this.map_tags = data.map_tags;
+        this.emptyStateLoaded = true;
       } catch (error) {
         if (
           revision !== this.requestRevision ||

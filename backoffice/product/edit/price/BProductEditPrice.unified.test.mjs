@@ -51,6 +51,15 @@ function evaluate(source, dependency, globals = {}) {
   });
   return exports;
 }
+const calendarModule = evaluate(
+  readFileSync(new URL('../../../../../core-js/enums/language/Calendar.ts', import.meta.url), 'utf8'),
+  name => { throw new Error('Unexpected calendar dependency ' + name); },
+);
+const dateModule = evaluate(
+  readFileSync(new URL('../../../../../core-js/helper/date/DateConverter.ts', import.meta.url), 'utf8'),
+  name => { if (name.includes('Calendar')) return calendarModule; throw new Error('Unexpected date dependency ' + name); },
+  { window: {}, Date, Intl },
+);
 function product(values = {}) {
   const result = {
     id: 31,
@@ -171,6 +180,7 @@ function environment(overrides = {}) {
     if (name.includes("/Currency")) return { Currency };
     if (name.includes("PricingTypes")) return { PricingTypes };
     if (name.includes("ProductType")) return { ProductType };
+    if (name.includes("DateConverter")) return dateModule;
     if (name.includes("ColorGenerator"))
       return { standardDesignColor: ["blue"] };
     if (name.includes("PriceHelper"))
@@ -273,6 +283,7 @@ function environment(overrides = {}) {
       "v-radio",
       "v-radio-group",
       "v-tooltip",
+      "v-progress-linear",
       "v-btn-toggle",
       "v-divider",
       "u-widget-header",

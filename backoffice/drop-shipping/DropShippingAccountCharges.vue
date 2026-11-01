@@ -13,13 +13,15 @@
   -->
 
 <template>
-  <div class="widget-box -large">
+  <div class="widget-box -large s-table-loading">
     <u-widget-header icon="paid" title="Wallet top-ups"></u-widget-header>
     <v-list-subheader>
       This is the list of all transactions between you and the wholesaler in this wallet.
     </v-list-subheader>
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && charges?.length" kind="payment" compact class="sd-modern-list-refresh" />
     <v-data-table-server
+      :aria-busy="busy_fetch"
+      :loading="busy_fetch"
         :mobile="$vuetify.display.xs"
       v-model:options="options"
       v-model:page="page"
@@ -41,22 +43,12 @@
       item-key="id"
       style="width: 100%"
     >
-      <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
-      <template v-slot:no-data>
-        <div v-if="!busy_fetch" class="py-5 usn text-center fadeIn">
-          <img
-            :src="require('../../assets/guides/transactions-empty.png')"
-            class="m-3 op-0-3"
-            style="max-height: 400px; object-fit: contain"
-            width="85%"
-          />
-          <h2 class="text-h4 font-weight-thin">No top-up records.</h2>
-        </div>
-        <div v-else class="text-center px-3 py-5 text-muted">
-          <v-icon class="me-1">sentiment_dissatisfied</v-icon>
-          {{ $t("global.commons.no_data") }}
-        </div>
+      <template v-if="!charges?.length" #loading>
+        <b-list-loading-state kind="payment" />
       </template>
+
+      <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
+      <template v-slot:no-data><b-list-empty-state v-if="emptyStateLoaded && !busy_fetch" kind="payment" :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t('dashboard_empty_state.context.topups.title'))" :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t('dashboard_empty_state.context.topups.description'))" /></template>
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
       <template v-slot:item.price="{ item }">
@@ -92,6 +84,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
@@ -99,7 +93,9 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 export default {
   name: "DropShippingAccountCharges",
   mixins: [DateMixin ],
-  components: {},
+  components: {
+    BListLoadingState,
+    BListEmptyState,},
   props: {
     shop: {
       required: true,
@@ -114,6 +110,8 @@ export default {
 
   data: () => ({
     busy_fetch: false,
+    emptyStateLoaded: false,
+    emptyStateRequest: 0,
 
     charges: [],
 
@@ -173,9 +171,11 @@ export default {
 
   methods: {
     fetchResellerAccountCharges(page, sortBy, sortDesc = true) {
+      const emptyRequest = ++this.emptyStateRequest;
       this.page = page;
 
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
 
       axios
         .get(
@@ -193,14 +193,18 @@ export default {
           },
         )
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.totalItems = data.total;
           this.charges = data.charges;
+          this.emptyStateLoaded = Array.isArray(data.charges);
         })
         .catch((error) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy_fetch = false;
         });
     },

@@ -13,7 +13,11 @@
   -->
 
 <template>
-  <div v-if="modern" class="s--shop-dashboard-finance-modern text-start">
+  <div
+    v-if="modern"
+    class="s--shop-dashboard-finance-modern text-start"
+    :dir="$vuetify.locale.isRtl ? 'rtl' : 'ltr'"
+  >
     <section class="sd-modern-widget">
       <header class="sd-modern-header">
         <div class="sd-modern-title">
@@ -205,10 +209,14 @@
       <header class="sd-modern-header">
         <div class="sd-modern-title">
           <span class="sd-modern-icon sd-modern-icon--plain"
-            ><v-icon icon="multiline_chart" size="20" aria-hidden="true"
+            ><b-dashboard-shop-finance-icon
+              name="ChartNoAxesCombined"
+              :size="18"
           /></span>
           <div>
-            <h2 class="sd-modern-title-text">
+            <h2
+              class="sd-modern-title-text s--shop-dashboard-finance-modern__refined-title"
+            >
               {{ $t("admin_shop.dashboard.modern.finance_activity_title") }}
             </h2>
             <p class="sd-modern-subtitle">
@@ -222,6 +230,7 @@
         multiple
         class="s--shop-dashboard-finance-modern__modes"
         selected-class="s--shop-dashboard-finance-modern__selected"
+        :aria-label="$t('admin_shop.dashboard.modern.finance_activity_title')"
       >
         <v-btn
           v-for="measure in amount_measures"
@@ -229,50 +238,59 @@
           :value="measure.key"
           variant="text"
           class="sd-modern-button"
-          :prepend-icon="
-            mode_funnel.includes(measure.key) ? 'check' : undefined
-          "
+          :aria-pressed="mode_funnel.includes(measure.key)"
         >
+          <template #prepend>
+            <b-dashboard-shop-finance-icon :name="measure.icon" :size="17" />
+          </template>
           {{ $t(measure.label) }}
-          <v-tooltip
-            activator="parent"
-            location="top"
-            open-on-focus
-            content-class="sd-modern-tooltip text-start"
-            >{{ $t(measure.label) }}</v-tooltip
-          >
+          <template #append>
+            <b-dashboard-shop-finance-icon
+              name="Check"
+              :size="12"
+              class="s--shop-dashboard-finance-modern__mode-check"
+              :class="{ '--selected': mode_funnel.includes(measure.key) }"
+            />
+          </template>
         </v-btn>
         <v-btn
           value="count"
           variant="text"
           class="sd-modern-button"
-          :prepend-icon="mode_funnel.includes('count') ? 'check' : undefined"
+          :aria-pressed="mode_funnel.includes('count')"
         >
+          <template #prepend>
+            <b-dashboard-shop-finance-icon name="Boxes" :size="17" />
+          </template>
           {{ $t("admin_shop.dashboard.finance.sell_count") }}
-          <v-tooltip
-            activator="parent"
-            location="top"
-            open-on-focus
-            content-class="sd-modern-tooltip text-start"
-            >{{
-              $t("admin_shop.dashboard.finance.sell_count_chart_title")
-            }}</v-tooltip
-          >
+          <template #append>
+            <b-dashboard-shop-finance-icon
+              name="Check"
+              :size="12"
+              class="s--shop-dashboard-finance-modern__mode-check"
+              :class="{ '--selected': mode_funnel.includes('count') }"
+            />
+          </template>
         </v-btn>
       </v-btn-toggle>
+      <p v-if="!mode_funnel.length" class="sd-modern-empty-state">
+        {{ $t("admin_shop.dashboard.modern.finance_select_measure") }}
+      </p>
       <template v-for="measure in amount_measures" :key="measure.key">
         <section
           v-if="mode_funnel.includes(measure.key)"
           class="s--shop-dashboard-finance-modern__history"
         >
           <h3 class="s--shop-dashboard-finance-modern__section-title">
+            <b-dashboard-shop-finance-icon :name="measure.icon" :size="16" />
             {{ $t(measure.label) }}
           </h3>
           <s-chart-funnel-finance
+            :modern="true"
             :shop="shop"
             :time-series="timeSeries"
             :finance-key="measure.key"
-            class="s--shop-dashboard-finance-modern__native-chart"
+            class="s--shop-dashboard-finance-modern__native-chart sd-modern-chart-colors"
           />
         </section>
       </template>
@@ -281,6 +299,7 @@
         class="s--shop-dashboard-finance-modern__history"
       >
         <h3 class="s--shop-dashboard-finance-modern__section-title">
+          <b-dashboard-shop-finance-icon name="Boxes" :size="16" />
           {{ $t("admin_shop.dashboard.finance.sell_count_chart_title") }}
         </h3>
         <s-chart-funnel-data
@@ -297,327 +316,213 @@
           :sub-label-images="subLabelImages"
           :sub-labels="subLabels"
           :time-series="timeSeries"
-          class="s--shop-dashboard-finance-modern__native-chart"
+          class="s--shop-dashboard-finance-modern__native-chart sd-modern-chart-colors"
         />
       </section>
     </section>
-    <s-widget-box
-      :h100="!modern"
-      :class="{ 'sd-modern-widget': modern }"
-      :color="modern ? 'rgb(var(--v-theme-surface))' : '#f0f0f0'"
-      :dark="modern && $vuetify.theme.current.dark"
-      :icon-to="modern ? undefined : { name: 'BPageShopFinanceGateways' }"
-      :title="
-        modern ? undefined : $t('admin_shop.dashboard.finance.active_gateways')
-      "
-      class="mb-5"
-      :icon="modern ? undefined : 'payment'"
-      :sub-title="
-        modern
-          ? undefined
-          : 'This is a compilation of payment gateways integrated into your store. Customers have the option to make payments in any currency through a single payment gateway. Employ multiple gateways for various currencies only if you wish to establish distinct pricing for each currency.'
-      "
-    >
-      <template v-if="modern" v-slot:actions>
-        <header class="sd-modern-header">
-          <div class="sd-modern-title">
-            <span class="sd-modern-icon sd-modern-icon--plain"
-              ><v-icon icon="payment" size="20" aria-hidden="true"
-            /></span>
-            <div>
-              <h2 class="sd-modern-title-text">
-                {{ $t("admin_shop.dashboard.modern.finance_methods_title") }}
-              </h2>
-              <p class="sd-modern-subtitle">
-                {{ $t("admin_shop.dashboard.modern.gateways_hint") }}
-              </p>
-            </div>
+    <section class="sd-modern-widget s--shop-dashboard-finance-modern__methods">
+      <header class="sd-modern-header">
+        <div class="sd-modern-title">
+          <span class="sd-modern-icon sd-modern-icon--plain">
+            <b-dashboard-shop-finance-icon name="Network" :size="18" />
+          </span>
+          <div>
+            <h2
+              class="sd-modern-title-text s--shop-dashboard-finance-modern__refined-title"
+            >
+              {{ $t("admin_shop.dashboard.modern.finance_methods_title") }}
+            </h2>
+            <p class="sd-modern-subtitle">
+              {{ $t("admin_shop.dashboard.modern.finance_methods_subtitle") }}
+            </p>
           </div>
+        </div>
+        <v-btn
+          :to="{ name: 'BPageShopFinanceGateways' }"
+          :active="false"
+          class="sd-modern-button sd-modern-button--inline text-primary s--shop-dashboard-finance-modern__manage-methods"
+          variant="text"
+        >
+          <template #prepend>
+            <b-dashboard-shop-finance-icon name="Settings2" :size="16" />
+          </template>
+          {{ $t("admin_shop.dashboard.modern.finance_manage_methods") }}
+        </v-btn>
+      </header>
+      <div class="s--shop-dashboard-finance-modern__methods-toolbar">
+        <div class="s--shop-dashboard-finance-modern__shop-currencies">
+          <span v-for="item in currencies" :key="item.code">
+            <u-currency-icon :currency="item" flag small />
+            <span>{{ getCurrencyName(item.code) }}</span>
+          </span>
           <v-btn
-            :to="{ name: 'BPageShopFinanceGateways' }"
-            class="sd-modern-button"
-            variant="text"
+            :to="{ name: 'BPageShopFinanceExchange' }"
             :active="false"
-            prepend-icon="settings"
-            :aria-label="$t('admin_shop.dashboard.finance.active_gateways')"
+            icon
+            class="sd-modern-icon-button"
+            :aria-label="$t('admin_shop.dashboard.info.currencies')"
             v-tooltip="{
-              text: $t('admin_shop.dashboard.finance.active_gateways'),
+              text: $t('admin_shop.dashboard.info.currencies'),
               location: 'top',
               contentClass: 'sd-modern-tooltip text-start',
               openOnFocus: true,
             }"
+            variant="text"
           >
-            {{ $t("admin_shop.dashboard.modern.finance_manage_methods") }}
+            <b-dashboard-shop-finance-icon name="Settings2" :size="16" />
           </v-btn>
-        </header>
-      </template>
-      <v-row class="my-2" no-gutters>
-        <v-chip
-          v-for="item in currencies"
-          :key="item.code"
-          class="ma-1"
-          :color="modern ? undefined : '#111'"
-          :variant="modern ? 'text' : 'outlined'"
-        >
-          <u-currency-icon
-            :currency="item"
-            class="ms-n1"
-            flag
-            small
-          ></u-currency-icon>
-
-          <span class="small ms-1">{{ getCurrencyName(item.code) }}</span>
-        </v-chip>
-
-        <v-btn
-          :to="{ name: 'BPageShopFinanceExchange' }"
-          icon
-          :class="{ 'sd-modern-icon-button': modern }"
-          :aria-label="$t('admin_shop.dashboard.info.currencies')"
-          v-tooltip="{
-            text: $t('admin_shop.dashboard.info.currencies'),
-            location: 'top',
-            contentClass: 'sd-modern-tooltip text-start',
-            openOnFocus: true,
-          }"
-          variant="text"
-        >
-          <v-icon>more_horiz</v-icon>
-        </v-btn>
-      </v-row>
-
+        </div>
+        <span class="s--shop-dashboard-finance-modern__methods-count">
+          {{
+            $t("admin_shop.dashboard.modern.finance_methods_summary", {
+              currencies: gateway_groups.length,
+              services: shopGateways.length,
+            })
+          }}
+        </span>
+      </div>
       <v-btn
         v-if="!currencies.length"
         :to="{ name: 'BPageShopFinanceExchange' }"
-        :color="modern ? 'primary' : 'red'"
-        :class="{ 'sd-modern-button': modern }"
-        :variant="modern ? 'text' : 'flat'"
-        v-tooltip="{
-          text: $t('admin_shop.dashboard.info.currencies_alert'),
-          location: 'top',
-          contentClass: 'sd-modern-tooltip text-start',
-          openOnFocus: true,
-        }"
+        color="primary"
+        class="sd-modern-button mb-4"
+        variant="text"
+        prepend-icon="add"
       >
-        <v-icon :color="modern ? undefined : '#fff'"> add</v-icon>
-        <span :class="{ 'text-white': !modern }">
-          {{ $t("admin_shop.dashboard.info.currencies_alert") }}
-        </span>
+        {{ $t("admin_shop.dashboard.info.currencies_alert") }}
       </v-btn>
-
-      <v-data-table
-        :group-by="[
-          {
-            key: 'currency',
-            order: 'asc',
-          },
-        ]"
-        :headers="gateway_headers"
-        :items="_shop_gateways"
-        :items-per-page="100"
-        class="bg-transparent"
-        :class="{ 'sd-modern-data-table': modern }"
-        item-key="id"
+      <div
+        v-if="gateway_groups.length"
+        class="s--shop-dashboard-finance-modern__gateway-tree"
       >
-        <template
-          v-slot:group-header="{ item, columns, toggleGroup, isGroupOpen }"
+        <div
+          v-for="(column, columnIndex) in gateway_columns"
+          :key="columnIndex"
+          class="s--shop-dashboard-finance-modern__gateway-column"
         >
-          <tr>
-            <td v-if="modern" :colspan="columns.length" class="pa-0">
-              <button
-                type="button"
-                :aria-expanded="isGroupOpen(item)"
-                class="s--shop-dashboard-finance-modern__gateway-group text-start"
-                v-tooltip="{
-                  text: getCurrencyName(item.value),
-                  location: 'top',
-                  contentClass: 'sd-modern-tooltip text-start',
-                  openOnFocus: true,
-                }"
-                @click="toggleGroup(item)"
-              >
-                <u-currency-icon :currency="item.value" flag small />
-                <span
-                  >{{ item.value }} · {{ getCurrencyName(item.value) }}</span
+          <details
+            v-for="group in column"
+            :key="group.code"
+            open
+            class="s--shop-dashboard-finance-modern__gateway-currency"
+          >
+            <summary
+              class="s--shop-dashboard-finance-modern__gateway-group sd-modern-clickable-item"
+            >
+              <u-currency-icon :currency="group.code" flag-only small />
+              <span class="s--shop-dashboard-finance-modern__group-identity">
+                <strong>{{ group.code }}</strong>
+                <small>{{ getCountryFromCurrency(group.code) }}</small>
+              </span>
+              <span class="s--shop-dashboard-finance-modern__group-count">
+                {{
+                  $t("admin_shop.dashboard.modern.finance_enabled_count", {
+                    enabled: group.enabled,
+                    total: group.items.length,
+                  })
+                }}
+              </span>
+              <b-dashboard-shop-finance-icon
+                name="ChevronDown"
+                :size="14"
+                class="s--shop-dashboard-finance-modern__group-chevron"
+              />
+            </summary>
+            <ul class="s--shop-dashboard-finance-modern__gateway-branches">
+              <li v-for="item in group.items" :key="item.id">
+                <router-link
+                  :to="{
+                    name: 'BPageGatewayDashboard',
+                    params: { gateway_code: item.gateway.code },
+                  }"
+                  class="s--shop-dashboard-finance-modern__gateway-row sd-modern-clickable-item"
                 >
-                <span class="s--shop-dashboard-finance-modern__group-providers">
-                  <span
-                    v-for="_g in item.items"
-                    :key="_g.id"
-                    class="d-inline-flex align-center me-3"
-                  >
-                    <img
-                      :src="getShopImagePath(_g.raw.gateway.icon)"
-                      alt=""
-                      width="20"
-                      height="20"
-                      class="me-1"
-                      :class="{
-                        'img-grayscale':
-                          !_g.raw.enable || !_g.raw.gateway.enable,
-                      }"
-                    />
-                    <span>{{ _g.raw.gateway.name }}</span>
+                  <img
+                    :src="getShopImagePath(item.gateway.icon)"
+                    alt=""
+                    width="24"
+                    height="24"
+                    :class="{
+                      'img-grayscale': !item.enable || !item.gateway.enable,
+                    }"
+                  />
+                  <span class="s--shop-dashboard-finance-modern__gateway-copy">
+                    <strong>{{ item.gateway.name }}</strong>
+                    <span
+                      class="s--shop-dashboard-finance-modern__gateway-meta"
+                    >
+                      <span>{{
+                        $t(
+                          item.gateway.cod
+                            ? "global.commons.COD"
+                            : item.gateway.cash
+                              ? "global.commons.cash"
+                              : item.gateway.dir
+                                ? "global.commons.dir_payment"
+                                : "global.commons.online",
+                        )
+                      }}</span>
+                      <span aria-hidden="true">·</span>
+                      <span class="sd-modern-status sd-modern-status--plain">
+                        <span
+                          class="sd-modern-status__dot"
+                          :class="
+                            item.livemode
+                              ? 'sd-modern-status__dot--success'
+                              : 'sd-modern-status__dot--warning'
+                          "
+                        />
+                        {{
+                          $t(
+                            item.livemode
+                              ? "admin_shop.dashboard.modern.live_mode"
+                              : "admin_shop.dashboard.modern.debug_mode",
+                          )
+                        }}
+                      </span>
+                      <span
+                        v-if="!item.gateway.enable"
+                        class="sd-modern-status sd-modern-status--plain"
+                      >
+                        <span
+                          class="sd-modern-status__dot sd-modern-status__dot--error"
+                        />
+                        {{
+                          $t(
+                            "admin_shop.dashboard.modern.gateway_globally_disabled",
+                          )
+                        }}
+                      </span>
+                    </span>
                   </span>
-                </span>
-                <small>{{ getCountryFromCurrency(item.value) }}</small>
-                <v-icon size="small">{{
-                  isGroupOpen(item) ? "expand_less" : "expand_more"
-                }}</v-icon>
-              </button>
-            </td>
-            <td v-else :colspan="columns.length - 1">
-              <VBtn
-                :icon="isGroupOpen(item) ? '$expand' : '$next'"
-                class="me-2"
-                size="small"
-                variant="text"
-                @click="toggleGroup(item)"
-              ></VBtn>
-
-              <u-currency-icon
-                :currency="item.value"
-                flag
-                small
-              ></u-currency-icon>
-
-              <b class="small ms-1 me-3">{{ getCurrencyName(item.value) }}</b>
-
-              <v-chip
-                v-for="_g in item.items"
-                :key="_g.id"
-                :variant="
-                  _g.raw.enable && _g.raw.gateway.enable ? 'text' : 'plain'
-                "
-                class="ma-1"
-                color="#111"
-              >
-                <v-img
-                  :src="getShopImagePath(_g.raw.gateway.icon)"
-                  class="me-1"
-                  height="24"
-                  width="24"
-                ></v-img>
-
-                <b class="small ms-1">{{ _g.raw.gateway.name }}</b>
-              </v-chip>
-            </td>
-
-            <td v-if="!modern" class="text-end" colspan="1">
-              <small>
-                {{ getCountryFromCurrency(item.value) }}
-              </small>
-            </td>
-          </tr>
-        </template>
-
-        <template v-slot:item.name="{ item }">
-          <img
-            :class="{ 'img-grayscale': !item.enable }"
-            :src="getShopImagePath(item.gateway.icon)"
-            class="m-2 rounded-8px"
-            height="24px"
-            width="auto"
-          />
-
-          {{ item.gateway.name }}
-        </template>
-
-        <template v-slot:item.state="{ item }">
-          <v-chip
-            v-if="!item.gateway.enable"
-            class="ma-1"
-            :color="modern ? undefined : 'red'"
-            size="small"
-            :title="
-              modern
-                ? $t('admin_shop.dashboard.modern.gateway_globally_disabled')
-                : 'This payment globally disabled on Selldone.'
-            "
-            :variant="modern ? 'text' : 'flat'"
-          >
-            <v-icon start :color="modern ? 'error' : undefined">warning</v-icon>
-            {{
-              modern
-                ? $t("admin_shop.dashboard.modern.gateway_globally_disabled")
-                : "Globally Disabled"
-            }}
-          </v-chip>
-
-          <v-chip
-            v-if="item.livemode"
-            class="ma-1"
-            :color="modern ? undefined : 'green'"
-            size="small"
-            :variant="modern ? 'text' : 'flat'"
-          >
-            <v-icon start :color="modern ? 'success' : undefined">paid</v-icon>
-            {{
-              modern ? $t("admin_shop.dashboard.modern.live_mode") : "Live Mode"
-            }}
-          </v-chip>
-          <v-chip
-            v-else
-            class="ma-1"
-            :color="modern ? undefined : 'orange'"
-            size="small"
-            :variant="modern ? 'text' : 'flat'"
-          >
-            <v-icon start>science</v-icon>
-            {{
-              modern
-                ? $t("admin_shop.dashboard.modern.debug_mode")
-                : "Debug Mode"
-            }}
-          </v-chip>
-        </template>
-        <template v-slot:item.type="{ item }">
-          {{
-            item.gateway.cod
-              ? $t("global.commons.COD")
-              : item.gateway.cash
-                ? $t("global.commons.cash")
-                : item.gateway.dir
-                  ? $t("global.commons.dir_payment")
-                  : $t("global.commons.online")
-          }}
-        </template>
-        <template v-slot:item.enable="{ item }">
-          <v-chip
-            :color="modern ? undefined : '#333'"
-            :variant="modern ? 'text' : 'tonal'"
-            size="small"
-          >
-            <v-icon v-if="item.enable" color="success" size="x-small" start
-              >lens
-            </v-icon>
-            <v-icon v-else color="red" size="x-small" start>lens</v-icon>
-            {{ $t(item.enable ? "global.active" : "global.inactive") }}
-          </v-chip>
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <v-btn
-            :to="{
-              name: 'BPageGatewayDashboard',
-              params: { gateway_code: item.gateway.code },
-            }"
-            :color="modern ? undefined : 'primary'"
-            :active="modern ? false : undefined"
-            :class="{ 'sd-modern-button sd-modern-button--inline': modern }"
-            variant="text"
-            v-tooltip="{
-              text: $t('global.actions.edit'),
-              location: 'top',
-              contentClass: 'sd-modern-tooltip text-start',
-              openOnFocus: true,
-            }"
-          >
-            <v-icon class="me-1" start>edit</v-icon>
-            {{ $t("global.actions.edit") }}
-          </v-btn>
-        </template>
-      </v-data-table>
-    </s-widget-box>
+                  <span
+                    class="sd-modern-status sd-modern-status--plain s--shop-dashboard-finance-modern__gateway-state"
+                  >
+                    <span
+                      class="sd-modern-status__dot"
+                      :class="
+                        item.enable
+                          ? 'sd-modern-status__dot--success'
+                          : 'sd-modern-status__dot--error'
+                      "
+                    />
+                    {{ $t(item.enable ? "global.active" : "global.inactive") }}
+                  </span>
+                  <b-dashboard-shop-finance-icon
+                    name="ChevronRight"
+                    :size="14"
+                    class="s--shop-dashboard-finance-modern__gateway-arrow"
+                  />
+                </router-link>
+              </li>
+            </ul>
+          </details>
+        </div>
+      </div>
+      <p v-else class="sd-modern-empty-state">
+        {{ $t("admin_shop.dashboard.modern.finance_no_methods") }}
+      </p>
+    </section>
   </div>
 
   <template v-else>
@@ -1118,12 +1023,14 @@ import SChartFunnelData from "../../../chart/funnel/data/SChartFunnelData.vue";
 import SChartFunnelFinance from "../../../chart/funnel/finance/SChartFunnelFinance.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import BDashboardShopFinanceIcon from "./BDashboardShopFinanceIcon.vue";
 
 export default {
   name: "BDashboardShopFinance",
   mixins: [DateMixin, CurrencyMixin],
 
   components: {
+    BDashboardShopFinanceIcon,
     UChartDonut,
     BDashboardShopPerformanceOrders,
     BDashboardShopPerformancePayments,
@@ -1210,11 +1117,20 @@ export default {
     },
     amount_measures() {
       return [
-        { key: "pay", label: "admin_shop.dashboard.finance.pay_amount" },
-        { key: "sell", label: "admin_shop.dashboard.finance.sell_amount" },
+        {
+          key: "pay",
+          label: "admin_shop.dashboard.finance.pay_amount",
+          icon: "Wallet",
+        },
+        {
+          key: "sell",
+          label: "admin_shop.dashboard.finance.sell_amount",
+          icon: "ShoppingBag",
+        },
         {
           key: "discount",
           label: "admin_shop.dashboard.finance.discount_amount",
+          icon: "BadgePercent",
         },
       ];
     },
@@ -1225,6 +1141,29 @@ export default {
           currency: item.gateway.currency,
         };
       });
+    },
+    gateway_groups() {
+      const groups = new Map();
+      for (const item of this._shop_gateways) {
+        if (!groups.has(item.currency)) {
+          groups.set(item.currency, {
+            code: item.currency,
+            items: [],
+            enabled: 0,
+          });
+        }
+        const group = groups.get(item.currency);
+        group.items.push(item);
+        if (item.enable) group.enabled++;
+      }
+      return [...groups.values()].sort((a, b) => a.code.localeCompare(b.code));
+    },
+    gateway_columns() {
+      const middle = Math.ceil(this.gateway_groups.length / 2);
+      return [
+        this.gateway_groups.slice(0, middle),
+        this.gateway_groups.slice(middle),
+      ];
     },
 
     todayDataOffset() {
@@ -1450,17 +1389,65 @@ export default {
     font-weight: 400;
   }
   &__modes {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
     height: auto;
-    flex-wrap: wrap;
-    gap: 8px;
+    padding: 6px;
+    gap: 6px;
+    border-radius: 11px;
+    background: var(--sd-modern-inset);
     overflow: visible;
   }
+  &__refined-title {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: -0.2px;
+  }
+  &__manage-methods {
+    min-height: 36px;
+    font-size: 12px;
+    line-height: 18px;
+  }
   &__modes > .v-btn {
-    border-radius: 9px !important;
-    font-weight: 400;
+    min-width: 0;
+    min-height: 42px;
+    height: auto;
+    padding: 8px !important;
+    border: 1px solid transparent;
+    border-radius: 7px !important;
+    color: var(--sd-modern-muted);
+    font-family: inherit;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 18px;
+    white-space: normal;
+  }
+  &__modes :deep(.v-btn__content) {
+    font: inherit;
+    white-space: normal;
+  }
+  &__modes :deep(.v-btn__prepend) {
+    margin-inline: 0 7px;
+  }
+  &__modes :deep(.v-btn__append) {
+    margin-inline: 7px 0;
   }
   &__selected {
-    background: rgba(var(--v-theme-on-surface), 0.06);
+    color: rgb(var(--v-theme-on-surface)) !important;
+    border-color: var(--sd-modern-border) !important;
+    background: rgb(var(--v-theme-surface));
+    box-shadow: var(--sd-modern-selected-shadow);
+  }
+  &__selected :deep(.v-btn__overlay) {
+    opacity: 0 !important;
+  }
+  &__mode-check {
+    visibility: hidden;
+    &.--selected {
+      visibility: visible;
+    }
   }
   &__history {
     margin-block-start: 24px;
@@ -1469,9 +1456,22 @@ export default {
     min-width: 0;
   }
   &__section-title {
-    margin: 0 0 16px;
-    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 12px;
+    font-family: inherit;
+    font-size: 14px;
     font-weight: 500;
+    line-height: 21px;
+    > svg {
+      color: var(--sd-modern-muted);
+    }
+  }
+  &__modes + &__history {
+    margin-block-start: 26px;
+    padding-block-start: 0;
+    border-block-start: 0;
   }
   &__native-chart :deep(.rounded-toggles) {
     height: auto;
@@ -1497,30 +1497,223 @@ export default {
     opacity: 0;
   }
   &__gateway-group {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 44px;
+    padding: 6px 12px;
+    border-radius: 9px;
+    background: var(--sd-modern-inset);
+    list-style: none;
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+  &__methods {
+    --sd-finance-tree-line: rgba(var(--v-theme-on-surface), 0.2);
+    container: sd-finance-methods / inline-size;
+  }
+  &__methods-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-block: 20px 16px;
+  }
+  &__shop-currencies {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
-    width: 100%;
-    min-height: 48px;
-    padding: 10px 14px;
-    background: var(--sd-modern-inset);
-    font-size: 13px;
-    font-weight: 400;
+    gap: 8px 14px;
+    > span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+    }
   }
-  &__gateway-group:hover {
-    background: rgba(var(--v-theme-on-surface), 0.05);
-  }
-  &__gateway-group:focus-visible {
-    outline: 2px solid rgb(var(--v-theme-primary));
-    outline-offset: -3px;
-  }
-  &__group-providers {
-    display: flex;
-    flex: 1 1 180px;
-    flex-wrap: wrap;
-    gap: 8px;
+  &__methods-count {
     color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 18px;
+  }
+  &__gateway-tree {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+  &__gateway-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+  &__gateway-currency {
+    min-width: 0;
+  }
+  &__group-identity {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+    flex: 1;
+    min-width: 0;
+    strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 21px;
+    }
+    small {
+      display: block;
+      color: var(--sd-modern-muted);
+      font-size: 12px;
+      line-height: 18px;
+      overflow-wrap: anywhere;
+    }
+  }
+  &__group-count {
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 18px;
+    text-align: end;
+  }
+  &__group-chevron {
+    color: var(--sd-modern-muted);
+  }
+  &__gateway-currency:not([open]) &__group-chevron {
+    transform: rotate(-90deg);
+    &:dir(rtl) {
+      transform: rotate(90deg);
+    }
+  }
+  &__gateway-branches {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    > li {
+      position: relative;
+      margin-inline-start: 29px;
+      padding-inline-start: 24px;
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        inset-inline-start: 0;
+        pointer-events: none;
+      }
+      &::before {
+        inset-block: 0;
+        border-inline-start: 1.5px solid var(--sd-finance-tree-line);
+      }
+      &:first-child::before {
+        inset-block-start: -4px;
+      }
+      &:last-child::before {
+        inset-block-end: calc(50% + 10px);
+      }
+      &::after {
+        inset-block-start: calc(50% - 10px);
+        width: 24px;
+        height: 10px;
+        border-inline-start: 1.5px solid var(--sd-finance-tree-line);
+        border-block-end: 1.5px solid var(--sd-finance-tree-line);
+        border-end-start-radius: 8px;
+      }
+    }
+  }
+  &__gateway-row {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 4px 12px;
+    border-radius: 8px;
+    color: rgb(var(--v-theme-on-surface));
+    text-decoration: none;
+    > img {
+      flex: 0 0 24px;
+      object-fit: contain;
+    }
+    &:hover {
+      color: rgb(var(--v-theme-on-surface));
+    }
+  }
+  &__gateway-copy {
+    flex: 1;
+    min-width: 0;
+    > strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 20px;
+      overflow-wrap: anywhere;
+    }
+  }
+  &__gateway-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px 5px;
+    margin-block-start: 2px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    :deep(.sd-modern-status) {
+      gap: 4px;
+      font-size: inherit;
+      font-weight: 400;
+      line-height: inherit;
+    }
+    .sd-modern-status__dot {
+      flex-basis: 4px;
+      width: 4px;
+      height: 4px;
+    }
+  }
+  &__gateway-state {
+    flex: 0 0 auto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+  &__gateway-arrow {
+    color: var(--sd-modern-muted);
+    &:dir(rtl) {
+      transform: rotate(180deg);
+    }
+  }
+  &__gateway-group:focus-visible,
+  &__gateway-row:focus-visible,
+  &__modes > .v-btn:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+  @container sd-finance-methods (max-width: 650px) {
+    &__gateway-tree {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+  }
+  @media (pointer: coarse) {
+    &__modes > .v-btn {
+      min-height: 44px;
+    }
+  }
+  @media (max-width: 800px) {
+    &__modes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 400px) {
+    &__gateway-arrow {
+      display: none;
+    }
   }
   @media (max-width: 900px) {
     &__snapshot {

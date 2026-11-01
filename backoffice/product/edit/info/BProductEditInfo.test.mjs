@@ -13,6 +13,11 @@ assert.deepEqual(errors, []);
 const compiled = ts.transpileModule(descriptor.script.content, {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
+const logisticExports = {};
+vm.runInNewContext(ts.transpileModule(readFileSync(new URL("../../../../../core-js/enums/logistic/LogisticProfileType.ts", import.meta.url), "utf8"), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+}).outputText, { exports: logisticExports });
+const { LogisticProfileType } = logisticExports;
 const types = Object.fromEntries(
   ["PHYSICAL", "VIRTUAL", "FILE", "SERVICE", "SUBSCRIPTION"].map((code) => [code, { code, name: code }]),
 );
@@ -56,6 +61,7 @@ function fixture({ type = "PHYSICAL", created = true, modern = true, vendorPanel
       if (name.includes("ProductType")) return { ProductType: types };
       if (name.includes("ProductCondition")) return { ProductCondition: conditions };
       if (name.includes("ProductStatus")) return { ProductStatus: statuses };
+      if (name.includes("LogisticProfileType")) return { LogisticProfileType };
       if (name.includes("BusinessModel")) return { BusinessModel: { MARKETPLACE: { code: "MARKETPLACE" } } };
       if (name.includes("ShopLicense")) return { ShopLicense: { COMPANY: { code: "COMPANY" }, ENTERPRISE: { code: "ENTERPRISE" } } };
       if (name.includes("BuyButtonHelper")) return { BuyButtonHelper: { ExtractIconCaption: (value) => value } };
@@ -173,6 +179,60 @@ test("profile digests follow selected IDs without displaying stale profile metad
   assert.doesNotMatch(state.profilesDigest, /Local tax|Warehouse|Furniture/);
   state.$product.type = "SERVICE";
   assert.doesNotMatch(state.profilesDigest, /digest_property|#10/);
+});
+
+test("assigned profile markers follow live IDs and distinguish all four logistic assignments", () => {
+  const { state, requests } = fixture({ product: {
+    warranty_profile: { id: 1, name: "Stale warranty" }, tax_profile: { id: 7 },
+    map: { id: 3, title: "Stale location" }, property_set: { id: 4, title: "Stale set" },
+  } });
+  assert.deepEqual(plain(state.assignedProfileIcons), [], "Metadata alone does not imply an assignment");
+  const expected = [
+    ["warranty_id", "ShieldCheck", LogisticProfileType.WARRANTY.title],
+    ["return_policy_id", "Undo2", LogisticProfileType.RETURN_POLICY.title],
+    ["guide_id", "BookOpen", LogisticProfileType.GUIDE.title],
+    ["shipping_id", "Truck", LogisticProfileType.SHIPPING.title],
+  ];
+  for (const [key] of expected) state.$product[key] = 12;
+  assert.deepEqual(plain(state.assignedProfileIcons.map(({ key, icon, title }) => [key, icon, title])), expected);
+  for (const [key] of expected) {
+    state.$product[key] = null;
+    assert.equal(state.assignedProfileIcons.some(item => item.key === key), false);
+    state.$product[key] = 24;
+    assert.equal(state.assignedProfileIcons.some(item => item.key === key), true);
+  }
+  assert.equal(requests.length, 0);
+});
+
+test("tax summary uses the current string-safe selection and preserves custom or fallback icons", () => {
+  const { state } = fixture({ shop: { tax_profiles: [{ id: 7, name: "Current tax", icon: "account_balance" }] },
+    product: { tax_id: "7" } });
+  const tax = () => state.assignedProfileIcons.find(item => item.key === "tax_id");
+  assert.equal(tax().materialIcon, "account_balance");
+  assert.equal(tax().title, "global.commons.tax");
+  assert.match(state.profilesDigest, /Current tax/);
+  state.$product.tax_id = "8";
+  assert.equal(tax().icon, "ReceiptText");
+  assert.equal(tax().materialIcon, undefined);
+  assert.doesNotMatch(state.profilesDigest, /Current tax/);
+  state.$product.tax_id = null;
+  assert.equal(tax(), undefined, "A previously loaded tax profile cannot leave a stale assigned marker");
+});
+
+test("location, included items and property-set markers respect current assignments and product types", () => {
+  for (const type of Object.keys(types)) {
+    const { state, requests } = fixture({ type, product: { map_id: 3, includes: [{ id: 5 }], property_set_id: 4 } });
+    const markers = Object.fromEntries(state.assignedProfileIcons.map(item => [item.key, item]));
+    assert.equal(markers.map_id.icon, "MapPin");
+    assert.equal(markers.map_id.title, "product_location_profile.title");
+    assert.equal(markers.includes.icon, "PackageOpen");
+    assert.equal(markers.includes.title, "global.commons.included_in_the_product");
+    assert.equal(!!markers.property_set_id, ["PHYSICAL", "VIRTUAL"].includes(type), type);
+    if (markers.property_set_id) assert.equal(markers.property_set_id.icon, "Layers");
+    Object.assign(state.$product, { map_id: null, includes: [], property_set_id: null });
+    assert.deepEqual(plain(state.assignedProfileIcons), []);
+    assert.equal(requests.length, 0);
+  }
 });
 
 test("vendor digest follows a changed assignment instead of the previous vendor name", () => {

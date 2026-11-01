@@ -837,7 +837,8 @@
       </div>
       <div
         v-else-if="canShowGooglePreview"
-        :class="{ blurred: busy_render_google, 'my-5': !modern }"
+        :class="{ 'my-5': !modern }"
+        :aria-busy="busy_render_google"
         class="seo-preview"
         v-html="rendered_on_google"
       ></div>
@@ -2123,12 +2124,4 @@ export default {
   }
 }
 
-.seo-preview {
-  //animation: blur 1s ease;
-  transition: all 1s;
-
-  &.blurred {
-    filter: blur(6px);
-  }
-}
 </style>

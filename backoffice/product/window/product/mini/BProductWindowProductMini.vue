@@ -274,7 +274,7 @@
   </div>
   <!-- Add Note Button -->
   <b-note-button
-      v-if="showNotes || (product.note && product.note.length)"
+      v-if="!hideActions && (showNotes || (product.note && product.note.length))"
       :activeColor="showNotes ? undefined : '#333'"
       :note="product.note"
       class="position-absolute z2 b-product-window-product-mini__note"
@@ -336,6 +336,7 @@ export default {
   },
   emits: ["select", "onShowNote", "onSelect"],
   props: {
+    hideActions: { type: Boolean, default: false },
     shop: {
       required: true,
       type: Object,

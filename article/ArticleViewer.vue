@@ -245,8 +245,34 @@
       </template>
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Top author info + Edit / Follow / Save ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
+      <slot v-if="helpReaderActive" name="help-reader" v-bind="helpReaderSlot" />
+
+      <section v-if="helpReaderActive && article && helpReaderSlot.canEdit" v-show="in_edit_mode && helpEditorSection === 'settings'" :id="`help-panel-settings-${targetId}`" :role="in_edit_mode ? 'tabpanel' : undefined" :aria-labelledby="in_edit_mode ? `help-tab-settings-${targetId}` : undefined" class="s-article-help-settings text-start" :inert="helpReaderBusy">
+        <div class="s-article-help-settings__publication">
+          <v-select :model-value="published_state" :items="workspace_statuses" :label="$t('global.article.workspace.status')" :disabled="helpReaderBusy || !!schedule_at" variant="underlined" class="sd-modern-underlined-field" hide-details @update:model-value="helpReaderSlot.setPublished" />
+          <v-select :model-value="isPrivate" :items="workspace_visibilities" :label="$t('global.article.workspace.visibility')" :disabled="helpReaderBusy" variant="underlined" class="sd-modern-underlined-field" hide-details @update:model-value="helpReaderSlot.setPrivate" />
+          <u-language-input :model-value="article.lang" :label="$t('global.article.workspace.language')" :disabled="helpReaderBusy || !can_change_article_language" variant="underlined" class="sd-modern-underlined-field" hide-details @update:model-value="helpReaderSlot.setLanguage" />
+        </div>
+        <div class="s-article-help-settings__schedule">
+          <u-date-input :model-value="schedule_at" :label="$t('global.article.schedule_input')" :min="new Date().toISOString()" :disabled="helpReaderBusy" clearable return-utc class="sd-modern-underlined-field" @update:model-value="helpReaderSlot.setScheduleAt" />
+          <v-btn v-if="article.id" variant="text" class="sd-modern-button sd-modern-button--compact" :disabled="helpReaderBusy" prepend-icon="timeline" @click="helpReaderSlot.schedule()">{{ $t('global.article.schedule_view_action') }}</v-btn>
+        </div>
+        <v-row class="s-article-help-settings__placement" dense>
+          <slot name="extra-header-options" :categoryId="category" :setCategoryId="helpReaderSlot.setCategory" :setCategoryObject="helpReaderSlot.setCategoryObject" :clusterId="cluster_id" :setClusterId="helpReaderSlot.setCluster" :menu="menu" :inEditMode="in_edit_mode" :state="state" :onChange="helpReaderSlot.changed" :disabled="helpReaderBusy || !in_edit_mode" />
+        </v-row>
+        <s-article-seo-editor ref="helpSeoEditor" :article="article" :images="images_in_article" workspace :disabled="helpReaderBusy || !in_edit_mode" @change="helpReaderSlot.changed" @open-menu="$refs.editorContainer?.findAllImages()" />
+        <details class="s-article-help-settings__schema">
+          <summary>{{ $t('global.json.structures') }}</summary>
+          <s-article-structured-data :model-value="article.structures" workspace :active="active && in_edit_mode && helpEditorSection === 'settings'" :edit-mode="in_edit_mode && !helpReaderBusy" @update:model-value="helpReaderSlot.setStructures" @pending-change="help_schema_pending = $event" />
+        </details>
+      </section>
+      <s-article-workspace-faqs v-if="helpReaderActive && article && helpReaderSlot.canEdit" :key="'help-faq-' + targetId" v-show="in_edit_mode && helpEditorSection === 'faq'" :id="`help-panel-faq-${targetId}`" :role="in_edit_mode ? 'tabpanel' : undefined" :aria-labelledby="in_edit_mode ? `help-tab-faq-${targetId}` : undefined" :model-value="article.faqs" :active="active && in_edit_mode && helpEditorSection === 'faq'" :edit-mode="in_edit_mode" :disabled="helpReaderBusy" @update:model-value="helpReaderSlot.setFaqs" @pending-change="help_faq_pending = $event" />
+      <section v-if="helpReaderActive && article && helpReaderSlot.canEdit" v-show="in_edit_mode && helpEditorSection === 'languages'" class="s-article-help-languages text-start">
+        <slot name="help-editor-languages" v-bind="helpReaderSlot" />
+      </section>
+
       <v-toolbar
-        v-if="!workspace && USER() && can_edit && canEdit"
+        v-if="!workspace && !helpReaderActive && USER() && can_edit && canEdit"
         extended
         :height="62"
         class="overflow-x-auto"
@@ -613,7 +639,10 @@
       </v-toolbar>
 
       <v-expand-transition>
-        <div v-if="!workspace && in_edit_mode">
+        <component
+          :is="'div'"
+          v-if="!workspace && !helpReaderActive && in_edit_mode"
+        >
           <v-container>
             <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Article Edit Top Menu ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
@@ -894,10 +923,10 @@
               ></slot>
             </v-row>
           </v-container>
-        </div>
+        </component>
       </v-expand-transition>
 
-      <hr v-if="!workspace && canEdit" />
+      <hr v-if="!workspace && !helpReaderActive && canEdit" />
 
       <!-- ――――――――――――――――――――― 🔍 Google search rank ――――――――――――――――――――― -->
       <v-expand-transition v-if="!product_workspace || !productSectionTabs">
@@ -918,7 +947,7 @@
       <!-- ―――――――――――――――――――――――――――――――――――――――――――――――― -->
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-      <div class="samin-article-widget" :class="{ 's-article-workspace__writing': workspace }" :inert="workspace && workspace_busy" v-show="!workspace || ['edit', 'article'].includes(workspaceSection)">
+      <div class="samin-article-widget" :id="helpReaderActive && in_edit_mode ? `help-panel-content-${targetId}` : undefined" :role="helpReaderActive && in_edit_mode ? 'tabpanel' : undefined" :aria-labelledby="helpReaderActive && in_edit_mode ? `help-tab-content-${targetId}` : undefined" :class="{ 's-article-workspace__writing': workspace, 's-article-help-writing': helpReaderActive }" :inert="workspace ? workspace_busy : helpReaderActive && helpReaderBusy" v-show="(!workspace || ['edit', 'article'].includes(workspaceSection)) && (!helpReaderActive || !in_edit_mode || helpEditorSection === 'content')">
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article > Content ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
         <!-- display: inline-block; Bug in flow image correction -->
 
@@ -928,12 +957,16 @@
           ref="editorContainer"
           v-model:body="article.body"
           v-model:title="article.title"
-          :edit="in_edit_mode && (!workspace || workspace_can_write)"
+          :edit="in_edit_mode && (workspace ? workspace_can_write : !helpReaderActive || helpReaderSlot.canEdit)"
           :enable-title="showTitle"
           :has-table-of-content="hasTableOfContent"
           :hide-title="hideTitle"
           :only-view="workspace ? !workspace_can_write : !canEdit"
           :workspace="workspace"
+          :immediate-change="helpReaderActive"
+          :help-editor="helpReaderActive"
+          :article-type="articleType"
+          :article-context="article"
           :product-workspace="product_workspace"
           :language="article.lang"
           :active="active"
@@ -945,6 +978,7 @@
           @update:images="onChangeImages"
           @workspace-busy="workspace_importing = $event"
           @workspace-pending="workspace_import_pending = $event"
+          @pending-change="flowchart_pending = $event"
         >
           <template v-if="workspace && !product_workspace && workspaceSection === 'article'" #before-title>
             <div class="s-article-workspace__metadata" role="group" :aria-label="$t('global.article.workspace.details')">
@@ -970,6 +1004,9 @@
               </dl>
               <span v-if="isNew || workspace_dirty" class="s-article-workspace__metadata-note">{{ $t('global.article.workspace.unsaved') }}</span>
             </div>
+          </template>
+          <template #edit-after-title>
+            <slot v-if="helpReaderActive && in_edit_mode" name="help-editor-introduction" v-bind="helpReaderSlot" />
           </template>
           <template v-slot:after-title>
             <!-- ――――――――――――――――――――― Author Info Small Top ――――――――――――――――――――― -->
@@ -1041,7 +1078,7 @@
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article FAQ ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
             <s-article-faqs
-              v-if="!workspace || workspaceSection === 'article'"
+              v-if="(!workspace || workspaceSection === 'article') && (!helpReaderActive || !in_edit_mode)"
               v-model:faqs="article.faqs"
               :editMode="edit"
               @change="onChangeNote"
@@ -1050,7 +1087,7 @@
 
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Structured Data ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
             <s-article-structured-data
-              v-if="!workspace && in_edit_mode"
+              v-if="!workspace && !helpReaderActive && in_edit_mode"
               v-model="article.structures"
               :editMode="edit"
             ></s-article-structured-data>
@@ -1360,11 +1397,12 @@ export default {
     SArticleWorkspaceComments,
   },
   inject: ["$shop"],
-  emits: ["request-auto-translate", "update-article", "delete", "get-data", "workspace-preview", "workspace-edit", "workspace-dirty", "workspace-busy"],
+  emits: ["request-auto-translate", "update-article", "delete", "get-data", "workspace-preview", "workspace-edit", "workspace-dirty", "workspace-busy", "help-reader-state"],
   props: {
     workspace: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
     workspaceSection: { type: String, default: "edit" },
+    helpEditorSection: { type: String, default: "content", validator: (value) => ['content', 'faq', 'settings', 'languages'].includes(value) },
     productSectionTabs: { type: Boolean, default: false },
     initialArticlePack: {
       required: false,
@@ -1572,6 +1610,9 @@ export default {
 
       //--------------
       busy_fix: false,
+      help_faq_pending: false,
+      help_schema_pending: false,
+      flowchart_pending: false,
       workspace_tools: false,
       workspace_details: false,
       workspace_schedule: false,
@@ -1594,6 +1635,37 @@ export default {
   },
 
   computed: {
+    helpReaderActive() {
+      return !this.workspace && this.articleType === Article.Types.SelldoneHelp.code && !!this.$slots?.['help-reader'];
+    },
+    helpReaderBusy() {
+      return this.inLoading || this.state === 'saving' || this.busy_fix || this.auto_generate_busy || !!this.$refs.editorContainer?.word_import_busy;
+    },
+    helpReaderPending() {
+      return this.help_faq_pending || this.help_schema_pending || this.flowchart_pending;
+    },
+    helpReaderDirty() {
+      return this.helpReaderPending || this.state === 'changed' || this.published_state !== this.article.published || this.isPrivate !== this.article.private || (this.schedule_at !== this.article.schedule_at && this.schedule_at !== (this.article.schedule_at ? this.convertUTCStringToLocalTimeString(this.article.schedule_at) : null));
+    },
+    helpReaderState() {
+      return this.helpReaderActive ? { editing: this.in_edit_mode, showContent: this.showContent, articleIdentity: this.article?.id || null, targetId: this.targetId } : null;
+    },
+    helpReaderSlot() {
+      const context = this.captureHelpReaderContext();
+      const action = (name) => () => this.invokeHelpReaderAction(name, context);
+      const field = (name) => (value) => this.setHelpReaderField(name, value, context);
+      const canEdit = !!this.USER() && this.can_edit && this.canEdit;
+      return {
+        article: this.article, menu: this.menu, editing: this.in_edit_mode, canEdit,
+        canDelete: canEdit && !this.isNew && !!this.article?.id,
+        busy: this.helpReaderBusy, dirty: this.helpReaderDirty, pending: this.helpReaderPending,
+        published: this.published_state, private: this.isPrivate, scheduleAt: this.schedule_at,
+        edit: action('edit'), preview: action('preview'), save: action('save'), discard: action('discard'),
+        delete: action('delete'), schedule: action('schedule'), googleSearch: action('googleSearch'), word: action('word'), autoFix: action('autoFix'), insert: action('insert'),
+        setDescription: field('description'), setPublished: field('published'), setPrivate: field('private'), setLanguage: field('language'), setScheduleAt: field('schedule'),
+        setFaqs: field('faqs'), setStructures: field('structures'), setCategory: field('category'), setCategoryObject: field('categoryObject'), setCluster: field('cluster'), changed: action('changed'),
+      };
+    },
     product_workspace() { return this.workspace && this.articleType === Article.Types.Product.code; },
     hasUnsavedChanges() { return this.workspace_has_changes; },
     workspaceBusy() { return this.workspace_busy; },
@@ -1824,6 +1896,17 @@ export default {
   },
 
   watch: {
+    helpReaderState: {
+      immediate: true,
+      handler(value) { if (value) this.$emit('help-reader-state', value); },
+    },
+    helpEditorSection(value) {
+      if (this.helpReaderActive && this.in_edit_mode && value === 'settings') this.$nextTick(() => {
+        if (!this.helpReaderActive || !this.in_edit_mode || this.helpEditorSection !== 'settings') return;
+        this.$refs.editorContainer?.findAllImages();
+        this.$refs.helpSeoEditor?.refresh();
+      });
+    },
     active(value) {
       if (!this.workspace || value) return;
       this.cancelWorkspaceSetting();
@@ -1842,6 +1925,7 @@ export default {
     },
 
     schedule_at(value) {
+      if (this.helpReaderActive && value === (this.article.schedule_at ? this.convertUTCStringToLocalTimeString(this.article.schedule_at) : null)) return;
       this.state = "changed";
       if (this.workspace && value) this.published_state = false;
     },
@@ -1876,6 +1960,85 @@ export default {
   beforeUnmount() { this._workspaceGeneration++; },
 
   methods: {
+    captureHelpReaderContext() {
+      return this.helpReaderActive ? { generation: this._workspaceGeneration, article: this.article, targetId: this.targetId, type: this.articleType, routeId: String(this.$route.params.help_id || this.targetId).split('-')[0], userId: this.USER_ID() } : null;
+    },
+    helpReaderContextCurrent(context) {
+      return this.helpReaderActive && !!context && context.generation === this._workspaceGeneration && context.article === this.article
+        && context.targetId === this.targetId && context.type === this.articleType
+        && context.routeId === String(this.$route.params.help_id || this.targetId).split('-')[0]
+        && context.routeId === String(this.targetId).split('-')[0] && context.userId === this.USER_ID();
+    },
+    helpReaderContextValid(context) {
+      // Slot callbacks can outlive an article, route, user or authorization change.
+      return this.helpReaderContextCurrent(context) && this.active && this.showContent && !this.helpReaderBusy && !!this.USER() && this.can_edit && this.canEdit;
+    },
+    invokeHelpReaderAction(action, context) {
+      if (!this.helpReaderContextValid(context)) return false;
+      if (this.helpReaderPending && !['discard', 'changed'].includes(action)) return false;
+      if (action === 'edit') this.render_state = 'editing';
+      else if (action === 'preview') {
+        if (!this.in_edit_mode || !this.$refs.editorContainer) return false;
+        if (this.$refs.editorContainer.state === 'changed') {
+          this.article.title = this.$refs.editorContainer.purifyTitle();
+          this.article.body = this.$refs.editorContainer.purifyBody();
+          this.state = 'changed';
+        }
+        this.render_state = 'review';
+      } else if (action === 'save') {
+        if (!this.in_edit_mode || !this.$refs.editorContainer) return false;
+        this.saveChange(() => {
+          if (this.helpReaderContextValid(context)) this.render_state = 'review';
+        });
+      } else if (action === 'discard') {
+        if (this.isNew || !this.article?.id) return false;
+        this.updateArticlePage(true);
+      } else if (action === 'delete') {
+        if (this.isNew || !this.article?.id) return false;
+        this.openDeleteArticleAlert();
+      } else if (action === 'schedule') {
+        if (this.isNew || !this.article?.id) return false;
+        this.showTimeline();
+      } else if (action === 'googleSearch') {
+        if (this.isNew || !this.article?.id || this.IS_VENDOR_PANEL) return false;
+        this.showGoogleSearch();
+      } else if (action === 'word') {
+        if (!this.$refs.editorContainer) return false;
+        this.render_state = 'editing';
+        this.$nextTick(() => {
+          if (this.helpReaderContextValid(context) && this.in_edit_mode) this.$refs.editorContainer?.showSelectWord();
+        });
+      } else if (action === 'autoFix') {
+        if (!this.in_edit_mode || (!this.article?.body?.trim() && this.$refs.editorContainer?.state !== 'changed')) return false;
+        this.autoFixArticle();
+      } else if (action === 'insert') {
+        if (!this.in_edit_mode || this.helpEditorSection !== 'content' || !this.$refs.editorContainer) return false;
+        this.$refs.editorContainer.showProductInsert();
+      } else if (action === 'changed') {
+        if (!this.in_edit_mode) return false;
+        this.onChangeNote();
+      } else return false;
+      return true;
+    },
+    setHelpReaderField(field, value, context) {
+      if (!this.helpReaderContextValid(context) || !this.in_edit_mode) return false;
+      const articleFields = { description: 'description', language: 'lang', faqs: 'faqs', structures: 'structures' };
+      const viewFields = { published: 'published_state', private: 'isPrivate', schedule: 'schedule_at', category: 'category', categoryObject: 'category_obj', cluster: 'cluster_id' };
+      if (!Object.hasOwn(articleFields, field) && !Object.hasOwn(viewFields, field)) return false;
+      if (field === 'description' && (typeof value !== 'string' || value.length > 256)) return false;
+      if (field === 'language' && (!this.can_change_article_language || typeof value !== 'string' || !/^[a-z]{2,3}(?:-[a-z0-9]{2,8})?$/i.test(value))) return false;
+      if (['published', 'private'].includes(field) && typeof value !== 'boolean') return false;
+      if (field === 'published' && this.schedule_at) return false;
+      if (field === 'schedule' && value !== null && value !== '' && (typeof value !== 'string' || !Number.isFinite(Date.parse(value)))) return false;
+      if (['faqs', 'structures'].includes(field) && !Array.isArray(value)) return false;
+      if (field === 'faqs' && this.helpEditorSection !== 'faq') return false;
+      if (field === 'structures' && this.helpEditorSection !== 'settings') return false;
+      const target = Object.hasOwn(articleFields, field) ? this.article : this;
+      const key = articleFields[field] || viewFields[field];
+      if (!key) return false;
+      if (target[key] !== value) { target[key] = value; this.onChangeNote(); }
+      return true;
+    },
     onProductPanelToggle(key, event) {
       this.product_panels[key] = !!event.target.open;
       if (key === 'seo' && this.product_panels.seo) this.$nextTick(() => this.$refs.editorContainer?.findAllImages());
@@ -2026,7 +2189,10 @@ export default {
 
     saveChange(callback_success = null) {
       if (this.workspace && (this.saveBlocked || !this.$refs.editorContainer)) return;
+      if (this.flowchart_pending) return;
+      if (this.helpReaderActive && (!this.helpReaderContextValid(this.captureHelpReaderContext()) || !this.in_edit_mode || this.helpReaderPending || !this.$refs.editorContainer)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article, shopId = this.shop_id;
+      const helpContext = this.captureHelpReaderContext();
       if (!this.article.description)
         this.article.description = this.$refs.editorContainer.gist();
 
@@ -2035,7 +2201,7 @@ export default {
 
       // ==================== Purify Body ==================
 
-      const readEditor = !this.workspace || (this.workspaceSection === "edit" && (!this.product_workspace || this.in_edit_mode));
+      const readEditor = this.helpReaderActive ? this.$refs.editorContainer.state === 'changed' : !this.workspace || (this.workspaceSection === "edit" && (!this.product_workspace || this.in_edit_mode));
       let pure_title = readEditor ? this.$refs.editorContainer.purifyTitle() : this.article.title;
       if (!pure_title) {
         return NotificationService.showErrorAlert(null, this.workspace ? this.$t("global.article.workspace.missing_title") : "Title can not be empty!");
@@ -2092,6 +2258,9 @@ export default {
             // Selldone Help:
             order: this.menu ? this.menu.order : 0,
             star: this.menu ? this.menu.star : false,
+            ...(this.articleType === Article.Types.SelldoneHelp.code && this.menu?.icon_supported
+              ? { icon: this.menu?.icon ?? null }
+              : {}),
 
             // FAQ
             faqs: this.article.faqs,
@@ -2105,6 +2274,10 @@ export default {
         )
         .then(({ data }) => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article || shopId !== this.shop_id)) return;
+          if (helpContext) {
+            if (!this.helpReaderContextCurrent(helpContext)) return;
+            if (!this.can_edit || !this.canEdit) { this.state = "changed"; return; }
+          }
           if (this.workspace && !this.workspace_can_write) { this.state = "changed"; return; }
           if (!data.error) {
             this.state = "no-change";
@@ -2160,6 +2333,7 @@ export default {
         })
         .catch((error) => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article || shopId !== this.shop_id)) return;
+          if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           this.state = "changed";
           NotificationService.showLaravelError(error);
         })
@@ -2176,6 +2350,7 @@ export default {
       const generation = ++this._workspaceGeneration;
       // 🞇 Reset to default
       this.resetToDefault();
+      const helpContext = this.captureHelpReaderContext();
 
       if (!force && this.initialArticlePack) {
         this.onGetArticlePackData(this.initialArticlePack);
@@ -2205,6 +2380,7 @@ export default {
           })
           .then(({ data }) => {
             if (this.workspace && generation !== this._workspaceGeneration) return;
+            if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
             if (data.error) {
               this.error_msg = data.error_msg;
 
@@ -2220,12 +2396,14 @@ export default {
 
           .catch((error) => {
             if (this.workspace && generation !== this._workspaceGeneration) return;
+            if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
             this.NOT_FOUND_ARTICLE = true;
 
             this.can_create_new = true;
           })
           .finally(() => {
             if (this.workspace && generation !== this._workspaceGeneration) return;
+            if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
             this.inLoading = false;
           });
       }
@@ -2319,6 +2497,10 @@ export default {
 
       this.article.id = null;
       this.NOT_FOUND_ARTICLE = false;
+
+      if (this.articleType === Article.Types.SelldoneHelp.code) {
+        this.menu = { icon: null, parent_id: null, order: 0, star: false };
+      }
 
       this.can_edit = true;
 
@@ -2446,12 +2628,14 @@ export default {
     openDeleteArticleAlert() {
       if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy || this.isNew)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article;
+      const helpContext = this.captureHelpReaderContext();
       NotificationService.openDangerAlert(
         this.$t("global.article.alert.delete_article.title"),
         this.$t("global.article.alert.delete_article.message"),
         this.$t("global.article.alert.delete_article.action"),
         () => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article)) return;
+          if (helpContext && !this.helpReaderContextValid(helpContext)) return;
           this.deleteArticle();
         },
       );
@@ -2459,6 +2643,8 @@ export default {
 
     deleteArticle() {
       if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy || this.isNew)) return;
+      const helpContext = this.captureHelpReaderContext();
+      if (helpContext && (!this.helpReaderContextValid(helpContext) || this.isNew)) return;
       axios
         .delete(
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -2473,6 +2659,7 @@ export default {
               ),
         )
         .then(({ data }) => {
+          if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           if (data.error) {
             // Error!
             NotificationService.showErrorAlert(
@@ -2488,6 +2675,7 @@ export default {
           if (!this.noReturnBackOnDelete) this.$router.go(-1);
         })
         .catch((e) => {
+          if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           NotificationService.showLaravelError(e);
         });
     },
@@ -2496,8 +2684,14 @@ export default {
     autoFixArticle() {
       if (this.workspace && (!this.active || !this.workspace_can_write || this.workspace_busy)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article;
+      const helpContext = this.captureHelpReaderContext();
+      if (helpContext && (!this.helpReaderContextValid(helpContext) || !this.in_edit_mode || this.helpReaderPending)) return;
+      if (helpContext && this.$refs.editorContainer?.state === 'changed') {
+        this.article.title = this.$refs.editorContainer.purifyTitle();
+        this.article.body = this.$refs.editorContainer.purifyBody();
+      }
       if (this.workspace && this.$refs.editorContainer && (!this.product_workspace || this.in_edit_mode)) this.article.body = this.$refs.editorContainer.purifyBody();
-      if (this.workspace && !this.article.body?.trim()) return;
+      if ((this.workspace || helpContext) && !this.article.body?.trim()) return;
       this.busy_fix = true;
       axios
         .post(
@@ -2510,6 +2704,7 @@ export default {
         )
         .then(({ data }) => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article || !this.workspace_can_write)) return;
+          if (helpContext && (!this.helpReaderContextCurrent(helpContext) || !this.can_edit || !this.canEdit)) return;
           if (data.error) {
             // Error!
             NotificationService.showErrorAlert(null, data.error_msg);
@@ -2522,10 +2717,12 @@ export default {
         })
         .catch((e) => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article)) return;
+          if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           NotificationService.showLaravelError(e);
         })
         .finally(() => {
           if (this.workspace && (generation !== this._workspaceGeneration || sourceArticle !== this.article)) return;
+          if (helpContext && !this.helpReaderContextCurrent(helpContext)) return;
           this.busy_fix = false;
         });
     },

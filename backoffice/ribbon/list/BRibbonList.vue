@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="widget-box -large" v-bind="$attrs">
+  <div class="widget-box -large s-table-loading" v-bind="$attrs">
     <u-widget-header
       :src="require('@selldone/core-js/assets/product-types/subscription.svg')"
       title="Ribbon Subscriptions"
@@ -26,7 +26,7 @@
       or more subscription panels.
     </v-list-subheader>
 
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && ribbons?.length" kind="product" compact class="sd-modern-list-refresh" />
 
     <v-row no-gutters>
       <v-spacer></v-spacer>
@@ -43,6 +43,8 @@
     </v-row>
 
     <v-data-table-server
+      :aria-busy="busy_fetch"
+      :loading="busy_fetch"
       v-model:expanded="expanded"
       v-model:options="options"
       v-model:page="page"
@@ -62,22 +64,13 @@
       show-expand
       @click:row="(_, r) => expanded.toggle(r.item)"
     >
+      <template v-if="!ribbons?.length" #loading>
+        <b-list-loading-state kind="product" />
+      </template>
+
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
-      <template v-slot:no-data>
-        <div v-if="!busy_fetch && !search" class="py-5 usn fadeIn">
-          <img
-            :src="require('../../../assets/guides/ribbon-items-empty.png')"
-            class="m-3 op-0-3"
-            width="85%"
-          />
-          <h2 class="text-h4 font-weight-thin">No product added...</h2>
-        </div>
-        <div v-else class="text-center px-3 py-5">
-          <v-icon class="me-1">sentiment_dissatisfied</v-icon>
-          {{ $t("global.commons.no_data") }}
-        </div>
-      </template>
+<template v-slot:no-data><b-list-empty-state v-if="emptyStateLoaded && !busy_fetch" kind="product" :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search ? 'dashboard_empty_state.no_results.title' : 'dashboard_empty_state.context.ribbon.title'))" :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search ? 'dashboard_empty_state.no_results.description' : 'dashboard_empty_state.context.ribbon.description'))" /></template>
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
       <!-- ▁▁▁▁▁▁▁▁▁▁▁ expanded-item ▁▁▁▁▁▁▁▁▁▁▁ -->
@@ -272,6 +265,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
@@ -283,7 +278,9 @@ import UAvatarFolder from "../../../ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "BRibbonList",
-  components: { UAvatarFolder, BProcessCenterList, USmartMenu },
+  components: {
+    BListLoadingState,
+    BListEmptyState, UAvatarFolder, BProcessCenterList, USmartMenu },
   props: {
     shop: {
       required: true,
@@ -295,6 +292,8 @@ export default {
 
     ProductType: ProductType,
     busy_fetch: false,
+    emptyStateLoaded: false,
+    emptyStateRequest: 0,
 
     ribbons: [],
 
@@ -369,7 +368,9 @@ export default {
     },
 
     fetchRibbons(page, sortBy, sortDesc = true) {
+      const emptyRequest = ++this.emptyStateRequest;
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
 
       axios
         .get(window.API.GET_SHOP_RIBBONS(this.shop.id), {
@@ -383,15 +384,19 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           if (!data.error) {
             this.totalItems = data.total;
             this.ribbons = data.ribbons;
+            this.emptyStateLoaded = Array.isArray(data.ribbons);
           }
         })
         .catch((error) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy_fetch = false;
         });
     },

@@ -20,7 +20,7 @@
     :aria-busy="busy_fetch"
     @dragover="dragover"
   >
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && items?.length" kind="product" compact class="sd-modern-list-refresh" />
 
     <!---------------------------- Filter ----------------------->
 
@@ -153,6 +153,7 @@
 
     <!---------------------------- List ----------------------->
     <v-data-table-server
+      :aria-busy="busy_fetch"
       :mobile="isMobile"
       :hide-default-header="wholesaleLayout && isMobile"
       :disable-sort="wholesaleLayout"
@@ -187,6 +188,10 @@
       hide-default-footer
       item-value="key"
     >
+      <template v-if="!items?.length" #loading>
+        <b-list-loading-state kind="product" />
+      </template>
+
       <template v-if="modern && !wholesaleLayout" v-slot:header.sku="{ toggleSort, isSorted }">
         <span class="b-inventory-list__sort-pair">
           <button v-for="key in ['sku', 'mpn']" :key="key" type="button" class="b-inventory-list__sort"
@@ -218,11 +223,9 @@
           <p>{{ $t('inventory_list.modern.load_error_help') }}</p>
           <v-btn class="sd-modern-button" variant="text" @click="onRefresh">{{ $t('global.actions.retry') }}</v-btn>
         </div>
-        <div v-else-if="modern && !busy_fetch" class="sd-modern-empty-state">
-          <v-icon size="28">{{ search || filters.length ? 'search_off' : 'shelves' }}</v-icon>
-          <h3>{{ $t('global.commons.no_data') }}</h3>
-          <p>{{ $t('inventory_list.subtitle') }}</p>
-        </div>
+        <b-list-empty-state v-else-if="emptyStateLoaded && modern && !busy_fetch" kind="product"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search || filters.length ? 'dashboard_empty_state.no_results.title' : 'dashboard_empty_state.product.title'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : (search || filters.length ? $t('dashboard_empty_state.no_results.description') : $t('inventory_list.subtitle'))" />
         <div v-else-if="!busy_fetch && !search" class="py-5 usn text-center fadeIn">
           <img
             :src="require('../../../assets/guides/inventory-empty.png')"
@@ -710,6 +713,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import UNumberInput from "../../../ui/number/input/UNumberInput.vue";
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import BProductEditPrice from "../../product/edit/price/BProductEditPrice.vue";
@@ -735,6 +740,8 @@ export default {
   name: "BInventoryList",
   mixins: [ProductMixin ],
   components: {
+    BListLoadingState,
+    BListEmptyState,
     BInventoryListIcon,
     UPriceInvalid,
     UAvatarFolder,
@@ -768,6 +775,7 @@ export default {
       tab: "list",
 
       busy_fetch: false,
+    emptyStateLoaded: false,
       fetch_error: false,
       fetch_id: 0,
       lifecycle_id: 0,
@@ -1249,6 +1257,7 @@ export default {
     },
 
     fetchData(page = 1, sortBy = null, sortDesc = true) {
+      this.emptyStateLoaded = false;
       const shopId = this.shop?.id;
       const fetchId = ++this.fetch_id;
       if (!shopId) {
@@ -1306,6 +1315,7 @@ export default {
             return;
           }
           this.products = data.products;
+          this.emptyStateLoaded = Array.isArray(data.products);
           this.totalItems = data.total;
         })
         .catch((error) => {

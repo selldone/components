@@ -149,6 +149,10 @@
         @update:options="updateModernOptions"
         @click:row="(_, row) => showContact(row.item)"
       >
+        <template v-if="!contacts?.length" #loading>
+          <b-list-loading-state kind="customer" />
+        </template>
+
         <template #item.customer="{ item }">
           <div class="b-contacts-modern__customer">
             <v-avatar size="32"
@@ -249,22 +253,13 @@
           }}</span></template
         >
         <template #no-data>
-          <div v-if="!fetch_error" class="sd-modern-empty-state">
-            <v-icon
-              :icon="search ? 'search_off' : 'question_answer'"
-              size="26"
-              aria-hidden="true"
-            />
-            <h3>
-              {{
-                $t(
+          <b-list-empty-state v-if="emptyStateLoaded && !busy_fetch && !fetch_error" kind="customer"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(
                   search
-                    ? "shop_contacts.modern.no_results"
-                    : "shop_contacts.modern.empty",
-                )
-              }}
-            </h3>
-          </div>
+                    ? 'shop_contacts.modern.no_results'
+                    : 'shop_contacts.modern.empty',
+                ))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search ? 'dashboard_empty_state.no_results.description' : 'dashboard_empty_state.context.conversations.description'))" />
         </template>
         <template #bottom>
           <footer
@@ -440,25 +435,13 @@
                     :text="getLastMessage(contact)?.message"
                   />
                 </button>
-                <div
-                  v-if="!contacts.length && !busy_fetch && !fetch_error"
-                  class="sd-modern-empty-state"
-                >
-                  <v-icon
-                    :icon="search ? 'search_off' : 'question_answer'"
-                    size="26"
-                    aria-hidden="true"
-                  />
-                  <p>
-                    {{
-                      $t(
+                <b-list-empty-state v-if="emptyStateLoaded && !contacts.length && !busy_fetch && !fetch_error" kind="customer"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(
                         search
-                          ? "shop_contacts.modern.no_results"
-                          : "shop_contacts.modern.empty",
-                      )
-                    }}
-                  </p>
-                </div>
+                          ? 'shop_contacts.modern.no_results'
+                          : 'shop_contacts.modern.empty',
+                      ))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search ? 'dashboard_empty_state.no_results.description' : 'dashboard_empty_state.context.conversations.description'))" />
               </nav>
               <footer v-if="totalItems" class="b-contacts-messenger__footer">
                 <span aria-live="polite">{{
@@ -783,6 +766,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import { SupportCategory } from "@selldone/core-js/enums/support/SupportCategory";
 import URatingEmoji from "../../../ui/rating/emoji/URatingEmoji.vue";
 import { throttle } from "lodash-es";
@@ -801,6 +786,8 @@ export default {
   mixins: [TemplateMixin, DateMixin],
 
   components: {
+    BListLoadingState,
+    BListEmptyState,
     BContactCustomerContext,
     ULoadingEllipsis,
     SDataIteratorToolbar,
@@ -832,6 +819,7 @@ export default {
     more: true,
 
     busy_fetch: false,
+    emptyStateLoaded: false,
     fetch_error: false,
     request_id: 0,
     preview_overflow: null,
@@ -1088,6 +1076,7 @@ export default {
       return contact.waiting ? "sd-modern-status__dot--warning" : "";
     },
     fetchSupports(page, sortBy, sortDesc = true) {
+      this.emptyStateLoaded = false;
       const request = ++this.request_id;
       this.busy_fetch = true;
       this.fetch_error = false;
@@ -1113,6 +1102,7 @@ export default {
             return;
           }
           this.contacts = data.contacts;
+          this.emptyStateLoaded = Array.isArray(data.contacts);
           this.totalItems = data.total;
         })
         .catch((error) => {

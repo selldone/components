@@ -211,7 +211,7 @@
             small
           />
           <u-price v-else :amount="price_converted" />
-          <span v-if="discount_percent" class="b-product-list__discount"
+          <span v-if="discount_percent" class="b-product-list__discount no-inv"
             >{{ discount_percent }}%</span
           >
           <span
@@ -288,7 +288,7 @@
           >
         </template>
       </div>
-      <div class="b-product-list__actions" @click.stop>
+      <div v-if="!hideActions" class="b-product-list__actions" @click.stop>
         <b-note-button
           v-if="showNotes || (product.note && product.note.length)"
           :note="product.note"
@@ -1099,6 +1099,7 @@ export default {
   emits: ["select", "click:image", "onShowNote", "onSelect", "contextmenu"],
   props: {
     modernList: { type: Boolean, default: false },
+    hideActions: { type: Boolean, default: false },
     multiSelectProducts: { type: Boolean, default: false },
     product: {
       required: true,
@@ -1529,10 +1530,18 @@ export default {
     line-height: 21px;
   }
   &__discount {
+    display: inline-flex;
+    align-items: center;
     margin-inline-start: 4px;
-    color: rgb(var(--v-theme-error));
+    padding: 1px 4px;
+    border-radius: 3px;
+    background: color-mix(in srgb, rgb(var(--v-theme-error)) 80%, #000);
+    color: rgb(var(--v-theme-on-error));
     font-size: 12px;
-    font-weight: 400;
+    font-weight: 500;
+    line-height: 18px;
+    vertical-align: middle;
+    white-space: nowrap;
   }
   &__price-warning,
   &__stock-warning {

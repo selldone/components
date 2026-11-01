@@ -52,6 +52,7 @@
     </v-row>
 
     <v-data-table-server
+      :aria-busy="busy_fetch"
       :class="{ 'sd-modern-data-table b-products-list__table': modern }"
       :mobile="$vuetify.display.xs"
       :items="products"
@@ -64,6 +65,10 @@
       density="compact"
       :items-per-page-options="[10, 20, 50, 100]"
     >
+      <template v-if="!set && !products?.length" #loading>
+        <b-list-loading-state kind="product" />
+      </template>
+
       <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ title ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
       <template v-slot:item.title="{ item }">
         <div
@@ -181,10 +186,10 @@
       </template>
 
       <template v-if="modern" #no-data>
-        <div class="sd-modern-empty-state" role="status">
-          <v-icon size="28" aria-hidden="true">inventory_2</v-icon>
-          <p>{{ $t("global.commons.no_data") }}</p>
-        </div>
+        <b-list-empty-state v-if="emptyStateLoaded && !busy_fetch && !set" kind="product"
+          :title="(total) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search || filters.length || showDeletes ? 'dashboard_empty_state.no_results.title' : 'dashboard_empty_state.product.title'))"
+          :description="(total) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search || filters.length || showDeletes ? 'dashboard_empty_state.no_results.description' : 'dashboard_empty_state.product.description'))" />
+        <p v-else-if="!busy_fetch">{{ $t('global.commons.no_data') }}</p>
       </template>
 
       <template v-if="modern" #bottom="{ pageCount, setItemsPerPage }">
@@ -258,6 +263,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import { defineComponent } from "vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus.ts";
@@ -280,6 +287,8 @@ import BProductWindowCategoryMini from "@selldone/components-vue/backoffice/prod
 export default defineComponent({
   name: "BProductsList",
   components: {
+    BListLoadingState,
+    BListEmptyState,
     BInventoryFilter,
     BProductWindowCategoryMini,
     SCategoryCard,
@@ -330,6 +339,8 @@ export default defineComponent({
       products: [],
       total: 0,
       busy_fetch: false,
+      emptyStateLoaded: false,
+      emptyStateRequest: 0,
       itemsPerPage: 10,
       page: 1,
       sortBy: [{ key: null, order: "desc" }],
@@ -511,6 +522,8 @@ export default defineComponent({
       this.fetchProducts();
     },
     fetchProducts() {
+      const request = ++this.emptyStateRequest;
+      this.emptyStateLoaded = false;
       const handleSuccessResponse = ({
         folders,
         products,
@@ -520,9 +533,11 @@ export default defineComponent({
         valuation,
         time_filter,
       }) => {
+        if (request !== this.emptyStateRequest) return;
         this.total = total;
 
         this.products = products;
+        this.emptyStateLoaded = Array.isArray(products) && typeof total === 'number';
 
         //━━━━━━━━━━━━━━━━ 🞧 Extra objects return by special search ━━━━━━━━━━━━
         this.tax_profile = tax_profile;
@@ -586,9 +601,12 @@ export default defineComponent({
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
+          if (request !== this.emptyStateRequest) return;
+          this.emptyStateLoaded = false;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (request !== this.emptyStateRequest) return;
           this.busy_fetch = false;
         });
     },

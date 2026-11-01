@@ -14,7 +14,7 @@
 
 <template>
   <v-container class="pa-0 pa-sm-3">
-    <div class="widget-box -large mb-5 min-height-50vh">
+    <div class="widget-box -large mb-5 min-height-50vh s-table-loading" :aria-busy="busy">
       <u-widget-header :title="$t('admin_shop.apps.store.title')" icon="shop">
         <template v-slot:actions>
           <v-menu>
@@ -78,26 +78,31 @@
         </v-select>
       </v-row>
 
+      <b-list-loading-state v-if="busy && apps?.length" kind="app" compact class="sd-modern-list-refresh" />
+
       <v-data-iterator
         v-model:options="options"
         v-model:page="page"
         :items="apps"
         :items-length="totalItems"
         :items-per-page="itemsPerPage"
-        :loading="busy"
+        :loading="busy && !apps?.length"
+        :aria-busy="busy"
         :search="search"
         class="my-3"
         hide-default-footer
-        no-data-text="Not found!"
       >
-        <template v-slot:loading>
-          <u-loading-ellipsis css-mode light></u-loading-ellipsis>
+        <template #no-data><b-list-empty-state v-if="emptyStateLoaded && !busy" kind="app"
+          :title="$t('dashboard_empty_state.no_results.title')"
+          :description="$t('dashboard_empty_state.no_results.description')" /></template>
+        <template #loader>
+          <b-list-loading-state kind="app" />
         </template>
 
         <template v-slot:header></template>
 
         <template v-slot:default="props">
-          <v-row class="m-2" no-gutters>
+          <v-row class="m-2" no-gutters :inert="busy ? true : undefined">
             <b-app-shop-store-icon
               v-for="(app, index) in props.items"
               :key="app.id"
@@ -167,6 +172,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import BAppConfigDialog from "../../config/dialog/BAppConfigDialog.vue";
 import BAppShopStoreIcon from "../../../app/shop/store/icon/BAppShopStoreIcon.vue";
 import { Application } from "@selldone/core-js";
@@ -177,7 +184,9 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 export default {
   name: "BAppShopStore",
   mixins: [],
-  components: { ULoadingEllipsis, BAppShopStoreIcon, BAppConfigDialog },
+  components: {
+    BListLoadingState,
+    BListEmptyState, ULoadingEllipsis, BAppShopStoreIcon, BAppConfigDialog },
   props: {
     shop: {
       type: Object,
@@ -186,6 +195,7 @@ export default {
   },
   data: () => ({
     busy: false,
+    emptyStateLoaded: false,
     selected_category: undefined, // Prevent double call fetch!
 
     //--------------------
@@ -292,6 +302,7 @@ export default {
       if (this.busy) return;
 
       this.busy = true;
+      this.emptyStateLoaded = false;
       axios
         .get(window.API.GET_APPSTORE_LIST(this.$route.params.shop_id), {
           params: {
@@ -308,6 +319,7 @@ export default {
         })
         .then(({ data }) => {
           this.apps = data.apps;
+          this.emptyStateLoaded = Array.isArray(data.apps);
 
           this.totalItems = data.total;
         })

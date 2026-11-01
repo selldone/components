@@ -13,7 +13,8 @@
   -->
 
 <template>
-  <div :class="{ blurred: busy }" class="blur-animate">
+  <div :aria-busy="busy" class="position-relative">
+    <u-loading-progress v-if="busy" />
     <v-btn
       v-if="statistic?.products > 0"
       :to="{

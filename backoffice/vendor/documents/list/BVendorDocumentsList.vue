@@ -18,6 +18,8 @@
     :class="{ 'b-vendor-documents--modern text-start': modern }"
   >
     <div
+      class="s-table-loading"
+      :aria-busy="busy"
       :class="modern ? 'sd-modern-widget b-vendor-documents__widget' : 'widget-box mb-5'"
     >
       <u-widget-header
@@ -48,9 +50,11 @@
             : $t("vendor_documents_list.marketplace_subtitle")
         }}
       </v-list-subheader>
-      <u-loading-progress v-if="busy"></u-loading-progress>
+      <b-list-loading-state v-if="busy && (documents_embed.length || documents_link.length || uploaded_documents.length)" kind="content" compact class="sd-modern-list-refresh" />
+      <b-list-loading-state v-if="busy && !documents_embed.length && !documents_link.length && !uploaded_documents.length" kind="content" />
 
       <v-list
+        v-if="!busy || documents_embed.length || documents_link.length || uploaded_documents.length"
         :class="modern ? 'b-vendor-documents__list' : 'border-between-vertical bg-transparent min-height-40vh'"
         lines="two"
       >
@@ -200,14 +204,9 @@
             </v-list-item-action>
           </template>
         </v-list-item>
-        <div
-          v-if="modern && !busy && !documents_embed.length && !documents_link.length && !uploaded_documents.length"
-          class="sd-modern-empty-state b-vendor-documents__empty"
-          role="status"
-        >
-          <v-icon size="24" aria-hidden="true">folder_open</v-icon>
-          <p>{{ $t("vendor_add.editor.documents_empty") }}</p>
-        </div>
+        <b-list-empty-state v-if="modern && emptyStateLoaded && !busy && !documents_embed.length && !documents_link.length && !uploaded_documents.length" role="status" kind="content" class="b-vendor-documents__empty"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t('vendor_add.editor.documents_empty'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t('dashboard_empty_state.context.documents.description'))" />
       </v-list>
     </div>
   </div>
@@ -337,6 +336,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import USmartSelect from "../../../../ui/smart/select/USmartSelect.vue";
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
 import VendorDocumentType from "@selldone/core-js/enums/vendor/VendorDocumentType";
@@ -353,6 +354,8 @@ export default {
     "dynamic-scripts": DynamicScriptDirective,
   },
   components: {
+    BListLoadingState,
+    BListEmptyState,
     USmartMenu,
     USmartSelect,
   },
@@ -375,6 +378,8 @@ export default {
       VendorDocumentType: VendorDocumentType,
 
       busy: false,
+      emptyStateLoaded: false,
+    emptyStateRequest: 0,
       uploaded_documents: [],
       totalItems: 0,
 
@@ -482,7 +487,9 @@ export default {
     },
 
     fetchDocuments() {
+      const emptyRequest = ++this.emptyStateRequest;
       this.busy = true;
+      this.emptyStateLoaded = false;
 
       axios
         .get(
@@ -495,18 +502,22 @@ export default {
           },
         )
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           if (data.error) {
             return NotificationService.showErrorAlert(null, data.error_msg);
           }
 
           this.uploaded_documents = data.documents;
+          this.emptyStateLoaded = Array.isArray(data.documents);
           this.totalItems = data.total;
         })
         .catch((error) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy = false;
         });
     },

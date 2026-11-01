@@ -2,6 +2,8 @@
 
 The modern add dialog uses the approved full-screen **Guided** layout: domain and connection, DNS and ownership, then review and connect. The existing `BDomainAdd` component owns the draft and requests throughout the three stages. The legacy/inline add view and the existing domain-edit capabilities remain available.
 
+Store setup reuses this same dialog from a compact domain summary. It passes the current shop and a fresh empty domain, with `modern` enabled and `inline` omitted. Cancel/reopen discards the local draft, switching shops closes it, and an active add request prevents dismissal. Successful adds update the existing shop domain list through `BDomainAdd`; the summary keeps saved enablement and ownership verification separate from HTTPS readiness. The full domain-management link remains available in a new tab.
+
 The flow retains apex, subdomain and wildcard addresses; Selldone hosting with the merchant's own CDN or the available Selldone secure CDN; and externally hosted websites with META or TXT ownership verification. DNS values come from the shop's configured connection targets. Host and value copying, provider guidance, quota/access controls, loading states and retry details stay in the existing feature. A and CNAME records for a matching host are alternatives.
 
 `POST_ADD_DOMAIN` verifies ownership and creates the connection together. Moving between the local stages does not verify ownership or create a domain. A successful add does not prove HTTPS is ready: external providers manage their certificates, while secure-CDN certificate setup can continue asynchronously. The edit view retains visitor-access updates and sign-in callback/client operations; those are not extra add steps.

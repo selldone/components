@@ -40,7 +40,7 @@
         {{ $t("transportation_boxes.subtitle") }}
       </v-list-subheader>
 
-      <u-loading-progress v-if="busy_fetch" />
+      <b-list-loading-state v-if="busy_fetch && boxes?.length" kind="shipping" compact class="sd-modern-list-refresh" />
 
       <!-- Top tools (search) -->
       <v-row :class="{ 'sd-modern-list-toolbar b-boxes-list__toolbar': modern }" align="center" no-gutters>
@@ -60,6 +60,8 @@
 
       <!-- Server-side data table -->
       <v-data-table-server
+        :aria-busy="busy_fetch"
+        :loading="busy_fetch"
         :mobile="modern ? $vuetify.display.smAndDown : $vuetify.display.xs"
         v-model:options="options"
         :page="page"
@@ -78,6 +80,10 @@
         item-key="id"
         v-on="canManageBoxes ? { 'click:row': (_, r) => openEditDialog(r.item) } : {}"
       >
+        <template v-if="!boxes?.length" #loading>
+          <b-list-loading-state kind="shipping" />
+        </template>
+
 
 
 
@@ -143,7 +149,10 @@
         </template>
 
         <template #no-data>
-          <div :class="modern ? 'sd-modern-empty-state' : 'pa-6 text-medium-emphasis'">
+          <b-list-empty-state v-if="modern && emptyStateLoaded && !busy_fetch" kind="shipping"
+            :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search ? 'dashboard_empty_state.no_results.title' : 'transportation_boxes.empty'))"
+            :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search ? 'dashboard_empty_state.no_results.description' : 'dashboard_empty_state.context.boxes.description'))" />
+          <div v-else-if="!modern" class="pa-6 text-medium-emphasis">
             {{ $t("transportation_boxes.empty") }}
           </div>
         </template>
@@ -315,6 +324,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import GlobalRules from "@selldone/core-js/helper/rules/GlobalRules.ts";
@@ -329,7 +340,9 @@ import { VendorMemberTypes } from "@selldone/core-js/models/shop/vendor/vendor_m
 
 export default {
   name: "BBoxesList",
-  components: { USmartSuggestion, UCube, USmartMenu, UNumberInput, UWidgetHeader },
+  components: {
+    BListLoadingState,
+    BListEmptyState, USmartSuggestion, UCube, USmartMenu, UNumberInput, UWidgetHeader },
 
   // shared for Shop & Vendor hosts
   inject: ["$shop", "$vendor"],
@@ -345,6 +358,8 @@ export default {
     // fetching flags
     busy: false,
     busy_fetch: false,
+    emptyStateLoaded: false,
+    emptyStateRequest: 0,
 
     // pagination & sorting (server)
     page: 1,
@@ -481,7 +496,9 @@ export default {
       sortDesc = true,
       ipp?: number,
     ) {
+      const emptyRequest = ++this.emptyStateRequest;
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
       this.page = page;
       if (ipp) this.itemsPerPage = ipp;
 
@@ -502,9 +519,11 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           if (!data.error) {
             // Accept flexible payloads
             this.boxes = data.boxes || data.items || data.data || [];
+            this.emptyStateLoaded = Array.isArray(data.boxes || data.items || data.data);
             this.totalItems =
               data.total ?? data.totalItems ?? this.boxes.length;
           } else {
@@ -512,9 +531,11 @@ export default {
           }
         })
         .catch((error) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy_fetch = false;
         });
     },

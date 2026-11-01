@@ -1,5 +1,5 @@
 <div class="medium-insert-buttons" contenteditable="false" style="display: none">
-    <button class="medium-insert-buttons-show" type="button"><span>+</span></button>
+    <button class="medium-insert-buttons-show" type="button" aria-label="{{insertLabel}}"><svg class="medium-insert-buttons-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span class="medium-insert-buttons-label">{{insertLabel}}</span></button>
     <ul class="medium-insert-buttons-addons" style="display: none">
         {{#each addons}}
             <li><button data-addon="{{@key}}" data-action="add" class="medium-insert-action" type="button">{{{label}}}</button></li>

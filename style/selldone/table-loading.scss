@@ -6,8 +6,27 @@
     pointer-events: none;
   }
 
+  > .sd-modern-list-refresh {
+    position: absolute;
+    inset-block-start: 4px;
+    inset-inline-end: 12px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
   > .v-data-table > .v-table__wrapper > table > thead > .v-data-table-progress {
     display: none;
+  }
+}
+
+// The empty-body Pipeline owns initial loading; unrelated tables keep native progress.
+.v-data-table:has(> .v-table__wrapper > table > tbody > .v-data-table-rows-loading .b-list-loading-state) {
+  > .v-table__wrapper > table > thead > .v-data-table-progress {
+    display: none;
+  }
+
+  > .v-table__wrapper > table > tbody > .v-data-table-rows-loading > td {
+    padding: 0 !important;
   }
 }
 

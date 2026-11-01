@@ -18,7 +18,7 @@
     :class="{ 'b-blogs-list--modern': modern }"
     :aria-busy="busy_fetch"
   >
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && articles?.length" kind="content" compact class="sd-modern-list-refresh" />
 
     <v-row
       v-if="hasClusterFilter || hasSearch"
@@ -148,6 +148,7 @@
     <!-- ━━━━━━━━━━━━━━━━━━━━━━━━ List ━━━━━━━━━━━━━━━━━━━━━━━━ -->
 
     <v-data-table-server
+      :aria-busy="busy_fetch"
       v-model:items-per-page="itemsPerPage"
       v-model:options="options"
       v-model:page="page"
@@ -178,36 +179,20 @@
           })
       "
     >
+      <template v-if="!articles?.length" #loading>
+        <b-list-loading-state kind="content" />
+      </template>
+
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
       <template v-slot:no-data>
-        <div
-          v-if="modern && !busy_fetch && !fetch_error"
-          class="sd-modern-empty-state b-blogs-list__empty"
+        <b-list-empty-state
+          v-if="emptyStateLoaded && modern && !busy_fetch && !fetch_error"
+          kind="content"
+          class="b-blogs-list__empty"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(hasFilters ? 'admin_shop.blogs.list.modern.no_results' : 'admin_shop.blogs.list.modern.empty_title'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(hasFilters ? 'admin_shop.blogs.list.modern.no_results_description' : 'admin_shop.blogs.list.modern.empty_description'))"
         >
-          <v-icon
-            :icon="hasFilters ? 'search_off' : 'edit_note'"
-            size="25"
-            aria-hidden="true"
-          />
-          <h2>
-            {{
-              $t(
-                hasFilters
-                  ? "admin_shop.blogs.list.modern.no_results"
-                  : "admin_shop.blogs.list.modern.empty_title",
-              )
-            }}
-          </h2>
-          <p>
-            {{
-              $t(
-                hasFilters
-                  ? "admin_shop.blogs.list.modern.no_results_description"
-                  : "admin_shop.blogs.list.modern.empty_description",
-              )
-            }}
-          </p>
           <v-btn
             v-if="hasFilters"
             class="sd-modern-button sd-modern-button--inline"
@@ -222,7 +207,7 @@
               >{{ $t("admin_shop.blogs.list.modern.clear_filters") }}</v-tooltip
             >
           </v-btn>
-        </div>
+        </b-list-empty-state>
         <div
           v-else-if="!modern && !busy_fetch && !search"
           class="py-5 usn fadeIn"
@@ -794,6 +779,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import BClusterInput from "../../cluster/input/BClusterInput.vue";
@@ -806,7 +793,9 @@ import BBlogAuthorEdit from "../author/BBlogAuthorEdit.vue";
 export default {
   name: "BBlogsList",
   mixins: [DateMixin],
-  components: { BBlogAuthorEdit, BUserBox, UAvatarFolder, BClusterInput },
+  components: {
+    BListLoadingState,
+    BListEmptyState, BBlogAuthorEdit, BUserBox, UAvatarFolder, BClusterInput },
   props: {
     shop: {
       required: true,
@@ -825,6 +814,7 @@ export default {
   data: () => ({
     // ―――――――― 🗘 Sync endless list. ――――――――
     busy_fetch: false,
+    emptyStateLoaded: false,
     fetch_error: false,
     request_id: 0,
 
@@ -1085,6 +1075,7 @@ export default {
       this.fetchArticles(this.page, sort?.key, sort?.order);
     },
     fetchArticles(page, sortBy, sortDesc: boolean | string = true) {
+      this.emptyStateLoaded = false;
       const request = ++this.request_id;
       this.busy_fetch = true;
       this.fetch_error = false;
@@ -1093,6 +1084,7 @@ export default {
         if (request !== this.request_id) return;
         this.totalItems = total;
         this.articles = articles;
+          this.emptyStateLoaded = Array.isArray(articles);
       };
 
       window.$backoffice.blog

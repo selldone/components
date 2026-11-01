@@ -7,6 +7,8 @@ import * as Vue from "vue";
 import { renderToString } from "vue/server-renderer";
 import { parse, compileScript, compileTemplate, compileStyleAsync } from "@vue/compiler-sfc";
 import ts from "typescript";
+import BListEmptyState from "../../../empty-state/BListEmptyState.test-helper.mjs";
+import BListLoadingState from "../../../loading-state/BListLoadingState.test-helper.mjs";
 
 // Render the real row-action slot with local controls; no HTTP or shop data.
 const filename = fileURLToPath(new URL("./BLogisticProfilesList.vue", import.meta.url));
@@ -22,6 +24,8 @@ const compiled = ts.transpileModule(descriptor.script.content + "\n" + template.
 const exports = {};
 vm.runInThisContext(`(function(require,exports,window){${compiled}})`)(name => {
   if (name === "vue") return Vue;
+  if (name.endsWith("BListEmptyState.vue")) return { default: BListEmptyState };
+  if (name.endsWith("BListLoadingState.vue")) return { default: BListLoadingState };
   if (name === "lodash-es") return { throttle: callback => callback };
   if (name.includes("LogisticProfileType")) return { LogisticProfileType: {} };
   if (name.includes("DateMixin") || name.includes("NotificationService")) return { default: {} };

@@ -30,9 +30,16 @@ const expectedTabs = {
   SERVICE: [1, 2, 3, 4, 5, 6, 7, 8, 10, 11],
   SUBSCRIPTION: [1, 2, 3, 4, 5, 7, 10, 11],
 };
+const notifications = [];
+let productRequest = () => assert.fail("Unexpected product request");
 const exports = {};
 vm.runInNewContext(compiled, {
   exports,
+  axios: { delete: (url) => productRequest(url) },
+  window: {
+    API: { DELETE_PRODUCT: (shop, product) => `/shops/${shop}/products/${product}` },
+    VAPI: { DELETE_MY_VENDOR_PRODUCT: (vendor, product) => `/vendors/${vendor}/products/${product}` },
+  },
   require(name) {
     if (name.includes("ProductType")) return { ProductType: productTypes };
     if (name.includes("PricingTypes")) return { PricingTypes: { FIX: { code: "FIX" } } };
@@ -49,6 +56,11 @@ vm.runInNewContext(compiled, {
     if (name === "@selldone/core-js")
       return { Article: { Types: { Product: { code: "Product" } } } };
     if (name === "vue") return Vue;
+    if (name.includes("NotificationService")) return { default: {
+      showErrorAlert: (...args) => notifications.push(["error", ...args]),
+      showSuccessAlert: (...args) => notifications.push(["success", ...args]),
+      showLaravelError: (...args) => notifications.push(["request-error", ...args]),
+    } };
     return { default: {} };
   },
 });
@@ -86,6 +98,209 @@ function fixture({ modern = true, type = "PHYSICAL", created = true, ...override
   }
   return state;
 }
+
+test("The sidebar counts current variant rows, not dimensions, and compacts large counts", () => {
+  const state = fixture();
+  assert.equal(state.sidebarVariantCount, 0);
+  state.$product.variants = [{ code: "color" }, { code: "style" }];
+  assert.equal(state.sidebarVariantCount, 0, "Dimension configuration is not a variant list");
+  state.$product.product_variants = [
+    { id: 1, deleted_at: null },
+    { id: 2, deleted_at: "2026-10-01" },
+    { id: 3, enable: false },
+  ];
+  const saved = JSON.stringify(state.$product.product_variants);
+  assert.equal(state.sidebarVariantCount, 2, "Disabled rows still exist, but deleted rows do not count");
+  assert.equal(state.sidebarVariantLabel, "2");
+  assert.equal(JSON.stringify(state.$product.product_variants), saved);
+  state.$product.product_variants[1].deleted_at = null;
+  assert.equal(state.sidebarVariantCount, 3, "Restoring a row updates the count");
+  state.$product.product_variants.splice(0, 1);
+  assert.equal(state.sidebarVariantCount, 2, "Removing a row updates the count");
+  state.$product.product_variants = Array.from({ length: 1234 }, (_, id) => ({ id }));
+  assert.equal(state.sidebarVariantLabel, "1.2K");
+  state.$product.product_variants = [];
+  assert.equal(state.sidebarVariantCount, 0);
+});
+
+test("Delete is saved-product navigation, separate from ordinary workflow progression", async () => {
+  for (const options of [{ modern: true }, { modern: false, modernGeneral: true }]) {
+    const state = fixture({ ...options, step: 2, visitedSteps: [2] });
+    const general = { draft: "Unsaved product name" };
+    state.setStepEditor(general, 2);
+    const flow = Array.from(state.flowTabs, (tab) => tab.value);
+    assert.equal(flow.includes(12), false);
+    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value), [...flow, 12]);
+    state.goTo(12);
+    component.watch.step.call(state, state.step);
+    assert.equal(state.step, 12);
+    assert.equal(state.flowCurrentTab.title, "global.actions.delete");
+    assert.equal(state.active_editor, null);
+    assert.equal(state.stepEditors[2], general);
+    assert.equal(state.isStepMounted(2), true);
+    assert.equal(state.flowSubmitDisabled, true);
+    state.editProduct = () => assert.fail("Delete cannot submit ordinary product fields");
+    state.addProduct = () => assert.fail("Delete cannot create a product");
+    state.finish = () => assert.fail("Delete cannot finish the routine workflow");
+    await state.submitStep();
+    state.nextStep();
+    assert.equal(state.step, 12);
+    state.deleteConfirmed = true;
+    state.goTo(2);
+    component.watch.step.call(state, state.step);
+    assert.equal(state.deleteConfirmed, false);
+    assert.equal(state.active_editor, general);
+    assert.equal(general.draft, "Unsaved product name");
+  }
+  for (const options of [{ created: false }, { modern: false }]) {
+    const state = fixture(options);
+    assert.equal(state.navigationTabs.some((tab) => tab.value === 12), false);
+    assert.equal(state.canSelectStep(12), false);
+  }
+});
+
+test("Delete deep links and verification remain scoped to the modern current product", () => {
+  for (const modern of [true, false]) {
+    const state = fixture({ modern, $route: { hash: "#delete", params: {}, matched: [] } });
+    state.getRenderedOnGoogle = () => {};
+    component.created.call(state);
+    assert.equal(state.step, modern ? 12 : 2);
+  }
+  const routes = [];
+  const state = fixture({ step: 12, replaceHashRoute: true, $router: { replace: (route) => routes.push(route.hash) } });
+  state.deleteConfirmed = true;
+  component.watch.step.call(state, 12);
+  assert.deepEqual(routes, ["#delete"]);
+  assert.equal(state.deleteConfirmed, false);
+  for (const key of ["$product.id", "$product.deleted_at"]) {
+    state.deleteConfirmed = true;
+    component.watch[key].call(state);
+    assert.equal(state.deleteConfirmed, false, `${key} invalidates previous consent`);
+  }
+});
+
+test("Modern deletion requires explicit consent on the idle Delete tab", () => {
+  let requests = 0;
+  productRequest = () => { requests++; return Promise.resolve({ data: {} }); };
+  try {
+    for (const changes of [
+      { step: 2 }, { deleteConfirmed: false }, { deleteConfirmed: "true" },
+      { busy: true }, { busy_delete: true }, { validatingStep: true },
+      { active_editor: { busy: true } }, { show_preview: true }, { disposed: true },
+      { $product: { id: null, type: "PHYSICAL" } },
+    ]) {
+      const state = fixture({ step: 12, deleteConfirmed: true, ...changes });
+      assert.equal(state.deleteProduct(), undefined);
+      assert.equal(requests, 0);
+    }
+  } finally {
+    productRequest = () => assert.fail("Unexpected product request");
+  }
+});
+
+test("Deletion preserves shop/vendor endpoints, request errors, retries and the legacy dialog contract", async () => {
+  try {
+    for (const vendorPanel of [false, true]) {
+      const routes = [], events = [], requests = [];
+      const state = fixture({ step: 12, deleteConfirmed: true,
+        $route: { params: vendorPanel ? { vendor_id: 16 } : {}, matched: [{ meta: { vendor: vendorPanel } }], hash: "" },
+        vendor: { id: 16 }, $router: { push: (route) => routes.push(route) }, $emit: (event) => events.push(event) });
+      let complete;
+      productRequest = (url) => { requests.push(url); return new Promise((resolve) => { complete = resolve; }); };
+      const pending = state.deleteProduct();
+      assert.equal(typeof pending?.then, "function");
+      assert.equal(state.flowBusy, true);
+      state.goTo(2);
+      assert.equal(state.step, 12);
+      assert.equal(state.deleteProduct(), undefined);
+      assert.equal(requests.length, 1);
+      assert.equal(requests[0], vendorPanel ? "/vendors/16/products/31" : "/shops/42/products/31");
+      complete({ data: { error: true, error_msg: "Cannot delete fixture" } });
+      await pending;
+      assert.equal(state.busy_delete, false);
+      assert.equal(state.deleteConfirmed, true, "A server error keeps consent for a deliberate retry");
+      assert.equal(routes.length, 0);
+      assert.deepEqual(events, []);
+      assert.deepEqual(notifications.at(-1), ["error", null, "Cannot delete fixture"]);
+
+      const error = new Error("Fixture network failure");
+      productRequest = () => Promise.reject(error);
+      await state.deleteProduct();
+      assert.equal(state.busy_delete, false);
+      assert.equal(state.deleteConfirmed, true);
+      assert.deepEqual(notifications.at(-1), ["request-error", error]);
+      assert.equal(routes.length, 0);
+
+      productRequest = () => Promise.resolve({ data: { success: true } });
+      await state.deleteProduct();
+      assert.equal(state.deleteConfirmed, false);
+      assert.equal(state.busy_delete, false);
+      assert.deepEqual(events, ["delete"]);
+      assert.equal(routes[0].name, "BPageShopProductsList");
+      assert.equal(routes[0].params.shop_id, 42);
+    }
+    const legacy = fixture({ modern: false, step: 2, deleteConfirmed: false, $router: { push() {} } });
+    let requests = 0;
+    productRequest = () => { requests++; return Promise.resolve({ data: { success: true } }); };
+    await legacy.deleteProduct();
+    assert.equal(requests, 1, "The unchanged legacy dialog remains the confirmation boundary");
+  } finally {
+    productRequest = () => assert.fail("Unexpected product request");
+  }
+});
+
+test("A completed deletion ignores a closed workspace or a different product", async () => {
+  try {
+    for (const obsolete of ["closed", "different-product"]) {
+      const routes = [], events = [];
+      const state = fixture({ step: 12, deleteConfirmed: true,
+        $router: { push: (route) => routes.push(route) }, $emit: (event) => events.push(event) });
+      let complete;
+      productRequest = () => new Promise((resolve) => { complete = resolve; });
+      const pending = state.deleteProduct();
+      if (obsolete === "closed") state.disposed = true;
+      else state.$product.id = 32;
+      complete({ data: { success: true } });
+      await pending;
+      assert.deepEqual(routes, []);
+      assert.deepEqual(events, []);
+      assert.equal(state.busy_delete, false);
+    }
+  } finally {
+    productRequest = () => assert.fail("Unexpected product request");
+  }
+});
+
+test("Pictures navigation reflects up to three distinct current product images without changing gallery order", () => {
+  const state = fixture();
+  const pictures = () => Array.from(state.sidebarPictures);
+  assert.deepEqual(pictures(), []);
+  state.$product.icon = "products/main.webp";
+  assert.deepEqual(pictures(), ["products/main.webp"]);
+  state.$product.images = [{ id: 1, path: "products/late.webp", order: 8, variant_id: null }];
+  assert.deepEqual(pictures(), ["products/main.webp", "products/late.webp"]);
+  state.$product.images.push(
+    { id: 2, path: "products/early.webp", order: 2, variant_id: null },
+    { id: 3, path: "products/main.webp", order: 0, variant_id: null },
+    { id: 4, path: "products/variant.webp", order: 0, variant_id: 14 },
+    { id: 5, path: "", order: 0, variant_id: null },
+    { id: 6, path: "products/early.webp", order: 3, variant_id: null },
+    { id: 7, path: "products/middle.webp", order: 5, variant_id: null },
+  );
+  const savedGallery = JSON.stringify(state.$product.images);
+  assert.deepEqual(pictures(), ["products/main.webp", "products/early.webp", "products/middle.webp"]);
+  assert.equal(JSON.stringify(state.$product.images), savedGallery, "The navigation cannot sort or rewrite source records");
+  state.$product.icon = null;
+  assert.deepEqual(pictures(), ["products/main.webp", "products/early.webp", "products/middle.webp"], "Gallery images fill the three available slots without a main image");
+  state.$product.icon = "products/new-main.webp";
+  state.$product.images = state.$product.images.filter(image => image.id !== 3);
+  state.$product.images[0].order = 1;
+  assert.deepEqual(pictures(), ["products/new-main.webp", "products/late.webp", "products/early.webp"]);
+  state.$product.images = [];
+  assert.deepEqual(pictures(), ["products/new-main.webp"]);
+  state.$product.icon = null;
+  assert.deepEqual(pictures(), []);
+});
 
 test("The modern preview blocks underlying saves and navigation until it closes", async () => {
   for (const options of [{ modern: true }, { modern: false, modernGeneral: true }]) {
@@ -621,6 +836,14 @@ test("the rendered Guided workspace shows only the active editor while retaining
       props.modelValue ? slots.default?.() : null,
     ]),
   }));
+  app.component("VCheckbox", Vue.defineComponent({
+    props: { modelValue: Boolean, disabled: Boolean, label: String },
+    emits: ["update:modelValue"],
+    setup: (props, { attrs, emit }) => () => Vue.h("input", {
+      ...attrs, type: "checkbox", checked: props.modelValue, disabled: props.disabled,
+      "aria-label": props.label, onChange: (event) => emit("update:modelValue", event.target.checked),
+    }),
+  }));
   app.component("VTooltip", Vue.defineComponent({
     props: { disabled: Boolean },
     setup(props, { attrs, slots }) {
@@ -640,7 +863,9 @@ test("the rendered Guided workspace shows only the active editor while retaining
   app.config.errorHandler = (error) => failures.push(error);
   app.config.warnHandler = (message) => warnings.push(message);
   app.provide("$shop", { id: 42, currencies: ["USD"] });
-  app.provide("$product", Vue.reactive({ id: 31, type: "PHYSICAL", title: "Fixture product", inputs: [], outputs: [] }));
+  const product = Vue.reactive({ id: 31, type: "PHYSICAL", title: "Fixture product", inputs: [], outputs: [],
+    product_variants: [{ id: 1 }, { id: 2, enable: false }, { id: 3, deleted_at: "2026-10-01" }] });
+  app.provide("$product", product);
   Object.assign(app.config.globalProperties, {
     $route: { params: {}, matched: [], hash: "" },
     $t: (key) => key,
@@ -671,6 +896,15 @@ test("the rendered Guided workspace shows only the active editor while retaining
   };
   try {
     await Vue.nextTick();
+    const variantBadge = () => descendants(host).find((element) => classHas(element, "b-product-add-full__variant-count"));
+    assert.ok(variantBadge());
+    assert.equal(text(variantBadge()).trim(), "2");
+    product.product_variants[2].deleted_at = null;
+    await Vue.nextTick();
+    assert.equal(text(variantBadge()).trim(), "3", "The real sidebar reacts to restored variants");
+    product.product_variants = [];
+    await Vue.nextTick();
+    assert.equal(variantBadge(), undefined, "An empty product has no redundant count badge");
     const previewLauncher = descendants(host).find((element) => classHas(element, "b-product-add-full__preview-launcher"));
     assert.ok(previewLauncher, "Saved products expose the preview utility");
     const main = descendants(host).find((element) => element.tag === "main");
@@ -803,6 +1037,42 @@ test("the rendered Guided workspace shows only the active editor while retaining
     await Vue.nextTick();
     assert.equal(state.active_editor, inventory);
     assert.equal(inventory.draft, "Unsubmitted local inventory options");
+    const deleteTab = descendants(sidebar).find((element) => classHas(element, "b-product-add-full__delete-tab"));
+    assert.ok(deleteTab, "Delete has an independent local navigation entry");
+    const mobileSelect = descendants(sidebar).find((element) => element.tag === "select");
+    const deleteOption = descendants(mobileSelect).find((element) => element.tag === "option" && element.props.value === 12);
+    assert.ok(deleteOption, "The compact mobile navigation includes Delete");
+    mobileSelect.props.onChange({ target: { value: "12" } });
+    await Vue.nextTick();
+    await Vue.nextTick();
+    assert.equal(state.step, 12);
+    assert.equal(state.active_editor, null);
+    assert.deepEqual(visibleEditors(), [], "The Delete tab hides every routine editor without destroying drafts");
+    assert.equal(descendants(host).some((element) => classHas(element, "b-product-add-full__footer")), false);
+    assert.equal(descendants(host).some((element) => classHas(element, "sd-modern-button--primary") && visible(element)), false);
+    const deletion = descendants(main).find((element) => classHas(element, "b-product-add-full__delete"));
+    assert.ok(deletion);
+    assert.ok(text(deletion).includes("add_product.delete_product.modern.restore"), "Recovery guidance stays visible in the inline card");
+    const consent = descendants(deletion).find((element) => element.props.type === "checkbox");
+    const deleteAction = descendants(deletion).find((element) => element.tag === "button" && text(element).trim() === "add_product.delete");
+    assert.ok(consent);
+    assert.equal(deleteAction.props.disabled, true);
+    consent.props.onChange({ target: { checked: true } });
+    await Vue.nextTick();
+    assert.equal(deleteAction.props.disabled, false);
+    state.busy_delete = true;
+    await Vue.nextTick();
+    assert.equal(consent.props.disabled, true);
+    assert.equal(deleteAction.props.disabled, true);
+    assert.equal(mobileSelect.props.disabled, true);
+    state.busy_delete = false;
+    await Vue.nextTick();
+    await navigate("general");
+    assert.equal(state.deleteConfirmed, false);
+    assert.equal(state.active_editor, general);
+    assert.equal(inventory.draft, "Unsubmitted local inventory options");
+    assert.equal(description.draft, "Unsubmitted product story");
+    assert.equal(specifications.draft, "Unsaved fabric details");
     assert.equal(warnings.some((message) => message.includes("Runtime directive used on component with non-element root")), false);
     assert.deepEqual(failures, []);
   } finally {

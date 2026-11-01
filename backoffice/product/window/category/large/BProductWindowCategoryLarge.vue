@@ -77,7 +77,7 @@
             >star</v-icon>
             {{ category.title }}
           </button>
-          <div class="b-product-category-list__actions" @click.stop>
+          <div v-if="!hideActions" class="b-product-category-list__actions" @click.stop>
             <slot name="actions" />
             <v-btn
               icon
@@ -279,6 +279,7 @@ export default {
 
   components: { CircleImage },
   props: {
+    hideActions: { type: Boolean, default: false },
     modernList: {
       type: Boolean,
       default: false,

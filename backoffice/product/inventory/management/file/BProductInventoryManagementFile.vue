@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div>
+  <div class="position-relative" :aria-busy="busy_request || busy_fetch || busy_sort">
     <u-loading-progress
       v-if="busy_request || busy_fetch || busy_sort"
       :color="busy_request ? '#673AB7' : 'green'"
@@ -248,13 +248,13 @@
       </template>
       <draggable
         v-model="files"
-        :class="{ blurred: busy_fetch }"
+        :aria-busy="busy_fetch"
         :component-data="{
           tag: 'ul',
           type: 'transition-group',
           name: !drag ? 'flip-list' : 'fade',
         }"
-        class="mt-3 blur-animate border-between-vertical rounded-list-xl"
+        class="mt-3 border-between-vertical rounded-list-xl"
         style="list-style-type: none"
         tag="transition-group"
         v-bind="dragOptions"

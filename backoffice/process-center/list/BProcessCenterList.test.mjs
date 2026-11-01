@@ -6,6 +6,8 @@ import { parse, compileTemplate, compileStyleAsync } from "@vue/compiler-sfc";
 import ts from "typescript";
 import * as Vue from "vue";
 import { renderToString } from "vue/server-renderer";
+import BListEmptyState from "../../empty-state/BListEmptyState.test-helper.mjs";
+import BListLoadingState from "../../loading-state/BListLoadingState.test-helper.mjs";
 
 // Real list/customer templates; requests, routing and UI leaves stay isolated.
 const calls = [], requests = [], copied = [], navigations = [], cached = [];
@@ -16,7 +18,7 @@ const leaf = (name) => Vue.defineComponent({
   setup: (_, { attrs, slots }) => () => {
     calls.push({ name, attrs });
     const content = name === "v-data-table-server"
-      ? [
+      ? attrs.loading && !attrs.items.length ? slots.loading?.() : [
         ...attrs.items.flatMap((item) => attrs.headers.flatMap((header) => slots[`item.${header.value}`]?.({ item }) ?? [])),
         ...(!attrs.items.length ? slots["no-data"]?.() ?? [] : []),
         ...(slots.bottom?.() ?? []),
@@ -53,6 +55,8 @@ const presentation = evaluate(readFileSync(new URL('./ProcessCenterPresentation.
 let Customer;
 function dependency(name) {
   if (name === "vue") return Vue;
+  if (name.endsWith("BListEmptyState.vue")) return { default: BListEmptyState };
+  if (name.endsWith("BListLoadingState.vue")) return { default: BListLoadingState };
   if (name.includes('ProcessCenterPresentation')) return presentation;
   if (name.endsWith("BProcessCenterCustomer.vue")) return { default: Vue.defineComponent({
     props: ["item", "shop", "isAffiliatePos"],
@@ -108,7 +112,7 @@ function fixture(modern = false) {
 }
 async function render(component, props, rows = [], data = {}) {
   calls.length = 0;
-  const app = Vue.createSSRApp(component === List ? { ...List, mixins: [], watch: {}, created: undefined, data: () => ({ ...List.data(), orders: rows, ...data }) } : component, props);
+  const app = Vue.createSSRApp(component === List ? { ...List, mixins: [], watch: {}, created: undefined, data: () => ({ ...List.data(), orders: rows, emptyStateLoaded: true, ...data }) } : component, props);
   for (const name of ["v-row", "v-text-field", "v-data-table-server", "v-img", "v-avatar", "v-icon", "v-btn", "v-btn-toggle", "v-spacer", "v-chip", "v-tooltip", "v-progress-linear", "v-badge", "v-pagination", "v-menu", "v-list", "v-list-item", "v-list-item-title", "v-sheet", "v-dialog", "v-card", "v-card-title", "v-card-text", "v-card-actions", "u-loading-progress", "u-price", "flag"]) app.component(name, leaf(name));
   app.component("router-link", leaf("RouterLink"));
   Object.assign(app.config.globalProperties, {
@@ -131,6 +135,36 @@ test("opt-in columns retain backend sort fields and Paid + COD selection", () =>
   assert.deepEqual(plain(legacy.headers.map((header) => header.value)), ["type", "id", "price", "status", "delivery_state", "reserved_at"]);
   assert.deepEqual(plain(modern.headers.filter((header) => header.sortable).map((header) => header.value)), ["id", "price", "status", "delivery_state", "reserved_at"]);
   assert.equal(modern.headers.find((header) => header.value === "customer").sortable, false);
+});
+
+test("pending order tables and their SVG stay clear while refresh retains rows and interaction locks", async () => {
+  for (const modern of [false, true]) for (const type of Object.values(ProductType)) {
+    const props = { modern, shop: { id: 7 }, type };
+    const pending = await render(List, props, [], { busy_fetch: true });
+    let table = calls.find(call => call.name === "v-data-table-server").attrs;
+    assert.equal(table.loading, true);
+    assert.equal(table["aria-busy"], true);
+    assert.match(table.class, /disabled-no-filter/);
+    assert.doesNotMatch(table.class, /blurred|blur-animate/);
+    assert.match(pending, /b-list-loading-state__wires/);
+    assert.doesNotMatch(pending, /b-list-empty-state/);
+
+    const row = Object.freeze({ id: 23, label: "Existing order", type: type.code, status: "Reserved", delivery_state: "PreparingOrder", currency: "USD", price: 10, delivery_price: 0, items: [], contents: [] });
+    const before = JSON.stringify(row);
+    const refresh = await render(List, props, [row], { busy_fetch: true });
+    table = calls.find(call => call.name === "v-data-table-server").attrs;
+    assert.match(refresh, /Existing order/);
+    assert.match(refresh, /b-list-loading-state--compact/);
+    assert.doesNotMatch(refresh, /b-list-loading-state__wires/);
+    assert.match(table.class, /disabled-no-filter/);
+    assert.doesNotMatch(table.class, /blurred|blur-animate/);
+    assert.equal(JSON.stringify(row), before);
+
+    await render(List, props, [row], { busy_fetch: false });
+    table = calls.find(call => call.name === "v-data-table-server").attrs;
+    assert.doesNotMatch(table.class, /disabled-no-filter|blurred|blur-animate/);
+    assert.equal(table["aria-busy"], false);
+  }
 });
 
 test("Vendor panel opts into five columns without merchant actions or changing type defaults", () => {
@@ -228,6 +262,7 @@ test("Vendor rows preserve native identity, payment, thumbnails, stages, Guest, 
 test("Vendor empty, filtered and failed lists retain filters and expose native reset/retry actions", async () => {
   const props = { modern: true, isVendorPanel: true, isVendorOrders: true, shop: { id: 7 }, type: ProductType.FILE };
   assert.match(await render(List, props), /vendor_orders\.empty_title/);
+  assert.doesNotMatch(await render(List, props, [], { emptyStateLoaded: false }), /vendor_orders\.empty_title/);
   assert.match(await render(List, props, [], { search: "missing" }), /vendor_orders\.no_results_title/);
   const failed = await render(List, props, [], { fetch_error: true, search: "kept" });
   assert.match(failed, /role="alert"/);

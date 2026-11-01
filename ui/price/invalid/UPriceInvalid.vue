@@ -14,7 +14,6 @@
 <template>
   <!-- ⛔ UPriceInvalid -->
   <v-tooltip
-    v-if="!is_valid_amount"
     :activator="embedMode ? undefined : 'parent'"
     :content-class="embedMode ? 'text-start' : 'text-start bg-black'"
     :location="embedMode ? 'top' : 'bottom'"

@@ -77,7 +77,7 @@
           class="sd-modern-button"
           color="primary"
           variant="flat"
-          @click="openSetupTab(next_setup_step)"
+          @click="openSetupTab(setup_steps[next_setup_step].value)"
         >
           {{ $t("global.actions.continue") }} ·
           {{ $t(setup_steps[next_setup_step].modern_label)
@@ -108,13 +108,13 @@
               type="button"
               class="s--shop-onboarding__step text-start"
               :class="{
-                'is-selected': tab === index,
+                'is-selected': tab === step.value,
                 'is-complete': step.complete,
                 'is-next': next_setup_step === index,
               }"
-              :aria-pressed="tab === index"
+              :aria-pressed="tab === step.value"
               :aria-controls="'shop-setup-details-' + shop.id"
-              @click="openSetupTab(index)"
+              @click="openSetupTab(step.value)"
             >
               <span class="s--shop-onboarding__number"
                 ><v-icon
@@ -130,11 +130,13 @@
                 }}</span>
                 <span class="s--shop-onboarding__step-status">{{
                   $t(
-                    step.complete
-                      ? "global.commons.completed"
-                      : next_setup_step === index
-                        ? "admin_shop.dashboard.modern.setup_next_step"
-                        : "onboarding.modern.to_do",
+                    step.complete === null
+                      ? "onboarding.modern.ai.status_unknown"
+                      : step.complete
+                        ? "global.commons.completed"
+                        : next_setup_step === index
+                          ? "admin_shop.dashboard.modern.setup_next_step"
+                          : "onboarding.modern.to_do",
                   )
                 }}</span>
               </span>
@@ -177,20 +179,23 @@
           <header class="s--shop-onboarding__detail-header">
             <h3 :id="'shop-setup-title-' + shop.id">{{ active_step_title }}</h3>
             <span
-              v-if="tab < 6"
+              v-if="active_setup_step"
               class="sd-modern-status sd-modern-status--plain"
             >
               <span
                 class="sd-modern-status__dot"
                 :class="{
-                  's--shop-onboarding__complete-dot': setup_steps[tab].complete,
+                  's--shop-onboarding__complete-dot':
+                    active_setup_step.complete,
                 }"
               />
               {{
                 $t(
-                  setup_steps[tab].complete
-                    ? "global.commons.completed"
-                    : "onboarding.modern.to_do",
+                  active_setup_step.complete === null
+                    ? "onboarding.modern.ai.status_unknown"
+                    : active_setup_step.complete
+                      ? "global.commons.completed"
+                      : "onboarding.modern.to_do",
                 )
               }}
             </span>
@@ -200,6 +205,17 @@
             :touch="false"
             class="s--shop-onboarding__window"
           >
+            <v-window-item
+              :value="8"
+              :transition="false"
+              :reverse-transition="false"
+              ><shop-onboarding-ai-tab
+                :shop="shop"
+                :connection="aiConnection"
+                :loading="aiLoading"
+                :error="aiError"
+                @refresh="$emit('refresh-ai')"
+            /></v-window-item>
             <v-window-item
               :value="0"
               :transition="false"
@@ -305,7 +321,8 @@
                     class="sd-modern-button sd-modern-button--inline"
                     variant="text"
                     color="primary"
-                    >{{ $t("onboarding.modern.shop_settings") }}<v-icon end size="16">north_east</v-icon></v-btn
+                    >{{ $t("onboarding.modern.shop_settings")
+                    }}<v-icon end size="16">north_east</v-icon></v-btn
                   >
                 </div>
                 <div class="s--shop-onboarding__resource-row">
@@ -335,19 +352,19 @@
                     }}<v-icon icon="expand_more" size="18" aria-hidden="true" />
                   </summary>
                   <div
-                    v-for="(step, index) in setup_steps"
+                    v-for="step in setup_steps"
                     :key="step.label"
                     class="s--shop-onboarding__resource-row"
                   >
                     <div>
                       <strong>{{ $t(step.modern_label) }}</strong
-                      ><span>{{ $t("onboarding.modern.guide_" + index) }}</span>
+                      ><span>{{ $t(step.guide) }}</span>
                     </div>
                     <v-btn
                       class="sd-modern-button sd-modern-button--inline"
                       color="primary"
                       variant="text"
-                      @click="openSetupTab(index)"
+                      @click="openSetupTab(step.value)"
                       >{{ $t("global.actions.open")
                       }}<v-icon end size="16" class="flip-rtl"
                         >arrow_forward</v-icon
@@ -727,13 +744,15 @@ import ShopOnboardingPaymentTab from "../onboarding/tabs/ShopOnboardingPaymentTa
 import SShopOnboardingCustomization from "../onboarding/customization/SShopOnboardingCustomization.vue";
 import ShopOnboardingSetupBusinessTab from "../onboarding/tabs/ShopOnboardingSetupBusinessTab.vue";
 import ShopOnboardingMigrationTab from "../onboarding/tabs/ShopOnboardingMigrationTab.vue";
+import ShopOnboardingAiTab from "../onboarding/tabs/ShopOnboardingAiTab.vue";
 import UFadeScroll from "../../ui/fade-scroll/UFadeScroll.vue";
 import { ShopURLs } from "@selldone/core-js/helper";
 
 export default {
   name: "SShopOnboarding",
-  emits: ["ai-build"],
+  emits: ["ai-build", "refresh-ai"],
   components: {
+    ShopOnboardingAiTab,
     UFadeScroll,
     ShopOnboardingMigrationTab,
     ShopOnboardingSetupBusinessTab,
@@ -745,6 +764,9 @@ export default {
   },
   props: {
     modern: { type: Boolean, default: false },
+    aiConnection: { type: Object, default: null },
+    aiLoading: Boolean,
+    aiError: Boolean,
     shop: {
       required: true,
       type: Object,
@@ -803,7 +825,7 @@ export default {
 
   computed: {
     setup_steps() {
-      return [
+      const steps = [
         {
           label: "onboarding.customize_theme",
           modern_label: "onboarding.modern.step_customize",
@@ -835,7 +857,29 @@ export default {
           modern_label: "onboarding.modern.step_payments",
           complete: this.gateways_online.length > 0,
         },
-      ];
+      ].map((step, value) => ({
+        ...step,
+        value,
+        guide: `onboarding.modern.guide_${value}`,
+      }));
+      if (this.modern)
+        steps.unshift({
+          label: "onboarding.modern.step_ai",
+          modern_label: "onboarding.modern.step_ai",
+          value: 8,
+          guide: "onboarding.modern.ai.guide",
+          complete: this.ai_complete,
+        });
+      return steps;
+    },
+    ai_complete() {
+      const count = this.aiConnection?.active_connections;
+      return Number.isInteger(count) && count >= 0
+        ? count > 0
+        : null;
+    },
+    active_setup_step() {
+      return this.setup_steps.find((step) => step.value === this.tab);
     },
     completed_steps() {
       return this.setup_steps.filter((step) => step.complete).length;
@@ -854,9 +898,7 @@ export default {
             ? this.modern
               ? "onboarding.modern.overview"
               : "onboarding.overview.title"
-            : this.setup_steps[this.tab]?.[
-                this.modern ? "modern_label" : "label"
-              ],
+            : this.active_setup_step?.[this.modern ? "modern_label" : "label"],
       );
     },
     ShopURLs() {
@@ -931,7 +973,11 @@ export default {
   },
 
   created() {
-    if (this.modern) this.tab = Math.max(0, this.next_setup_step);
+    if (this.modern)
+      this.tab =
+        this.next_setup_step >= 0
+          ? this.setup_steps[this.next_setup_step].value
+          : 0;
   },
 };
 </script>

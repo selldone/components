@@ -44,6 +44,7 @@
       >
     </div>
     <v-data-table-server
+      :aria-busy="busy_fetch"
       v-model:page="page"
       :headers="headers"
       :items="transactions"
@@ -55,6 +56,10 @@
       hide-default-footer
       class="sd-modern-data-table b-account-charges-list__table"
     >
+      <template v-if="!transactions?.length" #loading>
+        <b-list-loading-state kind="payment" />
+      </template>
+
       <template #item="{ item }">
         <tr
           class="sd-modern-clickable-item b-account-charges-list__row"
@@ -263,11 +268,10 @@
         </tr>
       </template>
       <template #no-data
-        ><div v-if="!busy_fetch && !fetch_error" class="sd-modern-empty-state">
-          <v-icon size="28" aria-hidden="true">receipt_long</v-icon>
-          <h2>{{ $t("account_page.history.modern.empty_title") }}</h2>
-          <p>{{ $t("account_page.history.modern.empty_message") }}</p>
-        </div></template
+        ><b-list-empty-state v-if="emptyStateLoaded && !busy_fetch && !fetch_error" kind="payment"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t('account_page.history.modern.empty_title'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t('account_page.history.modern.empty_message'))"
+        /></template
       >
       <template #bottom>
         <footer
@@ -685,6 +689,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import UCurrencyIcon from "../../../../ui/currency/icon/UCurrencyIcon.vue";
 import USmartMenu from "../../../../ui/smart/menu/USmartMenu.vue";
@@ -707,7 +713,9 @@ function escaped(value) {
 export default {
   name: "BAccountChargesList",
   mixins: [DateMixin, CurrencyMixin],
-  components: { UCurrencyIcon, UPaymentCard, USmartMenu },
+  components: {
+    BListLoadingState,
+    BListEmptyState, UCurrencyIcon, UPaymentCard, USmartMenu },
   emits: ["request:refresh"],
   props: {
     account: { required: true, type: Object },
@@ -715,6 +723,7 @@ export default {
   },
   data: () => ({
     busy_fetch: false,
+    emptyStateLoaded: false,
     fetch_error: false,
     transactions: [],
     page: 1,
@@ -951,6 +960,7 @@ export default {
       sortBy = this.sort_key,
       sortDesc = this.sort_desc,
     ) {
+      this.emptyStateLoaded = false;
       const request = ++this.list_request;
       const key = this.request_key;
       const context = this.context_key;
@@ -992,6 +1002,7 @@ export default {
             return;
           }
           this.transactions = data.transactions;
+          this.emptyStateLoaded = Array.isArray(data.transactions);
           this.totalItems = data.total;
           this.page = Math.min(this.page, this.pageCount);
         })

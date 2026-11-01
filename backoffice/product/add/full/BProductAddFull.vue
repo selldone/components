@@ -13,7 +13,7 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div v-bind="$attrs" :class="{ 'b-product-add-full--modern': modern, 'b-product-add-full--general sd-modern-canvas': modernGeneral, 'b-product-add-full--general-info': modernWorkspace && step === TAB_GENERAL_INFO, 'b-product-add-full--features-info': modernWorkspace && step === TAB_RATING, 'b-product-add-full--spec-info': modernWorkspace && step === TAB_SPEC, 'b-product-add-full--images-info': modernWorkspace && step === TAB_IMAGES, 'b-product-add-full--inputs-info': modernWorkspace && step === TAB_INPUTS, 'b-product-add-full--price-info': modernWorkspace && step === TAB_PRICE, 'b-product-add-full--shipping-info': modernWorkspace && step === TAB_PHYSICAL_EXTRA_INFO, 'b-product-add-full--description-info': modernWorkspace && step === TAB_REVIEW_BLOG, 'b-product-add-full--inventory-info': modernWorkspace && step === TAB_VARIANTS, 'text-start': modernWorkspace }">
+  <div v-bind="$attrs" :class="{ 'b-product-add-full--modern': modern, 'b-product-add-full--general sd-modern-canvas': modernGeneral, 'b-product-add-full--general-info': modernWorkspace && step === TAB_GENERAL_INFO, 'b-product-add-full--features-info': modernWorkspace && step === TAB_RATING, 'b-product-add-full--spec-info': modernWorkspace && step === TAB_SPEC, 'b-product-add-full--images-info': modernWorkspace && step === TAB_IMAGES, 'b-product-add-full--inputs-info': modernWorkspace && step === TAB_INPUTS, 'b-product-add-full--price-info': modernWorkspace && step === TAB_PRICE, 'b-product-add-full--shipping-info': modernWorkspace && step === TAB_PHYSICAL_EXTRA_INFO, 'b-product-add-full--description-info': modernWorkspace && step === TAB_REVIEW_BLOG, 'b-product-add-full--inventory-info': modernWorkspace && step === TAB_VARIANTS, 'b-product-add-full--delete-info': modernWorkspace && step === TAB_DELETE, 'text-start': modernWorkspace }">
     <template v-if="!modernWorkspace && $product.id">
       <v-row align="center" no-gutters>
         <div style="min-width: 48px">
@@ -230,7 +230,7 @@
               @change="goTo(Number($event.target.value))"
             >
               <option
-                v-for="tab in flowTabs"
+                v-for="tab in navigationTabs"
                 :key="tab.value"
                 :value="tab.value"
                 :disabled="!canSelectStep(tab.value)"
@@ -238,29 +238,34 @@
             </select>
           </div>
           <nav class="sd-modern-section-nav b-product-add-full__nav" :aria-label="$t('add_product.flow.navigation')">
-            <template v-for="tab in flowTabs" :key="tab.value">
+            <template v-for="tab in navigationTabs" :key="tab.value">
               <div v-if="tab.group" class="sd-modern-eyebrow b-product-add-full__group">{{ tab.group }}</div>
               <button
                 type="button"
                 class="sd-modern-section-nav__item"
+                :class="{ 'b-product-add-full__pictures-tab': tab.value === TAB_IMAGES, 'b-product-add-full__delete-tab': tab.value === TAB_DELETE }"
                 :aria-current="step === tab.value ? 'location' : undefined"
                 :disabled="!canSelectStep(tab.value)"
                 @click="goTo(tab.value)"
               >
                 <b-product-edit-info-icon :name="tab.icon" :size="16" />
                 <span>{{ tab.title }}</span>
+                <span v-if="tab.value === TAB_VARIANTS && sidebarVariantCount" class="b-product-add-full__variant-count" role="img" :aria-label="$t('b_product_inventory.variant_count', { count: sidebarVariantCount })">
+                  {{ sidebarVariantLabel }}
+                  <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('b_product_inventory.variant_count', { count: sidebarVariantCount }) }}</v-tooltip>
+                </span>
+                <span v-if="tab.value === TAB_IMAGES && sidebarPictures.length" class="b-product-add-full__pictures" :data-count="sidebarPictures.length" aria-hidden="true">
+                  <img v-for="path in sidebarPictures" :key="path" :src="getShopImagePath(path, 64)" class="hover-scale" alt="" width="24" height="24" :draggable="false" />
+                </span>
                 <b-product-edit-info-icon v-if="completedSteps.includes(tab.value)" name="Check" class="b-product-add-full__saved" :size="12" />
               </button>
             </template>
           </nav>
           <p v-if="modern" class="b-product-add-full__context">{{ $t($product.id ? 'add_product.flow.created_hint' : 'add_product.flow.create_hint') }}</p>
           <div v-if="$product.id" class="b-product-add-full__product">
+            <hr />
             <p class="b-product-add-full__completion"><b-product-edit-info-icon name="CircleCheck" :size="14" />{{ $t('add_product.completed') }} · {{ series[0] }}%</p>
             <b-product-breadcrumbs class="b-product-add-full__hierarchy" :image-size="20" :product="$product" :shop="shop" />
-            <v-btn class="sd-modern-button sd-modern-button--inline" variant="text" :disabled="flowBusy" @click="dialogDeleteProduct = true">
-              <template #prepend><b-product-edit-info-icon name="Trash2" :size="16" /></template>
-              {{ $t('global.actions.delete') }}
-            </v-btn>
           </div>
           <div v-if="canShowGooglePreview" class="b-product-add-full__preview-tools">
             <hr />
@@ -292,7 +297,7 @@
                     </v-btn>
                   </template>
                   <div class="b-product-add-full__hover-preview" :aria-busy="busy_render_google">
-                    <div :class="{ blurred: busy_render_google }" class="seo-preview" v-html="rendered_on_google"></div>
+                    <div :aria-busy="busy_render_google" class="seo-preview" v-html="rendered_on_google"></div>
                   </div>
                 </v-tooltip>
               </template>
@@ -308,7 +313,7 @@
                   </v-tooltip>
                 </header>
                 <v-card-text class="b-product-add-full__preview-body">
-                  <div :class="{ blurred: busy_render_google }" class="seo-preview" v-html="rendered_on_google"></div>
+                  <div :aria-busy="busy_render_google" class="seo-preview" v-html="rendered_on_google"></div>
                 </v-card-text>
               </v-card>
             </v-dialog>
@@ -317,7 +322,7 @@
         <main :class="{ 'b-product-add-full__main': modernWorkspace }">
           <header v-if="modernWorkspace" class="b-product-add-full__heading">
             <div>
-              <p v-if="!modernGeneral" class="b-product-add-full__position">
+              <p v-if="!modernGeneral && step !== TAB_DELETE" class="b-product-add-full__position">
                 {{ $t('add_product.flow.position', { current: flowStepIndex + 1, total: flowTabs.length }) }}
                 <template v-if="type && step !== TAB_TYPE"><span aria-hidden="true">·</span>{{ $t(type.name) }}</template>
               </p>
@@ -618,6 +623,28 @@
       </div>
     </div>
 
+    <!-- ███████████████████████ Product Delete ███████████████████████ -->
+
+    <section v-if="modernWorkspace && $product.id && step === TAB_DELETE" class="sd-modern-widget b-product-add-full__delete" :aria-busy="busy_delete">
+      <header class="b-product-add-full__delete-identity">
+        <img v-if="$product.icon" :src="getShopImagePath($product.icon, 64)" alt="" width="48" height="48" />
+        <b-product-edit-info-icon v-else name="PackageOpen" :size="28" />
+        <div><h3>{{ $product.title }}</h3><p>{{ $t('add_product.delete_product.modern.review') }}</p></div>
+      </header>
+      <p class="b-product-add-full__delete-copy">{{ $t('add_product.delete_product.modern.effect') }}</p>
+      <div class="b-product-add-full__delete-recovery">
+        <b-product-edit-info-icon name="Undo2" :size="18" />
+        <div><h3>{{ $t('add_product.delete_product.modern.restore_title') }}</h3><p>{{ $t(IS_VENDOR_PANEL ? 'add_product.delete_product.modern.restore_vendor' : 'add_product.delete_product.modern.restore') }}</p></div>
+      </div>
+      <v-checkbox v-model="deleteConfirmed" class="b-product-add-full__delete-confirm" color="primary" hide-details :disabled="flowBusy" :label="$t('add_product.delete_product.modern.confirm')" />
+      <div class="b-product-add-full__delete-actions">
+        <v-btn class="sd-modern-button" variant="outlined" :disabled="flowBusy" @click="goTo(TAB_GENERAL_INFO)">{{ $t('global.actions.cancel') }}</v-btn>
+        <v-btn class="sd-modern-button" color="red-darken-1" variant="flat" :loading="busy_delete" :disabled="!deleteConfirmed || flowBusy || show_preview" @click="deleteProduct">
+          <template #prepend><b-product-edit-info-icon name="Trash2" :size="16" /></template>{{ $t('add_product.delete') }}
+        </v-btn>
+      </div>
+    </section>
+
           </div>
 
           <footer v-if="modernGeneral && step === TAB_GENERAL_INFO" class="b-product-add-full__general-actions">
@@ -667,7 +694,7 @@
             ></u-widget-header>
 
             <div
-              :class="{ blurred: busy_render_google }"
+              :aria-busy="busy_render_google"
               class="seo-preview my-5"
               v-html="rendered_on_google"
             ></div>
@@ -678,7 +705,7 @@
         </main>
       </div>
     </div>
-    <footer v-if="modern" class="b-product-add-full__footer">
+    <footer v-if="modern && step !== TAB_DELETE" class="b-product-add-full__footer">
       <div class="b-product-add-full__footer-inner">
         <p>{{ $t(step === TAB_TYPE ? 'add_product.flow.choose_hint' : step === TAB_RATING ? 'add_product.features_modern.save_hint' : step === TAB_VARIANTS ? 'add_product.inventory_modern.save_scope' : $product.id ? 'add_product.flow.save_hint' : 'add_product.flow.create_action_hint') }}</p>
         <div class="b-product-add-full__actions">
@@ -705,7 +732,7 @@
   </div>
 
   <!-- --------------------- Dialog delete --------------------- -->
-  <v-dialog v-if="$product.id" v-model="dialogDeleteProduct" max-width="460">
+  <v-dialog v-if="$product.id && !modernWorkspace" v-model="dialogDeleteProduct" max-width="460">
     <v-card class="text-start" rounded="xl">
       <v-card-title class="d-flex align-center">
         <v-avatar
@@ -810,6 +837,7 @@ const TAB_OUTPUTS = 8;
 const TAB_PHYSICAL_EXTRA_INFO = 9;
 const TAB_REVIEW_BLOG = 10;
 const TAB_VARIANTS = 11;
+const TAB_DELETE = 12;
 
 /**
  * <b-product-add-full>
@@ -889,6 +917,7 @@ export default {
       TAB_REVIEW_BLOG: TAB_REVIEW_BLOG,
 
       TAB_VARIANTS: TAB_VARIANTS,
+      TAB_DELETE: TAB_DELETE,
 
       tabs_name: {
         // use for hash url
@@ -903,6 +932,7 @@ export default {
         extra: TAB_PHYSICAL_EXTRA_INFO,
         blog: TAB_REVIEW_BLOG,
         variants: TAB_VARIANTS,
+        delete: TAB_DELETE,
       },
 
       busy: false, // Add or Edit button busy
@@ -914,6 +944,7 @@ export default {
       completedSteps: [],
 
       dialogDeleteProduct: false,
+      deleteConfirmed: false,
 
       step: 1,
       /*
@@ -1088,19 +1119,37 @@ export default {
     flowStepIndex() {
       return this.flowTabs.findIndex((tab) => tab.value === this.step);
     },
+    navigationTabs() {
+      return this.modernWorkspace && this.$product.id
+        ? [...this.flowTabs, { value: TAB_DELETE, icon: 'Trash2', title: this.$t('global.actions.delete'), group: null }]
+        : this.flowTabs;
+    },
+    sidebarVariantCount() {
+      return this.$product.product_variants?.filter((variant) => !variant.deleted_at).length || 0;
+    },
+    sidebarVariantLabel() {
+      return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(this.sidebarVariantCount);
+    },
+    sidebarPictures() {
+      const gallery = (this.$product.images || [])
+        .filter((image) => image.variant_id === null)
+        .sort((a, b) => a.order - b.order);
+      return [...new Set([this.$product.icon, ...gallery.map((image) => image.path)].filter(Boolean))].slice(0, 3);
+    },
     flowCurrentTab() {
-      return this.flowTabs[this.flowStepIndex];
+      return this.navigationTabs.find((tab) => tab.value === this.step);
     },
     flowSubtitle() {
+      if (this.step === TAB_DELETE) return this.$t('add_product.delete_product.modern.subtitle');
       if (this.step === TAB_VARIANTS && this.isPhysical) return this.$t('add_product.inventory_modern.intro');
       const key = Object.keys(this.tabs_name).find((key) => this.tabs_name[key] === this.step);
       return this.$t(`add_product.flow.descriptions.${key}`);
     },
     flowBusy() {
-      return this.busy || this.validatingStep || !!this.active_editor?.busy || (this.step === TAB_IMAGES && !!this.active_editor?.mediaBusy) || ([TAB_PRICE, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.workspaceBusy) || this.active_editor?.state === 'saving';
+      return this.busy || this.busy_delete || this.validatingStep || !!this.active_editor?.busy || (this.step === TAB_IMAGES && !!this.active_editor?.mediaBusy) || ([TAB_PRICE, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.workspaceBusy) || this.active_editor?.state === 'saving';
     },
     flowSubmitDisabled() {
-      return this.flowBusy || (this.modernWorkspace && this.show_preview) || !this.type ||
+      return this.step === TAB_DELETE || this.flowBusy || (this.modernWorkspace && this.show_preview) || !this.type ||
         ([TAB_IMAGES, TAB_INPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.saveBlocked) ||
         (!this.$product.id && this.step > TAB_GENERAL_INFO) ||
         (this.step === TAB_PRICE && this.active_editor?.calculatePrice < 0);
@@ -1223,7 +1272,10 @@ export default {
     },
   },
   watch: {
+    '$product.id'() { this.deleteConfirmed = false; },
+    '$product.deleted_at'() { this.deleteConfirmed = false; },
     step(step) {
+      this.deleteConfirmed = false;
       if (this.modernWorkspace) {
         if (!this.visitedSteps.includes(step)) this.visitedSteps.push(step);
         this.active_editor = this.stepEditors[step] || null;
@@ -1267,7 +1319,7 @@ export default {
       // console.log("this.$route.hash", this.$route.hash);
       if (this.$route.hash) {
         const hash = this.$route.hash.replace("#", "");
-        if (hash && this.tabs_name[hash] && !(this.modernGeneral && this.tabs_name[hash] === TAB_TYPE)) {
+        if (hash && this.tabs_name[hash] && !(this.modernGeneral && this.tabs_name[hash] === TAB_TYPE) && (this.modernWorkspace || this.tabs_name[hash] !== TAB_DELETE)) {
           this.step = this.tabs_name[hash];
         }
       }
@@ -1366,7 +1418,7 @@ not need!
     },
 
     canSelectStep(step) {
-      if (this.flowBusy || !this.flowTabs.some((tab) => tab.value === step)) return false;
+      if (this.flowBusy || !this.navigationTabs.some((tab) => tab.value === step)) return false;
       if (this.step === TAB_VARIANTS && this.active_editor?.saveBlocked) return false;
       if (step === TAB_TYPE) return !this.$product.id;
       return !!this.type && (step === TAB_GENERAL_INFO || !!this.$product.id);
@@ -1695,8 +1747,11 @@ not need!
     },
 
     deleteProduct() {
+      if (this.disposed || !this.$product.id || this.busy_delete) return;
+      if (this.modernWorkspace && (this.step !== TAB_DELETE || this.deleteConfirmed !== true || this.flowBusy || this.show_preview)) return;
+      const productId = this.$product.id;
       this.busy_delete = true;
-      axios
+      return axios
         .delete(
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
             ? window.VAPI.DELETE_MY_VENDOR_PRODUCT(
@@ -1706,9 +1761,11 @@ not need!
             : window.API.DELETE_PRODUCT(this.shop.id, this.$product.id),
         )
         .then(({ data }) => {
+          if (this.disposed || this.$product.id !== productId) return;
           if (data.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
           } else {
+            this.deleteConfirmed = false;
             NotificationService.showSuccessAlert(null, "The product removed.");
             //this.$emit("delete", product);
 
@@ -1731,6 +1788,7 @@ not need!
     },
 
     nextStep() {
+      if (this.step === TAB_DELETE) return;
       if (this.modernWorkspace && this.show_preview) return;
       if (this.modernWorkspace && this.step === TAB_VARIANTS) {
         if (this.flowSubmitDisabled) return;
@@ -1913,12 +1971,28 @@ not need!
   .b-product-add-full__nav > button { min-height: 42px; font-weight: 400; }
   .b-product-add-full__nav > button[aria-current] { font-weight: 500; }
   .b-product-add-full__nav > button:disabled { opacity: 0.55; }
+  .b-product-add-full__nav > .b-product-add-full__delete-tab { margin-block-start: 14px; }
+  .b-product-add-full__variant-count { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-width: 20px; height: 18px; margin-inline-start: auto; padding-inline: 4px; border-radius: 4px; background: rgba(var(--v-theme-on-surface), 0.08); color: rgb(var(--v-theme-on-surface)); font-size: 10px; font-weight: 600; line-height: 16px; direction: ltr; unicode-bidi: isolate; }
+  .b-product-add-full__variant-count + .b-product-add-full__saved { margin-inline-start: 0; }
+  .b-product-add-full__nav > .b-product-add-full__pictures-tab { gap: 6px; }
+  .b-product-add-full__pictures-tab > span:first-of-type { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .b-product-add-full__pictures { display: grid; grid-template-columns: 24px; grid-template-rows: 24px; align-items: center; flex: 0 0 auto; gap: 2px; margin-inline-start: auto; }
+  .b-product-add-full__pictures[data-count="2"],
+  .b-product-add-full__pictures[data-count="3"] { grid-template-columns: 24px 10px; }
+  .b-product-add-full__pictures[data-count="3"] { grid-template-rows: 11px 11px; }
+  .b-product-add-full__pictures > img { width: 100%; height: 100%; object-fit: cover; border: 1px solid var(--sd-modern-border); border-radius: 3px; background: #fff; transform-origin: right center; }
+  .b-product-add-full__pictures:dir(rtl) > img { transform-origin: left center; }
+  .b-product-add-full__pictures > img:first-child { grid-row: 1 / -1; }
+  .b-product-add-full__pictures[data-count="2"] > img:last-child { height: 11px; }
+  .b-product-add-full__pictures + .b-product-add-full__saved { margin-inline-start: 0; }
+  @media (prefers-reduced-motion: reduce) { .b-product-add-full__pictures > img { --duration: 0s; } }
   .b-product-add-full__group { margin: 15px 10px 7px; font-weight: 400; }
   .b-product-add-full__group:first-child { margin-block-start: 0; }
   .b-product-add-full__rail-title { margin: 5px 10px 15px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; }
   .b-product-add-full__saved { margin-inline-start: auto; }
   .b-product-add-full__context { margin: 20px 10px 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
   .b-product-add-full__product { margin: 22px 10px 0; overflow-wrap: anywhere; }
+  .b-product-add-full__product > hr { margin-block: 14px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
   .b-product-add-full__completion { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; color: var(--sd-modern-muted); font-size: 12px; }
   .b-product-add-full__product :deep(.body-title) { font-size: 12px; }
   .b-product-add-full__hierarchy { min-width: 0; }
@@ -1958,6 +2032,20 @@ not need!
   .b-product-add-full__create-notice > span { flex: 1; min-width: 0; }
   .b-product-add-full__create-notice > .v-icon { margin-top: 2px; flex-shrink: 0; color: var(--sd-modern-muted); }
   .b-product-add-full__type { width: 100%; max-width: none; padding: 22px; border-radius: 15px; }
+  .b-product-add-full__delete { width: 100%; max-width: 760px; margin-inline: auto; padding: 24px; font-size: 14px; line-height: 22px; }
+  .b-product-add-full__delete-identity { display: flex; align-items: center; gap: 12px; }
+  .b-product-add-full__delete-identity > img { flex: 0 0 auto; object-fit: contain; border: 1px solid var(--sd-modern-border); border-radius: 9px; }
+  .b-product-add-full__delete-identity > div { min-width: 0; }
+  .b-product-add-full__delete h3 { margin: 0; font-family: inherit; font-size: 15px; font-weight: 500; line-height: 23px; overflow-wrap: anywhere; }
+  .b-product-add-full__delete-identity p { margin: 3px 0 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  .b-product-add-full__delete-copy { margin: 22px 0; }
+  .b-product-add-full__delete-recovery { display: flex; align-items: flex-start; gap: 10px; padding: 16px; border-radius: 9px; background: var(--sd-modern-inset); }
+  .b-product-add-full__delete-recovery > svg { flex-shrink: 0; margin-block-start: 2px; color: var(--sd-modern-muted); }
+  .b-product-add-full__delete-recovery h3 { font-size: 14px; line-height: 22px; }
+  .b-product-add-full__delete-recovery p { margin: 4px 0 0; color: var(--sd-modern-muted); }
+  .b-product-add-full__delete-confirm { margin-block: 20px 12px; }
+  .b-product-add-full__delete-confirm :deep(.v-label) { font-family: inherit; font-size: 14px; line-height: 22px; opacity: 1; }
+  .b-product-add-full__delete-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
 
   :deep(.b-product-add-full__editor .widget-box) {
     --background: rgb(var(--v-theme-surface));
@@ -2030,6 +2118,8 @@ not need!
   }
 
   @media (max-width: 420px) {
+    .b-product-add-full__delete { padding: 20px; }
+    .b-product-add-full__delete-actions > .v-btn { flex: 1 1 auto; min-height: 44px; }
     .b-product-add-full__actions { width: 100%; }
     .b-product-add-full__actions > .sd-modern-button--primary { flex: 1; }
     .b-product-add-full__heading { gap: 8px; }
@@ -2077,7 +2167,8 @@ not need!
 .b-product-add-full--price-info,
 .b-product-add-full--shipping-info,
 .b-product-add-full--description-info,
-.b-product-add-full--inventory-info {
+.b-product-add-full--inventory-info,
+.b-product-add-full--delete-info {
   .b-product-add-full__heading,
   .b-product-add-full__general-actions,
   .b-product-add-full__seo { width: 100%; max-width: 760px; margin-inline: auto; }
@@ -2120,12 +2211,4 @@ not need!
   }
 }
 
-.seo-preview {
-  //animation: blur 1s ease;
-  transition: all 1s;
-
-  &.blurred {
-    filter: blur(6px);
-  }
-}
 </style>

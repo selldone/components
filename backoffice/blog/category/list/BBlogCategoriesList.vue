@@ -19,7 +19,7 @@
     :aria-busy="busy_fetch"
   >
     <!-- ████████████████████████ List ████████████████████████ -->
-    <u-loading-progress v-if="busy_fetch" />
+    <b-list-loading-state v-if="busy_fetch && categories?.length" kind="category" compact class="sd-modern-list-refresh" />
     <div class="b-blog-categories-list__tools">
       <v-text-field
         v-model="search"
@@ -83,6 +83,7 @@
       >
     </div>
     <v-data-table-server
+      :aria-busy="busy_fetch"
       v-model:items-per-page="itemsPerPage"
       v-model:options="options"
       v-model:page="page"
@@ -103,34 +104,18 @@
       hide-default-footer
       @click:row="(_, row) => showAddBlogCategoryDialog(row.item)"
     >
+      <template v-if="!categories?.length" #loading>
+        <b-list-loading-state kind="category" />
+      </template>
+
       <template #no-data
-        ><div
-          v-if="!busy_fetch && !fetch_error"
-          class="sd-modern-empty-state b-blog-categories-list__empty"
+        ><b-list-empty-state
+          v-if="emptyStateLoaded && !busy_fetch && !fetch_error"
+          kind="category"
+          class="b-blog-categories-list__empty"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search ? 'blog_category.modern.no_results' : 'blog_category.modern.empty_title'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search ? 'blog_category.modern.no_results_description' : 'blog_category.modern.empty_description'))"
         >
-          <v-icon
-            :icon="search ? 'search_off' : 'folder_open'"
-            size="25"
-            aria-hidden="true"
-          />
-          <h2>
-            {{
-              $t(
-                search
-                  ? "blog_category.modern.no_results"
-                  : "blog_category.modern.empty_title",
-              )
-            }}
-          </h2>
-          <p>
-            {{
-              $t(
-                search
-                  ? "blog_category.modern.no_results_description"
-                  : "blog_category.modern.empty_description",
-              )
-            }}
-          </p>
           <v-btn
             v-if="search"
             class="sd-modern-button sd-modern-button--inline"
@@ -138,7 +123,7 @@
             @click="search = ''"
             >{{ $t("blog_category.modern.clear_search") }}</v-btn
           >
-        </div></template
+        </b-list-empty-state></template
       >
       <template #item.icon="{ item }"
         ><u-avatar-folder
@@ -788,6 +773,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import threads from "@selldone/core-js/utils/thread/threads";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions";
@@ -798,7 +785,9 @@ import UAvatarFolder from "../../../../ui/avatar/folder/UAvatarFolder.vue";
 
 export default {
   name: "BBlogCategoriesList",
-  components: { UAvatarFolder, SImageUploader, USmartSuggestion, USmartToggle },
+  components: {
+    BListLoadingState,
+    BListEmptyState, UAvatarFolder, SImageUploader, USmartSuggestion, USmartToggle },
   props: {
     shop: { required: true },
     modern: { type: Boolean, default: false },
@@ -813,6 +802,7 @@ export default {
     busy_del: null,
     categories: [],
     busy_fetch: false,
+    emptyStateLoaded: false,
     fetch_error: false,
     request_id: 0,
     editor_version: 0,
@@ -1091,6 +1081,7 @@ export default {
       sortDesc: boolean | string = true,
       force = false,
     ) {
+      this.emptyStateLoaded = false;
       const request = ++this.request_id;
       this.busy_fetch = true;
       this.fetch_error = false;
@@ -1107,6 +1098,7 @@ export default {
         .then(({ total, categories }) => {
           if (request !== this.request_id) return;
           this.categories = categories;
+          this.emptyStateLoaded = Array.isArray(categories);
           this.totalItems = total;
         })
         .catch((error) => {

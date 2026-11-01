@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div :class="{ 's-article-editor--workspace': workspace, 's-article-editor--product-workspace text-start': productWorkspace }">
+  <div class="s-article-editor" :class="{ 's-article-editor--workspace': workspace, 's-article-editor--product-workspace text-start': productWorkspace, 's-article-editor--help text-start': helpEditor }">
     <!-- ――――――――――――――――――――――― Article ――――――――――――――――――――――― -->
     <div
       :id="MASTER_ID"
@@ -45,6 +45,8 @@
           />
         </div>
 
+        <slot name="edit-after-title"></slot>
+
         <div>
           <div
             v-if="enableBody"
@@ -59,17 +61,6 @@
           />
         </div>
 
-        <v-btn
-          v-if="productWorkspace && enableBody && !noMediumInsert"
-          class="sd-modern-button sd-modern-button--compact sd-modern-button--inline s-article-editor__insert"
-          variant="text"
-          :disabled="!active || word_import_busy"
-          @click="showProductInsert"
-        >
-          <b-product-edit-info-icon name="CirclePlus" :size="17" />
-          {{ $t('add_product.description_modern.insert_content') }}
-        </v-btn>
-
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬ Drop Zone ⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
         <div
@@ -79,7 +70,7 @@
           @drop="drop"
         >
           <div class="center-absolute p-3">
-            <template v-if="workspace">
+            <template v-if="stagedWordImport">
               <v-icon icon="upload_file" size="32" aria-hidden="true" />
               <p>{{ $t('global.article.workspace_word.drop_hint') }}</p>
               <p>{{ $t('global.article.workspace_word.formats_hint') }}</p>
@@ -155,18 +146,27 @@
       :master-id="MASTER_ID"
       :upload-url="uploadUrl"
     ></a-addon-comparison-dialog>
+    <a-addon-flowchart-dialog
+      v-if="flowchartAllowed"
+      :model-value="flowchart_dialog"
+      :definition="flowchart_definition"
+      :article-type="articleType"
+      :active="flowchartCanWrite && flowchartContextCurrent()"
+      @update:model-value="!$event && closeFlowchart()"
+      @apply="applyFlowchart"
+    />
     <!-- <calculator-global-dialog></calculator-global-dialog>-->
 
     <!-- ――――――――――――――――――――――― 💡 Select word file (docx) ――――――――――――――――――――――― -->
     <input
       ref="file_input"
-      :accept="workspace ? '.docx,.odt' : '.docx'"
+      :accept="stagedWordImport ? '.docx,.odt' : '.docx'"
       hidden="hidden"
       type="file"
       @change="onSelectWordFile"
     />
     <v-dialog
-      v-if="workspace && active"
+      v-if="stagedWordImport && active"
       v-model="word_import_dialog"
       :persistent="word_import_busy"
       max-width="520"
@@ -234,7 +234,10 @@ import { debounce } from "lodash-es";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import ImageMixin from "@selldone/components-vue/mixin/image/ImageMixin.ts";
-import BProductEditInfoIcon from "@selldone/components-vue/backoffice/product/edit/info/BProductEditInfoIcon.vue";
+import AAddonFlowchart from "./add-on/flowchart/AAddonFlowchart.vue";
+import AAddonFlowchartDialog from "./add-on/flowchart/AAddonFlowchartDialog.vue";
+import { canUseArticleFlowchart, parseArticleFlowchart, parseArticleFlowchartElement, serializeArticleFlowchart, MAX_ARTICLE_FLOWCHARTS } from "./add-on/flowchart/article-flowchart";
+import { articleAddonContext } from "./add-on/toolbar/article-addon-context";
 
 window.MediumInsert = MediumInsert;
 
@@ -387,18 +390,22 @@ const OPTIONS_BODY = {
 export default defineComponent({
   name: "SArticleEditor",
   mixins: [ImageMixin],
-  emits: ["change", "update:title", "update:body", "update:images", "workspace-busy", "workspace-pending"],
+  emits: ["change", "update:title", "update:body", "update:images", "workspace-busy", "workspace-pending", "pending-change"],
 
   components: {
     SArticleTableOfContents,
     AAddonComparisonDialog,
     AAddonCatalogDialog,
     AAddonCodeEditorDialog,
-    BProductEditInfoIcon,
+    AAddonFlowchartDialog,
   },
 
   props: {
     workspace: { type: Boolean, default: false },
+    immediateChange: { type: Boolean, default: false },
+    helpEditor: { type: Boolean, default: false },
+    articleType: { type: String, default: "" },
+    articleContext: { type: Object, default: null },
     productWorkspace: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
     language: { type: String, default: "" },
@@ -490,33 +497,43 @@ export default defineComponent({
       word_import_error: "",
       word_import_busy: false,
       word_import_request: 0,
+      flowchart_dialog: false,
+      flowchart_definition: null,
     };
   },
 
   watch: {
     onlyView() {
-      if (this.workspace) this.resetWordImport();
+      this.closeFlowchart();
+      if (this.stagedWordImport) this.resetWordImport();
       this.$nextTick(() => {
         this.refresh();
       });
     },
 
     edit() {
-      if (this.workspace && !this.edit) this.resetWordImport();
-      if (this.productWorkspace && !this.edit) this.hideProductTools();
+      if (!this.edit) this.closeFlowchart();
+      if (this.stagedWordImport && !this.edit) this.resetWordImport();
+      if (!this.edit) this.hideProductTools();
     },
     active(value) {
-      if (this.workspace && !value) this.resetWordImport();
-      if (this.productWorkspace && !value) this.hideProductTools();
+      if (!value) this.closeFlowchart();
+      if (this.stagedWordImport && !value) this.resetWordImport();
+      if (!value) this.hideProductTools();
     },
     workspace(value, previous) {
       if (previous && this.word_import_busy) this.$emit("workspace-busy", false);
       if (previous && this.word_import_dialog) this.$emit("workspace-pending", false);
       this.resetWordImport();
     },
-    wordConverterUrl() { if (this.workspace) this.resetWordImport(); },
-    suffixId() { if (this.workspace) this.resetWordImport(); },
-    language() { if (this.productWorkspace) this.setDirection(); },
+    helpEditor(value, previous) { if (previous) this.resetWordImport(); },
+    nativeUserId() { this.closeFlowchart(); if (this.helpEditor) this.resetWordImport(); },
+    wordConverterUrl() { if (this.stagedWordImport) this.resetWordImport(); },
+    suffixId() { if (this.stagedWordImport) this.resetWordImport(); },
+    articleContext() { this.closeFlowchart(); if (this.helpEditor) { this.resetWordImport(); this.state = 'no-change'; } },
+    articleType() { this.closeFlowchart(); },
+    nativePending(value) { this.$emit('pending-change', value); },
+    language() { if (this.productWorkspace || this.helpEditor) this.setDirection(); },
     word_import_busy(value) { if (this.workspace) this.$emit("workspace-busy", value); },
     word_import_dialog(value) { if (this.workspace) this.$emit("workspace-pending", value); },
 
@@ -528,7 +545,10 @@ export default defineComponent({
 
   created() {
     // These independently mounted apps must not enter reactive article state.
+    this._addonUnmounted = false;
     this._addonApps = [];
+    this._flowchartGeneration = 0;
+    this._flowchartContext = null;
   },
 
   mounted() {
@@ -545,6 +565,8 @@ export default defineComponent({
 
   beforeUnmount() {
     this._addonUnmounted = true;
+    this.closeFlowchart();
+    this._flowchartPaletteBody?.removeEventListener('click', this.prepareFlowchartInsert, true);
     clearTimeout(this._addonRenderTimer);
     this.pruneAddonApps(true);
     if (this.workspace && this.word_import_busy) this.$emit("workspace-busy", false);
@@ -561,8 +583,13 @@ export default defineComponent({
   },
 
   computed: {
+    stagedWordImport() { return this.workspace || this.helpEditor; },
+    nativeUserId() { return this.flowchartAllowed || this.helpEditor ? this.USER_ID() : null; },
+    nativePending() { return this.flowchart_dialog || (this.helpEditor && this.word_import_dialog); },
+    flowchartAllowed() { return canUseArticleFlowchart(this.articleType); },
+    flowchartCanWrite() { return this.flowchartAllowed && this.active && this.edit && !this.onlyView && !this.noMediumInsert && !this.word_import_busy && !this._addonUnmounted && !!this.USER(); },
     canImportWord() {
-      return this.workspace && this.active && this.edit && !this.onlyView && !!this.wordConverterUrl;
+      return this.stagedWordImport && this.active && this.edit && !this.onlyView && !!this.wordConverterUrl && !this.flowchart_dialog && (!this.helpEditor || !!this.USER());
     },
     productWordCount() {
       if (!this.productWorkspace) return 0;
@@ -602,6 +629,12 @@ export default defineComponent({
     rendered_body() {
       let div = $("<div>");
       div.html(this.body);
+
+      // Only canonical definitions reach the DOM; mounted SVG/toolbars are never source content.
+      div.find('article-flowchart').each((_, element) => {
+        const flow = this.flowchartAllowed && parseArticleFlowchartElement(element);
+        $(element).replaceWith(flow ? serializeArticleFlowchart(flow) : '');
+      });
 
       this.reRenderAll();
 
@@ -648,20 +681,21 @@ export default defineComponent({
         editor?.getExtensionByName?.("toolbar")?.hideToolbar();
     },
     showProductInsert() {
-      if (!this.productWorkspace || !this.active || !this.edit || this.onlyView || this.noMediumInsert || this.word_import_busy) return;
+      if (!this.active || !this.edit || this.onlyView || this.noMediumInsert || this.word_import_busy || this.flowchart_dialog) return;
       const body = this.$refs.editable_body;
       const insert = body ? $(body).data("plugin_mediumInsert") : null;
       if (!insert) return;
 
       // Open the native palette at a trailing empty line; existing rich blocks stay intact.
       const children = Array.from(body.children).filter((element) => !element.classList.contains("medium-insert-buttons"));
-      let paragraph = children[children.length - 1];
-      if (paragraph?.tagName !== "P" || paragraph.textContent.trim() || paragraph.querySelector("img,video,iframe,canvas,code-editor,images-compare,flip-book,image-overlay-canvas")) {
+      let paragraph = (this.helpEditor && body.querySelector('p.medium-insert-active')) || children[children.length - 1];
+      if (paragraph?.tagName !== "P" || paragraph.textContent.trim() || paragraph.querySelector("img,video,iframe,canvas,code-editor,images-compare,flip-book,image-overlay-canvas,article-flowchart")) {
         paragraph = document.createElement("p");
         paragraph.append(document.createElement("br"));
         body.insertBefore(paragraph, body.querySelector(".medium-insert-buttons"));
       }
       insert.addButtons();
+      this.prepareFlowchartInsert();
       $(body).find(".medium-insert-active").removeClass("medium-insert-active");
       $(body).find(".medium-insert-buttons").removeAttr("data-active-addon");
       $(paragraph).addClass("medium-insert-active");
@@ -672,6 +706,64 @@ export default defineComponent({
       insert.hideAddons();
       insert.toggleAddons();
       $(body).find(".medium-insert-buttons-addons").stop(true, true).find("button").first().trigger("focus");
+    },
+    prepareFlowchartInsert() {
+      if (!this.flowchartCanWrite) return;
+      const body = this.$refs.editable_body, insert = body && $(body).data('plugin_mediumInsert');
+      if (!insert) return;
+      insert.addButtons();
+      const palette = body.querySelector('.medium-insert-buttons-addons');
+      if (!palette || palette.querySelector('.s-article-flowchart-insert')) return;
+      const item = document.createElement('li'), button = document.createElement('button'), icon = document.createElement('span');
+      button.type = 'button'; button.className = 's-article-flowchart-insert';
+      icon.className = 'material-icons'; icon.setAttribute('aria-hidden', 'true'); icon.textContent = 'account_tree';
+      button.append(icon, document.createTextNode(` ${this.$t('global.article.flowchart.insert')}`));
+      button.addEventListener('click', (event) => {
+        event.preventDefault(); event.stopPropagation();
+        if (body !== this.$refs.editable_body || !this.flowchartCanWrite) return;
+        this.openFlowchart(); insert.hideAddons(); insert.hideButtons();
+      });
+      item.append(button); palette.append(item);
+    },
+    flowchartContextCurrent() {
+      const context = this._flowchartContext, body = this.$refs.editable_body;
+      return !!context && this.flowchartCanWrite && context.generation === this._flowchartGeneration && context.article === this.articleContext && context.type === this.articleType && context.userId === this.USER_ID() && context.body === body && !!articleAddonContext(body) && (!context.element || (body.contains(context.element) && !!articleAddonContext(context.element) && context.serialized === context.element.getAttribute('data-flow')));
+    },
+    openFlowchart(definition = null, element = null) {
+      if (!this.flowchartCanWrite || this.flowchart_dialog) return false;
+      const body = this.$refs.editable_body;
+      if (!body?.isConnected || !articleAddonContext(body) || (element && (!body.contains(element) || !articleAddonContext(element)))) return false;
+      const flow = definition === null ? null : parseArticleFlowchart(definition);
+      if (definition !== null && !flow) return false;
+      if (!element && body.querySelectorAll('article-flowchart').length >= MAX_ARTICLE_FLOWCHARTS) {
+        NotificationService.showErrorAlert(null, this.$t('global.article.flowchart.limit')); return false;
+      }
+      this._flowchartContext = { generation: this._flowchartGeneration, article: this.articleContext, type: this.articleType, userId: this.USER_ID(), body, element, serialized: element?.getAttribute('data-flow'), paragraph: body.querySelector('p.medium-insert-active') };
+      this.flowchart_definition = flow;
+      this.flowchart_dialog = true;
+      return true;
+    },
+    closeFlowchart() {
+      this._flowchartGeneration++;
+      this._flowchartContext = null;
+      this.flowchart_dialog = false;
+      this.flowchart_definition = null;
+    },
+    applyFlowchart(value) {
+      if (!this.flowchart_dialog || !this.flowchartContextCurrent()) return false;
+      const html = serializeArticleFlowchart(value);
+      if (!html) return false;
+      const context = this._flowchartContext, body = context.body;
+      if (!context.element && body.querySelectorAll('article-flowchart').length >= MAX_ARTICLE_FLOWCHARTS) return false;
+      const template = document.createElement('template'); template.innerHTML = html;
+      const marker = template.content.firstElementChild;
+      if (context.element) context.element.replaceWith(marker);
+      else if (context.paragraph?.isConnected && body.contains(context.paragraph) && !context.paragraph.textContent.trim() && !context.paragraph.querySelector('img,iframe,video,article-flowchart')) context.paragraph.replaceWith(marker);
+      else body.insertBefore(marker, body.querySelector('.medium-insert-buttons'));
+      this.closeFlowchart();
+      this.onEdited();
+      this.reRenderAll();
+      return true;
     },
     resetWordImport() {
       this.word_import_request++;
@@ -712,9 +804,10 @@ export default defineComponent({
       if (!this.canImportWord || !this.word_import_dialog || !this.word_import_file || this.word_import_busy) return;
       const file = this.word_import_file;
       const url = this.wordConverterUrl, suffix = this.suffixId;
+      const sourceArticle = this.articleContext, userId = this.helpEditor ? this.USER_ID() : null;
       const request = ++this.word_import_request;
       const current = () => request === this.word_import_request && this.canImportWord &&
-        url === this.wordConverterUrl && suffix === this.suffixId;
+        url === this.wordConverterUrl && suffix === this.suffixId && (!this.helpEditor || (sourceArticle === this.articleContext && userId === this.USER_ID()));
       let converted = false;
       this.word_import_busy = true;
       this.word_import_error = "";
@@ -774,11 +867,11 @@ export default defineComponent({
     //――――――――――――――――――――――― Drop file (word) ―――――――――――――――――――――
     dragover(event) {
       if (!this.wordConverterUrl) return;
-      if (this.workspace && !this.canImportWord) return;
+      if (this.stagedWordImport && !this.canImportWord) return;
 
       // Word File:
       if (
-        this.workspace
+        this.stagedWordImport
           ? Array.from(event.dataTransfer.types || []).includes("Files")
           : Object.values(event.dataTransfer.items).some((i) =>
               i.type.includes("application/vnd"),
@@ -797,7 +890,7 @@ export default defineComponent({
 
     drop(event) {
       if (!this.wordConverterUrl) return;
-      if (this.workspace && !this.canImportWord) return;
+      if (this.stagedWordImport && !this.canImportWord) return;
 
       this.show_drop = false;
 
@@ -808,7 +901,7 @@ export default defineComponent({
     },
 
     showSelectWord() {
-      if (this.workspace) {
+      if (this.stagedWordImport) {
         if (!this.canImportWord || this.word_import_busy) return;
         this.resetWordImport();
         this.word_import_dialog = true;
@@ -819,13 +912,13 @@ export default defineComponent({
     },
     onSelectWordFile() {
       const defaultFile = this.$refs.file_input;
-      if (this.workspace) return this.stageWordFile(defaultFile.files);
+      if (this.stagedWordImport) return this.stageWordFile(defaultFile.files);
 
       // Send word file to server to convert to html:
       this.loadWordFile(defaultFile.files);
     },
     loadWordFile(files) {
-      if (this.workspace) return this.stageWordFile(files);
+      if (this.stagedWordImport) return this.stageWordFile(files);
       if (!this.wordConverterUrl) return;
 
       // Word files:
@@ -926,6 +1019,23 @@ export default defineComponent({
           let t = this;
 
           const i18n = this.geti18n();
+          if (this.flowchartAllowed) {
+            const sourceArticle = this.articleContext, sourceType = this.articleType;
+            document.querySelectorAll(`#${this.MASTER_ID} article-flowchart`).forEach((element) => {
+              if (element.classList.contains('a-article-flowchart')) return;
+              const definition = parseArticleFlowchartElement(element);
+              if (!definition) return;
+              const editable = element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
+              const app = createApp({ render: () => h(AAddonFlowchart, {
+                definition, articleType: sourceType, editable: editable && sourceArticle === this.articleContext && this.flowchartCanWrite,
+                onEdit: (flow, root) => { if (sourceArticle === this.articleContext && sourceType === this.articleType) this.openFlowchart(flow, root); },
+              }) });
+              app.use(window.$global_vuetify); app.use(i18n); installGlobalComponents(app);
+              const container = document.createElement('div'); app.mount(container);
+              const root = container.firstElementChild;
+              element.replaceWith(root); this._addonApps.push({ app, root });
+            });
+          }
           //――――――――――――――――――――――― 💡 Mega Replacer ▶ Code Editor ▶ Render Mode ―――――――――――――――――――――――
 
           // Get all elements with class 'code-editor'
@@ -1181,7 +1291,7 @@ export default defineComponent({
       this.pruneAddonApps();
       if (this.productWorkspace) this.product_body_revision++;
       // Resource navigation must see a changed draft before the next click.
-      if (this.workspace) {
+      if (this.workspace || this.immediateChange) {
         if (this.edit) this.state = "changed";
         this.$emit("change", { title: this.title, body: this.body });
       } else this.onEditedDebounced();
@@ -1237,7 +1347,7 @@ export default defineComponent({
         this.noMediumInsert,
       );
       // Keep the workspace import state and monotonic generation across editor refreshes.
-      if (!this.workspace) this.resetToDefault();
+      if (!this.stagedWordImport) this.resetToDefault();
 
       this.setDirection();
 
@@ -1289,6 +1399,7 @@ export default defineComponent({
       if (!this.noMediumInsert)
         $("#" + this.EDITABLE_BODY_ID).mediumInsert({
           editor: this.editor_body,
+          insertLabel: this.$t("global.article.editor.insert_content"),
           addons: {
             CodeEditorAddon: {},
 
@@ -1460,6 +1571,10 @@ export default defineComponent({
             },
           },
         });
+      this._flowchartPaletteBody?.removeEventListener('click', this.prepareFlowchartInsert, true);
+      this._flowchartPaletteBody = this.flowchartAllowed ? this.$refs.editable_body : null;
+      this._flowchartPaletteBody?.addEventListener('click', this.prepareFlowchartInsert, true);
+      this.prepareFlowchartInsert();
     },
 
     findAllImages() {
@@ -1497,6 +1612,15 @@ export default defineComponent({
 
       let div = $("<div>");
       div.html($("#" + this.EDITABLE_BODY_ID).html());
+
+      const flowcharts = [];
+      div.find('article-flowchart').each((_, element) => {
+        const definition = this.flowchartAllowed && parseArticleFlowchartElement(element);
+        const html = definition && serializeArticleFlowchart(definition);
+        if (!html) { $(element).remove(); return; }
+        const index = flowcharts.push(html) - 1;
+        $(element).replaceWith(`<replace-flowchart>${index}</replace-flowchart>`);
+      });
 
       //――――――――――――――――――――――― 💡 Mega Replacer ▶ Code Editor ▶ Save Mode ―――――――――――――――――――――――
       /**
@@ -1576,7 +1700,7 @@ export default defineComponent({
       div
         .find("*")
         .not(
-          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,iframe,strike,blockquote,script,span,table,tbody,thead,tr,td,th,br,style" +
+          "a,i,ol,ul,li,img,br,p,div,b,u,h1,h2,h3,h4,h5,h6,font,figure,figcaption,pre,code,iframe,replace,replace-embed,replace-flowchart,iframe,strike,blockquote,script,span,table,tbody,thead,tr,td,th,br,style" +
             ",math,semantics,mrow,msub,mi,mo" /*Math Formula*/ +
             ",mfrac,msup,msubsup,mmultiscripts,mprescripts,msqrt,mroot,mstyle,mpadded,mphantom,menclose" /*Math Layout*/ +
             ",mo,mn,mtext,mspace,maligngroup,malignmark" /*Math Tokens*/ +
@@ -1694,6 +1818,9 @@ export default defineComponent({
 
         $(this).replaceWith(div);
       });
+      div.find('replace-flowchart').each(function () {
+        $(this).replaceWith(flowcharts[Number($(this).text())] || '');
+      });
       //――――――――――――――――――――――― Solve image re-editable problem ―――――――――――――――――――――――
       div.find("figure").each(function () {
         //console.log('***********',$(this).children().find('img').length)
@@ -1801,7 +1928,7 @@ export default defineComponent({
 
       //console.log("doc= "+doc)
       let isRTL = doc && this.isUnicode(doc);
-      if (this.productWorkspace && !doc.trim()) isRTL = this.getLanguageObject?.(this.language)?.dir === 'rtl';
+      if ((this.productWorkspace || this.helpEditor) && !doc.trim()) isRTL = this.getLanguageObject?.(this.language)?.dir === 'rtl';
       this.isRTL = isRTL;
 
       if (element.style.direction === (isRTL ? "rtl" : "ltr")) return;
@@ -1841,6 +1968,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@use "./article-content";
+
 .review-style {
   .medium-insert-embeds-overlay {
     visibility: hidden;
@@ -1861,95 +1990,6 @@ export default defineComponent({
 
   p {
     unicode-bidi: embed !important;
-  }
-
-  // Editorial quotes inherit the article's ink/background; social embeds own their appearance.
-  blockquote:not(.twitter-tweet):not(.instagram-media):not(.tiktok-embed):not(.reddit-embed-bq):not(:where(.medium-insert-embed *, .medium-insert-embeds *, .embed-raw-html *)) {
-    display: flow-root;
-    position: relative;
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-    margin: 28px 0 !important;
-    padding: 22px 24px;
-    padding-inline-start: 65px;
-    border: 0;
-    border-inline-start: 3px solid color-mix(in srgb, currentColor 36%, transparent);
-    border-radius: 0;
-    background: transparent;
-    color: inherit;
-    font-family: inherit;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 1.75;
-    text-align: start;
-    overflow-wrap: anywhere;
-
-    &:before {
-      content: "\f10d" / "";
-      position: absolute;
-      inset-block-start: 26px;
-      inset-inline-start: 24px;
-      width: 25px;
-      height: 25px;
-      font-family: "Font Awesome 7 Free";
-      font-weight: 900;
-      font-size: 25px;
-      line-height: 25px;
-      color: color-mix(in srgb, currentColor 62%, transparent);
-      pointer-events: none;
-      user-select: none;
-    }
-
-    p, ol, ul, li {
-      color: inherit;
-      font-family: inherit;
-      font-size: inherit;
-      line-height: inherit;
-      text-align: start;
-    }
-
-    p { margin: 0; }
-    p + p { margin-block-start: 14px; }
-    > :first-child { margin-block-start: 0; }
-    > :last-child { margin-block-end: 0; }
-
-    ol, ul { margin-block: 12px; padding-inline-start: 1.4em; }
-    ol { list-style: decimal; }
-    ul { list-style: disc; }
-    li { display: list-item; margin: 6px 0; padding: 0; background: transparent; }
-    li:before { content: none; }
-
-    a, a:visited, a:hover {
-      color: inherit !important;
-      background: transparent !important;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
-    cite {
-      display: block;
-      margin-block-start: 10px;
-      color: inherit;
-      font-size: 12px;
-      font-style: normal;
-      line-height: 20px;
-    }
-
-    @media (max-width: 540px) {
-      padding: 18px 16px;
-      padding-inline-start: 46px;
-      font-size: 17px;
-
-      &:before {
-        inset-block-start: 22px;
-        inset-inline-start: 16px;
-        width: 20px;
-        height: 20px;
-        font-size: 20px;
-        line-height: 20px;
-      }
-    }
   }
 
   /**
@@ -2057,11 +2097,6 @@ export default defineComponent({
 /**
       HR
       */
-.s--article-editor-container hr {
-  border: 0px;
-  border-bottom: 2px dashed #b75ea8;
-}
-
 .s--article-editor-container {
   figure {
     img {
@@ -2180,195 +2215,7 @@ export default defineComponent({
   }
 }
 
-.s--article-editor-container ol {
-  display: flow-root;
-  margin: 1em 1em;
-  line-height: 1em;
-  font-size: 1.2rem;
-
-  counter-reset: li;
-  list-style: decimal;
-  padding: 0;
-
-  @media only screen and (max-width: 900px) {
-    margin: 1.5em 0;
-  }
-}
-
-.s--article-editor-container ol ol {
-  margin: 0 0 0 2em;
-}
-
-.s--article-editor-container ol li {
-  position: relative;
-  display: block;
-  padding: 0em 0.2em 0em 2em;
-  margin: 0.5em 0;
-  // background: #fafbfb;
-  color: #444;
-  text-decoration: none;
-  -moz-border-radius: 0.3em;
-  -webkit-border-radius: 0.3em;
-  border-radius: 2em;
-
-  line-height: 1.7em;
-
-  p {
-    margin: 0;
-  }
-}
-
-.s--article-editor-container ol li:hover {
-  text-decoration: none;
-}
-
-// =========== Un ordered list: ==============
 .s--article-editor-container {
-  --ol-li-dot-bg: linear-gradient(to right bottom, #333, #222);
-
-  ol {
-    li:before {
-      content: counter(li);
-      counter-increment: li;
-      position: absolute;
-      left: -1em;
-      top: 50%;
-      margin-top: -1em;
-
-      background: var(--ol-li-dot-bg);
-
-      font-size: 12px;
-      height: 30px;
-      width: 30px;
-      border: 0.3em solid #fff;
-      text-align: center;
-      font-weight: bold;
-      -moz-border-radius: 2em;
-      -webkit-border-radius: 2em;
-      border-radius: 2em;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-
-  --ul-li-dot-bg: linear-gradient(to right bottom, #333, #222);
-
-  ul {
-    display: flow-root;
-    margin: 1em 1em;
-    line-height: 1em;
-    font-size: 1.2rem;
-
-    counter-reset: li;
-    list-style: decimal;
-    padding: 0;
-
-    @media only screen and (max-width: 900px) {
-      margin: 1.5em 0;
-    }
-
-    li {
-      position: relative;
-      display: block;
-      padding: 0em 0.2em 0em 2em;
-      margin: 0.5em 0;
-      //   background: #fafbfb;
-      color: #444;
-      text-decoration: none;
-
-      line-height: 1.7em;
-
-      &:hover {
-        text-decoration: none;
-      }
-
-      &:before {
-        content: "•";
-        counter-increment: li;
-        position: absolute;
-        left: -1em;
-        top: 50%;
-        margin-top: -1em;
-
-        background: var(--ul-li-dot-bg);
-
-        font-size: 12px;
-        height: 30px;
-        width: 30px;
-        border: 0.3em solid #fff;
-        text-align: center;
-        font-weight: bold;
-        border-radius: 2em;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      p {
-        margin: 0;
-      }
-
-      &.filepond--item {
-        &:before {
-          content: unset;
-        }
-      }
-    }
-  }
-
-  /**
--------------------- 🐜🐜🐜 Nested Lists 🐜🐜🐜 --------------------
-*/
-  ol,
-  ul {
-    ul {
-      margin: 0;
-      margin-inline-start: 1em;
-      li {
-        padding: 0;
-        &:before {
-          content: " ";
-          height: 100%;
-          width: 1px;
-          border: none;
-          border-inline-start: 0.2em solid #000;
-          border-radius: 0;
-          top: 0;
-          bottom: 0;
-          display: block;
-          margin: 0;
-        }
-      }
-    }
-    ol {
-      margin: 0;
-      margin-inline-start: 1em;
-      li {
-        padding: 0;
-        &:before {
-          content: counter(li) " .";
-          counter-increment: li;
-          height: 100%;
-          background: none;
-          border: none;
-          border-inline-start: 0.2em solid #000;
-          border-radius: 0;
-          top: 0;
-          bottom: 0;
-          display: inline-block;
-          position: relative;
-          margin: 0;
-          color: currentColor;
-        }
-      }
-    }
-  }
-  /**
---------------------------------------------------------
- */
 
   //--------------------------------------------------------------------------------
   // MEDIUM INSERT BUTTON
@@ -2565,24 +2412,6 @@ p iframe {
 
 .for-rtl {
   &.s--article-editor-container {
-    ol li {
-      padding: 0em 2em 0em 0.2em;
-
-      &:before {
-        left: unset;
-        right: -1em;
-      }
-    }
-
-    ul li {
-      padding: 0em 2em 0em 0.2em;
-
-      &:before {
-        left: unset;
-        right: -1em;
-      }
-    }
-
     h6 {
       // note
       border-right: solid cadetblue medium;
@@ -2940,17 +2769,16 @@ p iframe {
   }
 }
 
-//------------------------ NEW STYLE ------------------------
-
-.u-article-body-view,
-.u-article-body-edit {
-  p {
-    margin-bottom: 2rem;
-  }
-}
 </style>
 
 <style lang="scss" scoped>
+.s--article-editor-container :deep(.s-article-flowchart-insert) {
+  display: inline-flex; align-items: center; gap: 8px; width: 220px; min-height: 42px;
+  padding: 0 12px !important; border: 1px solid #0061e0 !important; border-radius: 12px;
+  background: #0061e0; color: #fff !important; font: inherit; font-size: 14px; line-height: 22px; text-align: start;
+  .material-icons { font-size: 17px; }
+  &:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+}
 .s-article-editor--workspace {
   font-family: inherit;
   .s-article-editor__title {
@@ -3026,15 +2854,6 @@ p iframe {
     }
   }
   .review-style { padding-inline: 0 !important; }
-  .s-article-editor__insert {
-    min-height: 34px;
-    margin-block-start: 18px;
-    color: var(--sd-modern-muted);
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 20px;
-    :deep(.v-btn__content) { gap: 8px; }
-  }
   .s-article-editor__product-meta {
     display: flex;
     align-items: center;
@@ -3050,32 +2869,61 @@ p iframe {
     line-height: 18px;
   }
 
-  // Keep native insert operations, with an in-flow menu that fits the product card.
+}
+.s-article-editor {
+  min-width: 0;
+  .s-article-editor__body { position: relative; }
+  // All article contexts share the native palette; keep its inline paragraph coordinates.
   .s-article-editor__body :deep(.medium-insert-buttons) {
-    position: relative !important;
-    inset: auto !important;
+    position: absolute !important;
     width: 100% !important;
+    // Image controls sit at the image edge and open the native file chooser directly.
+    &[data-active-addon="images"] { width: auto !important; }
   }
-  .s-article-editor__body :deep(.medium-insert-buttons-show) {
+  .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-buttons-show) {
     position: relative;
     inset: auto;
-    width: 32px !important;
-    height: 32px !important;
-    border: 1px solid var(--sd-modern-border) !important;
-    border-radius: 8px !important;
-    background: rgb(var(--v-theme-surface)) !important;
-    color: rgb(var(--v-theme-on-surface)) !important;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: max-content !important;
+    max-width: 100%;
+    min-height: 32px;
+    height: auto !important;
+    padding: 4px 6px !important;
+    border: 0 !important;
+    border-radius: 6px !important;
+    background: transparent !important;
+    color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), .65)) !important;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    text-align: start;
     transform: none !important;
     transition: none;
+    &:hover { background: var(--sd-modern-inset, rgba(var(--v-theme-on-surface), .05)) !important; }
+    &:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+    > svg { flex: 0 0 20px; width: 20px; height: 20px; }
+    > span { display: block; margin: 0; line-height: inherit; white-space: normal; }
+  }
+  .s-article-editor__body :deep(.medium-insert-buttons[data-active-addon="images"] .medium-insert-buttons-show) {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    justify-content: center;
+    gap: 0;
+    > span { display: none; }
   }
   .s-article-editor__body :deep(.medium-insert-buttons-addons) {
     position: relative;
-    inset: auto;
+    inset: 0 auto auto 0;
     width: min(100%, 340px);
     max-width: 100%;
     margin: 8px 0 !important;
     padding: 6px !important;
-    border: 1px solid var(--sd-modern-border);
+    border: 1px solid var(--sd-modern-border, rgba(var(--v-theme-on-surface), .12));
     border-radius: 12px;
     background: rgb(var(--v-theme-surface));
     color: rgb(var(--v-theme-on-surface));
@@ -3083,6 +2931,7 @@ p iframe {
     direction: inherit;
     text-align: start;
     list-style: none;
+    box-sizing: border-box;
     > li {
       display: block;
       margin: 0;
@@ -3092,7 +2941,10 @@ p iframe {
       &:before { content: none !important; }
     }
   }
-  .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-action) {
+  .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-buttons-addons > li > button) {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100% !important;
     min-height: 42px;
     height: auto;
@@ -3107,23 +2959,22 @@ p iframe {
     line-height: 21px;
     white-space: normal;
     text-align: start;
-    &:hover, &:focus-visible { background: var(--sd-modern-inset) !important; }
+    &:hover, &:focus-visible { background: var(--sd-modern-inset, rgba(var(--v-theme-on-surface), .05)) !important; }
+    &:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+    > span { flex: 0 0 18px; width: 18px; margin: 0; font-size: 16px; text-align: center; }
   }
 }
 @media (max-width: 600px) {
   .s-article-editor--product-workspace {
     .s-article-editor__title { min-height: 53px !important; font-size: 24px !important; line-height: 34px; letter-spacing: -.3px; }
     .s-article-editor__body { font-size: 16px; line-height: 28px; }
-    .s-article-editor__insert { min-height: 44px; }
-    .s-article-editor__body :deep(.medium-insert-buttons-show) { width: 44px !important; height: 44px !important; }
-    .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-action) { min-height: 44px; }
   }
 }
-@media (pointer: coarse) {
-  .s-article-editor--product-workspace {
-    .s-article-editor__insert { min-height: 44px; }
-    .s-article-editor__body :deep(.medium-insert-buttons-show) { width: 44px !important; height: 44px !important; }
-    .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-action) { min-height: 44px; }
+@media (max-width: 600px), (pointer: coarse) {
+  .s-article-editor {
+    .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-buttons-show) { min-height: 44px; }
+    .s-article-editor__body :deep(.medium-insert-buttons[data-active-addon="images"] .medium-insert-buttons-show) { width: 44px !important; height: 44px !important; }
+    .s-article-editor__body :deep(.medium-insert-buttons .medium-insert-buttons-addons > li > button) { min-height: 44px; }
   }
 }
 .s-article-word-import {

@@ -15,6 +15,64 @@ saved tiers. Opening or closing a section changes presentation only. The
 schedule toggle retains native behavior: switching it off clears both dates;
 a zero discount merely hides the schedule controls.
 
+### Compact summary cues
+
+The closed Discount & schedule heading shows a small red coupon-style cue when
+a monetary discount is configured. Its percentage comes from the existing
+`PriceHelper` calculation: base price plus commission is the denominator, with
+the native percentage rounding retained. A tiny nonzero discount that rounds
+to zero uses a Discount label instead of claiming 0%. The amount and explicit
+scheduled/active/ended status remain in the text digest; the badge describes
+configuration, not a promise that the checkout discount currently applies.
+
+A compact 4px striped timeline shows elapsed time toward the next configured
+start or end boundary. Waiting uses the product creation date as its origin;
+an active period uses its start, or the known creation date when no start is
+set. A missing or invalid origin does not produce an invented percentage:
+the compact marker and available boundary/status remain readable. Reversed or
+malformed dates have an invalid state, and a zero-duration span has no division
+by zero. Hover, focus or tap reveals localized start/end values and the actual
+browser time zone using the real `DateConverter`; open-ended periods say so.
+The help button does not toggle the containing disclosure or change the draft.
+
+The one-second summary clock runs only for a mounted, active modern workspace
+with a future boundary. It stops after the final boundary, when the editor is
+hidden or unmounted, and is absent from Inventory/legacy modes. The exact end
+timestamp receives the final transition tick before the clock stops.
+
+Additional price details shows compact Coins/Tag cues only for a finite nonzero
+commission and/or a nonblank label. Whitespace is ignored for presentation but
+is not trimmed from the saved draft. Quantity pricing shows a 64×30 miniature
+step line only when scoped saved tiers exist. It follows actual minimum
+quantities and net values (base + commission − discount), including flat or
+increasing prices, without mutating tier order or claiming a generic discount
+curve. The existing digest retains the saved currency while the main currency
+has an unsaved change. All cues use the shared editor in Edit and Add; none
+alters a pricing endpoint, payload, permission or independent tier-save flow.
+
+This refinement touches `BProductEditPrice.vue`,
+`BProductEditPrice.workspace.test.mjs`, `BProductEditPrice.unified.test.mjs`, this
+README and dashboard `en.ts`/`fa.ts`. The workspace suite passes 26 checks,
+including six new rendered/behavior regressions for these cues, real date
+formatting and a controlled clock. The Unified adapter now loads the actual
+Calendar/DateConverter source so a helper stub cannot conceal a missing runtime
+dependency. Native browser QA separately verifies pixel geometry, tooltip
+interaction, mobile/RTL and theme appearance; source tests do not submit live
+shop price writes.
+
+Isolated actual Vue/Vuetify verification passes the 18-case desktop/mobile,
+English/Persian and Light/native Dark/Smart matrix, plus schedule boundaries,
+configured/empty details, scoped tiers and saved-currency checks. The collapsed
+timeline help works on hover, keyboard focus and touch without opening the
+disclosure; Escape dismisses help while retaining focus. Normal summary clicks
+and keyboard expansion still work. Both the red coupon and the timeline use
+the existing Smart-invert protection for their meaningful colors. Additional
+glyphs and quantity miniatures hide when their section is expanded. Clock
+pause/boundary/unmount behavior, Add layout, long text and reduced motion were
+checked with all HTTP blocked. The existing expanded schedule control and
+global progress primitive retain their behavior. The combined workspace and
+Unified suites pass 44 tests; no live price or tier write was submitted.
+
 The receipt and tier list show base plus commission minus configured discount,
 independently of dates, with an explicit schedule status and explanation. The
 tier editor's native calculator still respects its discount dates. Commission

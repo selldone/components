@@ -17,7 +17,7 @@
 
   <section
     v-if="modern"
-    class="b-user-security-login-devices sd-modern-widget text-start"
+    class="b-user-security-login-devices sd-modern-widget text-start s-table-loading"
     :aria-busy="fetching_login_devices"
     :aria-label="$t('user_security_control.modern.devices_title')"
   >
@@ -45,8 +45,9 @@
       </v-btn>
     </header>
 
-    <u-loading-progress v-if="fetching_login_devices" />
-    <ul v-else-if="login_devices.length" class="b-user-security-login-devices__list">
+    <b-list-loading-state v-if="fetching_login_devices && login_devices.length" kind="app" compact class="sd-modern-list-refresh" />
+    <b-list-loading-state v-if="fetching_login_devices && !login_devices.length" kind="app" />
+    <ul v-else-if="login_devices.length" class="b-user-security-login-devices__list" :inert="fetching_login_devices ? true : undefined">
       <li
         v-for="(login_device, index) in login_devices"
         :key="index"
@@ -89,12 +90,12 @@
         </div>
       </li>
     </ul>
-    <p v-else-if="login_devices_loaded" class="sd-modern-empty-state" role="status">
-      {{ $t('user_security_control.modern.no_devices') }}
-    </p>
+    <b-list-empty-state v-else-if="login_devices_loaded" kind="app"
+      :title="$t('user_security_control.modern.no_devices')"
+      :description="$t('dashboard_empty_state.context.devices.description')" />
   </section>
 
-  <div v-else class="widget-box mb-5">
+  <div v-else class="widget-box mb-5 s-table-loading" :aria-busy="fetching_login_devices">
     <u-widget-header
       :add-caption="$t('global.actions.refresh')"
       :add-loading="fetching_login_devices"
@@ -106,10 +107,11 @@
     ></u-widget-header>
     <v-list-subheader>List of my active devices.</v-list-subheader>
 
-    <u-loading-progress v-if="fetching_login_devices"></u-loading-progress>
+    <b-list-loading-state v-if="fetching_login_devices && login_devices.length" kind="app" compact class="sd-modern-list-refresh" />
+    <b-list-loading-state v-if="fetching_login_devices && !login_devices.length" kind="app" />
 
     <v-expand-transition>
-      <div v-if="!fetching_login_devices">
+      <div v-if="login_devices.length || !fetching_login_devices" :inert="fetching_login_devices ? true : undefined">
         <v-list
           class="mx-auto text-start border border-between-vertical rounded-28px"
           density="compact"
@@ -173,6 +175,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
@@ -181,7 +185,9 @@ export default {
   name: "BUserSecurityLoginDevices",
   mixins: [DateMixin ],
 
-  components: {},
+  components: {
+    BListLoadingState,
+    BListEmptyState,},
   props: {
     modern: Boolean,
   },

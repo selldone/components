@@ -25,8 +25,9 @@ function translator(locale) {
   const messages = Object.fromEntries(["onboarding", "global"].map((name) => [name,
     evaluate(readFileSync(path.resolve(__dirname, `../../../../translate/${name === "onboarding" ? "service/onboarding" : "global"}/${locale}.ts`), "utf8"), { require: () => ({ default: {} }) }).default,
   ]));
+  const dashboard = evaluate(readFileSync(path.resolve(__dirname, "../../../../translate/dashboard", locale + ".ts"), "utf8"), { require: () => ({}) }).default;
   return (key, values = {}) => {
-    const value = key.split(".").reduce((current, segment) => current?.[segment], messages);
+    const value = key.split(".").reduce((current, segment) => current?.[segment], messages) ?? key.split(".").reduce((current, segment) => current?.[segment], dashboard);
     assert.equal(typeof value, "string", `Missing ${locale} message: ${key}`);
     return value.replace(/\{(\w+)\}/g, (_, name) => String(values[name]));
   };
@@ -68,6 +69,14 @@ function fixture({ cached = rows(), response, failure } = {}) {
       showLaravelError: (error) => alerts.push(["laravel", error]),
     } };
     if (name.includes("BEventBusMixin")) return { BEventBusMixin: {} };
+    if (name.endsWith("LTemplatesPickerDialog.vue")) return { default: Vue.defineComponent({
+      name: "LTemplatesPickerDialog",
+      props: { modelValue: Boolean, fullscreen: Boolean, selectable: Boolean },
+      setup: (props, { slots }) => () => {
+        children.push({ name: "LTemplatesPickerDialog", ...props });
+        return slots.activator?.({ props: {} });
+      },
+    }) };
     if (name.endsWith("LTemplateCard.vue")) {
       const native = load(path.resolve(__dirname, "../../../../page-builder/components/templates/card/LTemplateCard.vue")).component;
       return { default: { ...native, created() {
@@ -189,10 +198,14 @@ test("EN/FA modern levels expose the real builder, settings and matching reposit
       "https://github.com/pajuhaan/selldone-custom-storefront-backoffice-1",
     ]);
     assert.ok(repositories.every((link) => link.target === "_blank" && link.rel === "noopener noreferrer"));
-    const browse = f.buttons.find((button) => button.to?.name === "LandingTemplatesListPage");
-    assert.ok(browse);
-    assert.equal(browse.target, "_blank");
-    assert.equal(browse.rel, "noopener noreferrer");
+    assert.equal(f.buttons.some((button) => button.to?.name === "LandingTemplatesListPage"), false);
+    const gallery = [...screen.document.querySelectorAll("button")].find((button) => button.textContent.includes(translator(locale)("onboarding.modern.customize.templates_gallery")));
+    assert.ok(gallery);
+    assert.equal(gallery.getAttribute("target"), null);
+    assert.equal(gallery.getAttribute("href"), null);
+    const picker = f.children.find((child) => child.name === "LTemplatesPickerDialog");
+    assert.equal(picker.fullscreen, true);
+    assert.equal(picker.selectable, false);
     assert.ok(f.buttons.some((button) => button.to?.name === "BPageShopSettingTheme"));
     const builder = f.buttons.find((button) => button.to?.name === "BPageLandingEditor");
     assert.deepEqual(JSON.parse(JSON.stringify(builder.to)), { name: "BPageLandingEditor", params: { page_id: "new" } });
@@ -253,7 +266,9 @@ test("legacy retains every native template card, current-shop deploy routes and 
     const deploy = f.buttons.filter((button) => button.to?.name === "BPageLandingEditor");
     assert.deepEqual(deploy.map((button) => button.to.query.template_id), premium ? [101, 202, 303] : [101, 303]);
     assert.ok(deploy.every((button) => button.to.params.page_id === "new"));
-    assert.ok(f.buttons.some((button) => button.to?.name === "LandingTemplatesListPage"));
+    const browse = f.buttons.find((button) => button.to?.name === "LandingTemplatesListPage");
+    assert.ok(browse);
+    assert.equal(browse.target, "_blank", "legacy Browse keeps its native external navigation");
     assert.ok(f.buttons.some((button) => button.to?.name === "BPageShopSettingTheme"));
     assert.equal(screen.html.includes("onboarding-customize-layout"), false);
     if (!premium) {
@@ -278,8 +293,181 @@ test("loading and empty reports retain real launch destinations without placehol
     const screen = await empty.render({ modern });
     assert.equal(screen.document.querySelector('[role="status"]'), null);
     assert.equal(empty.children.some((child) => child.name === "LTemplateCard"), false);
-    assert.ok(empty.buttons.some((button) => button.to?.name === "LandingTemplatesListPage"));
+    assert.equal(empty.buttons.some((button) => button.to?.name === "LandingTemplatesListPage"), !modern);
+    if (modern) assert.ok(screen.html.includes(translator("en")("onboarding.modern.customize.templates_gallery")));
     assert.ok(empty.buttons.some((button) => button.to?.name === "BPageShopSettingTheme"));
     assert.equal(empty.requests.length, 0);
+  }
+});
+
+// Exercise the actual shared picker from its onboarding activator. UI leaves
+// and HTTP/EventBus transports are isolated; component and helper owners stay real.
+async function mountedGallery(t, locale) {
+  const packages = path.resolve(__dirname, "../../../..");
+  const document = new JSDOM("<main></main>").window.document;
+  const requests = [], instances = {}, dialogs = [], failures = [], bus = [];
+  const cache = new Map();
+  const throttle = (await import("lodash-es")).throttle;
+  const route = Vue.reactive({ name: "BPageShopDashboard", params: { shop_id: 42 }, query: { dashboard: "setup" } });
+  const shop = Vue.reactive({ id: 42, theme: {} });
+  const globals = {
+    document,
+    window: {
+      CACHED_HOT_TEMPLATES: rows(),
+      SERACH_THROTTLE: 20,
+      GAPI: { GET_PAGE_BUILDER_TEMPLATES: () => "/fixture/templates" },
+      API: { GET_PAGE_BUILDER_TEMPLATE_CONTENT: () => "/fixture/content" },
+      CDN: { GET_SHOP_IMAGE_PATH: image => "/fixture/images/" + image },
+    },
+    axios: {
+      get: (url, options) => {
+        assert.equal(url, "/fixture/templates", "opening the gallery must not load/deploy page content");
+        return new Promise(resolve => requests.push({ url, options, resolve: data => resolve({ data }) }));
+      },
+      post: () => assert.fail("gallery must not deploy or save"),
+      put: () => assert.fail("gallery must not update a page"),
+    },
+  };
+  const leaf = Vue.defineComponent({
+    inheritAttrs: false,
+    setup: (_, { attrs, slots }) => () => Vue.h("div", attrs, [slots.activator?.({ props: {} }), slots.default?.()]),
+  });
+  function dependency(name) {
+    if (name === "vue") return Vue;
+    if (name === "lodash-es") return { throttle };
+    if (/\.(svg|png|jpg)$/.test(name)) return "/fixture/asset.svg";
+    if (name.includes("NotificationService")) return { default: {
+      showErrorAlert() {}, showLaravelError() {},
+    } };
+    if (name.endsWith("/EventBus.ts")) return { EventBus: { $emit: (...args) => bus.push(args) } };
+    if (name.endsWith("/BEventBusMixin.ts")) return evaluate(readFileSync(path.join(packages, "components-vue/utils/events/BEventBusMixin.ts"), "utf8"), { ...globals, require: dependency });
+    if (name.endsWith("/RawTemplate.ts")) return evaluate(readFileSync(path.join(packages, "page-builder/components/templates/list/RawTemplate.ts"), "utf8"), { ...globals, require: dependency });
+    if (name.includes("/sections/")) return new Proxy({}, { get: () => ({ label: "Fixture section", Seed: () => ({}) }) });
+    if (name === "@selldone/core-js") return { CONSOLE: { log() {} } };
+    for (const relative of ["picker/LTemplatesPickerDialog.vue", "list/LTemplatesList.vue", "card/LTemplateCard.vue"]) {
+      if (name.endsWith(path.basename(relative))) return { default: load(path.join(packages, "page-builder/components/templates", relative)) };
+    }
+    if (name.endsWith(".vue")) return { default: leaf };
+    assert.fail("Unexpected gallery dependency: " + name);
+  }
+  function load(file) {
+    if (cache.has(file)) return cache.get(file);
+    const parsed = parse(readFileSync(file, "utf8"), { filename: file });
+    assert.deepEqual(parsed.errors, []);
+    const descriptor = parsed.descriptor;
+    const script = compileScript(descriptor, { id: "onboarding-gallery-test" });
+    const component = evaluate(script.content, { ...globals, require: dependency }).default;
+    const compiled = compileTemplate({
+      source: descriptor.template.content, filename: file, id: "onboarding-gallery-test",
+      compilerOptions: { bindingMetadata: script.bindings },
+    });
+    assert.deepEqual(compiled.errors, []);
+    component.render = evaluate(compiled.code, { ...globals, require: dependency }).render;
+    const created = component.created;
+    component.created = function () { (instances[component.name] ||= []).push(this); created?.call(this); };
+    cache.set(file, component);
+    return component;
+  }
+  const renderer = Vue.createRenderer({
+    createElement: tag => document.createElement(tag),
+    createText: text => document.createTextNode(text),
+    createComment: text => document.createComment(text),
+    setText: (node, value) => { node.nodeValue = value; },
+    setElementText: (node, value) => { node.textContent = value; },
+    parentNode: node => node.parentNode,
+    nextSibling: node => node.nextSibling,
+    insert: (node, parent, anchor = null) => parent.insertBefore(node, anchor),
+    remove: node => node.parentNode?.removeChild(node),
+    patchProp(node, key, oldValue, value) {
+      if (/^on[A-Z]/.test(key)) {
+        node.listeners ||= {};
+        const event = key.slice(2).toLowerCase();
+        if (node.listeners[key]) node.removeEventListener(event, node.listeners[key]);
+        if (value) {
+          node.listeners[key] = e => (Array.isArray(value) ? value : [value]).forEach(handler => handler(e));
+          node.addEventListener(event, node.listeners[key]);
+        }
+      } else if (key === "style" && value && typeof value === "object") Object.assign(node.style, value);
+      else if (value == null || value === false) node.removeAttribute(key);
+      else node.setAttribute(key, String(value));
+    },
+  });
+  const entry = load(filename);
+  const app = renderer.createApp({ render: () => Vue.h(entry, { modern: true, shop, timeSeries: {} }) });
+  const core = evaluate(readFileSync(path.join(packages, "components-vue/mixin/CoreMixin.ts"), "utf8"), { ...globals, require: () => ({}) }).default;
+  app.mixin(core);
+  Object.assign(app.config.globalProperties, {
+    $t: translator(locale), $route: route,
+    $store: { getters: { getUser: { id: 8, premium: true } } },
+    $vuetify: { display: { xs: false, mdAndDown: false, smAndUp: true }, locale: { isRtl: locale === "fa" } },
+  });
+  const tags = new Set([...cache.keys()].flatMap(file => [...parse(readFileSync(file, "utf8")).descriptor.template.content.matchAll(/<(v-[\w-]+|u-[\w-]+)/g)].map(match => match[1])));
+  for (const tag of tags) if (!["v-btn", "v-dialog", "v-text-field"].includes(tag)) app.component(tag, leaf);
+  app.component("v-btn", Vue.defineComponent({
+    inheritAttrs: false,
+    setup: (_, { attrs, slots }) => () => Vue.h(attrs.href || attrs.to ? "a" : "button", attrs, slots.default?.()),
+  }));
+  app.component("v-text-field", Vue.defineComponent({
+    inheritAttrs: false, props: ["modelValue"],
+    setup: (props, { attrs }) => () => Vue.h("div", attrs, [Vue.h("input", { value: props.modelValue || "" })]),
+  }));
+  app.component("v-dialog", Vue.defineComponent({
+    inheritAttrs: false, props: ["modelValue", "fullscreen", "persistent"],
+    setup(props, { attrs, slots }) {
+      dialogs.push({ props, afterLeave: () => attrs.onAfterLeave?.() });
+      return () => Vue.h(Vue.Fragment, [
+        slots.activator?.({ props: { "aria-haspopup": "dialog", onClick: () => attrs["onUpdate:modelValue"](true) } }),
+        props.modelValue ? Vue.h("section", { "data-gallery-dialog": "" }, slots.default?.()) : null,
+      ]);
+    },
+  }));
+  app.config.warnHandler = message => { throw Error(message); };
+  app.config.errorHandler = error => failures.push(error);
+  app.mount(document.querySelector("main"));
+  t.after(() => app.unmount());
+  const tick = async () => { await Vue.nextTick(); await Promise.resolve(); await Vue.nextTick(); assert.deepEqual(failures, []); };
+  await tick();
+  return { document, requests, instances, dialogs, shop, route, bus, tick, click: async element => { element.focus(); element.click(); await tick(); } };
+}
+
+test("Templates gallery opens the shared fullscreen pre-built browser in place and restores focus", async t => {
+  for (const locale of ["en", "fa"]) {
+    const f = await mountedGallery(t, locale);
+    const originalRoute = JSON.stringify(f.route);
+    const gallery = [...f.document.querySelectorAll("button")].find(button => button.textContent.includes(translator(locale)("onboarding.modern.customize.templates_gallery")));
+    assert.ok(gallery);
+    assert.equal(gallery.getAttribute("href"), null);
+    assert.equal(gallery.getAttribute("target"), null);
+    assert.equal(f.requests.length, 0);
+    await f.click(gallery);
+    const picker = f.instances.LTemplatesPickerDialog[0];
+    const list = f.instances.LTemplatesList[0];
+    assert.equal(picker.fullscreen, true);
+    assert.equal(picker.isFullscreen, true);
+    assert.equal(picker.selectable, false);
+    assert.equal(f.dialogs[0].props.fullscreen, true, "fullscreen is explicit even on desktop");
+    assert.equal(list.hasRawTemplates, false);
+    assert.equal(list.clickable, false);
+    assert.equal(list.loadFromQuery, false);
+    assert.equal(f.requests.length, 1);
+    assert.equal(f.requests[0].options.params.limit, 20);
+    f.requests[0].resolve({ templates: rows(), total: 3 });
+    await f.tick();
+    assert.equal(f.document.querySelectorAll(".l-template-card-modern").length, 3);
+    assert.equal(f.instances.LTemplateCard.every(card => card.selection === false), true);
+    assert.equal(JSON.stringify(f.route), originalRoute);
+    assert.equal(f.requests.every(request => request.url === "/fixture/templates"), true);
+    const cancel = f.document.querySelector(".l-templates-picker__footer button");
+    await f.click(cancel);
+    assert.equal(f.document.querySelector("[data-gallery-dialog]"), null);
+    f.dialogs[0].afterLeave();
+    assert.equal(f.document.activeElement, gallery);
+    assert.equal(JSON.stringify(f.route), originalRoute);
+    await f.click(gallery);
+    f.shop.id = 43;
+    await f.tick();
+    assert.equal(f.document.querySelector("[data-gallery-dialog]"), null, "switching shop closes the old scoped gallery");
+    assert.equal(f.requests.every(request => request.url === "/fixture/templates"), true);
+    assert.deepEqual(f.bus, []);
   }
 });

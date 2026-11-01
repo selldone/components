@@ -15,28 +15,33 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- ============ Servers & Services ============ -->
 
-  <div
+  <section
     v-if="modern"
-    class="s--shop-dashboard-services text-start"
+    class="sd-modern-widget s--shop-dashboard-services text-start"
   >
-    <section v-for="item in services" :key="item.route" class="sd-modern-widget">
     <header class="sd-modern-header">
       <div class="sd-modern-title">
         <span class="sd-modern-icon sd-modern-icon--plain"
-          ><v-icon :icon="item.fallbackIcon" size="20" aria-hidden="true"
+          ><v-icon icon="settings_input_antenna" size="20" aria-hidden="true"
         /></span>
         <div>
           <h2 class="sd-modern-title-text">
-            {{ item.type }}
+            {{ $t("admin_shop.dashboard.technical.services_title") }}
           </h2>
           <p class="sd-modern-subtitle">
-            {{ $t("external_services.subtitle") }}
+            {{ $t("admin_shop.dashboard.technical.services_subtitle") }}
           </p>
         </div>
       </div>
     </header>
-      <div class="s--shop-dashboard-services__row">
-        <div class="sd-modern-icon">
+    <div class="sd-modern-records">
+      <article
+        v-for="item in services"
+        :key="item.route"
+        class="sd-modern-record s--shop-dashboard-services__row"
+        :aria-label="item.type"
+      >
+        <span class="s--shop-dashboard-services__icon">
           <img
             v-if="item.icon"
             :src="item.icon"
@@ -44,45 +49,95 @@
             width="28"
             height="28"
           />
-          <v-icon v-else>{{ item.fallbackIcon }}</v-icon>
-        </div>
+          <v-icon
+            v-else
+            :icon="item.fallbackIcon"
+            size="20"
+            aria-hidden="true"
+          />
+        </span>
         <div class="s--shop-dashboard-services__content">
-          <div class="sd-modern-value">
+          <h3>{{ item.type }}</h3>
+          <p class="s--shop-dashboard-services__description">
+            {{ $t(item.description) }}
+          </p>
+        </div>
+        <div class="s--shop-dashboard-services__provider">
+          <p>
             {{ item.title }}
-            <span v-if="item.service" class="sd-modern-status sd-modern-status--plain ms-2">
-              <span class="sd-modern-status__dot" :class="item.service.enable ? 'text-success' : 'text-medium-emphasis'" />
-              {{ $t(item.service.enable ? "global.commons.enable" : "global.commons.disable") }}
+          </p>
+          <div v-if="item.service" class="s--shop-dashboard-services__state">
+            <span class="sd-modern-status sd-modern-status--plain">
+              <span
+                class="sd-modern-status__dot"
+                :class="{
+                  'sd-modern-status__dot--success': item.service.enable,
+                }"
+              />
+              {{
+                $t(
+                  item.service.enable
+                    ? "global.commons.enable"
+                    : "global.commons.disable",
+                )
+              }}
+            </span>
+            <span>
+              {{ $t("admin_shop.dashboard.modern.service_errors") }} ·
+              {{
+                item.service.errors ??
+                $t("admin_shop.dashboard.technical.not_reported")
+              }}
             </span>
           </div>
-          <p v-if="item.service" class="sd-modern-subtitle">
-            {{ $t("admin_shop.dashboard.modern.service_errors") }} · {{ item.service.errors || 0 }}
-          </p>
-          <p
-            v-if="item.service?.error"
-            class="sd-modern-subtitle s--shop-dashboard-services__error"
-            role="alert"
-          >
-            <v-icon color="error" size="small" class="me-1">report</v-icon>
-            {{ item.service.error }}
-          </p>
         </div>
         <v-btn
           :to="{ name: item.route }"
           class="sd-modern-button sd-modern-button--inline"
+          color="primary"
           variant="text"
+          :aria-label="
+            $t('admin_shop.dashboard.technical.service_settings', {
+              service: item.type,
+            })
+          "
           v-tooltip="{
-                  text: `${item.type} · ${$t('global.commons.setting')}`,
-                  location: modern ? 'top' : undefined,
-                  contentClass: modern ? 'sd-modern-tooltip text-start' : undefined,
-                  openOnFocus: modern ? true : undefined,
-                }"
+            text: $t('admin_shop.dashboard.technical.service_settings', {
+              service: item.type,
+            }),
+            location: 'top',
+            contentClass: 'sd-modern-tooltip text-start',
+            openOnFocus: true,
+          }"
         >
           <v-icon start size="small">settings</v-icon>
           {{ $t("global.commons.setting") }}
         </v-btn>
-      </div>
-    </section>
-  </div>
+        <details
+          v-if="item.service?.error"
+          :key="shop.id + ':' + item.route + ':' + item.service.error"
+          class="s--shop-dashboard-services__error"
+        >
+          <summary>
+            <v-icon
+              icon="error_outline"
+              size="17"
+              color="error"
+              aria-hidden="true"
+            />
+            <span>{{ $t("admin_shop.dashboard.technical.latest_error") }}</span>
+            <v-icon
+              class="s--shop-dashboard-services__chevron"
+              icon="expand_more"
+              size="17"
+              aria-hidden="true"
+            />
+          </summary>
+          <p role="alert">{{ item.service.error }}</p>
+        </details>
+      </article>
+    </div>
+  </section>
   <s-widget-box
     v-else
     :sub-title="$t('external_services.subtitle')"
@@ -230,7 +285,11 @@ export default {
       return [
         {
           type: "SMS",
-          title: this.sms_provider?.title || this.sms_service?.driver || this.$t("global.commons.default"),
+          description: "admin_shop.dashboard.technical.sms_description",
+          title:
+            this.sms_provider?.title ||
+            this.sms_service?.driver ||
+            this.$t("global.commons.default"),
           icon:
             this.sms_provider?.driver !== "default"
               ? this.sms_provider?.icon
@@ -241,7 +300,11 @@ export default {
         },
         {
           type: this.$t("global.commons.email"),
-          title: this.mail_provider?.title || this.mail_service?.driver || this.$t("global.commons.default"),
+          description: "admin_shop.dashboard.technical.email_description",
+          title:
+            this.mail_provider?.title ||
+            this.mail_service?.driver ||
+            this.$t("global.commons.default"),
           icon: this.mail_provider?.icon,
           fallbackIcon: "mail_outline",
           service: this.mail_service,
@@ -277,36 +340,122 @@ export default {
 
 <style lang="scss" scoped>
 .s--shop-dashboard-services {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-  :deep(.sd-modern-value) { font-weight: 400; }
-  &__row {
-    display: grid;
-    grid-template-columns: 40px minmax(0, 1fr) auto;
-    align-items: start;
-    gap: 16px;
-    padding-block: 8px;
+  padding: 24px;
+  border-radius: 15px;
+  .sd-modern-title-text {
+    font-size: 17px;
+    font-weight: 500;
   }
-  &__content {
+  .sd-modern-header {
+    margin-block-end: 16px;
+  }
+  &__row {
+    grid-template-columns: 32px minmax(0, 1fr) minmax(150px, 0.65fr) auto;
+    gap: 10px 14px;
+    padding: 18px 12px;
+  }
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    color: var(--sd-modern-muted);
+    img {
+      max-width: 100%;
+      object-fit: contain;
+    }
+  }
+  &__content,
+  &__provider {
     min-width: 0;
   }
-  &__error {
-    opacity: 1;
-    overflow-wrap: anywhere;
+  &__content h3 {
+    margin: 0;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
   }
-  @media (max-width: 960px) {
-    grid-template-columns: minmax(0, 1fr);
+  &__description {
+    margin: 3px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+  }
+  &__provider > p {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 400;
+  }
+  &__state {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-block-start: 4px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    .sd-modern-status {
+      font-size: inherit;
+      font-weight: 400;
+    }
+  }
+  &__error {
+    grid-column: 2 / -1;
+    padding: 10px 12px;
+    border-radius: 9px;
+    background: var(--sd-modern-inset);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+    summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+      cursor: pointer;
+      &:focus-visible {
+        outline: 2px solid rgb(var(--v-theme-primary));
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+    }
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    p {
+      margin: 10px 0 0;
+      white-space: pre-line;
+    }
+    &[open] .s--shop-dashboard-services__chevron {
+      transform: rotate(180deg);
+    }
+  }
+  &__chevron {
+    margin-inline-start: auto;
   }
   @media (max-width: 600px) {
+    padding: 18px;
     &__row {
-      grid-template-columns: 40px minmax(0, 1fr);
-      gap: 12px;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
+      gap: 8px 10px;
+    }
+    &__provider {
+      grid-column: 2;
+      grid-row: 2;
     }
     &__row > .v-btn {
-      grid-column: 2;
-      justify-self: start;
+      grid-column: 3;
+      grid-row: 1 / 3;
     }
+    &__error {
+      grid-column: 1 / -1;
+      padding: 0 12px;
+    }
+    &__error summary {
+      min-height: 44px;
+    }
+    &__error p { margin: 0 0 12px; }
+  }
+  @media (pointer: coarse) {
+    &__error summary { min-height: 44px; }
   }
 }
 /*

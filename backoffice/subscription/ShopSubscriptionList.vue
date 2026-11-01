@@ -58,6 +58,7 @@
       <!-- ████████████████████ Shop Subscriptions ████████████████████ -->
 
       <v-data-table
+        :aria-busy="busy_fetch"
         v-model:page="history_page"
         :header-props="{ sortByText: $t('global.commons.sort_by') }"
         :headers="headers"
@@ -74,6 +75,10 @@
         item-key="id"
         :hide-default-footer="modern || subscriptions.length < 5"
       >
+        <template v-if="!subscriptions?.length" #loading>
+          <b-list-loading-state kind="payment" />
+        </template>
+
         <template v-if="modern" #header.renewal="{ column }">
           <span>{{ column.title }}</span>
           <v-tooltip
@@ -349,10 +354,9 @@
           </v-btn>
         </template>
         <template v-if="modern" #no-data>
-          <div class="sd-modern-empty-state">
-            <v-icon size="26">event_note</v-icon>
-            <p>{{ $t("shop_license.workspace.no_subscriptions") }}</p>
-          </div>
+          <b-list-empty-state v-if="emptyStateLoaded && !busy_fetch" kind="payment"
+            :title="(subscriptions.length) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t('shop_license.workspace.no_subscriptions'))"
+            :description="(subscriptions.length) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t('dashboard_empty_state.context.subscriptions.description'))" />
         </template>
         <template v-if="modern" #bottom>
           <div class="sd-modern-table-footer">
@@ -425,10 +429,8 @@
           }}<v-icon end size="16" class="flip-rtl">arrow_forward</v-icon></v-btn
         >
       </div>
-      <div v-if="!vouchers.length" class="sd-modern-empty-state">
-        <v-icon size="26">confirmation_number</v-icon>
-        <p>{{ $t("global.commons.empty") }}</p>
-      </div>
+      <b-list-empty-state v-if="!vouchers.length" kind="discount" :title="$t('global.commons.empty')"
+        :description="$t('dashboard_empty_state.context.vouchers.description')" />
     </section>
     <template v-else>
       <h3 class="text-start">
@@ -1324,6 +1326,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import { VDialog, VBottomSheet } from "vuetify/components";
 import BAccountInput from "../account/input/BAccountInput.vue";
 import { ShopLicense } from "@selldone/core-js/enums/shop/ShopLicense";
@@ -1346,6 +1350,8 @@ export default {
   emits: ["refresh"],
 
   components: {
+    BListLoadingState,
+    BListEmptyState,
     VDialog,
     VBottomSheet,
     USmartVerify,
@@ -1368,6 +1374,7 @@ export default {
   data: () => ({
     subscriptions: [],
     busy_fetch: false,
+    emptyStateLoaded: false,
     history_page: 1,
     fetch_request: 0,
     price_request: 0,
@@ -1823,6 +1830,7 @@ export default {
       const request = ++this.fetch_request;
       const shopId = this.shop.id;
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
       return axios
         .get(window.API.GET_SHOP_SUBSCRIPTIONS(shopId))
         .then(({ data }) => {
@@ -1834,6 +1842,7 @@ export default {
             return;
           if (!data.error) {
             this.subscriptions = data.subscriptions;
+            this.emptyStateLoaded = Array.isArray(data.subscriptions);
             this.history_page = Math.min(
               this.history_page,
               Math.max(1, Math.ceil(this.subscriptions.length / 10)),

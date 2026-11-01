@@ -14,8 +14,10 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="b-return-requests-list s-table-loading" :class="{ 'b-return-requests-list--modern text-start': modern }" :aria-busy="busy_fetch">
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && return_requests?.length" kind="order" compact class="sd-modern-list-refresh" />
     <v-data-table-server
+      :aria-busy="busy_fetch"
+      :loading="busy_fetch"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -38,10 +40,16 @@
       item-key="id"
       @click:row="(_, r) => $emit('select', r.item)"
     >
+      <template v-if="!return_requests?.length" #loading>
+        <b-list-loading-state kind="order" />
+      </template>
+
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="!busy_fetch" :class="modern ? 'sd-modern-empty-state' : 'py-5 usn text-center fadeIn'">
-          <v-icon v-if="modern" size="28">assignment_return</v-icon>
+        <b-list-empty-state v-if="modern && emptyStateLoaded && !busy_fetch" kind="order"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t('global.commons.no_data'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t('dashboard_empty_state.context.returns.description'))" />
+        <div v-else-if="!modern && !busy_fetch" class="py-5 usn text-center fadeIn">
           <img
             v-if="!modern"
             :src="require('../../../assets/guides/returned-orders-empty.png')"
@@ -49,8 +57,7 @@
             style="max-height: 400px; object-fit: contain"
             width="85%"
           />
-          <h2 v-if="modern" class="b-return-requests-list__empty-title">{{ $t('global.commons.no_data') }}</h2>
-          <h2 v-else class="text-h4 font-weight-thin">List of returned orders...</h2>
+          <h2 class="text-h4 font-weight-thin">List of returned orders...</h2>
         </div>
         <div v-else class="text-center px-3 py-5 text-muted">
           <v-icon class="me-1">sentiment_dissatisfied</v-icon>
@@ -149,6 +156,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import VariantItemViewMicro from "../../../storefront/product/variant/VariantItemViewMicro.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BOrderButton from "../../order/button/BOrderButton.vue";
@@ -163,7 +172,9 @@ import OrderMixin from "@selldone/components-vue/mixin/order/OrderMixin.ts";
 export default {
   name: "SBackofficeReturnRequestsList",
   mixins: [DateMixin, ProductMixin,OrderMixin],
-  components: { UAvatarFolder, BOrderButton, VariantItemViewMicro },
+  components: {
+    BListLoadingState,
+    BListEmptyState, UAvatarFolder, BOrderButton, VariantItemViewMicro },
   props: {
     modern: { type: Boolean, default: false },
     url: {
@@ -177,6 +188,8 @@ export default {
       ProductType: ProductType,
 
       busy_fetch: false,
+      emptyStateLoaded: false,
+    emptyStateRequest: 0,
 
       return_requests: [],
 
@@ -260,7 +273,9 @@ export default {
     },
 
     fetchData(page = 0, sortBy = null, sortDesc = true) {
+      const emptyRequest = ++this.emptyStateRequest;
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
 
       axios
         .get(this.url, {
@@ -272,16 +287,20 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           if (data.error) {
             return NotificationService.showErrorAlert(null.error_msg);
           }
           this.return_requests = data.return_requests;
+          this.emptyStateLoaded = Array.isArray(data.return_requests);
           this.totalItems = data.total;
         })
         .catch((error) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy_fetch = false;
         });
     },

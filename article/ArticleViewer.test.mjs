@@ -108,8 +108,8 @@ function faqReader() {
   return { ...scriptExports.default, render: renderExports.render };
 }
 
-function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp) {
-  const component = { ...f.component, created: undefined, mounted: undefined, beforeUnmount: undefined,
+function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp, components = {}) {
+  const component = { ...f.component, created() { this._workspaceGeneration = f.state._workspaceGeneration; }, mounted: undefined, beforeUnmount: undefined,
     components: { ...f.component.components, SArticleFaqs: reader || f.component.components.SArticleFaqs,
     SArticleEditor: reader ? {
       props: ["title", "body", "edit"],
@@ -117,8 +117,9 @@ function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp) {
         Vue.h("h2", this.title), Vue.h("div", { "data-saved-body": "true", innerHTML: this.body }),
         this.$slots.end?.({ edit: this.edit })]); },
     } : {
+      props: { immediateChange: Boolean },
       methods: { findAllImages() {} },
-      render() { return Vue.h("div", this.$attrs, [this.$slots["before-title"]?.(), this.$slots.default?.()]); },
+      render() { return Vue.h("div", { ...this.$attrs, "data-immediate-change": String(this.immediateChange) }, [this.$slots["before-title"]?.(), this.$slots.default?.()]); },
     }, SArticleWorkspaceComments: {
       props: ["active", "articleId", "shopId", "disabled"],
       render() { return Vue.h("section", { "data-workspace-comments": this.articleId,
@@ -134,11 +135,12 @@ function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp) {
       render() { return Vue.h("div", { ...this.$attrs, "data-workspace-faqs": "true",
         "data-faqs-active": this.active, "data-faqs-editable": this.editMode && !this.disabled },
         (this.modelValue || []).map((item) => Vue.h("p", item.question))); },
-    } },
+    }, ...components },
     data: () => Object.fromEntries(Object.keys(f.component.data()).map((key) => [key, f.state[key]])),
     render: templateExports.render };
   const props = () => Object.fromEntries(Object.keys(f.component.props).map((key) => [key, f.state[key]]));
   const app = createApp({ render: () => Vue.h(component, { ...props(), ref: "viewer" }, slots) });
+  app.config.warnHandler = (message) => { throw new Error(message); };
   app.provide("$shop", f.state.$shop);
   Object.assign(app.config.globalProperties, {
     $t: (key) => key, USER: f.state.USER, USER_ID: f.state.USER_ID,
@@ -152,7 +154,7 @@ function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp) {
     if (!special.has(tag)) app.component(tag, passthrough);
   }
   app.component("flag", passthrough);
-  if (reader) for (const tag of ["v-expansion-panels", "v-expansion-panel", "v-expansion-panel-title", "v-expansion-panel-text", "v-slide-y-reverse-transition"]) app.component(tag, passthrough);
+  if (reader) for (const tag of ["v-expansion-panels", "v-expansion-panel", "v-expansion-panel-title", "v-expansion-panel-text", "v-slide-y-reverse-transition", "v-text-field", "v-textarea"]) if (!app._context.components[tag]) app.component(tag, passthrough);
   app.component("v-dialog", { props: ["modelValue"], render() { return this.modelValue ? Vue.h("div", this.$slots.default?.()) : null; } });
   app.component("v-menu", { props: ["modelValue"], render() { return Vue.h("div", [this.$slots.activator?.({ props: { "aria-expanded": !!this.modelValue } }), this.modelValue ? this.$slots.default?.() : null]); } });
   app.component("v-btn", { props: ["disabled", "loading"], render() {
@@ -179,6 +181,377 @@ test("workspace remains opt-in and legacy creation keeps its published default",
   assert.equal(f.state.article.published, true);
   assert.equal(f.state.workspace_ready, false);
   assert.equal(f.state.workspace_dirty, false);
+});
+
+test("Help creation prepares editable icon metadata without changing other article types", () => {
+  const help = fixture({ workspace: false, articleType: "help" });
+  help.state.prepareCreateNew(); help.flush();
+  assert.deepEqual(plain(help.state.menu), { icon: null, parent_id: null, order: 0, star: false });
+  const blog = fixture({ workspace: false, articleType: "blog" });
+  blog.state.prepareCreateNew(); blog.flush();
+  assert.equal(blog.state.menu, null);
+});
+
+test("Help saves serialize selected and cleared icons only when icon metadata is supported", () => {
+  for (const icon of ["package", null]) {
+    const help = fixture({ workspace: false, articleType: "help", menu: { icon, icon_supported: true } });
+    help.state.saveChange();
+    assert.equal(help.requests[0].payload.icon, icon);
+    assert(Object.hasOwn(help.requests[0].payload, "icon"));
+  }
+  for (const props of [
+    { articleType: "help", menu: { icon: null, icon_supported: false } },
+    { articleType: "help", menu: null },
+    { articleType: "blog", menu: { icon: "store", icon_supported: true } },
+  ]) {
+    const article = fixture({ workspace: false, ...props });
+    article.state.saveChange();
+    assert.equal(Object.hasOwn(article.requests[0].payload, "icon"), false);
+  }
+});
+
+const helpReaderFixture = (props = {}) => fixture({
+  workspace: false, articleType: "help", targetId: 8,
+  $slots: { "help-reader": () => [] }, ...props,
+});
+
+test("the Help reader slot replaces only the opted-in Help toolbar and stays available to readers", async () => {
+  const content = { "help-reader": (scope) => Vue.h("header", { "data-help-reader": "true" }, [
+    Vue.h("h1", scope.article.title), scope.canEdit ? Vue.h("button", "Edit guide") : null,
+  ]) };
+  const guest = helpReaderFixture({ can_edit: false });
+  const guestHtml = await render(guest, content);
+  assert.match(guestHtml, /data-help-reader="true"/);
+  assert.match(guestHtml, /<h1>Article 12<\/h1>/);
+  assert.doesNotMatch(guestHtml, />Edit guide</);
+  const editor = helpReaderFixture();
+  const editorHtml = await render(editor, content);
+  assert.match(editorHtml, />Edit guide</);
+  assert.match(editorHtml, /data-immediate-change="true"/);
+  assert.doesNotMatch(editorHtml, /overflow-x-auto/);
+  const legacy = fixture({ workspace: false, articleType: "help" });
+  const legacyHtml = await render(legacy);
+  assert.match(legacyHtml, /overflow-x-auto/);
+  assert.match(legacyHtml, /data-immediate-change="false"/);
+  const blog = fixture({ workspace: false, articleType: "blog" });
+  assert.doesNotMatch(await render(blog, content), /data-help-reader/);
+  assert.equal(blog.state.helpReaderActive, false);
+  const workspace = helpReaderFixture({ workspace: true });
+  assert.equal(workspace.state.helpReaderActive, false);
+});
+
+test("Help reader callbacks recheck current authorization, operation state and captured article scope", () => {
+  const mutations = [
+    (state) => { state.can_edit = false; },
+    (state) => { state.USER = () => null; },
+    (state) => { state.active = false; },
+    (state) => { state.inLoading = true; },
+    (state) => { state.state = "saving"; },
+    (state) => { state.busy_fix = true; },
+    (state) => { state.$refs.editorContainer.word_import_busy = true; },
+    (state) => { state.article = { ...state.article }; },
+    (state) => { state.targetId = 9; },
+    (state) => { state.articleType = "blog"; },
+    (state) => { state.$route.params.help_id = "9-other"; },
+    (state) => { state.USER_ID = () => 4; },
+    (state) => { state._workspaceGeneration++; },
+  ];
+  const actions = ["edit", "preview", "save", "discard", "delete", "schedule", "googleSearch", "word", "autoFix"];
+  for (const mutate of mutations) {
+    const f = helpReaderFixture({ render_state: "editing" });
+    const slot = f.state.helpReaderSlot;
+    mutate(f.state);
+    for (const action of actions) assert.equal(slot[action](), false);
+    assert.equal(f.requests.length, 0);
+    assert.equal(f.notices.length, 0);
+  }
+});
+
+test("Help reader preview preserves untouched rich blocks and captures changed editor content", () => {
+  const f = helpReaderFixture({ render_state: "editing" });
+  const richBody = '<div data-block="catalog" data-value="saved"><span>Original stored block</span></div>';
+  f.state.article.body = richBody;
+  f.state.$refs.editorContainer.state = "no-change";
+  f.state.$refs.editorContainer.purifyTitle = () => { throw Error("Untouched title must stay intact"); };
+  f.state.$refs.editorContainer.purifyBody = () => { throw Error("Do not serialize mounted custom block DOM"); };
+  assert.equal(f.state.helpReaderSlot.preview(), true);
+  assert.equal(f.state.render_state, "review");
+  assert.equal(f.state.article.body, richBody);
+  assert.equal(f.state.helpReaderSlot.edit(), true);
+  f.state.$refs.editorContainer.state = "changed";
+  f.state.$refs.editorContainer.purifyTitle = () => "Edited Help title";
+  f.state.$refs.editorContainer.purifyBody = () => "<h2>Edited content</h2><p>Keep this edit.</p>";
+  assert.equal(f.state.helpReaderSlot.preview(), true);
+  assert.equal(f.state.article.title, "Edited Help title");
+  assert.equal(f.state.article.body, "<h2>Edited content</h2><p>Keep this edit.</p>");
+  assert.equal(f.state.helpReaderDirty, true);
+});
+
+test("Help reader saves preserve untouched rich body for metadata edits and serialize actual content edits", async () => {
+  for (const edited of [false, true]) {
+    const f = helpReaderFixture({ render_state: "editing", state: "changed" });
+    const richBody = '<div data-block="comparison">Original saved payload</div>';
+    f.state.article.body = richBody;
+    f.state.menu = { icon: "package", icon_supported: true, order: 4, star: true };
+    f.state.$refs.editorContainer.state = edited ? "changed" : "no-change";
+    if (!edited) {
+      f.state.$refs.editorContainer.purifyTitle = () => { throw Error("No title DOM read expected"); };
+      f.state.$refs.editorContainer.purifyBody = () => { throw Error("No rich DOM read expected"); };
+    }
+    assert.equal(f.state.helpReaderSlot.save(), true);
+    assert.equal(f.requests[0].payload.body, edited ? "<p>Purified body</p>" : richBody);
+    assert.equal(f.requests[0].payload.title, edited ? "Purified title" : "Article 12");
+    assert.equal(f.requests[0].payload.icon, "package");
+    f.requests[0].resolve({ data: { error: true, error_msg: "Retry this save" } }); await settle();
+    assert.equal(f.state.state, "changed");
+    assert.equal(f.state.render_state, "editing");
+    assert.equal(f.state.menu.icon, "package");
+  }
+});
+
+test("Help reader save returns to reading only after confirmed success, including newly created guides", async () => {
+  for (const isNew of [false, true]) {
+    const f = helpReaderFixture({ render_state: "editing", state: "changed", isNew,
+      targetId: isNew ? "new" : 8, article: { ...pack().article, id: isNew ? null : 12 } });
+    f.state.$refs.editorContainer.state = "no-change";
+    assert.equal(f.state.helpReaderSlot.save(), true);
+    assert.equal(f.state.render_state, "editing");
+    f.requests[0].resolve({ data: { id: 12, help_id: 8, menu: { icon: null } } }); await settle();
+    assert.equal(f.state.render_state, "review");
+    assert.equal(f.state.state, "no-change");
+    assert.equal(f.state.article.id, 12);
+  }
+  const stale = helpReaderFixture({ render_state: "editing", state: "changed" });
+  stale.state.helpReaderSlot.save();
+  stale.state.$route.fullPath = "/help/9-next";
+  stale.state.$route.params.help_id = "9-next";
+  stale.requests[0].resolve({ data: { id: 12 } }); await settle();
+  assert.equal(stale.state.render_state, "editing");
+});
+
+test("Help reader in-flight saves cannot overwrite a newly selected guide and heading hashes preserve valid saves", async () => {
+  const stale = helpReaderFixture({ render_state: "editing", state: "changed" });
+  stale.state.helpReaderSlot.save();
+  const nextArticle = { ...pack(90).article, body: "<p>Next guide body</p>" };
+  stale.state.targetId = 9; stale.state.$route.params.help_id = "9-next";
+  stale.state._workspaceGeneration++; stale.state.article = nextArticle;
+  stale.state.state = "no-change";
+  stale.requests[0].resolve({ data: { id: 12, article: pack(12).article } }); await settle();
+  assert.equal(stale.state.article, nextArticle);
+  assert.equal(stale.state.article.body, "<p>Next guide body</p>");
+  assert.equal(stale.state.state, "no-change");
+  assert.equal(stale.events.some(([name]) => name === "update-article"), false);
+  const current = helpReaderFixture({ render_state: "editing", state: "changed" });
+  current.state.$route.params.help_id = "8-title";
+  current.state.$route.fullPath = "/help/8-title";
+  current.state.helpReaderSlot.save();
+  current.state.$route.fullPath = "/help/8-title#step-two";
+  current.requests[0].resolve({ data: { id: 12 } }); await settle();
+  assert.equal(current.state.render_state, "review");
+  assert.equal(current.state.state, "no-change");
+});
+
+test("Help reader permission loss releases the current save state without applying the reply", async () => {
+  const f = helpReaderFixture({ render_state: "editing", state: "changed" });
+  f.state.helpReaderSlot.save();
+  assert.equal(f.state.state, "saving");
+  f.state.can_edit = false;
+  f.requests[0].resolve({ data: { id: 12, article: { title: "Unapplied reply" } } }); await settle();
+  assert.equal(f.state.state, "changed");
+  assert.equal(f.state.render_state, "editing");
+  assert.equal(f.state.article.title, "Article 12");
+  assert.equal(f.events.some(([name]) => name === "update-article"), false);
+});
+
+test("Help reader ignores late article loads and auto-fix replies from the previous guide", async () => {
+  const loaded = helpReaderFixture();
+  loaded.state.updateArticlePage(true);
+  loaded.state.targetId = 9; loaded.state.$route.params.help_id = "9-next";
+  loaded.state.updateArticlePage(true);
+  loaded.requests[1].resolve({ data: pack(90) }); await settle();
+  assert.equal(loaded.state.article.id, 90);
+  loaded.requests[0].resolve({ data: pack(12) }); await settle();
+  assert.equal(loaded.state.article.id, 90);
+  assert.equal(loaded.events.filter(([name]) => name === "get-data").length, 1);
+  const fixed = helpReaderFixture({ render_state: "editing" });
+  fixed.state.helpReaderSlot.autoFix();
+  fixed.state.targetId = 9; fixed.state.$route.params.help_id = "9-next";
+  fixed.state._workspaceGeneration++; fixed.state.article = pack(90).article;
+  fixed.state.busy_fix = false;
+  fixed.requests[0].resolve({ data: { body: "<p>Old guide correction</p>" } }); await settle();
+  assert.equal(fixed.state.article.body, "<p>Saved body</p>");
+  assert.equal(fixed.state.busy_fix, false);
+});
+
+test("Help reader Delete confirmation cannot act on another guide or after permission loss", async () => {
+  for (const change of [
+    (state) => { state.targetId = 9; state.$route.params.help_id = "9-next"; state.article = pack(90).article; },
+    (state) => { state.can_edit = false; },
+  ]) {
+    const f = helpReaderFixture();
+    assert.equal(f.state.helpReaderSlot.delete(), true);
+    const confirm = f.notices[0][4];
+    assert.equal(typeof confirm, "function");
+    change(f.state); confirm();
+    assert.equal(f.requests.length, 0);
+  }
+  const deleting = helpReaderFixture(); let navigated = 0;
+  deleting.state.$router.go = () => navigated++;
+  deleting.state.helpReaderSlot.delete(); deleting.notices[0][4]();
+  assert.equal(deleting.requests[0].method, "delete");
+  deleting.state.targetId = 9; deleting.state.$route.params.help_id = "9-next";
+  deleting.state._workspaceGeneration++; deleting.state.article = pack(90).article;
+  deleting.requests[0].resolve({ data: {} }); await settle();
+  assert.equal(navigated, 0);
+  assert.equal(deleting.events.some(([name]) => name === "delete"), false);
+});
+
+test("Help reader schedule metadata remains clean after loading and confirmed saving", async () => {
+  const f = helpReaderFixture({ article: { ...pack().article, schedule_at: "utc-date" }, schedule_at: "local:utc-date" });
+  f.component.watch.schedule_at.call(f.state, "local:utc-date");
+  assert.equal(f.state.state, "no-change");
+  assert.equal(f.state.helpReaderDirty, false);
+  f.state.schedule_at = "local:new-date";
+  f.component.watch.schedule_at.call(f.state, f.state.schedule_at);
+  assert.equal(f.state.helpReaderDirty, true);
+  f.state.render_state = "editing";
+  f.state.helpReaderSlot.save();
+  f.requests[0].resolve({ data: { id: 12 } }); await settle();
+  assert.equal(f.state.helpReaderDirty, false);
+  assert.equal(f.state.render_state, "review");
+});
+
+test("Help reader import rechecks deferred context and saved-only actions stay unavailable for new guides", () => {
+  const denied = helpReaderFixture(); let calls = 0;
+  denied.state.$refs.editorContainer.showSelectWord = () => calls++;
+  assert.equal(denied.state.helpReaderSlot.word(), true);
+  denied.state.can_edit = false; denied.flush(); assert.equal(calls, 0);
+  const allowed = helpReaderFixture();
+  allowed.state.$refs.editorContainer.showSelectWord = () => calls++;
+  assert.equal(allowed.state.helpReaderSlot.word(), true); allowed.flush(); assert.equal(calls, 1);
+  assert.equal(allowed.state.in_edit_mode, true);
+  const fresh = helpReaderFixture({ isNew: true, article: { ...pack().article, id: null } });
+  assert.equal(fresh.state.helpReaderSlot.canDelete, false);
+  for (const action of ["delete", "schedule", "googleSearch", "discard"]) assert.equal(fresh.state.helpReaderSlot[action](), false);
+  assert.equal(fresh.requests.length, 0);
+});
+
+test("Help reader confirmed discard uses the saved article endpoint and state events describe the actual view", () => {
+  const f = helpReaderFixture({ render_state: "editing", state: "changed" });
+  const initial = plain(f.state.helpReaderState);
+  assert.deepEqual(initial, { editing: true, showContent: true, articleIdentity: 12, targetId: 8 });
+  f.component.watch.helpReaderState.handler.call(f.state, f.state.helpReaderState);
+  assert.equal(f.events.at(-1)[0], "help-reader-state");
+  assert.deepEqual(plain(f.events.at(-1)[1]), initial);
+  assert.equal(f.state.helpReaderSlot.discard(), true);
+  assert.equal(f.requests[0].method, "get");
+  assert.match(f.requests[0].url, /GET_ARTICLE\/help\/8/);
+  assert.equal(f.state.inLoading, true);
+  assert.equal(f.state.render_state, "review");
+  assert.equal(f.state.helpReaderState.showContent, false);
+});
+
+test('Help tabs keep the native editor, settings and FAQ mounted while protecting pending dialog drafts', async () => {
+  const node = (type, text = '') => ({ type, text, props: {}, style: { display: '' }, children: [], parent: null });
+  const renderer = Vue.createRenderer({
+    createElement: node, createText: (text) => node('text', text), createComment: (text) => node('comment', text),
+    insert(child, parent, anchor = null) { if (child.parent) child.parent.children.splice(child.parent.children.indexOf(child), 1); parent.children.splice(anchor ? parent.children.indexOf(anchor) : parent.children.length, 0, child); child.parent = parent; },
+    remove(child) { if (child.parent) child.parent.children.splice(child.parent.children.indexOf(child), 1); child.parent = null; },
+    setText(child, text) { child.text = text; }, setElementText(child, text) { child.text = text; child.children = []; },
+    patchProp(child, key, previous, next) { child.props[key] = next; }, parentNode: (child) => child.parent,
+    nextSibling: (child) => child.parent?.children[child.parent.children.indexOf(child) + 1] || null,
+  });
+  const nodes = (current) => [current, ...current.children.flatMap(nodes)];
+  let editorMounts = 0, nativeEditor, settingsMounts = 0;
+  const NativeEditor = {
+    props: ['title', 'body', 'edit'], emits: ['change'],
+    data() { return { state: 'changed', liveTitle: 'Fast pending title', liveBody: '<p>Pending <b>rich</b> body.</p>' }; },
+    created() { editorMounts++; nativeEditor = this; },
+    methods: { purifyTitle() { return this.liveTitle; }, purifyBody() { return this.liveBody; }, findAllImages() {}, firstImage() { return '/cover.jpg'; }, gist() { return 'Pending summary'; } },
+    render() { return Vue.h('article', { 'data-native-editor': true, 'data-live-title': this.liveTitle }, this.$slots['edit-after-title']?.()); },
+  };
+  const Settings = { created() { settingsMounts++; }, methods: { refresh() {} }, render() { return Vue.h('div', { 'data-native-settings': true }); } };
+  const f = helpReaderFixture({ render_state: 'editing', initialRenderState: 'editing' });
+  f.state = Vue.reactive(f.state);
+  const app = renderApp(f, {
+    'help-reader': (reader) => Vue.h('header', { 'data-reader-pending': String(reader.pending) }),
+    'help-editor-introduction': (reader) => Vue.h('p', { 'data-introduction': true }, reader.article.description),
+    'help-editor-languages': (reader) => Vue.h('section', { id: `help-panel-languages-${reader.article.parent_id}` }, 'Languages'),
+  }, null, renderer.createApp, { SArticleEditor: NativeEditor, SArticleSeoEditor: Settings });
+  const container = node('root'), root = app.mount(container), viewer = root.$refs.viewer;
+  try {
+    const editor = nativeEditor, writing = nodes(container).find((item) => item.props.id === 'help-panel-content-8');
+    const settings = nodes(container).find((item) => item.props.id === 'help-panel-settings-8');
+    const faq = nodes(container).find((item) => item.props.id === 'help-panel-faq-8');
+    assert.equal(writing.props.role, 'tabpanel'); assert.equal(writing.props['aria-labelledby'], 'help-tab-content-8');
+    nativeEditor.$emit('change');
+    assert.equal(viewer.state, 'changed', 'An immediate native input must be seen before any tab click');
+    for (const section of ['faq', 'settings', 'languages', 'content']) {
+      f.state.helpEditorSection = section; await Vue.nextTick();
+      assert.equal(nativeEditor, editor); assert.equal(editorMounts, 1); assert.equal(settingsMounts, 1);
+      assert.equal(nativeEditor.liveTitle, 'Fast pending title');
+      assert.equal(nativeEditor.liveBody, '<p>Pending <b>rich</b> body.</p>');
+      assert.equal(viewer.article.title, 'Article 12', 'Switching tabs must not overwrite or serialize pending native DOM');
+      assert.equal(writing.style.display === 'none', section !== 'content');
+      assert.equal(settings.style.display === 'none', section !== 'settings');
+      assert.equal(faq.style.display === 'none', section !== 'faq');
+    }
+    assert(nodes(writing).some((item) => item.props['data-introduction']));
+    viewer.help_faq_pending = true; await Vue.nextTick();
+    assert.equal(viewer.helpReaderSlot.pending, true); assert.equal(viewer.helpReaderSlot.dirty, true);
+    for (const action of ['save', 'preview', 'insert', 'word', 'autoFix']) assert.equal(viewer.helpReaderSlot[action](), false);
+    viewer.saveChange(); assert.equal(f.requests.length, 0);
+    viewer.help_faq_pending = false; await Vue.nextTick();
+    assert.equal(viewer.helpReaderSlot.preview(), true);
+    assert.equal(viewer.article.title, 'Fast pending title'); assert.equal(viewer.article.body, '<p>Pending <b>rich</b> body.</p>');
+    assert.equal(f.requests.length, 0, 'Tabs and Preview never write an article');
+  } finally { app.unmount(); }
+});
+
+test('Help draft setters validate metadata and reject stale, unauthorized or read-mode callbacks without writing', () => {
+  const f = helpReaderFixture({ render_state: 'editing' }), reader = f.state.helpReaderSlot;
+  assert.equal(reader.setDescription('A clear introduction.'), true);
+  assert.equal(f.state.article.description, 'A clear introduction.');
+  assert.equal(reader.setDescription('x'.repeat(257)), false);
+  assert.equal(reader.setPublished(true), true); assert.equal(f.state.published_state, true);
+  assert.equal(reader.setPrivate(true), true); assert.equal(f.state.isPrivate, true);
+  assert.equal(reader.setLanguage('fa'), true); assert.equal(f.state.article.lang, 'fa');
+  assert.equal(reader.setLanguage('<script>'), false); assert.equal(reader.setScheduleAt('not a date'), false);
+  assert.equal(reader.setScheduleAt('2026-11-01T12:00:00Z'), true);
+  assert.equal(reader.setPublished(false), false, 'A scheduled article keeps the native publication guard');
+  f.state.helpEditorSection = 'faq';
+  assert.equal(reader.setFaqs([{ question: 'Question', answer: '<p>Answer</p>' }]), true);
+  f.state.helpEditorSection = 'settings';
+  assert.equal(reader.setStructures([{ '@type': 'FAQPage' }]), true);
+  assert.equal(reader.setFaqs([]), false, 'A delayed FAQ callback cannot mutate a hidden section');
+  const before = plain(f.state.article);
+  for (const mutate of [
+    (state) => { state.can_edit = false; }, (state) => { state.USER = () => null; },
+    (state) => { state._workspaceGeneration++; }, (state) => { state.article = { ...state.article }; },
+    (state) => { state.render_state = 'review'; }, (state) => { state.targetId = 9; },
+  ]) {
+    const denied = helpReaderFixture({ render_state: 'editing' }), callbacks = denied.state.helpReaderSlot;
+    mutate(denied.state);
+    assert.equal(callbacks.setDescription('Denied change'), false); assert.equal(callbacks.setPrivate(true), false);
+    assert.equal(denied.requests.length, 0);
+  }
+  assert.deepEqual(plain(f.state.article), before); assert.equal(f.requests.length, 0);
+});
+
+test('Help AutoFix captures immediate pending native edits before requesting a correction and preserves them on errors', async () => {
+  const f = helpReaderFixture({ render_state: 'editing' });
+  f.state.$refs.editorContainer.state = 'changed';
+  f.state.$refs.editorContainer.purifyTitle = () => 'Latest pending title';
+  f.state.$refs.editorContainer.purifyBody = () => '<p>Latest pending <b>rich</b> body.</p>';
+  assert.equal(f.state.helpReaderSlot.autoFix(), true);
+  assert.equal(f.requests[0].payload.body, '<p>Latest pending <b>rich</b> body.</p>');
+  assert.equal(f.state.article.title, 'Latest pending title');
+  f.requests[0].resolve({ data: { error: true, error_msg: 'Keep editing' } }); await settle();
+  assert.equal(f.state.article.body, '<p>Latest pending <b>rich</b> body.</p>'); assert.equal(f.state.busy_fix, false);
+  const transitioning = helpReaderFixture({ render_state: 'editing' });
+  transitioning.state.$route.params.help_id = '9-next';
+  transitioning.state.autoFixArticle(); transitioning.state.saveChange();
+  assert.equal(transitioning.requests.length, 0, 'Route transition cannot write the still-mounted previous article');
 });
 
 test("Product workspace retains article authorization without requiring Blog permission", () => {

@@ -28,8 +28,10 @@
         variant="plain"
       ></v-text-field>
     </v-row>
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && profiles?.length" kind="shipping" compact class="sd-modern-list-refresh" />
     <v-data-table-server
+      :aria-busy="busy_fetch"
+      :loading="busy_fetch"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -52,9 +54,16 @@
       item-key="id"
       @click:row="(_, r) => select(r.item)"
     >
+      <template v-if="!profiles?.length" #loading>
+        <b-list-loading-state kind="shipping" />
+      </template>
+
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="!busy_fetch" :class="modern ? 'sd-modern-empty-state' : 'py-5 usn text-center fadeIn'">
+        <b-list-empty-state v-if="modern && emptyStateLoaded && !busy_fetch" kind="shipping"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search ? 'dashboard_empty_state.no_results.title' : 'shop_logistic_profiles.subtitle'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : (search ? $t('dashboard_empty_state.no_results.description') : '')" />
+        <div v-else-if="!modern && !busy_fetch" class="py-5 usn text-center fadeIn">
           <img
             :src="require('../../../../assets/guides/logistic-profiles.png')"
             class="m-3 op-0-3"
@@ -158,6 +167,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import { throttle } from "lodash-es";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
@@ -168,7 +179,9 @@ export default {
   name: "BLogisticProfilesList",
   emits: ["show-products"],
   mixins: [DateMixin ],
-  components: {},
+  components: {
+    BListLoadingState,
+    BListEmptyState,},
   props: {
     modern: Boolean,
     shop: {
@@ -181,6 +194,8 @@ export default {
     return {
       LogisticProfileType: LogisticProfileType,
       busy_fetch: false,
+      emptyStateLoaded: false,
+    emptyStateRequest: 0,
 
       profiles: [],
 
@@ -271,7 +286,9 @@ export default {
       this.fetchData(page, sortBy[0]?.key, sortBy[0]?.order === "desc");
     },
     fetchData(page = 0, sortBy = null, sortDesc = true) {
+      const emptyRequest = ++this.emptyStateRequest;
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
 
       axios
         .get(window.API.GET_SHOP_LOGISTIC_PROFILES(this.shop.id), {
@@ -285,17 +302,21 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           if (data.error) {
             return NotificationService.showErrorAlert(null.error_msg);
           }
 
           this.profiles = data.profiles;
+          this.emptyStateLoaded = Array.isArray(data.profiles);
           this.totalItems = data.total;
         })
         .catch((error) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy_fetch = false;
         });
     },

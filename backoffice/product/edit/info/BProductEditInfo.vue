@@ -1206,9 +1206,20 @@
       >
         <b-product-edit-info-icon name="Layers" :size="18" /><span
           class="sd-modern-disclosure__copy"
-          ><span class="b-product-edit-info__summary-title">{{
-            $t("add_product.edit_info.modern.profiles_title")
-          }}</span
+          ><span class="b-product-edit-info__profile-heading">
+            <span class="b-product-edit-info__summary-title">{{ $t("add_product.edit_info.modern.profiles_title") }}</span>
+            <span v-if="assignedProfileIcons.length" class="b-product-edit-info__profile-icons">
+              <v-tooltip v-for="profile in assignedProfileIcons" :key="profile.key" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true" :open-on-click="true">
+                <template #activator="{ props }">
+                  <span v-bind="props" class="b-product-edit-info__profile-icon" role="img" :aria-label="profile.title" tabindex="0" @click.prevent.stop @keydown.enter.prevent.stop @keydown.space.prevent.stop>
+                    <v-icon v-if="profile.materialIcon" size="17" aria-hidden="true">{{ profile.materialIcon }}</v-icon>
+                    <b-product-edit-info-icon v-else :name="profile.icon" :size="17" />
+                  </span>
+                </template>
+                {{ profile.title }}
+              </v-tooltip>
+            </span>
+          </span
           ><span class="b-product-edit-info__digest">{{
             profilesDigest
           }}</span></span
@@ -1397,6 +1408,7 @@ import BProductGoogleCategoryInput from "../../../product/google/category/input/
 import { BuyButtonHelper } from "@selldone/core-js/helper/shop/BuyButtonHelper";
 import BProductProfileInclude from "../../../product/profile/include/BProductProfileInclude.vue";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
+import { LogisticProfileType } from "@selldone/core-js/enums/logistic/LogisticProfileType";
 import USmartSuggestion from "../../../../ui/smart/suggestion/USmartSuggestion.vue";
 import BTranslationButtonProduct from "../../../translation/button/product/BTranslationButtonProduct.vue";
 import ProductsDenseImagesCircles from "../../../../storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
@@ -1661,7 +1673,7 @@ export default {
         );
       if (product.tax_id) {
         const tax = this.shop.tax_profiles?.find(
-          (item) => item.id === product.tax_id,
+          (item) => String(item.id) === String(product.tax_id),
         );
         parts.push(
           this.$t("add_product.edit_info.modern.digest_tax", {
@@ -1700,6 +1712,22 @@ export default {
       return parts.length
         ? parts.join(" · ")
         : this.$t("add_product.edit_info.modern.digest_none");
+    },
+    assignedProfileIcons() {
+      const product = this.$product;
+      const icons = { WARRANTY: 'ShieldCheck', RETURN_POLICY: 'Undo2', GUIDE: 'BookOpen', SHIPPING: 'Truck' };
+      const assigned: { key: string; icon: string; title: string; materialIcon?: string }[] = Object.values(LogisticProfileType)
+        .filter(type => product[type.product_column])
+        .map(type => ({ key: type.product_column, icon: icons[type.value], title: this.$t(type.title) }));
+      if (product.tax_id) {
+        const tax = this.shop.tax_profiles?.find(item => String(item.id) === String(product.tax_id));
+        assigned.push({ key: 'tax_id', icon: 'ReceiptText', materialIcon: tax?.icon, title: this.$t('global.commons.tax') });
+      }
+      if (product.map_id) assigned.push({ key: 'map_id', icon: 'MapPin', title: this.$t('product_location_profile.title') });
+      if (product.includes?.length) assigned.push({ key: 'includes', icon: 'PackageOpen', title: this.$t('global.commons.included_in_the_product') });
+      if ((this.isPhysical || this.isVirtual) && product.property_set_id)
+        assigned.push({ key: 'property_set_id', icon: 'Layers', title: this.$t('product_property_set.profile.title') });
+      return assigned;
     },
     vendorDigest() {
       const id = this.$product.vendor_id;
@@ -2198,6 +2226,12 @@ export default {
     overflow-wrap: anywhere;
     unicode-bidi: plaintext;
   }
+
+  .b-product-edit-info__profile-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; }
+  .b-product-edit-info__profile-icons { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px; color: rgb(var(--v-theme-on-surface)); }
+  .b-product-edit-info__profile-icon { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; min-height: 24px; border-radius: 4px; }
+  .b-product-edit-info__profile-icon:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
+  @media (pointer: coarse) { .b-product-edit-info__profile-icon { min-width: 44px; min-height: 44px; } }
 
   .b-product-edit-info__section-content {
     padding: 0 23px 23px;

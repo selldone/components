@@ -18,9 +18,8 @@
     :class="{ 'b-transportation-service-orders--modern': modern }"
     :aria-busy="busy_fetch || busy_info_order"
   >
-    <u-loading-progress
-      v-if="busy_fetch || busy_info_order"
-    ></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && transportation_orders?.length" kind="shipping" compact class="sd-modern-list-refresh" />
+    <u-loading-progress v-if="busy_info_order && !busy_fetch" />
     <div
       v-if="modern"
       class="sd-modern-list-toolbar b-transportation-service-orders__toolbar"
@@ -115,6 +114,7 @@
     </div>
 
     <v-data-table-server
+      :aria-busy="busy_fetch"
       :mobile="modern ? $vuetify.display.width <= 900 : $vuetify.display.xs"
       :page="page"
       v-model:sort-by="sortBy"
@@ -126,7 +126,7 @@
       :items="transportation_orders"
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
-      :loading="modern && busy_fetch"
+      :loading="busy_fetch"
       class="bg-transparent"
       density="compact"
       hide-default-footer
@@ -138,6 +138,10 @@
         'sd-modern-data-table sd-modern-data-table--compact': modern,
       }"
     >
+      <template v-if="!transportation_orders?.length" #loading>
+        <b-list-loading-state kind="shipping" />
+      </template>
+
       <template v-slot:item.address="{ item }">
         <div
           class="b-transportation-service-orders__receiver text-start py-1"
@@ -989,15 +993,9 @@
       </template>
 
       <template v-if="modern" #no-data>
-        <div
-          v-if="canReadOrders && !busy_fetch && !fetch_error"
-          class="sd-modern-empty-state b-transportation-service-orders__empty"
-          role="status"
-        >
-          <v-icon :size="37" aria-hidden="true">inventory_2</v-icon>
-          <h2>{{ $t("transportation_orders.empty") }}</h2>
-          <p v-if="service">{{ $t("transportation_orders.service_empty") }}</p>
-        </div>
+        <b-list-empty-state v-if="emptyStateLoaded && canReadOrders && !busy_fetch && !fetch_error" role="status" kind="shipping" class="b-transportation-service-orders__empty"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t('transportation_orders.empty'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : (service ? $t('transportation_orders.service_empty') : $t('dashboard_empty_state.empty_period.description'))" />
       </template>
       <template v-slot:bottom>
         <div
@@ -1033,6 +1031,8 @@
   </div>
 </template>
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import BOrderButtonBasket from "../../../order/button/basket/BOrderButtonBasket.vue";
 import DeliveryServiceFulfilledButton from "../../../transportation/DeliveryServiceFulfilledButton.vue";
 import UButtonWhatsapp from "../../../../ui/button/whatsapp/UButtonWhatsapp.vue";
@@ -1053,6 +1053,8 @@ export default {
   mixins: [DateMixin, MapMixin],
   inject: { $vendor: { default: null } },
   components: {
+    BListLoadingState,
+    BListEmptyState,
     UMapGeoButton,
     BTransportationServiceRate,
     ProductsDenseImagesCircles,
@@ -1086,6 +1088,7 @@ export default {
       transportation_orders: [],
 
       busy_fetch: false,
+    emptyStateLoaded: false,
       fetch_error: false,
       fetchVersion: 0,
       ordersActive: true,
@@ -1410,6 +1413,7 @@ export default {
     //――――――――――――――――――――――― Fetch transportation orders ―――――――――――――――――――――――
 
     fetchOrders() {
+      this.emptyStateLoaded = false;
       if (!this.canReadOrders) {
         this.clearOrders();
         return;
@@ -1454,6 +1458,7 @@ export default {
           }
           this.totalItems = data.total;
           this.transportation_orders = data.transportation_orders;
+          this.emptyStateLoaded = Array.isArray(data.transportation_orders);
         })
         .catch((error) => {
           if (!isCurrent()) return;

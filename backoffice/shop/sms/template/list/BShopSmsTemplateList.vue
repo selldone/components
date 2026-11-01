@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div class="widget-box mb-5 min-height-40vh overflow-hidden">
+  <div class="widget-box mb-5 min-height-40vh overflow-hidden s-table-loading">
     <u-widget-header
       :disabled="
         sms.verification ||
@@ -57,7 +57,7 @@
       </div>
     </v-list-subheader>
 
-    <u-loading-progress v-if="busy"></u-loading-progress>
+    <b-list-loading-state v-if="busy && templates?.length" kind="campaign" compact class="sd-modern-list-refresh" />
 
     <!-- ███████████████████████ List of SMS Templates ███████████████████████ -->
 
@@ -83,6 +83,8 @@
       </v-row>
 
       <v-data-table-server
+        :aria-busy="busy"
+        :loading="busy"
         v-model:options="options"
         v-model:page="page"
         v-model:sort-by="sortBy"
@@ -103,7 +105,15 @@
         item-key="id"
         @click:row="(_, r) => showDialog(r.item)"
       >
+        <template v-if="!templates?.length" #loading>
+          <b-list-loading-state kind="campaign" />
+        </template>
+
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ code ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
+
+        <template #no-data><b-list-empty-state v-if="emptyStateLoaded && !busy" kind="campaign"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search || active ? 'dashboard_empty_state.no_results.title' : 'shop_sms.template.title'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search || active ? 'dashboard_empty_state.no_results.description' : 'dashboard_empty_state.context.sms_templates.description'))" /></template>
 
         <template v-slot:item.code="{ item }">
           <v-btn
@@ -404,6 +414,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import VueJsonPretty from "vue-json-pretty";
 import "vue-json-pretty/lib/styles.css";
 import USmartToggle from "../../../../../ui/smart/toggle/USmartToggle.vue";
@@ -425,6 +437,8 @@ export default {
   mixins: [DateMixin],
 
   components: {
+    BListLoadingState,
+    BListEmptyState,
     UWidgetHeader,
     UPodWire,
     UPodNode,
@@ -451,6 +465,8 @@ export default {
     templates: [],
 
     busy: false,
+    emptyStateLoaded: false,
+    emptyStateRequest: 0,
 
     // Pagination:
     page: 1,
@@ -558,9 +574,11 @@ export default {
 
   methods: {
     fetchItems(page, sortBy, sortDesc = true) {
+      const emptyRequest = ++this.emptyStateRequest;
       if (this.sms.verification) return; // No template for OTP messages!
 
       this.busy = true;
+      this.emptyStateLoaded = false;
 
       axios
         .get(window.API.GET_SHOP_SMS_TEMPLATES(this.shop.id), {
@@ -578,14 +596,18 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.templates = data.templates;
+          this.emptyStateLoaded = Array.isArray(data.templates);
           this.totalItems = data.total;
         })
         .catch((error) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           NotificationService.showLaravelError(error);
         })
 
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy = false;
         });
     },

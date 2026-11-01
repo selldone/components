@@ -178,12 +178,14 @@
       <v-btn class="sd-modern-button" variant="outlined" prepend-icon="refresh" :loading="busy_fetch" @click="refreshOrders">{{ $t('marketplace_fulfillments.retry') }}</v-btn>
     </div>
 
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && orders?.length" kind="order" compact class="sd-modern-list-refresh" />
     <v-data-table-server
+      :aria-busy="busy_fetch"
+      :loading="busy_fetch"
       v-show="!(modernMarketplace || modernVendorPanel) || !fetch_error"
       v-model:page="page"
       v-model:sort-by="sortBy"
-      :class="{ 'blurred disabled': busy_fetch && !HIGHLIGHT_ID, 'sd-modern-data-table b-process-center-list__table': modern }"
+      :class="{ 'disabled-no-filter': busy_fetch && !HIGHLIGHT_ID, 'sd-modern-data-table b-process-center-list__table': modern }"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
       :headers="headers"
       :items="orders"
@@ -199,47 +201,37 @@
           };
         }
       "
-      class="bg-transparent min-height-60vh blur-animate"
+      class="bg-transparent min-height-60vh"
       density="compact"
       hide-default-footer
       item-key="id"
       @click:row="(_, r) => handleSelected(r.item)"
     >
+      <template v-if="!orders?.length" #loading>
+        <b-list-loading-state kind="order" />
+      </template>
+
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="modernVendorPanel" class="sd-modern-empty-state b-process-center-list__vendor-empty" role="status">
-          <template v-if="!busy_fetch">
-            <b-vendor-order-icon :name="marketplaceFiltersChanged ? 'search' : 'clipboard-list'" :size="30" />
-            <h2>{{ $t(marketplaceFiltersChanged ? 'vendor_orders.no_results_title' : 'vendor_orders.empty_title') }}</h2>
-            <p>{{ $t(marketplaceFiltersChanged ? 'vendor_orders.no_results_body' : 'vendor_orders.empty_body') }}</p>
-            <v-btn v-if="marketplaceFiltersChanged" class="sd-modern-button" variant="outlined" @click="clearMarketplaceFilters">{{ $t('vendor_orders.clear_filters') }}</v-btn>
-          </template>
-        </div>
-        <div v-else-if="modernMarketplace" class="sd-modern-empty-state b-process-center-list__marketplace-empty" role="status">
-          <template v-if="!busy_fetch">
-            <v-icon size="28" aria-hidden="true">{{ marketplaceFiltersChanged ? 'search_off' : 'inventory_2' }}</v-icon>
-            <h2>{{ $t(marketplaceFiltersChanged ? 'marketplace_fulfillments.no_results_title' : 'marketplace_fulfillments.empty_title') }}</h2>
-            <p>{{ $t(marketplaceFiltersChanged ? 'marketplace_fulfillments.no_results_body' : 'marketplace_fulfillments.empty_body') }}</p>
-            <v-btn v-if="marketplaceFiltersChanged" class="sd-modern-button" variant="outlined" @click="clearMarketplaceFilters">{{ $t('marketplace_fulfillments.clear_filters') }}</v-btn>
-          </template>
-        </div>
-        <div v-else-if="!busy_fetch && !search && (!modern || !extraFilterSummaries.length)" class="py-5 usn text-center fadeIn" :class="{ 'sd-modern-empty-state': modern }">
-          <img
-            :src="require('../../../assets/guides/orders-empty.png')"
-            class="m-3 op-0-3"
-            style="max-height: 400px; object-fit: contain"
-            width="85%"
-          />
-          <h2 v-if="!modern" class="text-h4 font-weight-thin">
-            Your orders will appear here...
-          </h2>
-          <p v-else class="sd-modern-help mb-0">{{ $t('admin_shop.orders.modern.empty') }}</p>
-        </div>
-        <div v-else class="text-center px-3 py-5 text-muted">
-          <v-icon class="me-1">sentiment_dissatisfied</v-icon>
-          {{ $t("global.commons.no_data") }}
-        </div>
-      </template>
+  <b-list-empty-state v-if="modernVendorPanel && emptyStateLoaded && !busy_fetch && !fetch_error" kind="order" class="b-process-center-list__vendor-empty"
+    :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(marketplaceFiltersChanged ? 'vendor_orders.no_results_title' : 'vendor_orders.empty_title'))"
+    :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(marketplaceFiltersChanged ? 'vendor_orders.no_results_body' : 'vendor_orders.empty_body'))">
+    <v-btn v-if="marketplaceFiltersChanged" class="sd-modern-button" variant="outlined" @click="clearMarketplaceFilters">{{ $t('vendor_orders.clear_filters') }}</v-btn>
+  </b-list-empty-state>
+  <b-list-empty-state v-else-if="modernMarketplace && emptyStateLoaded && !busy_fetch && !fetch_error" kind="order" class="b-process-center-list__marketplace-empty"
+    :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(marketplaceFiltersChanged ? 'marketplace_fulfillments.no_results_title' : 'marketplace_fulfillments.empty_title'))"
+    :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(marketplaceFiltersChanged ? 'marketplace_fulfillments.no_results_body' : 'marketplace_fulfillments.empty_body'))">
+    <v-btn v-if="marketplaceFiltersChanged" class="sd-modern-button" variant="outlined" @click="clearMarketplaceFilters">{{ $t('marketplace_fulfillments.clear_filters') }}</v-btn>
+  </b-list-empty-state>
+  <b-list-empty-state v-else-if="modern && !modernMarketplace && !modernVendorPanel && emptyStateLoaded && !busy_fetch" kind="order"
+    :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search || extraFilterSummaries.length ? 'dashboard_empty_state.no_results.title' : 'dashboard_empty_state.order.title'))"
+    :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search || extraFilterSummaries.length ? 'dashboard_empty_state.no_results.description' : 'admin_shop.orders.modern.empty'))" />
+  <div v-else-if="!modern && !busy_fetch && !search" class="py-5 usn text-center fadeIn">
+    <img :src="require('../../../assets/guides/orders-empty.png')" class="m-3 op-0-3" style="max-height: 400px; object-fit: contain" width="85%" />
+    <h2 class="text-h4 font-weight-thin">Your orders will appear here...</h2>
+  </div>
+  <div v-else-if="!modern" class="text-center px-3 py-5 text-muted"><v-icon class="me-1">sentiment_dissatisfied</v-icon>{{ $t('global.commons.no_data') }}</div>
+</template>
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
 
       <template v-slot:item.type="{ item }">
@@ -1125,6 +1117,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import SOrderDeliveryStatusStepper from "../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
 import SOrderStatusesSelect from "../../../storefront/order/status-select/SOrderStatusesSelect.vue";
 import ReturnRequestButtonBadge from "../../../storefront/order/order-return/ReturnRequestButtonBadge.vue";
@@ -1168,6 +1162,8 @@ export default {
   mixins: [RouteMixin, DateMixin, OrderMixin ],
 
   components: {
+    BListLoadingState,
+    BListEmptyState,
     BVendorOrderIcon,
     BProcessCenterFilters,
     BCampaignSourceIcon,
@@ -1268,6 +1264,7 @@ export default {
       status: [Basket.Status.Payed.code, Basket.Status.COD.code],
 
       busy_fetch: false,
+      emptyStateLoaded: false,
       fetch_error: false,
       ordersRequestId: 0,
 
@@ -1858,6 +1855,7 @@ export default {
 
     fetchOrdersNow(page, sortBy, sortDesc = true) {
       this.page = page;
+      this.emptyStateLoaded = false;
 
       if (this.modernMarketplace && this.vendor != null && !(Number.isSafeInteger(Number(this.vendor.id)) && Number(this.vendor.id) > 0)) {
         this.ordersRequestId++;
@@ -1951,6 +1949,7 @@ export default {
 
           this.totalItems = data.total;
           this.orders = data.orders;
+          this.emptyStateLoaded = Array.isArray(data.orders) && typeof data.total === 'number';
         })
         .catch((e) => {
           if (modernRequest && requestId !== this.ordersRequestId) return;

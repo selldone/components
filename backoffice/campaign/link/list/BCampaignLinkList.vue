@@ -351,7 +351,7 @@
       </div>
     </template>
     <template v-if="modern" v-slot:no-data
-      ><div class="sd-modern-empty-state">{{ t("empty") }}</div></template
+      ><b-list-empty-state v-if="Array.isArray(links)" kind="campaign" :title="(links.length) > 0 ? $t('dashboard_empty_state.empty_page.title') : (t('empty'))" :description="(links.length) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t('dashboard_empty_state.context.campaign_links.description'))" /></template
     >
     <template v-if="modern" v-slot:bottom>
       <footer class="sd-modern-table-footer b-campaign-link-list__footer">
@@ -381,6 +381,7 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
 import BCampaignSourceIcon from "../../../campaign/source/icon/BCampaignSourceIcon.vue";
 import BCampaignMediumIcon from "../../../campaign/medium/icon/BCampaignMediumIcon.vue";
 import { CampaignHelper } from "@selldone/core-js/helper/campaign/CampaignHelper";
@@ -393,6 +394,7 @@ export default {
   name: "BCampaignLinkList",
   mixins: [CurrencyMixin],
   components: {
+    BListEmptyState,
     USparkline,
     BCampaignMediumIcon,
     BCampaignSourceIcon,

@@ -7,6 +7,7 @@ import { renderToString } from "vue/server-renderer";
 import { parse, compileTemplate, compileStyleAsync } from "@vue/compiler-sfc";
 import ts from "typescript";
 import { JSDOM } from "jsdom";
+import BListEmptyState from "../empty-state/BListEmptyState.test-helper.mjs";
 
 // Render the real native switch in Node; styles are compiled separately below.
 register(
@@ -73,6 +74,7 @@ const filename = new URL("./ShopSubscriptionList.vue", import.meta.url);
 const { descriptor, errors } = parse(readFileSync(filename, "utf8"));
 assert.deepEqual(errors, []);
 const component = evaluate(descriptor.script.content, (path) => {
+  if (path.endsWith("BListEmptyState.vue")) return { default: BListEmptyState };
   if (path.includes("ShopLicense")) return licenses;
   if (path.includes("Vouchers")) return vouchers;
   if (path.includes("NotificationService")) return { default: notification };
@@ -782,6 +784,7 @@ async function rendered({
   busyRenewal = false,
   checkoutStep = 1,
   checkout = {},
+  loaded = true,
 } = {}) {
   const t = locale(language);
   const user = { vouchers: [voucher] };
@@ -789,6 +792,7 @@ async function rendered({
     {
       ...component,
       components: {
+        ...component.components,
         VDialog: bottomSheet,
         VBottomSheet: bottomSheet,
         BAccountInput: wrapper("div"),
@@ -803,6 +807,7 @@ async function rendered({
       data: () => ({
         ...component.data(),
         subscriptions: rows,
+        emptyStateLoaded: loaded,
         sheet,
         voucher_selected: selected,
         subscription_code: selected
@@ -1315,6 +1320,7 @@ assert.ok(
 );
 const empty = await rendered({ rows: [] });
 assert.ok(empty.includes(english("shop_license.workspace.no_subscriptions")));
+assert.equal((await rendered({ rows: [], loaded: false })).includes(english("shop_license.workspace.no_subscriptions")), false);
 assert.equal(component.props.modern.name, "Boolean");
 assert.equal(component.props.disabled.name, "Boolean");
 const keyboard = state();

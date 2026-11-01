@@ -23,6 +23,7 @@
       'b-products-window--spec-import text-start': isSpecImport,
     }"
     class="s--backoffice-products-management-view"
+    :aria-busy="modern ? busy_fetch : undefined"
     v-bind="$attrs"
     @contextmenu="showMenu($event, null, null)"
   >
@@ -102,7 +103,8 @@
     />
     </div>
 
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <u-loading-progress v-if="busy_fetch && !modern"></u-loading-progress>
+    <b-list-loading-state v-if="modern && busy_fetch && !showCatalogLoading" kind="product" compact class="b-products-window__refresh" />
 
     <!-- ██████████████████ Sort tools ██████████████████ -->
     <v-row no-gutters id="sort_tools">
@@ -272,7 +274,7 @@
         :replace="dialogMode"
         class="b-products-window__breadcrumbs"
       />
-      <slot name="breadcrumb-append"></slot>
+      <slot v-if="!showCatalogEmpty" name="breadcrumb-append"></slot>
     </div>
 
     <!-- ██████████████████ Top Helper Container ██████████████████ -->
@@ -376,7 +378,37 @@
 
     <!-- ██████████████████ List ██████████████████ -->
 
-    <v-row id="manage-panel" dense>
+    <b-list-loading-state v-if="showCatalogLoading" kind="product" />
+    <section v-if="showCatalogEmpty" class="b-products-window__empty" role="status">
+      <svg class="b-products-window__empty-art" viewBox="0 0 240 154" fill="none" aria-hidden="true" focusable="false">
+        <path d="M32 135H208" class="b-products-window__empty-ground" />
+        <g class="b-products-window__empty-folder">
+          <path d="M42 63V48a8 8 0 0 1 8-8h37l13 13h75a8 8 0 0 1 8 8v60H42Z" class="b-products-window__empty-folder-back" />
+        </g>
+        <g class="b-products-window__empty-product">
+          <rect x="112" y="20" width="68" height="91" rx="9" class="b-products-window__empty-card" />
+          <rect x="124" y="32" width="44" height="34" rx="5" class="b-products-window__empty-picture" />
+          <path d="m129 59 10-10 8 7 7-6 9 9M126 79h40M126 88h25" class="b-products-window__empty-lines" />
+          <circle cx="155" cy="42" r="3" class="b-products-window__empty-lines" />
+        </g>
+        <path d="M37 68h61l11 10h78a7 7 0 0 1 7 8l-5 37a8 8 0 0 1-8 7H48a8 8 0 0 1-8-7l-9-47a7 7 0 0 1 6-8Z" class="b-products-window__empty-folder-front" />
+        <path d="M54 92h31M57 102h20" class="b-products-window__empty-lines" />
+        <g class="b-products-window__empty-add">
+          <circle cx="185" cy="113" r="18" class="b-products-window__empty-add-circle" />
+          <path d="M185 106v14M178 113h14" class="b-products-window__empty-add-lines" />
+        </g>
+      </svg>
+      <h2>{{ $t('product_panel.workspace.empty_catalog.title') }}</h2>
+      <p>{{ $t('product_panel.workspace.empty_catalog.description') }}</p>
+      <div v-if="$slots['breadcrumb-append']" class="b-products-window__empty-actions">
+        <slot name="breadcrumb-append"></slot>
+      </div>
+      <v-btn v-if="parent_folders" class="b-products-window__empty-back sd-modern-button sd-modern-button--inline" color="primary" variant="text" @click="selectFolder(parent_folders.parent)">
+        <v-icon size="16" class="me-1" aria-hidden="true">{{ $t('icons.chevron_back') }}</v-icon>
+        {{ $t('product_panel.workspace.list_view.back_to', { title: parent_folders.parent?.title || $t('global.commons.home') }) }}
+      </v-btn>
+    </section>
+    <v-row v-if="!showCatalogEmpty && !showCatalogLoading" id="manage-panel" dense>
       <v-fade-transition
         group
         hide-on-leave
@@ -2338,6 +2370,7 @@ import BNoteButton from "../../note/button/BNoteButton.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BProductEditInfoIcon from "../edit/info/BProductEditInfoIcon.vue";
 import BProductWindowSectionIcon from "./BProductWindowSectionIcon.vue";
+import BListLoadingState from "../../loading-state/BListLoadingState.vue";
 import BTaxProfileBox from "../../tax/profile/box/BTaxProfileBox.vue";
 import BCategoryBulkActionSetLogisticProfile from "../../category/bulk-action/set-logistic-profile/BCategoryBulkActionSetLogisticProfile.vue";
 import BInventoryBulkDiscount from "../../inventory/bulk/discount/BInventoryBulkDiscount.vue";
@@ -2380,6 +2413,7 @@ export default {
     "click:fast-add",
   ],
   components: {
+    BListLoadingState,
     BProductWindowSectionIcon,
     BProductEditInfoIcon,
     BCategoryEnginePreview,
@@ -2537,6 +2571,7 @@ export default {
     products: [],
     products_count: 0,
     busy_fetch: false,
+    catalogReadContext: null,
 
     sort: null,
     only_available: false,
@@ -2651,6 +2686,30 @@ export default {
   computed: {
     isSpecImport() {
       return this.modern && this.set === 'spec';
+    },
+    catalogBrowseReady() {
+      const context = this.catalogReadContext;
+      return (
+        this.modern && !this.set && !this.selectMode && !this.dialogMode &&
+        !this.busy_fetch && !!context && context.shopId === this.shop?.id &&
+        context?.vendorId === this.vendor?.id && context?.dir === this.current_dir_id &&
+        this.product_page === 1 &&
+        !this.search && !this.filters.length && !this.only_available &&
+        !this.vendor_filter && !this.showDeletes && !this.route_types.length &&
+        !this.inDragState
+      );
+    },
+    catalogHasNoItems() {
+      return Array.isArray(this.products) && !this.products.length &&
+        Array.isArray(this.folders) && !this.folders.length;
+    },
+    showCatalogLoading() {
+      return this.modern && !this.isSpecImport && this.busy_fetch &&
+        !this.products?.length && !this.folders?.length;
+    },
+    showCatalogEmpty() {
+      return this.catalogBrowseReady && this.catalogHasNoItems && this.products_count === 0 &&
+        !this.held_items.length && !this.held_folders.length;
     },
     list_products_only() {
       return this.modern && !this.isSpecImport && !this.mini && !this.folders.length;
@@ -2883,6 +2942,11 @@ export default {
     },
   },
   watch: {
+    catalogHasNoItems(empty, wasEmpty) {
+      // Local deletes/moves remove rows before the server total is refreshed.
+      if (empty && !wasEmpty && this.catalogBrowseReady && this.products_count > 0)
+        this.fetchData(true);
+    },
     "$route.query"(query) {
       if (this.isSpecImport) return;
       this.current_dir_id = query.dir ? parseInt(query.dir) : null;
@@ -3362,10 +3426,15 @@ export default {
         return;
       }
       this.LAST_QUERY_PARAMS = params;
+      const context = { shopId: this.shop.id, vendorId: this.vendor?.id, dir: this.current_dir_id };
+      // Only the current read may establish an empty location or release its loading state.
+      const isCurrentRequest = () => this.LAST_QUERY_PARAMS === params &&
+        context.shopId === this.shop?.id && context.vendorId === this.vendor?.id;
       // Import searches cancel older reads; only the latest browse request owns the view.
       const importRequestId = this.isSpecImport ? ++this.importRequestId : null;
 
       this.busy_fetch = true;
+      this.catalogReadContext = null;
       if (this.isSpecImport) this.importLoadError = false;
 
       const handleSuccessResponse = ({
@@ -3377,6 +3446,7 @@ export default {
         valuation,
         time_filter,
       }) => {
+        if (!isCurrentRequest()) return;
         if (importRequestId !== null && importRequestId !== this.importRequestId) return;
         this.products_count = total;
 
@@ -3391,6 +3461,7 @@ export default {
         this.tax_profile = tax_profile;
         this.valuation_filter = valuation;
         this.time_filter = time_filter;
+        this.catalogReadContext = context;
 
         this.$emit("change:folders", this.folders);
         this.$emit("change:parent-folder", this.parent_folders);
@@ -3412,11 +3483,14 @@ export default {
         .cache(handleSuccessResponse)
         .then(handleSuccessResponse)
         .catch((error) => {
+          if (!isCurrentRequest()) return;
           if (importRequestId !== null && (importRequestId !== this.importRequestId || error === undefined)) return;
+          this.catalogReadContext = null;
           if (this.isSpecImport) this.importLoadError = true;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (!isCurrentRequest()) return;
           if (importRequestId !== null && importRequestId !== this.importRequestId) return;
           this.busy_fetch = false;
         });
@@ -3429,7 +3503,7 @@ export default {
 
       if (
         !product && !category && e.target.id !== "manage-panel" &&
-        !(this.modern && !this.mini && e.target.classList?.contains("b-products-window__list-background"))
+        !(this.modern && ((!this.mini && e.target.classList?.contains("b-products-window__list-background")) || e.target.closest?.(".b-products-window__empty")))
       ) {
         // Prevent conflicts with product context menu
         return;
@@ -3943,6 +4017,17 @@ export default {
 <style lang="scss" scoped src="./style.scss"></style>
 
 <style lang="scss" scoped>
+.b-products-window--modern {
+  position: relative;
+}
+.b-products-window__refresh {
+  position: absolute;
+  inset-block-start: 4px;
+  inset-inline-end: 12px;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .b-products-window__location,
 .b-products-window__catalog,
 .b-products-window__categories,
@@ -3951,6 +4036,50 @@ export default {
 .b-products-window__feature-body,
 .b-products-window__feature-actions {
   display: contents;
+}
+
+.b-products-window__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 310px;
+  padding: 24px 16px 36px;
+  text-align: center;
+  color: var(--sd-modern-text);
+
+  h2 { margin: 12px 0 0; font-size: 18px; font-weight: 500; line-height: 26px; }
+  p { max-width: 420px; margin: 8px 0 0; font-size: var(--sd-modern-font-body, 14px); line-height: 23px; color: var(--sd-modern-muted); }
+  &-art { width: 220px; max-width: 100%; height: auto; flex-shrink: 0; pointer-events: none; }
+  &-ground { stroke: var(--sd-modern-border); stroke-width: 2; stroke-linecap: round; }
+  &-folder-back { fill: rgba(var(--v-theme-on-surface), .035); stroke: var(--sd-modern-border); stroke-width: 1.5; }
+  &-card { fill: rgb(var(--v-theme-surface)); stroke: var(--sd-modern-border); stroke-width: 1.5; }
+  &-picture { fill: rgba(var(--v-theme-primary), .07); }
+  &-lines { stroke: rgba(var(--v-theme-on-surface), .3); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  &-folder-front { fill: rgb(var(--v-theme-surface)); stroke: rgba(var(--v-theme-on-surface), .18); stroke-width: 1.5; }
+  &-add-circle { fill: rgba(var(--v-theme-primary), .09); stroke: rgb(var(--v-theme-primary)); stroke-width: 1.5; }
+  &-add-lines { stroke: rgb(var(--v-theme-primary)); stroke-width: 1.8; stroke-linecap: round; }
+  &-actions { margin-block-start: 20px; max-width: 100%; }
+  &-back { margin-block-start: 8px; }
+  &-product { animation: catalog-product-arrive 2.4s ease-out both; }
+  &-add { animation: catalog-add-arrive 2.8s ease-out both; transform-origin: 185px 113px; }
+
+  @media (max-width: 599px) {
+    min-height: 300px;
+    padding-inline: 4px;
+    &-art { width: 190px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &-product, &-add { animation: none; }
+  }
+}
+@keyframes catalog-product-arrive {
+  0%, 15% { opacity: 0; transform: translateY(18px); }
+  65%, 100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes catalog-add-arrive {
+  0%, 45% { opacity: 0; transform: scale(.75); }
+  80%, 100% { opacity: 1; transform: scale(1); }
 }
 
 .b-products-window--list {

@@ -4,7 +4,7 @@
   - Shop custom font manager.
   -->
 <template>
-  <div class="b-shop-theme-fonts sd-modern-widget text-start">
+  <div class="b-shop-theme-fonts sd-modern-widget text-start s-table-loading" :aria-busy="busy_fetch">
     <u-widget-header
       class="sd-modern-form-header"
       icon="font_download"
@@ -33,10 +33,12 @@
       <span v-else-if="!can_add"> · {{ $t('b_shop_theme_typography.custom_fonts.quota_reached') }}</span>
     </p>
 
-    <u-loading-progress v-if="busy_fetch" />
+    <b-list-loading-state v-if="busy_fetch && fonts.length" kind="content" compact class="sd-modern-list-refresh" />
+    <b-list-loading-state v-if="busy_fetch && !fonts.length" kind="content" />
 
     <v-list
       v-else-if="fonts.length"
+      :inert="busy_fetch ? true : undefined"
       class="b-shop-theme-fonts__list border-between-vertical bg-transparent"
       lines="three"
     >
@@ -102,15 +104,9 @@
       </v-list-item>
     </v-list>
 
-    <div v-else class="sd-modern-empty-state text-center">
-      <v-icon class="op-0-3" size="36">font_download</v-icon>
-      <h3 class="font-weight-light mt-2">
-        {{ $t("b_shop_theme_typography.custom_fonts.empty_title") }}
-      </h3>
-      <p class="mb-0 mt-1">
-        {{ $t("b_shop_theme_typography.custom_fonts.empty_description") }}
-      </p>
-    </div>
+    <b-list-empty-state v-else-if="emptyStateLoaded" kind="content"
+          :title="$t('b_shop_theme_typography.custom_fonts.empty_title')"
+          :description="$t('b_shop_theme_typography.custom_fonts.empty_description')" />
   </div>
 
   <!-- █████████████████ Dialog > Add / Edit custom font █████████████████ -->
@@ -450,6 +446,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import { defineComponent } from "vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
@@ -481,7 +479,9 @@ type EditableFace = {
 
 export default defineComponent({
   name: "BShopThemeCustomFonts",
-  components: { ULoadingProgress, USmartMenu, UWidgetHeader },
+  components: {
+    BListLoadingState,
+    BListEmptyState, ULoadingProgress, USmartMenu, UWidgetHeader },
   emits: ["update:modelValue", "delete"],
   props: {
     shop: {
@@ -505,6 +505,8 @@ export default defineComponent({
         allowed_formats: [...STANDARD_FONT_FORMATS],
       },
       busy_fetch: false,
+      emptyStateLoaded: false,
+    emptyStateRequest: 0,
       busy_save: false,
       busy_delete: null as number | null,
       dialog: false,
@@ -608,21 +610,26 @@ export default defineComponent({
   },
   methods: {
     fetchFonts() {
+      const emptyRequest = ++this.emptyStateRequest;
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
       axios
         .get(window.API.GET_SHOP_FONTS(this.shop.id))
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           if (data?.error || data?.success === false) {
             NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
           this.fonts = Array.isArray(data?.fonts) ? data.fonts : [];
+          this.emptyStateLoaded = Array.isArray(data?.fonts);
           this.applyQuota(data?.quota);
           this.syncFonts();
           this.loadFontCatalog();
         })
-        .catch((error) => NotificationService.showLaravelError(error))
+        .catch((error) => { if (emptyRequest !== this.emptyStateRequest) return; return NotificationService.showLaravelError(error); })
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy_fetch = false;
         });
     },

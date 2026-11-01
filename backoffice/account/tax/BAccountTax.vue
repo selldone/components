@@ -229,8 +229,8 @@
       <div v-if="!collapsed || !autoCollapse">
         <div
           v-if="hasVatCalculation"
-          :class="{ blurred: busy }"
-          class="d-flex align-center text-start py-3 blur-animate"
+          :aria-busy="busy"
+          class="d-flex align-center text-start py-3"
         >
           <span class="text-h4 font-weight-thin me-4"
             >{{ calculated_vat_percent }}%</span

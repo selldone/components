@@ -39,6 +39,8 @@ function fixture(name = "price", { product = {}, ...overrides } = {}) {
     events = [],
     notices = [],
     confirmations = [];
+  const timers = new Map();
+  let timerId = 0;
   const modules = {};
   const endpoint = (scope) =>
     new Proxy(
@@ -63,6 +65,8 @@ function fixture(name = "price", { product = {}, ...overrides } = {}) {
   const context = vm.createContext({
     exports: {},
     console,
+    setInterval(callback) { timers.set(++timerId, callback); return timerId; },
+    clearInterval(id) { timers.delete(id); },
     axios: Object.fromEntries(
       ["post", "put", "delete"].map((method) => [method, request(method)]),
     ),
@@ -235,6 +239,7 @@ function fixture(name = "price", { product = {}, ...overrides } = {}) {
     evaluate,
     context,
     modules,
+    timers,
   };
 }
 
@@ -545,7 +550,8 @@ test("closed digests describe configured values and saved-currency tiers without
     },
   });
   assert.equal(state.discountPeriodStatus, "ended");
-  assert.match(state.discountDigest, /5\.00 USD.*10%.*period_ended/);
+  assert.match(state.discountDigest, /5\.00 USD.*period_ended/);
+  assert.doesNotMatch(state.discountDigest, /10%/);
   assert.match(state.additionalDigest, /no_commission.*no_label/);
   assert.match(state.quantityDigest, /"count":10,"amount":"21\.00 USD"/);
   assert.equal(state.calculatePrice, 45.6);
@@ -555,6 +561,187 @@ test("closed digests describe configured values and saved-currency tiers without
   edit(state, "discount", 0);
   assert.match(state.discountDigest, /no_discount/);
   assert.equal(state.dis_end, "2000-01-02T00:00:00Z");
+});
+
+test("collapsed discount badge uses the native percentage and leaves fixed monetary pricing unchanged", () => {
+  const f = fixture();
+  const badge = () => renderedNodes(f.descriptor, f.state).find(node => node.props?.class?.includes?.("b-product-edit-price__discount-badge"));
+  assert.equal(badge().children, "10%");
+  edit(f.state, "price", 100);
+  edit(f.state, "commission", 20);
+  edit(f.state, "discount", 30);
+  assert.equal(badge().children, "25%", "commission remains part of the native percentage denominator");
+  assert.equal(f.state.calculatePrice, 90);
+  edit(f.state, "price", 1000);
+  edit(f.state, "commission", 0);
+  edit(f.state, "discount", 5);
+  assert.equal(badge().children, "0.5%");
+  f.state.$vuetify.locale.isRtl = true;
+  assert.equal(badge().children, "۰٫۵%");
+  edit(f.state, "discount", 0.01);
+  assert.equal(f.state.discount_percent, 0);
+  assert.equal(badge().children, "global.commons.discount", "a tiny configured discount must not claim to be zero percent");
+  edit(f.state, "discount", 0);
+  assert.equal(badge(), undefined);
+  assert.equal(f.state.product.discount, 0);
+  assert.equal(f.requests.length, 0);
+});
+
+test("collapsed schedule represents bounded, one-sided and invalid dates without invented progress", () => {
+  const f = fixture(), { state } = f;
+  const now = Date.parse("2026-11-01T12:00:00Z"), day = 86400000;
+  state.summaryNow = now;
+  state.product.created_at = new Date(now - day).toISOString();
+  state.has_discount_period = true;
+  state.dis_start = new Date(now + day).toISOString();
+  state.dis_end = new Date(now + day * 3).toISOString();
+  let schedule = state.summarySchedule;
+  assert.equal(schedule.state, "scheduled");
+  assert.equal(schedule.percent, 50);
+  assert.equal(schedule.target, now + day);
+  assert.match(state.scheduleDigestLabel, /schedule_starts_in.*schedule_days/);
+  const progress = renderedNodes(f.descriptor, state).find(node => node.type === "v-progress-linear" && node.props?.class?.includes?.("b-product-edit-price__schedule-track"));
+  assert.equal(progress.props["model-value"], 50);
+  assert.equal(progress.props.height, 4);
+  assert.equal(progress.props.striped, "");
+
+  state.dis_start = new Date(now - day).toISOString();
+  state.dis_end = new Date(now + day).toISOString();
+  assert.equal(state.summarySchedule.state, "active");
+  assert.equal(state.summarySchedule.percent, 50);
+  assert.match(state.scheduleDigestLabel, /schedule_ends_in/);
+  state.dis_start = null;
+  assert.equal(state.summarySchedule.percent, 50, "an end-only schedule uses the known creation date");
+  state.product.created_at = null;
+  assert.equal(state.summarySchedule.percent, null);
+  assert.equal(state.summarySchedule.target, now + day, "remaining time is still known without a progress origin");
+  state.dis_start = new Date(now - day).toISOString();
+  state.dis_end = null;
+  assert.equal(state.summarySchedule.state, "active");
+  assert.equal(state.summarySchedule.target, null);
+  assert.equal(state.summarySchedule.percent, null);
+  assert.match(state.scheduleDigestLabel, /period_active/);
+  state.dis_start = state.dis_end = null;
+  assert.equal(state.summarySchedule.state, "unset");
+  for (const [start, end] of [["bad date", null], [null, "bad date"], ["2026-11-02", "2026-11-01"]]) {
+    state.dis_start = start; state.dis_end = end;
+    assert.equal(state.summarySchedule.state, "invalid");
+    assert.equal(state.summarySchedule.percent, null);
+    assert.equal(state.summaryClockEnabled, false);
+    assert.doesNotMatch(state.scheduleDigestLabel, /NaN|undefined/);
+  }
+  state.dis_start = state.dis_end = new Date(now).toISOString();
+  assert.equal(state.summarySchedule.percent, null, "equal dates are valid but have no measurable duration");
+  assert.equal(state.invalidWorkspaceDates, false);
+  state.has_discount_period = false;
+  assert.equal(state.summarySchedule, null);
+  state.has_discount_period = true;
+  state.discount = 0;
+  assert.equal(state.summarySchedule, null);
+  assert.equal(f.requests.length, 0);
+});
+
+test("schedule detail uses the actual date utility and supplementary help never edits the pricing tuple", () => {
+  const f = fixture("price", { product: { dis_start: "2026-11-01T12:00:00Z", dis_end: "2026-11-02T12:00:00Z" } });
+  f.state.summaryNow = Date.parse("2026-11-01T18:00:00Z");
+  const before = plain(f.state.product);
+  assert.match(f.state.scheduleDateLabel(f.state.dis_start, "schedule_no_start"), /2026/);
+  assert.match(f.state.scheduleDateLabel(null, "schedule_no_start"), /schedule_no_start/);
+  assert.match(f.state.scheduleDateLabel(null, "schedule_no_end"), /schedule_no_end/);
+  assert.match(f.state.scheduleDateLabel("bad date", "schedule_no_start"), /period_invalid/);
+  f.context.window.$language = { full_locale: "fa-IR", calendar: { calendar: "persian" } };
+  assert.match(f.state.scheduleDateLabel(f.state.dis_start, "schedule_no_start"), /۱۴۰۵/);
+  assert.equal(typeof f.state.scheduleTimeZone, "string");
+  const help = renderedNodes(f.descriptor, f.state).find(node => node.props?.class?.includes?.("b-product-edit-price__schedule-digest"));
+  let stopped = false;
+  help.props.onClick({ stopPropagation() { stopped = true; } });
+  assert.equal(stopped, true);
+  assert.equal(f.state.scheduleHelp, true);
+  const onEscape = help.props.onKeydown;
+  const event = { key: "Escape", preventDefault() {}, stopPropagation() {} };
+  for (const handler of Array.isArray(onEscape) ? onEscape : [onEscape]) handler(event);
+  assert.equal(f.state.scheduleHelp, false);
+  assert.deepEqual(plain(f.state.product), before);
+  assert.equal(f.requests.length, 0);
+});
+
+test("schedule clock follows the visible workspace and completes the exact end boundary before stopping", () => {
+  const end = Date.parse("2026-11-02T12:00:00Z");
+  const f = fixture("price", { product: { dis_start: "2026-11-01T12:00:00Z", dis_end: "2026-11-02T12:00:00Z" } });
+  f.context.__testNow = end;
+  vm.runInContext("Date.now = () => __testNow", f.context);
+  assert.equal(f.state.summaryClockEnabled, false, "a nonmounted editor owns no clock");
+  f.component.mounted.call(f.state);
+  assert.equal(f.state.discountPeriodStatus, "active");
+  assert.equal(f.state.summaryClockEnabled, true, "one more tick is needed at an exact end timestamp");
+  f.component.watch.summaryClockEnabled.call(f.state, true);
+  assert.equal(f.timers.size, 1);
+  f.component.watch.summaryClockEnabled.call(f.state, true);
+  assert.equal(f.timers.size, 1, "restarting cannot accumulate timers");
+  f.context.__testNow = end + 1000;
+  [...f.timers.values()][0]();
+  assert.equal(f.state.discountPeriodStatus, "ended");
+  assert.equal(f.state.summarySchedule.percent, 100);
+  assert.equal(f.state.summaryClockEnabled, false);
+  f.component.watch.summaryClockEnabled.call(f.state, false);
+  assert.equal(f.timers.size, 0);
+  f.state.summaryNow = end - 1000;
+  f.state.active = false;
+  assert.equal(f.state.summaryClockEnabled, false);
+  f.state.active = true;
+  f.state.instanceMode = true;
+  assert.equal(f.state.summaryClockEnabled, false);
+  f.state.instanceMode = false;
+  f.component.watch.summaryClockEnabled.call(f.state, true);
+  f.component.beforeUnmount.call(f.state);
+  assert.equal(f.timers.size, 0);
+  assert.equal(f.state.summaryTimer, null);
+  assert.equal(f.requests.length, 0);
+});
+
+test("additional price cues appear only for configured commission or a nonblank label", () => {
+  const f = fixture(), { state } = f;
+  const cue = () => renderedNodes(f.descriptor, state).find(node => node.props?.class?.includes?.("b-product-edit-price__details-mini"));
+  assert.equal(cue(), undefined);
+  edit(state, "commission", "0");
+  edit(state, "price_label", "   ");
+  assert.equal(cue(), undefined);
+  assert.match(state.additionalDigest, /no_commission.*no_label/);
+  assert.equal(state.price_label, "   ", "presentation does not trim the stored label");
+  edit(state, "commission", 1.2);
+  assert.deepEqual(Array.from(cue().children).filter(node => node.props?.name).map(node => node.props.name), ["Coins"]);
+  edit(state, "commission", 0);
+  edit(state, "price_label", "Per item");
+  assert.deepEqual(Array.from(cue().children).filter(node => node.props?.name).map(node => node.props.name), ["Tag"]);
+  edit(state, "commission", 1.2);
+  assert.deepEqual(Array.from(cue().children).filter(node => node.props?.name).map(node => node.props.name), ["Coins", "Tag"]);
+  assert.equal(f.requests.length, 0);
+});
+
+test("quantity miniature follows actual scoped net prices, keeps saved currency and never reorders persisted tiers", () => {
+  const f = fixture("price", { product: { extra_pricings: [
+    { id: 1, min: 100, price: 20, commission: 2, discount: 1 },
+    { id: 2, min: 10, price: 30, commission: 0, discount: 2 },
+    { id: 3, min: 2, price: 1, variant_id: 9 },
+    { id: 4, min: 3, price: 2, vendor_id: 8 },
+  ] } });
+  const before = plain(f.state.product.extra_pricings);
+  assert.equal(f.state.quantitySummaryPath, "M3 4.00 H55.00 V26.00 H61");
+  const mini = renderedNodes(f.descriptor, f.state).find(node => node.props?.class?.includes?.("b-product-edit-price__quantity-mini"));
+  assert.ok(mini);
+  assert.equal(mini.children.find(node => node.type === "path").props.d, f.state.quantitySummaryPath);
+  edit(f.state, "currency", f.modules.currency.Currency.EUR);
+  assert.match(f.state.quantityDigest, /21\.00 USD/);
+  assert.equal(f.state.quantitySummaryPath, "M3 4.00 H55.00 V26.00 H61");
+  assert.deepEqual(plain(f.state.product.extra_pricings), before);
+  for (const rows of [[], [{ min: 10, price: 5 }], [{ min: 10, price: 5 }, { min: 10, price: 8 }], [{ min: 10, price: 5 }, { min: 100, price: 5 }], [{ min: "bad", price: 5 }]]) {
+    f.state.product.extra_pricings = PricingRows.from(rows);
+    const path = f.state.quantitySummaryPath;
+    assert.doesNotMatch(path, /NaN|Infinity/);
+    assert.equal(!!path, rows.length > 0 && rows[0].min !== "bad");
+    if (!path) assert.equal(renderedNodes(f.descriptor, f.state).some(node => node.props?.class?.includes?.("b-product-edit-price__quantity-mini")), false);
+  }
+  assert.equal(f.requests.length, 0);
 });
 
 test("product contexts retain native service methods, subscription plans and marketplace guidance", () => {

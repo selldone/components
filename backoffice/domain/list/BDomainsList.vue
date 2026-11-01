@@ -38,9 +38,10 @@
         </div>
         <v-text-field v-model="search" class="b-domains-list__search" :placeholder="$t('domains_modern.list.search')" :aria-label="$t('domains_modern.list.search')" clearable hide-details prepend-inner-icon="search" single-line variant="plain" />
       </div>
-      <u-loading-progress v-if="busy_fetch" />
+      <b-list-loading-state v-if="busy_fetch && shop_domains?.length" kind="domain" compact class="sd-modern-list-refresh" />
 
       <v-data-table-server
+        :aria-busy="busy_fetch"
         v-model:expanded="expanded" v-model:options="options" v-model:page="page" v-model:sort-by="sortBy"
         :headers="refinedHeaders" :items="shop_domains" :items-length="totalItems" :items-per-page="itemsPerPage"
         :header-props="{ sortByText: $t('global.commons.sort_by') }" :mobile="$vuetify.display.width < 700"
@@ -49,6 +50,10 @@
         class="sd-modern-data-table b-domains-list__refined-table bg-transparent" density="compact" hide-default-footer item-value="url"
         @click:row="openDomainRow"
       >
+        <template v-if="!shop_domains?.length" #loading>
+          <b-list-loading-state kind="domain" />
+        </template>
+
         <template #item.url="{ item }">
           <div class="b-domains-list__address"><router-link :to="domainRoute(item)" class="b-domains-list__domain-link" @click.stop="cacheRouteState(domainKey(item))"><bdi dir="ltr">{{ item.url.replace(/^https?:\/\//, '') }}</bdi></router-link><BShopLicenseBlockIcon v-if="item.domain && !can_edit_domain(item.domain)" /></div>
           <div class="b-domains-list__meta"><v-icon v-if="item.primary" size="13">star_border</v-icon>{{ item.primary ? $t('domains_modern.list.primary') : item.official === 'local' ? $t('domains_modern.list.store_address') : item.domain?.externally_hosted ? $t('admin_shop.dashboard.info.table.externally_hosted') : 'HTTPS' }}</div>
@@ -123,7 +128,9 @@
             </section>
           </td></tr>
         </template>
-        <template #no-data><div class="sd-modern-empty-state"><v-icon size="22">language</v-icon><span>{{ $t('domains_modern.list.empty') }}</span></div></template>
+        <template #no-data><b-list-empty-state v-if="emptyStateLoaded && !busy_fetch" kind="domain"
+          :title="(!search && totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search ? 'dashboard_empty_state.no_results.title' : 'domains_modern.list.empty'))"
+          :description="(!search && totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search ? 'dashboard_empty_state.no_results.description' : 'dashboard_empty_state.domain.description'))" /></template>
         <template #bottom><div class="sd-modern-table-footer"><span class="sd-modern-page-summary">{{ $n(totalItems) }} {{ $t('commons.domains') }}</span><v-pagination v-model="page" :length="refinedPageCount" class="sd-modern-pagination" rounded /></div></template>
       </v-data-table-server>
     </template>
@@ -144,7 +151,7 @@
       >{{ $t("domains.message") }}
 
     </component>
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && shop_domains?.length" kind="domain" compact class="sd-modern-list-refresh" />
 
     <!-- █████████████████████████████ Search █████████████████████████████ -->
 
@@ -206,6 +213,8 @@
     </div>
 
     <v-data-table-server
+      :aria-busy="busy_fetch"
+      :loading="busy_fetch"
       v-if="
         modern ||
         $vuetify.display.smAndUp ||
@@ -239,6 +248,10 @@
         }
       "
     >
+      <template v-if="!shop_domains?.length" #loading>
+        <b-list-loading-state kind="domain" />
+      </template>
+
       <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Headers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
       <template v-slot:header.indexed="{}">
@@ -1031,6 +1044,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import ShopSiteMap from "../../sitemap/ShopSiteMap.vue";
 
 import { DomainsHelper } from "@selldone/core-js/helper/domain/DomainsHelper";
@@ -1058,6 +1073,8 @@ export default {
   mixins: [DateMixin, DomainMixin, CurrencyMixin, RouteMixin],
 
   components: {
+    BListLoadingState,
+    BListEmptyState,
     BDomainFlowMap,
     ULoadingProgress,
     UMenuExpandable,
@@ -1094,6 +1111,8 @@ export default {
     sortBy: [{ key: null, order: "desc" }],
 
     busy_fetch: false,
+    emptyStateLoaded: false,
+    emptyStateRequest: 0,
 
     //----------------------------------
 
@@ -1285,7 +1304,9 @@ export default {
       return this.$t(currency ? 'domains_modern.map.currencyScopeHelp' : 'domains_modern.map.languageScopeHelp');
     },
     fetchDomains(page, sortBy, sortDesc = true) {
+      const emptyRequest = ++this.emptyStateRequest;
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
       const search = this.search;
 
       axios
@@ -1300,8 +1321,10 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.totalItems = data.total + (this.show_subdomains ? 2 : 0);
           this.domains = data.domains;
+          this.emptyStateLoaded = Array.isArray(data.domains) && typeof data.total === 'number';
           // Refresh the shared primary-first snapshot only from a complete, unfiltered list.
           if (page === 1 && !search && data.total === data.domains.length) {
             this.shop.domains = [...data.domains].sort(
@@ -1313,6 +1336,7 @@ export default {
           }
         })
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy_fetch = false;
         });
     },

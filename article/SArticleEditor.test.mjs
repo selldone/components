@@ -9,6 +9,7 @@ import { JSDOM } from "jsdom";
 import jquery from "jquery";
 import numeral from "numeral";
 import axios from "axios";
+import Handlebars from "handlebars";
 import { parse, compileScript, compileTemplate, compileStyle } from "@vue/compiler-sfc";
 import ts from "typescript";
 
@@ -23,12 +24,20 @@ const template = compileTemplate({
 });
 assert.deepEqual(template.errors, []);
 // Legacy global styles remain untouched; compile the new opt-in scoped treatment.
-for (const style of descriptor.styles.filter((style) => style.scoped)) assert.deepEqual(compileStyle({
-  source: style.content, filename, id: "article-editor-test", scoped: true, preprocessLang: style.lang,
-}).errors, []);
+const scopedStyles = descriptor.styles.filter((style) => style.scoped).map((style) => {
+  const compiled = compileStyle({
+    source: style.content, filename, id: "article-editor-test", scoped: true, preprocessLang: style.lang,
+  });
+  assert.deepEqual(compiled.errors, []);
+  return compiled.code;
+}).join("\n");
 const script = ts.transpileModule(descriptor.script.content, {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
+const flowchartExports = {};
+vm.runInNewContext(ts.transpileModule(readFileSync(new URL('./add-on/flowchart/article-flowchart.ts', import.meta.url), 'utf8'), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+}).outputText, { exports: flowchartExports, TextEncoder });
 const documentFile = (name = "story.docx", size = 100) => ({ name, size });
 const plain = (value) => JSON.parse(JSON.stringify(value));
 
@@ -38,6 +47,10 @@ function fixture(props = {}, browser) {
   let timerId = 0;
   const dispatchResult = { forwarded: true };
   const window = browser?.window || {};
+  const contextExports = {};
+  vm.runInNewContext(ts.transpileModule(readFileSync(new URL('./add-on/toolbar/article-addon-context.ts', import.meta.url), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText, { exports: contextExports, $: browser?.$ || (() => ({})) });
   window.axios = { post(url, form, config) {
     let resolve, reject, complete;
     const request = { url, file: form.get("file"), form, config,
@@ -64,14 +77,27 @@ function fixture(props = {}, browser) {
           const app = {
             unmounts: 0,
             use() {},
-            mount(container) { app.rendered = component.render(); app.root = container.firstElementChild = { isConnected: false }; },
-            unmount() { app.unmounts++; app.root.isConnected = false; },
+            mount(container) {
+              app.rendered = component.render();
+              if (browser?.document) {
+                app.root = browser.document.createElement(app.rendered.props.definition ? 'article-flowchart' : 'div');
+                if (app.rendered.props.definition) {
+                  app.root.className = 'a-article-flowchart'; app.root.setAttribute('data-version', '1');
+                  app.root.setAttribute('data-flow', JSON.stringify(app.rendered.props.definition));
+                  app.root.innerHTML = '<svg data-runtime="true"><path d="M 0 0"/></svg><button>Runtime edit tool</button>';
+                }
+                container.append(app.root);
+              } else app.root = container.firstElementChild = { isConnected: false };
+            },
+            unmount() { app.unmounts++; if (browser?.document) app.root.remove(); else app.root.isConnected = false; },
           };
           apps.push(app);
           return app;
         },
       };
       if (name.includes("components-mandetory")) return { installGlobalComponents() {} };
+      if (name.endsWith('/article-flowchart')) return flowchartExports;
+      if (name.endsWith('/article-addon-context')) return contextExports;
       if (name === "medium-editor") return { default: class { subscribe() {} } };
       if (name === "lodash-es") return { debounce: (callback) => callback };
       if (name.includes("FileFormatConverterOnline")) return { FileFormatConverterOnline: {
@@ -94,6 +120,7 @@ function fixture(props = {}, browser) {
     $store: { dispatch(action) { dispatches.push(action); return dispatchResult; } },
     $nextTick: (callback) => ticks.push(callback),
     $t: (key) => key,
+    USER: () => ({ id: 3 }), USER_ID: () => 3,
     $emit(name, value) {
       events.push([name, value]);
       if (name === "update:title") state.title = value;
@@ -111,6 +138,7 @@ function fixture(props = {}, browser) {
     set(value) { if (importDialog === value) return; importDialog = value; component.watch.word_import_dialog.call(state, value); },
   });
   Object.defineProperty(state, "canImportWord", { get: () => component.computed.canImportWord.call(state) });
+  for (const name of ['flowchartAllowed', 'flowchartCanWrite', 'stagedWordImport', 'nativePending']) Object.defineProperty(state, name, { get: () => component.computed[name].call(state) });
   for (const [key, method] of Object.entries(component.methods)) state[key] = method.bind(state);
   component.created.call(state);
   state.geti18n = () => ({});
@@ -137,6 +165,163 @@ function fixture(props = {}, browser) {
 }
 
 assert.equal(fixture().component.props.workspace.default, false);
+test("Help's immediate-change opt-in marks input dirty synchronously while normal editors retain debounce", () => {
+  const help = fixture({ immediateChange: true, workspace: false, productWorkspace: false });
+  assert.equal(help.component.props.immediateChange.default, false);
+  let delayed = 0;
+  help.state.onEditedDebounced = () => delayed++;
+  help.component.methods.onEdited.call(help.state);
+  assert.equal(help.state.state, "changed", "Immediate Preview/Save must see pending title or body changes");
+  assert(help.events.some(([name]) => name === "change"));
+  assert.equal(delayed, 0);
+  assert.equal(help.state.workspace, false);
+  assert.equal(help.state.body, "<p>Original body</p>", "Dirty tracking must not serialize mounted rich blocks");
+  assert.equal(help.events.some(([name]) => name === "update:body"), false);
+  assert.equal(help.requests.length, 0);
+  const legacy = fixture({ workspace: false });
+  const before = legacy.state.state;
+  legacy.state.onEditedDebounced = () => delayed++;
+  legacy.component.methods.onEdited.call(legacy.state);
+  assert.equal(legacy.state.state, before);
+  assert.equal(delayed, 1);
+  assert.equal(legacy.events.some(([name]) => name === "change"), false);
+});
+
+function flowchartFixture(articleType = 'help', extra = {}) {
+  const dom = new JSDOM('<!doctype html><body><div id="article-test"><div id="editable-flow" class="medium-editor-element" contenteditable="true"><p>Keep <b>existing</b> rich text.</p><p class="medium-insert-active"><br></p><div class="medium-insert-buttons"><button class="medium-insert-buttons-show" type="button">+</button><ul class="medium-insert-buttons-addons"><li><button type="button" data-addon="images">Image</button></li><li><button type="button" data-addon="embeds">Embed</button></li><li><button type="button" data-addon="CodeEditorAddon">Code</button></li><li><button type="button" data-addon="ImagesCompareAddon">Comparison</button></li><li><button type="button" data-addon="FlipBookAddon">Catalog</button></li><li><button type="button" data-addon="ImageOverlayCanvasAddon">Canvas</button></li></ul></div></div></div></body>');
+  const $ = jquery(dom.window), body = dom.window.document.querySelector('#editable-flow');
+  const f = fixture({ articleType, articleContext: { id: 8 }, helpEditor: articleType === 'help', immediateChange: articleType === 'help', ...extra }, { window: dom.window, document: dom.window.document, $ });
+  const core = { options: { enabled: true }, addButtons() {}, moveCaret() {}, positionButtons() {}, showButtons() {}, hideButtons() {}, hideAddons() {}, toggleAddons() {} };
+  $(body).data('plugin_mediumInsert', core);
+  f.state.$refs.editable_body = body; f.state.EDITABLE_BODY_ID = body.id;
+  return { ...f, dom, body, $, core };
+}
+
+test('Help insertion palette retains every native block tool and gates flowcharts to official Help and Blog', () => {
+  for (const type of ['help', 'blog', 'shop-blog', 'product', 'company', '']) {
+    const f = flowchartFixture(type);
+    f.state.prepareFlowchartInsert();
+    assert.deepEqual([...f.body.querySelectorAll('button[data-addon]')].map((button) => button.dataset.addon), ['images', 'embeds', 'CodeEditorAddon', 'ImagesCompareAddon', 'FlipBookAddon', 'ImageOverlayCanvasAddon']);
+    const button = f.body.querySelector('.s-article-flowchart-insert');
+    assert.equal(!!button, ['help', 'blog'].includes(type));
+    if (button) {
+      assert.equal(button.type, 'button'); assert.equal(button.classList.contains('medium-insert-action'), false, 'A local flow action must not dispatch an unknown native plugin');
+      button.click(); assert.equal(f.state.flowchart_dialog, true); assert.equal(f.requests.length, 0);
+    } else assert.equal(f.state.openFlowchart(), false);
+  }
+});
+
+test('flowchart insert, mounted reader, edit and serialization round-trip preserve only canonical JSON and other rich blocks', () => {
+  const f = flowchartFixture();
+  const flow = flowchartExports.createArticleFlowchart();
+  flow.title = 'Shipping & fulfillment';
+  assert.equal(f.state.openFlowchart(), true); assert.equal(f.state.applyFlowchart(flow), true);
+  let marker = f.body.querySelector('article-flowchart');
+  assert.equal(marker.children.length, 0); assert.equal(marker.getAttribute('data-version'), '1');
+  assert.equal(f.body.querySelector('p > b').textContent, 'existing');
+  assert.equal(f.events.some(([event]) => event === 'update:body'), false, 'Insertion marks the native draft without publishing mounted DOM to the parent');
+  f.flush(); f.flushTimers();
+  marker = f.body.querySelector('article-flowchart');
+  assert.ok(marker.querySelector('svg[data-runtime]'), 'The reader mount may own SVG descendants while editing');
+  let html = f.state.purifyBody(), saved = f.dom.window.document.createElement('div'); saved.innerHTML = html;
+  assert.equal(saved.querySelector('p > b').textContent, 'existing');
+  assert.equal(saved.querySelector('article-flowchart').children.length, 0);
+  assert.equal(saved.querySelector('article-flowchart').attributes.length, 2);
+  assert.doesNotMatch(html, /<svg|<path|Runtime edit tool|contenteditable|a-article-flowchart|medium-insert/);
+  assert.equal(flowchartExports.parseArticleFlowchartElement(saved.querySelector('article-flowchart')).title, 'Shipping & fulfillment');
+  const changed = flowchartExports.parseArticleFlowchart(flow); changed.title = 'A corrected flow';
+  assert.equal(f.state.openFlowchart(flow, marker), true); assert.equal(f.state.applyFlowchart(changed), true);
+  assert.equal(f.apps[0].unmounts, 1, 'Replacing a mounted flow releases its prior Vue app');
+  html = f.state.purifyBody(); saved.innerHTML = html;
+  assert.equal(saved.querySelectorAll('article-flowchart').length, 1);
+  assert.equal(flowchartExports.parseArticleFlowchartElement(saved.querySelector('article-flowchart')).title, 'A corrected flow');
+  assert.equal(f.requests.length, 0, 'Insert and Apply only change the local article draft');
+});
+
+test('flowchart dialog callbacks reject revoked permissions, changed users, hidden editors and stale article contexts', () => {
+  const flow = flowchartExports.createArticleFlowchart();
+  for (const change of [
+    (f) => { f.state.onlyView = true; }, (f) => { f.state.edit = false; }, (f) => { f.state.active = false; },
+    (f) => { f.state.articleType = 'shop-blog'; }, (f) => { f.state.articleContext = { id: 9 }; },
+    (f) => { f.state.USER = () => null; }, (f) => { f.state.USER_ID = () => 4; },
+    (f) => { f.body.parentElement.style.display = 'none'; }, (f) => { f.body.parentElement.inert = true; },
+    (f) => { f.core.options.enabled = false; }, (f) => { f.body.remove(); },
+  ]) {
+    const f = flowchartFixture(); assert.equal(f.state.openFlowchart(), true);
+    const before = f.body.innerHTML; change(f);
+    assert.equal(f.state.applyFlowchart(flow), false); assert.equal(f.body.innerHTML, before);
+    assert.equal(f.requests.length, 0);
+  }
+  const editing = flowchartFixture(), template = editing.dom.window.document.createElement('template');
+  template.innerHTML = flowchartExports.serializeArticleFlowchart(flow); editing.body.prepend(template.content);
+  const element = editing.body.querySelector('article-flowchart');
+  assert.equal(editing.state.openFlowchart(flow, element), true);
+  element.setAttribute('data-flow', JSON.stringify({ ...flow, title: 'A newer local change' }));
+  assert.equal(editing.state.applyFlowchart(flow), false, 'A delayed dialog cannot overwrite another change to its source marker');
+});
+
+test('flowchart insertion enforces the bounded article count and cancel leaves the body intact', () => {
+  const f = flowchartFixture(), flow = flowchartExports.createArticleFlowchart();
+  const before = f.body.innerHTML;
+  assert.equal(f.state.openFlowchart(), true); f.state.closeFlowchart();
+  assert.equal(f.body.innerHTML, before); assert.equal(f.state.flowchart_definition, null);
+  for (let index = 0; index < flowchartExports.MAX_ARTICLE_FLOWCHARTS; index++) f.body.insertAdjacentHTML('afterbegin', flowchartExports.serializeArticleFlowchart(flow));
+  assert.equal(f.state.openFlowchart(), false); assert.match(f.notices.at(-1)[2], /flowchart.limit/);
+  assert.equal(f.requests.length, 0);
+});
+
+test('native flow rendering strips runtime descendants and rejects unsupported types or malformed definitions before HTML display', () => {
+  const marker = flowchartExports.serializeArticleFlowchart(flowchartExports.createArticleFlowchart());
+  for (const type of ['help', 'blog', 'shop-blog', 'product']) {
+    const f = flowchartFixture(type);
+    f.state.body = `<p>Preserve content.</p>${marker.replace('</article-flowchart>', '<svg><script>BAD_RUNTIME</script></svg></article-flowchart>')}`;
+    const html = f.component.computed.rendered_body.call(f.state);
+    assert.doesNotMatch(html, /<svg|<script|BAD_RUNTIME/);
+    assert.equal(html.includes('<article-flowchart'), ['help', 'blog'].includes(type));
+    f.body.innerHTML = '<p>Keep me.</p><article-flowchart data-version="2" data-flow="{}"><svg>INVALID</svg></article-flowchart>';
+    assert.equal(f.state.purifyBody(), '<p>Keep me.</p>');
+  }
+});
+
+test('Guidebook Word import reuses confirmed native conversion and ignores late results from another article or user', () => {
+  for (const change of ['article', 'user', 'permission', 'current']) {
+    const f = fixture({ helpEditor: true, workspace: false, immediateChange: true, articleType: 'help', articleContext: { id: 8 } });
+    f.state.showSelectWord();
+    assert.equal(f.state.word_import_dialog, true); assert.equal(f.state.nativePending, true);
+    f.state.stageWordFile([documentFile()]); assert.equal(f.requests.length, 0);
+    f.state.confirmWordImport(); assert.equal(f.requests.length, 1); assert.equal(f.state.word_import_busy, true);
+    assert.equal(f.dispatches.length, 0, 'Only the authorized confirmed converter request begins work');
+    if (change === 'article') {
+      f.state.articleContext = { id: 9 }; f.component.watch.articleContext.call(f.state);
+    } else if (change === 'user') { f.state.USER_ID = () => 4; f.component.watch.nativeUserId.call(f.state); }
+    else if (change === 'permission') { f.state.onlyView = true; f.component.watch.onlyView.call(f.state); }
+    f.requests[0].success({ title: 'Converted guide', body: '<p>Converted help body.</p>' }); f.finish(); f.flush();
+    if (change === 'current') {
+      assert.equal(f.state.title, 'Converted guide'); assert.equal(f.state.body, '<p>Converted help body.</p>');
+      assert.equal(f.state.word_import_busy, false); assert.equal(f.state.nativePending, false);
+    } else {
+      assert.equal(f.state.title, 'Original title'); assert.equal(f.state.body, '<p>Original body</p>');
+      assert.equal(f.state.word_import_busy, false, 'Revoked or changed ownership must release the old import operation');
+    }
+    assert.equal(f.state.workspace, false, 'Help never enables Shop workspace behavior');
+  }
+});
+
+test('the real native editing template places introduction after H1 without a separate Help insertion action', async () => {
+  const dom = new JSDOM('<!doctype html><body></body>'), $ = jquery(dom.window);
+  const props = { helpEditor: true, articleType: 'help', edit: true, title: 'Native guide title', body: '<p>Native guide body.</p>', suffixId: '-help-tab' };
+  const f = fixture(props, { window: dom.window, document: dom.window.document, $ });
+  dom.window.document.body.innerHTML = await renderEditor(f, props, {
+    'edit-after-title': () => Vue.h('p', { 'data-intro': true }, 'Controlled introduction.'),
+  });
+  const title = dom.window.document.querySelector('[id^="editable_title"]');
+  const intro = dom.window.document.querySelector('[data-intro]');
+  const body = dom.window.document.querySelector('.u-article-body-edit');
+  assert.ok(title.compareDocumentPosition(intro) & dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
+  assert.ok(intro.compareDocumentPosition(body) & dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
+  assert.equal(dom.window.document.querySelector('.s-article-editor__insert'), null);
+  assert.equal(f.requests.length, 0);
+});
 {
   const f = fixture({ workspace: true });
   let delayed = 0;
@@ -432,15 +617,17 @@ async function renderEditor(f, props, slots = {}) {
   });
   // Render actual template/computed HTML without booting MediumEditor or add-on dialogs.
   const inert = { render() { return null; } };
-  const reader = { ...f.component, created: undefined, mounted: undefined, beforeUnmount: undefined,
+  const reader = { ...f.component, created: f.component.created, mounted: undefined, beforeUnmount: undefined,
     components: Object.fromEntries(Object.keys(f.component.components).map((name) => [name, inert])),
     data: () => Object.fromEntries(Object.keys(f.component.data()).map((key) => [key, f.state[key]])),
     methods: { ...f.component.methods, reRenderAll() {} },
     render: templateExports.render };
   const app = Vue.createSSRApp({ render: () => Vue.h(reader, props, slots) });
+  app.config.warnHandler = (message) => { throw new Error(message); };
   app.config.globalProperties.$t = (key) => key;
   app.config.globalProperties.numeralFormat = (value, format) => numeral(value).format(format);
   app.config.globalProperties.getLanguageName = (language) => ({ en: "English", fa: "فارسی" }[language] || language);
+  app.config.globalProperties.USER = f.state.USER; app.config.globalProperties.USER_ID = f.state.USER_ID;
   const pass = { render() { return Vue.h("div", this.$attrs, this.$slots.default?.()); } };
   for (const tag of new Set([...descriptor.template.content.matchAll(/<([a-z][\w-]*-[\w-]+)/g)].map(([, name]) => name))) if (!["v-dialog", "v-btn"].includes(tag)) app.component(tag, pass);
   app.component("v-dialog", { props: ["modelValue"], render() { return this.modelValue ? Vue.h("div", { role: "dialog" }, this.$slots.default?.()) : null; } });
@@ -655,41 +842,141 @@ test("leaving a product description closes unconfirmed Word staging and ignores 
   assert.equal(f.state.word_import_busy, false);
 });
 
-test("product Insert content reuses the native palette and preserves existing rich blocks", () => {
-  const dom = new JSDOM('<!doctype html><body><div id="body" contenteditable="true"><p>Story text</p><code-editor>original serialized block</code-editor><div class="medium-insert-buttons"><button class="medium-insert-buttons-show">+</button><ul class="medium-insert-buttons-addons"><li><button type="button" data-addon="images">Image</button></li><li><button type="button" data-addon="embeds">Embed</button></li></ul></div></div></body>');
-  const $ = jquery(dom.window), body = dom.window.document.querySelector("#body"), originalBlock = body.querySelector("code-editor");
-  const f = fixture({ workspace: true, productWorkspace: true }, { window: dom.window, document: dom.window.document, $ });
-  f.state.$refs.editable_body = body;
-  const calls = [];
-  const insert = {
-    addButtons() {}, moveCaret() {}, positionButtons() {}, showButtons() {},
-    hideButtons() { calls.push("hide-buttons"); },
-    hideAddons() { $(body).find(".medium-insert-buttons-addons").hide(); },
-    toggleAddons() { $(body).find(".medium-insert-buttons-addons").show(); },
-  };
-  $(body).data("plugin_mediumInsert", insert);
-  f.state.showProductInsert();
-  assert.equal(body.querySelector("code-editor"), originalBlock);
-  assert.equal(originalBlock.textContent, "original serialized block");
-  assert.equal(body.querySelectorAll("p").length, 2);
-  assert.equal(body.querySelectorAll(".medium-insert-active").length, 1);
-  assert.equal(dom.window.document.activeElement.dataset.addon, "images");
-  assert.notEqual($(body).find(".medium-insert-buttons-addons").css("display"), "none");
-  f.state.showProductInsert();
-  assert.equal(body.querySelectorAll("p").length, 2, "Repeated opening reuses the trailing empty paragraph");
-  for (const key of ["active", "edit", "productWorkspace"]) {
-    f.state[key] = false; f.state.showProductInsert(); f.state[key] = true;
+const editorContexts = [
+  ["legacy", {}], ["Blog", { workspace: true }],
+  ["Help", { helpEditor: true }], ["Product", { workspace: true, productWorkspace: true }],
+];
+
+test("shared Insert content reuses each editor's native palette and preserves existing rich blocks", () => {
+  for (const [context, props] of editorContexts) {
+    const dom = new JSDOM('<!doctype html><body><div id="body" contenteditable="true"><p>Story text</p><code-editor>original serialized block</code-editor><div class="medium-insert-buttons"><button class="medium-insert-buttons-show">+</button><ul class="medium-insert-buttons-addons"><li><button type="button" data-addon="images">Image</button></li><li><button type="button" data-addon="embeds">Embed</button></li></ul></div></div></body>');
+    const $ = jquery(dom.window), body = dom.window.document.querySelector("#body"), originalBlock = body.querySelector("code-editor");
+    const f = fixture(props, { window: dom.window, document: dom.window.document, $ });
+    f.state.$refs.editable_body = body;
+    const calls = [];
+    let opened = 0;
+    const insert = {
+      addButtons() {}, moveCaret() {}, positionButtons() {}, showButtons() { opened++; },
+      hideButtons() { calls.push("hide-buttons"); },
+      hideAddons() { $(body).find(".medium-insert-buttons-addons").hide(); },
+      toggleAddons() { $(body).find(".medium-insert-buttons-addons").show(); },
+    };
+    $(body).data("plugin_mediumInsert", insert);
+    f.state.showProductInsert();
+    assert.equal(opened, 1, `${context} can open its existing native palette`);
+    assert.equal(body.querySelector("code-editor"), originalBlock);
+    assert.equal(originalBlock.textContent, "original serialized block");
+    assert.equal(body.querySelectorAll("p").length, 2);
+    assert.equal(body.querySelectorAll(".medium-insert-active").length, 1);
+    assert.equal(dom.window.document.activeElement.dataset.addon, "images");
+    assert.notEqual($(body).find(".medium-insert-buttons-addons").css("display"), "none");
+    f.state.showProductInsert();
+    assert.equal(opened, 2);
+    assert.equal(body.querySelectorAll("p").length, 2, "Repeated opening reuses the trailing empty paragraph");
+    assert.deepEqual([...body.querySelectorAll("[data-addon]")].map((button) => button.dataset.addon), ["images", "embeds"]);
+    for (const key of ["active", "edit"]) {
+      f.state[key] = false; f.state.showProductInsert(); f.state[key] = true;
+    }
+    for (const key of ["onlyView", "noMediumInsert", "word_import_busy", "flowchart_dialog"]) {
+      f.state[key] = true; f.state.showProductInsert(); f.state[key] = false;
+    }
+    assert.equal(opened, 2, `${context} respects inactive, read-only and busy guards`);
+    assert.equal(body.querySelectorAll("p").length, 2);
+    f.state.editor_body = { getExtensionByName: () => ({ hideToolbar() { calls.push("hide-toolbar"); } }) };
+    f.state.hideProductTools();
+    assert.deepEqual(calls, ["hide-buttons", "hide-toolbar"]);
+    assert.equal($(body).find(".medium-insert-buttons-addons").css("display"), "none");
+    assert.equal(f.requests.length, 0);
+    assert.equal(f.state.body, "<p>Original body</p>");
+    dom.window.close();
   }
-  for (const key of ["onlyView", "noMediumInsert", "word_import_busy"]) {
-    f.state[key] = true; f.state.showProductInsert(); f.state[key] = false;
+});
+
+test("all inline Insert controls honor native paragraph coordinates within their article body", () => {
+  for (const context of ["", "s-article-editor--workspace", "s-article-editor--help", "s-article-editor--workspace s-article-editor--product-workspace"]) {
+    const dom = new JSDOM('<!doctype html><head><style></style></head><body>' +
+      `<div class="s-article-editor ${context}" data-v-article-editor-test>` +
+      '<div class="s-article-editor__body u-article-body-edit" data-v-article-editor-test><p><br></p>' +
+      '<div class="medium-insert-buttons" style="top:52px;left:0px">' +
+      '<button class="medium-insert-buttons-show">+</button>' +
+      '<ul class="medium-insert-buttons-addons"><li><button>Image</button></li></ul>' +
+      '</div></div></div></body>');
+    dom.window.document.querySelector("style").textContent = scopedStyles;
+    const body = dom.window.document.querySelector(".s-article-editor__body");
+    const buttons = body.querySelector(".medium-insert-buttons");
+    for (const direction of ["ltr", "rtl"]) {
+      body.style.direction = direction;
+      assert.equal(dom.window.getComputedStyle(body).position, "relative", "Paragraph and button coordinates must share the article origin");
+      for (const [top, left] of [[52, 0], [172, 24]]) {
+        // The native plugin updates these inline values when the empty paragraph changes.
+        Object.assign(buttons.style, { top: `${top}px`, left: `${left}px` });
+        const style = dom.window.getComputedStyle(buttons);
+        assert.equal(style.position, "absolute", "The inline Insert control must not remain in normal flow after the article");
+        assert.equal(style.top, `${top}px`);
+        assert.equal(style.left, `${left}px`);
+      }
+    }
+    dom.window.close();
   }
-  assert.equal(body.querySelectorAll("p").length, 2);
-  f.state.editor_body = { getExtensionByName: () => ({ hideToolbar() { calls.push("hide-toolbar"); } }) };
-  f.state.hideProductTools();
-  assert.deepEqual(calls, ["hide-buttons", "hide-toolbar"]);
-  assert.equal($(body).find(".medium-insert-buttons-addons").css("display"), "none");
-  assert.equal(f.requests.length, 0);
-  assert.equal(f.state.body, "<p>Original body</p>");
+});
+
+test("no article renders a separate bottom Insert action outside the native paragraph controls", async () => {
+  const dom = new JSDOM("<!doctype html><body></body>");
+  for (const [context, props] of editorContexts) {
+    const f = fixture(props, { window: dom.window, document: dom.window.document, $: jquery(dom.window) });
+    for (const state of [{}, { onlyView: true }, { noMediumInsert: true }, { enableBody: false }]) {
+      dom.window.document.body.innerHTML = await renderEditor(f, { ...props, edit: true, ...state });
+      assert.equal(dom.window.document.querySelector(".s-article-editor__insert"), null, `${context} uses only its native insertion control`);
+    }
+    assert.equal(f.requests.length, 0);
+  }
+  dom.window.close();
+});
+
+test("the native Insert label is escaped and its palette opens at the selected empty paragraph", async () => {
+  const nativeScript = ts.transpileModule(readFileSync(new URL('./insert/SelldoneEditorInsert.ts', import.meta.url), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  const rawTemplate = Handlebars.compile(readFileSync(new URL('./insert/templates/core-buttons.hbs', import.meta.url), 'utf8'));
+  for (const label of ['Insert content', 'درج محتوا', '<img src=x onerror="unexpected()"> & "Insert"']) {
+    const dom = new JSDOM('<!doctype html><body><div contenteditable="true"><p>Before</p><p id="target"><br></p><p>After</p></div></body>');
+    const { window } = dom, { document } = window, $ = jquery(window), exports = {};
+    $.fx.off = true;
+    vm.runInNewContext(nativeScript, {
+      exports, window, document, jQuery: $, getComputedStyle: window.getComputedStyle.bind(window),
+      setTimeout: window.setTimeout.bind(window), clearTimeout: window.clearTimeout.bind(window),
+      require(name) {
+        if (name === 'jquery') return $;
+        if (name === 'handlebars/runtime') return { default: Handlebars };
+        if (name === 'medium-editor') return { default: { util: {} } };
+        if (name === 'blueimp-file-upload') return {};
+        throw new Error(`Unexpected native Insert dependency: ${name}`);
+      },
+    });
+    window.MediumInsert = exports.MediumInsert;
+    const body = document.querySelector('[contenteditable]'), target = body.querySelector('#target');
+    // Exercise native templates/events without initializing any upload or embed add-on.
+    $(body).mediumInsert({ insertLabel: label, addons: { images: false, embeds: false } });
+    const core = $(body).data('plugin_mediumInsert'), button = body.querySelector('.medium-insert-buttons-show');
+    const raw = document.createElement('template'); raw.innerHTML = rawTemplate({ insertLabel: label, addons: {} });
+    assert.equal(button.outerHTML, raw.content.querySelector('button').outerHTML, 'The compiled native template must match its maintained HBS source');
+    assert.equal(button.getAttribute('aria-label'), label);
+    assert.equal(button.querySelector('.medium-insert-buttons-label').textContent, label);
+    assert.equal(button.querySelector('svg').getAttribute('aria-hidden'), 'true');
+    assert.equal(button.querySelector('img'), null);
+    const paragraphs = [...body.querySelectorAll('p')], range = document.createRange();
+    range.selectNodeContents(target); range.collapse(true); window.getSelection().addRange(range);
+    target.dispatchEvent(new window.KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    assert.equal(body.querySelector('.medium-insert-active'), target);
+    assert.equal(button.dispatchEvent(new window.MouseEvent('mousedown', { bubbles: true, cancelable: true })), false);
+    button.click();
+    assert.notEqual($(body).find('.medium-insert-buttons-addons').css('display'), 'none');
+    assert.equal(body.querySelector('.medium-insert-active'), target);
+    assert.deepEqual([...body.querySelectorAll('p')], paragraphs, 'Opening Insert must not append a trailing paragraph or relocate the active line');
+    assert.equal(core.options.insertLabel, label);
+    dom.window.close();
+  }
 });
 
 test("product editor renders its title label and live article metadata without changing legacy markup", async () => {
@@ -751,4 +1038,28 @@ test("changing Product description language refreshes direction without changing
   f.state.productWorkspace = false;
   f.state.language = 'ar'; f.component.watch.language.call(f.state);
   assert.equal(f.directions(), 1);
+});
+
+test('empty Help drafts follow their selected language while real written content and other article callers retain detection', () => {
+  const f = fixture({ helpEditor: true, workspace: false, language: 'fa', title: '', body: '' });
+  f.state.getLanguageObject = (code) => ({ dir: ['fa', 'ar'].includes(code) ? 'rtl' : 'ltr' });
+  for (const language of ['fa', 'ar', 'en']) {
+    f.state.language = language; f.component.watch.language.call(f.state);
+    for (const innerText of ['', ' \n\t ', '\u00a0']) {
+      const element = { innerText, style: {} }, reader = { style: {} };
+      f.state.applyDirection(element, '', reader);
+      assert.equal(element.style.direction, language === 'en' ? 'ltr' : 'rtl');
+      assert.equal(reader.style.direction, element.style.direction);
+    }
+  }
+  assert.equal(f.directions(), 3);
+  for (const [language, innerText, expected] of [['fa', 'An English guide', 'ltr'], ['en', 'راهنمای فروشگاه', 'rtl']]) {
+    f.state.language = language;
+    const element = { innerText, style: {} }; f.state.applyDirection(element);
+    assert.equal(element.style.direction, expected);
+  }
+  f.state.helpEditor = false; f.state.language = 'fa'; f.component.watch.language.call(f.state);
+  const legacy = { innerText: '', style: {} }; f.state.applyDirection(legacy);
+  assert.equal(legacy.style.direction, 'ltr'); assert.equal(f.directions(), 3);
+  assert.equal(f.state.title, ''); assert.equal(f.state.body, ''); assert.equal(f.requests.length, 0); assert.deepEqual(f.events, []);
 });

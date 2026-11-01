@@ -54,7 +54,7 @@
 
     <!-- -------------- Search -------------- -->
 
-    <section :class="{ 'sd-modern-widget b-order-bills-modern__list': isModern, 's-table-loading': !isModern }" :aria-busy="busy_fetch">
+    <section class="s-table-loading" :class="{ 'sd-modern-widget b-order-bills-modern__list': isModern }" :aria-busy="busy_fetch">
     <v-row align="center" :class="isModern ? 'sd-modern-list-toolbar b-order-bills-modern__toolbar' : 'mt-2'" no-gutters>
       <span v-if="isModern" class="b-order-bills-modern__count">{{ $t('process_center.bills.record_count', { count: totalItems }) }}</span>
       <v-spacer></v-spacer>
@@ -77,11 +77,12 @@
 
     <!-- -------------- Loading -------------- -->
 
-    <u-loading-progress v-if="busy_fetch && !isModern"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && bills?.length" kind="order" compact class="sd-modern-list-refresh" />
 
     <!-- -------------- List -------------- -->
 
     <v-data-table-server
+      :aria-busy="busy_fetch"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -91,7 +92,7 @@
       :items-length="totalItems"
       :items-per-page="itemsPerPage"
       :mobile="isModern ? $vuetify.display.width < 900 : $vuetify.display.xs"
-      :loading="isModern && busy_fetch"
+      :loading="busy_fetch"
       :loading-text="isModern ? $t('process_center.bills.loading') : undefined"
       :row-props="billRowProps"
       :class="isModern ? 'sd-modern-data-table b-order-bills-modern__table' : 'bg-transparent min-height-60vh'"
@@ -101,9 +102,16 @@
       style="width: 100%"
       @click:row="(_, r) => showDetail(r.item)"
     >
+      <template v-if="!bills?.length" #loading>
+        <b-list-loading-state kind="order" />
+      </template>
+
       <!--  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ Empty View ▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
       <template v-slot:no-data>
-        <div v-if="isModern" class="sd-modern-empty-state b-order-bills-modern__empty" :role="fetch_error ? 'alert' : 'status'">
+        <b-list-empty-state v-if="isModern && emptyStateLoaded && !busy_fetch && !fetch_error" kind="order" class="b-order-bills-modern__empty"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search ? 'process_center.bills.no_matches_title' : 'process_center.bills.empty_title'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search ? 'process_center.bills.no_matches_message' : isSubscription ? 'process_center.bills.empty_subscription' : 'process_center.bills.empty_service'))" />
+        <div v-else-if="isModern" class="sd-modern-empty-state b-order-bills-modern__empty" :role="fetch_error ? 'alert' : 'status'">
           <v-icon size="27" aria-hidden="true">{{ fetch_error ? 'error_outline' : busy_fetch ? 'hourglass_empty' : search ? 'search_off' : 'receipt_long' }}</v-icon>
           <h2>{{ $t(fetch_error ? 'process_center.bills.error_title' : busy_fetch ? 'process_center.bills.loading' : search ? 'process_center.bills.no_matches_title' : 'process_center.bills.empty_title') }}</h2>
           <p v-if="!busy_fetch">{{ $t(fetch_error ? 'process_center.bills.error_message' : search ? 'process_center.bills.no_matches_message' : isSubscription ? 'process_center.bills.empty_subscription' : 'process_center.bills.empty_service') }}</p>
@@ -354,6 +362,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import UPaymentCard from "../../../../ui/payment/card/UPaymentCard.vue";
 import BOrderButton from "../../../order/button/BOrderButton.vue";
 import SOrderDeliveryStatusStepper from "../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
@@ -374,6 +384,8 @@ export default {
   emits: ["fetch-order"],
 
   components: {
+    BListLoadingState,
+    BListEmptyState,
     BOrderPaymentRowPayment,
     SOrderDeliveryStatusStepper,
     BOrderButton,
@@ -397,6 +409,7 @@ export default {
       BillStatus: Bill.Status,
 
       busy_fetch: false,
+      emptyStateLoaded: false,
       fetch_error: false,
       list_request_id: 0,
 
@@ -605,6 +618,7 @@ export default {
       this.$emit('fetch-order');
     },
     fetchBills(page, sortBy, sortDesc = true) {
+      this.emptyStateLoaded = false;
       this.page = page;
       const modern_request = this.isModern;
       const request_id = ++this.list_request_id;
@@ -638,6 +652,7 @@ export default {
           }
           this.totalItems = data.total;
           this.bills = data.bills;
+          this.emptyStateLoaded = Array.isArray(data.bills);
           if (modern_request && selected_id && this.selected_bill?.id === selected_id) {
             const current_bill = data.bills.find((bill) => bill.id === selected_id);
             if (current_bill) this.selected_bill = current_bill;

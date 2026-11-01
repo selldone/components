@@ -130,7 +130,7 @@
         />
       </div>
 
-      <u-loading-progress v-if="busy_fetch" />
+      <b-list-loading-state v-if="busy_fetch && reviews?.length" kind="customer" compact class="sd-modern-list-refresh" />
 
       <v-data-table-server
         :mobile="modern ? $vuetify.display.smAndDown : $vuetify.display.xs"
@@ -147,7 +147,7 @@
             ? 'sd-modern-data-table b-listing-reviews__table'
             : 'bg-transparent mb-2 min-height-60vh'
         "
-        :loading="modern && busy_fetch"
+        :loading="busy_fetch"
         :aria-busy="busy_fetch"
         :row-props="
           modern
@@ -170,38 +170,28 @@
         hide-default-footer
         @click:row="(_, r) => openDialog(r.item)"
       >
+        <template v-if="!reviews?.length" #loading>
+          <b-list-loading-state kind="customer" />
+        </template>
+
         <template v-slot:no-data>
-          <div
-            v-if="modern && !busy_fetch"
-            class="sd-modern-empty-state"
-            role="status"
-          >
-            <v-icon size="38" aria-hidden="true">rate_review</v-icon>
-            <h2>
-              {{
-                $t(
+          <b-list-empty-state v-if="modern && emptyStateLoaded && !busy_fetch" role="status" kind="customer"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(
                   search ||
-                    (filter_status && filter_status !== "all") ||
+                    (filter_status && filter_status !== 'all') ||
                     filter_has_answer ||
                     with_trashed
-                    ? "shop_listing.modern.no_results"
-                    : "shop_listing.modern.reviews_empty_title",
-                )
-              }}
-            </h2>
-            <p class="sd-modern-muted">
-              {{
-                $t(
+                    ? 'shop_listing.modern.no_results'
+                    : 'shop_listing.modern.reviews_empty_title',
+                ))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(
                   search ||
-                    (filter_status && filter_status !== "all") ||
+                    (filter_status && filter_status !== 'all') ||
                     filter_has_answer ||
                     with_trashed
-                    ? "shop_listing.modern.no_results_hint"
-                    : "shop_listing.modern.reviews_empty_hint",
-                )
-              }}
-            </p>
-          </div>
+                    ? 'shop_listing.modern.no_results_hint'
+                    : 'shop_listing.modern.reviews_empty_hint',
+                ))" />
           <template v-else-if="!modern">
             <div
               v-if="!busy_fetch && !search"
@@ -401,6 +391,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { throttle } from "lodash-es";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
@@ -414,6 +406,8 @@ export default {
   inject: ["$shop"],
 
   components: {
+    BListLoadingState,
+    BListEmptyState,
     USmartMenu,
     BShopListingReviewDialog,
   },
@@ -425,6 +419,8 @@ export default {
     totalItems: 0,
 
     busy_fetch: false,
+    emptyStateLoaded: false,
+    emptyStateRequest: 0,
     busy_action_id: null as number | null,
 
     // filters
@@ -601,6 +597,7 @@ export default {
     },
 
     fetchReviews(page: number, sortBy: string, sortDesc: boolean) {
+      const emptyRequest = ++this.emptyStateRequest;
       const shopId = this.shop?.id;
       const vendorId = this.VENDOR_ID_SAFE;
 
@@ -608,6 +605,7 @@ export default {
       if (this.IS_VENDOR_PANEL && !vendorId) return;
 
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
 
       const url = this.IS_VENDOR_PANEL
         ? // ✅ Vendor endpoint
@@ -631,16 +629,18 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           if (data?.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
             return;
           }
           this.reviews = Array.isArray(data.reviews) ? data.reviews : [];
+          this.emptyStateLoaded = Array.isArray(data.reviews);
           this.totalItems =
             parseInt(String(data.total || 0), 10) || this.reviews.length;
         })
-        .catch((error) => NotificationService.showLaravelError(error))
-        .finally(() => (this.busy_fetch = false));
+        .catch((error) => { if (emptyRequest !== this.emptyStateRequest) return; return NotificationService.showLaravelError(error); })
+        .finally(() => { if (emptyRequest !== this.emptyStateRequest) return; return (this.busy_fetch = false); });
     },
 
     openDialog(review: any) {

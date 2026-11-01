@@ -65,7 +65,7 @@
         :class="{ 'sd-modern-widget b-vendor-transactions__list': modern }"
         :aria-busy="busy_fetch"
       >
-        <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+        <b-list-loading-state v-if="busy_fetch && transactions?.length" kind="payment" compact class="sd-modern-list-refresh" />
 
         <div
           :class="
@@ -132,6 +132,7 @@
         </div>
 
         <v-data-table-server
+          :aria-busy="busy_fetch"
           v-model:page="page"
           v-model:sort-by="sortBy"
           :header-props="{ sortByText: $t('global.commons.sort_by') }"
@@ -151,6 +152,10 @@
           hide-default-footer
           item-value="id"
         >
+          <template v-if="!transactions?.length" #loading>
+            <b-list-loading-state kind="payment" />
+          </template>
+
           <template v-slot:item.amount="{ item }">
             <div :class="{ 'b-vendor-transactions__amount': modern }">
               <u-price
@@ -271,16 +276,15 @@
           </template>
 
           <template v-if="modern" #no-data>
-            <div
-              v-if="!fetch_error && !busy_fetch"
-              class="sd-modern-empty-state b-vendor-transactions__empty"
-              role="status"
+            <b-list-empty-state
+              v-if="emptyStateLoaded && !fetch_error && !busy_fetch"
+              kind="payment"
+              class="b-vendor-transactions__empty"
+              :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search ? 'marketplace_wallets.transactions.no_results_title' : 'marketplace_wallets.transactions.empty_title'))"
+              :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search ? 'marketplace_wallets.transactions.no_results_help' : 'marketplace_wallets.transactions.empty_help'))"
             >
-              <v-icon size="26" aria-hidden="true">search_off</v-icon>
-              <h3>{{ $t(search ? 'marketplace_wallets.transactions.no_results_title' : 'marketplace_wallets.transactions.empty_title') }}</h3>
-              <p>{{ $t(search ? 'marketplace_wallets.transactions.no_results_help' : 'marketplace_wallets.transactions.empty_help') }}</p>
               <v-btn v-if="search" class="sd-modern-button sd-modern-button--inline" variant="text" color="primary" @click="search = null">{{ $t('marketplace_wallets.transactions.clear_search') }}</v-btn>
-            </div>
+            </b-list-empty-state>
           </template>
 
           <template v-slot:bottom>
@@ -322,6 +326,8 @@
   </v-container>
 </template>
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import BVendorPayoutPods from "../../../../vendor/payout/pods/BVendorPayoutPods.vue";
 import { throttle } from "lodash-es";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
@@ -333,7 +339,9 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 export default {
   name: "BVendorAccountTransactionsList",
   mixins: [DateMixin],
-  components: { BVendorPayoutPods, USmartMenu, UCurrencyIcon },
+  components: {
+    BListLoadingState,
+    BListEmptyState, BVendorPayoutPods, USmartMenu, UCurrencyIcon },
 
   props: {
     modern: { type: Boolean, default: false },
@@ -349,6 +357,7 @@ export default {
 
   data: () => ({
     busy_fetch: false,
+    emptyStateLoaded: false,
     fetch_error: false,
     request_id: 0,
 
@@ -506,6 +515,7 @@ export default {
       sortBy = this.sortBy[0]?.key,
       sortDesc = this.sortBy[0]?.order === "desc",
     ) {
+      this.emptyStateLoaded = false;
       // A late response for the previous wallet must not replace the active wallet's ledger.
       const request_id = ++this.request_id;
       if (!this.account?.id) {
@@ -536,6 +546,7 @@ export default {
           if (request_id !== this.request_id) return;
           if (!data.error) {
             this.transactions = data.transactions;
+          this.emptyStateLoaded = Array.isArray(data.transactions);
             this.totalItems = data.total;
           } else {
             this.fetch_error = true;

@@ -14,10 +14,34 @@
 
 <template>
   <div v-if="modern" class="b-product-currency-flow text-start">
+    <div class="b-product-currency-flow__summary">
+      <p v-if="periodLabel" class="sd-modern-subtitle">
+        {{
+          $t("admin_shop.dashboard.modern.finance_recorded_period", {
+            period: periodLabel,
+          })
+        }}
+      </p>
+      <div class="b-product-currency-flow__total" aria-live="polite">
+        <u-price
+          v-if="estimatedTotal !== null"
+          :amount="estimatedTotal"
+          :currency="selected_currency"
+        />
+        <span v-else>—</span>
+        <small>{{
+          $t("admin_shop.dashboard.modern.finance_estimated_total", {
+            currency: selected_currency,
+          })
+        }}</small>
+      </div>
+    </div>
     <div class="b-product-currency-flow__controls">
-      <label
-        >{{ $t("admin_shop.dashboard.finance.currency_convert_to")
-        }}<select v-model="selected_currency">
+      <label class="b-product-currency-flow__display">
+        <span class="b-product-currency-flow__caption">{{
+          $t("admin_shop.dashboard.modern.finance_display_currency")
+        }}</span>
+        <select v-model="selected_currency">
           <option
             v-for="currency in availableCurrencies"
             :key="currency.code"
@@ -25,19 +49,33 @@
           >
             {{ currency.code }}
           </option>
-        </select></label
-      >
-      <div class="b-product-currency-flow__sources">
-        <label v-for="currency in sourceCurrencies" :key="currency.code"
-          ><input
-            v-model="enable_currencies"
-            type="checkbox"
-            :value="currency.code"
-          /><u-currency-icon :currency="currency" flag small /><span>{{
-            currency.code
-          }}</span></label
-        >
-      </div>
+        </select>
+      </label>
+      <fieldset class="b-product-currency-flow__sources">
+        <legend class="b-product-currency-flow__caption">
+          {{ $t("admin_shop.dashboard.modern.finance_include_currencies") }}
+        </legend>
+        <div class="b-product-currency-flow__options">
+          <label
+            v-for="currency in sourceCurrencies"
+            :key="currency.code"
+            :class="{ '-selected': enable_currencies.includes(currency.code) }"
+          >
+            <u-currency-icon
+              :currency="currency"
+              flag-only
+              small
+              aria-hidden="true"
+            />
+            <bdi>{{ currency.code }}</bdi>
+            <input
+              v-model="enable_currencies"
+              type="checkbox"
+              :value="currency.code"
+            />
+          </label>
+        </div>
+      </fieldset>
     </div>
     <div ref="modernChart" class="b-product-currency-flow__chart">
       <apexchart
@@ -76,7 +114,16 @@
         is-currency
       >
         <template #series-identity="{ label, size }">
-          <u-currency-icon :currency="label" flag-only class="b-product-currency-flow__identity" :style="{ width: size + 'px', minWidth: size + 'px', height: size + 'px' }" />
+          <u-currency-icon
+            :currency="label"
+            flag-only
+            class="b-product-currency-flow__identity"
+            :style="{
+              width: size + 'px',
+              minWidth: size + 'px',
+              height: size + 'px',
+            }"
+          />
         </template>
       </u-chart-funnel>
       <p v-else class="sd-modern-subtitle">
@@ -245,6 +292,20 @@ export default {
     selected_currency: null,
   }),
   computed: {
+    periodLabel() {
+      if (!this.labels.length) return "";
+      return this.labels.length === 1
+        ? this.labels[0]
+        : this.labels[0] + " – " + this.labels.at(-1);
+    },
+    estimatedTotal() {
+      if (!this.enable_currencies.length || this.estimateUnavailable)
+        return null;
+      const values = this.amount_sell_values_noramized.flat();
+      return values.length && values.every(Number.isFinite)
+        ? values.reduce((total, value) => total + value, 0)
+        : null;
+    },
     sourceCurrencies() {
       const codes = new Set(
         this.timeSeries.raw_data.flatMap(
@@ -309,9 +370,20 @@ export default {
           y: {
             formatter: (value, { seriesIndex, dataPointIndex }) => {
               const currency = this.enable_currencies[seriesIndex];
-              const nativeValue = this.amount_sell_values[dataPointIndex]?.[seriesIndex];
-              const original = this.FormatNumberCurrency(nativeValue, currency) + " " + currency;
-              return currency === this.selected_currency ? original : original + " (≈ " + this.FormatNumberCurrency(value, this.selected_currency) + " " + this.selected_currency + ")";
+              const nativeValue =
+                this.amount_sell_values[dataPointIndex]?.[seriesIndex];
+              const original =
+                this.FormatNumberCurrency(nativeValue, currency) +
+                " " +
+                currency;
+              return currency === this.selected_currency
+                ? original
+                : original +
+                    " (≈ " +
+                    this.FormatNumberCurrency(value, this.selected_currency) +
+                    " " +
+                    this.selected_currency +
+                    ")";
             },
           },
         },
@@ -531,41 +603,105 @@ export default {
 <style lang="scss" scoped>
 .b-product-currency-flow {
   min-width: 0;
+  &__summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px 24px;
+    margin-block-end: 20px;
+  }
+  &__summary > p {
+    flex: 1 1 200px;
+    margin: 0;
+    font-size: 12px;
+  }
+  &__total {
+    margin-inline-start: auto;
+    text-align: end;
+    font-size: 21px;
+    font-weight: 400;
+    line-height: 26px;
+    font-variant-numeric: tabular-nums;
+  }
+  &__total small {
+    display: block;
+    margin-block-start: 3px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--sd-modern-muted);
+  }
+  &__total :deep(.u--price) {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 400 !important;
+    line-height: inherit;
+  }
   &__controls {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    align-items: flex-start;
+    gap: 16px 24px;
     margin-block-end: 16px;
   }
-  label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
+  &__caption {
+    display: block;
+    margin-block-end: 6px;
+    font-size: 11px;
+    line-height: 16px;
     color: var(--sd-modern-muted);
-    flex-wrap: wrap;
+    letter-spacing: 0.35px;
+  }
+  &__display {
+    flex: 0 0 auto;
   }
   select {
     min-height: 36px;
     background: var(--sd-modern-inset);
-    color: inherit;
-    padding: 4px 8px;
-    border-radius: 6px;
+    color: rgb(var(--v-theme-on-surface));
+    padding: 6px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+  }
+  option {
+    background: rgb(var(--v-theme-surface));
   }
   &__sources {
+    flex: 1 1 300px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  &__options {
     display: flex;
-    gap: 16px;
+    gap: 5px;
     flex-wrap: wrap;
   }
-  &__sources label {
+  &__options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     min-height: 36px;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--sd-modern-muted);
+  }
+  &__options label.-selected {
+    border-color: var(--sd-modern-border);
+    background: var(--sd-modern-inset);
+    color: rgb(var(--v-theme-on-surface));
+  }
+  &__options label:hover {
+    background: var(--sd-modern-inset);
   }
   input {
-    accent-color: rgb(var(--v-theme-primary));
-    width: 16px;
-    height: 16px;
+    accent-color: rgb(var(--v-theme-on-surface));
+    width: 13px;
+    height: 13px;
+    margin: 0;
   }
   &__chart {
     min-width: 0;
@@ -578,8 +714,20 @@ export default {
   }
   @media (max-width: 600px), (pointer: coarse) {
     select,
-    &__sources label {
+    &__options label {
       min-height: 44px;
+    }
+    select {
+      font-size: 16px;
+    }
+  }
+  @media (max-width: 600px) {
+    &__summary > p {
+      flex-basis: 100%;
+    }
+    &__total {
+      margin-inline-start: 0;
+      text-align: start;
     }
   }
 }

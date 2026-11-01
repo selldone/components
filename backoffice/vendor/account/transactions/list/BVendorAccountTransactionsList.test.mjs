@@ -7,6 +7,8 @@ import { compileStyleAsync, compileTemplate, parse } from "@vue/compiler-sfc";
 import * as Vue from "vue";
 import { renderToString } from "vue/server-renderer";
 import ts from "typescript";
+import BListEmptyState from "../../../../empty-state/BListEmptyState.test-helper.mjs";
+import BListLoadingState from "../../../../loading-state/BListLoadingState.test-helper.mjs";
 
 const filename = new URL(
   "./BVendorAccountTransactionsList.vue",
@@ -65,6 +67,8 @@ function fixture() {
       },
     },
     require(name) {
+      if (name.endsWith("BListEmptyState.vue")) return { default: BListEmptyState };
+      if (name.endsWith("BListLoadingState.vue")) return { default: BListLoadingState };
       if (name.includes("NotificationService"))
         return {
           default: {
@@ -251,6 +255,8 @@ test("modern template preserves signed native-currency amount, officer, full not
     {
       ...component,
       components: {
+        BListEmptyState,
+        BListLoadingState,
         BVendorPayoutPods: {
           inheritAttrs: false,
           setup(_, { attrs }) {

@@ -31,6 +31,7 @@
       />
     </div>
     <v-data-table-server
+      :aria-busy="busy_fetch"
       v-model:options="options"
       v-model:page="page"
       v-model:sort-by="sortBy"
@@ -47,39 +48,20 @@
       hide-default-footer
       item-value="id"
     >
-      <template #no-data
-        ><div class="sd-modern-empty-state">
-          <v-icon size="28" aria-hidden="true">{{
-            failed ? "error_outline" : search ? "search_off" : "inventory_2"
-          }}</v-icon
-          ><strong>{{
-            $t(
-              failed
-                ? "map_channel.products_load_error"
-                : search
-                  ? "map_channel.products_search_empty"
-                  : "map_channel.products_empty",
-            )
-          }}</strong>
-          <p>
-            {{
-              $t(
-                search
-                  ? "map_channel.products_search_hint"
-                  : "map_channel.products_assignment_help",
-              )
-            }}
-          </p>
-          <v-btn
-            v-if="failed"
-            class="sd-modern-button"
-            variant="text"
-            prepend-icon="refresh"
-            @click="retry"
-            >{{ $t("map_channel.retry") }}</v-btn
-          >
-        </div></template
-      >
+      <template v-if="!products?.length" #loading>
+        <b-list-loading-state kind="product" />
+      </template>
+
+      <template #no-data>
+  <b-list-empty-state v-if="emptyStateLoaded && !busy_fetch && !failed" kind="product"
+    :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search ? 'map_channel.products_search_empty' : 'map_channel.products_empty'))"
+    :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search ? 'map_channel.products_search_hint' : 'map_channel.products_assignment_help'))" />
+  <div v-else-if="failed" class="sd-modern-empty-state" role="alert">
+    <v-icon size="28" aria-hidden="true">error_outline</v-icon>
+    <strong>{{ $t('map_channel.products_load_error') }}</strong>
+    <v-btn class="sd-modern-button" variant="text" prepend-icon="refresh" @click="retry">{{ $t('map_channel.retry') }}</v-btn>
+  </div>
+</template>
       <template #item.title="{ item }"
         ><div class="b-map-tag-products__identity">
           <v-avatar rounded size="40" class="hover-scale-small"
@@ -194,18 +176,23 @@
   </div>
 </template>
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import UTimeProgressBar from "../../../../ui/time/progress-bar/UTimeProgressBar.vue";
 import { throttle } from "lodash-es";
 export default {
   name: "BMapTagProducts",
-  components: { UTimeProgressBar },
+  components: {
+    BListLoadingState,
+    BListEmptyState, UTimeProgressBar },
   props: {
     shop: { required: true, type: Object },
     mapTag: { required: true, type: Object },
   },
   data: () => ({
     busy_fetch: false,
+    emptyStateLoaded: false,
     failed: false,
     products: [],
     search: "",
@@ -298,6 +285,7 @@ export default {
       );
     },
     async fetchProducts(page, sortBy, sortDesc = true) {
+      this.emptyStateLoaded = false;
       if (this.disposed) return;
       const revision = ++this.fetch_revision,
         shopId = this.shop.id,
@@ -337,6 +325,7 @@ export default {
           throw new Error("Invalid assigned-products response");
         this.totalItems = Number(data.total);
         this.products = data.products;
+        this.emptyStateLoaded = true;
         if (this.page > this.pageCount) this.page = this.pageCount;
       } catch (error) {
         if (revision === this.fetch_revision) {

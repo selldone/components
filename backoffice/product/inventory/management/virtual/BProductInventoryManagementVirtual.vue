@@ -16,7 +16,7 @@
   <div>
     <!-- ███████████████████ Items ███████████████████ -->
 
-    <div class="widget-box -large mb-5 min-height-50vh">
+    <div class="widget-box -large mb-5 min-height-50vh s-table-loading">
       <u-widget-header
         :add-caption="
           showAddItem ? $t('virtual_items_list.add_virtual_item') : undefined
@@ -59,8 +59,10 @@
         <v-spacer></v-spacer>
       </v-row>
 
-      <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+      <b-list-loading-state v-if="busy_fetch && virtual_items?.length" kind="product" compact class="sd-modern-list-refresh" />
       <v-data-table-server
+        :aria-busy="busy_fetch"
+        :loading="busy_fetch"
         v-model:options="options"
         v-model:page="page"
         v-model:sort-by="sortBy"
@@ -82,6 +84,10 @@
         item-key="id"
         @click:row="(_, r) => showDetail(r.item)"
       >
+        <template v-if="!virtual_items?.length" #loading>
+          <b-list-loading-state kind="product" />
+        </template>
+
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂ product_id ▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <template v-slot:item.product_id="{ item }">
@@ -226,7 +232,9 @@
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂ no-data ▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <template v-slot:no-data>
-          <p>{{ $t("virtual_items_list.table.nodata") }}</p>
+          <b-list-empty-state v-if="emptyStateLoaded && !busy_fetch" kind="product"
+            :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t('virtual_items_list.table.nodata'))"
+            :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(filter_list.length !== 4 ? 'dashboard_empty_state.no_results.description' : 'dashboard_empty_state.context.virtual_items.description'))" />
         </template>
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂ footer ▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
@@ -394,6 +402,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import BOrderButtonBasket from "../../../../order/button/basket/BOrderButtonBasket.vue";
 
 import { BusinessModel } from "@selldone/core-js/enums/shop/BusinessModel";
@@ -411,6 +421,8 @@ export default {
   name: "BProductInventoryManagementVirtual",
   mixins: [DateMixin,OrderMixin ],
   components: {
+    BListLoadingState,
+    BListEmptyState,
     BProductVirtualItemAdd,
     USmartMenu,
     VariantItemViewMicro,
@@ -466,6 +478,8 @@ export default {
     current_item: null,
 
     busy_fetch: false,
+    emptyStateLoaded: false,
+    emptyStateRequest: 0,
 
     // Pagination:
     page: 1,
@@ -649,7 +663,9 @@ export default {
     },
 
     fetchVirtualItems(page, sortBy, sortDesc = true) {
+      const emptyRequest = ++this.emptyStateRequest;
       this.busy_fetch = true;
+      this.emptyStateLoaded = false;
 
       axios
         .get(
@@ -669,13 +685,17 @@ export default {
           },
         )
         .then(({ data }) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.virtual_items = data.virtual_items;
+          this.emptyStateLoaded = Array.isArray(data.virtual_items);
           this.totalItems = data.total;
         })
         .catch((error) => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (emptyRequest !== this.emptyStateRequest) return;
           this.busy_fetch = false;
         });
     },

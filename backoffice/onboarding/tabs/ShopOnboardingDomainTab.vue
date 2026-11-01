@@ -14,21 +14,69 @@
 
 <template>
   <section v-if="modern" class="s-onboarding-domain text-start">
-    <p class="s-onboarding-domain__description">
-      {{ $t("onboarding.modern.domain.description") }}
-    </p>
-
-    <div v-if="domains.length" class="s-onboarding-domain__domains">
-      <div v-for="domain in domains" :key="domain.id || domain.domain" class="s-onboarding-domain__domain">
-        <div>
-          <v-icon size="18" aria-hidden="true">public</v-icon>
-          <span dir="ltr">{{ domain.domain }}</span>
-        </div>
-        <span class="sd-modern-status sd-modern-status--plain">
-          <span class="sd-modern-status__dot" :class="{ 's-onboarding-domain__dot--active': domain.enable }" />
-          {{ $t(domain.enable ? 'global.active' : 'global.inactive') }}
-        </span>
+    <div v-if="!domains.length" class="s-onboarding-domain__intro">
+      <div>
+        <h4>{{ $t("onboarding.modern.domain.empty_title") }}</h4>
+        <p class="s-onboarding-domain__description">
+          {{ $t("onboarding.modern.domain.empty_description") }}
+        </p>
       </div>
+      <div class="s-onboarding-domain__flow" role="img" :aria-label="$t('onboarding.modern.domain.flow_label')">
+        <div class="s-onboarding-domain__flow-node"><v-icon size="20" aria-hidden="true">language</v-icon></div>
+        <span />
+        <div class="s-onboarding-domain__flow-node"><v-icon size="20" aria-hidden="true">dns</v-icon></div>
+        <span />
+        <div class="s-onboarding-domain__flow-node"><v-icon size="20" aria-hidden="true">storefront</v-icon></div>
+      </div>
+    </div>
+    <template v-else>
+      <p class="s-onboarding-domain__description">{{ $t("onboarding.modern.domain.description") }}</p>
+      <ul class="s-onboarding-domain__domains">
+        <li v-for="domain in domains" :key="domain.id || domain.domain" class="s-onboarding-domain__domain">
+          <div class="s-onboarding-domain__identity">
+            <v-icon size="18" aria-hidden="true">language</v-icon>
+            <bdi dir="ltr">{{ domain.domain }}</bdi>
+          </div>
+          <div class="s-onboarding-domain__statuses">
+            <span class="sd-modern-status sd-modern-status--plain">
+              <span class="sd-modern-status__dot" :class="domain.enable ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--error'" />
+              {{ $t(domain.enable ? 'domains_modern.list.enabled' : 'domains_modern.list.disabled') }}
+            </span>
+            <span v-if="typeof domain.approved === 'boolean'" class="sd-modern-status sd-modern-status--plain">
+              <span class="sd-modern-status__dot" :class="domain.approved ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--warning'" />
+              {{ $t(domain.approved ? 'domains_modern.list.verified' : 'domains_modern.list.pending') }}
+            </span>
+          </div>
+        </li>
+      </ul>
+    </template>
+
+    <div class="s-onboarding-domain__actions">
+      <v-dialog
+        :model-value="dialog_domain"
+        :persistent="domainBusy"
+        fullscreen
+        scrollable
+        transition="dialog-bottom-transition"
+        @update:model-value="setDomainDialog"
+      >
+        <template #activator="{ props: activatorProps }">
+          <v-btn v-bind="activatorProps" class="sd-modern-button" color="primary" variant="flat">
+            <v-icon start size="17" aria-hidden="true">add_link</v-icon>
+            {{ $t(domains.length ? 'onboarding.modern.domain.connect_another' : 'onboarding.modern.domain.connect_domain') }}
+          </v-btn>
+        </template>
+        <b-domain-add
+          v-if="dialog_domain"
+          :key="shop.id"
+          ref="domainAdd"
+          :domain="{}"
+          :shop="shop"
+          modern
+          @add="onDomainAdded"
+          @click:close="dialog_domain = false"
+        />
+      </v-dialog>
       <v-btn
         :to="{ name: 'BPageShopSettingDomain' }"
         target="_blank"
@@ -43,22 +91,9 @@
       </v-btn>
     </div>
 
-    <div class="s-onboarding-domain__guidance">
-      <h3>{{ $t("onboarding.modern.domain.dns_title") }}</h3>
-      <p>{{ $t("onboarding.modern.domain.dns_description") }}</p>
-    </div>
-
-    <b-domain-add
-      v-if="!domains.length"
-      :domain="{}"
-      :shop="shop"
-      class="s-onboarding-domain__form"
-      inline
-    />
-
     <aside class="s-onboarding-domain__note">
       <v-icon size="17" aria-hidden="true">info_outline</v-icon>
-      <p>{{ $t("onboarding.modern.domain.purchase_note") }}</p>
+      <p>{{ $t(domains.length ? 'onboarding.modern.domain.ownership_note' : 'onboarding.modern.domain.purchase_note') }}</p>
     </aside>
   </section>
   <v-card v-else color="transparent" flat>
@@ -101,6 +136,7 @@
 </template>
 
 <script lang="ts">
+import { shallowRef } from "vue";
 import BDomainAdd from "../../domain/add/BDomainAdd.vue";
 
 export default {
@@ -121,19 +157,36 @@ export default {
     },
   },
 
-  data: () => ({}),
+  setup() {
+    return { domainAdd: shallowRef(null) };
+  },
+
+  data: () => ({ dialog_domain: false }),
 
   computed: {
     domains() {
-      return this.shop.domains ? this.shop.domains : [];
+      return this.shop.domains || [];
+    },
+    domainBusy() {
+      return !!this.domainAdd?.busy_add;
     },
   },
 
-  watch: {},
+  watch: {
+    "shop.id"() {
+      this.dialog_domain = false;
+    },
+  },
 
-  methods: {},
-
-  created() {},
+  methods: {
+    onDomainAdded(domain) {
+      if (!this.shop.domains) this.shop.domains = [domain];
+    },
+    setDomainDialog(open) {
+      if (!open && this.domainBusy) return;
+      this.dialog_domain = open;
+    },
+  },
 };
 </script>
 
@@ -146,8 +199,23 @@ export default {
   font-weight: 400;
   line-height: 1.6;
 
-  &__description { max-width: 66ch; margin: 0; color: var(--sd-modern-muted); }
-  &__domains { margin-block-start: 18px; }
+  &__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 192px;
+    align-items: center;
+    gap: 26px;
+    h4 { margin: 0 0 8px; font-size: 15px; font-weight: 500; line-height: 24px; }
+  }
+  &__description { max-width: 46ch; margin: 0; color: var(--sd-modern-muted); }
+  &__flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sd-modern-muted);
+    > span { width: 17px; border-block-start: 1px solid var(--sd-modern-border); }
+  }
+  &__flow-node { display: flex; align-items: center; justify-content: center; flex: 0 0 42px; height: 42px; border: 1px solid var(--sd-modern-border); border-radius: 10px; }
+  &__domains { margin: 18px 0 0; padding: 0; list-style: none; }
   &__domain {
     display: flex;
     align-items: center;
@@ -157,62 +225,38 @@ export default {
     padding-block: 14px;
     border-block-start: 1px solid var(--sd-modern-border);
 
-    > div { display: flex; align-items: center; gap: 8px; min-width: 0; }
-    > div > span { overflow-wrap: anywhere; }
+    bdi { overflow-wrap: anywhere; font-size: 15px; }
     .v-icon { color: var(--sd-modern-muted); }
   }
-  &__dot--active { background: rgb(var(--v-theme-success)); }
-  &__guidance {
-    margin-block: 20px 14px;
-    h3 { margin: 0 0 6px; font-size: 14px; font-weight: 500; line-height: 1.45; }
-    p { margin: 0; color: var(--sd-modern-muted); }
+  &__identity, &__statuses { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; min-width: 0; }
+  &__identity { flex-wrap: nowrap; gap: 12px; }
+  &__statuses .sd-modern-status { font-size: 12px; }
+  &__actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-block-start: 21px;
   }
+  .s-onboarding-domain__actions .sd-modern-button { min-height: 42px; }
   &__note {
     display: flex;
     align-items: flex-start;
     gap: 9px;
-    margin-block-start: 18px;
+    margin-block-start: 24px;
+    padding-block-start: 18px;
+    border-block-start: 1px solid var(--sd-modern-border);
     color: var(--sd-modern-muted);
-    font-size: 12px;
 
     .v-icon { flex: 0 0 17px; margin-block-start: 2px; }
     p { margin: 0; }
   }
-  &__form {
-    color: inherit;
-    font: inherit;
-
-    :deep(> .v-card-text) { padding: 0; font: inherit; }
-    :deep(> .v-card-text > .text-black) { color: inherit !important; }
-    :deep(.widget-box) { max-width: none; padding: 16px 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
-    :deep(.s--widget-header), :deep(.widget-box h2) { font-size: 14px; font-weight: 500; line-height: 1.45; }
-    :deep(.s--widget-header .--icon), :deep(.widget-box > h2 > .v-icon) { width: 18px; height: 18px; font-size: 18px !important; }
-    :deep(.widget-box p) { font-size: 13px; line-height: 1.6; }
-    :deep(.v-list-subheader) { padding-inline: 0; font-size: 13px; font-weight: 400; line-height: 1.6; }
-    :deep(.v-alert) { background: var(--sd-modern-inset) !important; color: rgb(var(--v-theme-on-surface)) !important; font-size: 13px; font-weight: 400 !important; }
-    :deep(.v-field__input) { font-family: inherit; font-size: 14px; font-weight: 400; }
-    :deep(> .v-card-actions) { padding: 0; }
-    :deep(> .v-card-actions > .widget-buttons) { justify-content: flex-start; }
-    :deep(> .v-card-actions > .widget-buttons > .v-btn) {
-      --v-btn-height: 36px;
-      min-height: 36px;
-      height: auto;
-      padding: 7px 12px;
-      border-radius: 8px;
-      box-shadow: none;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.4;
-      letter-spacing: 0;
-      text-transform: none;
-    }
-    :deep(> .v-card-actions > .widget-buttons > .v-btn > .v-btn__content) { font: inherit; letter-spacing: inherit; }
-    :deep(> .v-card-actions > .widget-buttons > .v-btn .v-icon) { font-size: 18px; }
-    @media (max-width: 600px), (pointer: coarse) {
-      :deep(> .v-card-actions > .widget-buttons > .v-btn) { --v-btn-height: 44px; min-height: 44px; }
-      :deep(.v-field__input) { font-size: 16px; }
-    }
+  @media (max-width: 600px) {
+    &__intro { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    &__flow { display: none; }
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    .s-onboarding-domain__actions .sd-modern-button { min-height: 44px; }
   }
 }
 </style>

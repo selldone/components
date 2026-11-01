@@ -50,17 +50,26 @@
               }}</span>
             </p>
           </div>
-          <v-btn
-            :to="{ name: 'LandingTemplatesListPage' }"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="sd-modern-button sd-modern-button--inline"
-            color="primary"
-            variant="text"
+          <l-templates-picker-dialog
+            :key="shop.id"
+            v-model="dialog_templates"
+            fullscreen
+            :selectable="false"
           >
-            {{ $t("onboarding.modern.customize.browse") }}
-            <v-icon end size="15">north_east</v-icon>
-          </v-btn>
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                class="sd-modern-button sd-modern-button--inline"
+                color="primary"
+                variant="text"
+              >
+                {{ $t("onboarding.modern.customize.templates_gallery") }}
+                <v-icon end size="15" aria-hidden="true"
+                  >dashboard_customize</v-icon
+                >
+              </v-btn>
+            </template>
+          </l-templates-picker-dialog>
         </header>
         <p class="s--shop-onboarding-customization__copy">
           {{ $t("onboarding.modern.customize.pages.description") }}
@@ -368,6 +377,7 @@
 <script lang="ts">
 import UFadeScroll from "../../../ui/fade-scroll/UFadeScroll.vue";
 import LTemplateCard from "@selldone/page-builder/components/templates/card/LTemplateCard.vue";
+import LTemplatesPickerDialog from "@selldone/page-builder/components/templates/picker/LTemplatesPickerDialog.vue";
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import BShopOnboardingTour from "@selldone/components-vue/backoffice/onboarding/customization/BShopOnboardingTour.vue";
@@ -383,6 +393,7 @@ export default {
     UWidgetHeader,
     UColorCircle,
     LTemplateCard,
+    LTemplatesPickerDialog,
     UFadeScroll,
   },
   props: {
@@ -400,6 +411,7 @@ export default {
 
   data: () => ({
     dialog_sample: false,
+    dialog_templates: false,
 
     templates: null,
     busy_fetch: false,
@@ -447,7 +459,11 @@ export default {
     },
   },
 
-  watch: {},
+  watch: {
+    "shop.id"() {
+      this.dialog_templates = false;
+    },
+  },
 
   methods: {
     fetchHotTemplates() {

@@ -54,8 +54,9 @@
       @change="changePaymentStatus"
     ></s-order-statuses-select>
 
-    <u-loading-progress v-if="busy_fetch"></u-loading-progress>
+    <b-list-loading-state v-if="busy_fetch && orders?.length" kind="order" compact class="sd-modern-list-refresh" />
     <v-data-table-server
+      :aria-busy="busy_fetch"
       v-model:page="page"
       v-model:sort-by="sortBy"
       :header-props="{ sortByText: $t('global.commons.sort_by') }"
@@ -78,8 +79,8 @@
       @update:options="updateOptions"
       @click:row="(_, r) => selectOrder(r.item)"
     >
-      <template v-if="!orders.length" v-slot:loading>
-        <u-loading-ellipsis css-mode light></u-loading-ellipsis>
+      <template v-if="!orders?.length" #loading>
+        <b-list-loading-state kind="order" />
       </template>
 
       <template v-slot:no-data>
@@ -102,14 +103,9 @@
             >{{ $t("role_workspace.retry") }}</v-btn
           >
         </div>
-        <div
-          v-else-if="modern && !busy_fetch"
-          class="sd-modern-empty-state b-role-orders-list__empty"
-        >
-          <v-icon size="25" aria-hidden="true">inbox</v-icon>
-          <p>{{ $t("role_workspace.empty_title") }}</p>
-          <small>{{ $t("role_workspace.empty_subtitle") }}</small>
-        </div>
+        <b-list-empty-state v-else-if="modern && !busy_fetch && loadedRoleScope === roleScope" kind="order" class="b-role-orders-list__empty"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t('role_workspace.empty_title'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t('role_workspace.empty_subtitle'))" />
         <div v-else-if="!busy_fetch" class="py-5 text-center">
           {{ $t("global.commons.no_data") }}
         </div>
@@ -327,6 +323,8 @@
 </template>
 
 <script lang="ts">
+import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BListEmptyState.vue";
+import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import SOrderStatusesSelect from "../../../../../storefront/order/status-select/SOrderStatusesSelect.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SOrderDeliveryStatusStepper from "../../../../../storefront/order/shipping/stepper/SOrderDeliveryStatusStepper.vue";
@@ -341,6 +339,8 @@ export default {
   name: "BRolePanelOrdersList",
   mixins: [DateMixin, OrderMixin],
   components: {
+    BListLoadingState,
+    BListEmptyState,
     ULoadingEllipsis,
     SOrderStatusView,
     ReturnRequestButtonBadge,

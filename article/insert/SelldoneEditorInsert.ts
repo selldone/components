@@ -98,7 +98,11 @@ function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
         let stack1;
 
         return (
-          '<div class="medium-insert-buttons" contenteditable="false" style="display: none">\n    <button class="medium-insert-buttons-show" type="button"><span>+</span></button>\n    <ul class="medium-insert-buttons-addons" style="display: none">\n' +
+          '<div class="medium-insert-buttons" contenteditable="false" style="display: none">\n    <button class="medium-insert-buttons-show" type="button" aria-label="' +
+          container.escapeExpression(depth0.insertLabel) +
+          '"><svg class="medium-insert-buttons-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg><span class="medium-insert-buttons-label">' +
+          container.escapeExpression(depth0.insertLabel) +
+          '</span></button>\n    <ul class="medium-insert-buttons-addons" style="display: none">\n' +
           ((stack1 = helpers.each.call(
             depth0 != null ? depth0 : container.nullContext || {},
             depth0 != null ? depth0.addons : depth0,
@@ -666,6 +670,7 @@ function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
     const defaults = {
       editor: null,
       enabled: true,
+      insertLabel: "Insert content",
       addons: {
         images: true, // boolean or object containing configuration
         embeds: true,
@@ -1064,6 +1069,7 @@ function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
 
       return this.templates["src/js/templates/core-buttons.hbs"]({
         addons: this.options.addons,
+        insertLabel: this.options.insertLabel,
       }).trim();
     };
 

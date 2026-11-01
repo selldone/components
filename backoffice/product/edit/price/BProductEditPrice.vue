@@ -201,7 +201,9 @@
               <span
                 class="sd-modern-status__dot"
                 :class="
-                  discountPeriodStatus === 'active'
+                  discountPeriodStatus === 'invalid'
+                    ? 'sd-modern-status__dot--error'
+                    : discountPeriodStatus === 'active'
                     ? 'sd-modern-status__dot--success'
                     : 'sd-modern-status__dot--warning'
                 "
@@ -233,15 +235,29 @@
 
       <details
         class="sd-modern-widget sd-modern-disclosure b-product-edit-price__workspace-disclosure"
+        @toggle="scheduleHelp = false"
       >
-        <summary class="sd-modern-disclosure__summary">
+        <summary class="sd-modern-disclosure__summary b-product-edit-price__digest-summary">
           <b-product-edit-info-icon name="BadgePercent" /><span
             class="b-product-edit-price__workspace-summary"
-            ><span>{{
+            ><span class="b-product-edit-price__digest-title"><span>{{
               $t("add_product.pricing.workspace.discount_title")
-            }}</span
+            }}</span><span v-if="discount > 0 && Number.isFinite(Number(discount_percent))" class="b-product-edit-price__discount-badge no-inv">{{ Number(discount_percent) > 0 ? formatSummaryNumber(discount_percent) + '%' : $t('global.commons.discount') }}</span></span
             ><small>{{ discountDigest }}</small></span
-          ><b-product-edit-info-icon name="ChevronDown" :size="16" />
+          >
+          <button v-if="summarySchedule" type="button" class="b-product-edit-price__schedule-digest b-product-edit-price__summary-visual" :aria-label="scheduleDigestLabel" @click.stop="scheduleHelp = true" @keydown.esc="dismissScheduleHelp">
+            <span>{{ scheduleDigestLabel }}</span>
+            <v-progress-linear v-if="summarySchedule.percent != null" :model-value="summarySchedule.percent" :height="4" :color="summarySchedule.state === 'scheduled' ? 'warning' : summarySchedule.state === 'active' ? 'primary' : undefined" :aria-label="scheduleDigestLabel" class="b-product-edit-price__schedule-track no-inv" rounded striped />
+            <span v-else class="b-product-edit-price__schedule-marker" aria-hidden="true"><span /></span>
+            <v-tooltip :model-value="scheduleHelp" @update:model-value="scheduleHelp = $event" activator="parent" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true">
+              <dl class="b-product-edit-price__schedule-help">
+                <div><dt>{{ $t('add_product.pricing.start_input') }}</dt><dd>{{ scheduleDateLabel(dis_start, 'schedule_no_start') }}</dd></div>
+                <div><dt>{{ $t('add_product.pricing.end_input') }}</dt><dd>{{ scheduleDateLabel(dis_end, 'schedule_no_end') }}</dd></div>
+              </dl>
+              <span class="b-product-edit-price__schedule-zone">{{ scheduleTimeZone }}</span>
+            </v-tooltip>
+          </button>
+          <b-product-edit-info-icon name="ChevronDown" :size="16" />
         </summary>
         <div class="b-product-edit-price__workspace-disclosure-body">
           <div class="b-product-edit-price__workspace-subtitle">
@@ -345,12 +361,12 @@
       <details
         class="sd-modern-widget sd-modern-disclosure b-product-edit-price__workspace-disclosure"
       >
-        <summary class="sd-modern-disclosure__summary">
+        <summary class="sd-modern-disclosure__summary b-product-edit-price__digest-summary">
           <b-product-edit-info-icon name="Settings2" /><span
             class="b-product-edit-price__workspace-summary"
             ><span>{{ $t("add_product.pricing.workspace.details_title") }}</span
             ><small>{{ additionalDigest }}</small></span
-          ><b-product-edit-info-icon name="ChevronDown" :size="16" />
+          ><span v-if="summaryHasCommission || summaryHasLabel" class="b-product-edit-price__details-mini b-product-edit-price__summary-visual" aria-hidden="true"><b-product-edit-info-icon v-if="summaryHasCommission" name="Coins" :size="25" /><b-product-edit-info-icon v-if="summaryHasLabel" name="Tag" :size="23" /></span><b-product-edit-info-icon name="ChevronDown" :size="16" />
         </summary>
         <div class="b-product-edit-price__workspace-disclosure-body">
           <div class="b-product-edit-price__workspace-subtitle">
@@ -419,18 +435,18 @@
         v-if="(isPhysical || isVirtual) && !isMarketplace"
         class="sd-modern-widget sd-modern-disclosure b-product-edit-price__workspace-disclosure"
       >
-        <summary class="sd-modern-disclosure__summary">
+        <summary class="sd-modern-disclosure__summary b-product-edit-price__digest-summary">
           <b-product-edit-info-icon name="Layers" /><span
             class="b-product-edit-price__workspace-summary"
             ><span>{{
               $t("add_product.pricing.workspace.quantity_title")
             }}</span
             ><small>{{ quantityDigest }}</small></span
-          ><span class="b-product-edit-price__workspace-count">{{
+          ><span class="b-product-edit-price__quantity-digest"><svg v-if="quantitySummaryPath" class="b-product-edit-price__quantity-mini b-product-edit-price__summary-visual" viewBox="0 0 64 30" aria-hidden="true" focusable="false"><path :d="quantitySummaryPath" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" /></svg><span class="b-product-edit-price__workspace-count">{{
             $t("add_product.pricing.workspace.tier_count", {
               count: extra_pricings_to_show?.length || 0,
             })
-          }}</span
+          }}</span></span
           ><b-product-edit-info-icon name="ChevronDown" :size="16" />
         </summary>
         <div class="b-product-edit-price__workspace-disclosure-body">
@@ -1480,6 +1496,7 @@ import { PriceHelper } from "@selldone/core-js/helper/price/PriceHelper";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
 import UTextValueDashed from "../../../../ui/text/value-dashed/UTextValueDashed.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import BProductEditInfoIcon from "../info/BProductEditInfoIcon.vue";
@@ -1577,6 +1594,10 @@ export default {
   },
 
   data: () => ({
+    summaryNow: Date.now(),
+    summaryMounted: false,
+    summaryTimer: null,
+    scheduleHelp: false,
     savedSnapshot: "",
     tierActivity: false,
     PricingTypes: PricingTypes,
@@ -1654,19 +1675,61 @@ export default {
       return { ...this.product, currency: this.savedPriceCurrency };
     },
     discountPeriodStatus() {
-      if (this.dis_end && new Date(this.dis_end).getTime() < Date.now())
-        return "ended";
-      if (this.dis_start && new Date(this.dis_start).getTime() > Date.now())
-        return "scheduled";
-      return this.dis_start || this.dis_end ? "active" : "unset";
+      return this.summarySchedule?.state || 'unset';
+    },
+    summarySchedule() {
+      if (!(this.discount > 0) || !this.has_discount_period) return null;
+      const start = this.summaryTimestamp(this.dis_start), end = this.summaryTimestamp(this.dis_end);
+      const created = this.summaryTimestamp(this.CURRENT_ITEM?.created_at);
+      const invalid = (!!this.dis_start && start == null) || (!!this.dis_end && end == null) || (start != null && end != null && end < start);
+      const state = invalid ? 'invalid' : end != null && end < this.summaryNow ? 'ended' : start != null && start > this.summaryNow ? 'scheduled' : start != null || end != null ? 'active' : 'unset';
+      const target = state === 'scheduled' ? start : state === 'active' ? end : null;
+      const origin = state === 'scheduled' ? created : start ?? created;
+      const boundary = state === 'ended' ? end : target;
+      const percent = !invalid && origin != null && boundary != null && boundary > origin && this.summaryNow >= origin
+        ? Math.max(0, Math.min(100, ((this.summaryNow - origin) / (boundary - origin)) * 100)) : null;
+      return { start, end, state, target, percent };
+    },
+    summaryClockEnabled() {
+      return !!(this.summaryMounted && this.workspaceMode && this.active && this.summarySchedule && this.summarySchedule.state !== 'invalid' &&
+        (this.summarySchedule.start > this.summaryNow || (this.summarySchedule.end != null && this.summarySchedule.end >= this.summaryNow)));
+    },
+    scheduleDigestLabel() {
+      const schedule = this.summarySchedule;
+      if (!schedule) return '';
+      if (schedule.target == null) return this.$t('add_product.pricing.workspace.period_' + schedule.state);
+      const seconds = Math.max(0, Math.ceil((schedule.target - this.summaryNow) / 1000));
+      const [unit, scale] = seconds >= 86400 ? ['days', 86400] : seconds >= 3600 ? ['hours', 3600] : seconds >= 60 ? ['minutes', 60] : ['seconds', 1];
+      const time = this.$t('add_product.pricing.workspace.schedule_' + unit, { count: this.formatSummaryNumber(Math.ceil(seconds / scale)) });
+      return this.$t('add_product.pricing.workspace.' + (schedule.state === 'scheduled' ? 'schedule_starts_in' : 'schedule_ends_in'), { time });
+    },
+    scheduleTimeZone() {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    },
+    quantitySummaryPath() {
+      const tiers = (this.extra_pricings_to_show || []).map(item => ({ min: Number(item.min), net: Number(item.price || 0) + Number(item.commission || 0) - Number(item.discount || 0) }))
+        .filter(item => Number.isFinite(item.min) && Number.isFinite(item.net)).sort((a, b) => a.min - b.min);
+      if (!tiers.length) return '';
+      const low = Math.min(...tiers.map(item => item.net)), high = Math.max(...tiers.map(item => item.net));
+      const min = tiers[0].min, max = tiers[tiers.length - 1].min;
+      const y = item => high === low ? 15 : 4 + ((high - item.net) / (high - low)) * 22;
+      let path = `M3 ${y(tiers[0]).toFixed(2)}`;
+      for (const item of tiers.slice(1)) path += ` H${(3 + ((item.min - min) / (max - min || 1)) * 52).toFixed(2)} V${y(item).toFixed(2)}`;
+      return path + ' H61';
     },
     discountDigest() {
       if (!this.discount)
         return this.$t("add_product.pricing.workspace.no_discount");
-      return `${this.formatWorkspaceAmount(this.discount)} · ${this.discount_percent}% · ${this.$t(this.has_discount_period ? "add_product.pricing.workspace.period_" + this.discountPeriodStatus : "add_product.pricing.workspace.no_date_limit")}`;
+      return `${this.formatWorkspaceAmount(this.discount)} · ${this.$t(this.has_discount_period ? "add_product.pricing.workspace.period_" + this.discountPeriodStatus : "add_product.pricing.workspace.no_date_limit")}`;
+    },
+    summaryHasCommission() {
+      return Number.isFinite(Number(this.commission)) && Number(this.commission) !== 0;
+    },
+    summaryHasLabel() {
+      return !!String(this.price_label || '').trim();
     },
     additionalDigest() {
-      return `${this.commission ? this.$t("add_product.pricing.commission_input") + " " + this.formatWorkspaceAmount(this.commission) : this.$t("add_product.pricing.workspace.no_commission")} · ${this.price_label || this.$t("add_product.pricing.workspace.no_label")}`;
+      return `${this.summaryHasCommission ? this.$t("add_product.pricing.commission_input") + " " + this.formatWorkspaceAmount(this.commission) : this.$t("add_product.pricing.workspace.no_commission")} · ${this.summaryHasLabel ? this.price_label : this.$t("add_product.pricing.workspace.no_label")}`;
     },
     quantityDigest() {
       const tiers = this.extra_pricings_to_show || [];
@@ -1811,11 +1874,19 @@ export default {
   },
 
   watch: {
+    summaryClockEnabled(enabled) {
+      clearInterval(this.summaryTimer);
+      this.summaryTimer = null;
+      if (enabled) this.summaryTimer = setInterval(() => { this.summaryNow = Date.now(); }, 1000);
+    },
     active(value) {
+      if (this.workspaceMode) this.summaryNow = Date.now();
+      if (!value) this.scheduleHelp = false;
       if (this.workspaceMode && !value && !this.workspaceBusy)
         this.show_add_extra_price = false;
     },
     "product.id"() {
+      this.scheduleHelp = false;
       if (this.workspaceMode) {
         this.show_add_extra_price = false;
         this.selected_extra_price = null;
@@ -1826,7 +1897,9 @@ export default {
       if (!val) this.setSameAsProduct();
     },
 
+    discount(value) { if (!(value > 0)) this.scheduleHelp = false; },
     has_discount_period(value) {
+      if (!value) this.scheduleHelp = false;
       if (this.workspaceMode && this.workspaceBusy) return;
       if (!value) {
         this.dis_start = null;
@@ -1836,6 +1909,15 @@ export default {
         this.setValue("dis_end", null);
       }
     },
+  },
+  mounted() {
+    this.summaryNow = Date.now();
+    this.summaryMounted = true;
+  },
+  beforeUnmount() {
+    this.summaryMounted = false;
+    clearInterval(this.summaryTimer);
+    this.summaryTimer = null;
   },
   created() {
     this.type = this.customObject?.type
@@ -1885,6 +1967,24 @@ export default {
   },
 
   methods: {
+    dismissScheduleHelp(event) {
+      if (!this.scheduleHelp) return;
+      event.preventDefault();
+      event.stopPropagation();
+      this.scheduleHelp = false;
+    },
+    formatSummaryNumber(value) {
+      return Number(value).toLocaleString(this.$vuetify?.locale?.isRtl ? 'fa-IR' : 'en-US');
+    },
+    summaryTimestamp(value) {
+      const time = DateConverter.convertToLocalTime(value)?.getTime();
+      return Number.isFinite(time) ? time : null;
+    },
+    scheduleDateLabel(value, emptyKey) {
+      if (!value) return this.$t('add_product.pricing.workspace.' + emptyKey);
+      const time = this.summaryTimestamp(value);
+      return time == null ? this.$t('add_product.pricing.workspace.period_invalid') : DateConverter.GetLocalTimeString(new Date(time));
+    },
     captureSnapshot() {
       return JSON.stringify({
         pricing: this.pricing,
@@ -2087,6 +2187,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-product-edit-price__schedule-help {
+  display: grid; gap: 10px; margin: 0; font-size: 13px; line-height: 21px;
+  dt { margin: 0 0 2px; color: rgba(var(--v-theme-on-surface), .66); font-size: 12px; line-height: 19px; }
+  dd { margin: 0; overflow-wrap: anywhere; }
+}
+.b-product-edit-price__schedule-zone { display: block; margin-block-start: 8px; color: rgba(var(--v-theme-on-surface), .66); font-size: 12px; line-height: 19px; }
 .b-product-edit-price--modern :deep(.v-list-subheader__text) {
   white-space: normal;
   overflow: visible;
@@ -2565,6 +2671,44 @@ export default {
     color: var(--sd-modern-muted);
     overflow-wrap: anywhere;
   }
+  .b-product-edit-price__digest-summary {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) auto 16px;
+    align-items: center;
+    > svg:first-child { align-self: start; margin-block-start: 3px; }
+    > svg:last-child { grid-column: 4; grid-row: 1; }
+  }
+  .b-product-edit-price__workspace-summary > .b-product-edit-price__digest-title { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 8px; }
+  .b-product-edit-price__discount-badge {
+    display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 3px;
+    color: rgb(var(--v-theme-on-error)); background: rgb(var(--v-theme-error));
+    font-size: 12px; font-weight: 500; line-height: 18px; white-space: nowrap;
+  }
+  .b-product-edit-price__schedule-digest {
+    display: flex; flex-direction: column; justify-content: center; gap: 6px;
+    width: 138px; min-width: 0; padding: 6px 0; background: transparent; border: 0;
+    color: var(--sd-modern-muted); font: inherit; font-size: 11px; line-height: 18px; text-align: start;
+    cursor: pointer;
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 4px; border-radius: 3px; }
+  }
+  .b-product-edit-price__schedule-track { flex: none; width: 100%; }
+  .b-product-edit-price__schedule-marker {
+    display: block; position: relative; width: 100%; height: 4px; border-radius: 3px; background: var(--sd-modern-inset);
+    > span { position: absolute; inset-inline-end: 0; inset-block: -1px; width: 2px; border-radius: 1px; background: var(--sd-modern-muted); }
+  }
+  .b-product-edit-price__details-mini { display: flex; align-items: center; gap: 6px; color: var(--sd-modern-muted); }
+  .b-product-edit-price__quantity-digest { display: flex; align-items: center; gap: 9px; }
+  .b-product-edit-price__quantity-mini { display: block; flex-shrink: 0; width: 64px; height: 30px; color: var(--sd-modern-muted); }
+  details[open] > summary .b-product-edit-price__summary-visual { display: none; }
+  @media (max-width: 600px) {
+    .b-product-edit-price__digest-summary { grid-template-columns: 20px minmax(0, 1fr) 16px; gap: 8px 12px; > svg:last-child { grid-column: 3; } }
+    .b-product-edit-price__summary-visual, .b-product-edit-price__quantity-digest { grid-column: 2; grid-row: 2; }
+    .b-product-edit-price__schedule-digest { width: min(180px, 100%); min-height: 44px; padding-block: 0; }
+    .b-product-edit-price__details-mini { min-height: 25px; }
+    .b-product-edit-price__quantity-digest { justify-content: space-between; }
+  }
+  @media (pointer: coarse) { .b-product-edit-price__schedule-digest { min-height: 44px; } }
+  @media (prefers-reduced-motion: reduce) { .b-product-edit-price__schedule-track :deep(.v-progress-linear__determinate) { transition: none; } }
   details[open] > summary {
     min-height: 69px;
     padding-block-end: 12px;

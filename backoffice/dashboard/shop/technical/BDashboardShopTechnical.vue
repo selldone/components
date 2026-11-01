@@ -14,33 +14,20 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div
+    v-if="shop"
     class="s--shop-dashboard-technical text-start"
     :class="{ 's--shop-dashboard-technical--modern': modern }"
   >
     <!-- █████████████████████████ Domains █████████████████████████ -->
-    <section v-if="modern" class="sd-modern-widget">
-      <header class="sd-modern-header">
-        <div class="sd-modern-title">
-          <span class="sd-modern-icon sd-modern-icon--plain">
-            <img
-              :src="require('../../../../assets/icons/domains.svg')"
-              alt=""
-              height="20"
-              width="20"
-            />
-          </span>
-          <div>
-            <h2 class="sd-modern-title-text">
-              {{ $t("admin_shop.dashboard.info.shop_domains") }}
-            </h2>
-            <p class="sd-modern-subtitle">
-              {{ $t("admin_shop.dashboard.info.shop_domains_msg") }}
-            </p>
-          </div>
-        </div>
-      </header>
-      <b-domains-list :shop="shop" modern></b-domains-list>
-    </section>
+    <b-domains-list
+      v-if="modern"
+      :key="shop.id"
+      :shop="shop"
+      class="s--shop-dashboard-technical__domains"
+      show-header
+      modern
+      refined
+    />
     <s-widget-box v-else :title="$t('admin_shop.dashboard.info.shop_domains')">
       <template v-slot:top-left>
         <img
@@ -51,7 +38,7 @@
         />
       </template>
 
-      <b-domains-list :shop="shop"></b-domains-list>
+      <b-domains-list :key="shop.id" :shop="shop"></b-domains-list>
     </s-widget-box>
 
     <!--
@@ -98,7 +85,7 @@ export default {
     modern: { type: Boolean, default: false },
     shop: {
       required: true,
-      type: Object,
+      type: [Object, null],
     },
     timeSeries: {
       required: true,
@@ -114,7 +101,7 @@ export default {
 
   computed: {
     server_config() {
-      return this.shop.server_config;
+      return this.shop?.server_config;
     },
     zones() {
       if (!this.server_config.zones) return 0;
@@ -221,7 +208,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.s--shop-dashboard-technical--modern .sd-modern-title-text {
-  font-weight: 500;
+.s--shop-dashboard-technical__domains {
+  padding: 24px;
+  border-radius: 15px;
+
+  :deep(.b-domains-list__heading) { margin-block-end: 20px; }
+  :deep(.sd-modern-title-text) {
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 25px;
+    letter-spacing: 0;
+  }
+  :deep(.sd-modern-subtitle) {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 19px;
+  }
+  :deep(.b-domains-list__add) {
+    height: 36px;
+    min-height: 36px;
+    padding-inline: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 21px;
+  }
+  @media (max-width: 699px) {
+    padding: 18px;
+    :deep(.b-domains-list__add) { min-height: 44px; }
+  }
+  @media (pointer: coarse) {
+    :deep(.b-domains-list__add) { min-height: 44px; }
+  }
 }
 </style>
