@@ -94,17 +94,6 @@ export default {
   background-image: url("data:image/svg+xml,\00003csvg width='13px' height='15px' xmlns='http://www.w3.org/2000/svg'>\00003cpath fill='%23fabb05' d='m0,7.6l4.7,0,1.5-4.5,1.5,4.5,4.7,0-3.8,2.8,1.5,4.5-3.8-2.8-3.8,2.8,1.5-4.5'/>\00003c/svg>") !important;
 }
 
-.amp-bg {
-  background-size: 100% 100%;
-  display: inline-block;
-  height: 12px;
-  width: 12px;
-  margin-bottom: -2px;
-  opacity: 0.46;
-  margin-right: 6px;
-  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAQAAABLCVATAAABr0lEQVR4AbWWJYCUURhFD04Zi7hrLzgFd4nzV9x6wKHinmYb7g4zq71gIw2LWBnZ3Q8df/fh96Tn/t2HVIw4CVKk+fSFNCkSxInxW1pFkhLmoMRjVvFLmkEX5ocuZuBVPw5jv8hh+iEU5QEmuMK+prz7RN3dPMMEGQYzxpH/lGjzou5jgl7mAvOdZfcbF+jbm3MAbFZ7VX9SJnlL1D8UMyjLe+BrAYDb+jJUr59JrlNWRtcqX9GkrPCR4QBAf4qYJAkQoyQrbKKs8RiaEjEI0GvvQ1mLMC9xaBFFBaZS1TbMSwJSomg39erDF+TxpCCNOXjGQJTCvG6qn4ZPzkcxA61Tjhaf4KMj+6Q3XvW6Lopraa8IozRQxIi0a7NXorULc5JyHX/3F3q+0PsFYytVTaGgjz/AvCyiegE69IUsPxHNBMpa738i6tGWlzkAABjKe/+j9YeRHGVd9oWRnwe2ewDASp/L/UqoPQ5AmFeYZMavBP8dAJz0GWWDHQlzXApMdz4KYUfKICcxkKeOfGmQyrIPcgE9m+g/+kT812/Nr3+0kqzitxQjoKXh6xfor99nlEdFjyvH15gAAAAASUVORK5CYII=);
-}
-
 .title-preview {
   margin-left: 10px;
   margin-right: 10px;

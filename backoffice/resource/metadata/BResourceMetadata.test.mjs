@@ -33,7 +33,11 @@ vm.runInNewContext(transpile(template.code), {
   exports: output,
   require: (name) => {
     assert.equal(name, "vue");
-    return { ...Vue, resolveComponent: (name) => name };
+    return {
+      ...Vue,
+      // A component boundary keeps the tooltip's named activator slot intact.
+      resolveComponent: (name) => (name === "v-tooltip" ? { name } : name),
+    };
   },
 });
 const plain = (value) => JSON.parse(JSON.stringify(value));
@@ -84,10 +88,12 @@ function fixture(props = {}) {
     shop: { id: 42 },
     resource: { id: 31 },
     resourceType: "products",
+    resourceLabel: "Product",
     readOnly: false,
     active: true,
     parentBusy: false,
     $t: (key) => key,
+    $slots: {},
     $emit: (event, value) => events.push({ event, ...plain(value) }),
     ...props,
   };
@@ -104,20 +110,49 @@ function fixture(props = {}) {
   return { component, state, requests, events, seed, load };
 }
 
-function rendered(state) {
-  const root = output.render(state, []),
-    elements = [];
+// Supply Vue's real render context for named slots without mounting external UI libraries.
+const renderContext = Vue.createRenderer({
+  createElement: () => ({}),
+  createText: () => ({}),
+  createComment: () => ({}),
+  insert() {},
+  remove() {},
+  setText() {},
+  setElementText() {},
+  patchProp() {},
+  parentNode: () => null,
+  nextSibling: () => null,
+});
+function rendered(state, tooltipProps = {}) {
+  let root;
+  const app = renderContext.createApp({
+    render() {
+      root = output.render(state, []);
+      return null;
+    },
+  });
+  app.config.errorHandler = (error) => {
+    throw error;
+  };
+  app.mount({});
+  app.unmount();
+  return descendants(root, { props: tooltipProps });
+}
+function descendants(root, slotPayload = { props: {} }) {
+  const elements = [];
   function visit(node) {
     if (Array.isArray(node)) return node.forEach(visit);
     if (!node || typeof node !== "object") return;
     if (typeof node.type === "string") elements.push(node);
+    else if (node.type?.name === "v-tooltip")
+      elements.push({ ...node, type: "v-tooltip" });
     if (
       node.children &&
       !Array.isArray(node.children) &&
       typeof node.children === "object"
     ) {
       for (const slot of Object.values(node.children))
-        if (typeof slot === "function") visit(slot());
+        if (typeof slot === "function") visit(slot(slotPayload));
     } else visit(node.children);
   }
   visit(root);
@@ -136,7 +171,7 @@ const content = (element) => {
   )
     return Object.values(element.children)
       .filter((slot) => typeof slot === "function")
-      .map((slot) => content(slot()))
+      .map((slot) => content(slot({ props: {} })))
       .join("");
   return content(element.children);
 };
@@ -165,7 +200,7 @@ test("The real SFC template and scoped SCSS compile with production asset transf
   assert.ok(style.code.includes(".b-resource-metadata"));
 });
 
-test("The mounted SFC renders stored markup safely through the actual JSON viewer", async () => {
+test("The mounted generic SFC renders the caller's Category identity and safely escapes stored markup", async () => {
   const h = fixture({ active: false });
   const runtime = {};
   vm.runInNewContext(transpile(template.code), {
@@ -176,22 +211,40 @@ test("The mounted SFC renders stored markup safely through the actual JSON viewe
     },
   });
   const unsafe = '<img src="synthetic" onerror="alert(1)">';
-  const app = Vue.createSSRApp(
-    {
-      ...h.component,
-      render: runtime.render,
-      created() {
-        this.accept(this.entry, { markup: unsafe });
-      },
+  const metadataComponent = {
+    ...h.component,
+    render: runtime.render,
+    created() {
+      this.accept(this.entry, { markup: unsafe });
     },
-    {
-      shop: { id: 42 },
-      resource: { id: 31 },
-      resourceType: "products",
-      active: false,
-      readOnly: true,
+  };
+  const app = Vue.createSSRApp({
+    render() {
+      return Vue.h(
+        metadataComponent,
+        {
+          shop: { id: 42 },
+          resource: { id: 31 },
+          resourceType: "categories",
+          resourceLabel: "Category",
+          active: false,
+          readOnly: true,
+        },
+        {
+          "resource-icon": () =>
+            Vue.h(
+              "svg",
+              {
+                "data-resource-icon": "category",
+                "aria-hidden": "true",
+                viewBox: "0 0 24 24",
+              },
+              [Vue.h("path", { d: "M3 6h6l2 2h10v12H3z" })],
+            ),
+        },
+      );
     },
-  );
+  });
   const slotStub = Vue.defineComponent({
     setup:
       (props, { attrs, slots }) =>
@@ -206,6 +259,20 @@ test("The mounted SFC renders stored markup safely through the actual JSON viewe
     "VProgressCircular",
   ])
     app.component(name, slotStub);
+  app.component(
+    "VTooltip",
+    Vue.defineComponent({
+      setup:
+        (props, { attrs, slots }) =>
+        () =>
+          Vue.h("span", attrs, [
+            slots.activator?.({
+              props: { "aria-describedby": "metadata-key-help" },
+            }),
+            Vue.h("span", { id: "metadata-key-help" }, slots.default?.()),
+          ]),
+    }),
+  );
   app.config.globalProperties.$t = (key) => key;
   const warnings = [],
     failures = [];
@@ -218,9 +285,286 @@ test("The mounted SFC renders stored markup safely through the actual JSON viewe
     false,
     "Metadata cannot become executable HTML",
   );
+  assert.ok(
+    html.includes('data-resource-icon="category"'),
+    "The actual named icon slot renders",
+  );
+  assert.ok(html.includes(">Category</span>"));
+  assert.ok(
+    html.includes('aria-describedby="metadata-key-help"'),
+    "The mounted column button receives its help description",
+  );
+  assert.ok(html.includes(">public_attributes</code>"));
+  assert.equal(html.includes("global.actions.refresh"), false);
+  assert.equal(
+    html.includes(">Product</span>"),
+    false,
+    "Shared metadata does not hardcode its first product caller",
+  );
   assert.deepEqual(warnings, []);
   assert.deepEqual(failures, []);
   assert.deepEqual(h.requests, []);
+});
+
+test("Connected navigation exposes four real controls, exact selected columns and the canonical Selldone mark", () => {
+  const h = fixture({ resourceType: "categories", resourceLabel: "Category" });
+  const fields = [
+    "public_attributes",
+    "private_attributes",
+    "ai_agent",
+    "meta",
+  ];
+  for (const field of fields) h.seed(field, { synthetic: field });
+  let elements = rendered(h.state);
+  assert.ok(
+    content(
+      elements.find((element) =>
+        hasClass(element, "b-resource-metadata__origin"),
+      ),
+    ).includes("Category"),
+    "The Connected source identifies the caller's resource type",
+  );
+  const nav = elements.find((element) =>
+    hasClass(element, "b-resource-metadata__nav"),
+  );
+  assert.equal(nav.type, "nav");
+  assert.equal(
+    nav.props["aria-hidden"],
+    undefined,
+    "Connected selection stays accessible",
+  );
+  const buttons = descendants(nav).filter(
+    (element) => element.type === "button",
+  );
+  assert.equal(buttons.length, 4);
+  for (const [index, field] of fields.entries()) {
+    assert.equal(buttons[index].props.type, "button");
+    buttons[index].props.onClick();
+    assert.equal(h.state.selected, field);
+    elements = rendered(h.state);
+    const current = elements.filter(
+      (element) =>
+        element.type === "button" &&
+        element.props?.["aria-current"] === "location",
+    );
+    assert.equal(current.length, 1);
+    assert.ok(content(current[0]).includes("resource_metadata." + field));
+    const column = elements.find((element) =>
+      hasClass(element, "b-resource-metadata__column"),
+    );
+    assert.equal(column.type, "code");
+    assert.equal(column.props.dir, "ltr");
+    assert.equal(content(column).trim(), field);
+  }
+  const brand = descendants(buttons[3]).find((element) =>
+    hasClass(element, "b-resource-metadata__brand"),
+  );
+  assert.ok(brand);
+  assert.equal(brand.type, "svg");
+  assert.equal(brand.props.viewBox, "0 0 141.45 180.69");
+  assert.equal(brand.props.fill, "currentColor");
+  assert.equal(
+    descendants(brand).filter((element) => element.type === "path").length,
+    2,
+  );
+  assert.ok(
+    descendants(brand).some((element) =>
+      element.props?.d?.startsWith("M77.43 128.05"),
+    ),
+    "Use the canonical Selldone geometry",
+  );
+  assert.equal(
+    content(buttons[3]).includes("settings"),
+    false,
+    "The Selldone section is identified by its brand mark",
+  );
+  assert.equal(
+    elements.some((element) =>
+      /resource_metadata\.(illustration|animation)/i.test(content(element)),
+    ),
+    false,
+  );
+  assert.equal(
+    elements.some((element) =>
+      hasClass(element, "b-resource-metadata__storage"),
+    ),
+    false,
+    "File-storage guidance remains contextual to editing",
+  );
+});
+
+test("Column help stays keyboard and tap accessible in every section, with advanced help only for writable metadata", () => {
+  for (const field of [
+    "public_attributes",
+    "private_attributes",
+    "ai_agent",
+    "meta",
+  ]) {
+    for (const readOnly of [true, false]) {
+      const h = fixture({ readOnly });
+      h.state.selected = field;
+      h.seed(field, { synthetic: "data" });
+      const activations = [];
+      const elements = rendered(h.state, {
+        "aria-describedby": "fixture-metadata-help",
+        onMouseenter: () => activations.push("hover"),
+        onFocus: () => activations.push("focus"),
+        onClick: () => activations.push("tap"),
+      });
+      const key = elements.find((element) =>
+        hasClass(element, "b-resource-metadata__column-button"),
+      );
+      assert.equal(key.type, "button");
+      assert.equal(key.props.type, "button");
+      assert.equal(key.props["aria-describedby"], "fixture-metadata-help");
+      assert.ok(
+        content(key).includes(field),
+        "The visible exact key supplies the accessible button name",
+      );
+      key.props.onMouseenter();
+      key.props.onFocus();
+      key.props.onClick();
+      assert.deepEqual(activations, ["hover", "focus", "tap"]);
+      const help = elements.filter((element) => element.type === "v-tooltip");
+      const columnHelp = help.find((element) =>
+        content(element).includes("resource_metadata.column_help"),
+      );
+      assert.ok(columnHelp);
+      assert.equal(columnHelp.props.location, "top");
+      assert.ok(
+        columnHelp.props["content-class"].includes("sd-modern-tooltip"),
+      );
+      for (const trigger of ["open-on-hover", "open-on-focus", "open-on-click"])
+        assert.ok(Object.hasOwn(columnHelp.props, trigger));
+      const canEdit =
+        !readOnly &&
+        ["public_attributes", "private_attributes"].includes(field);
+      const advancedHelp = help.find((element) =>
+        content(element).includes("resource_metadata.advanced_help"),
+      );
+      const info = elements.find((element) =>
+        hasClass(element, "sd-modern-info-button"),
+      );
+      assert.equal(!!advancedHelp, canEdit);
+      assert.equal(!!info, canEdit);
+      if (info) {
+        assert.ok(info.props["aria-label"].includes("global.commons.help"));
+        assert.equal(info.props["aria-describedby"], "fixture-metadata-help");
+        for (const trigger of [
+          "open-on-hover",
+          "open-on-focus",
+          "open-on-click",
+        ])
+          assert.ok(Object.hasOwn(advancedHelp.props, trigger));
+      }
+      assert.deepEqual(h.requests, [], "Help never reads or writes metadata");
+    }
+  }
+});
+
+test("Writable JSON editing shows one quiet advanced-use advisory before the input without extra approval controls", () => {
+  for (const field of ["public_attributes", "private_attributes"]) {
+    const h = fixture();
+    h.state.selected = field;
+    h.seed(field, null);
+    assert.equal(
+      rendered(h.state).some((element) =>
+        hasClass(element, "b-resource-metadata__advisory"),
+      ),
+      false,
+    );
+    h.state.edit();
+    const elements = rendered(h.state);
+    const advisory = elements.filter((element) =>
+      hasClass(element, "b-resource-metadata__advisory"),
+    );
+    assert.equal(advisory.length, 1);
+    assert.ok(hasClass(advisory[0], "sd-modern-notice"));
+    assert.equal(advisory[0].props.role, "note");
+    assert.ok(content(advisory[0]).includes("resource_metadata.advanced_help"));
+    const textarea = elements.find((element) => element.type === "v-textarea");
+    assert.ok(elements.indexOf(advisory[0]) < elements.indexOf(textarea));
+    assert.equal(
+      elements.some((element) =>
+        ["v-dialog", "v-checkbox"].includes(element.type),
+      ),
+      false,
+    );
+    const save = elements.find(
+      (element) =>
+        element.type === "v-btn" &&
+        content(element).trim() === "resource_metadata.save",
+    );
+    assert.equal(
+      save.props.disabled,
+      false,
+      "The advisory adds no new confirmation gate",
+    );
+  }
+  for (const [field, readOnly] of [
+    ["public_attributes", true],
+    ["private_attributes", true],
+    ["ai_agent", false],
+    ["meta", false],
+  ]) {
+    const h = fixture({ readOnly });
+    h.state.selected = field;
+    h.seed(field, {});
+    h.state.entry.editing = true;
+    assert.equal(
+      rendered(h.state).some((element) =>
+        hasClass(element, "b-resource-metadata__advisory"),
+      ),
+      false,
+    );
+  }
+});
+
+test("Routine Refresh stays absent in normal metadata states while failed reads retain Retry", async () => {
+  for (const field of [
+    "public_attributes",
+    "private_attributes",
+    "ai_agent",
+    "meta",
+  ]) {
+    for (const value of [null, { synthetic: "existing" }]) {
+      for (const readOnly of [true, false]) {
+        const h = fixture({ readOnly });
+        h.state.selected = field;
+        h.seed(field, value);
+        const elements = rendered(h.state);
+        assert.equal(
+          elements.some(
+            (element) =>
+              element.props?.["aria-label"] === "global.actions.refresh",
+          ),
+          false,
+        );
+        assert.equal(
+          elements.some((element) =>
+            content(element).includes("global.actions.refresh"),
+          ),
+          false,
+        );
+        assert.deepEqual(h.requests, []);
+      }
+    }
+  }
+  const h = fixture();
+  const failed = h.state.load("public_attributes");
+  h.requests[0].reject(new Error("Synthetic read failure"));
+  await failed;
+  const retry = rendered(h.state).find(
+    (element) =>
+      element.type === "v-btn" &&
+      content(element).trim() === "resource_metadata.retry",
+  );
+  assert.ok(retry);
+  const pending = retry.props.onClick();
+  assert.equal(h.requests[1].method, "GET");
+  h.requests[1].resolve(response("public_attributes", { recovered: true }));
+  await pending;
+  assert.equal(h.state.entry.value.recovered, true);
 });
 
 test("Metadata reads use the configured dashboard API and one authorized resource field", async () => {
@@ -302,6 +646,148 @@ test("Successful null and empty metadata remain distinct from unavailable or fai
   }
 });
 
+test("Successful empty sections show section-specific finite artwork and only permitted Add JSON actions", () => {
+  for (const field of [
+    "public_attributes",
+    "private_attributes",
+    "ai_agent",
+    "meta",
+  ]) {
+    for (const readOnly of [true, false]) {
+      const h = fixture({ readOnly });
+      h.state.selected = field;
+      h.seed(field, null);
+      const elements = rendered(h.state);
+      const empty = elements.find((element) =>
+        hasClass(element, "b-resource-metadata__empty"),
+      );
+      assert.ok(empty);
+      const title = descendants(empty).find((element) =>
+        hasClass(element, "b-resource-metadata__empty-title"),
+      );
+      assert.equal(content(title).trim(), "resource_metadata.empty_" + field);
+      const artwork = descendants(empty).find((element) =>
+        hasClass(element, "b-resource-metadata__empty-art"),
+      );
+      assert.equal(artwork.type, "svg");
+      assert.equal(artwork.props["aria-hidden"], "true");
+      assert.equal(artwork.props.focusable, "false");
+      const add = descendants(empty).find(
+        (element) =>
+          element.type === "v-btn" &&
+          content(element).trim() === "resource_metadata.add",
+      );
+      const editable =
+        !readOnly &&
+        ["public_attributes", "private_attributes"].includes(field);
+      assert.equal(!!add, editable);
+      if (add) {
+        add.props.onClick();
+        assert.equal(h.state.entry.editing, true);
+        assert.equal(h.state.entry.draft, "{}");
+        assert.equal(
+          rendered(h.state).some((element) =>
+            hasClass(element, "b-resource-metadata__storage"),
+          ),
+          true,
+        );
+      }
+      assert.deepEqual(h.requests, []);
+    }
+  }
+  const pending = fixture();
+  pending.state.entry.loading = true;
+  assert.equal(
+    rendered(pending.state).some((element) =>
+      hasClass(element, "b-resource-metadata__empty-art"),
+    ),
+    false,
+  );
+  pending.state.entry.loading = false;
+  assert.equal(
+    rendered(pending.state).some((element) =>
+      hasClass(element, "b-resource-metadata__empty-art"),
+    ),
+    false,
+    "Unavailable metadata cannot look successfully empty",
+  );
+  pending.state.entry.error = true;
+  assert.equal(
+    rendered(pending.state).some((element) =>
+      hasClass(element, "b-resource-metadata__empty-art"),
+    ),
+    false,
+  );
+});
+
+test("Empty artwork finishes once, survives hidden sections statically and respects reduced motion", () => {
+  const h = fixture();
+  h.seed("public_attributes", null);
+  let art = rendered(h.state).find((element) =>
+    hasClass(element, "b-resource-metadata__empty-art"),
+  );
+  assert.equal(hasClass(art, "b-resource-metadata__empty-art--animated"), true);
+  const target = {};
+  art.props.onAnimationend({ target: {}, currentTarget: target });
+  assert.equal(
+    h.state.emptyMotionFinished,
+    false,
+    "A child animation does not prematurely finish the root sequence",
+  );
+  art.props.onAnimationend({ target, currentTarget: target });
+  assert.equal(h.state.emptyMotionFinished, true);
+  art = rendered(h.state).find((element) =>
+    hasClass(element, "b-resource-metadata__empty-art"),
+  );
+  assert.equal(
+    hasClass(art, "b-resource-metadata__empty-art--animated"),
+    false,
+  );
+  assert.ok(
+    descendants(art).some((element) => element.type === "rect") ||
+      /<rect\b/.test(content(art)),
+    "The complete static drawing remains after motion",
+  );
+  h.state.emptyMotionFinished = false;
+  h.state.active = false;
+  h.component.watch.active.call(h.state, false);
+  h.state.active = true;
+  h.component.watch.active.call(h.state, true);
+  assert.equal(
+    h.state.emptyMotionFinished,
+    true,
+    "Returning to the section does not replay decorative motion",
+  );
+  h.state.active = false;
+  h.state.reset();
+  assert.equal(
+    h.state.emptyMotionFinished,
+    false,
+    "A new authorized scope can have its own initial sequence",
+  );
+  const css = descriptor.styles[0].content;
+  const animations = [...css.matchAll(/\banimation:\s*([^;]+);/g)]
+    .map((match) => match[1])
+    .filter((value) => value !== "none");
+  assert.ok(animations.length > 0);
+  for (const animation of animations) {
+    assert.equal(/\binfinite\b/.test(animation), false);
+    const seconds = [...animation.matchAll(/([\d.]+)(ms|s)\b/g)].reduce(
+      (sum, match) => sum + Number(match[1]) / (match[2] === "ms" ? 1000 : 1),
+      0,
+    );
+    assert.ok(
+      seconds > 0 && seconds <= 4,
+      "Every sequence, including its delay, finishes within four seconds",
+    );
+  }
+  assert.match(
+    css,
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?animation:\s*none/,
+  );
+  assert.deepEqual(h.requests, []);
+});
+
 test("Public and Private saves verify the snapshot and PUT only the selected column", async () => {
   for (const [field, draft, expected] of [
     [
@@ -339,6 +825,34 @@ test("Public and Private saves verify the snapshot and PUT only the selected col
     assert.deepEqual(plain(h.state.entry.value), expected);
     assert.deepEqual(h.events, [{ event: "saved", field, value: expected }]);
   }
+});
+
+test("Adding JSON to an empty null section starts with an object and preserves the original save snapshot", async () => {
+  const h = fixture();
+  h.seed("public_attributes", null);
+  h.state.edit();
+  assert.equal(h.state.entry.editing, true);
+  assert.equal(h.state.entry.draft, "{}");
+  assert.equal(h.state.entry.snapshot, "null");
+  assert.equal(h.state.dirty, true);
+  h.state.entry.draft = '{"badge":"New"}';
+  h.state.edit();
+  assert.equal(
+    h.state.entry.draft,
+    '{"badge":"New"}',
+    "Repeated edit activation cannot replace an existing local draft",
+  );
+  const pending = h.state.save();
+  h.requests[0].resolve(response("public_attributes", null));
+  await settle();
+  assert.equal(h.requests[1].method, "PUT");
+  assert.deepEqual(plain(h.requests[1].body), {
+    public_attributes: { badge: "New" },
+  });
+  h.requests[1].resolve(response("public_attributes", { badge: "New" }));
+  await pending;
+  assert.equal(h.state.entry.value.badge, "New");
+  assert.equal(h.state.entry.editing, false);
 });
 
 test("Malformed, scalar and oversized JSON cannot reach any request", async () => {

@@ -1113,12 +1113,19 @@
     <!-- ██████████████████████ Dialog > Chat ██████████████████████ -->
     <v-dialog
       v-model="dialog_chat"
-      fullscreen
+      :fullscreen="!modernChatDialog || $vuetify.display.width < 600"
+      :max-width="modernChatDialog ? 706 : undefined"
+      :aria-label="modernChatDialog ? $t('b_order_chat_box.modern.dialog_title') : undefined"
       scrollable
       transition="dialog-bottom-transition"
     >
-      <v-card v-if="selected_basket" class="text-start">
-        <v-card-title>
+      <v-card
+        v-if="selected_basket"
+        class="text-start"
+        :class="{ 'sd-modern-widget b-process-center-chat-dialog': modernChatDialog }"
+        :theme="chatDialogTheme"
+      >
+        <v-card-title v-if="!modernChatDialog">
           <v-avatar class="m-2" size="24">
             <v-img :src="getShopImagePath(shop.icon, IMAGE_SIZE_SMALL)" />
           </v-avatar>
@@ -1126,13 +1133,17 @@
           {{ $t("global.commons.chat") }} >
           {{ getBasketOrderCode(selected_basket) }}
         </v-card-title>
-        <v-card-text v-if="selected_basket">
+        <v-card-text :class="{ 'b-process-center-chat-dialog__body': modernChatDialog }">
           <b-order-chat-box
+            v-if="!modernChatDialog || dialog_chat"
             :basket="selected_basket"
             :shop="shop"
+            :modern="modernChatDialog"
+            :dialog-mode="modernChatDialog"
+            @close="dialog_chat = false"
           ></b-order-chat-box>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions v-if="!modernChatDialog">
           <div class="widget-buttons">
             <v-btn size="x-large" variant="text" @click="dialog_chat = false">
               <v-icon start>close</v-icon>
@@ -1316,6 +1327,18 @@ export default {
     };
   },
   computed: {
+    modernChatDialog() {
+      return this.modern && !this.isVendorPanel && !this.isVendorOrders && !this.isAffiliatePos &&
+        !this.isPos && !this.isDropShipping && !this.isAvocado && !this.isHyper &&
+        String(this.$route.params.shop_id) === String(this.shop.id) &&
+        ['BPageShopOrdersPhysical', 'BPageShopOrdersVirtual', 'BPageShopOrdersFile', 'BPageShopOrdersService', 'BPageShopOrdersSubscription'].includes(this.$route.name);
+    },
+    chatDialogScope() {
+      return this.modernChatDialog ? `${this.shop.id}:${this.$route.name}` : '';
+    },
+    chatDialogTheme() {
+      return this.modernChatDialog ? (this.USER?.()?.preferences?.dark ? 'dark' : 'light') : undefined;
+    },
     modernPos() {
       // Only the focused POS entry opts in; existing management lists keep their presentation.
       return this.modern && this.isPos && this.$route.name === 'BPagePosOrders';
@@ -1724,6 +1747,15 @@ export default {
     },
   },
   watch: {
+    chatDialogScope(scope, previous) {
+      if (previous && scope !== previous) {
+        this.dialog_chat = false;
+        this.selected_basket = null;
+      }
+    },
+    dialog_chat(open) {
+      if (!open && this.modernChatDialog) this.selected_basket = null;
+    },
     'vendor.id'() {
       if (!this.modernMarketplace) return;
       this.ordersRequestId++;
@@ -2173,6 +2205,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-process-center-chat-dialog.sd-modern-widget {
+  padding: 0;
+  border-radius: 18px;
+  max-block-size: calc(100dvh - 48px);
+  overflow: hidden;
+
+  .b-process-center-chat-dialog__body {
+    padding: 0;
+    min-block-size: 0;
+    overflow-y: auto;
+  }
+
+  @media (max-width: 600px) {
+    border-radius: 0;
+    max-block-size: 100dvh;
+  }
+}
 .b-process-center-list--modern {
   font-family: inherit;
   font-size: 13px;

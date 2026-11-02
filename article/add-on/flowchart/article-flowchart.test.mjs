@@ -190,6 +190,60 @@ function configure(app) {
   return app;
 }
 
+test("compiled RTL transforms stay inside the shared flow instead of moving the document", async () => {
+  const filename = fileURLToPath(new URL("./SArticleFlow.vue", import.meta.url));
+  const { descriptor } = parse(readFileSync(filename, "utf8"), { filename });
+  const style = await compileStyleAsync({
+    source: descriptor.styles[0].content,
+    filename,
+    id: "data-v-flow-rtl",
+    scoped: true,
+    preprocessLang: descriptor.styles[0].lang,
+  });
+  assert.deepEqual(style.errors, []);
+  const fixture = new JSDOM(`<!doctype html><html dir="rtl"><body>
+    <section class="api-doc-content" data-v-flow-rtl>
+      <span class="api-doc-content__direction" data-v-flow-rtl></span>
+      <span class="api-doc-content__pill api-doc-content__pill--end" data-v-flow-rtl></span>
+      <span class="api-doc-content__pill" data-v-flow-rtl></span>
+    </section>
+    <section class="api-doc-content" dir="ltr" data-v-flow-rtl>
+      <span class="api-doc-content__direction" data-v-flow-rtl></span>
+      <span class="api-doc-content__pill" data-v-flow-rtl></span>
+    </section>
+    <span class="api-doc-content__direction"></span>
+  </body></html>`);
+  const doc = fixture.window.document;
+  const sheet = doc.createElement("style");
+  sheet.textContent = style.code;
+  doc.head.append(sheet);
+  const transformRules = [];
+  const visit = (rules) => {
+    for (const rule of rules) {
+      if (rule.selectorText && rule.style?.getPropertyValue("transform"))
+        transformRules.push(rule);
+      if (rule.cssRules) visit(rule.cssRules);
+    }
+  };
+  visit(sheet.sheet.cssRules);
+  for (const element of [doc.documentElement, doc.body])
+    assert.equal(
+      transformRules.some((rule) => element.matches(rule.selectorText)),
+      false,
+      "Scoped flow styles must never transform the document or body.",
+    );
+  const rtlRules = transformRules.filter((rule) => rule.selectorText.includes(":dir(rtl)"));
+  const transforms = (element) => rtlRules
+    .filter((rule) => element.matches(rule.selectorText))
+    .map((rule) => rule.style.getPropertyValue("transform").replace(/\s/g, ""));
+  const flow = doc.querySelector("section");
+  assert.deepEqual(transforms(flow.querySelector(".api-doc-content__direction")), ["rotate(180deg)"]);
+  assert.deepEqual(transforms(flow.querySelector(".api-doc-content__pill--end")), ["translate(0,-50%)"]);
+  assert.deepEqual(transforms(flow.querySelector(".api-doc-content__pill:not(.api-doc-content__pill--end)")), ["translate(calc(-100%-8px),-50%)"]);
+  for (const element of doc.querySelectorAll('section[dir="ltr"] span, body > span'))
+    assert.deepEqual(transforms(element), [], "LTR flows and unrelated page content keep their own geometry.");
+});
+
 test("strict definitions match server defaults, retain cycles, and never mutate the input", () => {
   const input = {
     type: "flow",

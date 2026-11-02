@@ -154,7 +154,7 @@ export default {
   &__section {padding:0 20px 4px;&--pinned {padding-block-end:8px;border-block-end:1px solid var(--sd-modern-border);}}
   &__day {display:flex;align-items:center;gap:10px;margin:0;padding:21px 0 9px;font-size:12px;font-weight:500;line-height:20px;&:after{content:'';height:1px;background:var(--sd-modern-border);flex:1;margin-inline-start:5px;}}
   &__count {color:var(--sd-modern-muted);font-size:11px;font-weight:400;line-height:17px;}
-  &__row {position:relative;&:not(:last-child):after{position:absolute;content:'';height:1px;inset-inline-start:124px;inset-inline-end:0;bottom:0;background:var(--sd-modern-border);}&+&:before{content:'';position:absolute;width:1px;inset-inline-start:98px;top:-7px;height:36px;background:var(--sd-modern-border);}}
+  &__row {position:relative;&:not(:last-child):after{position:absolute;content:'';height:1px;inset-inline-start:124px;inset-inline-end:0;bottom:0;background:var(--sd-modern-border);}&:not(:last-child):before{content:'';position:absolute;width:1px;inset-inline-start:97.5px;top:42px;bottom:-14px;background:var(--sd-modern-border);}}
   &__bundle {display:grid;grid-template-columns:72px 28px minmax(0,1fr);gap:12px;align-items:start;padding-block:14px;}
   &__bundle-time {display:flex;flex-direction:column;gap:2px;padding-block-start:2px;color:var(--sd-modern-muted);font-size:11px;line-height:17px;font-variant-numeric:tabular-nums;>span:first-child{color:rgb(var(--v-theme-on-surface));font-size:12px;}}
   &__bundle-icon {display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--sd-modern-border);border-radius:50%;background:rgb(var(--v-theme-surface));color:var(--sd-modern-muted);position:relative;z-index:1;}
@@ -173,7 +173,7 @@ export default {
     &__sort {width:100%;}
     &__section {padding-inline:12px;}
     &__day {gap:7px;flex-wrap:wrap;}
-    &__row {&:not(:last-child):after{inset-inline-start:36px;}&+&:before{inset-inline-start:12px;top:-8px;}}
+    &__row {&:not(:last-child):after{inset-inline-start:36px;}&:not(:last-child):before{inset-inline-start:12px;top:41px;bottom:-16px;}}
     &__bundle {grid-template-columns:26px minmax(0,1fr);gap:5px 10px;}
     &__bundle-icon {grid-column:1;grid-row:1 / 3;width:25px;height:25px;margin-block-start:2px;}
     &__bundle-main {grid-column:2;grid-row:1;}

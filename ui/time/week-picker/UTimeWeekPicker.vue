@@ -13,7 +13,49 @@
   -->
 
 <template>
-  <div class="t-w">
+  <div v-if="modern" class="u-time-week-modern">
+    <div class="u-time-week-modern__days" role="group" :aria-label="$t('service_design.refined.week_days')">
+      <button
+        v-for="day in modernDays"
+        :key="day.value"
+        type="button"
+        :aria-pressed="selectedDay === day.value"
+        :aria-label="`${$t(day.name)} · ${$t('service_design.refined.selected_hours', { count: hoursForDay(day.value).length })}`"
+        @click="selectedDay = day.value"
+      >
+        <span>{{ shortDay(day) }}</span>
+        <span v-if="hoursForDay(day.value).length" class="u-time-week-modern__day-dot" aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="u-time-week-modern__caption" aria-live="polite">
+      <span>{{ $t(WeekDaysSource[selectedDay].name) }}</span>
+      <small>{{ $t('service_design.refined.selected_hours', { count: hoursForDay(selectedDay).length }) }}</small>
+    </div>
+    <div class="u-time-week-modern__hours" dir="ltr">
+      <button
+        v-for="hour in modernHours"
+        :key="hour"
+        type="button"
+        :disabled="!editable || !isAllowed(selectedDay, hour)"
+        :aria-pressed="hoursForDay(selectedDay).includes(hour)"
+        :aria-current="isPointed(selectedDay, hour) ? 'true' : undefined"
+        :aria-label="`${$t(WeekDaysSource[selectedDay].name)} · ${hourRange(hour)}`"
+        :class="{ 'u-time-week-modern__hour--pointed': isPointed(selectedDay, hour) }"
+        @click="toggleModernHour(hour)"
+      >
+        <v-icon v-if="isPointed(selectedDay, hour)" size="14" aria-hidden="true">check</v-icon>
+        {{ hourRange(hour) }}
+      </button>
+    </div>
+    <div class="u-time-week-modern__tools">
+      <button v-if="editable" type="button" @click="setModernDay(true)">{{ $t('service_design.refined.all_hours') }}</button>
+      <button v-if="editable" type="button" @click="setModernDay(false)">{{ $t('service_design.refined.clear_day') }}</button>
+      <button type="button" :aria-expanded="showAllHours" @click="showAllHours = !showAllHours">
+        {{ $t(showAllHours ? 'service_design.refined.show_daytime_hours' : 'service_design.refined.show_all_hours') }}
+      </button>
+    </div>
+  </div>
+  <div v-else class="t-w">
     <div class="t-d">
       <div class="th-h -name">
         <v-btn
@@ -75,6 +117,10 @@ export default {
   name: "UTimeWeekPicker",
   emits: ["update:modelValue", "change"],
   props: {
+    modern: {
+      type: Boolean,
+      default: false,
+    },
     modelValue: {},
     pointedTimeUtc: {},
     editable: {
@@ -91,12 +137,25 @@ export default {
   },
 
   data: () => ({
+    WeekDaysSource: WeekDays,
+    selectedDay: "Monday",
+    showAllHours: false,
     drag_day: null,
     drag_hour: null,
     drag_day_end: null,
     drag_hour_end: null,
   }),
   computed: {
+    modernDays() {
+      const days = Object.values(WeekDays);
+      const first = this.day_offset;
+      return [...days.slice(first), ...days.slice(0, first)];
+    },
+    modernHours() {
+      return this.showAllHours
+        ? [24, ...Array.from({ length: 23 }, (_, hour) => hour + 1)]
+        : Array.from({ length: 12 }, (_, hour) => hour + 7);
+    },
     day_offset() {
       return this.getCurrentLanguage().calendar.first_day_of_week;
     },
@@ -113,6 +172,34 @@ export default {
     }
   },
   methods: {
+    hoursForDay(day) {
+      return Array.isArray(this.modelValue?.[day])
+        ? [...new Set(this.modelValue[day].filter((hour) => Number.isInteger(hour) && hour >= 1 && hour <= 24))]
+        : [];
+    },
+    shortDay(day) {
+      return new Intl.DateTimeFormat(this.getCurrentLanguage().full_locale, { weekday: "short" })
+        .format(new Date(2026, 10, 1 + day.day));
+    },
+    hourRange(hour) {
+      // Native 24 means midnight on the selected day; other values are literal hours.
+      const start = hour === 24 ? 0 : hour;
+      return `${String(start).padStart(2, "0")}:00–${String(start + 1).padStart(2, "0")}:00`;
+    },
+    emitModernDay(hours) {
+      const value = { ...(this.modelValue && typeof this.modelValue === "object" && !Array.isArray(this.modelValue) ? this.modelValue : {}), [this.selectedDay]: hours };
+      this.$emit("update:modelValue", value);
+      this.$emit("change", value);
+    },
+    toggleModernHour(hour) {
+      if (!this.editable || !this.isAllowed(this.selectedDay, hour)) return;
+      const hours = this.hoursForDay(this.selectedDay);
+      this.emitModernDay(hours.includes(hour) ? hours.filter((value) => value !== hour) : [...hours, hour].sort((a, b) => a - b));
+    },
+    setModernDay(available) {
+      if (!this.editable) return;
+      this.emitModernDay(available ? Array.from({ length: 24 }, (_, hour) => hour + 1).filter((hour) => this.isAllowed(this.selectedDay, hour)) : []);
+    },
     onClick(e) {
       this.resetDrag();
       const day = e.target.getAttribute("day");
@@ -244,7 +331,7 @@ export default {
       const date = new Date();
       const day_i = Object.keys(WeekDays).indexOf(day);
 
-      return date.getDay() === day_i && date.getHours() === hour;
+      return date.getDay() === day_i && date.getHours() === (this.modern && hour === 24 ? 0 : hour);
     },
     isPointed(day, hour) {
       // Green color!
@@ -254,7 +341,7 @@ export default {
       const day_i = Object.keys(WeekDays).indexOf(day);
 
       // console.log(date);
-      return date.getDay() === day_i && date.getHours() === hour;
+      return date.getDay() === day_i && date.getHours() === (this.modern && hour === 24 ? 0 : hour);
     },
     //--------------------------------------------------------
     toggleDay(day) {
@@ -287,6 +374,7 @@ export default {
     //--------------------------------------------------------
     isAllowed(day, hour) {
       if (!this.restrictions) return true;
+      if (this.modern) return Array.isArray(this.restrictions[day]) && this.restrictions[day].includes(hour);
       return this.restrictions[day] && this.restrictions[day].includes(hour);
     },
   },
@@ -294,6 +382,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.u-time-week-modern {
+  min-width: 0;
+  color: rgb(var(--v-theme-on-surface));
+  font-family: inherit;
+
+  button { font-family: inherit; font-size: 12px; font-weight: 400; line-height: 18px; color: inherit; }
+  button:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  &__days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-block-end: 16px; }
+  &__days button { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; min-width: 0; min-height: 40px; padding: 6px 2px; border-radius: 7px; background: transparent; }
+  &__days button[aria-pressed="true"] { background: rgba(var(--v-theme-on-surface), .07); font-weight: 500; }
+  &__day-dot { display: block; width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+  &__caption { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-block-end: 12px; font-size: 12px; line-height: 18px; }
+  &__caption small { font-size: 11px; color: rgba(var(--v-theme-on-surface), .65); }
+  &__hours { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+  &__hours button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 40px; padding: 8px 4px; border: 1px solid rgba(var(--v-theme-on-surface), .12); border-radius: 7px; background: rgb(var(--v-theme-surface)); }
+  &__hours button[aria-pressed="true"] { background: rgb(var(--v-theme-on-surface)); border-color: rgb(var(--v-theme-on-surface)); color: rgb(var(--v-theme-surface)); }
+  &__hours button:disabled { opacity: .45; cursor: default; }
+  &__hours &__hour--pointed { box-shadow: inset 0 0 0 2px rgb(var(--v-theme-primary)); }
+  &__tools { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 16px; margin-block-start: 12px; }
+  &__tools button { min-height: 34px; padding-block: 6px; color: rgb(var(--v-theme-primary)); background: transparent; }
+  @media (max-width: 460px) { &__hours { grid-template-columns: repeat(2, minmax(0, 1fr)); } &__days button { font-size: 11px; } }
+  @media (pointer: coarse) { button { min-height: 44px; } }
+}
+
 .t-w {
   display: flex;
   flex-direction: column;

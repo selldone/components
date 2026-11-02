@@ -14,7 +14,7 @@
 <template>
   <v-card class="text-start text-wrap" :elevation="elevation" rounded="xl">
     <v-card-title class="text-subtitle-2 d-flex align-center">
-      <v-icon class="me-1">{{ $t(quotaKey.icon)}}</v-icon>
+      <v-icon :icon="quotaKey.icon" class="me-1" aria-hidden="true" />
       <b>{{ $t("quota_importer.quota") }} | {{$t(quotaKey.title)}}</b>
     </v-card-title>
     <v-card-subtitle>

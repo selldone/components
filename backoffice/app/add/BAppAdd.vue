@@ -374,7 +374,7 @@
                   ><v-list-item
                     v-bind="props"
                     class="b-app-add__scope"
-                    :prepend-icon="item.raw?.icon"
+                    :prepend-icon="getScopeIcon(item.raw?.code || item.value)"
                     :title="metadataTitle(item.raw)"
                     :subtitle="metadataDescription(item.raw)"
                 /></template>
@@ -390,8 +390,7 @@
                         v-bind="{ ...props, ...helpProps }"
                         variant="tonal"
                         ><v-icon
-                          v-if="item.raw?.icon"
-                          :icon="item.raw?.icon"
+                          :icon="getScopeIcon(item.raw?.code || item.value)"
                           size="16"
                           class="me-1"
                         /><span>{{ metadataTitle(item.raw) }}</span></v-chip
@@ -521,6 +520,7 @@
 <script lang="ts">
 import SFormBuilder from "../../../ui/form/SFormBuilder.vue";
 import { Scopes } from "@selldone/core-js/enums/permission/Scopes";
+import { getScopeIcon } from "@selldone/core-js/enums/permission/ScopeIcons";
 import { SmartConvertTextToHtml } from "@selldone/core-js/helper/html/HtmlHelper";
 import { Application } from "@selldone/core-js";
 
@@ -660,6 +660,7 @@ export default {
   },
 
   methods: {
+    getScopeIcon,
     // Saved values may predate the current category/scope catalog; retain their raw code.
     metadataTitle(item) {
       if (typeof item === "string") return item;

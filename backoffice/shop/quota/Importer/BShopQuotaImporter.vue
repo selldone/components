@@ -15,7 +15,10 @@
 <template>
   <section v-if="modern" class="b-shop-quota-importer text-start">
     <header class="b-shop-quota-importer__header">
-      <h3>{{ $t("quota_importer.quota") }}</h3>
+      <h3>
+        <v-icon :icon="quotaKey.icon" size="18" aria-hidden="true" />
+        {{ $t("quota_importer.quota") }}
+      </h3>
       <div class="b-shop-quota-importer__shop">
         <v-avatar size="24">
           <v-img :src="getShopImagePath(shop.icon, 128)" />
@@ -102,7 +105,8 @@
     <v-row align="stretch" justify="space-around">
       <v-col cols="12" sm="4">
         <v-card class="min-h-100" elevation="24" rounded="xl">
-          <v-card-title>
+          <v-card-title class="d-flex align-center ga-2">
+            <v-icon :icon="quotaKey.icon" size="20" aria-hidden="true" />
             <b>{{ $t("quota_importer.quota") }}</b>
           </v-card-title>
           <v-card-subtitle>
@@ -332,6 +336,9 @@ export default defineComponent({
   }
 
   h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin: 0;
     font-size: 14px;
     font-weight: 500;

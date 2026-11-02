@@ -809,7 +809,7 @@ export default defineComponent({
   }
 }
 
-:global([dir="rtl"]) .api-doc-content__direction {
+.api-doc-content:dir(rtl) .api-doc-content__direction {
   transform: rotate(180deg);
 }
 
@@ -848,7 +848,7 @@ export default defineComponent({
   }
 }
 
-:global([dir="rtl"]) .api-doc-content__pill--end {
+.api-doc-content:dir(rtl) .api-doc-content__pill--end {
   transform: translate(0, -50%);
 }
 
@@ -864,7 +864,7 @@ export default defineComponent({
       transform: translate(8px, -50%);
     }
   }
-  :global([dir="rtl"]) .api-doc-content__pill:not(.api-doc-content__pill--end) {
+  .api-doc-content:dir(rtl) .api-doc-content__pill:not(.api-doc-content__pill--end) {
     transform: translate(calc(-100% - 8px), -50%);
   }
 }

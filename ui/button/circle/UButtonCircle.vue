@@ -376,7 +376,7 @@ export default {
 
   .mini-name {
     transition: all 0.3s ease-in-out;
-    text-wrap: balance;
+    word-break: normal;
     text-align: center;
     font-weight: 500;
     // opacity: 0.9;
@@ -413,6 +413,8 @@ export default {
   &.--wrap {
     .mini-name {
       white-space: normal;
+      text-wrap: balance;
+      overflow-wrap: break-word;
     }
   }
 

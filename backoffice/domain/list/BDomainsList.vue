@@ -58,6 +58,7 @@
         <template #item.url="{ item }">
           <div class="b-domains-list__address"><b-domain-provider :item="item" /><router-link :to="domainRoute(item)" class="b-domains-list__domain-link" @click.stop="cacheRouteState(domainKey(item))"><bdi dir="ltr">{{ item.url.replace(/^https?:\/\//, '') }}</bdi></router-link><BShopLicenseBlockIcon v-if="item.domain && !can_edit_domain(item.domain)" /></div>
           <div class="b-domains-list__meta"><v-icon v-if="item.primary" size="13">star_border</v-icon>{{ item.primary ? $t('domains_modern.list.primary') : item.official === 'local' ? $t('domains_modern.list.store_address') : item.domain?.externally_hosted ? $t('admin_shop.dashboard.info.table.externally_hosted') : 'HTTPS' }}</div>
+          <b-domain-layout-mark :summary="item.layout_summary" :shop-id="shop.id" :domain-key="domainKey(item)" />
         </template>
         <template #item.home="{ item }">
           <v-btn v-if="!item.official && !item.domain?.externally_hosted" class="b-domains-list__destination" variant="text" @click.stop="openDomain(item, 'BPageDomainStorefront')">
@@ -512,6 +513,7 @@
               </div>
             </template>
           </u-text-copy-box>
+          <b-domain-layout-mark :summary="item.layout_summary" :shop-id="shop.id" :domain-key="domainKey(item)" />
           <span
             v-if="modern && (item.error || item.approved !== undefined)"
             class="sd-modern-status sd-modern-status--plain b-domains-list__domain-status"
@@ -1087,6 +1089,7 @@ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 import BDomainFlowMap from "./BDomainFlowMap.vue";
 import BDomainProvider from "../provider/BDomainProvider.vue";
+import BDomainLayoutMark from "../layout/BDomainLayoutMark.vue";
 import { RouteMixin } from "@selldone/components-vue/mixin/route/RouteMixin.ts";
 
 export default {
@@ -1095,6 +1098,7 @@ export default {
   mixins: [DateMixin, DomainMixin, CurrencyMixin, RouteMixin],
 
   components: {
+    BDomainLayoutMark,
     BDomainProvider,
     BListLoadingState,
     BListEmptyState,

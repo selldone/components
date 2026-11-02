@@ -22,21 +22,24 @@
         :aria-label="$t('channel_google.modern.reporting')"
       >
         <header class="b-google-serp-connect__header">
-          <div class="sd-modern-title b-google-serp-connect__heading">
-            <img
-              :src="require('../../../assets/icons/seo.svg')"
-              width="23"
-              height="23"
-              alt=""
-            />
-            <div>
-              <h2 class="sd-modern-title-text">
-                {{ $t("channel_google.modern.reporting") }}
-              </h2>
-              <p class="sd-modern-subtitle">
-                {{ $t("channel_google.modern.reportingIntro") }}
-              </p>
-            </div>
+          <div class="b-google-serp-connect__heading">
+            <svg
+              class="b-google-serp-connect__chart-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path d="M3 3v18h18" />
+              <path d="m19 9-5 5-4-4-3 3" />
+            </svg>
+            <h2 class="sd-modern-title-text">
+              {{ $t("channel_google.modern.reporting") }}
+            </h2>
           </div>
           <span
             class="sd-modern-status sd-modern-status--plain b-google-serp-connect__status"
@@ -59,6 +62,9 @@
             }}
           </span>
         </header>
+        <p class="sd-modern-subtitle b-google-serp-connect__intro">
+          {{ $t("channel_google.modern.reportingIntro") }}
+        </p>
 
         <template v-if="!shop.search_console">
           <ol class="sd-modern-steps b-google-serp-connect__steps">
@@ -76,6 +82,9 @@
                 <p v-if="main_domain" class="b-google-serp-connect__domain">
                   <bdi dir="ltr">{{ main_domain.domain }}</bdi>
                 </p>
+                <p v-else class="b-google-serp-connect__domain">
+                  {{ $t("channel_google.modern.missingDomain") }}
+                </p>
                 <v-btn
                   :to="{ name: 'BPageShopSettingDomain' }"
                   class="sd-modern-button sd-modern-button--inline b-google-serp-connect__text-action"
@@ -83,7 +92,7 @@
                   variant="text"
                 >
                   {{ $t("channel_google.modern.manageDomains") }}
-                  <v-icon end size="14" aria-hidden="true">{{
+                  <v-icon end size="16" aria-hidden="true">{{
                     $vuetify.locale.isRtl ? "arrow_back" : "arrow_forward"
                   }}</v-icon>
                 </v-btn>
@@ -106,34 +115,32 @@
                   variant="text"
                 >
                   {{ $t("channel_google.modern.openSearchConsole") }}
-                  <v-icon end size="14" aria-hidden="true">north_east</v-icon>
+                  <v-icon end size="16" aria-hidden="true">north_east</v-icon>
                 </v-btn>
               </div>
             </li>
           </ol>
           <div class="b-google-serp-connect__connect-row">
-            <p>
-              {{
-                $t(
-                  !canWrite
-                    ? "channel_google.modern.readonly"
-                    : !main_domain
-                      ? "channel_google.modern.missingDomain"
-                      : "channel_google.modern.connectionHint",
-                )
-              }}
-            </p>
             <v-btn
               :href="`/shops/${shop.id}/services/google/search/authentication/login`"
               :disabled="!canAuthenticate"
               :loading="busy_search"
-              class="sd-modern-button sd-modern-button--primary"
+              class="sd-modern-button sd-modern-button--primary b-google-serp-connect__connect-button"
               color="primary"
               variant="flat"
-              prepend-icon="cable"
+              prepend-icon="link"
               @click="startAuthentication"
               >{{ $t("channel_google.modern.connect") }}</v-btn
             >
+            <p>
+              {{
+                $t(
+                  canWrite
+                    ? "channel_google.modern.connectionHint"
+                    : "channel_google.modern.readonly",
+                )
+              }}
+            </p>
           </div>
         </template>
         <p v-else class="b-google-serp-connect__connected-copy">
@@ -415,61 +422,76 @@ export default {
   font-size: 13px;
   line-height: 21px;
 
-  &__performance {
-    padding: 26px;
+  &__performance.sd-modern-widget {
+    padding: 24px;
+    border: 0;
+    box-shadow: none;
   }
   &__header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 18px;
+    gap: 10px;
   }
   &__heading {
-    flex: 1;
-    min-width: min(290px, 100%);
-    gap: 11px;
-    > img {
-      flex: 0 0 23px;
-      object-fit: contain;
-      margin-block-start: 2px;
-    }
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 9px;
     .sd-modern-title-text {
-      font-size: 18px;
-      font-weight: 500;
-      line-height: 25px;
-      letter-spacing: -0.15px;
-      margin-block-end: 4px;
-    }
-    .sd-modern-subtitle {
       margin: 0;
-      font-size: 13px;
-      line-height: 21px;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.4;
+      letter-spacing: -0.2px;
     }
   }
+  &__chart-icon {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+  }
+  &__intro.sd-modern-subtitle {
+    margin-block: 8px 0;
+    font-size: 13px;
+    line-height: 1.65;
+  }
   &__status {
-    margin-block-start: 2px;
+    margin: 0;
     gap: 6px;
+    color: var(--sd-modern-muted);
     font-size: 12px;
     font-weight: 400;
     line-height: 20px;
+    .sd-modern-status__dot--warning {
+      background: color-mix(
+        in srgb,
+        rgb(var(--v-theme-warning)) 65%,
+        rgb(var(--v-theme-on-surface))
+      );
+    }
   }
   &__steps {
-    margin-block-start: 23px;
+    margin-block: 25px;
     .sd-modern-step {
-      grid-template-columns: 24px minmax(0, 1fr);
+      grid-template-columns: 26px minmax(0, 1fr);
       gap: 11px;
+      padding-block: 17px;
+    }
+    .sd-modern-step:first-child {
+      padding-block-start: 0;
     }
     .sd-modern-step + .sd-modern-step {
-      margin-block-start: 18px;
-      padding: 0;
-      border: 0;
+      margin-block-start: 0;
+      border-block-start: 1px solid var(--sd-modern-border);
     }
     .sd-modern-step__number {
-      width: 24px;
-      height: 24px;
-      border: 0;
-      background: var(--sd-modern-inset);
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--sd-modern-border);
+      border-radius: 8px;
+      background: rgb(var(--v-theme-surface));
       color: var(--sd-modern-muted);
       font-size: 12px;
       font-weight: 400;
@@ -482,35 +504,52 @@ export default {
     }
   }
   &__domain {
-    margin: 0;
+    margin: 5px 0;
     color: var(--sd-modern-muted);
-    font-size: 13px;
+    font-size: 12px;
     line-height: 21px;
     overflow-wrap: anywhere;
   }
   &__text-action.sd-modern-button {
-    min-height: 32px;
-    margin: 0;
-    padding: 4px 0;
-    font-size: 12px;
+    min-height: 34px;
+    margin-inline-start: -8px;
+    padding: 6px 8px;
+    font-size: 13px;
     font-weight: 500;
     line-height: 20px;
   }
   &__connect-row {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-block-start: 22px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-block-start: 20px;
+    border-block-start: 1px solid var(--sd-modern-border);
   }
   &__connect-row > p {
-    flex: 1;
-    min-width: 180px;
     margin: 0;
     color: var(--sd-modern-muted);
     font-size: 12px;
     line-height: 19px;
+  }
+  &__connect-button.sd-modern-button {
+    min-height: 42px;
+    padding: 9px 14px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 21px;
+    :deep(> .v-btn__content) {
+      font: inherit;
+    }
+    &.v-btn--disabled {
+      color: var(--sd-modern-muted) !important;
+      background: var(--sd-modern-inset) !important;
+      opacity: 1;
+      :deep(> .v-btn__overlay) {
+        opacity: 0;
+      }
+    }
   }
   &__connected-copy {
     margin-block: 18px 0;
@@ -560,14 +599,11 @@ export default {
   }
 
   @media (max-width: 650px) {
-    &__performance {
-      padding: 21px;
+    &__performance.sd-modern-widget {
+      padding: 20px;
     }
     &__header {
       gap: 10px;
-    }
-    &__status {
-      margin-inline-start: 34px;
     }
     &__critical > summary {
       padding-inline: 21px;
@@ -576,16 +612,21 @@ export default {
       padding-inline: 21px;
     }
   }
-  @media (max-width: 480px) {
-    &__connect-row {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    &__connect-row > p {
-      min-width: 0;
+  @media (max-width: 380px) {
+    &__performance.sd-modern-widget {
+      padding: 17px 14px;
     }
   }
   @media (max-width: 599px), (pointer: coarse) {
+    &__connect-button.sd-modern-button {
+      min-height: 44px;
+      max-width: 100%;
+      height: auto;
+      white-space: normal;
+      :deep(> .v-btn__content) {
+        white-space: normal;
+      }
+    }
     &__text-action.sd-modern-button {
       min-height: 44px;
     }

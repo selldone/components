@@ -181,6 +181,10 @@ test("Cancel and native Escape/backdrop dismissal preserve the applied assignmen
     assert.equal(f.state.assign_dialog, false);
     assert.deepEqual(plain(f.props.product), before);
     assert.doesNotMatch(f.rendered(), /Unconfirmed sizing/);
+    f.state.property_set = propertySet({ id: 13 });
+    f.state.confirm(); await settle();
+    assert.deepEqual(plain(f.props.product), before, "A late Confirm cannot apply a stale draft after dismissal");
+    assert.equal(f.state.assign_dialog, false);
     await f.open();
     assert.deepEqual(plain(f.state.property_set), before.property_set);
   }

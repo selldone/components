@@ -466,6 +466,7 @@ const node = (type, text = "") => ({
   type,
   text,
   props: {},
+  style: { display: "" },
   children: [],
   parent: null,
 });
@@ -584,6 +585,56 @@ for (const name of [
 ])
   assert.equal(mounted[name], false);
 app.unmount();
+
+// The approved dialog keeps native actions while exposing one compact header and quiet link tools.
+assert.equal(component.props.dialogMode.default, false);
+assert.equal(context({ modern: true, dialogMode: true }).isConversationDialog, true);
+assert.equal(context({ modern: true, dialogMode: false }).isConversationDialog, false);
+assert.equal(context({ modern: false, dialogMode: true }).isConversationDialog, false);
+for (const [modern, dialogMode, unmounted, expected] of [[true, true, false, 320], [true, false, false, 0], [false, true, false, 0], [true, true, true, 0]]) {
+  const history = { scrollHeight: 320, scrollTop: 0 };
+  const current = context({ modern, dialogMode, chat_unmounted: unmounted, $refs: { conversationHistory: history } });
+  current.scrollConversationToEnd(); await tick();
+  assert.equal(history.scrollTop, expected, "Only the active Conversation pane reveals the latest message.");
+}
+const dialogRoot = node("root");
+const dialogBasket = Vue.reactive({ id: 42, chat: [{ officer: true, body: "Native recorded message" }], buyer: { name: "Fixture buyer", email: "buyer@example.invalid" } });
+let closedConversation = 0;
+const dialogApp = renderer.createApp({
+  ...component,
+  created: undefined,
+  components: Object.fromEntries(Object.keys(component.components).map(name => [name, passthrough])),
+}, { basket: dialogBasket, modern: true, dialogMode: true, onClose: () => closedConversation++ });
+dialogApp.provide("$shop", { id: 7, mail_service: { enable: true, errors: 0 } });
+dialogApp.mixin({ methods: globalMethods });
+Object.assign(dialogApp.config.globalProperties, { $t: t, $tm: () => [], $route: { params: { shop_id: 7 } } });
+for (const name of renderNames) dialogApp.component(name, name === "v-btn" ? button : ["v-dialog", "v-bottom-sheet"].includes(name) ? dialog : passthrough);
+dialogApp.config.warnHandler = message => { throw new Error(message); };
+const mountedDialog = dialogApp.mount(dialogRoot);
+const dialogNodes = () => flatten(dialogRoot);
+assert.equal(dialogNodes().filter(target => String(target.props.class || "").includes("b-order-chat-modern__dialog-header")).length, 1);
+assert.equal(dialogNodes().some(target => String(target.props.class || "").includes("b-order-chat-modern__recipient")), false);
+assert.equal(dialogNodes().some(target => target.type === "footer"), false, "Teleported Conversation actions do not inherit the global footer inversion.");
+const historyRegion = dialogNodes().find(target => target.props.role === "region");
+assert.equal(historyRegion.props["aria-label"], "b_order_chat_box.modern.history_label");
+assert.equal(historyRegion.props.tabindex, 0);
+const linksToggle = dialogNodes().find(target => target.type === "button" && target.props["aria-controls"] === "order-chat-links-42");
+assert.ok(linksToggle); assert.equal(linksToggle.props["aria-expanded"], false);
+const linksPanel = dialogNodes().find(target => target.props.id === "order-chat-links-42");
+assert.equal(linksPanel.style.display, "none");
+before = calls.length; linksToggle.props.onClick(); await tick();
+assert.equal(mountedDialog.order_links_open, true); assert.equal(linksPanel.style.display, ""); assert.equal(calls.length, before);
+dialogNodes().find(target => target.type === "button" && text(target).includes("b_order_chat_box.modern.templates_action")).props.onClick();
+await tick(); assert.equal(mountedDialog.dialog_templates, true);
+dialogNodes().find(target => target.type === "button" && text(target).includes("b_order_chat_box.modern.email_dialog_action")).props.onClick();
+await tick(); assert.equal(mountedDialog.email_preview, true); assert.equal(calls.length, before, "Opening utilities never sends an email or creates a guest link.");
+dialogNodes().find(target => target.type === "button" && target.props["aria-label"] === "global.actions.close").props.onClick();
+assert.equal(closedConversation, 1); assert.equal(calls.length, before);
+mountedDialog.body_input = "Pending dialog draft"; dialogBasket.id = 43; await tick();
+assert.equal(mountedDialog.body_input, null); assert.equal(mountedDialog.order_links_open, false);
+assert.equal(mountedDialog.dialog_templates, false); assert.equal(mountedDialog.email_preview, false);
+dialogApp.unmount();
+
 state = context({
   modern: false,
   body_input: "Legacy draft",

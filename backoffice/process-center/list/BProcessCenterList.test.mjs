@@ -123,6 +123,7 @@ Customer = await load("./BProcessCenterCustomer.vue");
 const List = await load("./BProcessCenterList.vue");
 const display = { xs: false, mdAndUp: true, width: 1400 };
 const route = { params: {}, matched: [] };
+const chatAppearance = { dark: false };
 function fixture(modern = false) {
   const state = { ...Object.fromEntries(Object.entries(List.props).map(([key, prop]) => [key, prop.default])), ...List.data(), modern, shop: { id: 7 }, type: ProductType.PHYSICAL, $t: (key) => key, $vuetify: { display }, $route: route };
   for (const [name, fn] of Object.entries(List.methods)) state[name] = fn.bind(state);
@@ -137,6 +138,9 @@ async function render(component, props, rows = [], data = {}) {
   app.component("router-link", leaf("RouterLink"));
   Object.assign(app.config.globalProperties, {
     $t: (key) => key, $vuetify: { display, locale: { isRtl: false } }, $route: route, HIGHLIGHT_ID: null,
+    USER: () => ({ preferences: chatAppearance }),
+    getShopImagePath: (path) => `/fixture/shop-image/${path || "default"}`,
+    IMAGE_SIZE_SMALL: 128,
     getBasketOrderCode: (item) => item.label || `${ProductType[item.type]?.basket_code || "SM"}-${item.vendor_id ? item.basket_id : item.id}`,
     getVendorOrderCode: (item) => `VND-${item.id}`,
     getUserAvatar: (id) => `/avatar/${id}`, copyToClipboard: (value) => copied.push(value),
@@ -152,6 +156,78 @@ async function render(component, props, rows = [], data = {}) {
   }
   return renderToString(app);
 }
+
+test("Conversation dialog opts into the five native seller lists with one close control and actual appearance", async () => {
+  const previous = { name: route.name, params: route.params, width: display.width, dark: chatAppearance.dark };
+  try {
+    for (const type of ["PHYSICAL", "VIRTUAL", "FILE", "SERVICE", "SUBSCRIPTION"]) {
+      route.name = `BPageShopOrders${{ PHYSICAL: "Physical", VIRTUAL: "Virtual", FILE: "File", SERVICE: "Service", SUBSCRIPTION: "Subscription" }[type]}`;
+      route.params = { shop_id: "7" };
+      const row = { id: 42, type, chat: [{ body: "Recorded message", officer: true }] };
+      for (const [width, dark] of [[1400, false], [390, true]]) {
+        display.width = width; chatAppearance.dark = dark;
+        await render(List, { modern: true, shop: { id: 7 }, type: ProductType[type] }, [], { selected_basket: row, dialog_chat: true });
+        const dialog = calls.find(call => call.name === "v-dialog" && call.attrs.modelValue === true);
+        assert.equal(dialog.attrs.fullscreen, width < 600);
+        assert.equal(dialog.attrs["max-width"], 706);
+        const card = calls.find(call => call.name === "v-card");
+        assert.equal(card.attrs.theme, dark ? "dark" : "light");
+        const chat = calls.find(call => call.name === "BOrderChatBox");
+        assert.equal(chat.attrs.modern, true);
+        assert.equal(chat.attrs["dialog-mode"], true);
+        assert.equal(chat.attrs.basket.id, row.id);
+        assert.equal(typeof chat.attrs.onClose, "function");
+        assert.equal(calls.some(call => call.name === "v-card-title" || call.name === "v-card-actions"), false);
+      }
+      await render(List, { modern: true, shop: { id: 7 }, type: ProductType[type] }, [], { selected_basket: row, dialog_chat: false });
+      assert.equal(calls.some(call => call.name === "BOrderChatBox"), false, "Closing unmounts the modern conversation and its private link state.");
+    }
+  } finally {
+    if (previous.name === undefined) delete route.name; else route.name = previous.name;
+    route.params = previous.params; display.width = previous.width; chatAppearance.dark = previous.dark;
+  }
+});
+
+test("Conversation dialog preserves legacy and unrelated order contexts and clears its scope on exit", async () => {
+  const previous = { name: route.name, params: route.params };
+  try {
+    route.name = "BPageShopOrdersPhysical"; route.params = { shop_id: 7 };
+    const row = { id: 42, type: "PHYSICAL", chat: [] };
+    for (const props of [
+      { modern: false }, { modern: true, isVendorPanel: true }, { modern: true, isVendorOrders: true },
+      { modern: true, isAffiliatePos: true }, { modern: true, isPos: true },
+      { modern: true, isDropShipping: true }, { modern: true, isAvocado: true }, { modern: true, isHyper: true },
+    ]) {
+      await render(List, { shop: { id: 7 }, type: ProductType.PHYSICAL, ...props }, [], { selected_basket: row, dialog_chat: true });
+      const dialog = calls.find(call => call.name === "v-dialog" && call.attrs.modelValue === true);
+      assert.equal(dialog.attrs.fullscreen, true);
+      assert.equal(dialog.attrs["max-width"], undefined);
+      const chat = calls.find(call => call.name === "BOrderChatBox");
+      assert.equal(chat.attrs.modern, false); assert.equal(chat.attrs["dialog-mode"], false);
+      assert.ok(calls.some(call => call.name === "v-card-title"));
+      assert.ok(calls.some(call => call.name === "v-card-actions"));
+    }
+    const current = fixture(true); current.selected_basket = row; current.dialog_chat = true;
+    assert.equal(current.modernChatDialog, true);
+    List.watch.dialog_chat.call(current, false);
+    assert.equal(current.selected_basket, null);
+    current.selected_basket = row; current.dialog_chat = true;
+    List.watch.chatDialogScope.call(current, current.chatDialogScope, current.chatDialogScope);
+    assert.equal(current.selected_basket, row, "Same-scope refresh retains the conversation.");
+    List.watch.chatDialogScope.call(current, "8:BPageShopOrdersPhysical", current.chatDialogScope);
+    assert.equal(current.selected_basket, null); assert.equal(current.dialog_chat, false);
+    current.selected_basket = row; current.dialog_chat = true;
+    List.watch.chatDialogScope.call(current, "", "7:BPageShopOrdersPhysical");
+    assert.equal(current.selected_basket, null); assert.equal(current.dialog_chat, false);
+    route.name = "BPageCustomerOrdersPhysical";
+    assert.equal(fixture(true).modernChatDialog, false);
+    route.name = "BPageShopOrdersPhysical"; route.params = { shop_id: 8 };
+    assert.equal(fixture(true).modernChatDialog, false);
+  } finally {
+    if (previous.name === undefined) delete route.name; else route.name = previous.name;
+    route.params = previous.params;
+  }
+});
 
 test("opt-in columns retain backend sort fields and Paid + COD selection", () => {
   assert.equal(List.props.modern.default, false);

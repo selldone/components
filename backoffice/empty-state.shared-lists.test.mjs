@@ -103,7 +103,7 @@ function fixture(definition) {
     sort: null, sortBy: [], status: [], subscriptions: [], vouchers: [],
     documents_embed: [], documents_link: [], uploaded_documents: [],
     $t: key => key, $n: String, $slots: {},
-    active: false,
+    active: path === "app/shop/store/BAppShopStore.vue",
     writeShopAccess: () => false,
   };
   const view = () => source.render(state, []);

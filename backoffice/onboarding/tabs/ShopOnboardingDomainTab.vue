@@ -37,6 +37,7 @@
             <v-icon size="18" aria-hidden="true">language</v-icon>
             <bdi dir="ltr">{{ domain.domain }}</bdi>
           </div>
+          <b-domain-layout-mark :summary="domain.layout_summary" :shop-id="shop.id" :domain-key="domain.id" />
           <div class="s-onboarding-domain__statuses">
             <span class="sd-modern-status sd-modern-status--plain">
               <span class="sd-modern-status__dot" :class="domain.enable ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--error'" />
@@ -138,11 +139,13 @@
 <script lang="ts">
 import { shallowRef } from "vue";
 import BDomainAdd from "../../domain/add/BDomainAdd.vue";
+import BDomainLayoutMark from "../../domain/layout/BDomainLayoutMark.vue";
 
 export default {
   name: "ShopOnboardingDomainTab",
   components: {
     BDomainAdd,
+    BDomainLayoutMark,
   },
   props: {
     modern: { type: Boolean, default: false },

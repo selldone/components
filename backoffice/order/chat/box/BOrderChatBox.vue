@@ -15,9 +15,20 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!-- █████████████████████ Chat Messages █████████████████████ -->
 
-  <div :class="{ 'sd-modern-content b-order-chat-modern': modern }">
+  <div :class="{ 'sd-modern-content b-order-chat-modern': modern, 'b-order-chat-modern--dialog': isConversationDialog }">
     <template v-if="modern">
-      <header class="sd-modern-header b-order-chat-modern__header">
+      <header v-if="isConversationDialog" class="b-order-chat-modern__dialog-header">
+        <span class="b-order-chat-modern__dialog-icon"><v-icon size="20" aria-hidden="true">question_answer</v-icon></span>
+        <div class="b-order-chat-modern__dialog-heading">
+          <h2>{{ $t('b_order_chat_box.modern.dialog_title') }}</h2>
+          <p><bdi>{{ getBasketOrderCode(basket) }}</bdi><span aria-hidden="true">·</span><span>{{ buyer?.name || $t('global.commons.guest') }}</span></p>
+        </div>
+        <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t('global.actions.close')" @click="$emit('close')">
+          <v-icon size="16" aria-hidden="true">close</v-icon>
+          <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-focus>{{ $t('global.actions.close') }}</v-tooltip>
+        </v-btn>
+      </header>
+      <header v-else class="sd-modern-header b-order-chat-modern__header">
         <div>
           <div class="sd-modern-title">
             <span class="sd-modern-icon sd-modern-icon--plain"
@@ -62,7 +73,7 @@
         class="sd-modern-widget b-order-chat-modern__conversation"
         :aria-label="$t('global.commons.messages')"
       >
-        <header class="b-order-chat-modern__recipient">
+        <header v-if="!isConversationDialog" class="b-order-chat-modern__recipient">
           <div class="b-order-chat-modern__person">
             <v-avatar size="34" class="b-order-chat-modern__avatar"
               ><v-img v-if="basket.user_id" :src="getUserAvatar(basket.user_id)" /><v-icon
@@ -83,7 +94,7 @@
             <bdi>{{ getBasketOrderCode(basket) }}</bdi></span
           >
         </header>
-        <div class="b-order-chat-modern__history">
+        <div ref="conversationHistory" class="b-order-chat-modern__history" :role="isConversationDialog ? 'region' : undefined" :tabindex="isConversationDialog ? 0 : undefined" :aria-label="$t('b_order_chat_box.modern.history_label')">
           <s-order-chat-message
             v-for="(message, i) in chat"
             :key="i"
@@ -103,7 +114,13 @@
         </div>
         <form class="b-order-chat-modern__composer" @submit.prevent="addChat">
           <div class="b-order-chat-modern__composer-heading">
-            <div class="b-order-chat-modern__sender">
+            <template v-if="isConversationDialog">
+              <label class="b-order-chat-modern__field-label" :for="`order-chat-message-${basket.id}`">{{ $t('b_order_chat_box.modern.write_message') }}</label>
+              <v-btn class="sd-modern-button sd-modern-button--compact sd-modern-button--inline" variant="text" :loading="busy_fetch_templates" @click="dialog_templates = true">
+                <v-icon start size="16" aria-hidden="true">text_snippet</v-icon>{{ $t('b_order_chat_box.modern.templates_action') }}<v-icon end size="16" aria-hidden="true">expand_more</v-icon>
+              </v-btn>
+            </template>
+            <div v-else class="b-order-chat-modern__sender">
               <v-avatar size="24" class="b-order-chat-modern__avatar"
                 ><v-img v-if="USER_ID()" :src="getUserAvatar(USER_ID())" /><v-icon
                   v-else
@@ -113,9 +130,10 @@
                 ></v-avatar
               ><span>{{ $t("b_order_chat_box.modern.reply_as", { name: senderName }) }}</span>
             </div>
-            <span>{{ $t("b_order_chat_box.modern.visible_to_customer") }}</span>
+            <span v-if="!isConversationDialog">{{ $t("b_order_chat_box.modern.visible_to_customer") }}</span>
           </div>
           <label
+            v-if="!isConversationDialog"
             class="b-order-chat-modern__field-label"
             :for="`order-chat-message-${basket.id}`"
             >{{ $t("global.commons.message") }}</label
@@ -128,23 +146,25 @@
             :placeholder="$t('b_order_chat_box.modern.message_placeholder')"
             :readonly="busy_add"
             :maxlength="1024"
-            :rows="4"
+            :rows="isConversationDialog ? 3 : 4"
+            :max-rows="isConversationDialog ? 8 : undefined"
             auto-grow
             hide-details
             variant="outlined"
             class="b-order-chat-modern__input"
           />
           <div class="b-order-chat-modern__quick-replies">
-            <span v-if="templates.length">{{ $t("b_order_chat_box.modern.quick_replies") }}</span>
+            <span v-if="templates.length && !isConversationDialog">{{ $t("b_order_chat_box.modern.quick_replies") }}</span>
             <u-smart-suggestion
               :samples="templates"
-              :preview-count="2"
+              :preview-count="isConversationDialog ? 3 : 2"
               modern
               title-key="title"
               value-key="body"
               @select="setTemplate"
             />
             <v-btn
+              v-if="!isConversationDialog"
               class="sd-modern-button sd-modern-button--inline"
               variant="text"
               :loading="busy_fetch_templates"
@@ -154,10 +174,15 @@
             >
           </div>
           <div class="b-order-chat-modern__composer-actions">
+            <div v-if="isConversationDialog" class="b-order-chat-modern__dialog-recipient">
+              <span>{{ $t('b_order_chat_box.modern.to_name', { name: buyer?.name || $t('global.commons.guest') }) }}</span>
+              <bdi v-if="buyer?.email" dir="ltr">{{ buyer.email }}</bdi>
+              <span v-else>{{ $t('b_order_chat_box.modern.no_email') }}</span>
+            </div>
             <span :id="`order-chat-count-${basket.id}`" class="b-order-chat-modern__count"
               >{{ (body_input || "").length }} / 1,024</span
             >
-            <span v-if="buyer?.email" class="b-order-chat-modern__to">{{
+            <span v-if="buyer?.email && !isConversationDialog" class="b-order-chat-modern__to">{{
               $t("b_order_chat_box.modern.to_customer", { email: buyer.email })
             }}</span>
             <v-btn
@@ -197,6 +222,20 @@
             >
           </div>
         </form>
+      </section>
+
+      <section v-if="isConversationDialog" class="b-order-chat-modern__tools" :aria-label="$t('b_order_chat_box.modern.order_links_action')">
+        <div class="b-order-chat-modern__tool-actions">
+          <v-btn class="sd-modern-button sd-modern-button--compact sd-modern-button--inline" variant="text" :aria-expanded="order_links_open" :aria-controls="`order-chat-links-${basket.id}`" @click="order_links_open = !order_links_open">
+            <v-icon start size="16" aria-hidden="true">link</v-icon>{{ $t('b_order_chat_box.modern.order_links_action') }}<v-icon end size="16" aria-hidden="true">{{ order_links_open ? 'expand_less' : 'expand_more' }}</v-icon>
+          </v-btn>
+          <v-btn class="sd-modern-button sd-modern-button--compact sd-modern-button--inline" variant="text" :disabled="!statusEmailRecipient" @click="email_preview = true">
+            <v-icon start size="16" aria-hidden="true">mail_outline</v-icon>{{ $t('b_order_chat_box.modern.email_dialog_action') }}
+          </v-btn>
+        </div>
+        <div v-show="order_links_open" :id="`order-chat-links-${basket.id}`" class="b-order-chat-modern__links">
+          <b-order-share :basket="basket" modern class="b-order-chat-modern__dialog-access" />
+        </div>
       </section>
 
       <v-dialog
@@ -275,12 +314,12 @@
               >
             </div>
           </v-card-text>
-          <footer class="b-order-chat-dialog__actions">
+          <component :is="isConversationDialog ? 'div' : 'footer'" class="b-order-chat-dialog__actions">
             <v-btn class="sd-modern-button" variant="outlined" @click="showAddTemplateMessage"
               ><v-icon start size="18" aria-hidden="true">add</v-icon
               >{{ $t("b_order_chat_box.modern.add_reply") }}</v-btn
             >
-          </footer>
+          </component>
         </v-card>
       </v-dialog>
       <v-dialog
@@ -293,7 +332,7 @@
             <h2>{{ $t("b_order_chat_box.modern.replace_title") }}</h2>
           </header>
           <p>{{ $t("b_order_chat_box.modern.replace_message") }}</p>
-          <footer class="b-order-chat-dialog__actions">
+          <component :is="isConversationDialog ? 'div' : 'footer'" class="b-order-chat-dialog__actions">
             <v-btn class="sd-modern-button" variant="outlined" @click="dialog_replace = false">{{
               $t("global.actions.cancel")
             }}</v-btn
@@ -305,7 +344,7 @@
               ><v-icon start size="18" aria-hidden="true">edit_note</v-icon
               >{{ $t("b_order_chat_box.modern.replace_action") }}</v-btn
             >
-          </footer></v-card
+          </component></v-card
         >
       </v-dialog>
     </template>
@@ -457,6 +496,7 @@
     <!-- █████████████████████ Secure Order Link █████████████████████ -->
 
     <b-order-share
+      v-if="!isConversationDialog"
       :class="modern ? 'b-order-chat-modern__access' : 'mb-5'"
       :basket="basket"
       :modern="modern"
@@ -781,6 +821,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BOrderChatBox",
+  emits: ["close"],
   mixins: [],
   components: {
     VDialog,
@@ -795,6 +836,7 @@ export default {
 
   props: {
     modern: { type: Boolean, default: false },
+    dialogMode: { type: Boolean, default: false },
     basket: {
       require: true,
       type: Object,
@@ -820,9 +862,13 @@ export default {
     dialog_replace: false,
     pending_template_body: null,
     chat_unmounted: false,
+    order_links_open: false,
   }),
 
   computed: {
+    isConversationDialog() {
+      return this.modern && this.dialogMode;
+    },
     user() {
       return this.USER();
     },
@@ -878,13 +924,24 @@ export default {
   created() {
     this.fetchMessageTemplates();
   },
+  mounted() {
+    this.scrollConversationToEnd();
+  },
   beforeUnmount() {
     this.chat_unmounted = true;
   },
 
   methods: {
+    scrollConversationToEnd() {
+      if (!this.isConversationDialog) return;
+      this.$nextTick(() => {
+        const history = this.$refs.conversationHistory;
+        if (!this.chat_unmounted && history) history.scrollTop = history.scrollHeight;
+      });
+    },
     resetModernConversation() {
       if (!this.modern) return;
+      this.order_links_open = false;
       this.body_input = this.pending_template_body = null;
       this.dialog_templates =
         this.dialog_replace =
@@ -892,6 +949,7 @@ export default {
         this.email_preview =
           false;
       this.busy_add = this.busy_send_update = false;
+      this.scrollConversationToEnd();
     },
     addChat() {
       if (this.modern && !this.canSendMessage) return;
@@ -915,6 +973,7 @@ export default {
           } else {
             this.body_input = null;
             this.basket.chat = data.chat;
+            this.scrollConversationToEnd();
             NotificationService.showSuccessAlert(
               null,
               this.$t("b_order_chat_box.notifications.add_chat_success_message"),
@@ -1389,6 +1448,98 @@ export default {
       font-size: 16px;
       line-height: 24px;
     }
+  }
+}
+.b-order-chat-modern--dialog {
+  --sd-modern-icon-button-size: 32px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+
+  .b-order-chat-modern__dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 22px;
+    border-block-end: 1px solid var(--sd-modern-border);
+  }
+  .b-order-chat-modern__dialog-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 38px;
+    height: 38px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 11px;
+    background: var(--sd-modern-inset);
+  }
+  .b-order-chat-modern__dialog-heading {
+    flex: 1;
+    min-width: 0;
+    h2 { margin: 0; font-size: 19px; font-weight: 500; line-height: 26px; letter-spacing: -.3px; }
+    p { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin: 2px 0 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; overflow-wrap: anywhere; }
+  }
+  .b-order-chat-modern__conversation {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .b-order-chat-modern__history {
+    max-height: 320px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 20px 22px 22px;
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: -3px; }
+    :deep(.s-order-chat-message-modern) { padding-block: 0; margin-block-end: 18px; }
+    :deep(.s-order-chat-message-modern:last-child) { margin-block-end: 0; }
+    :deep(.s-order-chat-message-modern__time) { margin-inline-start: 0; }
+    :deep(.s-order-chat-message-modern--staff .s-order-chat-message-modern__body) { padding: 0; background: transparent; border-radius: 0; }
+    :deep(.s-order-chat-message-modern:not(.s-order-chat-message-modern--staff) .s-order-chat-message-modern__body) { padding: 10px 12px; background: var(--sd-modern-inset); border-radius: 10px; border-start-start-radius: 0; }
+  }
+  .b-order-chat-modern__composer { padding: 20px 22px; }
+  .b-order-chat-modern__composer-heading { margin-block-end: 10px; }
+  .b-order-chat-modern__field-label { margin: 0; color: rgb(var(--v-theme-on-surface)); font-size: 13px; font-weight: 500; line-height: 20px; }
+  .b-order-chat-modern__quick-replies { margin-block-start: 9px; }
+  .b-order-chat-modern__composer-actions { gap: 12px; margin-block-start: 15px; }
+  .b-order-chat-modern__dialog-recipient {
+    flex: 1;
+    min-width: 0;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 17px;
+    > bdi { display: block; color: rgb(var(--v-theme-on-surface)); font-size: 12px; line-height: 18px; overflow-wrap: anywhere; }
+    > span { display: block; }
+  }
+  .b-order-chat-modern__notification { align-items: flex-start; line-height: 17px; > .v-icon { margin-block-start: 2px; } }
+  .b-order-chat-modern__tools { padding: 13px 22px; border-block-start: 1px solid var(--sd-modern-border); background: var(--sd-modern-inset); }
+  .b-order-chat-modern__tool-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 12px; }
+  .b-order-chat-modern__links { padding-block-start: 13px; margin-block-start: 12px; border-block-start: 1px solid var(--sd-modern-border); }
+  .b-order-chat-modern__dialog-access {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    :deep(.b-order-access__header) { margin-block-end: 12px; }
+    :deep(.b-order-access__heading) { font-size: 13px; line-height: 20px; }
+    :deep(.b-order-access__options) { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    :deep(.b-order-access__option + .b-order-access__option) { padding-inline-start: 0; padding-block-start: 16px; border-inline-start: 0; border-block-start: 1px solid var(--sd-modern-border); }
+  }
+  .sd-modern-button { font-size: 12px; line-height: 20px; }
+  .sd-modern-button:not(.b-order-chat-modern__send) { color: var(--sd-modern-muted); font-weight: 400; }
+
+  @media (max-width: 600px) {
+    .b-order-chat-modern__dialog-header { padding: 16px; gap: 9px; }
+    .b-order-chat-modern__dialog-icon { flex-basis: 34px; height: 34px; }
+    .b-order-chat-modern__dialog-heading h2 { font-size: 18px; }
+    .b-order-chat-modern__history { padding: 16px; max-height: 300px; }
+    .b-order-chat-modern__composer { padding: 16px; }
+    .b-order-chat-modern__composer-heading > .b-order-chat-modern__field-label { display: block; }
+    .b-order-chat-modern__tools { padding-inline: 16px; }
+    .b-order-chat-modern__dialog-recipient { flex-basis: 100%; }
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    --sd-modern-icon-button-size: 44px;
+    .sd-modern-button { min-height: 44px; }
   }
 }
 .b-order-chat-dialog {

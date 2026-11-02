@@ -412,18 +412,17 @@ async function renderEmptyFixture(
     [0, 1, 2],
   );
   ac.shop = { options: [{ code: "amp", value: true }] };
-  assert.equal(ac.endpointPoints.length, 4);
+  assert.equal(ac.endpointPoints.length, 3, "The retired option cannot restore an AMP series");
   assert.equal(ac.endpointPoints[1].y, 0);
   assert.deepEqual(plain(ac.endpointPoints.map((p) => p.marker.strokeColor)), [
     "#FFA000",
-    "#444",
     "#C2185B",
     "#1976D2",
   ]);
   assert.deepEqual(
     plain(ac.maxPoints.map((p) => p.seriesIndex)),
-    [0, 2, 3],
-    "Maximum labels track the real AMP series order",
+    [0, 1, 2],
+    "Maximum labels track the surviving series order",
   );
   assert.deepEqual(
     plain(ac.maxPoints.map((p) => [p.x, p.y])),
@@ -699,7 +698,7 @@ async function renderEmptyFixture(
   };
   const native = new nativeExports.default(nativeContext);
   ac.modern = true;
-  const point = ac.endpointPoints[2];
+  const point = ac.endpointPoints[1];
   const annotation = {
     ...point,
     label: { text: "", offsetX: 0, offsetY: 0, style: { fontSize: "11px" } },
@@ -917,7 +916,7 @@ async function renderEmptyFixture(
     );
   }
   assert.deepEqual(
-    maxCaptions(600, [2]).centers,
+    maxCaptions(600, [1]).centers,
     [34, 566],
     "Hiding a series does not reposition the remaining captions away from their maxima",
   );

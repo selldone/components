@@ -89,7 +89,7 @@
               v-html="
                 !itemText
                   ? task
-                  : isFunction(itemText)
+                  : isOptionFunction(itemText)
                     ? itemText(task)
                     : $t(task[itemText])
               "
@@ -97,7 +97,7 @@
             <slot :item="task" name="append-title"></slot>
             <div v-if="itemDescription" class="op-0-7 small">
               {{
-                isFunction(itemDescription)
+                isOptionFunction(itemDescription)
                   ? itemDescription(task)
                   : $t(task[itemDescription] ?? "")
               }}
@@ -109,20 +109,20 @@
           <v-icon
             v-if="
               itemIcon &&
-              (isFunction(itemIcon) ? itemIcon(task) : task[itemIcon])
+              (isOptionFunction(itemIcon) ? itemIcon(task) : task[itemIcon])
             "
             :theme="dark ? 'dark' : 'light'"
             class="ms-2"
-            >{{ isFunction(itemIcon) ? itemIcon(task) : task[itemIcon] }}
+            >{{ isOptionFunction(itemIcon) ? itemIcon(task) : task[itemIcon] }}
           </v-icon>
           <v-avatar
-            v-if="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
+            v-if="isOptionFunction(itemImage) ? itemImage(task) : task[itemImage]"
             :rounded="rounded"
             class="ms-2"
             size="24"
           >
             <img
-              :src="isFunction(itemImage) ? itemImage(task) : task[itemImage]"
+              :src="isOptionFunction(itemImage) ? itemImage(task) : task[itemImage]"
           /></v-avatar>
         </div>
       </div>
@@ -139,7 +139,8 @@ export default {
   emits: ["change", "update:modelValue"],
   data() {
     return {
-      isFunction: isFunction,
+      // Keep the local option helper distinct from CoreMixin.isFunction.
+      isOptionFunction: isFunction,
     };
   },
   props: {

@@ -13,8 +13,9 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="position-con" style="width: 24px; height: 24px">
-    <span :class="position" class="-pos"></span>
+  <div class="position-con" :class="{ '-modern': modern }" :style="{ width: modern ? '26px' : '24px', height: modern ? '26px' : '24px' }">
+    <template v-if="modern"><span v-for="cell in positions" :key="cell" class="position-cell" :class="{ '-active': cell === position }"></span></template>
+    <span v-else :class="position" class="-pos"></span>
   </div>
 </template>
 
@@ -23,13 +24,14 @@ export default {
   name: "BPopupPositionView",
   components: {},
   props: {
+    modern: Boolean,
     position: {
       required: true,
     },
   },
 
   data() {
-    return {};
+    return { positions: ['top-left', 'top-center', 'top-right', 'left-center', 'center', 'right-center', 'bottom-left', 'bottom-center', 'bottom-right'] };
   },
 
   computed: {},
@@ -43,6 +45,19 @@ export default {
 .position-con {
   position: relative;
   border: dashed 1px #999;
+
+  &.-modern {
+    display: grid;
+    grid-template-columns: repeat(3, 3px);
+    gap: 2px;
+    padding: 5px;
+    border: 1px solid var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+    border-radius: 4px;
+    direction: ltr;
+
+    .position-cell { width: 3px; height: 3px; background: var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09)); }
+    .position-cell.-active { background: rgb(var(--v-theme-primary)); }
+  }
 
   .-pos {
     position: absolute;

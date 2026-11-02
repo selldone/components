@@ -32,13 +32,20 @@ const expectedTabs = {
 };
 const notifications = [];
 let productRequest = () => assert.fail("Unexpected product request");
+let productUpdate = () => assert.fail("Unexpected product update");
 const exports = {};
 vm.runInNewContext(compiled, {
   exports,
-  axios: { delete: (url) => productRequest(url) },
+  axios: { delete: (url) => productRequest(url), put: (url, payload) => productUpdate(url, payload) },
   window: {
-    API: { DELETE_PRODUCT: (shop, product) => `/shops/${shop}/products/${product}` },
-    VAPI: { DELETE_MY_VENDOR_PRODUCT: (vendor, product) => `/vendors/${vendor}/products/${product}` },
+    API: {
+      DELETE_PRODUCT: (shop, product) => `/shops/${shop}/products/${product}`,
+      PUT_EDIT_PRODUCT: (shop, product) => `/shops/${shop}/products/${product}`,
+    },
+    VAPI: {
+      DELETE_MY_VENDOR_PRODUCT: (vendor, product) => `/vendors/${vendor}/products/${product}`,
+      PUT_MY_VENDOR_EDIT_PRODUCT: (vendor, product) => `/vendors/${vendor}/products/${product}`,
+    },
   },
   require(name) {
     if (name.includes("ProductType")) return { ProductType: productTypes };
@@ -130,7 +137,7 @@ test("Delete is saved-product navigation, separate from ordinary workflow progre
     state.setStepEditor(general, 2);
     const flow = Array.from(state.flowTabs, (tab) => tab.value);
     assert.equal(flow.includes(12), false);
-    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value), [...flow, 13, 12]);
+    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value), [...flow, 12, 13]);
     state.goTo(12);
     component.watch.step.call(state, state.step);
     assert.equal(state.step, 12);
@@ -165,7 +172,7 @@ test("Metadata is saved shop-product navigation with its own save boundary", asy
     const general = { draft: "Unsaved product title" };
     state.setStepEditor(general, 2);
     assert.equal(state.flowTabs.some((tab) => tab.value === 13), false);
-    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value).slice(-2), [13, 12]);
+    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value).slice(-2), [12, 13]);
     state.goTo(13);
     component.watch.step.call(state, state.step);
     assert.equal(state.step, 13);
@@ -725,6 +732,81 @@ test("Shipping shares its guarded dedicated save in Edit and Add and advances on
   }
 });
 
+test("Service configuration alone replaces Outputs naming and retains its editor on revisits", () => {
+  for (const options of [{ modern: true }, { modern: false, modernGeneral: true }]) {
+    const service = fixture({ ...options, type: "SERVICE", step: 8, visitedSteps: [2, 8] });
+    const virtual = fixture({ ...options, type: "VIRTUAL", step: 8, visitedSteps: [2, 8] });
+    assert.equal(service.flowCurrentTab.title, "service_design.refined.title");
+    assert.equal(service.flowCurrentTab.icon, "Settings2");
+    assert.equal(service.flowSubtitle, "service_design.refined.subtitle");
+    assert.equal(virtual.flowCurrentTab.title, "add_product.flow.menu.outputs");
+    assert.equal(virtual.flowCurrentTab.icon, "PackageCheck");
+    assert.equal(virtual.flowSubtitle, "add_product.flow.descriptions.outputs");
+    const editor = { draft: "Unsaved weekly schedule" };
+    service.setStepEditor(editor, 8);
+    service.goTo(7);
+    component.watch.step.call(service, service.step);
+    assert.equal(service.isStepMounted(8), true);
+    service.goTo(8);
+    component.watch.step.call(service, service.step);
+    assert.equal(service.active_editor, editor);
+    assert.equal(editor.draft, "Unsaved weekly schedule");
+  }
+  const legacy = fixture({ modern: false, type: "SERVICE", step: 8 });
+  assert.equal(legacy.tabs.find((tab) => tab?.value === 8).title, "service_design.refined.title");
+  assert.equal(legacy.tabs.find((tab) => tab?.value === 8).icon, "tune");
+});
+
+test("Service validation guards both save launchers and successful product updates mark only the live editor saved", async () => {
+  const tick = () => new Promise((resolve) => setImmediate(resolve));
+  try {
+    for (const modern of [true, false]) {
+      const state = fixture({ modern, modernGeneral: !modern, type: "SERVICE", step: 8, visitedSteps: [8] });
+      state.$product.outputs = { type: "CHARGE", charge: 2000 };
+      state.getRenderedOnGoogle = () => {};
+      let allowed = false;
+      const saved = [];
+      const editor = { prepareSave: () => allowed, markSaved: () => saved.push(state.$product.outputs) };
+      state.setStepEditor(editor, 8);
+      const requests = [];
+      productUpdate = (url, payload) => new Promise((resolve, reject) => requests.push({ url, payload, resolve, reject }));
+      await state.submitStep();
+      state.nextStep();
+      assert.equal(requests.length, 0);
+      allowed = true;
+      state.busy = true;
+      await state.submitStep();
+      state.nextStep();
+      assert.equal(requests.length, 0);
+      state.busy = false;
+      await state.submitStep();
+      assert.equal(requests.length, 1);
+      assert.equal(requests[0].url, "/shops/42/products/31");
+      assert.deepEqual(requests[0].payload.outputs, { type: "CHARGE", charge: 2000 });
+      assert.equal(state.step, 8);
+      await state.submitStep();
+      assert.equal(requests.length, 1, "A pending product request cannot submit twice");
+      requests[0].resolve({ data: { error: true, error_msg: "Invalid draft" } });
+      await tick();
+      assert.deepEqual(saved, []);
+      assert.equal(state.step, 8);
+      await state.submitStep();
+      requests[1].resolve({ data: { product: { id: 31, outputs: { type: "CHARGE", charge: 1800 } } } });
+      await tick();
+      assert.deepEqual(saved, [{ type: "CHARGE", charge: 1800 }], "The snapshot follows the actual server result");
+      assert.equal(state.step, modern ? 10 : 8, "Add advances after success; Edit saves in place");
+      state.step = 8;
+      await state.submitStep();
+      state.setStepEditor({ prepareSave: () => true, markSaved: () => assert.fail("An old request cannot mark a replacement editor saved") }, 8);
+      requests[2].resolve({ data: { product: { id: 31, outputs: { type: "CHARGE", charge: 1900 } } } });
+      await tick();
+      assert.equal(saved.length, 1);
+    }
+  } finally {
+    productUpdate = () => assert.fail("Unexpected product update");
+  }
+});
+
 test("Guided saves advance only after success and skip unavailable sections", () => {
   for (const [type, step, destination] of [
     ["PHYSICAL", 5, 6],
@@ -858,7 +940,7 @@ test("the rendered Guided workspace shows only the active editor while retaining
   const editorStub = (name) => Vue.defineComponent({
     name,
     inheritAttrs: false,
-    props: { externalActionButtons: Boolean, modern: Boolean, workspace: Boolean, productWorkspace: Boolean, active: Boolean, parentBusy: Boolean, shop: Object, resource: Object, resourceType: String, readOnly: Boolean },
+    props: { externalActionButtons: Boolean, modern: Boolean, workspace: Boolean, productWorkspace: Boolean, active: Boolean, parentBusy: Boolean, shop: Object, resource: Object, resourceType: String, resourceLabel: String, readOnly: Boolean },
     data: () => ({ draft: "", busy: false, saveCalls: 0 }),
     methods: {
       saveSpec() { this.saveCalls++; },
@@ -1114,6 +1196,11 @@ test("the rendered Guided workspace shows only the active editor while retaining
     assert.equal(metadata.resource, product);
     assert.equal(metadata.shop.id, 42);
     assert.equal(metadata.resourceType, "products");
+    assert.equal(metadata.resourceLabel, "global.commons.product", "The generic metadata component receives the localized current resource type");
+    const resourceIcon = metadata.$slots["resource-icon"]();
+    assert.equal(resourceIcon.length, 1);
+    assert.equal(resourceIcon[0].props.name, "PackageOpen");
+    assert.equal(resourceIcon[0].props.size, 18);
     assert.equal(metadata.active, true);
     assert.equal(metadata.readOnly, false);
     productWriteAccess.value = false;
@@ -1144,8 +1231,17 @@ test("the rendered Guided workspace shows only the active editor while retaining
     assert.equal(state.active_editor, metadata);
     const deleteTab = descendants(sidebar).find((element) => classHas(element, "b-product-add-full__delete-tab"));
     assert.ok(deleteTab, "Delete has an independent local navigation entry");
+    const navigation = descendants(sidebar).find((element) => classHas(element, "b-product-add-full__nav"));
+    const navigationItems = navigation.children.filter((element) => element.tag === "button" || element.tag === "hr");
+    const metadataIndex = navigationItems.findIndex((element) => element.tag === "button" && element.children.some((child) => child.tag === "span" && text(child) === "resource_metadata.title"));
+    assert.ok(metadataIndex > 1);
+    assert.equal(navigationItems[metadataIndex - 2], deleteTab, "Metadata follows Delete in the rail");
+    assert.equal(navigationItems[metadataIndex - 1].tag, "hr");
+    assert.equal(classHas(navigationItems[metadataIndex - 1], "b-product-add-full__metadata-divider"), true, "A neutral horizontal separator immediately precedes Metadata");
     const mobileSelect = descendants(sidebar).find((element) => element.tag === "select");
-    const deleteOption = descendants(mobileSelect).find((element) => element.tag === "option" && element.props.value === 12);
+    const mobileOptions = descendants(mobileSelect).filter((element) => element.tag === "option");
+    assert.deepEqual(mobileOptions.slice(-2).map((element) => element.props.value), [12, 13], "Mobile retains Delete then Metadata order");
+    const deleteOption = mobileOptions.find((element) => element.props.value === 12);
     assert.ok(deleteOption, "The compact mobile navigation includes Delete");
     mobileSelect.props.onChange({ target: { value: "12" } });
     await Vue.nextTick();

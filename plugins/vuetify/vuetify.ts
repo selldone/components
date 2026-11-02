@@ -20,6 +20,8 @@ import * as directives from "vuetify/directives";
 
 import { SetupService } from "@selldone/core-js/server/SetupService";
 import { aliases, md } from "vuetify/iconsets/md";
+import { shopQuotaIcons } from "./shop-quota-icons";
+import { scopeIcons } from "./scope-icons";
 
 //import "@fortawesome/fontawesome-free/css/all.css"; // Ensure your project is capable of handling css files
 import { fa } from "vuetify/iconsets/fa";
@@ -74,6 +76,8 @@ const vuetifyOptions: VuetifyOptions = {
     sets: {
       md,
       fa,
+      quota: shopQuotaIcons,
+      scope: scopeIcons,
     },
   },
 };

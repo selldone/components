@@ -178,11 +178,15 @@
 
       <template v-slot:item.payment_id="{ item }">
         <div v-if="isModern && item.payment" class="b-order-bills-modern__payment">
-          <div class="b-order-bills-modern__provider"><img v-if="item.payment.gateway?.logo" :src="getShopImagePath(item.payment.gateway.logo)" :alt="item.payment.gateway.name || ''" height="17" /><span v-else>{{ item.payment.gateway?.name }}</span><u-price v-if="item.payment.amount !== undefined && item.payment.currency" :amount="item.payment.amount" :currency="item.payment.currency" /></div>
-          <u-payment-card v-if="item.payment.card" :card="item.payment.card" :currency="item.payment.currency" :method="item.payment.method" horizontal />
-          <span v-else-if="item.payment.method" class="b-order-bills-modern__secondary">{{ item.payment.method }}</span>
-          <span class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="paymentStatusClass(item.payment.status)" />{{ paymentStatusLabel(item.payment.status) }}</span>
-          <span v-if="item.payment.payment_at" class="b-order-bills-modern__date" :title="getLocalTimeString(item.payment.payment_at)">{{ getLocalTimeStringSmall(item.payment.payment_at) }}</span>
+          <div class="b-order-bills-modern__payment-summary">
+            <div class="b-order-bills-modern__provider"><img v-if="item.payment.gateway?.logo" :src="getShopImagePath(item.payment.gateway.logo)" :alt="item.payment.gateway.name || ''" height="17" /><span v-else>{{ item.payment.gateway?.name }}</span><u-price v-if="item.payment.amount !== undefined && item.payment.currency" :amount="item.payment.amount" :currency="item.payment.currency" /></div>
+            <span class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="paymentStatusClass(item.payment.status)" />{{ paymentStatusLabel(item.payment.status) }}</span>
+          </div>
+          <div class="b-order-bills-modern__payment-meta">
+            <u-payment-card v-if="item.payment.card" :card="item.payment.card" :currency="item.payment.currency" :method="item.payment.method" modern horizontal class="b-order-bills-modern__card" />
+            <span v-else-if="item.payment.method" class="b-order-bills-modern__secondary">{{ item.payment.method }}</span>
+            <span v-if="item.payment.payment_at" class="b-order-bills-modern__date b-order-bills-modern__payment-date" :title="getLocalTimeString(item.payment.payment_at)">{{ getLocalTimeStringSmall(item.payment.payment_at) }}</span>
+          </div>
         </div>
         <u-payment-card
           v-else-if="!isModern && item.payment?.card"
@@ -918,8 +922,57 @@ export default {
     object-fit: contain;
   }
 
-  &__payment :deep(.u--payment-card) {
+  &__payment-summary,
+  &__payment-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 10px;
     min-width: 0;
+  }
+
+  &__card {
+    gap: 6px;
+    min-width: 0;
+
+    :deep(.u-payment-card-modern__logo) {
+      flex-basis: 24px;
+      height: 18px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+
+      > img,
+      > span {
+        width: 24px;
+        height: 18px;
+      }
+    }
+
+    :deep(.u-payment-card-modern__identity) {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px 8px;
+    }
+
+    :deep(.u-payment-card-modern__title) {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 18px;
+    }
+
+    :deep(.u-payment-card-modern__metadata) {
+      margin-block-start: 0;
+      font-size: 11px;
+      line-height: 18px;
+    }
+  }
+
+  &__payment-meta > &__secondary,
+  &__payment-meta > &__payment-date {
+    max-width: none;
+    margin-block-start: 0;
   }
 
   &__order-link {

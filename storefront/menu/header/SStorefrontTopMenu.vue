@@ -110,8 +110,9 @@
 
         >
           <!-- Menu > default -->
+          <!-- Preserve saved md presets using Vuetify's native medium rounding. -->
           <v-sheet
-            :rounded="tab.rounded"
+            :rounded="tab.rounded === 'md' ? 'lg' : tab.rounded"
             class="s--storefront-top-menu-submenu"
             elevation="0"
             border
@@ -169,7 +170,7 @@
               :preview="preview"
               class="my-2 ms-2"
               style="width: 98vw; max-height: 90vh"
-              :rounded-preview="tab.rounded"
+              :rounded-preview="tab.rounded === 'md' ? 'lg' : tab.rounded"
               :dark="dark"
             ></menu-categories>
 

@@ -232,7 +232,7 @@ test("report acquisition splits the original series and preserves independent co
   value.start_date = "composition-start";
   value.end_date = "composition-end";
   assert.equal(value.report_series.visitors.length, 2);
-  assert.equal(value.report_series.views.length, 2);
+  assert.equal(value.report_series.views.length, 1, "Historical AMP options do not add a view series");
   series.raw_data[0].new_visitors = 100;
   series.raw_data[1].new_visitors = null;
   series.raw_data[0].returning_visitors = 0;

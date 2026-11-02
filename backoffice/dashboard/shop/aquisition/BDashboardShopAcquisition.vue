@@ -304,19 +304,6 @@
         >
           {{ $t("shop_crm_report.composition_scope") }}
         </p>
-        <div v-if="modern && has_amp" class="b-dashboard-acquisition__amp">
-          <span
-            ><v-icon icon="bolt" size="16" aria-hidden="true" />{{
-              $t("shop_visitors_widget.amp")
-            }}</span
-          >
-          <span>{{
-            numeralFormat(
-              timeSeries.totalOf("amp", start_date, end_date),
-              "0,0.[0]a",
-            )
-          }}</span>
-        </div>
       </v-col>
 
       <component
@@ -550,9 +537,7 @@ export default {
       });
       return {
         visitors: ["new_visitors", "returning_visitors"].map(plot),
-        views: (this.has_amp ? ["page_views", "amp"] : ["page_views"]).map(
-          plot,
-        ),
+        views: ["page_views"].map(plot),
       };
     },
     report_plot_options() {
@@ -596,10 +581,7 @@ export default {
       });
       return {
         visitors: plot(["#C2185B", "#1976D2"], ["person_add", "history"]),
-        views: plot(
-          this.has_amp ? ["#FFA000", "#444"] : ["#FFA000"],
-          this.has_amp ? ["visibility", "bolt"] : ["visibility"],
-        ),
+        views: plot(["#FFA000"], ["visibility"]),
       };
     },
     report_composition_series() {
@@ -854,13 +836,6 @@ export default {
       return this.timeSeries.previousWeekData();
     },
 
-    has_amp() {
-      return (
-        this.shop.options &&
-        this.shop.options.some((e) => e.code === "amp" && e.value === true)
-      );
-    },
-
     maxPoints() {
       const labels = [
         this.$t("shop_visitors_widget.page_views"),
@@ -880,10 +855,7 @@ export default {
       return maxPoints.map((point) => ({
         ...point,
         id: `b-dashboard-acquisition__maximum-point-${point.marker.strokeColor.slice(1)}`,
-        seriesIndex: (this.has_amp
-          ? ["#FFA000", "#444", "#C2185B", "#1976D2"]
-          : ["#FFA000", "#C2185B", "#1976D2"]
-        ).indexOf(point.marker.strokeColor),
+        seriesIndex: colors.indexOf(point.marker.strokeColor),
         label: {
           ...point.label,
           text:
@@ -905,15 +877,9 @@ export default {
 
     endpointPoints() {
       if (!this.modern) return [];
-      const keys = this.has_amp
-        ? ["page_views", "amp", "new_visitors", "returning_visitors"]
-        : ["page_views", "new_visitors", "returning_visitors"];
-      const icons = this.has_amp
-        ? ["\ue8f4", "\uea0b", "\ue7fe", "\ue889"]
-        : ["\ue8f4", "\ue7fe", "\ue889"];
-      const colors = this.has_amp
-        ? ["#FFA000", "#444", "#C2185B", "#1976D2"]
-        : ["#FFA000", "#C2185B", "#1976D2"];
+      const keys = ["page_views", "new_visitors", "returning_visitors"];
+      const icons = ["\ue8f4", "\ue7fe", "\ue889"];
+      const colors = ["#FFA000", "#C2185B", "#1976D2"];
       return keys.flatMap((key, seriesIndex) => {
         let last = null;
         this.timeSeries.raw_data.forEach((row) => {
@@ -996,9 +962,7 @@ export default {
             }
 ,*/
         },
-        colors: this.has_amp
-          ? ["#FFA000", "#444", "#C2185B", "#1976D2"]
-          : ["#FFA000", "#C2185B", "#1976D2"],
+        colors: ["#FFA000", "#C2185B", "#1976D2"],
         dataLabels: {
           enabled: false,
         },
@@ -1046,10 +1010,7 @@ export default {
           markers: this.modern
             ? {
                 size: 8,
-                customHTML: (this.has_amp
-                  ? ["visibility", "bolt", "person_add", "history"]
-                  : ["visibility", "person_add", "history"]
-                ).map(
+                customHTML: ["visibility", "person_add", "history"].map(
                   (icon) => () =>
                     `<span class="material-icons b-dashboard-acquisition__trend-icon" aria-hidden="true">${icon}</span>`,
                 ),
@@ -1103,7 +1064,7 @@ export default {
     },
 
     series() {
-      let series = [
+      return [
         {
           name: this.$t("shop_visitors_widget.page_views"),
           data: this.timeSeries.arrayOf("page_views", true, "created_at"),
@@ -1124,14 +1085,6 @@ export default {
         },
       ];
 
-      if (this.has_amp) {
-        series.insert(1, {
-          name: this.$t("shop_visitors_widget.amp"),
-          data: this.timeSeries.arrayOf("amp", true, "created_at"),
-        });
-      }
-
-      return series;
     },
 
     //new_visitors:
@@ -1578,26 +1531,6 @@ export default {
     font-weight: 400;
     font-variant-numeric: tabular-nums;
     pointer-events: none;
-  }
-
-  .b-dashboard-acquisition__amp {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    order: 3;
-    margin-block-start: 16px;
-    padding: 12px 0;
-    border-block-start: 1px solid var(--sd-modern-border);
-    font-size: 13px;
-    font-weight: 400;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .b-dashboard-acquisition__amp > span:first-child {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
   }
 
   .b-dashboard-acquisition__flow-layout {

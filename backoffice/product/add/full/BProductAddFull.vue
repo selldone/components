@@ -240,6 +240,7 @@
           <nav class="sd-modern-section-nav b-product-add-full__nav" :aria-label="$t('add_product.flow.navigation')">
             <template v-for="tab in navigationTabs" :key="tab.value">
               <div v-if="tab.group" class="sd-modern-eyebrow b-product-add-full__group">{{ tab.group }}</div>
+              <hr v-if="tab.value === TAB_METADATA" class="b-product-add-full__metadata-divider" />
               <button
                 type="button"
                 class="sd-modern-section-nav__item"
@@ -466,11 +467,14 @@
     <div v-if="isStepMounted(TAB_OUTPUTS)" v-show="step === TAB_OUTPUTS">
     <b-product-edit-outputs
       :ref="(editor) => setStepEditor(editor, TAB_OUTPUTS)"
-      :external-action-buttons="modern"
-      :class="{ 'b-product-add-full__editor sd-modern-underlined-field': modern }"
+      :modern="modernWorkspace"
+      :metadata-available="metadataAvailable"
+      :external-action-buttons="modern || step !== TAB_OUTPUTS"
+      :class="{ 'b-product-add-full__editor sd-modern-underlined-field': modern && !isService }"
       :busy="busy"
       :product="$product"
       @next="nextStep()"
+      @navigate="goTo($event === 'metadata' ? TAB_METADATA : TAB_VARIANTS)"
     />
     </div>
     <!-- ███████████████████████ Product Extra ███████████████████████ -->
@@ -633,11 +637,14 @@
       :shop="shop"
       :resource="$product"
       resource-type="products"
+      :resource-label="$t('global.commons.product')"
       :active="step === TAB_METADATA"
       :read-only="!writeShopAccess('PRODUCTS')"
       :parent-busy="busy || show_preview"
       @saved="({ field, value }) => $product[field] = value"
-    />
+    >
+      <template #resource-icon><b-product-edit-info-icon name="PackageOpen" :size="18" /></template>
+    </b-resource-metadata>
 
     <!-- ███████████████████████ Product Delete ███████████████████████ -->
 
@@ -1078,10 +1085,10 @@ export default {
 
         this.hasStep__Outputs
           ? {
-              title: this.$t("add_product.menu.outputs"),
+              title: this.$t(this.isService ? "service_design.refined.title" : "add_product.menu.outputs"),
               value: TAB_OUTPUTS,
               color: this.type?.color,
-              icon: "fa:fas fa-code-branch",
+              icon: this.isService ? "tune" : "fa:fas fa-code-branch",
             }
           : null,
         this.hasStep__physicalExtra
@@ -1118,7 +1125,7 @@ export default {
         [TAB_IMAGES]: 'Images',
         [TAB_INPUTS]: 'ClipboardList',
         [TAB_PRICE]: 'Tag',
-        [TAB_OUTPUTS]: 'PackageCheck',
+        [TAB_OUTPUTS]: this.isService ? 'Settings2' : 'PackageCheck',
         [TAB_PHYSICAL_EXTRA_INFO]: 'Truck',
         [TAB_REVIEW_BLOG]: 'AlignLeft',
         [TAB_VARIANTS]: 'Archive',
@@ -1128,7 +1135,7 @@ export default {
         return {
           ...tab,
           icon: icons[tab.value],
-          title: tab.value === TAB_VARIANTS && this.type
+          title: tab.value === TAB_OUTPUTS && this.isService ? this.$t('service_design.refined.title') : tab.value === TAB_VARIANTS && this.type
             ? this.$t(`add_product.flow.inventory.${this.type.code}`)
             : this.$t(`add_product.flow.menu.${key}`),
           group: this.modernGeneral ? null : tab.value === TAB_TYPE ? this.$t('add_product.flow.start')
@@ -1148,7 +1155,7 @@ export default {
         ? [{ value: TAB_METADATA, icon: 'Braces', title: this.$t('resource_metadata.title'), group: null }]
         : [];
       return this.modernWorkspace && this.$product.id
-        ? [...this.flowTabs, ...metadata, { value: TAB_DELETE, icon: 'Trash2', title: this.$t('global.actions.delete'), group: null }]
+        ? [...this.flowTabs, { value: TAB_DELETE, icon: 'Trash2', title: this.$t('global.actions.delete'), group: null }, ...metadata]
         : this.flowTabs;
     },
     sidebarVariantCount() {
@@ -1167,6 +1174,7 @@ export default {
       return this.navigationTabs.find((tab) => tab.value === this.step);
     },
     flowSubtitle() {
+      if (this.step === TAB_OUTPUTS && this.isService) return this.$t('service_design.refined.subtitle');
       if (this.step === TAB_METADATA) return this.$t('resource_metadata.subtitle');
       if (this.step === TAB_DELETE) return this.$t('add_product.delete_product.modern.subtitle');
       if (this.step === TAB_VARIANTS && this.isPhysical) return this.$t('add_product.inventory_modern.intro');
@@ -1178,7 +1186,7 @@ export default {
     },
     flowSubmitDisabled() {
       return [TAB_DELETE, TAB_METADATA].includes(this.step) || this.flowBusy || (this.modernWorkspace && this.show_preview) || !this.type ||
-        ([TAB_IMAGES, TAB_INPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.saveBlocked) ||
+        ([TAB_IMAGES, TAB_INPUTS, TAB_OUTPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.saveBlocked) ||
         (!this.$product.id && this.step > TAB_GENERAL_INFO) ||
         (this.step === TAB_PRICE && this.active_editor?.calculatePrice < 0);
     },
@@ -1436,7 +1444,7 @@ not need!
     isStepMounted(step) {
       // Keep modern draft snapshots; inactive editors have no save button or shortcut.
       return this.step === step ||
-        ((this.modern || (!!this.modernGeneral && ([TAB_GENERAL_INFO, TAB_INPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_METADATA].includes(step) || (step === TAB_VARIANTS && this.isPhysical)))) && this.visitedSteps.includes(step));
+        ((this.modern || (!!this.modernGeneral && ([TAB_GENERAL_INFO, TAB_INPUTS, TAB_OUTPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_METADATA].includes(step) || (step === TAB_VARIANTS && this.isPhysical)))) && this.visitedSteps.includes(step));
     },
 
     setStepEditor(editor, step = this.step) {
@@ -1466,7 +1474,7 @@ not need!
       if (this.step === TAB_SPEC && this.active_editor?.dialog_ai) return;
       if (this.flowSubmitDisabled) return;
       if (this.step === TAB_IMAGES && this.active_editor?.prepareSave?.() === false) return;
-      if (this.modernWorkspace && [TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO].includes(this.step) && this.active_editor?.prepareSave?.() === false) return;
+      if (this.modernWorkspace && [TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_OUTPUTS].includes(this.step) && this.active_editor?.prepareSave?.() === false) return;
       if (this.step === TAB_GENERAL_INFO) {
         this.validatingStep = true;
         try {
@@ -1640,6 +1648,7 @@ not need!
       const generalEditor = this.stepEditors[TAB_GENERAL_INFO];
       const imagesEditor = this.step === TAB_IMAGES ? this.stepEditors[TAB_IMAGES] : null;
       const inputsEditor = this.stepEditors[TAB_INPUTS];
+      const outputsEditor = this.stepEditors[TAB_OUTPUTS];
       const priceEditor = this.stepEditors[TAB_PRICE];
       this.busy = true;
       axios
@@ -1747,6 +1756,7 @@ not need!
             Object.assign(this.$product, data.product); // Copy product data (refresh)
             if (imagesEditor && !this.disposed && this.stepEditors[TAB_IMAGES] === imagesEditor) imagesEditor.markSaved?.();
             if (inputsEditor && !this.disposed && this.stepEditors[TAB_INPUTS] === inputsEditor) inputsEditor.markSaved?.();
+            if (outputsEditor && !this.disposed && this.stepEditors[TAB_OUTPUTS] === outputsEditor) outputsEditor.markSaved?.();
             if (priceEditor && !this.disposed && this.stepEditors[TAB_PRICE] === priceEditor) priceEditor.markSaved?.();
             if (generalEditor) this.$nextTick(() => {
               if (!this.disposed && this.stepEditors[TAB_GENERAL_INFO] === generalEditor) generalEditor.markSaved?.();
@@ -1818,6 +1828,10 @@ not need!
     nextStep() {
       if ([TAB_DELETE, TAB_METADATA].includes(this.step)) return;
       if (this.modernWorkspace && this.show_preview) return;
+      if (this.modernWorkspace && this.step === TAB_OUTPUTS && this.isService) {
+        if (this.flowBusy || this.active_editor?.prepareSave?.() === false) return;
+        if (this.modernGeneral) return this.editProduct();
+      }
       if (this.modernWorkspace && this.step === TAB_VARIANTS) {
         if (this.flowSubmitDisabled) return;
         // Inventory operations save separately; Finish waits only for the product save.
@@ -1995,11 +2009,12 @@ not need!
   .b-product-add-full__sidebar { position: sticky; top: 24px; min-width: 0; max-height: calc(100dvh - 224px); overflow-y: auto; scrollbar-width: thin; padding: 3px; }
   .b-product-add-full__main { min-width: 0; }
   .b-product-add-full__mobile-nav { display: none; }
-  .b-product-add-full__nav { padding-block: 3px; gap: 5px; }
+  .b-product-add-full__nav { padding-block: 3px 0; gap: 5px; }
   .b-product-add-full__nav > button { min-height: 42px; font-weight: 400; }
   .b-product-add-full__nav > button[aria-current] { font-weight: 500; }
   .b-product-add-full__nav > button:disabled { opacity: 0.55; }
   .b-product-add-full__nav > .b-product-add-full__delete-tab { margin-block-start: 14px; }
+  .b-product-add-full__metadata-divider { margin: 9px 10px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
   .b-product-add-full__variant-count { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-width: 20px; height: 18px; margin-inline-start: auto; padding-inline: 4px; border-radius: 4px; background: rgba(var(--v-theme-on-surface), 0.08); color: rgb(var(--v-theme-on-surface)); font-size: 10px; font-weight: 600; line-height: 16px; direction: ltr; unicode-bidi: isolate; }
   .b-product-add-full__variant-count + .b-product-add-full__saved { margin-inline-start: 0; }
   .b-product-add-full__nav > .b-product-add-full__pictures-tab { gap: 6px; }
@@ -2019,8 +2034,12 @@ not need!
   .b-product-add-full__rail-title { margin: 5px 10px 15px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; }
   .b-product-add-full__saved { margin-inline-start: auto; }
   .b-product-add-full__context { margin: 20px 10px 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
-  .b-product-add-full__product { margin: 22px 10px 0; overflow-wrap: anywhere; }
-  .b-product-add-full__product > hr { margin-block: 14px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
+  // Keep the divider's equal margins inside each utility group.
+  .b-product-add-full__product,
+  .b-product-add-full__preview-tools { display: flow-root; margin: 0 10px; }
+  .b-product-add-full__product > hr,
+  .b-product-add-full__preview-tools > hr { margin-block: 14px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
+  .b-product-add-full__product { overflow-wrap: anywhere; }
   .b-product-add-full__completion { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; color: var(--sd-modern-muted); font-size: 12px; }
   .b-product-add-full__product :deep(.body-title) { font-size: 12px; }
   .b-product-add-full__hierarchy { min-width: 0; }
@@ -2046,8 +2065,6 @@ not need!
   .b-product-add-full__hierarchy :deep(.v-icon) { flex-shrink: 0; }
   .b-product-add-full__hierarchy :deep(.link-dash) { min-width: 0; overflow-wrap: anywhere; }
   .b-product-add-full__hierarchy :deep(a:focus-visible) { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; border-radius: 3px; }
-  .b-product-add-full__preview-tools { margin: 22px 10px 0; }
-  .b-product-add-full__preview-tools > hr { margin: 0 0 14px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
   .b-product-add-full__preview-launcher { width: 100%; height: auto; min-height: 42px; justify-content: flex-start; text-align: start; }
   .b-product-add-full__preview-launcher :deep(.v-btn__content) { white-space: normal; }
   .b-product-add-full__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 0 2px 18px; }
@@ -2130,8 +2147,8 @@ not need!
     .b-product-add-full__sidebar { position: static; max-height: none; overflow: visible; padding: 0; }
     .b-product-add-full__nav, .b-product-add-full__context, .b-product-add-full__product { display: none; }
     .b-product-add-full__mobile-nav { display: flex; align-items: center; gap: 15px; justify-content: space-between; }
-    .b-product-add-full__preview-tools { margin: 16px 0 0; }
-    .b-product-add-full__preview-tools > hr { margin-block-end: 8px; }
+    .b-product-add-full__preview-tools { margin: 0; }
+    .b-product-add-full__preview-tools > hr { margin-block: 8px; }
     .b-product-add-full__preview-launcher { width: auto; min-height: 44px; }
     .b-product-add-full__mobile-nav label { color: var(--sd-modern-muted); font-size: 12px; }
     .b-product-add-full__mobile-nav select { width: min(230px, 78%); min-height: 44px; padding: 8px 0; border-block-end: 1px solid var(--sd-modern-border); color: rgb(var(--v-theme-on-surface)); background: transparent; appearance: auto; font-family: inherit; font-size: 13px; }

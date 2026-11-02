@@ -491,19 +491,31 @@
             <span class="b-product-edit-info__summary-title">{{
               $t("add_product.edit_info.modern.units_title")
             }}</span>
-            <span
-              v-if="isPhysical || isService || isVirtual"
-              class="b-product-edit-info__unit-marker"
-            >
-              <v-icon size="14" aria-hidden="true">{{ selectedPriceInputMode.icon }}</v-icon>
-              {{ $t('price_input_type.' + selectedPriceInputMode.code + '.title') }}
-            </span>
-            <span
-              v-if="isPhysical && $product.unit_float"
-              class="b-product-edit-info__unit-marker"
-            >
-              <v-icon size="14" aria-hidden="true">exposure</v-icon>
-              {{ $t('add_product.edit_info.modern.digest_fractional') }}
+            <span v-if="unitSummaryMarkers.length" class="b-product-edit-info__unit-markers">
+              <v-tooltip
+                v-for="marker in unitSummaryMarkers"
+                :key="marker.key"
+                location="top"
+                content-class="sd-modern-tooltip text-start"
+                :open-on-focus="true"
+                :open-on-click="true"
+              >
+                <template #activator="{ props }">
+                  <span
+                    v-bind="props"
+                    class="b-product-edit-info__unit-marker"
+                    role="img"
+                    :aria-label="marker.title"
+                    tabindex="0"
+                    @click.prevent.stop
+                    @keydown.enter.prevent.stop
+                    @keydown.space.prevent.stop
+                  >
+                    <v-icon size="17" aria-hidden="true">{{ marker.icon }}</v-icon>
+                  </span>
+                </template>
+                {{ marker.title }}
+              </v-tooltip>
             </span>
           </span
           ><span class="b-product-edit-info__digest">{{
@@ -1629,16 +1641,36 @@ export default {
         JSON.stringify(this.generalDraft) !== this.generalSnapshot
       );
     },
+    unitSummaryMarkers() {
+      const markers = [];
+      if (this.isPhysical || this.isVirtual || this.isService) {
+        const mode = this.selectedPriceInputMode;
+        const formTitle = this.$product.valuation?.title?.trim();
+        markers.push({
+          key: "input",
+          icon: mode.icon,
+          title: mode.code === "custom" && formTitle
+            ? this.$t("add_product.edit_info.modern.digest_input_form", { name: formTitle })
+            : this.$t("add_product.edit_info.modern.digest_input", {
+                mode: this.$t("price_input_type." + mode.code + ".title"),
+              }),
+        });
+      }
+      if (this.isPhysical && this.$product.unit_float)
+        markers.push({
+          key: "fractional",
+          icon: "exposure",
+          title: this.$t("add_product.edit_info.modern.digest_fractional"),
+        });
+      return markers;
+    },
     unitsDigest() {
       const product = this.$product;
       const parts = [
         product.unit ||
           this.$t("add_product.edit_info.modern.digest_default_unit"),
       ];
-      if (this.isPhysical || this.isVirtual || this.isService) {
-        if (this.selectedPriceInputMode.code === "custom" && product.valuation?.title)
-          parts.push(product.valuation.title);
-      }
+      parts.push(...this.unitSummaryMarkers.map((marker) => marker.title));
       if (product.action)
         parts.push(
           this.$t("add_product.edit_info.modern.digest_action", {
@@ -2287,14 +2319,32 @@ export default {
     gap: 6px 14px;
   }
 
-  .b-product-edit-info__unit-marker {
+  .b-product-edit-info__unit-markers {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    color: var(--sd-modern-muted);
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 18px;
+    color: rgb(var(--v-theme-on-surface));
+  }
+
+  .b-product-edit-info__unit-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    min-height: 24px;
+    border-radius: 4px;
+  }
+
+  .b-product-edit-info__unit-marker:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+
+  @media (pointer: coarse) {
+    .b-product-edit-info__unit-marker {
+      min-width: 44px;
+      min-height: 44px;
+    }
   }
 
   .b-product-edit-info__pricing {

@@ -103,7 +103,7 @@
                 <template #prepend><b-product-edit-info-icon name="Plus" :size="16" /></template>{{ t('create') }}<v-icon size="16" end aria-hidden="true">north_east</v-icon>
               </v-btn>
             </div>
-            <label class="b-product-profile-property-set__field-label">{{ $t('global.commons.property_set') }}</label>
+            <span class="b-product-profile-property-set__field-label">{{ $t('global.commons.property_set') }}</span>
             <v-locale-provider :rtl="false">
               <!-- Preserve the native menu workaround without changing the field's reading direction. -->
               <b-property-set-input v-if="assign_dialog" ref="propertySetInput" :key="shop.id" v-model="property_set" modern return-object :dir="$vuetify.locale.isRtl ? 'rtl' : 'ltr'" class="sd-modern-underlined-field" @load-state="setSelectorState" />
@@ -273,7 +273,7 @@ export default {
       return new Set((this.property_set?.variants || []).map(item => item.code).filter(code => Object.hasOwn(ProductVariants, code))).size;
     },
     confirmBlocked() {
-      return this.modern && (this.selectorState.loading || this.selectorState.error || (!!this.property_set && (typeof this.property_set !== 'object' || this.property_set.id == null)));
+      return this.modern && (!this.assign_dialog || this.selectorState.loading || this.selectorState.error || (!!this.property_set && (typeof this.property_set !== 'object' || this.property_set.id == null)));
     },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/

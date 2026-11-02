@@ -118,7 +118,7 @@ test("collapsed General digests reflect live unsaved values and sensible empty s
     sku: "DRAFT-42", mpn: "   ", gtin: "12345678", hsn: 0,
     condition: "used", original: false, warranty: "Two years", return_warranty: 30,
   });
-  assert.equal(state.unitsDigest, "kg");
+  assert.match(state.unitsDigest, /^kg · .*digest_input.*price_input_type\.area\.title.* · .*digest_fractional$/);
   assert.equal(state.selectedPriceInputMode.code, "area");
   assert.match(state.identifiersDigest, /SKU: DRAFT-42/);
   assert.match(state.identifiersDigest, /GTIN: 12345678/);
@@ -145,7 +145,10 @@ test("General type and vendor guards preserve available pricing and verification
     const { state } = fixture({ type, product: { unit_float: true, lead: 0 } });
     assert.deepEqual(plain(state.price_input_modes.map((mode) => mode.code)),
       type === "PHYSICAL" ? ["default", "area", "volume", "custom"] : ["default", "custom"]);
-    assert.equal(state.unitsDigest, "Item");
+    const hasPricingInput = ["PHYSICAL", "VIRTUAL", "SERVICE"].includes(type);
+    assert.equal(state.unitsDigest.includes("digest_input"), hasPricingInput);
+    assert.equal(state.unitsDigest.includes("digest_fractional"), type === "PHYSICAL");
+    assert.equal(state.unitsDigest.split(" · ")[0], "Item");
     assert.equal(state.identifiersDigest.includes("New"), type === "PHYSICAL");
     assert.equal(state.warrantyDigest.includes('"hours":0'), type === "VIRTUAL");
   }
@@ -174,13 +177,39 @@ test("pricing summary markers follow draft mode changes and Discard without savi
     assert.equal(state.selectedPriceInputMode.code, code);
     assert.equal(state.selectedPriceInputMode.icon, icon);
     assert.equal(state.selectedPriceInputMode.title, `price_input_type.${code}.title`);
+    assert.equal(state.unitSummaryMarkers[0].icon, icon);
+    assert.match(state.unitSummaryMarkers[0].title, new RegExp(`price_input_type\\.${code}\\.title`));
+    assert.equal(state.unitsDigest.includes(state.unitSummaryMarkers[0].title), true);
     assert.equal(state.hasUnsavedChanges, code !== "default");
   }
   state.$product.unit_float = true;
   state.discardChanges();
   assert.equal(state.selectedPriceInputMode.code, "default");
   assert.equal(state.$product.unit_float, false);
+  assert.deepEqual(plain(state.unitSummaryMarkers.map((marker) => marker.key)), ["input"]);
+  assert.match(state.unitsDigest, /price_input_type\.default\.title/);
+  assert.doesNotMatch(state.unitsDigest, /digest_fractional/);
   assert.equal(state.hasUnsavedChanges, false);
+  assert.equal(requests.length, 0);
+});
+
+test("unit summary describes only the active input form and visible fractional setting", () => {
+  const { state, requests } = fixture({ product: {
+    price_input: "custom", valuation: { id: 17, title: "  Product dimensions  " }, unit_float: true,
+  } });
+  assert.match(state.unitsDigest, /digest_input_form.*"name":"Product dimensions"/);
+  assert.deepEqual(plain(state.unitSummaryMarkers.map((marker) => marker.key)), ["input", "fractional"]);
+  state.$product.price_input = "default";
+  assert.doesNotMatch(state.unitsDigest, /Product dimensions|digest_input_form/);
+  state.$product.price_input = "custom";
+  state.$product.valuation.title = "   ";
+  assert.match(state.unitsDigest, /price_input_type\.custom\.title/);
+  assert.doesNotMatch(state.unitsDigest, /digest_input_form/);
+  for (const type of Object.keys(types)) {
+    state.$product.type = type;
+    assert.equal(state.unitSummaryMarkers.some((marker) => marker.key === "input"), ["PHYSICAL", "VIRTUAL", "SERVICE"].includes(type));
+    assert.equal(state.unitSummaryMarkers.some((marker) => marker.key === "fractional"), type === "PHYSICAL");
+  }
   assert.equal(requests.length, 0);
 });
 

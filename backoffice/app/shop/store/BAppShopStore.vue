@@ -13,70 +13,69 @@
   -->
 
 <template>
-  <v-container class="pa-0 pa-sm-3">
-    <div class="widget-box -large mb-5 min-height-50vh s-table-loading" :aria-busy="busy">
-      <u-widget-header :title="$t('admin_shop.apps.store.title')" icon="shop">
-        <template v-slot:actions>
+  <v-container v-if="shop" fluid class="b-app-store sd-modern-canvas pa-0 text-start">
+    <header class="b-app-store__header">
+      <div class="sd-modern-content b-app-store__header-content">
+        <div class="b-app-store__title">
+          <img src="@selldone/components-vue/assets/icons/selldone-appstore.svg" width="23" height="27" alt="" />
+          <h1>{{ $t('app_store_catalog.title') }}</h1>
+        </div>
+        <div class="b-app-store__header-actions">
           <v-menu>
             <template v-slot:activator="{ props }">
               <v-btn
-                class="mx-2"
+                class="sd-modern-icon-button b-app-store__more"
                 icon
-                size="small"
-                style="align-self: baseline"
                 v-bind="props"
                 variant="text"
+                :aria-label="$t('app_store_catalog.more_actions')"
               >
-                <v-icon>more_vert</v-icon>
+                <v-icon size="17">more_horiz</v-icon>
+                <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-focus>
+                  {{ $t('app_store_catalog.more_actions') }}
+                </v-tooltip>
               </v-btn>
             </template>
-            <v-list>
+            <v-list class="text-start">
               <v-list-item
-                prepend-icon="add"
+                prepend-icon="key"
                 @click="show_add_enterprise = true"
               >
-                <v-list-item-title>Add enterprise app</v-list-item-title>
+                <v-list-item-title>{{ $t('app_store_catalog.add_enterprise') }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
-        </template>
-      </u-widget-header>
+          <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="$t('global.actions.close')" @click="$emit('close')">
+            <v-icon size="17">close</v-icon>
+            <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-focus>
+              {{ $t('global.actions.close') }}
+            </v-tooltip>
+          </v-btn>
+        </div>
+      </div>
+    </header>
 
-      <v-list-subheader>
-        {{ $t("admin_shop.apps.store.subtitle") }}
-      </v-list-subheader>
-
-      <v-row no-gutters>
-        <v-spacer></v-spacer>
-
-        <v-select
-          v-model="selected_category"
-          :items="categories"
-          :label="$t('global.commons.category')"
-          bg-color="transparent"
-          class="max-width-field"
-          clearable
-          flat
-          item-value="code"
-          messages="Filter apps by category"
-          variant="solo"
-        >
-          <template v-slot:item="{ item, props }">
-            <v-list-item
-              :prepend-icon="item.raw.icon"
-              :title="$t(item.raw.name)"
-              class="text-start"
-              v-bind="props"
-            >
-            </v-list-item>
+    <div class="sd-modern-content b-app-store__content">
+      <div class="b-app-store__toolbar">
+        <p>{{ $t('app_store_catalog.subtitle') }}</p>
+        <v-select v-model="selected_category" :items="categories" :label="$t('app_store_catalog.all_categories')"
+                  :placeholder="$t('app_store_catalog.all_categories')" :aria-label="$t('global.commons.category')"
+                  class="b-app-store__category" item-value="code" bg-color="transparent"
+                  clearable hide-details single-line variant="plain">
+          <template #item="{ item, props }">
+            <v-list-item v-bind="props" :prepend-icon="item.raw.icon" :title="$t(item.raw.name)" class="text-start" />
           </template>
-
-          <template v-slot:selection="{ item }">
-            <v-icon>{{ item.raw.icon }}</v-icon>
-            <span class="mx-2">{{ $t(item.raw.name) }}</span>
-          </template>
+          <template #selection="{ item }"><span>{{ $t(item.raw.name) }}</span></template>
         </v-select>
-      </v-row>
+      </div>
+
+      <div class="b-app-store__catalog s-table-loading" :aria-busy="busy">
+      <div v-if="list_error && !busy" class="b-app-store__error" role="alert">
+        <p>{{ $t('app_store_catalog.load_error') }}</p>
+        <v-btn class="sd-modern-button" variant="outlined" @click="fetchAppsList(page, options.sortBy?.[0]?.key, options.sortBy?.[0]?.order === 'desc')">
+          <v-icon start size="16">refresh</v-icon>{{ $t('app_store_catalog.retry') }}
+        </v-btn>
+      </div>
 
       <b-list-loading-state v-if="busy && apps?.length" kind="app" compact class="sd-modern-list-refresh" />
 
@@ -89,7 +88,8 @@
         :loading="busy && !apps?.length"
         :aria-busy="busy"
         :search="search"
-        class="my-3"
+        v-show="!list_error"
+        class="b-app-store__iterator"
         hide-default-footer
       >
         <template #no-data><b-list-empty-state v-if="emptyStateLoaded && !busy" kind="app"
@@ -102,70 +102,60 @@
         <template v-slot:header></template>
 
         <template v-slot:default="props">
-          <v-row class="m-2" no-gutters :inert="busy ? true : undefined">
+          <div class="b-app-store__grid" :inert="busy ? true : undefined">
             <b-app-shop-store-icon
-              v-for="(app, index) in props.items"
-              :key="app.id"
+              v-for="app in props.items"
+              :key="app.raw.id"
               :app="app.raw"
               :loading="busy_fetch_id === app.raw.id"
-              :style="`animation-delay: ${130 * index}ms`"
-              class="ma-2 zoomIn"
+              :disabled="busy"
               @select="editPluginDialog"
-            >
-            </b-app-shop-store-icon>
-          </v-row>
+            />
+          </div>
         </template>
 
         <template v-slot:footer>
-          <v-pagination v-model="page" :length="pageCount" rounded />
+          <div v-if="emptyStateLoaded || apps.length" class="sd-modern-table-footer b-app-store__footer">
+            <span>{{ $t('app_store_catalog.range', { start: rangeStart, end: rangeEnd, total: totalItems }) }}</span>
+            <v-pagination v-model="page" :length="Math.max(1, pageCount)" :total-visible="5"
+                          :disabled="busy" class="sd-modern-pagination" />
+          </div>
         </template>
       </v-data-iterator>
+      </div>
     </div>
 
     <!-- ------------------- Edit Plugin Dialog ------------------- -->
 
     <b-app-config-dialog
-      v-if="app"
+      v-if="app && shop"
       v-model="dialog_app_edit"
       v-model:shop-app="shop_app"
       :app="app"
       :shop="shop"
+      @after-leave="restoreDetailFocus"
     />
 
     <!-- ------------------- Add Enterprise App Dialog ------------------- -->
-    <v-dialog v-model="show_add_enterprise" max-width="620">
-      <v-card class="text-start">
-        <v-card-title>Add Enterprise App</v-card-title>
-        <v-card-text>
-          <p>
-            To install a private enterprise app on the store, you must have a
-            credential key, which can be obtained from the developer.
-          </p>
-          <v-text-field
-            v-model="credential"
-            class="max-width-field-large mx-auto my-3"
-            label="App Credential"
-            messages="Enter app credential"
-            variant="outlined"
-          >
-          </v-text-field>
-        </v-card-text>
-
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn
-              :class="{ disabled: !credential }"
-              :loading="busy_add_credential"
-              color="primary"
-              size="x-large"
-              variant="flat"
-              @click="addCredential()"
-            >
-              <v-icon size="small">add</v-icon>
-              Add Credential
+    <v-dialog v-model="show_add_enterprise" max-width="460" :persistent="busy_add_credential"
+              :aria-label="$t('app_store_catalog.add_enterprise')" @after-leave="restoreMenuFocus">
+      <v-card class="sd-modern-widget b-app-store__enterprise text-start">
+        <form @submit.prevent="addCredential">
+          <h2>{{ $t('app_store_catalog.add_enterprise') }}</h2>
+          <p>{{ $t('app_store_catalog.enterprise_help') }}</p>
+          <v-text-field v-model="credential" :label="$t('app_store_catalog.credential')"
+                        :disabled="busy_add_credential" class="sd-modern-underlined-field b-app-store__credential"
+                        type="password" autocomplete="off" variant="underlined" required hide-details="auto" />
+          <div class="sd-modern-actions b-app-store__enterprise-actions">
+            <v-btn class="sd-modern-button" variant="text" :disabled="busy_add_credential" @click="show_add_enterprise = false">
+              {{ $t('global.actions.cancel') }}
+            </v-btn>
+            <v-btn class="sd-modern-button sd-modern-button--primary" type="submit" color="primary" variant="flat"
+                   :disabled="!credential?.trim() || busy_add_credential" :loading="busy_add_credential">
+              <v-icon start size="16">add</v-icon>{{ $t('app_store_catalog.add_app') }}
             </v-btn>
           </div>
-        </v-card-actions>
+        </form>
       </v-card>
     </v-dialog>
   </v-container>
@@ -177,48 +167,42 @@ import BListLoadingState from "@selldone/components-vue/backoffice/loading-state
 import BAppConfigDialog from "../../config/dialog/BAppConfigDialog.vue";
 import BAppShopStoreIcon from "../../../app/shop/store/icon/BAppShopStoreIcon.vue";
 import { Application } from "@selldone/core-js";
-import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
   name: "BAppShopStore",
-  mixins: [],
+  emits: ["select", "close"],
   components: {
     BListLoadingState,
-    BListEmptyState, ULoadingEllipsis, BAppShopStoreIcon, BAppConfigDialog },
+    BListEmptyState, BAppShopStoreIcon, BAppConfigDialog },
   props: {
     shop: {
       type: Object,
-      require: true,
+      required: true,
     },
+    active: { type: Boolean, default: true },
   },
   data: () => ({
     busy: false,
     emptyStateLoaded: false,
+    list_error: false,
+    list_request_id: 0,
+    list_key: null,
+    loaded_offset: 0,
+    detail_request_id: 0,
+    detail_focus_target: null,
+    credential_request_id: 0,
     selected_category: undefined, // Prevent double call fetch!
 
     //--------------------
     apps: [],
     search: "",
-    filter: {},
 
     // Pagination:
     page: 1,
-    itemsPerPage: 18,
     totalItems: 0,
-    options: {},
-
-    keys: [
-      { label: "code", value: "code" },
-      { label: "name", value: "name" },
-      /*  {label: 'global.sort.title', value: 'title'},
-              {label: 'global.sort.like', value: 'like'},
-              {label: 'global.sort.power', value: 'power'},*/
-    ],
-    //------------------
-    offset: 0,
-    more: true,
+    options: { page: 1, sortBy: [] },
 
     //--------------
     dialog_app_edit: false,
@@ -233,8 +217,18 @@ export default {
     busy_add_credential: false,
   }),
   computed: {
+    itemsPerPage() {
+      const width = this.$vuetify.display.width;
+      return (width <= 360 ? 1 : width <= 640 ? 2 : 3) * 6;
+    },
     pageCount() {
       return Math.ceil(this.totalItems / this.itemsPerPage);
+    },
+    rangeStart() {
+      return this.apps.length ? this.loaded_offset + 1 : 0;
+    },
+    rangeEnd() {
+      return Math.min(this.loaded_offset + this.apps.length, this.totalItems);
     },
     categories() {
       return Object.values(Application.ApplicationCategories);
@@ -245,68 +239,135 @@ export default {
     // Pagination:
     options: {
       handler() {
-        const { sortBy, page, itemsPerPage } = this.options;
-        this.fetchAppsList(page, sortBy[0]?.key, sortBy[0]?.order === "desc");
+        const { sortBy, page } = this.options;
+        this.fetchAppsList(page, sortBy?.[0]?.key, sortBy?.[0]?.order === "desc");
       },
       deep: true,
     },
 
-    selected_category(category, category1) {
+    selected_category(category) {
       this.page = 1;
       this.apps = [];
       this.$emit("select", category);
-      const { sortBy, page, itemsPerPage } = this.options;
+      const { sortBy } = this.options;
       this.fetchAppsList(
         this.page,
-        sortBy[0]?.key,
-        sortBy[0]?.order === "desc",
+        sortBy?.[0]?.key,
+        sortBy?.[0]?.order === "desc",
       );
+    },
+    show_add_enterprise(open) {
+      if (!open) this.credential = "";
+    },
+    active(visible) {
+      if (!visible) this.closeDialogs();
+      else if (!this.emptyStateLoaded && !this.busy)
+        this.fetchAppsList(this.page, this.options.sortBy?.[0]?.key, this.options.sortBy?.[0]?.order === "desc");
+    },
+    "shop.id"() {
+      this.list_request_id++;
+      this.list_key = null;
+      this.busy = false;
+      this.apps = [];
+      this.totalItems = 0;
+      this.loaded_offset = 0;
+      this.emptyStateLoaded = false;
+      this.list_error = false;
+      this.page = 1;
+      this.closeDialogs();
+      this.fetchAppsList(1, this.options.sortBy?.[0]?.key, this.options.sortBy?.[0]?.order === "desc");
     },
   },
 
   created() {
     this.selected_category = this.$route.query.category;
   },
+  beforeUnmount() {
+    this.list_request_id++;
+    this.closeDialogs();
+  },
 
   methods: {
+    restoreMenuFocus() {
+      if (this.active) this.$el?.querySelector?.('.b-app-store__more')?.focus({ preventScroll: true });
+    },
+    restoreDetailFocus() {
+      if (!this.active) return;
+      if (this.detail_focus_target?.isConnected && this.detail_focus_target.getClientRects().length)
+        this.detail_focus_target.focus({ preventScroll: true });
+      else this.restoreMenuFocus();
+    },
+    closeDialogs() {
+      // A hidden or replaced store must not open a dialog from an older response.
+      this.detail_request_id++;
+      this.credential_request_id++;
+      this.busy_fetch_id = null;
+      this.detail_focus_target = null;
+      this.busy_add_credential = false;
+      this.dialog_app_edit = false;
+      this.app = null;
+      this.shop_app = null;
+      this.show_add_enterprise = false;
+      this.credential = "";
+    },
     addCredential() {
+      if (!this.active || !this.shop?.id || !this.credential?.trim() || this.busy_add_credential) return;
+      const request = ++this.credential_request_id;
       this.busy_add_credential = true;
 
       axios
-        .post(window.API.POST_ADD_ENTERPRISE_APP(this.$route.params.shop_id), {
+        .post(window.API.POST_ADD_ENTERPRISE_APP(this.shop.id), {
           credential: this.credential,
         })
         .then(({ data }) => {
+          if (request !== this.credential_request_id) return;
           if (!data.error) {
             this.show_add_enterprise = false;
-            this.credential = null;
-            this.AddOrUpdateItemByID(this.apps, data.app, "id", false);
+            this.credential = "";
+            this.list_request_id++;
+            this.busy = false;
+            this.selected_category = undefined;
+            this.page = 1;
+            this.apps = [];
+            this.totalItems = 0;
+            this.loaded_offset = 0;
+            this.emptyStateLoaded = false;
+            // The assignment response has no category or catalog total; reload the authorized list.
+            this.fetchAppsList(1, this.options.sortBy?.[0]?.key, this.options.sortBy?.[0]?.order === "desc");
 
             NotificationService.showSuccessAlert(
-              "Add credential",
-              "Your enterprise app credential added successfully.",
+              null,
+              this.$t('app_store_catalog.enterprise_added'),
             );
           } else {
             NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
+          if (request !== this.credential_request_id) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (request !== this.credential_request_id) return;
           this.busy_add_credential = false;
         });
     },
 
     fetchAppsList(page, sortBy, sortDesc = true) {
-      if (this.busy) return;
+      if (!this.active || !this.shop?.id) return;
+      const key = JSON.stringify([this.shop.id, page, this.itemsPerPage, sortBy, sortDesc, this.search, this.selected_category]);
+      if (this.busy && key === this.list_key) return;
+      this.list_key = key;
+      const request = ++this.list_request_id;
+      const offset = (page - 1) * this.itemsPerPage;
 
       this.busy = true;
       this.emptyStateLoaded = false;
+      this.list_error = false;
       axios
-        .get(window.API.GET_APPSTORE_LIST(this.$route.params.shop_id), {
+        .get(window.API.GET_APPSTORE_LIST(this.shop.id), {
           params: {
-            offset: (page - 1) * this.itemsPerPage,
+            offset,
             limit: this.itemsPerPage,
             sortBy: sortBy,
             sortDesc: sortDesc,
@@ -318,25 +379,39 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (request !== this.list_request_id) return;
+          if (data.error || !Array.isArray(data.apps)) {
+            this.list_error = true;
+            NotificationService.showErrorAlert(null, data.error_msg || this.$t('app_store_catalog.load_error'));
+            return;
+          }
           this.apps = data.apps;
           this.emptyStateLoaded = Array.isArray(data.apps);
 
           this.totalItems = data.total;
+          this.loaded_offset = offset;
         })
         .catch((error) => {
+          if (request !== this.list_request_id) return;
+          this.list_error = true;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (request !== this.list_request_id) return;
           this.busy = false;
         });
     },
 
     editPluginDialog(app) {
+      if (!this.active || !this.shop?.id || this.busy) return;
+      this.detail_focus_target = typeof document === 'undefined' ? null : document.activeElement?.closest?.('.b-app-store-card');
+      const request = ++this.detail_request_id;
       this.app = null;
       this.busy_fetch_id = app.id;
       axios
-        .get(window.API.GET_SHOP_APP_INFO(this.$route.params.shop_id, app.code))
+        .get(window.API.GET_SHOP_APP_INFO(this.shop.id, app.code))
         .then(({ data }) => {
+          if (request !== this.detail_request_id) return;
           if (!data.error) {
             this.app = data.app;
             this.shop_app = data.shop_app;
@@ -346,9 +421,11 @@ export default {
           }
         })
         .catch((error) => {
+          if (request !== this.detail_request_id) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (request !== this.detail_request_id) return;
           this.busy_fetch_id = null;
         });
     },
@@ -357,62 +434,45 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scrolling-wrapper {
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
+.b-app-store {
+  min-height: 100%;
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 14px;
+  line-height: 21px;
 
-  padding-top: 8px;
-  padding-bottom: 16px;
+  &__header { position: sticky; top: 0; z-index: 2; padding-block: 22px; background: rgb(var(--v-theme-surface)); border-block-end: 1px solid var(--sd-modern-border); }
+  &__header-content { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-inline: 22px; }
+  &__title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  &__title img { flex: 0 0 23px; object-fit: contain; }
+  &__title h1 { margin: 0; font-size: 24px; font-weight: 500; line-height: 30px; letter-spacing: -.4px; }
+  &__header-actions { display: flex; align-items: center; gap: 8px; }
+  &__content { padding: 22px; }
+  &__toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-block-end: 20px; }
+  &__toolbar > p { flex: 1 1 240px; margin: 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  &__category { flex: 0 1 240px; min-width: 0; font-size: 13px; }
+  &__catalog { position: relative; min-height: 220px; }
+  &__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  &__error { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-block-end: 18px; }
+  &__error p { margin: 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 20px; }
+  &__footer { margin-block-start: 22px; padding-block: 16px; font-size: 12px; line-height: 18px; }
+  &__enterprise { padding: 24px; }
+  &__enterprise h2 { margin: 0 0 8px; font-size: 20px; font-weight: 500; line-height: 27px; }
+  &__enterprise p { margin: 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
+  &__credential { margin-block: 24px; }
+  &__enterprise-actions { justify-content: flex-end; gap: 10px; }
 
-  &::-webkit-scrollbar {
-    display: none;
+  @media (max-width: 640px) {
+    &__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    &__category { flex: 1 1 220px; }
   }
-
-  -webkit-overflow-scrolling: touch;
-
-  .item {
-    user-select: none;
-    padding: 8px;
-    display: inline-block;
-    border-radius: 12px;
-
-    background-color: #fff;
-    margin: 14px 4px;
-    cursor: pointer;
-
-    transition: all 0.25s;
-    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.05);
-
-    &:hover {
-      z-index: 2;
-      box-shadow: 0px 5px 25px 0px rgba(0, 0, 0, 0.2);
-      transition: all 0.5s;
-    }
-
-    min-width: 128px;
-
-    p {
-      font-weight: 500;
-      margin-top: 8px;
-    }
-
-    .icon {
-      margin: auto;
-    }
-
-    .gray {
-      -webkit-filter: grayscale(1);
-      filter: grayscale(1);
-    }
+  @media (max-width: 420px) {
+    &__header { padding-block: 18px; }
+    &__header-content { padding-inline: 14px; }
+    &__content { padding: 18px 14px; }
+    &__title h1 { font-size: 21px; line-height: 28px; }
   }
-
-  .item-space {
-    display: inline-block;
-
-    vertical-align: unset !important;
-    margin: auto 16px;
-    height: 84px;
+  @media (max-width: 360px) {
+    &__grid { grid-template-columns: minmax(0, 1fr); }
   }
 }
 </style>

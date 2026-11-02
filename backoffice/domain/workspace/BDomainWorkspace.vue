@@ -712,6 +712,18 @@
     </template>
 
     <!-- Draft-owning panels stay mounted while local routes change. -->
+    <b-shop-layout-editor
+      v-if="visited.storefront && !isExternal"
+      v-show="section === 'storefront'"
+      :key="resourceKey"
+      :shop="shop"
+      :domain-key="item.domain?.id || item.official"
+      :domain-item="item"
+      :read-only="!canWrite || !!busy || homeBusy"
+      class="b-domain-workspace__layout-editor"
+      @state="layoutDirty = $event.dirty; layoutBusy = $event.busy"
+      @saved="$emit('refresh')"
+    />
     <section
       v-if="visited.storefront"
       v-show="section === 'storefront'"
@@ -1328,6 +1340,7 @@ import BDomainCloudflareSetup from "../add/BDomainCloudflareSetup.vue";
 import BDomainWorkspaceFlow from "./BDomainWorkspaceFlow.vue";
 import BDomainSearchIllustration from "./BDomainSearchIllustration.vue";
 import BDomainStorefrontPreview from "./BDomainStorefrontPreview.vue";
+import BShopLayoutEditor from "../layout/BShopLayoutEditor.vue";
 
 const fields = ["enable", "indexed", "https", "languages", "currencies"];
 const equal = (left, right) => JSON.stringify(left) === JSON.stringify(right);
@@ -1336,6 +1349,7 @@ export default {
   name: "BDomainWorkspace",
   mixins: [DomainMixin, DateMixin],
   components: {
+    BShopLayoutEditor,
     BDomainStorefrontPreview,
     BDomainSearchIllustration,
     BDomainWorkspaceFlow,
@@ -1375,6 +1389,8 @@ export default {
     visited: { storefront: false },
     homeDirty: false,
     homeBusy: false,
+    layoutDirty: false,
+    layoutBusy: false,
     stopHomeWatch: null,
     busy: "",
     operationError: "",
@@ -1581,11 +1597,12 @@ export default {
       return (
         fields.some((field) => this.changed(field)) ||
         this.homeDirty ||
+        this.layoutDirty ||
         (!!this.quickField && this.quickValue !== this.draft[this.quickField])
       );
     },
     isBusy() {
-      return !!this.busy || this.homeBusy;
+      return !!this.busy || this.homeBusy || this.layoutBusy;
     },
     canChangePrimary() {
       return (
@@ -2023,6 +2040,8 @@ export default {
       this.stopHomeWatch = null;
       this.homeDirty = false;
       this.homeBusy = false;
+      this.layoutDirty = false;
+      this.layoutBusy = false;
       this.visited.storefront = this.section === "storefront";
       this.$nextTick(this.observeHome);
       this.resetRemoval();

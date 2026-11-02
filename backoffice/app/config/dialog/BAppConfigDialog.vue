@@ -17,7 +17,7 @@
   <v-bottom-sheet
     v-model="value_local"
     :fullscreen="$vuetify.display.mdAndDown"
-    content-class="rounded-t-xl"
+    content-class="b-app-config-dialog"
     max-width="1280"
     scrollable
   >
@@ -25,7 +25,6 @@
       :app="app"
       :shop-app="shopApp"
       :shop-id="shop.id"
-      class="rounded-t-xl"
       dark
       @close="value_local = false"
       @update:shopApp="(val) => $emit('update:shopApp', val)"
@@ -79,4 +78,11 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+:global(.b-app-config-dialog) {
+  border-radius: 18px;
+}
+:global(.v-dialog > .v-overlay__content.b-app-config-dialog > .b-app-detail) {
+  border-radius: 18px;
+}
+</style>

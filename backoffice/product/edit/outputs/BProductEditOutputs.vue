@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div>
+  <div :class="{ 'b-product-edit-outputs--modern': modern && isService }">
     <!-- ███████████████████ Virtual ███████████████████ -->
 
     <template v-if="isVirtual">
@@ -28,7 +28,7 @@
     <!-- ███████████████████ Service ███████████████████ -->
 
     <template v-if="isService">
-      <div class="widget-box mb-5">
+      <div v-if="!modern" class="widget-box mb-5">
         <u-widget-header
           :title="$t('product_outputs.service.title')"
           icon="info"
@@ -38,10 +38,14 @@
           >{{ $t("product_outputs.service.sub_title") }}
         </v-list-subheader>
       </div>
-      <b-product-service-manage :product="product"></b-product-service-manage>
+      <b-product-service-manage ref="serviceEditor" :product="product" :modern="modern" :disabled="!!busy" :metadata-available="metadataAvailable" @navigate="$emit('navigate', $event)" />
+      <footer v-if="modern" class="b-product-edit-outputs__footer">
+        <p role="status" aria-live="polite">{{ $t(hasUnsavedChanges ? 'add_product.edit_info.modern.unsaved' : 'add_product.edit_info.modern.all_saved') }}</p>
+        <div><v-btn class="sd-modern-button" variant="outlined" :disabled="!!busy || !!product.parent_id || !hasUnsavedChanges" @click="discardChanges">{{ $t('add_product.edit_info.modern.discard') }}</v-btn><v-btn v-if="!externalActionButtons" class="sd-modern-button sd-modern-button--primary" color="primary" variant="elevated" :loading="!!busy" :disabled="saveBlocked" aria-keyshortcuts="Control+s" @click="submit" v-ctrl.s="submit"><template #prepend><v-icon size="16">save</v-icon></template>{{ $t(product.id ? 'add_product.edit_info.modern.save_changes' : 'global.actions.save_continue') }}</v-btn></div>
+      </footer>
     </template>
 
-    <s-widget-buttons v-if="!externalActionButtons" auto-fixed-position class="my-5">
+    <s-widget-buttons v-if="!externalActionButtons && !(modern && isService)" auto-fixed-position class="my-5">
       <v-btn
         :loading="busy"
         color="primary"
@@ -64,11 +68,16 @@ import SFormBuilder from "../../../../ui/form/SFormBuilder.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BProductServiceManage from "../../service/manage/BProductServiceManage.vue";
 import SWidgetButtons from "../../../../ui/widget/buttons/SWidgetButtons.vue";
+import { shallowRef } from 'vue';
 
 export default {
   name: "BProductEditOutputs",
   components: { SWidgetButtons, BProductServiceManage, SFormBuilder },
+  emits: ['next', 'navigate'],
+  setup() { return { serviceEditor: shallowRef(null) }; },
   props: {
+    modern: { type: Boolean, default: false },
+    metadataAvailable: { type: Boolean, default: false },
     externalActionButtons: {
       type: Boolean,
       default: false,
@@ -84,6 +93,8 @@ export default {
     // outputs:[],
   }),
   computed: {
+    hasUnsavedChanges() { return this.serviceEditor?.hasUnsavedChanges || false; },
+    saveBlocked() { return !!this.busy; },
     isPhysical() {
       return this.product && this.product.type === ProductType.PHYSICAL.code;
     },
@@ -109,6 +120,10 @@ export default {
   },
 
   methods: {
+    prepareSave() { return this.isService ? this.serviceEditor?.prepareSave() ?? false : true; },
+    markSaved() { this.serviceEditor?.markSaved(); },
+    discardChanges() { this.serviceEditor?.discardChanges(); },
+    submit() { if (!this.saveBlocked && this.prepareSave()) this.$emit('next'); },
     /*  addVirtualVariants(){
       if(!this.product.outputs || !Array.isArray(this.product.outputs))this.product.outputs=[];
 
@@ -125,4 +140,12 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-product-edit-outputs--modern {
+  container: product-service / inline-size;
+  .b-product-edit-outputs__footer { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-block-start: 22px; }
+  .b-product-edit-outputs__footer > p { margin: 0; color: var(--sd-modern-muted); font-size: 12px; }
+  .b-product-edit-outputs__footer > div { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+  @media (max-width: 600px) { .b-product-edit-outputs__footer { flex-wrap: wrap; } .b-product-edit-outputs__footer > div { inline-size: 100%; } }
+}
+</style>

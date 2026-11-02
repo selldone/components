@@ -186,6 +186,7 @@
           </v-btn>
         </div>
       </article>
+      <b-official-layout-showcase :shop="shop" class="s--shop-onboarding-customization__level" />
       <article
         v-for="path in advancedPaths"
         :key="path.id"
@@ -381,6 +382,7 @@ import LTemplatesPickerDialog from "@selldone/page-builder/components/templates/
 import UColorCircle from "../../../ui/color/circle/UColorCircle.vue";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import BShopOnboardingTour from "@selldone/components-vue/backoffice/onboarding/customization/BShopOnboardingTour.vue";
+import BOfficialLayoutShowcase from "@selldone/components-vue/backoffice/domain/layout/BOfficialLayoutShowcase.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -389,6 +391,7 @@ export default {
   mixins: [],
   emits: ["ai-build"],
   components: {
+    BOfficialLayoutShowcase,
     BShopOnboardingTour,
     UWidgetHeader,
     UColorCircle,

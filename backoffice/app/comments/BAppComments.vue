@@ -13,47 +13,47 @@
   -->
 
 <template>
-  <div class="text-start">
-    <p class="small">
+  <div class="b-app-comments text-start" :aria-busy="busy">
+    <p class="b-app-comments__total">
       {{ $t("app_config.total_comments") }}: {{ numeralFormat(total, "0,0") }}
     </p>
-
-    <div class="border-between-vertical">
-      <div v-for="comment in comments" :key="comment.id" class="d-flex pt-2">
-        <v-avatar class="me-2" size="48">
-          <img :src="getUserAvatar(comment.user_id)" />
-        </v-avatar>
-        <div class="flex-grow-1">
-          <p class="font-weight-bold mb-1">{{ comment.user.name }}</p>
-          <p class="mb-2">
-            <v-rating
-              :model-value="comment.rate"
-              active-color="yellow-darken-3"
-              class="inline-block me-2"
-              color="grey-darken-1"
-              density="compact"
-              readonly
-              size="x-small"
-            ></v-rating>
+    <div class="b-app-comments__list">
+      <article
+        v-for="comment in comments"
+        :key="comment.id"
+        class="b-app-comments__item"
+      >
+        <div class="b-app-comments__byline">
+          <span>{{ comment.user.name }}</span>
+          <span class="b-app-comments__date">
             {{ getLocalDateString(comment.created_at) }}
             <small
               v-if="comment.created_at !== comment.updated_at"
               :title="getLocalDateString(comment.updated_at)"
-              class="mx-2"
-              small
               >{{ $t("global.commons.edited") }}</small
             >
-          </p>
-          <p v-text="comment.message"></p>
+          </span>
         </div>
-      </div>
+        <div
+          class="b-app-comments__stars"
+          role="img"
+          :aria-label="
+            $t('app_detail_modern.rating_value', { rate: comment.rate })
+          "
+        >
+          <span v-for="star in 5" :key="star" aria-hidden="true">{{
+            star <= comment.rate ? "★" : "☆"
+          }}</span>
+        </div>
+        <p v-text="comment.message" />
+      </article>
     </div>
-
     <v-pagination
       v-if="pageCount > 1"
       v-model="page"
       :length="pageCount"
-      @change="fetchAppReviews()"
+      class="b-app-comments__pagination"
+      @update:model-value="fetchAppReviews()"
     />
   </div>
 </template>
@@ -65,7 +65,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BAppComments",
-  mixins: [DateMixin ],
+  mixins: [DateMixin],
 
   props: {
     appCode: {
@@ -77,6 +77,8 @@ export default {
     busy: false,
     comments: [],
     page: 1,
+    loaded_page: 1,
+    request_id: 0,
     total: 0,
     itemsPerPage: 10,
   }),
@@ -89,33 +91,108 @@ export default {
   created() {
     this.fetchAppReviews();
   },
+  beforeUnmount() {
+    this.request_id++;
+  },
   methods: {
     fetchAppReviews() {
+      const requestId = ++this.request_id;
+      const page = this.page;
       this.busy = true;
-      axios
+      return axios
         .get(window.GAPI.GET_APP_COMMENTS(this.appCode), {
           params: {
-            offset: (this.page - 1) * this.itemsPerPage,
+            offset: (page - 1) * this.itemsPerPage,
             limit: this.itemsPerPage,
           },
         })
         .then(({ data }) => {
+          if (requestId !== this.request_id) return;
           if (!data.error) {
             this.comments = data.comments;
             this.total = data.total;
+            this.loaded_page = page;
           } else {
+            this.page = this.loaded_page;
             NotificationService.showErrorAlert(null, data.error_msg);
           }
         })
         .catch((error) => {
+          if (requestId !== this.request_id) return;
+          this.page = this.loaded_page;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
-          this.busy = false;
+          if (requestId === this.request_id) this.busy = false;
         });
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.b-app-comments {
+  min-inline-size: 0;
+  color: var(--ad-ink, rgb(var(--v-theme-on-surface)));
+}
+.b-app-comments p {
+  margin: 0;
+}
+.b-app-comments__total {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.b-app-comments__list {
+  display: grid;
+  gap: 16px;
+}
+.b-app-comments__item {
+  display: grid;
+  gap: 6px;
+  padding-block: 14px;
+  border-block-start: 1px solid
+    var(--ad-border, rgba(var(--v-theme-on-surface), 0.12));
+}
+.b-app-comments__item:first-child {
+  padding-block-start: 3px;
+  border: 0;
+}
+.b-app-comments__byline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.b-app-comments__date {
+  color: var(--ad-muted, rgba(var(--v-theme-on-surface), 0.65));
+  text-align: end;
+}
+.b-app-comments__date small {
+  font-size: inherit;
+  margin-inline-start: 5px;
+}
+.b-app-comments__stars {
+  color: var(--ad-muted, rgba(var(--v-theme-on-surface), 0.65));
+  font-size: 12px;
+  line-height: 21px;
+  letter-spacing: 1px;
+}
+.b-app-comments__item > p {
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.b-app-comments__pagination {
+  margin-block-start: 14px;
+}
+</style>

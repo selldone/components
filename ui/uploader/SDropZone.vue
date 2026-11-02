@@ -13,9 +13,16 @@
   -->
 
 <template>
-  <div class="d-flex items-center justify-center w-full text-center">
+  <div
+    class="d-flex items-center justify-center w-full"
+    :class="modern ? 's-drop-zone--modern' : 'text-center'"
+  >
     <div
-      class="pa-6 dashed border-gray-300 rounded-18px d-flex flex-column flex-grow-1"
+      :class="
+        modern
+          ? 's-drop-zone__target'
+          : 'pa-6 dashed border-gray-300 rounded-18px d-flex flex-column flex-grow-1'
+      "
       style="min-height: inherit"
       @dragend="dragleave"
       @dragleave="dragleave"
@@ -29,17 +36,34 @@
         :label="label"
         :multiple="multiple"
         bg-color="transparent"
-        class="w-px h-px opacity-0 overflow-hidden absolute flex-grow-0"
+        :class="
+          modern
+            ? 's-drop-zone__input sd-modern-underlined-field'
+            : 'w-px h-px opacity-0 overflow-hidden absolute flex-grow-0'
+        "
         flat
-        variant="solo"
+        :hide-details="modern"
+        :variant="modern ? 'underlined' : 'solo'"
         @update:model-value="(files) => processFile(files, '')"
       />
 
       <v-spacer></v-spacer>
       <div>
-        <v-icon class="m-2" color="#fff" size="64">{{ icon }}</v-icon>
+        <v-icon
+          class="m-2"
+          :color="modern ? undefined : '#fff'"
+          :size="modern ? 24 : 64"
+          aria-hidden="true"
+          >{{ icon }}</v-icon
+        >
       </div>
-      <div>Drop landing page file here or click top input.</div>
+      <div :class="{ 's-drop-zone__hint': modern }">
+        {{
+          modern
+            ? hint || label
+            : "Drop landing page file here or click top input."
+        }}
+      </div>
       <v-spacer></v-spacer>
       <template v-if="multiple">
         <h3 class="text-h2 font-weight-black mt-3">
@@ -102,6 +126,7 @@ export default {
     failedFiles: {},
     icon: { default: "file_present" },
     hint: {},
+    modern: Boolean,
   },
   data: () => ({
     filelist: [], // Store our uploaded files
@@ -128,6 +153,10 @@ export default {
 
     dragover(event) {
       event.preventDefault();
+      if (this.modern) {
+        event.currentTarget.classList.add("s-drop-zone--dragging");
+        return;
+      }
       // Add some visual fluff to show the user can drop its files
       if (!event.currentTarget.classList.contains("bg-green-300")) {
         event.currentTarget.classList.remove("bg-gray-100");
@@ -136,13 +165,16 @@ export default {
     },
     dragleave(event) {
       // Clean up
+      if (this.modern) {
+        event.currentTarget.classList.remove("s-drop-zone--dragging");
+        return;
+      }
       event.currentTarget.classList.add("bg-gray-100");
       event.currentTarget.classList.remove("bg-green-300");
     },
     drop(event) {
       // Clean up
-      event.currentTarget.classList.add("bg-gray-100");
-      event.currentTarget.classList.remove("bg-green-300");
+      this.dragleave(event);
 
       event.preventDefault();
 
@@ -189,7 +221,7 @@ export default {
           NotificationService.showErrorAlert(
             null,
             `Maximum file size limited to ${Math.round(
-              maxFileSize / (1024 * 1024),
+              this.maxFileSize / (1024 * 1024),
             )} MB!`,
           );
           return;
@@ -202,7 +234,7 @@ export default {
           files: accepted,
           local_folder: local_folder,
         });
-      else this.$emit("select:file", files.length ? files[0] : null);
+      else this.$emit("select:file", accepted.length ? accepted[0] : null);
     },
 
     resendFailed() {
@@ -245,5 +277,30 @@ export default {
 .bg-green-300 {
   background-color: #00a89a;
   color: #fff;
+}
+
+.s-drop-zone--modern {
+  text-align: start;
+}
+.s-drop-zone--modern .s-drop-zone__target {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 12px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px dashed
+    var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.16));
+  border-radius: 12px;
+}
+.s-drop-zone--modern .s-drop-zone__target.s-drop-zone--dragging {
+  background: rgba(var(--v-theme-on-surface), 0.04);
+}
+.s-drop-zone--modern .s-drop-zone__input {
+  width: 100%;
+}
+.s-drop-zone--modern .s-drop-zone__hint {
+  font-size: var(--sd-modern-font-small, 13px);
+  line-height: 21px;
 }
 </style>

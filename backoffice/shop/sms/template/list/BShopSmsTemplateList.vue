@@ -13,8 +13,32 @@
   -->
 
 <template>
-  <div class="widget-box mb-5 min-height-40vh overflow-hidden s-table-loading">
+  <div
+    class="b-shop-sms-template-list s-table-loading text-start"
+    :class="modern ? 'sd-modern-widget b-shop-sms-template-list--modern' : 'widget-box mb-5 min-height-40vh overflow-hidden'"
+  >
+    <header v-if="modern" class="sd-modern-header b-shop-sms-template-list__header">
+      <div class="sd-modern-title">
+        <v-icon class="sd-modern-icon sd-modern-icon--plain" aria-hidden="true">description</v-icon>
+        <div>
+          <p class="sd-modern-eyebrow">{{ $t('shop_sms.modern.custom_templates') }}</p>
+          <h2 class="sd-modern-title-text">{{ sms.title }}</h2>
+          <code v-copy dir="ltr" class="b-shop-sms-template-list__context-code">{{ sms.code }}</code>
+        </div>
+      </div>
+      <v-btn
+        :disabled="sms.verification || !shop.sms_service || shop.sms_service.driver === 'default' || !shop.sms_service.enable"
+        class="sd-modern-button sd-modern-button--primary"
+        color="primary"
+        variant="elevated"
+        @click="showDialog()"
+      >
+        <v-icon start aria-hidden="true">add</v-icon>
+        {{ $t('shop_sms.modern.add_template') }}
+      </v-btn>
+    </header>
     <u-widget-header
+      v-else
       :disabled="
         sms.verification ||
         !shop.sms_service ||
@@ -36,24 +60,26 @@
       @click:add="showDialog()"
     ></u-widget-header>
 
-    <v-list-subheader>
+    <v-list-subheader :class="{ 'b-shop-sms-template-list__notice': modern }">
       <div
         v-if="
           shop.sms_service &&
           shop.sms_service.driver !== 'default' &&
           shop.sms_service.enable
         "
+        :class="{ 'sd-modern-status sd-modern-status--plain': modern }"
       >
-        <v-icon class="me-1" color="success">check_circle_outline</v-icon>
-        {{ $t("shop_sms.template.valid_message") }}
+        <span v-if="modern" class="sd-modern-status__dot sd-modern-status__dot--success" aria-hidden="true"></span>
+        <v-icon v-else class="me-1" color="success">check_circle_outline</v-icon>
+        <span :class="{ 'sd-modern-notice__content': modern }">{{ $t(modern ? 'shop_sms.modern.custom_available' : 'shop_sms.template.valid_message') }}</span>
       </div>
-      <div v-else-if="shop.sms_service && !shop.sms_service.enable">
-        <v-icon class="me-1" color="orange">warning_amber</v-icon>
-        {{ $t("shop_sms.template.provider_not_enable_message") }}
+      <div v-else-if="shop.sms_service && !shop.sms_service.enable" :class="{ 'sd-modern-notice sd-modern-notice--plain': modern }">
+        <v-icon class="me-1" :color="modern ? 'warning' : 'orange'" :size="modern ? 16 : undefined">warning_amber</v-icon>
+        <span :class="{ 'sd-modern-notice__content': modern }">{{ $t("shop_sms.template.provider_not_enable_message") }}</span>
       </div>
-      <div v-else>
-        <v-icon class="me-1" color="orange">warning_amber</v-icon>
-        {{ $t("shop_sms.template.need_custom_provider_message") }}
+      <div v-else :class="{ 'sd-modern-notice sd-modern-notice--plain': modern }">
+        <v-icon class="me-1" :color="modern ? 'warning' : 'orange'" :size="modern ? 16 : undefined">warning_amber</v-icon>
+        <span :class="{ 'sd-modern-notice__content': modern }">{{ $t("shop_sms.template.need_custom_provider_message") }}</span>
       </div>
     </v-list-subheader>
 
@@ -62,10 +88,12 @@
     <!-- ███████████████████████ List of SMS Templates ███████████████████████ -->
 
     <template v-if="!sms.verification">
-      <v-row no-gutters>
+      <v-row no-gutters :class="{ 'sd-modern-list-toolbar b-shop-sms-template-list__toolbar': modern }">
         <u-smart-toggle
           v-model="active"
           false-gray
+          :accessible="modern"
+          :class="{ 'b-shop-sms-template-list__enabled-filter': modern }"
           :true-title="$t('shop_sms.template.enable_only_filter')"
         ></u-smart-toggle>
         <v-spacer></v-spacer>
@@ -73,7 +101,7 @@
         <v-text-field
           v-model="search"
           :placeholder="$t('global.commons.search')"
-          class="max-width-field"
+          :class="modern ? 'b-shop-sms-template-list__search' : 'max-width-field'"
           clearable
           hide-details
           prepend-inner-icon="search"
@@ -93,13 +121,14 @@
         :items="templates"
         :items-length="totalItems"
         :items-per-page="itemsPerPage"
-        :mobile="$vuetify.display.xs"
+        :mobile="templateTableMobile"
         :row-props="
           (_data) => {
-            return { class: 'row-hover' };
+            return { class: modern ? 'sd-modern-clickable-item' : 'row-hover' };
           }
         "
         class="bg-transparent min-height-10vh"
+        :class="{ 'sd-modern-data-table': modern }"
         density="compact"
         hide-default-footer
         item-key="id"
@@ -112,70 +141,91 @@
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ code ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <template #no-data><b-list-empty-state v-if="emptyStateLoaded && !busy" kind="campaign"
-          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search || active ? 'dashboard_empty_state.no_results.title' : 'shop_sms.template.title'))"
-          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search || active ? 'dashboard_empty_state.no_results.description' : 'dashboard_empty_state.context.sms_templates.description'))" /></template>
+          :class="{ 'b-shop-sms-template-list__empty': modern }"
+          :title="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.title') : ($t(search || active ? 'dashboard_empty_state.no_results.title' : modern ? 'shop_sms.modern.no_templates' : 'shop_sms.template.title'))"
+          :description="(totalItems) > 0 ? $t('dashboard_empty_state.empty_page.description') : ($t(search || active ? 'dashboard_empty_state.no_results.description' : modern ? 'shop_sms.modern.no_templates_help' : 'dashboard_empty_state.context.sms_templates.description'))" /></template>
 
         <template v-slot:item.code="{ item }">
           <v-btn
             v-if="item.error"
             class="ma-1 float-end"
-            color="red"
+            :class="{ 'sd-modern-icon-button': modern }"
+            :aria-label="modern ? $t('global.commons.error') : undefined"
+            :color="modern ? undefined : 'red'"
             icon
-            size="24"
+            :size="modern ? undefined : 24"
             variant="text"
+            @click="modern && $event.stopPropagation()"
           >
             <v-icon>error</v-icon>
 
             <v-tooltip
               activator="parent"
-              content-class="bg-black text-start"
-              location="bottom"
-              max-width="360"
+              :content-class="modern ? 'sd-modern-tooltip text-start' : 'bg-black text-start'"
+              :location="modern ? 'top' : 'bottom'"
+              :max-width="modern ? undefined : 360"
+              :open-on-click="modern"
             >
               {{ item.error }}
             </v-tooltip>
           </v-btn>
 
-          <span v-if="item.mode === 'text' && !sms_provider.support_text">
-            <v-icon class="ma-1 float-end" color="amber" size="small"
+          <span v-if="item.mode === 'text' && !sms_provider?.support_text"
+                :tabindex="modern ? 0 : undefined" :aria-label="modern ? $t('shop_sms.template.text_template_not_supported_msg') : undefined"
+                @click="modern && $event.stopPropagation()">
+            <v-icon class="ma-1 float-end" :color="modern ? 'warning' : 'amber'" size="small"
               >warning
             </v-icon>
             <v-tooltip
               activator="parent"
-              content-class="bg-black text-start"
-              location="bottom"
-              max-width="360"
+              :content-class="modern ? 'sd-modern-tooltip text-start' : 'bg-black text-start'"
+              :location="modern ? 'top' : 'bottom'"
+              :max-width="modern ? undefined : 360"
+              :open-on-click="modern"
             >
               {{ $t("shop_sms.template.text_template_not_supported_msg") }}
             </v-tooltip>
           </span>
           <span
             v-else-if="
-              item.mode === 'template' && !sms_provider.support_template
+              item.mode === 'template' && !sms_provider?.support_template
             "
+            :tabindex="modern ? 0 : undefined" :aria-label="modern ? $t('shop_sms.template.structure_template_not_supported_msg') : undefined"
+            @click="modern && $event.stopPropagation()"
           >
-            <v-icon class="ma-1 float-end" color="amber" size="small"
+            <v-icon class="ma-1 float-end" :color="modern ? 'warning' : 'amber'" size="small"
               >warning
             </v-icon>
 
             <v-tooltip
               activator="parent"
-              content-class="bg-black text-start"
-              location="bottom"
-              max-width="360"
+              :content-class="modern ? 'sd-modern-tooltip text-start' : 'bg-black text-start'"
+              :location="modern ? 'top' : 'bottom'"
+              :max-width="modern ? undefined : 360"
+              :open-on-click="modern"
             >
               {{ $t("shop_sms.template.structure_template_not_supported_msg") }}
             </v-tooltip>
           </span>
 
-          <b class="small">{{ item.code }}</b>
+          <template v-if="modern">
+            <button type="button" class="sd-modern-button sd-modern-button--inline b-shop-sms-template-list__identity-open" @click.stop="showDialog(item)">
+              <v-icon aria-hidden="true">{{ item.mode === 'text' ? 'subject' : 'data_object' }}</v-icon>
+              {{ $t(item.mode === 'text' ? 'sms_template_mode.text.title' : 'sms_template_mode.template.title') }}
+            </button>
+            <code v-copy class="b-shop-sms-template-list__code" dir="ltr" @click.stop>{{ item.code }}</code>
+          </template>
+          <b v-else class="small">{{ item.code }}</b>
         </template>
 
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ language ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <template v-slot:item.language="{ item }">
+          <span v-if="modern" class="b-shop-sms-template-list__language">
+            {{ item.language ? getLanguageName(item.language) : $t('global.commons.default') }}
+          </span>
           <b
-            v-if="item.language"
+            v-else-if="item.language"
             :caption="getLanguageName(item.language)"
             class="text-uppercase sub-caption b-12px -no-wrap"
             >{{ item.language }}</b
@@ -187,25 +237,38 @@
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ enable ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <template v-slot:item.enable="{ item }">
-          <u-check :model-value="item.enable" read-only></u-check>
+          <span v-if="modern" class="sd-modern-status sd-modern-status--plain">
+            <span class="sd-modern-status__dot" :class="item.enable ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--error'"></span>
+            {{ $t(item.enable ? 'shop_sms.modern.enabled' : 'shop_sms.modern.disabled') }}
+          </span>
+          <u-check v-else :model-value="item.enable" read-only></u-check>
         </template>
 
         <!-- ▂▂▂▂▂▂▂▂▂▂▂▂▂ text ▂▂▂▂▂▂▂▂▂▂▂▂▂ -->
 
         <template v-slot:item.text="{ item }">
-          <div v-if="item.mode === 'text'" class="py-1 small">
+          <v-tooltip v-if="modern && item.mode === 'text'" location="top" content-class="sd-modern-tooltip text-start"
+                     :disabled="!item.text || item.text === item.text.limitWords(12)">
+            <template #activator="{ props }">
+              <button v-bind="props" type="button" class="sd-modern-button sd-modern-button--inline b-shop-sms-template-list__excerpt" @click.stop="showDialog(item)">
+                {{ item.text?.limitWords(12) }}
+              </button>
+            </template>
+            {{ item.text }}
+          </v-tooltip>
+          <div v-else-if="item.mode === 'text'" class="py-1 small">
             <v-icon class="me-1 float-start" color="#111">subject</v-icon>
             {{ item.text?.limitWords(12) }}
           </div>
           <div v-else-if="item.mode === 'template'" class="py-1">
-            <v-icon class="me-1 float-start" color="#111">data_object</v-icon>
+            <v-icon class="me-1 float-start" :color="modern ? undefined : '#111'" aria-hidden="true">data_object</v-icon>
             <code>{{ $t("shop_sms.template.structured_data") }}</code>
           </div>
-          <div class="py-1 small">
+          <div class="py-1 small" :class="{ 'b-shop-sms-template-list__edited': modern }">
             <v-avatar
               class="me-2 avatar-gradient -thin -officer hover-scale"
               size="24"
-              title="Last editor"
+              :title="modern ? $t('shop_sms.modern.last_editor') : 'Last editor'"
             >
               <img :src="getUserAvatar(item.user_id)" />
             </v-avatar>
@@ -222,6 +285,8 @@
 
         <template v-slot:item.action="{ item }">
           <u-smart-menu
+            :modern="modern"
+            :title="modern ? $t('global.commons.actions') : undefined"
             :items="[
               {
                 title: $t('global.commons.edit'),
@@ -238,7 +303,7 @@
               {
                 title: $t('shop_sms.template.menu.send_test'),
                 subtitle:
-                  `${$t('global.commons.phone')}: ${USER().phone}` ||
+                  modern && !USER().phone ? $t('shop_sms.modern.test_phone_required') : `${$t('global.commons.phone')}: ${USER().phone}` ||
                   '⚠ Set your phone number first!',
                 click: () => sendTest(item),
                 icon: 'send',
@@ -258,7 +323,11 @@
         </template>
 
         <template v-slot:bottom>
-          <v-pagination v-model="page" :length="pageCount" rounded />
+          <footer v-if="modern" class="sd-modern-table-footer">
+            <p class="sd-modern-page-summary">{{ $t('shop_sms.modern.templates_count', { count: totalItems }) }}</p>
+            <v-pagination v-model="page" :length="pageCount" class="sd-modern-pagination" rounded />
+          </footer>
+          <v-pagination v-else v-model="page" :length="pageCount" rounded />
         </template>
       </v-data-table-server>
     </template>
@@ -276,6 +345,7 @@
     <!-- ███████████████████████ Preview ███████████████████████ -->
 
     <frame-view
+      v-if="!hidePreview"
       :shadow="false"
       class="max-width-field mx-auto mt-5 mb-n4"
       style="height: 250px; overflow: hidden"
@@ -336,11 +406,13 @@
         :shop="shop"
         :sms="sms"
         :template="selected_template"
+        :modern="modern"
         has-close
         @add="
           (val) => {
             AddOrUpdateItemByID(templates, val, 'id', false);
             totalItems++;
+            $emit('templates-changed');
           }
         "
         @close="dialog = false"
@@ -359,15 +431,15 @@
       scrollable
       transition="dialog-bottom-transition"
     >
-      <v-card v-if="test_response" class="text-start">
+      <v-card v-if="test_response" class="text-start" :class="{ 'sd-modern-canvas b-shop-sms-template-list__response': modern }">
         <v-card-title class="d-flex align-center">
           <v-icon class="me-1">science</v-icon>
-          Test response
+          {{ modern ? $t('shop_sms.modern.test_response') : 'Test response' }}
         </v-card-title>
 
         <v-card-text>
           <v-container>
-            <div class="max-widget-width mx-auto">
+            <div class="max-widget-width mx-auto" :class="{ 'sd-modern-widget': modern }">
               <u-pods-panel>
                 <u-pod-node
                   :color="
@@ -386,23 +458,20 @@
                 ></u-pod-node>
               </u-pods-panel>
             </div>
-            <u-widget-header title="Response"></u-widget-header>
-            <vue-json-pretty
-              :data="test_response.response"
-              class="my-3"
-            ></vue-json-pretty>
-
-            <hr class="my-5" />
-            <u-widget-header title="Config & Parameters"></u-widget-header>
-            <vue-json-pretty
-              :data="test_response.request"
-              class="my-3"
-            ></vue-json-pretty>
+            <div :class="{ 'sd-modern-widget': modern }">
+              <u-widget-header :class="{ 'sd-modern-form-header': modern }" :title="modern ? $t('shop_sms.modern.provider_response') : 'Response'"></u-widget-header>
+              <vue-json-pretty :data="test_response.response" class="my-3"></vue-json-pretty>
+            </div>
+            <hr v-if="!modern" class="my-5" />
+            <div :class="{ 'sd-modern-widget': modern }">
+              <u-widget-header :class="{ 'sd-modern-form-header': modern }" :title="modern ? $t('shop_sms.modern.request_parameters') : 'Config & Parameters'"></u-widget-header>
+              <vue-json-pretty :data="test_response.request" class="my-3"></vue-json-pretty>
+            </div>
           </v-container>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions :class="{ 'sd-modern-form-actions': modern }">
           <div class="widget-buttons">
-            <v-btn size="x-large" variant="text" @click="show_data = false">
+            <v-btn :class="{ 'sd-modern-button': modern }" :size="modern ? 'default' : 'x-large'" variant="text" @click="show_data = false">
               <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
@@ -434,6 +503,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 export default {
   name: "BShopSmsTemplateList",
+  emits: ['templates-changed'],
   mixins: [DateMixin],
 
   components: {
@@ -450,6 +520,8 @@ export default {
     VueJsonPretty,
   },
   props: {
+    modern: Boolean,
+    hidePreview: Boolean,
     shop: {
       required: true,
     },
@@ -463,6 +535,7 @@ export default {
 
     //------------------------------------------
     templates: [],
+    tableWidth: null,
 
     busy: false,
     emptyStateLoaded: false,
@@ -494,38 +567,46 @@ export default {
   }),
 
   computed: {
+    templateTableMobile() {
+      return this.modern ? (this.tableWidth ?? this.$vuetify.display.width) < 660 : this.$vuetify.display.xs;
+    },
     headers() {
       return [
         {
-          title: this.$t("global.commons.code"),
+          title: this.$t(this.modern ? 'shop_sms.modern.template' : 'global.commons.code'),
           align: "start",
           value: "code",
           sortable: true,
+          width: this.modern ? '25%' : undefined,
         },
 
         {
           title: this.$t("global.commons.language"),
-          align: "center",
+          align: this.modern ? 'start' : 'center',
           value: "language",
           sortable: true,
+          width: this.modern ? '14%' : undefined,
         },
         {
           title: this.$t("global.commons.message"),
           align: "start",
           value: "text",
           sortable: true,
+          width: this.modern ? '36%' : undefined,
         },
         {
-          title: this.$t("global.commons.enable"),
+          title: this.$t(this.modern ? 'shop_sms.modern.status' : 'global.commons.enable'),
           align: "start",
           value: "enable",
           sortable: true,
+          width: this.modern ? '17%' : undefined,
         },
         {
           title: "",
           align: "center",
           value: "action",
           sortable: false,
+          width: this.modern ? '8%' : undefined,
         },
       ];
     },
@@ -570,6 +651,16 @@ export default {
       this.page = 1;
       this.fetchItems(1, sortBy[0]?.key, sortBy[0]?.order === "desc");
     },
+  },
+  mounted() {
+    if (!this.modern) return;
+    this.tableResizeObserver = new ResizeObserver(([entry]) => {
+      if (entry.contentRect.width > 0) this.tableWidth = entry.contentRect.width;
+    });
+    this.tableResizeObserver.observe(this.$el);
+  },
+  beforeUnmount() {
+    this.tableResizeObserver?.disconnect();
   },
 
   methods: {
@@ -635,6 +726,7 @@ export default {
             .then(({ data }) => {
               if (!data.error) {
                 this.DeleteItemByID(this.templates, data.id);
+                this.$emit('templates-changed');
               } else {
                 NotificationService.showErrorAlert(null, data.error_msg);
               }
@@ -712,4 +804,95 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-shop-sms-template-list--modern.sd-modern-widget {
+  container-type: inline-size;
+  padding: 20px;
+  border: 0;
+  border-radius: 20px;
+
+  .b-shop-sms-template-list__header {
+    margin-block-end: 14px;
+
+    .sd-modern-title-text { font-size: 14px; font-weight: 500; line-height: 22px; overflow-wrap: anywhere; }
+    .sd-modern-subtitle { font-size: 13px; line-height: 20px; }
+    .sd-modern-icon { font-size: 18px; }
+  }
+  .b-shop-sms-template-list__context-code { display: inline-block; max-width: 100%; margin-block-start: 4px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 18px; overflow-wrap: anywhere; }
+
+  .b-shop-sms-template-list__notice {
+    min-height: 0;
+    padding: 0;
+    margin-block-end: 18px;
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 13px;
+    line-height: 21px;
+    white-space: normal;
+  }
+
+  .b-shop-sms-template-list__toolbar {
+    margin: 0;
+    flex-wrap: wrap;
+  }
+
+  .b-shop-sms-template-list__enabled-filter :deep(.mnh) { min-height: 28px; }
+  .b-shop-sms-template-list__enabled-filter :deep(b) { font-size: 13px; font-weight: 400; line-height: 20px; }
+  .b-shop-sms-template-list__notice :deep(.v-list-subheader__text) { width: 100%; overflow: visible; white-space: normal; }
+  .b-shop-sms-template-list__identity-open,
+  .b-shop-sms-template-list__excerpt {
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+    border: 0;
+    background: transparent;
+    color: rgb(var(--v-theme-on-surface));
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 21px;
+    text-align: start;
+    overflow-wrap: anywhere;
+    &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
+  }
+  .b-shop-sms-template-list__identity-open { font-weight: 500; }
+  .b-shop-sms-template-list__identity-open > .v-icon { font-size: 18px; color: var(--sd-modern-muted); }
+  .b-shop-sms-template-list__code { display: block; font-size: 11px; line-height: 18px; color: var(--sd-modern-muted); overflow-wrap: anywhere; }
+  .b-shop-sms-template-list__language { font-size: 13px; line-height: 21px; }
+  .b-shop-sms-template-list__edited { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
+  .b-shop-sms-template-list__edited small { font: inherit; }
+  .b-shop-sms-template-list__empty { padding-block: 26px; }
+  .b-shop-sms-template-list__empty :deep(.b-list-empty-state__art) { width: 120px; margin-block-end: 12px; }
+  .b-shop-sms-template-list__empty :deep(.b-list-empty-state__title) { font-size: 16px; line-height: 24px; }
+  .b-shop-sms-template-list__empty :deep(.b-list-empty-state__description) { font-size: 13px; line-height: 21px; }
+
+  .b-shop-sms-template-list__search {
+    flex: 0 1 240px;
+    min-width: 150px;
+    max-width: 100%;
+  }
+
+  :deep(.sd-modern-data-table > .v-table__wrapper) { overflow: visible; }
+  :deep(.sd-modern-data-table td) { overflow-wrap: anywhere; }
+
+  @media (max-width: 600px) {
+    padding: 18px 16px;
+    .b-shop-sms-template-list__search { flex-basis: 100%; }
+  }
+  @container (max-width: 660px) {
+    .b-shop-sms-template-list__search { flex-basis: 100%; }
+  }
+  @media (max-width: 600px), (pointer: coarse) {
+    .b-shop-sms-template-list__identity-open,
+    .b-shop-sms-template-list__excerpt { min-height: 44px; }
+  }
+}
+
+.b-shop-sms-template-list__response {
+  > .v-card-title { font-size: 18px; font-weight: 500; line-height: 26px; }
+  > .v-card-text > .v-container {
+    display: grid;
+    gap: 16px;
+    width: min(1040px, 100%);
+  }
+  .sd-modern-widget { padding: 20px; border: 0; border-radius: 20px; }
+}
+</style>

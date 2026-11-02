@@ -312,6 +312,12 @@
           >
           </u-widget-header>
 
+          <div v-if="requestedAppointmentLabel" class="s-service-appointment-request">
+            <span>{{ $t('service_design.refined.request_summary') }}</span>
+            <strong><bdi>{{ requestedAppointmentLabel }}</bdi></strong>
+            <small>{{ $t('service_design.refined.request_timezone', { timezone: requestedAppointmentTimezone }) }}</small>
+          </div>
+
           <u-date-input
             v-if="!modern || editing"
             v-model="reserved_at"
@@ -1051,6 +1057,7 @@ import { Basket } from "@selldone/core-js";
 import { throttle } from "lodash-es";
 import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import { formatAppointmentRequest, getServiceTimezone } from "../../product/service/service-appointment";
 
 export default {
   name: "ServiceBillingItem",
@@ -1130,6 +1137,14 @@ export default {
   },
 
   computed: {
+    requestedAppointmentTimezone() {
+      return getServiceTimezone(this.preferences?.appointment) || getServiceTimezone(this.outputs);
+    },
+    requestedAppointmentLabel() {
+      return this.has_reserve && this.requestedAppointmentTimezone
+        ? formatAppointmentRequest(this.preferences?.appointment, this.getCurrentLanguage().full_locale)
+        : null;
+    },
     isCurrentPricing() {
       return (
         this.modern &&
@@ -1328,6 +1343,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.s-service-appointment-request {
+  display: grid;
+  gap: 3px;
+  margin-block-end: 14px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+
+  > span, > small { color: rgba(var(--v-theme-on-surface), 0.7); font-size: inherit; }
+  > strong { font-weight: 500; }
+}
 .s-service-billing-item-modern {
   border: 1px solid var(--sd-modern-border);
   border-radius: 10px;

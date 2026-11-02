@@ -13,19 +13,29 @@
   -->
 
 <template>
-  <div>
+  <div :class="{ 'b-language-override-table--modern': modern }">
     <v-table
       :key="'key' + key"
-      :class="{ dense: dense }"
+      :class="{
+        dense: dense,
+        'sd-modern-table sd-modern-data-table b-language-override-table__table':
+          modern,
+      }"
       :dense="dense"
       class="mx-2 bg-transparent"
     >
       <template v-slot:default>
         <thead class="text-start">
           <tr>
-            <th class="max-w-120">Record</th>
-            <th>Default</th>
-            <th>Value</th>
+            <th class="max-w-120">
+              {{ modern ? $t("shop_languages.override_record") : "Record" }}
+            </th>
+            <th>
+              {{ modern ? $t("shop_languages.override_default") : "Default" }}
+            </th>
+            <th>
+              {{ modern ? $t("shop_languages.override_custom") : "Value" }}
+            </th>
           </tr>
         </thead>
         <tbody class="text-start">
@@ -33,8 +43,12 @@
             v-for="(val, key) in structure"
             :key="key"
             :class="{
-              'bg-red-soft': !checkValidParams(key),
-              '-edited': modelValue[key] && isString(modelValue[key]),
+              'bg-red-soft': !modern && !checkValidParams(key),
+              '-edited':
+                !modern && modelValue[key] && isString(modelValue[key]),
+              'b-language-override-table__group':
+                modern && nested && val && isObject(val) && !Array.isArray(val),
+              'sd-modern-clickable-item': modern && !readOnly && isString(val),
             }"
             class="row-hover"
             @click.stop="
@@ -53,7 +67,15 @@
               "
               colspan="3"
             >
-              <h3 class="mt-3 mb-2 text-blue">{{ key }}</h3>
+              <h3
+                :class="
+                  modern
+                    ? 'b-language-override-table__group-title'
+                    : 'mt-3 mb-2 text-blue'
+                "
+              >
+                {{ key }}
+              </h3>
 
               <!-- Table -->
               <b-language-override-table
@@ -62,6 +84,8 @@
                 :nested="nested"
                 :structure="val"
                 :to="to"
+                :modern="modern"
+                :read-only="readOnly"
               ></b-language-override-table>
             </td>
 
@@ -69,13 +93,59 @@
             <template v-else>
               <!-- Key -->
 
-              <td class="max-w-120 text-muted">
-                {{ getName(key) }}<br />
+              <td
+                class="max-w-120 text-muted"
+                :data-label="
+                  modern ? $t('shop_languages.override_record') : undefined
+                "
+              >
+                <v-btn
+                  v-if="modern && isString(val)"
+                  variant="text"
+                  class="sd-modern-button sd-modern-button--inline b-language-override-table__edit"
+                  :disabled="readOnly"
+                  :aria-label="$t('shop_languages.override_edit') + ': ' + key"
+                  @click.stop="editRecord(key)"
+                >
+                  <span>{{ getName(key) }}</span
+                  ><v-icon end size="14" aria-hidden="true">edit</v-icon>
+                </v-btn>
+                <template v-else>{{ getName(key) }}</template>
+                <v-tooltip
+                  v-if="modern && !checkValidParams(key)"
+                  location="top"
+                  content-class="sd-modern-tooltip text-start"
+                  open-on-focus
+                  open-on-click
+                >
+                  <template #activator="{ props }">
+                    <v-btn
+                      v-bind="props"
+                      icon
+                      variant="text"
+                      class="sd-modern-icon-button sd-modern-info-button"
+                      :aria-label="
+                        $t('shop_languages.override_params_mismatch')
+                      "
+                      @click.stop
+                    >
+                      <v-icon color="error" aria-hidden="true"
+                        >error_outline</v-icon
+                      >
+                    </v-btn>
+                  </template>
+                  {{ $t("shop_languages.override_params_mismatch") }}
+                </v-tooltip>
+                <br v-if="!dense" />
                 <small v-if="!dense">{{ key }}</small>
               </td>
 
               <!-- Original -->
-              <td>
+              <td
+                :data-label="
+                  modern ? $t('shop_languages.override_default') : undefined
+                "
+              >
                 <p v-if="val && Array.isArray(val)">{{ val.join(", ") }}</p>
                 <div
                   v-else-if="
@@ -100,7 +170,12 @@
               </td>
 
               <!-- Value -->
-              <td :dir="language_object.dir">
+              <td
+                :dir="language_object.dir"
+                :data-label="
+                  modern ? $t('shop_languages.override_custom') : undefined
+                "
+              >
                 <p v-if="modelValue[key] && Array.isArray(modelValue[key])">
                   {{ modelValue[key].join(", ") }}
                 </p>
@@ -121,7 +196,14 @@
                 ></u-check>
 
                 <span v-else>
-                  <span v-if="modelValue[key]">🔵 {{ modelValue[key] }} </span>
+                  <span v-if="modelValue[key]">
+                    <span
+                      v-if="modern"
+                      class="b-language-override-table__edited-dot"
+                      aria-hidden="true"
+                    ></span>
+                    <template v-else>🔵 </template>{{ modelValue[key] }}
+                  </span>
                   <small v-else>{{ val }}</small>
                 </span>
               </td>
@@ -134,46 +216,83 @@
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Dialog ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
 
     <v-dialog v-model="dialog" max-width="640">
-      <v-card v-if="selected_key !== null" class="text-start" rounded="xl">
-        <v-card-title> Edit | {{ selected_key }}</v-card-title>
+      <v-card
+        v-if="selected_key !== null"
+        class="text-start"
+        :class="{
+          'sd-modern-widget b-language-override-table__dialog': modern,
+        }"
+        rounded="xl"
+      >
+        <v-card-title
+          :class="{ 'b-language-override-table__dialog-title': modern }"
+        >
+          {{ modern ? $t("shop_languages.override_edit") : "Edit" }} |
+          <bdi>{{ selected_key }}</bdi>
+        </v-card-title>
         <v-card-text>
-          <v-list-subheader>Original value</v-list-subheader>
+          <v-list-subheader>{{
+            modern ? $t("shop_languages.override_default") : "Original value"
+          }}</v-list-subheader>
           <p v-copy class="typo-body text-start text--black">
             {{ structure[selected_key] }}
           </p>
 
-          <v-list-subheader>Translated value</v-list-subheader>
+          <v-list-subheader>{{
+            modern ? $t("shop_languages.override_custom") : "Translated value"
+          }}</v-list-subheader>
 
           <v-text-field
             v-model="input"
             :dir="language_object.dir"
-            label="Translated"
-            variant="outlined"
+            :label="
+              modern ? $t('shop_languages.override_translated') : 'Translated'
+            "
+            :class="{ 'sd-modern-underlined-field': modern }"
+            :variant="modern ? 'underlined' : 'outlined'"
           >
           </v-text-field>
 
-          <div v-if="!checkValidParams(selected_key)" class="widget-buttons">
+          <div
+            v-if="!checkValidParams(selected_key)"
+            :class="
+              modern
+                ? 'b-language-override-table__validation'
+                : 'widget-buttons'
+            "
+          >
             <v-btn
-              color="black"
-              size="x-large"
-              variant="elevated"
+              :color="modern ? undefined : 'black'"
+              :size="modern ? undefined : 'x-large'"
+              :class="{ 'sd-modern-button': modern }"
+              :variant="modern ? 'outlined' : 'elevated'"
               @click="autoFix(selected_key)"
             >
               <v-icon class="me-1">auto_fix_high</v-icon>
-              Auto fix
+              {{ modern ? $t("shop_languages.override_auto_fix") : "Auto fix" }}
             </v-btn>
           </div>
         </v-card-text>
         <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn size="x-large" variant="text" @click="dialog = false">
+          <div
+            :class="
+              modern ? 'b-language-override-table__actions' : 'widget-buttons'
+            "
+          >
+            <v-btn
+              :size="modern ? undefined : 'x-large'"
+              :class="{ 'sd-modern-button': modern }"
+              variant="text"
+              @click="dialog = false"
+            >
               <v-icon start>close</v-icon>
               {{ $t("global.actions.close") }}
             </v-btn>
             <v-btn
               :loading="busy_save"
               color="primary"
-              size="x-large"
+              :size="modern ? undefined : 'x-large'"
+              :class="{ 'sd-modern-button sd-modern-button--primary': modern }"
               variant="elevated"
               @click="setValue()"
             >
@@ -188,7 +307,6 @@
 </template>
 
 <script lang="ts">
-
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 export default {
@@ -212,6 +330,8 @@ export default {
       default: false,
       type: Boolean,
     },
+    modern: Boolean,
+    readOnly: Boolean,
   },
   data: () => ({
     dialog: false,
@@ -230,6 +350,16 @@ export default {
     },
   },
 
+  watch: {
+    readOnly(value) {
+      if (this.modern && value) {
+        this.dialog = false;
+        this.selected_key = null;
+        this.input = null;
+      }
+    },
+  },
+
   created() {
     Object.keys(this.structure).forEach((key) => {
       if (!this.modelValue[key]) {
@@ -245,12 +375,14 @@ export default {
 
   methods: {
     editRecord(key) {
+      if (this.modern && this.readOnly) return;
       this.dialog = true;
       this.selected_key = key;
       this.input = this.modelValue[this.selected_key];
       //console.log("editRecord", key, this.dialog);
     },
     setValue() {
+      if (this.modern && this.readOnly) return;
       this.modelValue[this.selected_key] = this.input;
       this.dialog = false;
       this.key = Math.random();
@@ -284,6 +416,7 @@ export default {
     },
 
     autoFix(key) {
+      if (this.modern && this.readOnly) return;
       let out = this.modelValue[key];
 
       const paramsPattern = /[^{\}]+(?=})/g;
@@ -294,15 +427,23 @@ export default {
       let originalParams = original.match(paramsPattern);
       let translatedParams = translated.match(paramsPattern);
 
-      if (translatedParams.length !== originalParams.length) {
-        NotificationService.showErrorAlert(null, "Params length not equal!");
+      if (
+        !translatedParams ||
+        !originalParams ||
+        translatedParams.length !== originalParams.length
+      ) {
+        NotificationService.showErrorAlert(
+          null,
+          this.modern
+            ? this.$t("shop_languages.override_params_mismatch")
+            : "Params length not equal!",
+        );
         return;
       }
       for (let i = 0; i < translatedParams.length; i++) {
         out = out.replace(`{${translatedParams[i]}}`, `{${originalParams[i]}}`);
       }
 
-      console.log("out", out, translatedParams, originalParams);
       this.input = out;
     },
   },
@@ -318,5 +459,137 @@ export default {
 
 .-edited {
   background-color: rgba(26, 100, 174, 0.1);
+}
+
+.b-language-override-table--modern {
+  min-width: 0;
+  font-size: var(--sd-modern-font-body, 14px);
+  line-height: 1.6;
+
+  > .b-language-override-table__table {
+    margin-inline: 0 !important;
+  }
+  > .b-language-override-table__table :deep(> .v-table__wrapper > table) {
+    width: 100%;
+    table-layout: fixed;
+  }
+  > .b-language-override-table__table
+    :deep(> .v-table__wrapper > table > thead > tr > th:first-child) {
+    width: 24%;
+    max-width: none !important;
+  }
+  > .b-language-override-table__table
+    :deep(> .v-table__wrapper > table > tbody > tr > td) {
+    padding: 14px 12px;
+    max-width: none !important;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 23px;
+  }
+  > .b-language-override-table__table
+    :deep(> .v-table__wrapper > table > tbody > tr > td small) {
+    font-size: 13px;
+    line-height: 21px;
+  }
+  .b-language-override-table__group-title {
+    margin: 12px 0 16px;
+    color: rgb(var(--v-theme-on-surface));
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 23px;
+  }
+  .b-language-override-table__edit {
+    padding-block: 4px;
+    white-space: normal;
+    max-width: 100%;
+    height: auto;
+    text-align: start;
+  }
+  .b-language-override-table__edit :deep(.v-btn__content) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .b-language-override-table__edited-dot {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-inline-end: 5px;
+    margin-block-end: 2px;
+    border-radius: 50%;
+    background: rgb(var(--v-theme-primary));
+  }
+
+  @media (max-width: 650px) {
+    > .b-language-override-table__table
+      :deep(> .v-table__wrapper > table > thead) {
+      display: none;
+    }
+    > .b-language-override-table__table
+      :deep(> .v-table__wrapper > table > tbody > tr) {
+      display: block;
+      padding-block: 12px;
+    }
+    > .b-language-override-table__table
+      :deep(> .v-table__wrapper > table > tbody > tr > td) {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      border: 0;
+    }
+    > .b-language-override-table__table
+      :deep(> .v-table__wrapper > table > tbody > tr > td[data-label]::before) {
+      content: attr(data-label);
+      display: block;
+      margin-block-end: 4px;
+    }
+    > .b-language-override-table__table
+      :deep(
+        > .v-table__wrapper
+          > table
+          > tbody
+          > tr.b-language-override-table__group
+      ) {
+      padding: 0;
+    }
+    > .b-language-override-table__table
+      :deep(
+        > .v-table__wrapper
+          > table
+          > tbody
+          > tr.b-language-override-table__group
+          > td
+      ) {
+      padding-inline: 0;
+    }
+  }
+}
+
+.b-language-override-table__dialog {
+  .b-language-override-table__dialog-title {
+    padding: 0 0 16px;
+    white-space: normal;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 26px;
+  }
+  > :deep(.v-card-text) {
+    padding: 0;
+    font-size: 14px;
+    line-height: 23px;
+  }
+  > :deep(.v-card-actions) {
+    padding: 20px 0 0;
+  }
+  .b-language-override-table__validation {
+    margin-block-start: 16px;
+  }
+  .b-language-override-table__actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+  }
 }
 </style>
