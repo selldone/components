@@ -10,13 +10,13 @@
         <div class="s-onboarding-ai__chat">
           <div class="s-onboarding-ai__brands">
             <img
-              src="/assets/img/mcp-agents/chatgpt.svg"
+              :src="'/assets/img/mcp-agents/chatgpt.svg'"
               width="23"
               height="23"
               alt=""
             />
             <img
-              src="/assets/img/mcp-agents/claude.svg"
+              :src="'/assets/img/mcp-agents/claude.svg'"
               width="23"
               height="23"
               alt=""

@@ -83,23 +83,34 @@ test('modern searches keep their bounded native shop query without changing the 
   await pending;
   assert.equal(state.property_sets[0].id, 8);
   assert.equal(state.modelValue.id, 7);
-  assert.equal(emitted.length, 0, 'A search cannot clear or replace the unsubmitted assignment');
+  assert.equal(emitted.filter(([name]) => name === 'update:modelValue').length, 0, 'A search cannot clear or replace the unsubmitted assignment');
+  assert.deepEqual(emitted.filter(([name]) => name === 'load-state').map(([, value]) => ({ ...value })), [
+    { loading: true, error: false }, { loading: false, error: false },
+  ]);
   assert.equal(state.busy, false);
 });
 
-test('stale search completions cannot replace newer choices or clear their loading state', async () => {
-  const { state, requests } = inputFixture();
-  const old = state.getPropertySets();
-  state.search = 'new';
-  const current = state.getPropertySets();
-  requests[0].resolve({ data: { property_sets: [{ id: 1, title: 'Old' }], total: 1 } });
-  await old;
-  assert.equal(state.property_sets.length, 0);
-  assert.equal(state.busy, true);
-  requests[1].resolve({ data: { property_sets: [{ id: 2, title: 'New' }], total: 1 } });
-  await current;
-  assert.equal(state.property_sets[0].id, 2);
-  assert.equal(state.busy, false);
+test('stale search success or failure cannot replace newer choices or change their loading/error state', async () => {
+  for (const failed of [false, true]) {
+    const { state, requests, emitted, notices } = inputFixture();
+    const old = state.getPropertySets();
+    state.search = 'new';
+    const current = state.getPropertySets();
+    if (failed) requests[0].reject(new Error('Stale search failed'));
+    else requests[0].resolve({ data: { property_sets: [{ id: 1, title: 'Old' }], total: 1 } });
+    await old;
+    assert.equal(state.property_sets.length, 0);
+    assert.equal(state.busy, true);
+    const statuses = () => emitted.filter(([name]) => name === 'load-state').map(([, value]) => ({ ...value }));
+    assert.deepEqual(statuses(), [{ loading: true, error: false }, { loading: true, error: false }]);
+    assert.equal(notices.length, 0);
+    requests[1].resolve({ data: { property_sets: [{ id: 2, title: 'New' }], total: 1 } });
+    await current;
+    assert.equal(state.property_sets[0].id, 2);
+    assert.equal(state.busy, false);
+    assert.deepEqual(statuses().at(-1), { loading: false, error: false });
+    assert.equal(emitted.filter(([name]) => name === 'update:modelValue').length, 0);
+  }
 });
 
 test('closing before search completion ignores the response and modern failures keep the selected draft', async () => {
@@ -109,7 +120,8 @@ test('closing before search completion ignores the response and modern failures 
   requests[0].resolve({ data: { property_sets: [{ id: 8 }], total: 1 } });
   await pending;
   assert.equal(state.property_sets.length, 0);
-  assert.equal(emitted.length, 0);
+  assert.equal(emitted.filter(([name]) => name === 'update:modelValue').length, 0);
+  assert.deepEqual(emitted.filter(([name]) => name === 'load-state').map(([, value]) => ({ ...value })), [{ loading: true, error: false }]);
   const failure = inputFixture();
   const rejected = failure.state.getPropertySets();
   failure.requests[0].reject(new Error('Search unavailable'));
@@ -117,6 +129,16 @@ test('closing before search completion ignores the response and modern failures 
   assert.equal(failure.notices.length, 1);
   assert.equal(failure.state.modelValue.id, 7);
   assert.equal(failure.state.busy, false);
+  const statuses = () => failure.emitted.filter(([name]) => name === 'load-state').map(([, value]) => ({ ...value }));
+  assert.deepEqual(statuses().at(-1), { loading: false, error: true });
+  const retried = failure.state.getPropertySets();
+  assert.deepEqual(statuses().at(-1), { loading: true, error: false });
+  failure.requests[1].resolve({ data: { property_sets: [{ id: 8, title: 'Recovered' }], total: 1 } });
+  await retried;
+  assert.deepEqual(statuses().at(-1), { loading: false, error: false });
+  assert.equal(failure.state.property_sets[0].title, 'Recovered');
+  assert.equal(failure.state.modelValue.id, 7);
+  assert.equal(failure.emitted.filter(([name]) => name === 'update:modelValue').length, 0);
   assert.equal(notices.length, 0);
 });
 
@@ -127,6 +149,7 @@ test('legacy search keeps return-object and ID hydration behavior', async () => 
     requests[0].resolve({ data: { property_sets: [{ id: 7, title: 'Clothing' }], total: 1 } });
     await pending;
     assert.equal(returnObject ? emitted[0][1].id : emitted[0][1], 7);
+    assert.equal(emitted.filter(([name]) => name === 'load-state').length, 0, 'Legacy callers retain their existing event contract');
   }
 });
 

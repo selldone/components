@@ -118,8 +118,8 @@ test("collapsed General digests reflect live unsaved values and sensible empty s
     sku: "DRAFT-42", mpn: "   ", gtin: "12345678", hsn: 0,
     condition: "used", original: false, warranty: "Two years", return_warranty: 30,
   });
-  assert.match(state.unitsDigest, /kg · price_input_type\.area\.title/);
-  assert.match(state.unitsDigest, /digest_fractional/);
+  assert.equal(state.unitsDigest, "kg");
+  assert.equal(state.selectedPriceInputMode.code, "area");
   assert.match(state.identifiersDigest, /SKU: DRAFT-42/);
   assert.match(state.identifiersDigest, /GTIN: 12345678/);
   assert.match(state.identifiersDigest, /HSN: 0/);
@@ -145,9 +145,7 @@ test("General type and vendor guards preserve available pricing and verification
     const { state } = fixture({ type, product: { unit_float: true, lead: 0 } });
     assert.deepEqual(plain(state.price_input_modes.map((mode) => mode.code)),
       type === "PHYSICAL" ? ["default", "area", "volume", "custom"] : ["default", "custom"]);
-    assert.equal(state.unitsDigest.includes("digest_fractional"), type === "PHYSICAL");
-    assert.equal(state.unitsDigest.includes("price_input_type.default.title"),
-      ["PHYSICAL", "VIRTUAL", "SERVICE"].includes(type));
+    assert.equal(state.unitsDigest, "Item");
     assert.equal(state.identifiersDigest.includes("New"), type === "PHYSICAL");
     assert.equal(state.warrantyDigest.includes('"hours":0'), type === "VIRTUAL");
   }
@@ -160,6 +158,48 @@ test("General type and vendor guards preserve available pricing and verification
   assert.equal(fixture({ created: true, vendorPanel: true, shop: marketplace }).state.$product.status, "Open");
   assert.equal(fixture({ created: false, vendorPanel: false, shop: marketplace }).state.$product.status, "Open");
   assert.equal(fixture({ shop: { license: "FREE" } }).state.can_set_external, false);
+});
+
+test("pricing summary markers follow draft mode changes and Discard without saving", () => {
+  const { state, component, requests } = fixture();
+  component.mounted.call(state);
+  const modes = [
+    ["default", "pin"],
+    ["area", "aspect_ratio"],
+    ["volume", "view_in_ar"],
+    ["custom", "calculate"],
+  ];
+  for (const [code, icon] of modes) {
+    state.$product.price_input = code;
+    assert.equal(state.selectedPriceInputMode.code, code);
+    assert.equal(state.selectedPriceInputMode.icon, icon);
+    assert.equal(state.selectedPriceInputMode.title, `price_input_type.${code}.title`);
+    assert.equal(state.hasUnsavedChanges, code !== "default");
+  }
+  state.$product.unit_float = true;
+  state.discardChanges();
+  assert.equal(state.selectedPriceInputMode.code, "default");
+  assert.equal(state.$product.unit_float, false);
+  assert.equal(state.hasUnsavedChanges, false);
+  assert.equal(requests.length, 0);
+});
+
+test("pricing mode fallback respects product types and keeps legacy choice titles", () => {
+  for (const type of Object.keys(types)) {
+    const { state, requests } = fixture({ type });
+    for (const code of ["area", "volume", "custom", "unknown", null, undefined]) {
+      state.$product.price_input = code;
+      const available = code === "custom" || type === "PHYSICAL" && ["area", "volume"].includes(code);
+      assert.equal(state.selectedPriceInputMode.code, available ? code : "default", `${type}: ${code}`);
+      assert.equal(state.$product.price_input, code, "Presentation fallback does not rewrite the draft");
+    }
+    assert.equal(requests.length, 0);
+  }
+  for (const modern of [false, true]) {
+    const { state } = fixture({ modern });
+    for (const mode of state.price_input_modes)
+      assert.equal(mode.title, `${modern ? "" : "price_input_type.title : "}price_input_type.${mode.code}.title`);
+  }
 });
 
 test("profile digests follow selected IDs without displaying stale profile metadata", () => {
@@ -233,6 +273,25 @@ test("location, included items and property-set markers respect current assignme
     assert.deepEqual(plain(state.assignedProfileIcons), []);
     assert.equal(requests.length, 0);
   }
+});
+
+test("included tooltip keeps actual item images, a full count and a bounded live preview", () => {
+  const includes = Array.from({ length: 10 }, (_, i) => ({ id: i + 1, title: `Item ${i + 1}`, image: i ? `item-${i}.png` : null }));
+  const original = plain(includes);
+  const { state, requests } = fixture({ product: { includes } });
+  const marker = () => state.assignedProfileIcons.find(item => item.key === "includes");
+  assert.equal(marker().count, 10);
+  assert.equal(state.includedPreviewItems.length, 8);
+  assert.equal(state.includedPreviewItems[0].image, null, "An item with no image still has a fallback identity");
+  assert.equal(state.includedPreviewItems[1].image, "item-1.png");
+  assert.deepEqual(plain(includes), original, "The tooltip does not modify or reorder the assigned items");
+  state.$product.includes = [{ id: 25, title: "New item", image: "new.png" }];
+  assert.equal(marker().count, 1);
+  assert.deepEqual(plain(state.includedPreviewItems), [{ id: 25, title: "New item", image: "new.png" }]);
+  state.$product.includes = null;
+  assert.equal(marker(), undefined);
+  assert.deepEqual(plain(state.includedPreviewItems), []);
+  assert.equal(requests.length, 0);
 });
 
 test("vendor digest follows a changed assignment instead of the previous vendor name", () => {

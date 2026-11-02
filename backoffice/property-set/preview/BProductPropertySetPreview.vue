@@ -15,7 +15,9 @@
 <template>
   <ol v-if="modern" class="b-product-property-set-options">
     <li v-for="option in options" :key="option.code">
-      <v-icon aria-hidden="true" size="18">{{ option.icon }}</v-icon><span>{{ option.name }}</span>
+      <slot name="option" :option="option">
+        <v-icon aria-hidden="true" size="18">{{ option.icon }}</v-icon><span>{{ option.name }}</span>
+      </slot>
     </li>
   </ol>
   <div v-else class="b--product-property-set-preview">

@@ -487,9 +487,25 @@
       >
         <b-product-edit-info-icon name="Ruler" :size="18" /><span
           class="sd-modern-disclosure__copy"
-          ><span class="b-product-edit-info__summary-title">{{
-            $t("add_product.edit_info.modern.units_title")
-          }}</span
+          ><span class="b-product-edit-info__units-heading">
+            <span class="b-product-edit-info__summary-title">{{
+              $t("add_product.edit_info.modern.units_title")
+            }}</span>
+            <span
+              v-if="isPhysical || isService || isVirtual"
+              class="b-product-edit-info__unit-marker"
+            >
+              <v-icon size="14" aria-hidden="true">{{ selectedPriceInputMode.icon }}</v-icon>
+              {{ $t('price_input_type.' + selectedPriceInputMode.code + '.title') }}
+            </span>
+            <span
+              v-if="isPhysical && $product.unit_float"
+              class="b-product-edit-info__unit-marker"
+            >
+              <v-icon size="14" aria-hidden="true">exposure</v-icon>
+              {{ $t('add_product.edit_info.modern.digest_fractional') }}
+            </span>
+          </span
           ><span class="b-product-edit-info__digest">{{
             unitsDigest
           }}</span></span
@@ -542,19 +558,184 @@
             </template>
           </v-combobox>
 
-          <u-smart-select
-            v-if="isPhysical || isService || isVirtual"
-            v-model="$product.price_input"
-            :items="price_input_modes"
-            :class="['my-5', { 'sd-modern-smart-select': modern }]"
-            :border="modern"
-            item-description="desc"
-            item-icon="icon"
-            item-text="title"
-            item-value="code"
-            @change="$forceUpdate()"
-          >
-          </u-smart-select>
+          <div :class="{ 'b-product-edit-info__pricing': modern }">
+            <h3
+              v-if="modern && (isPhysical || isService || isVirtual)"
+              class="sd-modern-eyebrow mb-3"
+            >
+              {{ $t("price_input_type.title") }}
+            </h3>
+            <div :class="{ 'b-product-edit-info__pricing-grid': modern }">
+              <u-smart-select
+                v-if="isPhysical || isService || isVirtual"
+                v-model="$product.price_input"
+                :items="price_input_modes"
+                :class="modern ? 'sd-modern-smart-select' : 'my-5'"
+                :border="modern"
+                :force-show-all="modern"
+                :accessible="modern"
+                :aria-label="modern ? $t('price_input_type.title') : undefined"
+                item-description="desc"
+                item-icon="icon"
+                item-text="title"
+                item-value="code"
+                @change="$forceUpdate()"
+              >
+              </u-smart-select>
+              <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Custom Price Input ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
+              <v-expand-transition>
+                <div v-if="$product.price_input === 'custom'" id="custom_valuation">
+                  <div
+                    :class="
+                      modern ? 'b-product-edit-info__valuation' : 'widget-box mb-5'
+                    "
+                  >
+                    <div v-if="modern" class="b-product-edit-info__valuation-heading">
+                      <h4>{{ $t("add_product.edit_info.custom_pricing.title") }}</h4>
+                      <v-btn
+                        class="sd-modern-button sd-modern-button--inline sd-modern-button--compact"
+                        color="primary"
+                        variant="text"
+                        :prepend-icon="
+                          $product.valuation ? 'edit_note' : 'playlist_add'
+                        "
+                        @click="showValuationForm"
+                        >{{
+                          $t(
+                            $product.valuation
+                              ? "add_product.edit_info.custom_pricing.edit_pricing_action"
+                              : "add_product.edit_info.custom_pricing.add_pricing_action",
+                          )
+                        }}</v-btn
+                      >
+                    </div>
+                    <u-widget-header
+                      v-else
+                      :title="$t('add_product.edit_info.custom_pricing.title')"
+                      icon="calculate"
+                      :add-caption="
+                        $product.valuation
+                          ? $t(
+                              'add_product.edit_info.custom_pricing.edit_pricing_action',
+                            )
+                          : $t(
+                              'add_product.edit_info.custom_pricing.add_pricing_action',
+                            )
+                      "
+                      @click:add="showValuationForm"
+                      :add-icon="$product.valuation ? 'edit_note' : 'playlist_add'"
+                      :add-sub-caption="$product.valuation?.title"
+                    ></u-widget-header>
+
+                    <v-list-subheader>
+                      {{ $t("add_product.edit_info.custom_pricing.subtitle") }}
+                    </v-list-subheader>
+
+                    <s-product-section-valuation
+                      v-if="!modern && $vuetify.display.mdAndUp"
+                      v-model:preferences="preview_valuation"
+                      :product="$product"
+                      class=""
+                      preview-mode
+                      style="
+                        position: absolute;
+                        left: 115%;
+                        top: 50%;
+                        transform: scale(0.6) translateX(-50%) translateY(-50%);
+                        transform-origin: top center;
+                        border: solid #eee thick;
+                      "
+                    >
+                      <div class="pa-3 border-top-dashed d-flex align-center flex-wrap">
+                        {{ $t("global.commons.price") }}:
+                        <u-price
+                          :amount="valuation_price_base"
+                          class="ms-2"
+                          medium
+                          title="Base product price"
+                        ></u-price>
+                        <v-icon class="flip-rtl mx-3">trending_flat</v-icon>
+                        <u-price
+                          :amount="valuation_price_preview"
+                          medium
+                          title="Product price after valuation"
+                        ></u-price>
+                      </div>
+                    </s-product-section-valuation>
+
+                    <b-valuation-input
+                      v-model="valuation"
+                      :loading="busy_valuation"
+                      :shop="shop"
+                      @update:model-value="
+                        (val) => {
+                          setProductValuation(val ? val.id : null);
+                        }
+                      "
+                    ></b-valuation-input>
+
+                    <div v-if="!in_edit_mode" class="py-3 text-red font-weight-bold">
+                      <v-icon class="me-1" color="red">warning_amber</v-icon>
+
+                      {{
+                        $t(
+                          "add_product.edit_info.custom_pricing.valuation_need_saved_product_message",
+                        )
+                      }}
+                    </div>
+                    <div
+                      v-else-if="!$product.valuation_id"
+                      class="py-3 text-red font-weight-bold"
+                    >
+                      <v-icon class="me-1" color="red">warning_amber</v-icon>
+
+                      {{
+                        $t(
+                          "add_product.edit_info.custom_pricing.assign_valuation_message",
+                        )
+                      }}
+                    </div>
+
+                    <v-dialog
+                      v-model="show_valuation"
+                      fullscreen
+                      scrollable
+                      transition="dialog-bottom-transition"
+                    >
+                      <b-valuation-add
+                        v-if="pre_show_valuation"
+                        :product="$product"
+                        :shop="shop"
+                        :valuation="$product.valuation"
+                        has-file
+                        @add="
+                          (val) => {
+                            setProductValuation(val ? val.id : null);
+                            show_valuation = false;
+                          }
+                        "
+                        @close="closeValuation"
+                        @edit="
+                          (val) => {
+                            $product.valuation = val;
+                            Object.assign(valuation, val);
+                          }
+                        "
+                      ></b-valuation-add>
+                    </v-dialog>
+                  </div>
+                </div>
+              </v-expand-transition>
+              <b-product-pricing-illustration
+                v-if="modern && (isPhysical || isService || isVirtual)"
+                :mode="selectedPriceInputMode.code"
+              />
+            </div>
+          </div>
+          <hr
+            v-if="modern && (isPhysical || isService || isVirtual)"
+            class="b-product-edit-info__units-divider"
+          />
 
           <!-- Float unit option -->
           <template v-if="isPhysical">
@@ -714,132 +895,7 @@
           </v-expand-transition>
         </div>
 
-        <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Custom Price Input ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-        <v-expand-transition>
-          <div v-if="$product.price_input === 'custom'" id="custom_valuation">
-            <div
-              :class="
-                modern ? 'b-product-edit-info__valuation' : 'widget-box mb-5'
-              "
-            >
-              <u-widget-header
-                :title="$t('add_product.edit_info.custom_pricing.title')"
-                icon="calculate"
-                :add-caption="
-                  $product.valuation
-                    ? $t(
-                        'add_product.edit_info.custom_pricing.edit_pricing_action',
-                      )
-                    : $t(
-                        'add_product.edit_info.custom_pricing.add_pricing_action',
-                      )
-                "
-                @click:add="showValuationForm"
-                :add-icon="$product.valuation ? 'edit_note' : 'playlist_add'"
-                :add-sub-caption="$product.valuation?.title"
-              ></u-widget-header>
-
-              <v-list-subheader>
-                {{ $t("add_product.edit_info.custom_pricing.subtitle") }}
-              </v-list-subheader>
-
-              <s-product-section-valuation
-                v-if="!modern && $vuetify.display.mdAndUp"
-                v-model:preferences="preview_valuation"
-                :product="$product"
-                class=""
-                preview-mode
-                style="
-                  position: absolute;
-                  left: 115%;
-                  top: 50%;
-                  transform: scale(0.6) translateX(-50%) translateY(-50%);
-                  transform-origin: top center;
-                  border: solid #eee thick;
-                "
-              >
-                <div
-                  class="pa-3 border-top-dashed d-flex align-center flex-wrap"
-                >
-                  {{ $t("global.commons.price") }}:
-                  <u-price
-                    :amount="valuation_price_base"
-                    class="ms-2"
-                    medium
-                    title="Base product price"
-                  ></u-price>
-                  <v-icon class="flip-rtl mx-3">trending_flat</v-icon>
-                  <u-price
-                    :amount="valuation_price_preview"
-                    medium
-                    title="Product price after valuation"
-                  ></u-price>
-                </div>
-              </s-product-section-valuation>
-
-              <b-valuation-input
-                v-model="valuation"
-                :loading="busy_valuation"
-                :shop="shop"
-                @update:model-value="
-                  (val) => {
-                    setProductValuation(val ? val.id : null);
-                  }
-                "
-              ></b-valuation-input>
-
-              <div v-if="!in_edit_mode" class="py-3 text-red font-weight-bold">
-                <v-icon class="me-1" color="red">warning_amber</v-icon>
-
-                {{
-                  $t(
-                    "add_product.edit_info.custom_pricing.valuation_need_saved_product_message",
-                  )
-                }}
-              </div>
-              <div
-                v-else-if="!$product.valuation_id"
-                class="py-3 text-red font-weight-bold"
-              >
-                <v-icon class="me-1" color="red">warning_amber</v-icon>
-
-                {{
-                  $t(
-                    "add_product.edit_info.custom_pricing.assign_valuation_message",
-                  )
-                }}
-              </div>
-
-              <v-dialog
-                v-model="show_valuation"
-                fullscreen
-                scrollable
-                transition="dialog-bottom-transition"
-              >
-                <b-valuation-add
-                  v-if="pre_show_valuation"
-                  :product="$product"
-                  :shop="shop"
-                  :valuation="$product.valuation"
-                  has-file
-                  @add="
-                    (val) => {
-                      setProductValuation(val ? val.id : null);
-                      show_valuation = false;
-                    }
-                  "
-                  @close="closeValuation"
-                  @edit="
-                    (val) => {
-                      $product.valuation = val;
-                      Object.assign(valuation, val);
-                    }
-                  "
-                ></b-valuation-add>
-              </v-dialog>
-            </div>
-          </div>
-        </v-expand-transition></div
+      </div
     ></component>
     <component
       :is="modern ? 'details' : 'div'"
@@ -1211,12 +1267,20 @@
             <span v-if="assignedProfileIcons.length" class="b-product-edit-info__profile-icons">
               <v-tooltip v-for="profile in assignedProfileIcons" :key="profile.key" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true" :open-on-click="true">
                 <template #activator="{ props }">
-                  <span v-bind="props" class="b-product-edit-info__profile-icon" role="img" :aria-label="profile.title" tabindex="0" @click.prevent.stop @keydown.enter.prevent.stop @keydown.space.prevent.stop>
+                  <span v-bind="props" class="b-product-edit-info__profile-icon" role="img" :aria-label="profile.count ? `${profile.title} · ${profile.count}` : profile.title" tabindex="0" @click.prevent.stop @keydown.enter.prevent.stop @keydown.space.prevent.stop>
                     <v-icon v-if="profile.materialIcon" size="17" aria-hidden="true">{{ profile.materialIcon }}</v-icon>
                     <b-product-edit-info-icon v-else :name="profile.icon" :size="17" />
+                    <small v-if="profile.count" class="b-product-edit-info__profile-count" aria-hidden="true">{{ profile.count }}</small>
                   </span>
                 </template>
-                {{ profile.title }}
+                <span>{{ profile.title }}</span>
+                <span v-if="profile.key === 'includes'" class="b-product-edit-info__included-preview">
+                  <span v-for="item in includedPreviewItems" :key="item.id" class="b-product-edit-info__included-image" role="img" :aria-label="item.title || profile.title">
+                    <img v-if="item.image" :src="getShopImagePath(item.image, 96)" alt="" />
+                    <b-product-edit-info-icon v-else name="PackageOpen" :size="20" />
+                  </span>
+                  <span v-if="profile.count > includedPreviewItems.length" dir="ltr">+{{ profile.count - includedPreviewItems.length }}</span>
+                </span>
               </v-tooltip>
             </span>
           </span
@@ -1427,6 +1491,7 @@ import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import BProductProfilePropertySet from "@selldone/components-vue/backoffice/product/profile/property-set/BProductProfilePropertySet.vue";
 import BProductEditInfoIcon from "./BProductEditInfoIcon.vue";
+import BProductPricingIllustration from "./BProductPricingIllustration.vue";
 import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 
 export default {
@@ -1434,6 +1499,7 @@ export default {
   mixins: [ProductMixin],
 
   components: {
+    BProductPricingIllustration,
     BProductEditInfoIcon,
     USmartToggle,
     BProductProfilePropertySet,
@@ -1570,17 +1636,9 @@ export default {
           this.$t("add_product.edit_info.modern.digest_default_unit"),
       ];
       if (this.isPhysical || this.isVirtual || this.isService) {
-        const mode = ["default", "area", "volume", "custom"].includes(
-          product.price_input,
-        )
-          ? product.price_input
-          : "default";
-        parts.push(this.$t("price_input_type." + mode + ".title"));
-        if (mode === "custom" && product.valuation?.title)
+        if (this.selectedPriceInputMode.code === "custom" && product.valuation?.title)
           parts.push(product.valuation.title);
       }
-      if (this.isPhysical && product.unit_float)
-        parts.push(this.$t("add_product.edit_info.modern.digest_fractional"));
       if (product.action)
         parts.push(
           this.$t("add_product.edit_info.modern.digest_action", {
@@ -1716,7 +1774,7 @@ export default {
     assignedProfileIcons() {
       const product = this.$product;
       const icons = { WARRANTY: 'ShieldCheck', RETURN_POLICY: 'Undo2', GUIDE: 'BookOpen', SHIPPING: 'Truck' };
-      const assigned: { key: string; icon: string; title: string; materialIcon?: string }[] = Object.values(LogisticProfileType)
+      const assigned: { key: string; icon: string; title: string; materialIcon?: string; count?: number }[] = Object.values(LogisticProfileType)
         .filter(type => product[type.product_column])
         .map(type => ({ key: type.product_column, icon: icons[type.value], title: this.$t(type.title) }));
       if (product.tax_id) {
@@ -1724,10 +1782,14 @@ export default {
         assigned.push({ key: 'tax_id', icon: 'ReceiptText', materialIcon: tax?.icon, title: this.$t('global.commons.tax') });
       }
       if (product.map_id) assigned.push({ key: 'map_id', icon: 'MapPin', title: this.$t('product_location_profile.title') });
-      if (product.includes?.length) assigned.push({ key: 'includes', icon: 'PackageOpen', title: this.$t('global.commons.included_in_the_product') });
+      if (product.includes?.length) assigned.push({ key: 'includes', icon: 'PackageOpen', title: this.$t('global.commons.included_in_the_product'), count: product.includes.length });
       if ((this.isPhysical || this.isVirtual) && product.property_set_id)
         assigned.push({ key: 'property_set_id', icon: 'Layers', title: this.$t('product_property_set.profile.title') });
       return assigned;
+    },
+    includedPreviewItems() {
+      // Keep the tooltip bounded; the profile row retains access to every included item.
+      return this.$product.includes?.slice(0, 8) || [];
     },
     vendorDigest() {
       const id = this.$product.vendor_id;
@@ -1755,13 +1817,18 @@ export default {
     in_edit_mode() {
       return !!this.$product?.id;
     },
+    selectedPriceInputMode() {
+      return (
+        this.price_input_modes.find((mode) => mode.code === this.$product.price_input) ||
+        this.price_input_modes[0]
+      );
+    },
     price_input_modes() {
       return [
         {
           code: "default",
           title:
-            this.$t("price_input_type.title") +
-            " : " +
+            (this.modern ? "" : this.$t("price_input_type.title") + " : ") +
             this.$t("price_input_type.default.title"),
           desc: this.$t("price_input_type.default.desc"),
           icon: "pin",
@@ -1771,8 +1838,7 @@ export default {
               {
                 code: "area",
                 title:
-                  this.$t("price_input_type.title") +
-                  " : " +
+                  (this.modern ? "" : this.$t("price_input_type.title") + " : ") +
                   this.$t("price_input_type.area.title"),
                 desc: this.$t("price_input_type.area.desc"),
                 icon: "aspect_ratio",
@@ -1780,8 +1846,7 @@ export default {
               {
                 code: "volume",
                 title:
-                  this.$t("price_input_type.title") +
-                  " : " +
+                  (this.modern ? "" : this.$t("price_input_type.title") + " : ") +
                   this.$t("price_input_type.volume.title"),
                 desc: this.$t("price_input_type.volume.desc"),
                 icon: "view_in_ar",
@@ -1792,8 +1857,7 @@ export default {
         {
           code: "custom",
           title:
-            this.$t("price_input_type.title") +
-            " : " +
+            (this.modern ? "" : this.$t("price_input_type.title") + " : ") +
             this.$t("price_input_type.custom.title"),
           desc: this.$t("price_input_type.custom.desc"),
           icon: "calculate",
@@ -2216,6 +2280,87 @@ export default {
     line-height: 21px;
   }
 
+  .b-product-edit-info__units-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+  }
+
+  .b-product-edit-info__unit-marker {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+
+  .b-product-edit-info__pricing {
+    container: product-pricing / inline-size;
+    margin-block-start: 24px;
+  }
+
+  .b-product-edit-info__pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 24px;
+  }
+
+  #custom_valuation {
+    min-width: 0;
+    grid-column: 1 / -1;
+
+    .b-product-edit-info__valuation {
+      margin-block-start: 0;
+    }
+  }
+
+  .b-product-pricing-illustration {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  @container product-pricing (max-width: 560px) {
+    .b-product-edit-info__pricing-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .b-product-pricing-illustration {
+      grid-column: 1;
+      grid-row: auto;
+      min-block-size: 270px;
+    }
+  }
+
+  .b-product-edit-info__valuation-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+
+    h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 21px;
+    }
+  }
+
+  .b-product-edit-info__valuation :deep(.v-list-subheader__text) {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .b-product-edit-info__units-divider {
+    margin-block: 28px;
+    border: 0;
+    border-block-start: 1px solid var(--sd-modern-border);
+  }
+
   .b-product-edit-info__digest {
     display: block;
     margin-block-start: 3px;
@@ -2229,7 +2374,8 @@ export default {
 
   .b-product-edit-info__profile-heading { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; }
   .b-product-edit-info__profile-icons { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px; color: rgb(var(--v-theme-on-surface)); }
-  .b-product-edit-info__profile-icon { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; min-height: 24px; border-radius: 4px; }
+  .b-product-edit-info__profile-icon { display: inline-flex; align-items: center; justify-content: center; gap: 3px; min-width: 24px; min-height: 24px; border-radius: 4px; }
+  .b-product-edit-info__profile-count { font-size: 11px; line-height: 16px; font-weight: 500; }
   .b-product-edit-info__profile-icon:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
   @media (pointer: coarse) { .b-product-edit-info__profile-icon { min-width: 44px; min-height: 44px; } }
 
@@ -2333,6 +2479,27 @@ export default {
       min-height: 44px;
     }
   }
+}
+
+.b-product-edit-info__included-preview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-block-start: 10px;
+}
+
+.b-product-edit-info__included-image {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(var(--v-theme-on-surface), .12);
+  border-radius: 6px;
+  overflow: hidden;
+
+  img { width: 100%; height: 100%; object-fit: contain; }
 }
 
 .label-s-number-input {

@@ -158,6 +158,10 @@
               <span v-if="index" class="b-product-profile-tax__connector" aria-hidden="true"><b-product-edit-info-icon name="ChevronRight" :size="16" /></span>
               <button type="button" class="b-product-profile-tax__node" :class="{ 'b-product-profile-tax__node--operation': step.operation && !dialog_tax_disabled }" @click="setTaxHelp(step.key, true)">
                 <b-product-edit-info-icon :name="step.icon" :size="18" /><span>{{ step.title }}</span><small>{{ step.detail }}</small>
+                <span v-if="!dialog_tax_disabled && step.key !== 'calculation'" class="b-product-profile-tax__price-composition" aria-hidden="true">
+                  <span class="b-product-profile-tax__price-part">{{ t('price_part') }}<span v-if="dialog_tax_included" class="b-product-profile-tax__tax-part">{{ t('tax_part') }}</span></span>
+                  <template v-if="!dialog_tax_included && step.key === 'checkout'"><span>+</span><span class="b-product-profile-tax__tax-part">{{ t('tax_part') }}</span></template>
+                </span>
                 <v-tooltip :model-value="tax_help === step.key" @update:model-value="setTaxHelp(step.key, $event)" activator="parent" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true">{{ step.help }}</v-tooltip>
               </button>
             </template>
@@ -419,12 +423,12 @@ export default defineComponent({
     taxFlowSteps() {
       const disabled = this.dialog_tax_disabled;
       return [
-        { key: 'price', icon: 'Tag', title: this.t('product_price'), detail: this.t(disabled ? 'no_tax' : this.dialog_tax_included ? 'tax_included' : 'before_tax'), help: this.t('price_help') },
+        { key: 'price', icon: 'Tag', title: this.t('product_price'), detail: this.t(disabled ? 'no_tax' : this.dialog_tax_included ? 'tax_included' : 'tax_excluded'), help: this.t('price_help') },
         { key: 'calculation', operation: true, icon: disabled ? 'CircleSlash' : this.taxMode === 'external' ? 'Globe' : this.fixedTaxRate ? 'Calculator' : 'MapPin',
           title: disabled ? this.t('disabled') : this.taxMode === 'external' ? this.taxProviderName(this.dialog_tax_rule) : this.t('selldone'),
           detail: this.t(disabled ? 'no_tax' : this.taxMode === 'internal' && !this.fixedTaxRate ? 'buyer_location' : 'calculate_tax'),
           help: this.t(disabled ? 'disabled_help' : this.taxMode === 'external' ? 'external_help' : 'internal_help', { provider: this.taxProviderName(this.dialog_tax_rule) }) },
-        { key: 'checkout', icon: 'ShoppingCart', title: this.t('checkout'), detail: this.t(disabled ? 'none_added' : this.dialog_tax_included ? 'already_included' : 'tax_added'),
+        { key: 'checkout', icon: 'ShoppingCart', title: this.t('checkout'), detail: this.t(disabled ? 'none_added' : this.dialog_tax_included ? 'no_additional_tax' : 'price_plus_tax'),
           help: this.t(disabled ? 'checkout_disabled_help' : this.dialog_tax_included ? 'checkout_included_help' : 'checkout_added_help') },
       ];
     },
@@ -726,7 +730,7 @@ export default defineComponent({
   }
   .b-product-profile-tax__flow { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; margin-block: 24px 16px; min-width: 0; }
   .b-product-profile-tax__node {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; align-self: stretch; gap: 4px;
     min-width: 0; min-height: 104px; padding: 12px 8px; border: 1px solid var(--sd-modern-border); border-radius: 10px;
     background: rgb(var(--v-theme-surface)); color: inherit; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 20px; text-align: center;
     > .b-product-edit-info-icon { color: var(--sd-modern-muted); margin-block-end: 3px; flex-shrink: 0; }
@@ -735,6 +739,17 @@ export default defineComponent({
     &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
   }
   .b-product-profile-tax__node--operation { border: 2px solid rgb(var(--v-theme-primary)); }
+  .b-product-profile-tax__price-composition {
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 5px; margin-block-start: 5px;
+    font-size: 12px; line-height: 18px; color: var(--sd-modern-muted);
+  }
+  .b-product-profile-tax__price-part {
+    display: inline-flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: 5px; padding: 3px 7px;
+    border: 1px solid var(--sd-modern-border); border-radius: 5px;
+  }
+  .b-product-profile-tax__tax-part {
+    display: inline-block; padding: 0 5px; border: 1px dashed currentColor; border-radius: 3px; color: inherit;
+  }
   .b-product-profile-tax__connector { display: flex; align-items: center; justify-content: center; color: var(--sd-modern-muted); }
   @media (min-width: 601px) { .b-product-profile-tax__flow--rtl .b-product-profile-tax__connector :deep(.b-product-edit-info-icon) { transform: rotate(180deg); } }
   .b-product-profile-tax__details {
@@ -764,7 +779,8 @@ export default defineComponent({
     .b-product-profile-tax__section-heading { gap: 8px; }
     .b-product-profile-tax__facts { grid-template-columns: 1fr 1fr; gap: 20px 18px; > div:last-child { grid-column: 1 / -1; } dd.b-product-profile-tax__text-value { margin-block-start: 4px; } }
     .b-product-profile-tax__flow { grid-template-columns: minmax(0, 1fr); gap: 4px; }
-    .b-product-profile-tax__node { min-height: 58px; display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px; text-align: start; justify-content: start; padding: 10px 12px; > .b-product-edit-info-icon { grid-row: 1 / 3; margin: 0; } > span, > small { grid-column: 2; } }
+    .b-product-profile-tax__node { min-height: 58px; display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px; text-align: start; justify-content: start; padding: 10px 12px; > .b-product-edit-info-icon { grid-row: 1 / 4; margin: 0; } > span, > small { grid-column: 2; } }
+    .b-product-profile-tax__price-composition { justify-content: flex-start; }
     .b-product-profile-tax__connector :deep(.b-product-edit-info-icon) { transform: rotate(90deg); }
     .b-product-profile-tax__rules > div { grid-template-columns: 1fr; gap: 3px; }
     .b-product-profile-tax__footer { flex-direction: column; align-items: stretch; gap: 16px; padding: 18px; > p { max-width: none; } }

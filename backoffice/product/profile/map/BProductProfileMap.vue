@@ -92,11 +92,87 @@
 
   <v-dialog
     v-model="map_dialog"
-    fullscreen
+    :fullscreen="!modern || $vuetify.display.xs"
+    :max-width="modern ? 820 : undefined"
     scrollable
-    transition="dialog-bottom-transition"
+    :transition="modern ? 'dialog-transition' : 'dialog-bottom-transition'"
   >
-    <v-card class="text-start">
+    <v-card class="text-start" :class="{ 'sd-modern-widget b-product-profile-map__dialog': modern }">
+      <template v-if="modern">
+        <header class="b-product-profile-map__header">
+          <v-icon class="b-product-profile-map__heading-icon" aria-hidden="true">map</v-icon>
+          <div class="b-product-profile-map__heading">
+            <h1>{{ $t('product_location_profile.dialog.header') }}</h1>
+            <p>{{ t('subtitle') }}</p>
+          </div>
+          <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="$t('global.actions.close')" @click="map_dialog = false">
+            <v-icon aria-hidden="true">close</v-icon>
+            <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :open-on-focus="true">{{ $t('global.actions.close') }}</v-tooltip>
+          </v-btn>
+        </header>
+        <v-card-text class="b-product-profile-map__workspace sd-modern-canvas">
+          <section class="sd-modern-widget b-product-profile-map__selection">
+            <div class="b-product-profile-map__selection-heading">
+              <div><h2>{{ t('selection_title') }}</h2><p>{{ t('selection_help') }}</p></div>
+              <v-btn class="sd-modern-button sd-modern-button--inline" color="primary" variant="text" :to="{ name: 'BPageShopChannelMap' }" prepend-icon="add">{{ t('add') }}</v-btn>
+            </div>
+            <v-locale-provider :rtl="false">
+              <!-- Keep the native selector's overlay workaround and the field's actual direction. -->
+              <b-map-tag-input
+                v-if="map_dialog"
+                :key="shop.id"
+                v-model="map_input"
+                :shop="shop"
+                :dir="$vuetify.locale.isRtl ? 'rtl' : 'ltr'"
+                return-object
+                class="b-product-profile-map__input sd-modern-underlined-field"
+              />
+            </v-locale-provider>
+          </section>
+          <section v-if="map_input" class="sd-modern-widget b-product-profile-map__preview">
+            <div class="b-product-profile-map__preview-heading">
+              <h2>{{ t('preview') }}</h2>
+              <span class="b-product-profile-map__range"><v-icon size="16" aria-hidden="true">{{ map_input.range ? 'radar' : 'all_inclusive' }}</v-icon><span>{{ map_input.range ? t('range', { range: map_input.range }) : t('unlimited') }}</span></span>
+            </div>
+            <div class="b-product-profile-map__details" :class="{ 'b-product-profile-map__details--no-map': !map_url }">
+              <figure v-if="map_url" class="b-product-profile-map__map">
+                <v-img :src="map_url" aspect-ratio="1" class="map-view-box rounded-lg" :alt="t('map_alt', { title: map_input.title })">
+                  <u-map-view-pin class="map-pointer" />
+                </v-img>
+              </figure>
+              <div class="b-product-profile-map__information">
+                <h3><flag v-if="map_input.country" :iso="map_input.country" :squared="false" />{{ map_input.title }}</h3>
+                <dl>
+                  <div v-if="full_address"><dt><v-icon size="14" aria-hidden="true">place</v-icon>{{ $t('global.commons.address') }}</dt><dd>{{ full_address }}</dd></div>
+                  <div v-if="map_input.message"><dt><v-icon size="14" aria-hidden="true">chat_bubble_outline</v-icon>{{ $t('global.commons.message') }}</dt><dd>{{ map_input.message }}</dd></div>
+                </dl>
+                <details v-if="map_input.created_at || map_input.updated_at" class="b-product-profile-map__history">
+                  <summary><v-icon size="16" aria-hidden="true">history</v-icon><span>{{ t('history') }}</span><v-icon class="b-product-profile-map__history-chevron" size="16" aria-hidden="true">expand_more</v-icon></summary>
+                  <dl>
+                    <div v-if="map_input.created_at"><dt>{{ $t('global.commons.created_at') }}</dt><dd>{{ getLocalTimeString(map_input.created_at) }}</dd></div>
+                    <div v-if="map_input.updated_at"><dt>{{ t('updated') }}</dt><dd>{{ getLocalTimeString(map_input.updated_at) }}</dd></div>
+                  </dl>
+                </details>
+              </div>
+            </div>
+          </section>
+          <section v-else class="sd-modern-widget b-product-profile-map__empty">
+            <v-icon size="30" aria-hidden="true">wrong_location</v-icon>
+            <h2>{{ t('empty_title') }}</h2><p>{{ t('empty_help') }}</p>
+          </section>
+          <div class="sd-modern-notice b-product-profile-map__notice">
+            <v-icon aria-hidden="true">info_outline</v-icon><p class="sd-modern-notice__content">{{ t('guidance') }}</p>
+          </div>
+        </v-card-text>
+        <v-card-actions class="b-product-profile-map__footer">
+          <p><v-icon size="14" aria-hidden="true">save</v-icon><span>{{ t('save_help') }}</span></p>
+          <div class="b-product-profile-map__footer-actions">
+            <v-btn class="sd-modern-button" variant="text" @click="map_dialog = false">{{ $t('global.actions.cancel') }}</v-btn>
+            <v-btn class="sd-modern-button sd-modern-button--primary" color="primary" variant="elevated" prepend-icon="check" @click="selectMap(map_input)">{{ t('confirm') }}</v-btn>
+          </div>
+        </v-card-actions>
+      </template>
+      <template v-else>
       <v-card-title class="d-flex align-center">
         <v-icon class="me-1">map</v-icon>
 
@@ -210,6 +286,7 @@
           </v-btn>
         </div>
       </v-card-actions>
+      </template>
     </v-card>
   </v-dialog>
 </template>
@@ -270,6 +347,9 @@ export default defineComponent({
   },
 
   methods: {
+    t(key, values = {}) {
+      return this.$t(`product_location_profile.refined.${key}`, values);
+    },
     // ████████████████████ Set Map ████████████████████
 
     showSetMapTag() {
@@ -286,6 +366,75 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.b-product-profile-map__dialog {
+  padding: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  max-height: calc(100dvh - 48px);
+
+  h1, h2, h3, p, figure, dl, dd { margin: 0; font-family: inherit; }
+  h2 { font-size: 14px; font-weight: 500; line-height: 22px; }
+  p { font-size: 13px; line-height: 21px; color: var(--sd-modern-muted); }
+  .sd-modern-button { font-size: 13px; line-height: 20px; }
+  .b-product-profile-map__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 24px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--sd-modern-border);
+  }
+  .b-product-profile-map__heading-icon { flex-shrink: 0; margin-block-start: 3px; font-size: 22px; color: var(--sd-modern-muted); }
+  .b-product-profile-map__heading { flex: 1; min-width: 0; }
+  h1 { font-size: 20px; font-weight: 500; line-height: 28px; letter-spacing: 0; }
+  .b-product-profile-map__heading p { margin-block-start: 4px; }
+  .b-product-profile-map__workspace { display: flex; flex-direction: column; gap: 16px; padding: 20px; min-width: 0; }
+  .b-product-profile-map__selection, .b-product-profile-map__preview, .b-product-profile-map__empty { flex-shrink: 0; padding: 20px; border-radius: 14px; }
+  .b-product-profile-map__selection-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .b-product-profile-map__selection-heading p { margin-block-start: 4px; }
+  .b-product-profile-map__input { margin-block-start: 20px; }
+  .b-product-profile-map__input :deep(.v-field__input), .b-product-profile-map__input :deep(.v-autocomplete__selection) { font-size: 14px; line-height: 22px; font-weight: 400; }
+  .b-product-profile-map__preview-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-block-end: 16px; }
+  .b-product-profile-map__range { display: inline-flex; align-items: center; gap: 6px; color: var(--sd-modern-muted); font-size: 12px; line-height: 18px; }
+  .b-product-profile-map__details { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; align-items: start; }
+  .b-product-profile-map__details--no-map { grid-template-columns: minmax(0, 1fr); }
+  .b-product-profile-map__map, .b-product-profile-map__information { min-width: 0; }
+  .b-product-profile-map__information h3 { display: flex; align-items: center; gap: 8px; margin-block-end: 16px; font-size: 16px; font-weight: 500; line-height: 24px; overflow-wrap: anywhere; }
+  dl { display: grid; gap: 16px; }
+  dt { display: flex; align-items: center; gap: 6px; margin-block-end: 4px; color: var(--sd-modern-muted); font-size: 12px; line-height: 18px; }
+  dd { font-size: 13px; line-height: 21px; overflow-wrap: anywhere; unicode-bidi: plaintext; }
+  .b-product-profile-map__history { margin-block-start: 20px; }
+  .b-product-profile-map__history summary { display: flex; align-items: center; gap: 6px; min-height: 32px; list-style: none; cursor: pointer; color: var(--sd-modern-muted); font-size: 12px; line-height: 20px; }
+  .b-product-profile-map__history summary::-webkit-details-marker { display: none; }
+  .b-product-profile-map__history summary:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; border-radius: 4px; }
+  .b-product-profile-map__history-chevron { margin-inline-start: auto; }
+  .b-product-profile-map__history[open] .b-product-profile-map__history-chevron { transform: rotate(180deg); }
+  .b-product-profile-map__history dl { padding-block-start: 10px; gap: 10px; }
+  .b-product-profile-map__empty { display: flex; align-items: center; flex-direction: column; gap: 8px; padding-block: 38px; text-align: center; }
+  .b-product-profile-map__empty > .v-icon { margin-block-end: 4px; color: var(--sd-modern-muted); }
+  .b-product-profile-map__notice { padding: 0 4px; background: transparent; }
+  .b-product-profile-map__footer { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 16px; padding: 16px 24px; border-top: 1px solid var(--sd-modern-border); }
+  .b-product-profile-map__footer > p { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; line-height: 18px; }
+  .b-product-profile-map__footer > p .v-icon { flex-shrink: 0; margin-block-start: 2px; }
+  .b-product-profile-map__footer-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+  @media (max-width: 600px) {
+    max-height: 100dvh;
+    border-radius: 0;
+    .b-product-profile-map__header { padding: 20px 16px; }
+    .b-product-profile-map__workspace { padding: 16px; }
+    .b-product-profile-map__selection, .b-product-profile-map__preview, .b-product-profile-map__empty { padding: 16px; }
+    .b-product-profile-map__selection-heading { flex-wrap: wrap; gap: 6px; }
+    .b-product-profile-map__input { margin-block-start: 16px; }
+    .b-product-profile-map__input :deep(.v-field__input), .b-product-profile-map__input :deep(.v-autocomplete__selection) { font-size: 16px; }
+    .b-product-profile-map__details { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .b-product-profile-map__map { width: 100%; max-width: 300px; margin-inline: auto; }
+    .b-product-profile-map__footer { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px; }
+    .b-product-profile-map__footer-actions { justify-content: flex-end; flex-wrap: wrap; }
+    .b-product-profile-map__history summary { min-height: 44px; }
+  }
+}
+
 .b-product-profile-map--modern {
   min-height: 62px;
   padding: 10px 12px;

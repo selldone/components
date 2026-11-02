@@ -90,7 +90,7 @@ import {
 
 export default {
   name: "BPropertySetInput",
-  emits: ["update:modelValue", "click:clear"],
+  emits: ["update:modelValue", "click:clear", "load-state"],
   components: { VAutocomplete, VCombobox },
   inject: ["$shop"],
   props: {
@@ -154,6 +154,8 @@ export default {
       if (this.modern && this.disposed) return;
       const request_id = ++this.request_id;
       this.busy = true;
+      let failed = false;
+      if (this.modern) this.$emit('load-state', { loading: true, error: false });
       return axios
         .get(window.API.GET_PROPERTY_SETS(this.$shop.id), {
           params: {
@@ -195,11 +197,15 @@ export default {
         })
         .catch((error) => {
           if (!this.modern) throw error;
-          if (!this.disposed && request_id === this.request_id) NotificationService.showLaravelError(error);
+          if (!this.disposed && request_id === this.request_id) {
+            failed = true;
+            NotificationService.showLaravelError(error);
+          }
         })
         .finally(() => {
           if (this.modern && (this.disposed || request_id !== this.request_id)) return;
           this.busy = false;
+          if (this.modern) this.$emit('load-state', { loading: false, error: failed });
         });
     },
   },

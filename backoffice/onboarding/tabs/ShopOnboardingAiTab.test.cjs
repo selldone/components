@@ -114,6 +114,8 @@ function fixture(
     source: descriptor.template.content,
     filename,
     id: "onboarding-ai-test",
+    // Match Vite's production transform to catch unresolved public asset imports.
+    transformAssetUrls: { includeAbsolute: true },
     compilerOptions: { bindingMetadata: script.bindings },
   });
   assert.deepEqual(template.errors, []);

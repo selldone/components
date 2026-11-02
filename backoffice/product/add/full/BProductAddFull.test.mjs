@@ -130,7 +130,7 @@ test("Delete is saved-product navigation, separate from ordinary workflow progre
     state.setStepEditor(general, 2);
     const flow = Array.from(state.flowTabs, (tab) => tab.value);
     assert.equal(flow.includes(12), false);
-    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value), [...flow, 12]);
+    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value), [...flow, 13, 12]);
     state.goTo(12);
     component.watch.step.call(state, state.step);
     assert.equal(state.step, 12);
@@ -157,6 +157,72 @@ test("Delete is saved-product navigation, separate from ordinary workflow progre
     assert.equal(state.navigationTabs.some((tab) => tab.value === 12), false);
     assert.equal(state.canSelectStep(12), false);
   }
+});
+
+test("Metadata is saved shop-product navigation with its own save boundary", async () => {
+  for (const options of [{ modern: true }, { modern: false, modernGeneral: true }]) {
+    const state = fixture({ ...options, step: 2, visitedSteps: [2] });
+    const general = { draft: "Unsaved product title" };
+    state.setStepEditor(general, 2);
+    assert.equal(state.flowTabs.some((tab) => tab.value === 13), false);
+    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value).slice(-2), [13, 12]);
+    state.goTo(13);
+    component.watch.step.call(state, state.step);
+    assert.equal(state.step, 13);
+    assert.equal(state.flowCurrentTab.title, "resource_metadata.title");
+    assert.equal(state.flowSubtitle, "resource_metadata.subtitle");
+    assert.equal(state.flowSubmitDisabled, true);
+    const metadata = { busy: false, draft: "Unsaved metadata" };
+    state.setStepEditor(metadata, 13);
+    state.editProduct = () => assert.fail("Metadata cannot submit ordinary product fields");
+    state.addProduct = () => assert.fail("Metadata cannot create a product");
+    state.finish = () => assert.fail("Metadata cannot finish the routine workflow");
+    await state.submitStep();
+    state.nextStep();
+    assert.equal(state.step, 13);
+    metadata.busy = true;
+    state.goTo(2);
+    assert.equal(state.step, 13, "A pending metadata request keeps the workspace in place");
+    metadata.busy = false;
+    state.goTo(2);
+    component.watch.step.call(state, state.step);
+    assert.equal(state.active_editor, general);
+    assert.equal(general.draft, "Unsaved product title");
+    assert.equal(state.isStepMounted(13), true, "Metadata drafts survive a section visit");
+    state.goTo(13);
+    component.watch.step.call(state, state.step);
+    assert.equal(state.active_editor, metadata);
+    assert.equal(metadata.draft, "Unsaved metadata");
+  }
+  for (const options of [
+    { created: false }, { modern: false }, { shop: null },
+    { $route: { params: { vendor_id: 16 }, matched: [{ meta: { vendor: true } }], hash: "#metadata" } },
+  ]) {
+    const state = fixture(options);
+    assert.equal(state.metadataAvailable, false);
+    assert.equal(state.navigationTabs.some((tab) => tab.value === 13), false);
+    assert.equal(state.canSelectStep(13), false);
+  }
+});
+
+test("Metadata deep links require a saved non-vendor modern product", () => {
+  for (const options of [
+    { modern: true, expected: 13 },
+    { modern: false, modernGeneral: true, expected: 13 },
+    { modern: false, expected: 2 },
+    { modern: true, created: false, expected: 1 },
+    { modern: true, vendor: true, expected: 2 },
+  ]) {
+    const { expected, vendor, ...props } = options;
+    const state = fixture({ ...props, $route: { hash: "#metadata", params: vendor ? { vendor_id: 16 } : {}, matched: vendor ? [{ meta: { vendor: true } }] : [] } });
+    state.getRenderedOnGoogle = () => {};
+    component.created.call(state);
+    assert.equal(state.step, expected);
+  }
+  const routes = [];
+  const state = fixture({ step: 13, replaceHashRoute: true, $router: { replace: (route) => routes.push(route.hash) } });
+  component.watch.step.call(state, 13);
+  assert.deepEqual(routes, ["#metadata"]);
 });
 
 test("Delete deep links and verification remain scoped to the modern current product", () => {
@@ -792,7 +858,7 @@ test("the rendered Guided workspace shows only the active editor while retaining
   const editorStub = (name) => Vue.defineComponent({
     name,
     inheritAttrs: false,
-    props: { externalActionButtons: Boolean, modern: Boolean, workspace: Boolean, productWorkspace: Boolean, active: Boolean, parentBusy: Boolean },
+    props: { externalActionButtons: Boolean, modern: Boolean, workspace: Boolean, productWorkspace: Boolean, active: Boolean, parentBusy: Boolean, shop: Object, resource: Object, resourceType: String, readOnly: Boolean },
     data: () => ({ draft: "", busy: false, saveCalls: 0 }),
     methods: {
       saveSpec() { this.saveCalls++; },
@@ -815,6 +881,7 @@ test("the rendered Guided workspace shows only the active editor while retaining
     stubs[`BProductEdit${name}`] = editorStub(`BProductEdit${name}`);
   stubs.ArticleViewer = editorStub("ArticleViewer");
   stubs.BProductInventoryManagement = editorStub("BProductInventoryManagement");
+  stubs.BResourceMetadata = editorStub("BResourceMetadata");
   stubs.VForm = Vue.defineComponent({
     methods: { validate: async () => ({ valid: true }) },
     render() { return Vue.h("form", this.$slots.default?.()); },
@@ -866,11 +933,13 @@ test("the rendered Guided workspace shows only the active editor while retaining
   const product = Vue.reactive({ id: 31, type: "PHYSICAL", title: "Fixture product", inputs: [], outputs: [],
     product_variants: [{ id: 1 }, { id: 2, enable: false }, { id: 3, deleted_at: "2026-10-01" }] });
   app.provide("$product", product);
+  const productWriteAccess = Vue.ref(true);
   Object.assign(app.config.globalProperties, {
     $route: { params: {}, matched: [], hash: "" },
     $t: (key) => key,
     $vuetify: Vue.reactive({ display: { smAndUp: true, lgAndUp: true } }),
     USER: () => null,
+    writeShopAccess: (region) => { assert.equal(region, "PRODUCTS"); return productWriteAccess.value; },
   });
   const host = node("root");
   const state = app.mount(host);
@@ -1037,6 +1106,42 @@ test("the rendered Guided workspace shows only the active editor while retaining
     await Vue.nextTick();
     assert.equal(state.active_editor, inventory);
     assert.equal(inventory.draft, "Unsubmitted local inventory options");
+    state.goTo(13);
+    await Vue.nextTick();
+    await Vue.nextTick();
+    const metadata = state.active_editor;
+    assert.equal(metadata.$options.name, "BResourceMetadata");
+    assert.equal(metadata.resource, product);
+    assert.equal(metadata.shop.id, 42);
+    assert.equal(metadata.resourceType, "products");
+    assert.equal(metadata.active, true);
+    assert.equal(metadata.readOnly, false);
+    productWriteAccess.value = false;
+    await Vue.nextTick();
+    assert.equal(metadata.readOnly, true, "Revoked product write access reaches the shared editor");
+    productWriteAccess.value = true;
+    await Vue.nextTick();
+    assert.deepEqual(visibleEditors(), ["BResourceMetadata"]);
+    assert.equal(descendants(host).some((element) => classHas(element, "b-product-add-full__footer")), false, "Metadata owns saving outside the product workflow footer");
+    metadata.draft = "Unsubmitted fulfillment metadata";
+    metadata.$emit("saved", { field: "public_attributes", value: { badge: "Custom" } });
+    assert.deepEqual(product.public_attributes, { badge: "Custom" });
+    assert.equal(general.draft, "");
+    state.show_preview = true;
+    await Vue.nextTick();
+    assert.equal(metadata.parentBusy, true);
+    state.show_preview = false;
+    metadata.busy = true;
+    state.goTo(7);
+    assert.equal(state.step, 13);
+    metadata.busy = false;
+    await navigate("price");
+    assert.equal(metadata.active, false);
+    assert.equal(metadata.draft, "Unsubmitted fulfillment metadata");
+    state.goTo(13);
+    await Vue.nextTick();
+    await Vue.nextTick();
+    assert.equal(state.active_editor, metadata);
     const deleteTab = descendants(sidebar).find((element) => classHas(element, "b-product-add-full__delete-tab"));
     assert.ok(deleteTab, "Delete has an independent local navigation entry");
     const mobileSelect = descendants(sidebar).find((element) => element.tag === "select");

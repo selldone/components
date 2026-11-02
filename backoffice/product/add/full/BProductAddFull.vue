@@ -322,7 +322,7 @@
         <main :class="{ 'b-product-add-full__main': modernWorkspace }">
           <header v-if="modernWorkspace" class="b-product-add-full__heading">
             <div>
-              <p v-if="!modernGeneral && step !== TAB_DELETE" class="b-product-add-full__position">
+              <p v-if="!modernGeneral && ![TAB_DELETE, TAB_METADATA].includes(step)" class="b-product-add-full__position">
                 {{ $t('add_product.flow.position', { current: flowStepIndex + 1, total: flowTabs.length }) }}
                 <template v-if="type && step !== TAB_TYPE"><span aria-hidden="true">·</span>{{ $t(type.name) }}</template>
               </p>
@@ -623,6 +623,22 @@
       </div>
     </div>
 
+    <!-- ███████████████████████ Resource Metadata █████████████████████████ -->
+
+    <b-resource-metadata
+      v-if="metadataAvailable && isStepMounted(TAB_METADATA)"
+      v-show="step === TAB_METADATA"
+      :key="`${shop.id}:${$product.id}`"
+      :ref="(editor) => setStepEditor(editor, TAB_METADATA)"
+      :shop="shop"
+      :resource="$product"
+      resource-type="products"
+      :active="step === TAB_METADATA"
+      :read-only="!writeShopAccess('PRODUCTS')"
+      :parent-busy="busy || show_preview"
+      @saved="({ field, value }) => $product[field] = value"
+    />
+
     <!-- ███████████████████████ Product Delete ███████████████████████ -->
 
     <section v-if="modernWorkspace && $product.id && step === TAB_DELETE" class="sd-modern-widget b-product-add-full__delete" :aria-busy="busy_delete">
@@ -705,7 +721,7 @@
         </main>
       </div>
     </div>
-    <footer v-if="modern && step !== TAB_DELETE" class="b-product-add-full__footer">
+    <footer v-if="modern && ![TAB_DELETE, TAB_METADATA].includes(step)" class="b-product-add-full__footer">
       <div class="b-product-add-full__footer-inner">
         <p>{{ $t(step === TAB_TYPE ? 'add_product.flow.choose_hint' : step === TAB_RATING ? 'add_product.features_modern.save_hint' : step === TAB_VARIANTS ? 'add_product.inventory_modern.save_scope' : $product.id ? 'add_product.flow.save_hint' : 'add_product.flow.create_action_hint') }}</p>
         <div class="b-product-add-full__actions">
@@ -821,6 +837,7 @@ import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import { mergeProps, useId } from "vue";
 import { VForm } from "vuetify/components";
+import BResourceMetadata from "../../../resource/metadata/BResourceMetadata.vue";
 
 const TAB_TYPE = 1;
 const TAB_GENERAL_INFO = 2;
@@ -838,6 +855,7 @@ const TAB_PHYSICAL_EXTRA_INFO = 9;
 const TAB_REVIEW_BLOG = 10;
 const TAB_VARIANTS = 11;
 const TAB_DELETE = 12;
+const TAB_METADATA = 13;
 
 /**
  * <b-product-add-full>
@@ -849,6 +867,7 @@ export default {
   },
   mixins: [],
   components: {
+    BResourceMetadata,
     VForm,
     UWidgetHeader,
     UPrice,
@@ -918,6 +937,7 @@ export default {
 
       TAB_VARIANTS: TAB_VARIANTS,
       TAB_DELETE: TAB_DELETE,
+      TAB_METADATA: TAB_METADATA,
 
       tabs_name: {
         // use for hash url
@@ -933,6 +953,7 @@ export default {
         blog: TAB_REVIEW_BLOG,
         variants: TAB_VARIANTS,
         delete: TAB_DELETE,
+        metadata: TAB_METADATA,
       },
 
       busy: false, // Add or Edit button busy
@@ -1119,9 +1140,15 @@ export default {
     flowStepIndex() {
       return this.flowTabs.findIndex((tab) => tab.value === this.step);
     },
+    metadataAvailable() {
+      return this.modernWorkspace && !!this.shop?.id && !!this.$product.id && !this.IS_VENDOR_PANEL;
+    },
     navigationTabs() {
+      const metadata = this.metadataAvailable
+        ? [{ value: TAB_METADATA, icon: 'Braces', title: this.$t('resource_metadata.title'), group: null }]
+        : [];
       return this.modernWorkspace && this.$product.id
-        ? [...this.flowTabs, { value: TAB_DELETE, icon: 'Trash2', title: this.$t('global.actions.delete'), group: null }]
+        ? [...this.flowTabs, ...metadata, { value: TAB_DELETE, icon: 'Trash2', title: this.$t('global.actions.delete'), group: null }]
         : this.flowTabs;
     },
     sidebarVariantCount() {
@@ -1140,6 +1167,7 @@ export default {
       return this.navigationTabs.find((tab) => tab.value === this.step);
     },
     flowSubtitle() {
+      if (this.step === TAB_METADATA) return this.$t('resource_metadata.subtitle');
       if (this.step === TAB_DELETE) return this.$t('add_product.delete_product.modern.subtitle');
       if (this.step === TAB_VARIANTS && this.isPhysical) return this.$t('add_product.inventory_modern.intro');
       const key = Object.keys(this.tabs_name).find((key) => this.tabs_name[key] === this.step);
@@ -1149,7 +1177,7 @@ export default {
       return this.busy || this.busy_delete || this.validatingStep || !!this.active_editor?.busy || (this.step === TAB_IMAGES && !!this.active_editor?.mediaBusy) || ([TAB_PRICE, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.workspaceBusy) || this.active_editor?.state === 'saving';
     },
     flowSubmitDisabled() {
-      return this.step === TAB_DELETE || this.flowBusy || (this.modernWorkspace && this.show_preview) || !this.type ||
+      return [TAB_DELETE, TAB_METADATA].includes(this.step) || this.flowBusy || (this.modernWorkspace && this.show_preview) || !this.type ||
         ([TAB_IMAGES, TAB_INPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.saveBlocked) ||
         (!this.$product.id && this.step > TAB_GENERAL_INFO) ||
         (this.step === TAB_PRICE && this.active_editor?.calculatePrice < 0);
@@ -1319,7 +1347,7 @@ export default {
       // console.log("this.$route.hash", this.$route.hash);
       if (this.$route.hash) {
         const hash = this.$route.hash.replace("#", "");
-        if (hash && this.tabs_name[hash] && !(this.modernGeneral && this.tabs_name[hash] === TAB_TYPE) && (this.modernWorkspace || this.tabs_name[hash] !== TAB_DELETE)) {
+        if (hash && this.tabs_name[hash] && !(this.modernGeneral && this.tabs_name[hash] === TAB_TYPE) && (this.modernWorkspace || this.tabs_name[hash] !== TAB_DELETE) && (this.tabs_name[hash] !== TAB_METADATA || this.metadataAvailable)) {
           this.step = this.tabs_name[hash];
         }
       }
@@ -1408,7 +1436,7 @@ not need!
     isStepMounted(step) {
       // Keep modern draft snapshots; inactive editors have no save button or shortcut.
       return this.step === step ||
-        ((this.modern || (!!this.modernGeneral && ([TAB_GENERAL_INFO, TAB_INPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG].includes(step) || (step === TAB_VARIANTS && this.isPhysical)))) && this.visitedSteps.includes(step));
+        ((this.modern || (!!this.modernGeneral && ([TAB_GENERAL_INFO, TAB_INPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_METADATA].includes(step) || (step === TAB_VARIANTS && this.isPhysical)))) && this.visitedSteps.includes(step));
     },
 
     setStepEditor(editor, step = this.step) {
@@ -1788,7 +1816,7 @@ not need!
     },
 
     nextStep() {
-      if (this.step === TAB_DELETE) return;
+      if ([TAB_DELETE, TAB_METADATA].includes(this.step)) return;
       if (this.modernWorkspace && this.show_preview) return;
       if (this.modernWorkspace && this.step === TAB_VARIANTS) {
         if (this.flowSubmitDisabled) return;

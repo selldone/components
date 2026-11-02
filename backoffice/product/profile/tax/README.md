@@ -40,7 +40,7 @@ Focused source and isolated behavior checks:
 node --test @selldone/components-vue/backoffice/product/profile/tax/BProductProfileTax.test.mjs
 ```
 
-The 18-check suite compiles the actual Vue template/scoped styles and mounts its actual
+The 19-check suite compiles the actual Vue template/scoped styles and mounts its actual
 logic with native component stubs. It verifies draft-only selection, Confirm,
 Cancel/native dismissal, inherited defaults, financial preview modes, context
 changes, applied-row refresh, legacy rendering, subscription guidance and
@@ -50,8 +50,18 @@ facts and rule details. Nested tooltip help consumes the first Escape while
 retaining the dialog; with no active help, native Escape dismissal remains
 available. Context changes clear both the pending selection and help.
 
-The parent, input and adjacent General/logistic suites pass 55 checks. Actual
-Vue/Vuetify browser QA passes 27 baseline cases across desktop/mobile, EN/FA,
+The checkout illustration names Tax included/Tax excluded explicitly. Its small
+price composition contains the Tax label inside the price frame for included
+rules; excluded rules add a separate Tax part only at checkout. The checkout
+caption states No additional tax or Price + tax. These inert, non-proportional
+labels represent inclusion rather than an estimated amount; disabled and
+unavailable rules show no active tax composition. The focused suite verifies
+both modes for fixed, location-based and external-provider rules.
+This refinement passes the 19 isolated checks; browser QA was unavailable
+because the browser-control tool failed to launch with a host resource error.
+
+The original Refined dialog's parent, input and adjacent General/logistic suites
+passed 55 checks. Prior Vue/Vuetify browser QA passed 27 baseline cases across desktop/mobile, EN/FA,
 Light/native Dark/Smart, Add, unavailable defaults and legacy presentation.
 Focused follow-up checks cover native menu contrast, long names, pointer/touch
 help, accessible descriptions, and two-step Escape with focus retained, including

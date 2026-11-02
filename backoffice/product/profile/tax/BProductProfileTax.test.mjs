@@ -226,6 +226,31 @@ test("fixed-rate facts and rule details retain configured fractional percentages
   assert.doesNotMatch(text(rules()), /Shipping is not taxable/);
 });
 
+test("the illustration contains tax within included prices and adds it separately only at excluded checkout", async t => {
+  const hasClass = (item, name) => typeof item.props.class === "string" && item.props.class.split(" ").includes(name);
+  const matching = (parent, name) => allNodes(parent).filter(item => hasClass(item, `b-product-profile-tax__${name}`));
+  for (const mode of [{}, { fix: false }, { meta: { external_tax: { enabled: true, provider: "stripe_tax" } } }]) {
+    const f = await fixture(t, { shop: shop({ tax_profiles: [taxProfile(mode)] }) });
+    await f.open();
+    for (const included of [false, true]) {
+      f.props.shop.tax_profiles[0].included = included; await settle();
+      const [price, calculation, checkout] = matching(f.root, "node");
+      assert.ok(text(price).includes(included ? "Tax included" : "Tax excluded"));
+      assert.ok(text(checkout).includes(included ? "No additional tax" : "Price + tax"));
+      assert.equal(matching(calculation, "price-composition").length, 0);
+      const priceFrame = matching(price, "price-part")[0];
+      const checkoutFrame = matching(checkout, "price-part")[0];
+      assert.equal(matching(priceFrame, "tax-part").length, included ? 1 : 0);
+      assert.equal(matching(checkoutFrame, "tax-part").length, included ? 1 : 0);
+      assert.equal(matching(checkout, "tax-part").length, 1);
+      assert.equal(matching(f.root, "price-composition").every(item => item.props["aria-hidden"] === "true"), true);
+    }
+    f.props.shop.tax_profiles[0].enable = false; await settle();
+    assert.equal(matching(f.root, "price-composition").length, 0);
+    assert.ok(text(matching(f.root, "node")[2]).includes("No tax added"));
+  }
+});
+
 test("location rules and provider rules do not promise fixed tax rates", async t => {
   for (const rule of [taxProfile({ fix: false }),
     taxProfile({ meta: { external_tax: { enabled: true, provider: "stripe_tax" } } }),
