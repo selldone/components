@@ -9,7 +9,8 @@
           'api-doc-content__flow--play': block.animated && played[blockIndex],
         }"
       >
-        <figcaption class="api-doc-content__caption">
+        <slot v-if="$slots.caption" name="caption" />
+        <figcaption v-else class="api-doc-content__caption">
           <span class="api-doc-content__eyebrow">{{
             $t("api_docs_unified.illustration")
           }}</span>
@@ -29,6 +30,12 @@
             '--doc-flow-gap-extra': `${(layouts[blockIndex].stacked || 0) * 28}px`,
           }"
         >
+          <slot
+            name="stage-decoration"
+            :boxes="boxes[blockIndex] || {}"
+            :size="sizes[blockIndex]"
+            :layout="layouts[blockIndex]"
+          />
           <svg
             class="api-doc-content__wires"
             :viewBox="`0 0 ${sizes[blockIndex]?.w || 1} ${sizes[blockIndex]?.h || 1}`"
@@ -78,6 +85,7 @@
             :ref="(el) => setTile(blockIndex, node.id, el)"
             type="button"
             class="api-doc-content__tile"
+            :data-node-id="node.id"
             :class="{
               'api-doc-content__tile--target': arrivals[blockIndex]?.[node.id],
             }"
@@ -85,15 +93,18 @@
             :aria-describedby="
               node.description ? `${uid}-${blockIndex}-${index}` : undefined
             "
+            @click="interactive && $emit('select', node.id)"
           >
             <span class="api-doc-content__tile-head">
-              <v-icon
-                v-if="node.icon"
-                class="api-doc-content__icon"
-                size="18"
-                aria-hidden="true"
-                >{{ node.icon }}</v-icon
-              >
+              <slot name="node-icon" :node="node">
+                <v-icon
+                  v-if="node.icon"
+                  class="api-doc-content__icon"
+                  size="18"
+                  aria-hidden="true"
+                  >{{ node.icon }}</v-icon
+                >
+              </slot>
               <strong>{{ node.label }}</strong>
               <span class="api-doc-content__index" aria-hidden="true">{{
                 index + 1
@@ -107,7 +118,11 @@
               class="api-doc-content__outcome"
               :class="`api-doc-content__outcome--${node.outcome.tone}`"
             >
-              <span class="api-doc-content__dot" aria-hidden="true"></span
+              <span
+                class="api-doc-content__dot"
+                :class="{ 'no-inv': node.outcome.tone !== 'neutral' }"
+                aria-hidden="true"
+              ></span
               >{{ node.outcome.label }}
             </span>
             <span
@@ -121,7 +136,7 @@
               activator="parent"
               location="top"
               open-on-focus
-              open-on-click
+              :open-on-click="!interactive"
               content-class="sd-modern-tooltip text-start"
               :text="node.description"
             />
@@ -163,8 +178,15 @@
           >
         </p>
 
-        <details class="api-doc-content__text">
-          <summary>{{ $t("api_docs_unified.flow_text_version") }}</summary>
+        <component
+          :is="showTextVersion ? 'details' : 'div'"
+          :class="
+            showTextVersion ? 'api-doc-content__text' : 'api-doc-content__sr'
+          "
+        >
+          <summary v-if="showTextVersion">
+            {{ $t("api_docs_unified.flow_text_version") }}
+          </summary>
           <ol class="api-doc-content__accessible-nodes">
             <li v-for="node in block.nodes" :key="node.id">
               {{ node.label
@@ -192,7 +214,7 @@
               >
             </li>
           </ul>
-        </details>
+        </component>
       </figure>
     </template>
   </div>
@@ -237,6 +259,9 @@ export default defineComponent({
   name: "SArticleFlow",
   props: {
     block: { type: Object as PropType<ApiDocFlowBlock>, required: true },
+    showTextVersion: { type: Boolean, default: false },
+    interactive: { type: Boolean, default: false },
+    railColumns: { type: Number, default: 0 },
     legendLabels: {
       type: Object as PropType<
         Partial<Record<ApiDocFlowTone | "data", string>>
@@ -244,11 +269,13 @@ export default defineComponent({
       default: () => ({}),
     },
   },
+  emits: ["select", "measure"],
   data() {
     return {
       uid: `api-doc-flow-${++instances}`,
       narrow: {} as Record<number, boolean>,
       sizes: {} as Record<number, { w: number; h: number }>,
+      boxes: {} as Record<number, Record<string, ApiDocFlowBox>>,
       wires: {} as Record<number, Wire[]>,
       played: {} as Record<number, boolean>,
       figures: {} as Record<number, HTMLElement | null>,
@@ -256,13 +283,14 @@ export default defineComponent({
       tiles: {} as Record<number, Record<string, HTMLElement | null>>,
       flips: {} as Record<number, number[]>,
       resize: null as ResizeObserver | null,
+      resizeFrame: null as number | null,
       intersection: null as IntersectionObserver | null,
       direction: null as MutationObserver | null,
     };
   },
   computed: {
     content(): ApiDocFlowBlock[] {
-      // Both callers validate first; a second normalization must not alter canonical article text.
+      // Callers supply validated article definitions or trusted runtime data; keep canonical text intact.
       return [this.block];
     },
     flows(): ApiDocFlowBlock[] {
@@ -274,7 +302,11 @@ export default defineComponent({
       const out: Record<number, ApiDocFlowLayout> = {};
       this.content.forEach((block, index) => {
         if (block.type === "flow")
-          out[index] = layoutFlow(block, this.narrow[index] === true);
+          out[index] = layoutFlow(
+            block,
+            this.narrow[index] === true,
+            this.railColumns,
+          );
       });
       return out;
     },
@@ -322,7 +354,14 @@ export default defineComponent({
   },
   mounted() {
     if (typeof ResizeObserver !== "undefined") {
-      this.resize = new ResizeObserver(() => this.measure());
+      // Layout writes must run after observer delivery, coalesced into one frame.
+      this.resize = new ResizeObserver(() => {
+        if (this.resizeFrame !== null) return;
+        this.resizeFrame = requestAnimationFrame(() => {
+          this.resizeFrame = null;
+          this.measure();
+        });
+      });
     }
     if (typeof IntersectionObserver !== "undefined") {
       // The story plays once, when the reader reaches the figure; before that the wires stay hidden.
@@ -365,6 +404,7 @@ export default defineComponent({
   },
   beforeUnmount() {
     this.resize?.disconnect();
+    if (this.resizeFrame !== null) cancelAnimationFrame(this.resizeFrame);
     this.intersection?.disconnect();
     this.direction?.disconnect();
   },
@@ -442,7 +482,8 @@ export default defineComponent({
         // Stack in one column when the wide layout has no readable room per column (see narrowThreshold).
         const wasNarrow = this.narrow[index] === true;
         const narrow =
-          rect.width > 0 && rect.width < narrowThreshold(block, wasNarrow);
+          rect.width > 0 &&
+          rect.width < narrowThreshold(block, wasNarrow, this.railColumns);
         // A layout that keeps flipping (the container resizes with the column) stays as it is and is drawn.
         const now = Date.now();
         const recent = (this.flips[index] || []).filter((at) => now - at < 500);
@@ -469,6 +510,8 @@ export default defineComponent({
           };
         }
         const stages = edgeStages(block, this.layouts[index]);
+        // Runtime decorations share the exact measured geometry used by the connectors.
+        this.boxes[index] = boxes;
         this.sizes[index] = {
           w: Math.max(1, Math.round(rect.width)),
           h: Math.max(1, Math.round(rect.height)),
@@ -492,6 +535,12 @@ export default defineComponent({
             },
           ];
         });
+        this.$emit("measure", {
+          index,
+          boxes,
+          size: this.sizes[index],
+          layout: this.layouts[index],
+        });
       });
     },
   },
@@ -501,7 +550,12 @@ export default defineComponent({
 <style scoped lang="scss">
 .api-doc-content {
   --doc-flow-accent-rgb: var(--sd-modern-illustration-accent-rgb, 147, 66, 193);
-  --doc-flow-wire: rgba(var(--v-theme-on-surface), 0.28);
+  // Opaque theme colors keep crossing wires and arrowheads from darkening at overlaps.
+  --doc-flow-wire: color-mix(
+    in srgb,
+    rgb(var(--v-theme-on-surface)) 28%,
+    rgb(var(--v-theme-surface))
+  );
   display: grid;
   gap: 16px;
   min-width: 0;
@@ -864,7 +918,8 @@ export default defineComponent({
       transform: translate(8px, -50%);
     }
   }
-  .api-doc-content:dir(rtl) .api-doc-content__pill:not(.api-doc-content__pill--end) {
+  .api-doc-content:dir(rtl)
+    .api-doc-content__pill:not(.api-doc-content__pill--end) {
     transform: translate(calc(-100% - 8px), -50%);
   }
 }

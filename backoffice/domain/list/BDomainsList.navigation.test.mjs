@@ -50,10 +50,16 @@ function fixture(items = Object.values(entries), config = {}) {
     name => name === "vue" ? Vue : { delay() {} }, routeExports, win,
   );
   const RouteMixin = routeExports.RouteMixin;
+  const domainExports = {};
+  new Function("require", "exports", transpile(readFileSync(new URL("../../../mixin/domain/DomainMixin.ts", import.meta.url), "utf8")))(
+    name => name.replace("@selldone/components-vue/", "/fixture-assets/"), domainExports,
+  );
+  const DomainMixin = domainExports.default;
   const dependency = name => {
     if (name === "vue") return Vue;
     if (name === "lodash-es") return { throttle: callback => callback };
     if (name.endsWith("/RouteMixin.ts")) return { RouteMixin };
+    if (name.endsWith("/DomainMixin.ts")) return { default: DomainMixin };
     if (name.includes("/DomainsHelper")) return { DomainsHelper: { GetShopDomains: () => items } };
     if (name.includes("/ShopLicense")) return { Eligible: { CanEditDomain: () => config.eligible !== false } };
     if (name.includes("/ShopPermissions")) return { ShopPermissionRegions: { SETTINGS: { code: "SETTINGS" } } };
@@ -72,15 +78,15 @@ function fixture(items = Object.values(entries), config = {}) {
     modern: true, refined: true, showHeader: false,
     $route: { name: "BPageShopSettingDomain", params: { shop_id: "999" } },
     $router: { push: route => { order.push("push"); pushes.push(route); return route; } },
-    $t: key => key, $n: value => String(value), $nextTick: callback => callback?.(),
+    $t: (key, values) => key === 'domains_modern.list.sslManager' ? `SSL · ${values.provider}` : key === 'domains_modern.list.open_domain' ? `Open domain: ${values.domain}` : key, $n: value => String(value), $nextTick: callback => callback?.(),
     $refs: {}, $attrs: {}, $emit() {},
-    $vuetify: { display: { width: 1200 }, locale: { isRtl: false } },
-    writeShopAccess: () => config.permitted !== false, GetDomainHomeName: value => `home:${value}`,
+    $vuetify: { display: { width: 1200 }, locale: { isRtl: false }, theme: { current: { dark: false } } },
+    writeShopAccess: () => config.permitted !== false,
     GetCurrency: () => ({ flag: "gb" }), getLanguageName: value => value,
   };
   const state = { ...globals, $data: data };
   for (const key of Object.keys(data)) Object.defineProperty(state, key, { get: () => data[key], set: value => { data[key] = value; }, configurable: true });
-  for (const [key, method] of Object.entries({ ...RouteMixin.methods, ...component.methods })) state[key] = method.bind(state);
+  for (const [key, method] of Object.entries({ ...RouteMixin.methods, ...DomainMixin.methods, ...component.methods })) state[key] = method.bind(state);
   for (const [key, computed] of Object.entries(component.computed)) Object.defineProperty(state, key, { get: () => computed.call(state), configurable: true });
   const cache = state.cacheRouteState;
   state.cacheRouteState = key => { order.push("cache"); return cache(key); };
@@ -88,8 +94,8 @@ function fixture(items = Object.values(entries), config = {}) {
   return { component, RouteMixin, state, globals, data, dependency, win, pushes, order, items, cell };
 }
 
-async function renderRefined() {
-  const f = fixture([entries.custom]), buttons = [], links = [], toggles = [];
+async function renderRefined(items = [entries.custom], config = {}) {
+  const f = fixture(items, config), buttons = [], links = [], toggles = [];
   const compiled = {};
   new Function("require", "exports", transpile(template.code))(name => name === "vue" ? Vue : f.dependency(name), compiled);
   const component = { ...f.component, render: compiled.render };
@@ -102,9 +108,9 @@ async function renderRefined() {
   app.component("VDataTableServer", {
     props: ["items", "headers"],
     setup(props, { attrs, slots }) {
-      return () => Vue.h("table", { class: attrs.class }, [Vue.h("tbody", props.items.map(item => {
+      return () => Vue.h("table", { class: attrs.class }, [Vue.h("tbody", props.items.flatMap(item => {
         const input = { item, internalItem: item, isExpanded: () => false, toggleExpand: value => toggles.push(value) };
-        return Vue.h("tr", ["url", "home", "connection", "visibility", "actions"].map(key => Vue.h("td", slots[`item.${key}`]?.(input))));
+        return [Vue.h("tr", ["url", "home", "connection", "visibility", "actions"].map(key => Vue.h("td", slots[`item.${key}`]?.(input)))), ...(config.expanded ? [slots['expanded-row']?.({ item, columns: props.headers })] : [])];
       }))]);
     },
   });
@@ -147,6 +153,78 @@ test("every address opens an explicit current-shop domain overview with optional
   assert.equal(f.pushes[0].params.shop_id, 71, "the current authorized shop wins over inherited/stale route params");
 });
 
+test("overridden home pages show their canonical destination icon while inherited homes keep the default mark", async () => {
+  for (const [home, asset] of [
+    ["shop", "store.svg"], ["avocado", "avocado.svg"], ["hyper", "hyper.svg"],
+    ["blog", "blog.svg"], ["community", "community.png"], ["map", "map-tag.svg"],
+    ["/collections/new", "static-pages.svg"], [84, "landing-page.svg"],
+  ]) {
+    const item = structuredClone(entries.custom);
+    item.domain.home = home;
+    const f = await renderRefined([item]);
+    const icon = f.document.querySelector(".b-domains-list__destination img");
+    assert.equal(icon.getAttribute("src"), `/fixture-assets/assets/icons/${asset}`);
+    assert.equal(icon.getAttribute("alt"), "");
+    assert.equal(icon.getAttribute("width"), "20");
+  }
+  for (const value of [{ home: null }, { home: "avocado", primary: true }]) {
+    const item = structuredClone(entries.custom);
+    item.domain.home = value.home;
+    item.primary = !!value.primary;
+    const f = await renderRefined([item]);
+    assert.equal(f.document.querySelector(".b-domains-list__destination img"), null);
+    assert.equal(f.document.querySelector(".b-domains-list__destination").firstElementChild.textContent, "home");
+  }
+});
+
+test("maintenance stays explicit in custom-domain visibility, with disabled access taking precedence", async () => {
+  const summary = { supported: true, enabled: true, has_html: true, byte_size: 512, updated_at: '2026-11-03T00:00:00Z', reason: null };
+  for (const nested of [false, true]) for (const enabled of [false, true]) for (const permitted of [false, true]) {
+    const item = structuredClone(entries.custom);
+    item.enable = enabled;
+    if (nested) item.domain.maintenance_summary = { ...summary, has_html: false };
+    else item.maintenance_summary = summary;
+    const f = await renderRefined([item], { permitted, expanded: true });
+    const status = f.document.querySelector('td:nth-child(4) .sd-modern-status');
+    assert.equal(status.textContent, enabled ? 'domains_modern.maintenance.status' : 'domains_modern.list.disabled');
+    assert(status.querySelector(enabled ? '.sd-modern-status__dot--warning' : '.sd-modern-status__dot--error'));
+    assert.match(f.document.querySelector('.b-domains-list__details .sd-modern-notice').textContent, enabled ? /maintenance.serving_hint/ : /maintenance.configured_disabled/);
+    assert.equal(f.document.querySelector('.b-domains-list__details').textContent.includes('maintenance.missing_html'), nested, 'missing HTML never falls through to a normal-store claim');
+    assert.equal(f.document.querySelector('.b-domains-list__details .b-domain-storefront-preview'), null, 'the compact list does not duplicate the customer-view preview');
+  }
+  for (const item of [
+    { ...entries.local, maintenance_summary: summary },
+    { ...entries.sub, maintenance_summary: summary },
+    { ...entries.custom, maintenance_summary: { ...summary, supported: false } },
+    { ...entries.custom, maintenance_summary: { ...summary, enabled: false } },
+    { ...entries.custom, maintenance_summary: summary, domain: { ...entries.custom.domain, externally_hosted: true } },
+    entries.custom,
+  ]) {
+    const f = await renderRefined([item], { expanded: true });
+    assert.equal(f.document.querySelector('td:nth-child(4) .sd-modern-status').textContent, 'domains_modern.list.enabled');
+    assert.equal(f.document.querySelector('.b-domains-list__details .sd-modern-notice'), null);
+  }
+});
+
+test("connection rows explain configured SSL management independently of the public provider", async () => {
+  for (const [entry, managed] of [
+    [entries.local, true],
+    [entries.sub, true],
+    [{ ...entries.custom, connection_provider: { id: 'cloudflare' }, domain: { ...entries.custom.domain, ssl_proxy: true } }, true],
+    [{ ...entries.custom, connection_provider: { id: 'selldone' }, domain: { ...entries.custom.domain, ssl_proxy: false } }, false],
+    [{ ...entries.custom, domain: { ...entries.custom.domain, ssl_proxy: true, externally_hosted: true } }, false],
+  ]) {
+    const f = await renderRefined([entry]);
+    const connection = f.document.querySelector('td:nth-child(3)');
+    const manager = connection.querySelector('.b-domains-list__ssl-manager');
+    assert.equal(manager.tagName, 'BUTTON');
+    assert.equal(manager.getAttribute('type'), 'button');
+    assert.equal(manager.textContent.trim(), `SSL · domains_modern.map.${managed ? 'selldoneEdge' : 'externalEdge'}`);
+    assert.ok(connection.textContent.includes(`domains_modern.connection.${managed ? 'sslSecureHint' : 'sslOwnHint'}`));
+    assert.equal(f.pushes.length, 0);
+  }
+});
+
 test("navigation caches the list state and selected record before routing", () => {
   const f = fixture();
   f.state.openDomain(entries.custom, "BPageDomainConnection");
@@ -179,7 +257,9 @@ test("the rendered refined row keeps native address navigation without a copy bo
   const expand = f.buttons.find(button => button["aria-label"] === "domains_modern.workspace.details");
   expand.onClick(event);
   assert.equal(f.toggles.length, 1); assert.equal(f.pushes.length, 0);
-  const external = f.buttons.find(button => button["aria-label"] === "user_dashboard.shops.modern.open_in_new_tab");
+  const external = f.buttons.find(button => button["aria-label"] === "Open domain: store.example.test");
+  assert.equal(external.href, entries.custom.url);
+  assert.ok(f.document.querySelector('.b-domains-list__row-actions').textContent.includes("Open domain: store.example.test"));
   external.onClick(event);
   assert.equal(external.target, "_blank"); assert.equal(external.rel, "noopener noreferrer");
   assert.equal(f.pushes.length, 0, "the native external link is independent of workspace routing");
@@ -188,6 +268,8 @@ test("the rendered refined row keeps native address navigation without a copy bo
   assert.deepEqual(f.pushes, [{ name: "BPageDomainOverview", params: { shop_id: 71, domain_key: "24" }, query: {} }]);
   assert.equal(f.win.__RETURN.HIGHLIGHT_ID, "24");
   assert.equal(stopped, 3);
+  const sub = await renderRefined([entries.sub]);
+  assert.ok(sub.buttons.some(button => button["aria-label"] === "Open domain: fixture.example.test" && button.href === entries.sub.url));
 });
 
 const visibilityButton = (f, item) => descendants(f.cell("visibility", item)).find(node => node.type === "button");
@@ -233,9 +315,9 @@ function writeFixture(item, handler) {
     http: { put: (url, payload) => { requests.push([url, payload]); return handler(); } },
     notification: Object.fromEntries(["showSuccessAlert", "showErrorAlert", "showLaravelError"].map(name => [name, (...args) => notices.push([name, ...args])])),
   });
-  f.state.shop.domains = item.domain ? [{ ...item.domain, enable: item.enable }] : [];
+  f.state.shop.domains = item.domain ? [{ ...item.domain, enable: item.enable, indexed: item.indexed }] : [];
   f.state.domains = [...f.state.shop.domains];
-  if (item.official) f.state.shop[item.official] = { enable: item.enable };
+  if (item.official) f.state.shop[item.official] = { enable: item.enable, indexed: item.indexed };
   const accept = (items, value) => {
     const index = items.findIndex(entry => entry.id === value.id);
     if (index < 0) items.push(value); else items[index] = value;
@@ -311,5 +393,228 @@ test("attention links retain read access and focus the same address's HTTPS deta
   }
   for (const item of [entries.custom, entries.local, entries.sub, { ...entries.custom, ssl: false, error: "External", domain: { ...entries.custom.domain, externally_hosted: true } }]) {
     assert.equal(connectionLink(fixture([item]), item), undefined, "healthy and externally managed statuses remain plain");
+  }
+});
+
+function expandedMap(f, item) {
+  const table = descendants(renderTree(f.state, [])).find(node => node.type?.name === "v-data-table-server");
+  return descendants(table.children["expanded-row"]({ columns: f.state.refinedHeaders, item })).find(node => node.type?.name === "b-domain-flow-map");
+}
+const normalizedProps = props => Object.fromEntries(Object.entries(props).map(([key, value]) => [key.startsWith('aria-') || key.startsWith('data-') ? key : Vue.camelize(key), value]));
+
+function loadOptions(path, dependency) {
+  const source = readFileSync(new URL(path, import.meta.url), "utf8");
+  const { descriptor, errors } = parse(source, { filename: path });
+  assert.deepEqual(errors, []);
+  const options = {};
+  new Function("require", "exports", transpile(descriptor.script.content))(dependency, options);
+  return { component: options.default, descriptor };
+}
+const domainMixin = {};
+new Function("require", "exports", transpile(readFileSync(new URL("../../../mixin/domain/DomainMixin.ts", import.meta.url), "utf8")))(name => name, domainMixin);
+const nativeToggle = loadOptions("../../../ui/smart/toggle/USmartToggle.vue", name => { throw Error("Unexpected native toggle import: " + name); }).component;
+const nativeMap = loadOptions("./BDomainFlowMap.vue", name => {
+  if (name.endsWith("/DomainMixin.ts")) return domainMixin;
+  if (name.endsWith("USmartToggle.vue")) return { default: nativeToggle };
+  if (name.endsWith("/DateConverter")) return { DateConverter: {} };
+  throw Error("Unexpected map import: " + name);
+});
+const renderMapTree = new Function("Vue", compile(nativeMap.descriptor.template.content, {
+  mode: "function", prefixIdentifiers: true,
+}).code)({ ...Vue, resolveComponent: name => ({ name }), resolveDynamicComponent: name => name });
+
+function indexingControl(f, item) {
+  const owner = expandedMap(f, item);
+  owner.props = normalizedProps(owner.props);
+  const state = { ...nativeMap.component.data(), ...owner.props, busyRepair: false, $t: key => key, $vuetify: f.state.$vuetify,
+    $nextTick: callback => callback?.(), $refs: {},
+    $emit: (event, change) => event === "update-domain" && owner.props.onUpdateDomain(change),
+  };
+  for (const [key, method] of Object.entries({ ...domainMixin.default.methods, ...nativeMap.component.methods })) state[key] = method.bind(state);
+  for (const [key, computed] of Object.entries(nativeMap.component.computed)) Object.defineProperty(state, key, { get: () => computed.call(state) });
+  const tree = descendants(renderMapTree(state, []));
+  const toggles = tree.filter(node => node.type?.name === "u-smart-toggle");
+  for (const toggle of toggles) toggle.props = normalizedProps(toggle.props);
+  return { owner, state, tree, primary: toggles[0], search: toggles[1],
+    click() {
+      const props = toggles[1].props;
+      return nativeToggle.methods.toggle.call({ ...props, modelValue: props.modelValue, $nextTick: callback => callback(),
+        $emit: (event, value) => event === "update:modelValue" && props["onUpdate:modelValue"](value),
+      });
+    },
+  };
+}
+
+test("expanded details allow indexing alone with truthful permission, license, local and pending reasons", () => {
+  const sub = { ...entries.sub, indexed: true };
+  for (const [item, config, allowed, reason] of [
+    [sub, { eligible: false }, true, ""],
+    [entries.custom, {}, true, ""],
+    [entries.custom, { permitted: false }, false, "indexingLockedPermission"],
+    [entries.custom, { eligible: false }, false, "indexingLockedLicense"],
+    [sub, { permitted: false }, false, "indexingLockedPermission"],
+  ]) {
+    const f = fixture([item], config), view = indexingControl(f, item);
+    assert.equal(view.owner.props.readOnly, true);
+    assert.equal(view.owner.props.indexingEditable, allowed);
+    assert.equal(view.primary.props.readonly, true, "Primary keeps its original lock");
+    assert.equal(view.search.props.readonly, !allowed);
+    assert.equal(view.owner.props.indexingLockedReason, reason ? `domains_modern.map.${reason}` : "");
+    if (reason) assert(view.tree.some(node => node.props?.role === "status" && node.children === `domains_modern.map.${reason}`));
+    view.state.updateValue("primary", true);
+    view.owner.props.onUpdateDomain({ param: "primary", value: true });
+    assert.equal(f.state.busy_update, false, "indexing override cannot submit Primary");
+  }
+  const local = fixture([entries.local]);
+  assert.equal(local.state.canIndexDomain(entries.local), false);
+  assert.equal(local.state.indexingLockReason(entries.local), "domains_modern.map.indexingLockedLocal");
+  assert.equal(indexingControl(local, entries.local).search, undefined, "local URL has no unsupported indexing control");
+  const dark = fixture([sub], { permitted: false });
+  dark.state.$vuetify.theme.current.dark = true;
+  assert.equal(indexingControl(dark, sub).primary.props.dark, true);
+  assert.equal(indexingControl(dark, sub).search.props.dark, true);
+  for (const [pending, reason] of [["busy_update", "domains_modern.map.indexingSaving"], ["busy_fetch", "global.commons.loading"]]) {
+    const f = fixture([sub]); f.state[pending] = true;
+    const view = indexingControl(f, sub);
+    assert.equal(view.search.props.readonly, true);
+    assert.equal(view.search.props.loading, true);
+    assert.equal(view.owner.props.indexingLockedReason, reason);
+  }
+});
+
+test("the native expanded indexing toggle autosaves once, retains the saved value while pending and reports one success", async () => {
+  for (const source of [entries.custom, { ...entries.sub, indexed: true }]) {
+    for (const indexed of [false, true]) {
+      const item = structuredClone({ ...source, indexed });
+      let resolve;
+      const f = writeFixture(item, () => new Promise(done => { resolve = done; }));
+      const view = indexingControl(f, item);
+      view.click();
+      assert.equal(f.state.busy_update, true);
+      assert.equal(item.indexed, indexed);
+      assert.equal(indexingControl(f, item).search.props.modelValue, indexed);
+      view.click();
+      for (const handler of [view.search.props.onKeydown].flat()) handler({ key: "Enter", preventDefault() {} });
+      assert.deepEqual(f.requests, [[`fixture:71:${item.domain?.domain || item.official}:indexed`, { value: !indexed }]]);
+      const saved = { ...(item.domain || f.state.shop.sub), indexed: !indexed };
+      resolve({ data: item.domain ? { domain: saved } : { sub: saved } });
+      await new Promise(done => setImmediate(done));
+      assert.equal(f.state.busy_update, false);
+      assert.equal(f.state.busy_update_param, null);
+      assert.equal(item.domain ? f.state.domains[0].indexed : f.state.shop.sub.indexed, !indexed);
+      assert.deepEqual(f.notices.map(notice => notice[0]), ["showSuccessAlert"]);
+      assert.deepEqual(f.pushes, [], "autosave never opens another workspace or Save step");
+    }
+  }
+});
+
+test("indexing failures keep saved data, release the control and allow a later retry", async () => {
+  for (const failure of [() => Promise.resolve({ data: { error: true, error_msg: "Denied" } }),
+    () => Promise.resolve({ data: { success: false, error_msg: "Rejected" } }), () => Promise.reject(new Error("Offline"))]) {
+    const item = structuredClone(entries.custom), saved = { ...item.domain, indexed: false };
+    let attempt = 0;
+    const f = writeFixture(item, () => ++attempt === 1 ? failure() : Promise.resolve({ data: { domain: saved } }));
+    const before = structuredClone(f.state.domains);
+    indexingControl(f, item).click();
+    await new Promise(done => setImmediate(done));
+    assert.deepEqual(f.state.domains, before);
+    assert.equal(f.state.busy_update, false);
+    assert.equal(f.state.busy_update_param, null);
+    assert.equal(f.notices.some(notice => notice[0] === "showSuccessAlert"), false);
+    indexingControl(f, item).click();
+    await new Promise(done => setImmediate(done));
+    assert.equal(f.requests.length, 2);
+    assert.equal(f.state.domains[0].indexed, false);
+    assert.equal(f.notices.filter(notice => notice[0] === "showSuccessAlert").length, 1);
+  }
+});
+
+test("indexing rechecks current authorization before writing and ignores stale completions", async () => {
+  for (const kind of ["permission", "license", "local"]) {
+    const item = structuredClone(kind === "local" ? { ...entries.local, indexed: false } : entries.custom);
+    const f = writeFixture(item, () => { throw Error("Denied control must not submit"); });
+    const staleView = indexingControl(f, item);
+    if (kind === "permission") f.state.writeShopAccess = () => false;
+    if (kind === "license") f.state.can_edit_domain = () => false;
+    if (kind === "local") staleView.owner.props.onUpdateDomain({ param: "indexed", value: true });
+    else staleView.click();
+    assert.equal(f.requests.length, 0);
+  }
+  for (const kind of ["shop", "shopId", "permission", "license", "removed", "unmount"]) {
+    const item = structuredClone(entries.custom);
+    let resolve;
+    const f = writeFixture(item, () => new Promise(done => { resolve = done; }));
+    const saving = f.state.updateFlowDomain(item, { param: "indexed", value: false });
+    const before = structuredClone(f.state.domains);
+    if (kind === "shop") { f.state.shop = { ...f.state.shop, id: 72, domains: [] }; f.component.watch['shop.id'].call(f.state); }
+    if (kind === "shopId") { f.state.shop.id = 72; f.component.watch["shop.id"].call(f.state); }
+    if (kind === "permission") f.state.writeShopAccess = () => false;
+    if (kind === "license") f.state.can_edit_domain = () => false;
+    if (kind === "removed") { f.state.domains = []; f.state.shop.domains = []; }
+    if (kind === "unmount") f.component.beforeUnmount.call(f.state);
+    resolve({ data: { domain: { ...item.domain, indexed: false } } });
+    await saving;
+    assert.deepEqual(f.state.domains, kind === "removed" ? [] : before, kind);
+    assert.deepEqual(f.notices, [], `${kind} ignores both model and notification`);
+    assert.equal(f.state.busy_update, false);
+  }
+});
+
+test("a same-shop metadata refresh preserves a pending indexing update and releases its busy state", async () => {
+  const item = structuredClone(entries.custom);
+  let resolve;
+  const f = writeFixture(item, () => new Promise(done => { resolve = done; }));
+  const saving = f.state.updateFlowDomain(item, { param: "indexed", value: false });
+  f.state.shop = structuredClone(f.state.shop);
+  assert.equal(f.state.busy_update, true);
+  resolve({ data: { domain: { ...item.domain, indexed: false } } });
+  await saving;
+  assert.equal(f.state.shop.domains[0].indexed, false);
+  assert.equal(f.state.domains[0].indexed, false);
+  assert.equal(f.state.busy_update, false);
+  assert.deepEqual(f.notices.map(notice => notice[0]), ["showSuccessAlert"]);
+});
+
+test("unconfirmed or mismatched autosave responses retain the saved model and show a failure instead of success", async () => {
+  for (const item of [entries.custom, { ...entries.sub, indexed: true }]) {
+    const branch = item.domain ? 'domain' : 'sub';
+    const saved = { ...(item.domain || {}), indexed: false };
+    for (const data of [{}, '<html>Unexpected login page</html>', null, { [branch]: {} },
+      { [branch]: { ...saved, indexed: 'false' } }, { [branch]: { ...saved, indexed: true } },
+      { [item.domain ? 'sub' : 'domain']: saved },
+      ...(item.domain ? [{ domain: { ...saved, id: 99 } }, { domain: { ...saved, domain: 'another.example.test' } }] : []),
+    ]) {
+      const f = writeFixture(item, () => Promise.resolve({ data }));
+      const before = structuredClone(f.state.domains), sub = structuredClone(f.state.shop.sub);
+      await f.state.updateFlowDomain(item, { param: 'indexed', value: false });
+      assert.deepEqual(f.state.domains, before);
+      assert.deepEqual(f.state.shop.sub, sub);
+      assert.equal(f.state.busy_update, false);
+      assert.equal(f.notices.length, 1);
+      assert.deepEqual(f.notices[0], ['showErrorAlert', 'global.notification.error', 'domains_modern.list.update_failed']);
+    }
+  }
+});
+
+test("a stale completion cannot clear a newer shop's pending indexing request or show a notice", async () => {
+  for (const failOld of [false, true]) {
+    const item = structuredClone(entries.custom), pending = [];
+    const f = writeFixture(item, () => new Promise((resolve, reject) => pending.push({ resolve, reject })));
+    const old = f.state.updateFlowDomain(item, { param: 'indexed', value: false });
+    f.state.shop = { id: 72, home: 'shop', domains: [], sub: { indexed: true } };
+    f.state.domains = [];
+    f.component.watch['shop.id'].call(f.state);
+    const current = f.state.updateFlowDomain({ ...entries.sub, indexed: true }, { param: 'indexed', value: false });
+    if (failOld) pending[0].reject(new Error('Old transport failed'));
+    else pending[0].resolve({ data: { domain: { ...item.domain, indexed: false } } });
+    await old;
+    assert.equal(f.state.busy_update, true);
+    assert.equal(f.state.busy_update_param, 'indexed-sub');
+    assert.deepEqual(f.notices, []);
+    pending[1].resolve({ data: { sub: { indexed: false } } });
+    await current;
+    assert.equal(f.state.busy_update, false);
+    assert.equal(f.state.shop.sub.indexed, false);
+    assert.deepEqual(f.notices.map(notice => notice[0]), ['showSuccessAlert']);
   }
 });

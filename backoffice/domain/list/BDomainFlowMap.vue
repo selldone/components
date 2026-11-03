@@ -52,6 +52,7 @@
       <div class="b-domain-flow__preference">
         <u-smart-toggle
           class="b-domain-flow__preference-control" role="checkbox"
+          :dark="$vuetify.theme.current.dark"
           :model-value="item.primary" :true-title="$t('domains_modern.map.primary')"
           :readonly="item.primary || readOnly || busyUpdate" :loading="busyUpdate"
           :aria-checked="!!item.primary" :aria-disabled="item.primary || readOnly || busyUpdate"
@@ -66,19 +67,23 @@
         </v-btn>
       </div>
       <div class="b-domain-flow__preference">
-        <u-smart-toggle
-          class="b-domain-flow__preference-control" role="checkbox"
-          :model-value="item.indexed" :true-title="$t('domains_modern.map.search')"
-          :readonly="readOnly || busyUpdate" :loading="busyUpdate"
-          :aria-checked="!!item.indexed" :aria-disabled="readOnly || busyUpdate"
-          :tabindex="readOnly || busyUpdate ? -1 : 0" false-gray
-          @update:model-value="updateValue('indexed', $event)"
-          @keydown.enter.prevent="updateValue('indexed', !item.indexed)"
-          @keydown.space.prevent="updateValue('indexed', !item.indexed)"
-        />
-        <v-btn icon variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="$t('domains_modern.map.searchTip')">
+        <div class="b-domain-flow__indexing">
+          <u-smart-toggle
+            class="b-domain-flow__preference-control" role="checkbox"
+            :dark="$vuetify.theme.current.dark"
+            :model-value="item.indexed" :true-title="$t('domains_modern.map.search')"
+            :readonly="indexingReadOnly || busyUpdate" :loading="busyUpdate"
+            :aria-checked="!!item.indexed" :aria-disabled="indexingReadOnly || busyUpdate"
+            :tabindex="indexingReadOnly || busyUpdate ? -1 : 0" false-gray
+            @update:model-value="updateValue('indexed', $event)"
+            @keydown.enter.prevent="updateValue('indexed', !item.indexed)"
+            @keydown.space.prevent="updateValue('indexed', !item.indexed)"
+          />
+          <p v-if="indexingLockedReason" class="b-domain-flow__indexing-reason" role="status">{{ indexingLockedReason }}</p>
+        </div>
+        <v-btn icon variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="indexingLockedReason || $t('domains_modern.map.searchTip')">
           <v-icon size="14">info_outline</v-icon>
-          <v-tooltip activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.map.searchTip') }}</v-tooltip>
+          <v-tooltip activator="parent" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start">{{ indexingLockedReason || $t('domains_modern.map.searchTip') }}</v-tooltip>
         </v-btn>
       </div>
     </div>
@@ -94,8 +99,9 @@
         </header>
         <v-card-text class="b-domain-flow__dialog-body">
           <template v-if="active === 'access' || active === 'search'">
-            <v-checkbox-btn :model-value="active === 'access' ? item.enable : item.indexed" :label="$t(active === 'access' ? 'domains_modern.map.enableLabel' : 'domains_modern.map.searchLabel')" :disabled="readOnly || busyUpdate" @update:model-value="updateValue(active === 'access' ? 'enable' : 'indexed', $event)" />
+            <v-checkbox-btn :model-value="active === 'access' ? item.enable : item.indexed" :label="$t(active === 'access' ? 'domains_modern.map.enableLabel' : 'domains_modern.map.searchLabel')" :disabled="(active === 'search' ? indexingReadOnly : readOnly) || busyUpdate" @update:model-value="updateValue(active === 'access' ? 'enable' : 'indexed', $event)" />
             <p>{{ $t(active === 'access' ? 'domains_modern.map.enableHelp' : 'domains_modern.map.searchHelp') }}</p>
+            <p v-if="active === 'search' && indexingLockedReason" role="status">{{ indexingLockedReason }}</p>
             <v-progress-linear v-if="busyUpdate" indeterminate color="primary" height="2" class="mt-3" />
           </template>
           <template v-else-if="active === 'repair'">
@@ -132,12 +138,15 @@ export default {
     item: { type: Object, required: true },
     shop: { type: Object, required: true },
     readOnly: { type: Boolean, default: false },
+    indexingEditable: { type: Boolean, default: false },
+    indexingLockedReason: { type: String, default: '' },
     busyUpdate: { type: Boolean, default: false },
     busyRepair: { type: Boolean, default: false },
   },
   emits: ["update-domain", "edit-domain", "settings", "home", "default-home", "sitemap", "repair"],
-  data: () => ({ availableWidth: 628, canvasWidth: 1, canvasHeight: 1, edges: [], resizeObserver: null, active: null, dialogActivator: null }),
+  data: () => ({ availableWidth: 628, canvasWidth: 1, canvasHeight: 1, edges: [], resizeObserver: null, resizeFrame: null, active: null, dialogActivator: null }),
   computed: {
+    indexingReadOnly() { return this.item.official === 'local' || (this.readOnly && !this.indexingEditable); },
     isExternal() { return !!this.item.domain?.externally_hosted; },
     isOfficial() { return !!this.item.official; },
     homeValue() { return this.item.primary || !this.item.domain?.home ? this.shop.home : this.item.domain.home; },
@@ -169,11 +178,21 @@ export default {
     stages: { deep: true, handler() { this.$nextTick(this.measure); } },
   },
   mounted() {
-    this.resizeObserver = new ResizeObserver(this.measure);
+    // Reactive geometry writes run after observer delivery, at most once per frame.
+    this.resizeObserver = new ResizeObserver(() => {
+      if (this.resizeFrame !== null) return;
+      this.resizeFrame = requestAnimationFrame(() => {
+        this.resizeFrame = null;
+        this.measure();
+      });
+    });
     this.resizeObserver.observe(this.$refs.canvas);
     this.measure();
   },
-  beforeUnmount() { this.resizeObserver?.disconnect(); },
+  beforeUnmount() {
+    this.resizeObserver?.disconnect();
+    if (this.resizeFrame !== null) cancelAnimationFrame(this.resizeFrame);
+  },
   methods: {
     stagePlacement(index) {
       const row = Math.floor(index / this.columns);
@@ -194,7 +213,7 @@ export default {
       this.active = id;
     },
     updateValue(param, value) {
-      if (this.readOnly || this.busyUpdate || typeof value !== 'boolean' || !['enable', 'indexed', 'primary'].includes(param)) return;
+      if ((param === 'indexed' ? this.indexingReadOnly : this.readOnly) || this.busyUpdate || typeof value !== 'boolean' || !['enable', 'indexed', 'primary'].includes(param)) return;
       if (this.item.official === 'local' && param !== 'enable') return;
       if (param === 'primary' && (this.item.primary || value !== true)) return;
       this.$emit('update-domain', { param, value });
@@ -280,6 +299,8 @@ export default {
   &__preference { display: flex; align-items: center; gap: 8px; min-width: 0; padding-inline-end: 16px; }
   &__preference + &__preference { padding-inline: 16px 0; border-inline-start: 1px solid var(--sd-modern-border); }
   &__preference-control { flex: 1; min-width: 0; border-radius: 10px; }
+  &__indexing { flex: 1; min-width: 0; }
+  &__indexing-reason { margin: 5px 0 0; font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
   &__preference-control :deep(b) { font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; letter-spacing: 0; }
   &__preference-control:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
   &__paths { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }

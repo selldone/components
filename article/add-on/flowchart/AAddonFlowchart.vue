@@ -17,7 +17,12 @@
       edit-icon="account_tree"
       @click:edit="requestEdit"
     />
-    <s-article-flow v-if="flow" :block="flow" :legend-labels="legendLabels" />
+    <s-article-flow
+      v-if="flow"
+      :block="flow"
+      :legend-labels="legendLabels"
+      show-text-version
+    />
     <p v-else class="a-article-flowchart__invalid" role="status">
       {{ $t("global.article.flowchart.invalid") }}
     </p>

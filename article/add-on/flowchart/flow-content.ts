@@ -243,10 +243,12 @@ export function laneGutter(layout: ApiDocFlowLayout): number {
  * Where each tile goes. A linear sequence becomes a rail of up to three tiles per row (two rows of two for
  * four steps) so the stage stays short; branches become columns ordered by depth with their tiles stacked
  * and centred. Narrow containers stack everything in one column with bypass lanes for links that skip a tile.
+ * Runtime callers can prefer another rail width without changing the stored article definition.
  */
 export function layoutFlow(
   block: ApiDocFlowBlock,
   narrow = false,
+  preferredRailColumns = 0,
 ): ApiDocFlowLayout {
   const count = block.nodes.length;
   if (narrow) return column(block);
@@ -260,7 +262,10 @@ export function layoutFlow(
     (node) =>
       (incoming.get(node.id) ?? 0) > 1 || (outgoing.get(node.id) ?? 0) > 1,
   );
-  const railColumns = count <= 3 ? count : count === 4 ? 2 : 3;
+  const railColumns = Math.min(
+    count,
+    preferredRailColumns || (count <= 3 ? count : count === 4 ? 2 : 3),
+  );
   if (!branching) return rail(block, railColumns);
   const depth = depths(block);
   const columns = Math.max(...depth.values()) + 1;
@@ -293,8 +298,9 @@ const NARROW_RELEASE = 60;
 export function narrowThreshold(
   block: ApiDocFlowBlock,
   narrow = false,
+  preferredRailColumns = 0,
 ): number {
-  const columns = layoutFlow(block, false).columns;
+  const columns = layoutFlow(block, false, preferredRailColumns).columns;
   return (
     Math.max(NARROW_STAGE, columns * MIN_TILE + (columns - 1) * MIN_GAP) +
     (narrow ? NARROW_RELEASE : 0)

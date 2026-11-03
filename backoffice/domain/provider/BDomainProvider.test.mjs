@@ -14,6 +14,11 @@ const file = new URL("./BDomainProvider.vue", import.meta.url);
 const { descriptor, errors } = parse(readFileSync(file, "utf8"), { filename: file.pathname });
 assert.deepEqual(errors, []);
 const transpile = source => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const providerExports = {};
+new Function("require", "exports", transpile(readFileSync(new URL("./domain-provider.ts", import.meta.url), "utf8")))(name => {
+  assert.ok(name.endsWith(".svg"), "Provider artwork must use an existing local asset");
+  return name;
+}, providerExports);
 const dateExports = {};
 new Function("require", "exports", "window", transpile(readFileSync(new URL("../../../mixin/date/DateMixin.ts", import.meta.url), "utf8")))(
   () => ({ DateConverter: {} }), dateExports, { $language: { full_locale: "en-US", calendar: { calendar: "gregory" } } },
@@ -22,8 +27,8 @@ const script = compileScript(descriptor, { id: "domain-provider-test" });
 const exported = {};
 new Function("require", "exports", transpile(script.content))(name => {
   if (name.endsWith("/DateMixin.ts")) return { default: dateExports.default };
-  assert.ok(name.endsWith(".svg"), "Provider artwork must use an existing local asset");
-  return name;
+  if (name === "./domain-provider.ts") return providerExports;
+  return assert.fail(name);
 }, exported);
 const component = exported.default;
 const template = compileTemplate({ source: descriptor.template.content, filename: file.pathname, id: "domain-provider-test", compilerOptions: { bindingMetadata: script.bindings } });
@@ -49,6 +54,17 @@ async function render(value) {
 
 test("component template and scoped Sass compile", () => {
   for (const style of descriptor.styles) assert.deepEqual(compileStyle({ source: style.content, filename: file.pathname, id: "data-v-domain-provider", scoped: style.scoped, preprocessLang: style.lang }).errors, []);
+});
+
+test("shared resolver preserves saved-evidence precedence and never mutates its input", () => {
+  const value = Object.freeze({
+    connection_provider: Object.freeze(checked("cloudflare")),
+    domain: Object.freeze({ connection_provider: Object.freeze(checked("fastly")) }),
+  });
+  assert.equal(providerExports.resolveDomainProvider(value).id, "cloudflare");
+  assert.deepEqual(value.connection_provider, checked("cloudflare"));
+  assert.deepEqual(value.domain.connection_provider, checked("fastly"));
+  assert.equal(providerExports.resolveDomainProvider({ ...value, connection_provider: {} }).kind, "not_checked");
 });
 
 test("verified common providers use canonical local logos and real registered date formatting", async () => {

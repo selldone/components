@@ -19,6 +19,18 @@
         </div>
       </template>
 
+      <template v-else-if="mode === 'maintenance'">
+        <div class="b-domain-customer-preview__maintenance b-domain-customer-preview__detail">
+          <div class="b-domain-customer-preview__maintenance-art">
+            <svg viewBox="0 0 112 84" width="112" height="84" focusable="false"><rect x="24" y="7" width="64" height="70" rx="5" /><path d="M24 22h64M34 15h2m5 0h2m5 0h2M44 38l-7 7 7 7m24-14 7 7-7 7m-9-17-6 22M39 66h34" /></svg>
+            <v-icon size="30" aria-hidden="true">construction</v-icon>
+          </div>
+          <strong>{{ $t('domains_modern.maintenance.art_title') }}</strong>
+          <p>{{ $t('domains_modern.maintenance.art_message') }}</p>
+          <span>{{ $t('domains_modern.maintenance.art_html') }}</span>
+        </div>
+      </template>
+
       <template v-else-if="mode === 'blog'">
         <div class="b-domain-customer-preview__section-title"><strong>{{ $t('domains_modern.workspace.previewArt.journal') }}</strong><span>01 — 03</span></div>
         <div class="b-domain-customer-preview__editorial b-domain-customer-preview__detail">
@@ -81,7 +93,7 @@ export default {
   data: () => ({ complete: false }),
   computed: {
     mode() {
-      return ['shop', 'blog', 'community', 'map', 'avocado', 'hyper', 'landing', 'static', 'external'].includes(this.kind) ? this.kind : 'shop';
+      return ['shop', 'blog', 'community', 'map', 'avocado', 'hyper', 'landing', 'static', 'external', 'maintenance'].includes(this.kind) ? this.kind : 'shop';
     },
   },
 };
@@ -104,6 +116,11 @@ export default {
   &__scene > * + * { margin-block-start: 10px; }
   &__scene svg:not(.sd-modern-illustration__icon) { display: block; fill: none; stroke: rgba(var(--v-theme-on-surface), .64); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
   &__scene strong { font-size: 12px; font-weight: 500; line-height: 18px; overflow-wrap: anywhere; }
+  &__maintenance { display: grid; justify-items: center; gap: 9px; min-height: 205px; padding: 18px 12px; text-align: center; border: 1px solid var(--sd-modern-border); border-radius: 12px; background: rgb(var(--v-theme-surface)); }
+  &__maintenance-art { position: relative; color: var(--sd-modern-muted); }
+  &__maintenance-art > .v-icon { position: absolute; inset-inline-end: 0; inset-block-end: 4px; color: rgb(var(--v-theme-on-surface)); background: rgb(var(--v-theme-surface)); }
+  &__maintenance > p { margin: 0; color: var(--sd-modern-muted); overflow-wrap: anywhere; }
+  &__maintenance > span { color: var(--sd-modern-muted); font-size: 10px; }
   &__sand { fill: rgba(var(--preview-sand), .55); stroke: none; }
   &__sage { fill: rgba(var(--preview-sage), .55); stroke: none; }
   &__rose { fill: rgba(var(--sd-modern-illustration-highlight-rgb), .45); stroke: none; }

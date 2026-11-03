@@ -98,6 +98,7 @@
               v-if="parsed"
               :block="parsed"
               :legend-labels="legendLabels"
+              show-text-version
             />
             <p v-else class="a-article-flowchart-dialog__empty">
               {{ $t("global.article.flowchart.preview_empty") }}

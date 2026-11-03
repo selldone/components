@@ -7,7 +7,7 @@ const vue = localRequire('@vue/compiler-sfc');
 const ts = localRequire('typescript');
 const root = new URL('../', import.meta.url);
 
-function fixture(file) {
+function fixture(file, browser = {}) {
   const source = fs.readFileSync(new URL(file, root), 'utf8');
   const { descriptor, errors } = vue.parse(source, { filename: file });
   assert.deepEqual(errors, []);
@@ -19,13 +19,13 @@ function fixture(file) {
     return { __esModule: true, default: {}, ShopPermissionRegions: { SETTINGS: { code: 'SETTINGS' } } };
   };
   const compiled = ts.transpileModule(descriptor.script.content, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
-  new Function('require', 'exports', 'window', 'axios', compiled)(dependency, exports, { SERACH_THROTTLE: 0 }, new Proxy({}, { get() { throw Error('Network access is not permitted in map tests'); } }));
+  new Function('require', 'exports', 'window', 'axios', 'ResizeObserver', 'requestAnimationFrame', 'cancelAnimationFrame', compiled)(dependency, exports, { SERACH_THROTTLE: 0 }, new Proxy({}, { get() { throw Error('Network access is not permitted in map tests'); } }), browser.ResizeObserver, browser.requestAnimationFrame, browser.cancelAnimationFrame);
   const component = exports.default;
   const events = [], calls = [];
   const state = {
     ...component.data(), ...component.methods,
     shop: { id: 71, home: 'shop', domains: [] }, item: null,
-    modern: true, refined: true, readOnly: false, busyUpdate: false, busyRepair: false,
+    modern: true, refined: true, readOnly: false, indexingEditable: false, indexingLockedReason: '', busyUpdate: false, busyRepair: false,
     busy_update: false, busy_add_client: false,
     $t: key => key, $emit: (...args) => events.push(args),
     $nextTick: fn => fn?.(), $refs: {},
@@ -132,8 +132,9 @@ function testParentUpdates() {
   for (const [kind, item] of Object.entries(entries)) {
     const f = listFixture();
     for (const param of ['enable', 'indexed', 'primary']) {
-      f.calls.length = 0; f.state.updateFlowDomain(clone(item), { param, value: true });
-      assert.deepEqual(f.calls, kind === 'local' && param !== 'enable' ? [] : [['updateShopDomain', param, item.domain?.domain || item.official, true]], kind + ':' + param + ' parent');
+      const value = param === 'indexed' ? !item.indexed : true;
+      f.calls.length = 0; f.state.updateFlowDomain(clone(item), { param, value });
+      assert.deepEqual(f.calls, kind === 'local' && param !== 'enable' ? [] : [['updateShopDomain', param, item.domain?.domain || item.official, value]], kind + ':' + param + ' parent');
     }
   }
   const f = listFixture();
@@ -149,7 +150,7 @@ function testParentUpdates() {
   f.state.updateFlowDomain({ ...clone(entries.custom), primary: true }, { param: 'primary', value: true });
   assert.deepEqual(f.calls, [], 'parent denies missing write access, busy, unknown, primary false/reselection');
   f.state.updateFlowDomain(clone(entries.custom), { param: 'enable', value: false });
-  f.state.updateFlowDomain(clone(entries.custom), { param: 'indexed', value: false });
+  f.state.updateFlowDomain({ ...clone(entries.custom), indexed: true }, { param: 'indexed', value: false });
   assert.deepEqual(f.calls, [['updateShopDomain', 'enable', entries.custom.domain.domain, false], ['updateShopDomain', 'indexed', entries.custom.domain.domain, false]], 'parent preserves valid false updates');
 }
 
@@ -209,7 +210,59 @@ function testScopeFocus() {
 
 test('domain map exposes the supported capabilities of each address', testMapStates);
 test('map controls block read-only, busy and unsupported updates', testMapUpdates);
+test('the indexing-only override never unlocks Primary, access or local indexing', () => {
+  const f = fixture('list/BDomainFlowMap.vue');
+  f.state.item = clone(entries.sub);
+  f.state.readOnly = true;
+  f.state.indexingEditable = true;
+  f.state.updateValue('indexed', false);
+  f.state.updateValue('primary', true);
+  f.state.updateValue('enable', false);
+  assert.deepEqual(f.events, [['update-domain', { param: 'indexed', value: false }]]);
+  for (const restriction of ['busyUpdate', 'indexingEditable']) {
+    f.events.length = 0;
+    f.state[restriction] = restriction === 'busyUpdate';
+    f.state.updateValue('indexed', false);
+    assert.deepEqual(f.events, []);
+    f.state[restriction] = restriction !== 'busyUpdate';
+  }
+  f.state.item = clone(entries.local);
+  f.state.updateValue('indexed', true);
+  assert.deepEqual(f.events, [], 'local remains unsupported even with an override');
+});
 test('node actions preserve capability boundaries and balanced responsive rows', testMapNavigation);
 test('parent enforces domain mutation intents independently', testParentUpdates);
 test('map actions use existing domain flows and permission gates', testParentRouting);
 test('scope shortcuts focus the matching existing settings field', testScopeFocus);
+test('map resize delivery coalesces measurement after the observer and cancels pending work on unmount', () => {
+  const frames = new Map(), cancelled = [];
+  let observer, nextFrame = 1;
+  const f = fixture('list/BDomainFlowMap.vue', {
+    ResizeObserver: class {
+      constructor(callback) { this.callback = callback; observer = this; }
+      observe(target) { this.target = target; }
+      disconnect() { this.disconnected = true; }
+    },
+    requestAnimationFrame(callback) { const id = nextFrame++; frames.set(id, callback); return id; },
+    cancelAnimationFrame(id) { cancelled.push(id); frames.delete(id); },
+  });
+  const canvas = {};
+  f.state.$refs.canvas = canvas;
+  let measurements = 0;
+  f.state.measure = () => { measurements++; };
+  f.component.mounted.call(f.state);
+  assert.equal(observer.target, canvas);
+  assert.equal(measurements, 1, 'initial explicit measurement stays direct');
+  observer.callback([]); observer.callback([]);
+  assert.equal(measurements, 1, 'observer delivery cannot synchronously write geometry');
+  assert.equal(frames.size, 1);
+  const [id, callback] = frames.entries().next().value;
+  frames.delete(id); callback();
+  assert.equal(measurements, 2);
+  observer.callback([]);
+  const pending = f.state.resizeFrame;
+  f.component.beforeUnmount.call(f.state);
+  assert.equal(observer.disconnected, true);
+  assert.deepEqual(cancelled, [pending]);
+  assert.equal(frames.size, 0);
+});

@@ -4,6 +4,15 @@
 
 The default supports standard, official and private layouts. A domain supports those modes plus inheritance from the shop default. Custom domains and hosted `local`/`sub` addresses use the same editor. Existing domain rows, metadata, status indicators, details and actions remain intact; `BDomainLayoutMark` adds a compact link to the existing Storefront route. `DomainsHelper` forwards server summaries without inferring assignments from names or missing fields.
 
+The assignment link's existing tooltip also shows the effective custom layout's
+real `layout_summary.image_url` when available, including inherited assignments.
+The contained thumbnail is limited to 150px high within the shared mobile-safe
+tooltip width. Missing images and the standard layout retain the text-only
+tooltip. The list link also replaces its leading layers icon with a fixed 16px
+avatar when a custom image is available. It has no hover scaling or image
+transition; missing/broken images retain the layers icon and native link.
+No additional catalog request or assignment change is performed.
+
 ## Server contract
 
 - Default: `GET /shops/{shop}/layout/options`, `POST /shops/{shop}/layout`.

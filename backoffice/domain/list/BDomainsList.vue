@@ -62,7 +62,8 @@
         </template>
         <template #item.home="{ item }">
           <v-btn v-if="!item.official && !item.domain?.externally_hosted" class="b-domains-list__destination" variant="text" @click.stop="openDomain(item, 'BPageDomainStorefront')">
-            <v-icon size="16">{{ item.primary || !item.domain.home ? 'home' : 'web' }}</v-icon>
+            <v-icon v-if="item.primary || !item.domain.home" size="16">home</v-icon>
+            <img v-else :src="GetDomainHomeIcon(getCorrespondingHomePageValue(item))" width="20" height="20" alt="" aria-hidden="true" class="b-domains-list__home-icon" />
             <span><span>{{ item.primary || !item.domain.home ? $t('domains_modern.list.store_default') : GetDomainHomeName(getCorrespondingHomePageValue(item)) }}</span><span class="b-domains-list__meta">{{ item.primary || !item.domain.home ? GetDomainHomeName(shop.home) : ('' + item.domain.home).startsWith('/') ? item.domain.home : $t('domains_modern.list.custom_home') }}</span></span>
           </v-btn>
           <div v-else class="b-domains-list__destination-static"><v-icon size="16">{{ item.domain?.externally_hosted ? 'open_in_new' : 'home' }}</v-icon><span>{{ item.domain?.externally_hosted ? $t('admin_shop.dashboard.info.table.externally_hosted') : $t('domains_modern.list.store_default') }}<span v-if="!item.domain?.externally_hosted" class="b-domains-list__meta">{{ GetDomainHomeName(shop.home) }}</span></span></div>
@@ -81,6 +82,16 @@
           <span class="sd-modern-status sd-modern-status--plain b-domains-list__connection"><span class="sd-modern-status__dot" :class="{ 'bg-warning': item.error || (!item.ssl && !item.domain?.externally_hosted), 'bg-success': item.ssl && !item.error && !item.domain?.externally_hosted && item.official !== 'local' }" />{{ item.domain?.externally_hosted ? $t('domains_modern.list.external') : item.error || !item.ssl ? $t('domains_modern.list.attention') : item.official === 'local' ? $t('domains_modern.list.store_address') : 'HTTPS' }}</span>
           <div v-if="item.approved !== undefined && !item.domain?.externally_hosted" class="b-domains-list__meta">{{ $t(item.error ? 'domains_modern.list.connection_error' : item.approved ? 'domains_modern.list.verified' : 'domains_modern.list.pending') }}</div>
           </template>
+          <v-tooltip :model-value="sslHelp === domainKey(item)" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start"
+                     @update:model-value="sslHelp = $event ? domainKey(item) : null">
+            <template #activator="{ props }">
+              <button v-bind="props" type="button" class="b-domains-list__meta b-domains-list__ssl-manager"
+                      @click.stop="sslHelp = domainKey(item)" @keydown.esc.stop="sslHelp = null">
+                {{ $t('domains_modern.list.sslManager', { provider: $t(usesSelldoneSsl(item) ? 'domains_modern.map.selldoneEdge' : 'domains_modern.map.externalEdge') }) }}
+              </button>
+            </template>
+            {{ $t(usesSelldoneSsl(item) ? 'domains_modern.connection.sslSecureHint' : 'domains_modern.connection.sslOwnHint') }}
+          </v-tooltip>
         </template>
         <template #item.visibility="{ item }">
           <button v-if="canToggleDomain(item)" type="button" class="b-domains-list__status-action"
@@ -89,15 +100,16 @@
                   :aria-busy="busy_update_param === `enable-${item.domain ? item.domain.domain : item.official}`"
                   :aria-label="`${$t(item.enable ? 'domains_modern.list.disable_action' : 'domains_modern.list.enable_action')} · ${item.domain?.domain || item.url}`"
                   @click.stop="updateFlowDomain(item, { param: 'enable', value: !item.enable })">
-            <span class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="item.enable ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--error'" />{{ $t(item.enable ? 'domains_modern.list.enabled' : 'domains_modern.list.disabled') }}</span>
+            <span class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="!item.enable ? 'sd-modern-status__dot--error' : maintenanceEnabled(item) ? 'sd-modern-status__dot--warning' : 'sd-modern-status__dot--success'" />{{ $t(!item.enable ? 'domains_modern.list.disabled' : maintenanceEnabled(item) ? 'domains_modern.maintenance.status' : 'domains_modern.list.enabled') }}</span>
             <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t(item.enable ? 'domains_modern.list.disable_action' : 'domains_modern.list.enable_action') }}</v-tooltip>
           </button>
-          <span v-else class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="item.enable ? 'sd-modern-status__dot--success' : 'sd-modern-status__dot--error'" />{{ $t(item.enable ? 'domains_modern.list.enabled' : 'domains_modern.list.disabled') }}</span>
+          <span v-else class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="!item.enable ? 'sd-modern-status__dot--error' : maintenanceEnabled(item) ? 'sd-modern-status__dot--warning' : 'sd-modern-status__dot--success'" />{{ $t(!item.enable ? 'domains_modern.list.disabled' : maintenanceEnabled(item) ? 'domains_modern.maintenance.status' : 'domains_modern.list.enabled') }}</span>
+          <div v-if="maintenanceEnabled(item)" class="b-domains-list__meta">{{ $t(item.enable ? 'domains_modern.maintenance.all_paths' : 'domains_modern.maintenance.configured_disabled') }}</div>
           <div v-if="item.official !== 'local'" class="b-domains-list__meta">{{ $t(item.indexed ? 'domains_modern.list.index_allowed' : 'domains_modern.list.index_off') }}</div>
         </template>
         <template #item.actions="{ item, internalItem, isExpanded, toggleExpand }">
           <div class="b-domains-list__row-actions">
-            <v-btn v-if="item.official !== 'local' && !item.url.includes('*')" :href="item.url" :disabled="!item.enable" target="_blank" rel="noopener noreferrer" icon variant="text" class="sd-modern-icon-button" :aria-label="$t('user_dashboard.shops.modern.open_in_new_tab')" @click.stop><v-icon size="16">north_east</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('user_dashboard.shops.modern.open_in_new_tab') }}</v-tooltip></v-btn>
+            <v-btn v-if="item.official !== 'local' && !item.url.includes('*')" :href="item.url" :disabled="!item.enable" target="_blank" rel="noopener noreferrer" icon variant="text" class="sd-modern-icon-button" :aria-label="$t('domains_modern.list.open_domain', { domain: item.domain?.domain || item.url.replace(/^https?:\/\//, '') })" @click.stop><v-icon size="16">north_east</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.list.open_domain', { domain: item.domain?.domain || item.url.replace(/^https?:\/\//, '') }) }}</v-tooltip></v-btn>
             <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t('domains_modern.workspace.openSettings')" @click.stop="openDomain(item)"><v-icon size="16">settings</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.workspace.openSettings') }}</v-tooltip></v-btn>
             <v-btn icon variant="text" class="sd-modern-icon-button" :aria-label="$t(isExpanded(internalItem) ? 'domains_modern.workspace.hideDetails' : 'domains_modern.workspace.details')" :aria-expanded="isExpanded(internalItem)" @click.stop="toggleExpand(internalItem)"><v-icon size="16">{{ isExpanded(internalItem) ? 'expand_less' : 'expand_more' }}</v-icon><v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t(isExpanded(internalItem) ? 'domains_modern.workspace.hideDetails' : 'domains_modern.workspace.details') }}</v-tooltip></v-btn>
           </div>
@@ -107,11 +119,18 @@
             <section class="b-domains-list__details text-start">
               <div class="sd-modern-list-header">{{ $t('domains_modern.workspace.quickDetails') }}</div>
               <h3 class="b-domains-list__detail-title"><bdi dir="ltr">{{ item.domain?.domain || item.url }}</bdi></h3>
+              <div v-if="maintenanceEnabled(item)" class="sd-modern-notice" role="status">
+                <v-icon size="18" aria-hidden="true">construction</v-icon>
+                <div class="sd-modern-notice__content">{{ $t(item.enable ? 'domains_modern.maintenance.serving_hint' : 'domains_modern.maintenance.configured_disabled') }}<template v-if="(item.maintenance_summary || item.domain?.maintenance_summary)?.has_html === false"> {{ $t('domains_modern.maintenance.missing_html') }}</template></div>
+              </div>
               <b-domain-flow-map
                 :item="item" :shop="shop"
                 :read-only="true"
-                :busy-update="busy_update"
+                :indexing-editable="canIndexDomain(item)"
+                :indexing-locked-reason="indexingLockReason(item)"
+                :busy-update="busy_update || busy_fetch"
                 :busy-repair="busy_add_client && add_client_code === (item.domain ? item.domain.id : item.official)"
+                @update-domain="$event.param === 'indexed' && updateFlowDomain(item, $event)"
                 @edit-domain="openDomain(item, 'BPageDomainConnection')"
                 @settings="openDomain(item, $event === 'ssl' ? 'BPageDomainConnection' : 'BPageDomainSettings', $event)"
                 @home="openDomain(item, 'BPageDomainStorefront')"
@@ -607,6 +626,7 @@
           <v-icon v-if="item.enable" color="green">check</v-icon>
           <v-icon v-else color="red">block</v-icon>
         </v-btn>
+        <div v-if="maintenanceEnabled(item)" class="small">{{ $t(item.enable ? 'domains_modern.maintenance.status' : 'domains_modern.maintenance.configured_disabled') }}</div>
       </template>
       <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Indexed ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
 
@@ -1128,6 +1148,7 @@ export default {
 
   data: () => ({
     expanded: [],
+    sslHelp: null,
     domains: [],
     page: 1,
     pageCount: 1,
@@ -1148,6 +1169,7 @@ export default {
 
     selected_shop_domain: {},
     busy_update: false,
+    domainUpdateRequest: 0,
 
     busy_add_client: false,
     add_client_code: null,
@@ -1254,6 +1276,7 @@ export default {
   },
 
   watch: {
+    'shop.id'() { this.resetDomainUpdate(); },
     // Pagination:
     options: {
       handler() {
@@ -1275,7 +1298,21 @@ export default {
     }, window.SERACH_THROTTLE),
   },
   mounted() {},
+  beforeUnmount() { this.resetDomainUpdate(); },
   methods: {
+    maintenanceEnabled(item) {
+      const summary = item.maintenance_summary || item.domain?.maintenance_summary;
+      return !item.official && !!item.domain?.id && !item.domain.externally_hosted && summary?.supported === true && summary.enabled === true;
+    },
+    resetDomainUpdate() {
+      this.domainUpdateRequest++;
+      this.busy_update = false;
+      this.busy_primary = false;
+      this.busy_update_param = null;
+    },
+    usesSelldoneSsl(item) {
+      return ['local', 'sub'].includes(item.official) || (!item.domain?.externally_hosted && !!item.domain?.ssl_proxy);
+    },
     domainKey(item) {
       return String(item.domain?.id || item.official);
     },
@@ -1296,11 +1333,26 @@ export default {
         (!item.domain || this.can_edit_domain(item.domain)) &&
         this.writeShopAccess(ShopPermissionRegions.SETTINGS.code);
     },
+    canIndexDomain(item) {
+      return item.official !== 'local' && typeof item.indexed === 'boolean' &&
+        (item.official === 'sub' || !!item.domain?.id) &&
+        (!item.domain || this.can_edit_domain(item.domain)) &&
+        this.writeShopAccess(ShopPermissionRegions.SETTINGS.code);
+    },
+    indexingLockReason(item) {
+      if (item.official === 'local') return this.$t('domains_modern.map.indexingLockedLocal');
+      if (!this.writeShopAccess(ShopPermissionRegions.SETTINGS.code)) return this.$t('domains_modern.map.indexingLockedPermission');
+      if (item.domain && !this.can_edit_domain(item.domain)) return this.$t('domains_modern.map.indexingLockedLicense');
+      if (this.busy_update) return this.$t('domains_modern.map.indexingSaving');
+      if (this.busy_fetch) return this.$t('global.commons.loading');
+      return '';
+    },
     updateFlowDomain(item, change) {
       if (!this.writeShopAccess(ShopPermissionRegions.SETTINGS.code) || this.busy_update || this.busy_fetch) return;
       if (item.domain && !this.can_edit_domain(item.domain)) return;
       if (!['enable', 'indexed', 'primary'].includes(change?.param) || typeof change.value !== 'boolean') return;
       if (change.param === 'enable' && !this.canToggleDomain(item)) return;
+      if (change.param === 'indexed' && (!this.canIndexDomain(item) || item.indexed === change.value)) return;
       if (item.official === 'local' && change.param !== 'enable') return;
       if (change.param === 'primary' && (!change.value || item.primary)) return;
       return this.updateShopDomain(change.param, item.domain ? item.domain.domain : item.official, change.value);
@@ -1339,6 +1391,7 @@ export default {
       return this.$t(currency ? 'domains_modern.map.currencyScopeHelp' : 'domains_modern.map.languageScopeHelp');
     },
     fetchDomains(page, sortBy, sortDesc = true) {
+      this.sslHelp = null;
       const emptyRequest = ++this.emptyStateRequest;
       this.busy_fetch = true;
       this.emptyStateLoaded = false;
@@ -1430,6 +1483,17 @@ export default {
     },
 
     updateShopDomain(param, domain, value) {
+      if (this.busy_update || this.busy_fetch || !this.writeShopAccess(ShopPermissionRegions.SETTINGS.code)) return;
+      if (!['enable', 'indexed', 'primary'].includes(param) || typeof value !== 'boolean') return;
+      const builtin = ['local', 'sub'].includes(domain);
+      const target = builtin ? null : this.domains.find(item => item.domain === domain) || this.shop.domains.find(item => item.domain === domain);
+      if ((!builtin && (!target || !this.can_edit_domain(target))) || (domain === 'local' && param !== 'enable')) return;
+      if (param === 'primary' && (!value || (target || this.shop[domain])?.primary)) return;
+      const shopId = this.shop.id, request = ++this.domainUpdateRequest;
+      const currentScope = () => request === this.domainUpdateRequest && this.shop.id === shopId;
+      // A completion belongs to the current shop and still-authorized domain, not the old rendered row.
+      const currentAccess = () => currentScope() && this.writeShopAccess(ShopPermissionRegions.SETTINGS.code) &&
+        (!target || (this.can_edit_domain(target) && [...this.domains, ...this.shop.domains].some(item => item.id === target.id && item.domain === domain)));
       this.busy_update = true;
 
       if (param === "primary") this.busy_primary = true;
@@ -1440,7 +1504,16 @@ export default {
           value: value,
         })
         .then(({ data }) => {
-          if (!data.error) {
+          if (!currentAccess()) return;
+          const saved = builtin ? data?.[domain] : data?.domain;
+          const confirmed = saved && typeof saved === 'object' && saved[param] === value &&
+            (builtin || (saved.id === target.id && saved.domain === domain));
+          if (data?.error || data?.success === false || !confirmed) {
+            NotificationService.showErrorAlert(
+              this.$t("global.notification.error"),
+              data?.error_msg || this.$t('domains_modern.list.update_failed'),
+            );
+          } else {
             NotificationService.showSuccessAlert(
               this.$t("global.notification.confirm"),
               this.$t("admin_shop.dashboard.info.notification.update_message"),
@@ -1454,24 +1527,20 @@ export default {
               if (this.shop.sub) this.shop.sub.primary = false;
             }
 
-            if (data.domain) {
-              this.AddOrUpdateItemByID(this.shop.domains, data.domain);
-              this.UpdateItemByID(this.domains, data.domain);
-            } else if (data.local) this.shop.local = data.local;
-            else if (data.sub) this.shop.sub = data.sub;
+            if (!builtin) {
+              this.AddOrUpdateItemByID(this.shop.domains, saved);
+              this.UpdateItemByID(this.domains, saved);
+            } else this.shop[domain] = saved;
 
             this.dialog_set_domain = false;
-          } else {
-            NotificationService.showErrorAlert(
-              this.$t("global.notification.error"),
-              data.error_msg,
-            );
           }
         })
         .catch((error) => {
+          if (!currentAccess()) return;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
+          if (!currentScope()) return;
           this.busy_update = false;
           if (param === "primary") this.busy_primary = false;
           else this.busy_update_param = null;
@@ -1543,6 +1612,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.b-domains-list__home-icon { flex: none; object-fit: contain; }
 .b-domains-list__home-dialog {
   &.sd-modern-widget { padding: 0; }
   border-radius: 18px;
@@ -1580,6 +1650,8 @@ export default {
   .b-domains-list__refined-table :deep(tbody > tr:not(.b-domains-list__expanded) > td) { padding: 15px 12px !important; font-size: 12px; font-weight: 400; line-height: 19px; }
   .b-domains-list__address { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; line-height: 20px; min-width: 0; overflow-wrap: anywhere; }
   .b-domains-list__meta { display: flex; align-items: center; gap: 5px; margin-block-start: 3px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; overflow-wrap: anywhere; }
+  .b-domains-list__ssl-manager { max-width: 100%; padding: 0; border: 0; border-radius: 3px; background: transparent; font-family: inherit; text-align: start; cursor: help; }
+  .b-domains-list__ssl-manager:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
   .b-domains-list__destination, .b-domains-list__destination-static { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; font-weight: 400; line-height: 19px; text-align: start; min-width: 0; }
   .b-domains-list__destination { height: auto; min-height: 38px; border-radius: 8px; padding: 0; text-transform: none; letter-spacing: 0; white-space: normal; }
   .b-domains-list__destination :deep(.v-btn__content) { white-space: normal; justify-content: flex-start; gap: 7px; text-align: start; min-width: 0; }
@@ -1611,6 +1683,9 @@ export default {
   .b-domains-list__critical p { margin-block: 10px; color: var(--sd-modern-muted); }
   .sd-modern-empty-state { padding-block: 40px; }
   .sd-modern-table-footer { padding-block: 16px 0; }
+  @media (max-width: 699px), (pointer: coarse) {
+    .b-domains-list__ssl-manager { min-height: 44px; }
+  }
   @media (max-width: 699px) {
     padding: 20px 15px;
     .b-domains-list__heading { flex-direction: column; align-items: stretch; gap: 14px; }

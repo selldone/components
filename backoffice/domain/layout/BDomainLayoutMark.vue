@@ -5,7 +5,18 @@
     class="b-domain-layout-mark"
     @click.stop
   >
-    <v-icon size="14" aria-hidden="true">layers</v-icon>
+    <v-avatar
+      v-if="summary.effective_mode !== 'standard' && summary.image_url"
+      size="16"
+      rounded="sm"
+      class="b-domain-layout-mark__avatar"
+      aria-hidden="true"
+    >
+      <v-img :src="summary.image_url" alt="" cover :transition="false">
+        <template #error><v-icon size="14">layers</v-icon></template>
+      </v-img>
+    </v-avatar>
+    <v-icon v-else size="14" aria-hidden="true">layers</v-icon>
     <span
       v-if="summary.mode !== 'inherit' && summary.effective_mode !== 'standard'"
       class="b-domain-layout-mark__override"
@@ -22,8 +33,19 @@
       location="top"
       open-on-focus
       content-class="sd-modern-tooltip text-start"
-      >{{ $t("domain_layouts.open_assignment", { name: label }) }}</v-tooltip
     >
+      <div class="b-domain-layout-mark__tooltip">
+        <v-img
+          v-if="summary.effective_mode !== 'standard' && summary.image_url"
+          :src="summary.image_url"
+          :alt="label"
+          :aspect-ratio="16 / 10"
+          :max-height="150"
+          class="b-domain-layout-mark__preview"
+        />
+        <span>{{ $t("domain_layouts.open_assignment", { name: label }) }}</span>
+      </div>
+    </v-tooltip>
   </router-link>
 </template>
 
@@ -69,6 +91,11 @@ export default {
     flex-shrink: 0;
     color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), 0.66));
   }
+  &__avatar {
+    flex: none;
+    transform: none;
+    transition: none;
+  }
   &__name {
     min-width: 0;
     overflow: hidden;
@@ -87,6 +114,15 @@ export default {
     flex-shrink: 0;
     border-radius: 50%;
     background: rgb(var(--v-theme-primary));
+  }
+  &__tooltip {
+    display: grid;
+    gap: 10px;
+    min-width: 0;
+  }
+  &__preview {
+    inline-size: 100%;
+    border-radius: 8px;
   }
   &:hover &__name {
     text-decoration: underline;

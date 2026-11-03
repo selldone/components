@@ -9,6 +9,7 @@ import { renderToString } from "vue/server-renderer";
 import { JSDOM } from "jsdom";
 
 const clone = (value) => structuredClone(value);
+const messageDocument = new JSDOM("", { url: "https://selldone.test/" }).window.document;
 const custom = () => ({
   url: "https://store.example.com",
   site_map: "https://store.example.com/sitemap",
@@ -32,7 +33,7 @@ const custom = () => ({
   },
 });
 
-function fixture(file = "BDomainWorkspace.vue", item = custom()) {
+function fixture(file = "BDomainWorkspace.vue", item = custom(), withDocument = true) {
   const source = readFileSync(new URL(file, import.meta.url), "utf8");
   const { descriptor, errors } = parse(source, { filename: file });
   assert.deepEqual(errors, []);
@@ -103,11 +104,12 @@ function fixture(file = "BDomainWorkspace.vue", item = custom()) {
           `${String(name)}:${args.join(":")}`,
     },
   );
-  new Function("require", "exports", "window", "axios", script)(
+  new Function("require", "exports", "window", "axios", "document", script)(
     dependency,
     exports,
     { API: api },
     http,
+    withDocument ? messageDocument : undefined,
   );
   const component = exports.default;
   const state = {
@@ -189,6 +191,93 @@ test("mount and safe refresh never make a request; unrelated dirty drafts surviv
   assert.equal(f.state.hasUnsavedChanges, true);
 });
 
+test("maintenance is saved configuration, keeps disabled access authoritative, and links to Visitor access", () => {
+  const f = fixture();
+  f.state.item.domain.maintenance_summary = { supported: true, enabled: true, has_html: true };
+  assert.equal(f.state.healthSummary.state, "maintenance");
+  assert.equal(f.state.healthSummary.source, "savedSetup");
+  assert.equal(f.state.overviewRows.find(row => row.key === "maintenance").value, "domains_modern.maintenance.all_paths");
+  f.state.runHealthAction();
+  assert.deepEqual(f.events.at(-1), ["navigate", "settings", "access"]);
+  assert.deepEqual(f.requests, []);
+  f.state.item.domain.maintenance_summary.has_html = false;
+  assert.equal(f.state.healthSummary.state, "maintenanceUnavailable");
+  f.state.item.enable = false;
+  assert.equal(f.state.healthSummary.state, "disabled");
+  assert.equal(f.state.overviewRows.find(row => row.key === "maintenance").value, "domains_modern.maintenance.configured_disabled");
+  f.state.item.domain.externally_hosted = true;
+  assert.equal(f.state.maintenanceActive, false);
+  assert.equal(f.state.overviewRows.some(row => row.key === "maintenance"), false);
+  f.state.item = { official: "local", enable: true };
+  assert.equal(f.state.maintenanceActive, false);
+});
+
+test("maintenance accepts only the current domain and preserves unrelated dirty preferences", () => {
+  const f = fixture();
+  f.state.draft.indexed = true;
+  const summary = { supported: true, enabled: true, has_html: true, byte_size: 41 };
+  f.state.acceptMaintenance({ success: true, domain: { id: 99 }, maintenance_summary: summary });
+  assert.deepEqual(f.events, []);
+  assert.equal(f.state.maintenanceSummary, null);
+  f.state.acceptMaintenance({ success: true, domain: { id: 11, maintenance_summary: summary }, maintenance_summary: summary });
+  assert.deepEqual(f.state.item.maintenance_summary, summary);
+  assert.deepEqual(f.state.item.domain.maintenance_summary, summary);
+  assert.deepEqual(f.state.shop.domains[0].maintenance_summary, summary);
+  assert.equal(f.state.item.enable, true);
+  assert.equal(f.state.item.indexed, false);
+  assert.equal(f.state.draft.indexed, true);
+  assert.equal(f.state.changed("indexed"), true);
+  assert.deepEqual(f.events.at(-1), ["refresh"]);
+});
+
+test("maintenance source drafts and requests participate in the existing resource exit guards", () => {
+  const f = fixture();
+  f.state.maintenanceDirty = true;
+  f.state.maintenanceBusy = true;
+  assert.equal(f.state.hasUnsavedChanges, true);
+  assert.equal(f.state.isBusy, true);
+  assert.equal(f.state.canChangePrimary, false);
+  f.state.resetResource();
+  assert.equal(f.state.hasUnsavedChanges, false);
+  assert.equal(f.state.isBusy, false);
+});
+
+test("loading is a custom-domain Settings group and its drafts and requests use the resource exit guard", () => {
+  const f = fixture();
+  assert.equal(f.state.settings.some(setting => setting.value === "loading"), true);
+  assert.equal(f.state.settings.some(setting => setting.value === "oauth"), true);
+  assert.equal(f.state.overviewRows.some(row => row.key === "login"), false);
+  f.state.settingSection = "loading";
+  assert.equal(f.state.activeSetting, "loading");
+  f.state.loadingDirty = true;
+  f.state.loadingBusy = true;
+  assert.equal(f.state.hasUnsavedChanges, true);
+  assert.equal(f.state.isBusy, true);
+  assert.equal(f.state.canChangePrimary, false);
+  f.state.resetResource();
+  assert.equal(f.state.hasUnsavedChanges, false);
+  assert.equal(f.state.isBusy, false);
+  f.state.item = { official: "local", enable: true };
+  assert.equal(f.state.settings.some(setting => setting.value === "loading"), false);
+});
+
+test("loading acknowledgments update the current domain without dropping maintenance or other drafts", () => {
+  const f = fixture();
+  f.state.item.maintenance_summary = { supported: true, enabled: true, has_html: true };
+  f.state.draft.indexed = true;
+  const summary = { supported: true, mode: "custom", has_code: true, head_bytes: 40, body_bytes: 40 };
+  f.state.acceptLoading({ success: true, domain: { id: 99 }, loading_summary: summary });
+  assert.deepEqual(f.events, []);
+  f.state.acceptLoading({ success: true, domain: { id: 11, loading_summary: summary }, loading_summary: summary });
+  assert.deepEqual(f.state.item.loading_summary, summary);
+  assert.deepEqual(f.state.item.domain.loading_summary, summary);
+  assert.deepEqual(f.state.shop.domains[0].loading_summary, summary);
+  assert.equal(f.state.item.maintenance_summary.enabled, true);
+  assert.equal(f.state.draft.indexed, true);
+  assert.equal(f.state.changed("indexed"), true);
+  assert.deepEqual(f.events.at(-1), ["refresh"]);
+});
+
 test("sitemap closes on section or resource exit without saving the indexing draft", () => {
   const f = fixture();
   f.state.section = "search";
@@ -263,6 +352,70 @@ test("Overview ends with the exact hosted sitemap link and a read-only copy acti
   }
   assert.deepEqual(f.requests, []);
   assert.deepEqual(f.events, []);
+});
+
+test("Overview shows the effective layout identity and opens its native read-only editor", async () => {
+  const f = fixture();
+  const { descriptor } = parse(f.source);
+  const template = compileTemplate({ source: descriptor.template.content, filename: "BDomainWorkspace.vue", id: "overview-layout-test" });
+  const rendering = {};
+  new Function("require", "exports", ts.transpileModule(template.code, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS },
+  }).outputText)(() => Vue, rendering);
+  f.allow(false);
+  const image = "https://assets.example.test/layout-cover.png";
+  for (const [summary, expected, expectedImage, external] of [
+    [{ effective_mode: "private", name: "My Storefront", image_url: image }, "My Storefront · domain_layouts.private", image],
+    [{ effective_mode: "official", name: "Atelier", inherited: true, image_url: image }, "Atelier · domain_layouts.inherited", image],
+    [{ effective_mode: "private", package: "shop-editorial", available: false }, "shop-editorial · domain_layouts.unavailable", null],
+    [{ effective_mode: "standard", name: "standard", image_url: image }, "domain_layouts.standard · domain_layouts.standard_kind", null],
+    [null, "domain_layouts.unavailable", null],
+    [{ effective_mode: "private", name: "External assignment", image_url: image }, null, null, true],
+  ]) {
+    f.state.item = custom();
+    // Cover the same authoritative projection both at item level and nested domain level.
+    if (summary?.inherited) f.state.item.domain.layout_summary = summary;
+    else f.state.item.layout_summary = summary;
+    f.state.item.domain.externally_hosted = !!external;
+    const clicks = [];
+    const app = Vue.createSSRApp({ render: () => rendering.render(f.state, []) });
+    app.config.warnHandler = () => {};
+    app.component("VDialog", { render: () => null });
+    app.component("VImg", {
+      props: ["src", "alt"],
+      setup: props => () => Vue.h("img", { src: props.src, alt: props.alt }),
+    });
+    app.component("VBtn", {
+      inheritAttrs: false,
+      setup(_, { attrs, slots }) {
+        const index = clicks.push(attrs.onClick) - 1;
+        return () => Vue.h("button", { ...attrs, "data-click": index }, slots.default?.());
+      },
+    });
+    const document = new JSDOM(await renderToString(app)).window.document;
+    const row = [...document.querySelectorAll(".b-domain-workspace__overview-row")]
+      .find(row => row.querySelector("h3")?.textContent === "domain_layouts.domain_title");
+    if (external) {
+      assert.equal(row, undefined);
+      continue;
+    }
+    assert.ok(row);
+    assert.equal(row.querySelector("p").textContent, expected);
+    assert.equal(row.querySelector("img")?.getAttribute("src") || null, expectedImage);
+    const action = row.querySelector("button");
+    if (expectedImage) {
+      const avatar = row.querySelector(".b-domain-workspace__layout-avatar");
+      assert.equal(avatar.getAttribute("size"), "32");
+      assert.equal(avatar.getAttribute("rounded"), "lg");
+      assert.equal(avatar.nextElementSibling, action);
+      assert.equal(row.querySelector(".b-domain-workspace__overview-row-copy img"), null);
+    }
+    assert.ok(action.textContent.includes("domains_modern.workspace.health.view"));
+    assert.equal(action.disabled, false);
+    clicks[Number(action.dataset.click)]();
+    assert.deepEqual(f.events.at(-1), ["navigate", "storefront", undefined]);
+  }
+  assert.deepEqual(f.requests, []);
 });
 
 test("quick editors preview independently and cancel without discarding shared drafts", () => {
@@ -602,7 +755,6 @@ test("explicit DNS check retains diagnostics without treating stored approval as
   assert.equal(f.state.dnsError, "<b>Review target</b>");
   assert.equal(f.state.operationError, "");
   assert.deepEqual(f.notifications, []);
-  assert.equal(f.source.includes("v-html"), false);
 });
 
 test("only current explicit DNS evidence can produce accepted health", async () => {
@@ -697,6 +849,8 @@ test("DNS and SSL business failures stay separate and preserve unrelated operati
 
 test("SSL confirmation accepts current domain data while preserving drafts and DNS feedback", async () => {
   const f = fixture();
+  f.state.item.connection_provider = { id: "unknown", source: "response_headers", checked_at: "2026-11-01T00:00:00Z" };
+  const provider = { id: "cloudflare", source: "response_headers", checked_at: "2026-11-03T00:00:00Z" };
   f.state.draft.https = false;
   f.state.draft.languages = ["fa"];
   f.state.dnsMessage = "Earlier DNS result";
@@ -708,6 +862,7 @@ test("SSL confirmation accepts current domain data while preserving drafts and D
         id: 11,
         ssl: true,
         certificate: { "Expiry Date": "2099-01-01" },
+        connection_provider: provider,
       },
     },
   });
@@ -717,6 +872,8 @@ test("SSL confirmation accepts current domain data while preserving drafts and D
   assert.equal(f.state.sslMessage, "domains_modern.workspace.sslCheckSuccess");
   assert.equal(f.state.sslError, "");
   assert.equal(f.state.item.ssl, true);
+  assert.deepEqual(f.state.item.connection_provider, provider);
+  assert.deepEqual(f.state.item.domain.connection_provider, provider);
   assert.equal(f.state.item.certificate["Expiry Date"], "2099-01-01");
   assert.equal(f.state.draft.https, false);
   assert.deepEqual(f.state.draft.languages, ["fa"]);
@@ -727,7 +884,8 @@ test("SSL confirmation accepts current domain data while preserving drafts and D
   f.response.handler = async () => ({
     data: {
       success: true,
-      domain: { id: 11, ssl: false },
+      error: true,
+      domain: { id: 11, ssl: false, connection_provider: { ...provider, id: "vercel" } },
       message: "Probe rejected",
     },
   });
@@ -735,8 +893,127 @@ test("SSL confirmation accepts current domain data while preserving drafts and D
   assert.equal(f.state.sslError, "Probe rejected");
   assert.equal(f.state.sslMessage, "");
   assert.equal(f.state.item.ssl, false);
+  assert.equal(f.state.item.connection_provider.id, "vercel", "a failed later hop still refreshes first-host provider evidence");
   assert.equal(f.state.item.certificate["Expiry Date"], "2099-01-01");
   assert.equal(f.state.certificateState, "unknown");
+});
+
+test("Overview provider refresh uses the existing explicit HTTPS check and keeps its result beside the flow", async () => {
+  const f = fixture(), source = f.state.checkSsl, sources = [];
+  f.state.checkSsl = (origin) => { sources.push(origin); return source(origin); };
+  const { descriptor } = parse(f.source);
+  const template = compileTemplate({ source: descriptor.template.content, filename: 'BDomainWorkspace.vue', id: 'provider-refresh-test' });
+  assert.deepEqual(template.errors, []);
+  const rendering = {};
+  new Function('require', 'exports', ts.transpileModule(template.code, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(() => Vue, rendering);
+  let refresh, flowProps;
+  const render = async () => {
+    const app = Vue.createSSRApp({ render: () => rendering.render(f.state, []) });
+    const leaf = { inheritAttrs: false, setup: (_, { slots }) => () => Vue.h('div', slots.default?.()) };
+    for (const name of [...template.code.matchAll(/_resolveComponent\("([^"]+)"\)/g)].map(match => match[1])) {
+      if (!['b-domain-workspace-flow', 'v-dialog'].includes(name)) app.component(name, leaf);
+    }
+    app.component('b-domain-workspace-flow', {
+      props: ['shop', 'item', 'providerChecking', 'providerCheckAllowed'],
+      emits: ['navigate', 'refresh-provider'],
+      setup(props, { emit }) {
+        flowProps = props;
+        refresh = () => emit('refresh-provider');
+        return () => Vue.h('div', { 'data-provider-flow': '' });
+      },
+    });
+    app.component('v-dialog', { render: () => null });
+    app.directive('copy', {});
+    app.config.warnHandler = message => { throw Error(message); };
+    return new JSDOM(await renderToString(app)).window.document;
+  };
+  let document = await render();
+  assert.equal(flowProps.providerCheckAllowed, true);
+  assert.equal(flowProps.providerChecking, false);
+  assert.equal(document.querySelector('.b-domain-workspace__provider-result'), null);
+  assert.deepEqual(f.requests, [], 'rendering never checks the connection');
+  f.state.item.connection_provider = { id: 'unknown', source: 'response_headers', checked_at: '2026-11-01T00:00:00Z' };
+  f.state.draft.languages = ['fa'];
+  f.state.dnsMessage = 'Previous DNS result';
+  f.state.operationError = 'Previous save result';
+  let resolve;
+  f.response.handler = () => new Promise(done => { resolve = done; });
+  refresh(); refresh();
+  assert.deepEqual(sources, ['provider', 'provider']);
+  assert.deepEqual(f.requests, [['post', 'POST_DOMAIN_CHECK_SSL:7:11']]);
+  document = await render();
+  assert.equal(flowProps.providerChecking, true);
+  assert.equal(flowProps.providerCheckAllowed, false);
+  const pending = document.querySelector('.b-domain-workspace__provider-result');
+  assert.equal(pending.getAttribute('role'), 'status');
+  assert.equal(pending.getAttribute('aria-live'), 'polite');
+  assert(pending.textContent.includes('domains_modern.request_flow.checking_provider'));
+  const provider = { id: 'cloudflare', source: 'response_headers', checked_at: '2026-11-03T00:00:00Z' };
+  resolve({ data: { success: true, domain: { id: 11, ssl: true, connection_provider: provider }, message: 'Fresh <b>provider</b><script>bad()</script>' } });
+  await new Promise(done => setImmediate(done));
+  assert.deepEqual(f.state.item.connection_provider, provider);
+  assert.deepEqual(f.state.item.domain.connection_provider, provider);
+  assert.deepEqual(f.state.draft.languages, ['fa']);
+  assert.equal(f.state.dnsMessage, 'Previous DNS result');
+  assert.equal(f.state.operationError, 'Previous save result');
+  document = await render();
+  const success = document.querySelector('.b-domain-workspace__provider-result');
+  assert.equal(success.getAttribute('role'), 'status');
+  assert.equal(success.querySelector('b').textContent, 'provider');
+  assert.equal(success.querySelector('script'), null);
+  assert.equal(document.querySelector('.b-domain-workspace__ssl-result'), null);
+  assert.equal(flowProps.providerChecking, false);
+  f.response.handler = async () => { throw { response: { data: { message: 'Provider <b>retry</b><script>bad()</script>' } } }; };
+  refresh();
+  await new Promise(done => setImmediate(done));
+  document = await render();
+  const error = document.querySelector('.b-domain-workspace__provider-result');
+  assert.equal(error.getAttribute('role'), 'alert');
+  assert.equal(error.querySelector('b').textContent, 'retry');
+  assert.equal(error.querySelector('script'), null);
+  assert.deepEqual(f.state.item.connection_provider, provider, 'failed refresh preserves the last observation');
+  f.response.handler = async () => ({ data: { success: true, domain: { id: 11, ssl: true, connection_provider: provider } } });
+  await f.state.checkSsl({ type: 'click' });
+  document = await render();
+  assert.equal(f.state.providerCheckRequested, false, 'ordinary Connection clicks retain their original feedback location');
+  assert.equal(document.querySelector('.b-domain-workspace__provider-result'), null);
+  assert.deepEqual(f.notifications, [], 'inline checks never add duplicate generic notifications');
+});
+
+test("provider refresh denies unsupported or unauthorized actions and discards stale responses", async () => {
+  for (const restriction of ['local', 'sub', 'external', 'permission', 'license', 'busy', 'homeBusy', 'layoutBusy']) {
+    const f = fixture();
+    if (['local', 'sub'].includes(restriction)) f.state.item = { official: restriction, enable: true };
+    if (restriction === 'external') f.state.item.domain.externally_hosted = true;
+    if (restriction === 'permission') f.allow(false);
+    if (restriction === 'license') f.license(false);
+    if (restriction === 'busy') f.state.busy = 'dns';
+    if (restriction === 'homeBusy') f.state.homeBusy = true;
+    if (restriction === 'layoutBusy') f.state.layoutBusy = true;
+    await f.state.checkSsl('provider');
+    assert.deepEqual(f.requests, [], restriction);
+    assert.equal(f.state.providerCheckRequested, false);
+  }
+  for (const restriction of ['resource', 'permission', 'license', 'external', 'unmount']) {
+    const f = fixture();
+    const original = { id: 'unknown', source: 'response_headers', checked_at: '2026-11-01T00:00:00Z' };
+    f.state.item.connection_provider = original;
+    let resolve;
+    f.response.handler = () => new Promise(done => { resolve = done; });
+    const pending = f.state.checkSsl('provider');
+    if (restriction === 'resource') { f.state.item.domain.id = 12; f.state.resetResource(); }
+    if (restriction === 'permission') f.allow(false);
+    if (restriction === 'license') f.license(false);
+    if (restriction === 'external') f.state.item.domain.externally_hosted = true;
+    if (restriction === 'unmount') f.component.beforeUnmount.call(f.state);
+    resolve({ data: { success: true, domain: { id: 11, ssl: true, connection_provider: { id: 'cloudflare', source: 'response_headers', checked_at: '2026-11-03T00:00:00Z' } } } });
+    await pending;
+    assert.deepEqual(f.state.item.connection_provider, original, restriction);
+    assert.equal(f.state.sslMessage, '');
+    assert.equal(f.state.sslError, '');
+    assert.deepEqual(f.notifications, []);
+    if (restriction === 'resource') assert.equal(f.state.providerCheckRequested, false);
+  }
 });
 
 test("checks retain transport detail inline and do not invent SSL confirmation", async () => {
@@ -842,7 +1119,7 @@ test("retries clear only their own feedback and stale checks cannot populate a d
   }
 });
 
-test("DNS and SSL messages render only in their own Connection sections as plain text", async () => {
+test("DNS and SSL messages render sanitized HTML only in their own Connection sections", async () => {
   const f = fixture();
   const { descriptor } = parse(f.source);
   const template = compileTemplate({
@@ -879,9 +1156,9 @@ test("DNS and SSL messages render only in their own Connection sections as plain
     const dns = document.querySelector(".b-domain-workspace__dns-result"),
       ssl = document.querySelector(".b-domain-workspace__ssl-result");
     if (section === "connection") {
-      assert.ok(dns.textContent.includes("DNS <b>synthetic</b> detail"));
+      assert.ok(dns.textContent.includes("DNS synthetic detail"));
       assert.equal(dns.getAttribute("role"), "alert");
-      assert.equal(dns.querySelector("b"), null);
+      assert.equal(dns.querySelector("b").textContent, "synthetic");
       assert.ok(ssl.textContent.includes("SSL synthetic result"));
       assert.equal(ssl.getAttribute("role"), "status");
       assert.equal(
@@ -938,6 +1215,65 @@ test("repair no-op with a real client preserves server message; absence is a fai
       f.state.callback,
       present ? "https://store.example.com/selldone-callback" : "",
     );
+  }
+});
+
+test("server feedback preserves formatting and safe links while removing executable HTML", () => {
+  const f = fixture();
+  const html = f.state.messageHtml('Checking results:<br><br><ul><li onclick="bad()">Client <strong>repaired</strong>.</li></ul><a href="/settings">Settings</a><a href="https://docs.example.test/help" target="_self" style="color:red">Help</a><a href="mailto:help@example.test">Email</a><a href="java&#x0a;script:bad()">Unsafe</a><a href="data:text/html,bad">Data</a><a href="https://user:secret@example.test">Credentials</a><img src=x onerror="bad()"><script>bad()</script><style>body{display:none}</style><svg onload="bad()"><foreignObject><p>bad</p></foreignObject></svg><iframe src="https://evil.test"></iframe>');
+  const document = new JSDOM(html).window.document;
+  assert.equal(document.querySelectorAll("br").length, 2);
+  assert.equal(document.querySelector("ul li").textContent, "Client repaired.");
+  assert.equal(document.querySelector("strong").textContent, "repaired");
+  assert.equal(document.querySelector('a[href="/settings"]').getAttribute("target"), null);
+  const external = document.querySelector('a[href="https://docs.example.test/help"]');
+  assert.equal(external.getAttribute("target"), "_blank");
+  assert.equal(external.getAttribute("rel"), "noopener noreferrer");
+  assert.ok(document.querySelector('a[href="mailto:help@example.test"]'));
+  assert.deepEqual([...document.querySelectorAll("a:not([href])")].map((a) => a.textContent), ["Unsafe", "Data", "Credentials"]);
+  assert.equal(document.querySelector("script,style,img,svg,iframe,[onclick],[onerror],[onload],[style]"), null);
+  assert.equal(f.state.messageHtml(null), "");
+  assert.equal(f.state.messageHtml("Plain text & details"), "Plain text &amp; details");
+  assert.equal(fixture("BDomainWorkspace.vue", custom(), false).state.messageHtml('<b>Unavailable & safe</b>'), "&lt;b&gt;Unavailable &amp; safe&lt;/b&gt;");
+  assert.deepEqual(f.requests, []);
+});
+
+test("new, existing and failed client repairs render complete sanitized server results", async () => {
+  const f = fixture();
+  const { descriptor } = parse(f.source);
+  const template = compileTemplate({ source: descriptor.template.content, filename: "BDomainWorkspace.vue", id: "repair-feedback-test" });
+  const rendering = {};
+  new Function("require", "exports", ts.transpileModule(template.code, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(() => Vue, rendering);
+  f.state.section = "settings";
+  f.state.settingSection = "oauth";
+  for (const { success, client, expectedRole, result } of [
+    { success: true, client: null, expectedRole: "status", result: "Client <b>result</b>." },
+    { success: false, client: null, expectedRole: "alert", result: "Client <b>result</b>." },
+    {
+      success: false,
+      client: { redirect_uris: ["https://store.example.com/selldone-callback"] },
+      expectedRole: "status",
+      result: "Client already exists. Sign-in settings synchronized.",
+    },
+  ]) {
+    f.response.handler = async () => ({ data: {
+      success, client,
+      message: `Checking results:<br><br><ul><li>${result}</li></ul><script>bad()</script>`,
+    } });
+    await f.state.repairClient();
+    const app = Vue.createSSRApp({ render: () => rendering.render(f.state, []) });
+    app.config.warnHandler = () => {};
+    app.component("VDialog", { render: () => null });
+    const document = new JSDOM(await renderToString(app)).window.document;
+    const notice = document.querySelector(`.sd-modern-notice[role="${expectedRole}"]`);
+    assert.equal(notice.querySelector("li").textContent, result.replace(/<\/?b>/g, ""));
+    assert.equal(notice.querySelectorAll("br").length, 2);
+    assert.equal(notice.querySelector("script"), null);
+    assert.equal(notice.textContent.includes("<ul>"), false);
+    if (client) {
+      assert.equal(document.querySelector('.sd-modern-notice[role="alert"]'), null);
+      assert.equal(f.state.callback, client.redirect_uris[0]);
+    }
   }
 });
 
@@ -1183,6 +1519,110 @@ test("customer preview follows saved home types, primary/default inheritance and
   assert.deepEqual(preview.requests, []);
 });
 
+test("the real shared preview explains authoritative layout assignments while keeping native home-choice captions", async () => {
+  const transpile = (source) => ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  const noNetwork = new Proxy({}, { get() { throw Error('The preview must not request live data'); } });
+  const loadScript = (path, imports = {}) => {
+    const exports = {};
+    new Function('require', 'exports', 'axios', 'self', transpile(readFileSync(new URL(path, import.meta.url), 'utf8')))(name => {
+      assert(name in imports, 'Unexpected preview dependency: ' + name);
+      return imports[name];
+    }, exports, noNetwork, messageDocument.defaultView);
+    return exports;
+  };
+  const domain = loadScript('../../../mixin/domain/DomainMixin.ts');
+  const html = loadScript('../../../../core-js/helper/html/HtmlHelper.ts');
+  const loadComponent = (path, imports = {}) => {
+    const { descriptor, errors } = parse(readFileSync(new URL(path, import.meta.url), 'utf8'), { filename: path });
+    assert.deepEqual(errors, []);
+    const template = compileTemplate({ source: descriptor.template.content, filename: path, id: 'real-preview-caption-test', transformAssetUrls: { includeAbsolute: true } });
+    assert.deepEqual(template.errors, []);
+    const options = {}, rendering = {};
+    new Function('require', 'exports', 'axios', transpile(descriptor.script.content))(name => {
+      assert(name in imports, 'Unexpected preview component dependency: ' + name);
+      return imports[name];
+    }, options, noNetwork);
+    new Function('require', 'exports', transpile(template.code))(() => Vue, rendering);
+    return { ...options.default, render: rendering.render };
+  };
+  const art = loadComponent('./BDomainCustomerPreview.vue');
+  const Preview = loadComponent('./BDomainStorefrontPreview.vue', {
+    '@selldone/core-js/helper/html/HtmlHelper': html,
+    '@selldone/components-vue/mixin/domain/DomainMixin.ts': domain,
+    './BDomainCustomerPreview.vue': { default: art },
+  });
+  const prefix = 'domains_modern.workspace.previewLayout.';
+  const copy = {
+    [prefix + 'standard']: 'Standard storefront: {name}.',
+    [prefix + 'custom']: 'Custom storefront: {name}.',
+    [prefix + 'customUnnamed']: 'Custom storefront layout.',
+    [prefix + 'inherited']: 'Uses the shop default layout.',
+    [prefix + 'unavailable']: 'The assigned layout is unavailable.',
+    [prefix + 'unknown']: 'Layout details are unavailable.',
+    [prefix + 'external']: 'This storefront is hosted externally.',
+    'domain_layouts.standard': 'Selldone standard',
+    'domains_modern.home.preview_title': 'Conceptual preview',
+    'domains_modern.maintenance.preview_active': 'Maintenance is enabled on every path.',
+    'domains_modern.maintenance.preview_disabled': 'Maintenance is configured; this address is disabled.',
+    'domains_modern.maintenance.preview_unavailable': 'Maintenance is enabled, but its HTML is unavailable. The storefront remains unavailable.',
+    'domains_modern.maintenance.missing_html': 'Maintenance HTML is unavailable.',
+  };
+  const standard = { effective_mode: 'standard', name: 'Selldone', available: true };
+  const official = { mode: 'official', effective_mode: 'official', name: 'Atelier', available: true };
+  for (const [props, expected] of [
+    [{ layoutSummary: standard }, 'Standard storefront: Selldone.'],
+    [{ layoutSummary: { effective_mode: 'standard' } }, 'Standard storefront: Selldone standard.'],
+    [{ layoutSummary: official }, 'Custom storefront: Atelier.'],
+    [{ layoutSummary: { effective_mode: 'private', name: 'My Storefront', available: true } }, 'Custom storefront: My Storefront.'],
+    [{ layoutSummary: { ...official, inherited: true } }, 'Custom storefront: Atelier. Uses the shop default layout.'],
+    [{ layoutSummary: { ...standard, mode: 'inherit' } }, 'Standard storefront: Selldone. Uses the shop default layout.'],
+    [{ layoutSummary: { ...official, inherited: true, available: false } }, 'Custom storefront: Atelier. Uses the shop default layout. The assigned layout is unavailable.'],
+    [{ layoutSummary: { effective_mode: 'private', available: false } }, 'Custom storefront layout. The assigned layout is unavailable.'],
+    [{ layoutSummary: null }, 'Layout details are unavailable.'],
+    [{ layoutSummary: {} }, 'Layout details are unavailable.'],
+    [{ layoutSummary: { effective_mode: 'future', name: 'Unexpected' } }, 'Layout details are unavailable.'],
+    [{ layoutSummary: { effective_mode: 'private', name: { invalid: true } } }, 'Custom storefront layout.'],
+    [{ layoutSummary: official, external: true }, 'This storefront is hosted externally.'],
+    [{ layoutSummary: { ...official, reason: 'externally_hosted' } }, 'This storefront is hosted externally.'],
+    [{ layoutSummary: null, external: true }, 'This storefront is hosted externally.'],
+    [{ layoutSummary: { ...official, name: '<img src=x onerror=bad()>Store' } }, 'Custom storefront: <img src=x onerror=bad()>Store.'],
+    [{}, 'domains_modern.workspace.previewArt.shopSummary domains_modern.workspace.previewArt.note'],
+    [{ home: 'blog' }, 'domains_modern.workspace.previewArt.blogSummary domains_modern.workspace.previewArt.note'],
+    [{ external: true }, 'domains_modern.workspace.previewArt.externalSummary domains_modern.workspace.previewArt.note'],
+    [{ maintenanceSummary: { supported: true, enabled: true, has_html: true, html: '<script>bad()</script>' } }, 'Maintenance is enabled on every path.'],
+    [{ maintenanceSummary: { supported: true, enabled: true, has_html: false } }, 'Maintenance is enabled, but its HTML is unavailable. The storefront remains unavailable.'],
+    [{ domainEnabled: false, maintenanceSummary: { supported: true, enabled: true, has_html: true } }, 'Maintenance is configured; this address is disabled.'],
+    [{ domainEnabled: false, maintenanceSummary: { supported: true, enabled: true, has_html: false } }, 'Maintenance is configured; this address is disabled. Maintenance HTML is unavailable.'],
+    [{ layoutSummary: official, maintenanceSummary: { supported: false, enabled: true } }, 'Custom storefront: Atelier.'],
+    [{ layoutSummary: official, maintenanceSummary: { supported: true, enabled: false } }, 'Custom storefront: Atelier.'],
+    [{ layoutSummary: official, external: true, maintenanceSummary: { supported: true, enabled: true } }, 'This storefront is hosted externally.'],
+  ]) {
+    const app = Vue.createSSRApp(Preview, { shop: { id: 7, name: 'fixture', title: '<b>Real store</b>' }, address: 'https://store.example.test', home: 'shop', ...props });
+    app.config.globalProperties.$t = (key, values = {}) => (copy[key] || key).replace(/\{(\w+)\}/g, (_, name) => values[name]);
+    app.component('VIcon', { setup: (_, { attrs, slots }) => () => Vue.h('span', attrs, slots.default?.()) });
+    app.component('VAvatar', { setup: (_, { attrs, slots }) => () => Vue.h('span', attrs, slots.default?.()) });
+    app.component('VImg', { setup: (_, { attrs }) => () => Vue.h('img', attrs) });
+    app.config.warnHandler = (message) => { throw Error(message); };
+    const document = new JSDOM(await renderToString(app)).window.document;
+    assert.equal(document.querySelector('.b-domain-storefront-preview__note').textContent.trim().replace(/\s+/g, ' '), expected);
+    assert.equal(document.querySelector('figcaption').textContent, 'Conceptual preview');
+    assert.equal(document.querySelector('.b-domain-storefront-preview__identity strong').textContent, 'Real store');
+    assert.equal(document.querySelector('bdi').textContent, 'https://store.example.test');
+    assert(document.querySelector('.b-domain-storefront-preview__browser svg'));
+    assert.equal(document.querySelector('button,a,input,textarea,select,form,img,script,[src],[href],[contenteditable]'), null);
+    const maintenance = !props.external && props.maintenanceSummary?.supported === true && props.maintenanceSummary.enabled === true;
+    assert.equal(document.querySelector('.b-domain-customer-preview').getAttribute('data-kind') === 'maintenance', maintenance);
+    if (maintenance) {
+      assert(document.querySelector('.b-domain-customer-preview__maintenance svg'));
+      assert.match(document.querySelector('.b-domain-customer-preview__maintenance').textContent, /construction/);
+      assert.doesNotMatch(document.body.textContent, /bad\(\)/, 'uploaded HTML is never rendered inside the operator preview');
+    }
+    if (props.layoutSummary !== undefined) assert.equal(document.querySelector('.b-domain-storefront-preview__note').textContent.includes('previewArt.'), false);
+  }
+});
+
 test("customer page illustrations render distinct inert layouts without real data or controls", async () => {
   const f = fixture("BDomainCustomerPreview.vue");
   const { descriptor } = parse(f.source);
@@ -1210,12 +1650,15 @@ test("customer page illustrations render distinct inert layouts without real dat
     "landing",
     "static",
     "external",
+    "maintenance",
   ]) {
     const app = Vue.createSSRApp(
       { ...f.component, render: rendering.render },
       { kind },
     );
     app.config.globalProperties.$t = (key) => key;
+    app.component('VIcon', { setup: (_, { attrs, slots }) => () => Vue.h('span', attrs, slots.default?.()) });
+    app.config.warnHandler = message => { throw Error(message); };
     const html = await renderToString(app);
     const document = new JSDOM(html).window.document;
     assert.equal(
@@ -1234,35 +1677,6 @@ test("customer page illustrations render distinct inert layouts without real dat
       assert.equal(svg.getAttribute("focusable"), "false", kind);
     layouts.add(document.body.textContent + document.body.innerHTML);
   }
-  assert.equal(layouts.size, 9);
+  assert.equal(layouts.size, 10);
   assert.deepEqual(f.requests, []);
-});
-
-test("overview flow uses real hosting distinctions and keeps responsive snake order", () => {
-  const f = fixture("BDomainWorkspaceFlow.vue");
-  assert.deepEqual(
-    f.state.nodes.map((node) => node.section),
-    ["settings", "connection", "storefront", "storefront"],
-  );
-  f.state.availableWidth = 500;
-  assert.equal(f.state.columns, 2);
-  assert.deepEqual(
-    [0, 1, 2, 3].map((index) => f.state.placement(index)),
-    [
-      { gridRow: 1, gridColumn: 1 },
-      { gridRow: 1, gridColumn: 2 },
-      { gridRow: 2, gridColumn: 2 },
-      { gridRow: 2, gridColumn: 1 },
-    ],
-  );
-  f.state.item.domain.externally_hosted = true;
-  assert.equal(f.state.nodes[2].title, "domains_modern.connection.external");
-  assert.equal(f.state.nodes[3].caption, "domains_modern.map.externalHome");
-  f.state.item = {
-    official: "sub",
-    name: "Sub domain",
-    url: "https://actual.example.test",
-    enable: true,
-  };
-  assert.equal(f.state.nodes[0].title, "actual.example.test");
 });

@@ -157,7 +157,7 @@ const renderer = Vue.createRenderer({
   nextSibling: (child) =>
     child.parent?.children[child.parent.children.indexOf(child) + 1] || null,
 });
-function native(name, props = {}) {
+function native(name, props = {}, imageError = false) {
   return Vue.defineComponent({
     name,
     inheritAttrs: false,
@@ -168,7 +168,7 @@ function native(name, props = {}) {
           ? Vue.createCommentVNode("closed")
           : Vue.h(name, { ...attrs, ...values }, [
               slots.prepend?.(),
-              slots.default?.(),
+              imageError ? slots.error?.() : slots.default?.(),
               slots.append?.(),
             ]);
     },
@@ -393,6 +393,7 @@ async function fixture(t, settings = {}) {
     "VIcon",
     "VBtn",
     "VImg",
+    "VAvatar",
     "VCard",
     "VCardTitle",
     "VCardText",
@@ -404,7 +405,7 @@ async function fixture(t, settings = {}) {
     "RouterLink",
     "VTooltip",
   ])
-    app.component(name, native(name));
+    app.component(name, native(name, {}, name === "VImg" && settings.imageError === true));
   app.component("VDialog", native("VDialog", { modelValue: Boolean }));
   app.config.globalProperties.$t = (key, values) =>
     translate(key, values, settings.locale === "fa" ? persian : english);
@@ -528,6 +529,45 @@ test("picker selection stays local, Cancel preserves the assignment and Select r
   f.state.discard();
   await settle();
   assert.equal(f.state.isDirty, false);
+});
+
+test("Save appears only for a changed layout and disappears after discard or successful saving", async (t) => {
+  for (const domainKey of ["default", "local"]) {
+    const f = await fixture(t, { props: { domainKey } });
+    const label = translate(
+      `domain_layouts.${domainKey === "default" ? "save_default" : "save_domain"}`,
+    );
+    const saveButton = () =>
+      f.nodes("VBtn").find((item) => text(item).includes(label));
+    assert.equal(saveButton(), undefined);
+    f.state.draft = { mode: "official", official_layout_id: 31 };
+    await settle();
+    assert.equal(saveButton().props.disabled, false);
+    f.state.discard();
+    await settle();
+    assert.equal(saveButton(), undefined);
+
+    f.state.draft = { mode: "official", official_layout_id: 31 };
+    await settle();
+    const pending = f.state.save();
+    await settle();
+    assert.equal(saveButton().props.disabled, true);
+    assert.equal(saveButton().props.loading, true);
+    f.calls.writes[0].resolve({
+      data: options({
+        selection: { mode: "official", official_layout_id: 31 },
+        layout_summary: {
+          ...standard(),
+          mode: "official",
+          name: "Official Atlas",
+        },
+      }),
+    });
+    await pending;
+    await settle();
+    assert.equal(saveButton(), undefined);
+    assert.equal(f.calls.writes.length, 1);
+  }
 });
 
 test("the change control retains the full selected identity and edits private release beside it", async (t) => {
@@ -1030,6 +1070,99 @@ test("compact marks navigate to current-shop Storefront assignments and normaliz
     before.domains[0].layout_summary,
   );
   assert.deepEqual(plain(resource), before);
+});
+
+test("compact assignment tooltips show only the effective custom layout's supplied image", async (t) => {
+  for (const summary of [
+    {
+      mode: "private",
+      effective_mode: "private",
+      name: "Private Cedar",
+      image_url: "https://images.example.test/private.png",
+    },
+    {
+      mode: "official",
+      effective_mode: "official",
+      name: "Official Atlas",
+      image_url: "https://images.example.test/official.png",
+    },
+    {
+      mode: "inherit",
+      effective_mode: "private",
+      inherited: true,
+      name: "Inherited Cedar",
+      image_url: "https://images.example.test/inherited.png",
+    },
+    {
+      mode: "private",
+      effective_mode: "private",
+      name: "No cover",
+      image_url: null,
+    },
+    { ...standard(), image_url: "https://images.example.test/not-custom.png" },
+  ]) {
+    const f = await fixture(t, {
+      file: "@selldone/components-vue/backoffice/domain/layout/BDomainLayoutMark.vue",
+      props: { summary, shopId: 7, domainKey: "sub" },
+    });
+    const tooltip = f.nodes("VTooltip")[0];
+    assert.equal(tooltip.props.location, "top");
+    assert.ok(Object.hasOwn(tooltip.props, "open-on-focus"));
+    assert.equal(
+      tooltip.props["content-class"],
+      "sd-modern-tooltip text-start",
+    );
+    const images = all(tooltip).filter((entry) => entry.type === "VImg");
+    const hasImage =
+      summary.effective_mode !== "standard" && !!summary.image_url;
+    const avatars = f.nodes("VAvatar");
+    assert.equal(avatars.length, hasImage ? 1 : 0);
+    if (hasImage) {
+      assert.equal(avatars[0].props.size, "16");
+      assert.equal(avatars[0].props["aria-hidden"], "true");
+      const thumbnail = all(avatars[0]).find((entry) => entry.type === "VImg");
+      assert.equal(thumbnail.props.src, summary.image_url);
+      assert.equal(thumbnail.props.alt, "");
+      assert.equal(thumbnail.props.transition, false);
+    } else {
+      assert.ok(f.nodes("VIcon").some((entry) => text(entry) === "layers"));
+    }
+    assert.equal(images.length, hasImage ? 1 : 0);
+    if (hasImage) {
+      assert.equal(images[0].props.src, summary.image_url);
+      assert.equal(images[0].props.alt, summary.name);
+      assert.equal(images[0].props["aspect-ratio"], 1.6);
+      assert.equal(images[0].props["max-height"], 150);
+    }
+    assert.match(
+      text(tooltip),
+      /View or change the layout used on this domain/,
+    );
+    assert.equal(f.calls.reads.length, 0);
+    assert.equal(f.calls.writes.length, 0);
+  }
+});
+
+test("a failed tiny layout image keeps its icon fallback, label and native destination", async (t) => {
+  const f = await fixture(t, {
+    file: "@selldone/components-vue/backoffice/domain/layout/BDomainLayoutMark.vue",
+    imageError: true,
+    props: {
+      summary: { mode: "private", effective_mode: "private", name: "Private Cedar", image_url: "https://images.example.test/unavailable.png" },
+      shopId: 7,
+      domainKey: "sub",
+    },
+  });
+  const avatar = f.nodes("VAvatar")[0];
+  assert.equal(avatar.props.size, "16");
+  assert.ok(all(avatar).some((entry) => entry.type === "VIcon" && text(entry) === "layers"));
+  assert.match(f.rendered(), /Private Cedar/);
+  assert.deepEqual(plain(f.state.destination), {
+    name: "BPageDomainStorefront",
+    params: { shop_id: 7, domain_key: "sub" },
+  });
+  assert.equal(f.calls.reads.length, 0);
+  assert.equal(f.calls.writes.length, 0);
 });
 
 test("English and Persian layout copy have equal keys and preserve interpolation tokens", () => {

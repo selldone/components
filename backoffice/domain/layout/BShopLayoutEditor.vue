@@ -16,7 +16,14 @@
           variant="text"
           :disabled="saving"
           ><v-icon size="16" start>visibility</v-icon>{{ t("preview")
-          }}<v-icon size="16" end>north_east</v-icon></v-btn
+          }}<v-icon size="16" end>north_east</v-icon
+          ><v-tooltip
+            activator="parent"
+            location="top"
+            open-on-focus
+            content-class="sd-modern-tooltip text-start"
+            >{{ t("preview_help") }}</v-tooltip
+          ></v-btn
         >
       </header>
       <v-progress-linear
@@ -176,6 +183,7 @@
               @click="discard"
               >{{ t("cancel") }}</v-btn
             ><v-btn
+              v-if="isDirty"
               class="sd-modern-button sd-modern-button--primary"
               color="primary"
               variant="elevated"

@@ -36,11 +36,17 @@
       role="alert"
     >
       <v-icon size="18" color="error" aria-hidden="true">error_outline</v-icon>
-      <div class="sd-modern-notice__content">{{ operationError }}</div>
+      <div
+        class="sd-modern-notice__content"
+        v-html="messageHtml(operationError)"
+      ></div>
     </div>
     <div v-if="operationMessage" class="sd-modern-notice" role="status">
       <v-icon size="18" aria-hidden="true">info_outline</v-icon>
-      <div class="sd-modern-notice__content">{{ operationMessage }}</div>
+      <div
+        class="sd-modern-notice__content"
+        v-html="messageHtml(operationMessage)"
+      ></div>
     </div>
 
     <!-- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ Overview ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ -->
@@ -159,6 +165,19 @@
                     <h3>{{ row.title }}</h3>
                     <p>{{ row.value }}</p>
                   </div>
+                  <v-avatar
+                    v-if="row.image"
+                    size="32"
+                    rounded="lg"
+                    class="b-domain-workspace__layout-avatar"
+                    aria-hidden="true"
+                  >
+                    <v-img :src="row.image" alt="" cover :transition="false">
+                      <template #error>
+                        <v-icon size="18">{{ row.icon }}</v-icon>
+                      </template>
+                    </v-img>
+                  </v-avatar>
                   <v-btn
                     v-if="row.quick"
                     variant="text"
@@ -243,6 +262,9 @@
               :address="address"
               :home="configuredHome"
               :external="isExternal"
+              :layout-summary="item.layout_summary || item.domain?.layout_summary || null"
+              :maintenance-summary="maintenanceSummary"
+              :domain-enabled="!!item.enable"
             />
             <dl class="b-domain-workspace__preview-facts">
               <div>
@@ -331,8 +353,33 @@
         <b-domain-workspace-flow
           :shop="shop"
           :item="item"
+          :provider-checking="busy === 'ssl'"
+          :provider-check-allowed="isCustom && !isExternal && canWrite && !isBusy"
           @navigate="navigate"
+          @refresh-provider="checkSsl('provider')"
         />
+        <div
+          v-if="providerCheckRequested && (busy === 'ssl' || sslError || sslMessage)"
+          class="sd-modern-notice mt-4 b-domain-workspace__provider-result"
+          :role="sslError ? 'alert' : 'status'"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <v-icon
+            size="18"
+            :color="sslError ? 'error' : undefined"
+            aria-hidden="true"
+            >{{ sslError ? "error_outline" : "info_outline" }}</v-icon
+          >
+          <div v-if="busy === 'ssl'" class="sd-modern-notice__content">
+            {{ $t("domains_modern.request_flow.checking_provider") }}
+          </div>
+          <div
+            v-else
+            class="sd-modern-notice__content"
+            v-html="messageHtml(sslError || sslMessage)"
+          ></div>
+        </div>
       </section>
     </template>
 
@@ -511,9 +558,10 @@
                     : "info_outline"
               }}</v-icon
             >
-            <div class="sd-modern-notice__content">
-              {{ dnsError || dnsMessage }}
-            </div>
+            <div
+              class="sd-modern-notice__content"
+              v-html="messageHtml(dnsError || dnsMessage)"
+            ></div>
           </div>
           <b-domain-dns-feedback
             v-if="detectedDns !== null"
@@ -621,9 +669,10 @@
                     : "info_outline"
               }}</v-icon
             >
-            <div class="sd-modern-notice__content">
-              {{ sslError || sslMessage }}
-            </div>
+            <div
+              class="sd-modern-notice__content"
+              v-html="messageHtml(sslError || sslMessage)"
+            ></div>
           </div>
           <dl
             v-if="certificate"
@@ -719,7 +768,7 @@
       :shop="shop"
       :domain-key="item.domain?.id || item.official"
       :domain-item="item"
-      :read-only="!canWrite || !!busy || homeBusy"
+      :read-only="!canWrite || !!busy || homeBusy || maintenanceBusy || loadingBusy"
       class="b-domain-workspace__layout-editor"
       @state="layoutDirty = $event.dirty; layoutBusy = $event.busy"
       @saved="$emit('refresh')"
@@ -742,19 +791,6 @@
             <h2>{{ $t("domains_modern.workspace.themeTitle") }}</h2>
             <p>{{ $t("domains_modern.workspace.themeSubtitle") }}</p>
           </div>
-          <v-btn
-            :to="{
-              name: 'BPageShopSettingTheme',
-              params: { shop_id: shop.id },
-            }"
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="text"
-            color="primary"
-            class="sd-modern-button sd-modern-button--inline"
-            append-icon="north_east"
-            >{{ $t("domains_modern.workspace.manageTheme") }}</v-btn
-          >
         </header>
         <p v-if="!isCustom" class="b-domain-workspace__section-help">
           {{ $t("domains_modern.workspace.defaultHomeHelp") }}
@@ -767,7 +803,7 @@
             :shop="shop"
             modern
             :clearable="isCustom"
-            :read-only="!canWrite || !!busy"
+            :read-only="!canWrite || !!busy || layoutBusy || maintenanceBusy || loadingBusy"
           />
         </div>
         <div
@@ -1043,7 +1079,10 @@
               @keydown.space.prevent="changeParam('primary', true)"
             />
           </div>
-          <div class="sd-modern-actions b-domain-workspace__actions">
+          <div
+            v-if="changed('enable')"
+            class="sd-modern-actions b-domain-workspace__actions"
+          >
             <v-btn
               color="primary"
               variant="flat"
@@ -1052,10 +1091,32 @@
               :disabled="!canWrite || isBusy || !changed('enable')"
               :loading="busy === 'enable'"
               @click="changeParam('enable', draft.enable)"
-              >{{ $t("global.actions.save") }}</v-btn
+              >{{ $t("global.actions.save_changes") }}</v-btn
             >
           </div>
+          <b-domain-maintenance
+            v-if="isCustom"
+            :key="resourceKey"
+            :shop="shop"
+            :item="item"
+            :read-only="!canWrite"
+            :disabled="!!busy || homeBusy || layoutBusy || loadingBusy"
+            @state="maintenanceDirty = $event.dirty; maintenanceBusy = $event.busy"
+            @saved="acceptMaintenance"
+          />
         </section>
+        <b-domain-loading
+          v-if="isCustom"
+          v-show="activeSetting === 'loading'"
+          :key="resourceKey"
+          :shop="shop"
+          :item="item"
+          :active="section === 'settings' && activeSetting === 'loading'"
+          :read-only="!canWrite"
+          :disabled="!!busy || homeBusy || layoutBusy || maintenanceBusy"
+          @state="loadingDirty = $event.dirty; loadingBusy = $event.busy"
+          @saved="acceptLoading"
+        />
         <section
           v-if="isCustom"
           v-show="activeSetting === 'scope'"
@@ -1261,7 +1322,10 @@
             <v-icon size="18" color="error" aria-hidden="true"
               >error_outline</v-icon
             >
-            <div class="sd-modern-notice__content">{{ operationError }}</div>
+            <div
+              class="sd-modern-notice__content"
+              v-html="messageHtml(operationError)"
+            ></div>
           </div>
           <u-smart-switch
             v-model="quickValue"
@@ -1341,6 +1405,8 @@ import BDomainWorkspaceFlow from "./BDomainWorkspaceFlow.vue";
 import BDomainSearchIllustration from "./BDomainSearchIllustration.vue";
 import BDomainStorefrontPreview from "./BDomainStorefrontPreview.vue";
 import BShopLayoutEditor from "../layout/BShopLayoutEditor.vue";
+import BDomainMaintenance from "../maintenance/BDomainMaintenance.vue";
+import BDomainLoading from "../loading/BDomainLoading.vue";
 
 const fields = ["enable", "indexed", "https", "languages", "currencies"];
 const equal = (left, right) => JSON.stringify(left) === JSON.stringify(right);
@@ -1349,6 +1415,8 @@ export default {
   name: "BDomainWorkspace",
   mixins: [DomainMixin, DateMixin],
   components: {
+    BDomainLoading,
+    BDomainMaintenance,
     BShopLayoutEditor,
     BDomainStorefrontPreview,
     BDomainSearchIllustration,
@@ -1391,6 +1459,10 @@ export default {
     homeBusy: false,
     layoutDirty: false,
     layoutBusy: false,
+    maintenanceDirty: false,
+    maintenanceBusy: false,
+    loadingDirty: false,
+    loadingBusy: false,
     stopHomeWatch: null,
     busy: "",
     operationError: "",
@@ -1404,6 +1476,7 @@ export default {
     sslResult: null,
     sslError: "",
     sslMessage: "",
+    providerCheckRequested: false,
     quickField: "",
     quickValue: false,
     quickActivator: null,
@@ -1452,6 +1525,15 @@ export default {
         action = "connection";
         button = "reviewOwnership";
         icon = "verified_user";
+      } else if (this.maintenanceActive) {
+        state = this.maintenanceSummary.has_html
+          ? "maintenance"
+          : "maintenanceUnavailable";
+        label = "maintenance";
+        tone = "warning";
+        action = "maintenance";
+        button = "manageMaintenance";
+        icon = "construction";
       } else if (!this.isCustom) {
         state = "managed";
         label = "managed";
@@ -1491,6 +1573,26 @@ export default {
     },
     overviewRows() {
       const t = (key) => this.$t("domains_modern.workspace.health." + key);
+      const layout = this.item.layout_summary || this.item.domain?.layout_summary;
+      const layoutName =
+        layout?.effective_mode === "standard"
+          ? this.$t("domain_layouts.standard")
+          : layout?.name ||
+            layout?.package ||
+            this.$t("domain_layouts.unavailable");
+      const layoutSource = layout
+        ? this.$t(
+            `domain_layouts.${
+              layout.available === false
+                ? "unavailable"
+                : layout.inherited
+                  ? "inherited"
+                  : layout.effective_mode === "standard"
+                    ? "standard_kind"
+                    : layout.effective_mode
+            }`,
+          )
+        : "";
       const sslHint = this.isExternal
         ? "sslExternalHint"
         : !this.isCustom
@@ -1528,6 +1630,44 @@ export default {
           section: "storefront",
           change: !this.isExternal,
         },
+        ...(!this.isExternal
+          ? [
+              {
+                key: "layout",
+                icon: "layers",
+                title: this.$t("domain_layouts.domain_title"),
+                value:
+                  layoutSource && layoutSource !== layoutName
+                    ? `${layoutName} · ${layoutSource}`
+                    : layoutName,
+                image:
+                  layout?.effective_mode !== "standard" ? layout?.image_url : null,
+                section: "storefront",
+                change: this.canWrite,
+              },
+            ]
+          : []),
+        ...(this.isCustom && !this.isExternal
+          ? [{
+              key: "maintenance",
+              icon: "construction",
+              title: this.$t("domains_modern.maintenance.title"),
+              value: this.$t("domains_modern.maintenance." + (
+                this.maintenanceSummary?.supported === false
+                  ? "unavailable"
+                  : !this.maintenanceActive
+                    ? "off_hint"
+                    : !this.item.enable
+                      ? "configured_disabled"
+                      : this.maintenanceSummary.has_html
+                        ? "all_paths"
+                        : "missing_html"
+              )),
+              section: "settings",
+              setting: "access",
+              change: this.canWrite,
+            }]
+          : []),
         {
           key: "search",
           icon: "manage_search",
@@ -1538,16 +1678,6 @@ export default {
               : t(this.item.indexed ? "searchAllowedHint" : "searchOffHint"),
           quick: this.item.official !== "local" ? "indexed" : undefined,
           section: "search",
-        },
-        {
-          key: "login",
-          icon: "key",
-          title: t("loginTitle"),
-          value: t(
-            this.item.client ? "loginConfiguredHint" : "loginMissingHint",
-          ),
-          section: "settings",
-          setting: "oauth",
         },
       ];
     },
@@ -1564,6 +1694,16 @@ export default {
     },
     isCustom() {
       return !!this.item.domain?.id;
+    },
+    maintenanceSummary() {
+      return this.item.maintenance_summary || this.item.domain?.maintenance_summary || null;
+    },
+    maintenanceActive() {
+      return (
+        this.isCustom && !this.isExternal &&
+        this.maintenanceSummary?.supported === true &&
+        this.maintenanceSummary.enabled === true
+      );
     },
     isExternal() {
       return !!this.item.domain?.externally_hosted;
@@ -1598,11 +1738,13 @@ export default {
         fields.some((field) => this.changed(field)) ||
         this.homeDirty ||
         this.layoutDirty ||
+        this.maintenanceDirty ||
+        this.loadingDirty ||
         (!!this.quickField && this.quickValue !== this.draft[this.quickField])
       );
     },
     isBusy() {
-      return !!this.busy || this.homeBusy || this.layoutBusy;
+      return !!this.busy || this.homeBusy || this.layoutBusy || this.maintenanceBusy || this.loadingBusy;
     },
     canChangePrimary() {
       return (
@@ -1612,7 +1754,7 @@ export default {
     settings() {
       return [
         "access",
-        ...(this.isCustom ? ["scope"] : []),
+        ...(this.isCustom ? ["loading", "scope"] : []),
         "oauth",
         ...(this.isCustom ? ["remove"] : []),
       ].map((value) => ({
@@ -1883,8 +2025,64 @@ export default {
     this.stopHomeWatch?.();
   },
   methods: {
+    messageHtml(value) {
+      const html = typeof value === "string" ? value : "";
+      if (typeof document === "undefined")
+        return html.replace(/[&<>"']/g, (character) => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+        })[character]);
+      // Server messages can include domain/user values; preserve formatting without trusting executable markup.
+      const template = document.createElement("template");
+      template.innerHTML = html;
+      const allowed = new Set([
+        "p", "div", "span", "br", "hr", "b", "strong", "i", "em", "u",
+        "small", "code", "pre", "ol", "ul", "li", "a",
+      ]);
+      const blocked = new Set([
+        "script", "style", "iframe", "object", "embed", "template", "base", "meta", "link",
+      ]);
+      for (const element of Array.from(template.content.querySelectorAll("*"))) {
+        const tag = element.tagName.toLowerCase();
+        if (
+          blocked.has(tag) ||
+          element.namespaceURI !== "http://www.w3.org/1999/xhtml"
+        ) {
+          element.remove();
+          continue;
+        }
+        if (!allowed.has(tag)) {
+          element.replaceWith(...element.childNodes);
+          continue;
+        }
+        const href = tag === "a" ? element.getAttribute("href") : null;
+        for (const attribute of Array.from(element.attributes))
+          element.removeAttribute(attribute.name);
+        if (href && !/[\u0000-\u001f\u007f]/.test(href)) {
+          try {
+            const url = new URL(href, document.baseURI);
+            if (
+              ["http:", "https:", "mailto:"].includes(url.protocol) &&
+              !url.username && !url.password
+            ) {
+              element.setAttribute("href", href);
+              if (
+                url.protocol !== "mailto:" &&
+                url.origin !== new URL(document.baseURI).origin
+              ) {
+                element.setAttribute("target", "_blank");
+                element.setAttribute("rel", "noopener noreferrer");
+              }
+            }
+          } catch {
+            // Invalid links retain their readable text.
+          }
+        }
+      }
+      return template.innerHTML;
+    },
     runHealthAction(event) {
       const action = this.healthSummary.action;
+      if (action === "maintenance") return this.navigate("settings", "access");
       if (action === "enable") return this.openQuickEdit("enable", event);
       if (action === "check") {
         this.navigate("connection");
@@ -2017,6 +2215,10 @@ export default {
     resetResource() {
       this.requestId++;
       this.busy = "";
+      this.maintenanceDirty = false;
+      this.maintenanceBusy = false;
+      this.loadingDirty = false;
+      this.loadingBusy = false;
       this.operationError = "";
       this.operationMessage = "";
       this.baseline = {};
@@ -2029,6 +2231,7 @@ export default {
       this.sslResult = null;
       this.sslError = "";
       this.sslMessage = "";
+      this.providerCheckRequested = false;
       this.quickField = "";
       this.quickValue = false;
       this.quickActivator = null;
@@ -2075,6 +2278,9 @@ export default {
           "ssl",
           "error",
           "certificate",
+          "connection_provider",
+          "maintenance_summary",
+          "loading_summary",
         ].forEach((field) => {
           if (field in data.domain) this.item[field] = data.domain[field];
         });
@@ -2087,6 +2293,25 @@ export default {
         Object.assign(this.item, data.sub);
       }
       this.syncDrafts();
+    },
+    acceptMaintenance(data) {
+      if (
+        data?.success !== true ||
+        data.domain?.id !== this.item.domain?.id ||
+        !data.maintenance_summary
+      ) return;
+      this.acceptDomain(data);
+      this.item.maintenance_summary = data.maintenance_summary;
+      this.item.domain.maintenance_summary = data.maintenance_summary;
+      this.operationMessage = this.$t("domains_modern.maintenance.saved");
+      this.$emit("refresh");
+    },
+    acceptLoading(data) {
+      if (data?.success !== true || data.domain?.id !== this.item.domain?.id || !data.loading_summary) return;
+      this.acceptDomain(data);
+      this.item.loading_summary = data.loading_summary;
+      this.item.domain.loading_summary = data.loading_summary;
+      this.$emit("refresh");
     },
     async runWrite(kind, send, apply) {
       if (!this.canWrite || this.isBusy) return false;
@@ -2213,11 +2438,12 @@ export default {
         ) || fallback
       );
     },
-    async checkSsl() {
+    async checkSsl(source = null) {
       if (!this.isCustom || this.isExternal || !this.canWrite || this.isBusy)
         return;
       const key = this.resourceKey,
         requestId = ++this.requestId;
+      this.providerCheckRequested = source === "provider";
       this.busy = "ssl";
       this.sslResult = null;
       this.sslError = "";
@@ -2226,7 +2452,14 @@ export default {
         const { data } = await axios.post(
           window.API.POST_DOMAIN_CHECK_SSL(this.shop.id, this.item.domain.id),
         );
-        if (key !== this.resourceKey || requestId !== this.requestId) return;
+        if (
+          key !== this.resourceKey ||
+          requestId !== this.requestId ||
+          !this.canWrite ||
+          !this.isCustom ||
+          this.isExternal
+        )
+          return;
         this.sslResult = {
           ssl: typeof data?.domain?.ssl === "boolean" ? data.domain.ssl : null,
           skipped: data?.skipped === true,
@@ -2252,7 +2485,13 @@ export default {
         }
         if (data?.domain) this.acceptDomain(data);
       } catch (error) {
-        if (key === this.resourceKey && requestId === this.requestId) {
+        if (
+          key === this.resourceKey &&
+          requestId === this.requestId &&
+          this.canWrite &&
+          this.isCustom &&
+          !this.isExternal
+        ) {
           this.sslError = this.checkResultMessage(
             error.response?.data || error,
             this.$t("domains_modern.workspace.sslCheckFailed"),
@@ -2486,13 +2725,16 @@ export default {
     display: grid;
     grid-template-columns: minmax(0, 1.55fr) minmax(235px, 1fr);
     gap: 22px;
-    align-items: start;
+    align-items: stretch;
   }
   &__overview-column {
     display: flex;
     flex-direction: column;
     gap: 22px;
     min-width: 0;
+  }
+  &__overview-column > .b-domain-workspace__widget:last-child {
+    flex: 1;
   }
   &__health-status {
     display: flex;
@@ -2567,6 +2809,11 @@ export default {
   &__overview-row > .v-icon {
     color: var(--sd-modern-muted);
     flex: none;
+  }
+  &__layout-avatar {
+    flex: none;
+    background: var(--sd-modern-inset);
+    color: var(--sd-modern-muted);
   }
   &__overview-row-copy {
     min-width: 0;

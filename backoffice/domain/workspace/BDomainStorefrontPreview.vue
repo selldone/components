@@ -7,15 +7,22 @@
       </div>
       <div class="b-domain-storefront-preview__identity">
         <v-avatar v-if="shop.icon" size="25"><v-img :src="getShopImagePath(shop.icon, 64)" alt="" /></v-avatar>
-        <v-icon v-else size="21" aria-hidden="true">storefront</v-icon>
+        <v-icon v-else size="21" aria-hidden="true">{{ maintenanceEnabled ? 'construction' : 'storefront' }}</v-icon>
         <strong>{{ storefrontTitle }}</strong>
       </div>
       <p>{{ homeLabel }}</p>
       <b-domain-customer-preview :kind="kind" />
     </div>
     <p class="b-domain-storefront-preview__note">
-      {{ $t(`domains_modern.workspace.previewArt.${kind}Summary`) }}
-      {{ $t('domains_modern.workspace.previewArt.note') }}
+      <template v-if="maintenanceEnabled">
+        {{ $t(!domainEnabled ? 'domains_modern.maintenance.preview_disabled' : maintenanceSummary.has_html === false ? 'domains_modern.maintenance.preview_unavailable' : 'domains_modern.maintenance.preview_active') }}
+        <span v-if="!domainEnabled && maintenanceSummary.has_html === false"> {{ $t('domains_modern.maintenance.missing_html') }}</span>
+      </template>
+      <template v-else-if="layoutCaption !== null">{{ layoutCaption }}</template>
+      <template v-else>
+        {{ $t(`domains_modern.workspace.previewArt.${kind}Summary`) }}
+        {{ $t('domains_modern.workspace.previewArt.note') }}
+      </template>
     </p>
   </figure>
 </template>
@@ -34,15 +41,39 @@ export default {
     address: { type: String, default: '' },
     home: { type: [String, Number], default: null },
     external: { type: Boolean, default: false },
+    // Omitted by native home-choice previews; explicit null means assignment details are unavailable.
+    layoutSummary: { type: Object, default: undefined },
+    maintenanceSummary: { type: Object, default: null },
+    domainEnabled: { type: Boolean, default: true },
   },
   computed: {
+    maintenanceEnabled() {
+      return !this.external && this.maintenanceSummary?.supported === true && this.maintenanceSummary.enabled === true;
+    },
+    layoutCaption() {
+      if (this.layoutSummary === undefined) return null;
+      const t = (key, values = {}) => this.$t(`domains_modern.workspace.previewLayout.${key}`, values);
+      const summary = this.layoutSummary;
+      if (this.external || summary?.reason === 'externally_hosted') return t('external');
+      if (!summary || !['standard', 'official', 'private'].includes(summary.effective_mode)) return t('unknown');
+      const name = typeof summary.name === 'string' ? summary.name.trim() : '';
+      const label = summary.effective_mode === 'standard'
+        ? t('standard', { name: name || this.$t('domain_layouts.standard') })
+        : name ? t('custom', { name }) : t('customUnnamed');
+      return [label,
+        summary.inherited === true || summary.mode === 'inherit' ? t('inherited') : '',
+        summary.available === false ? t('unavailable') : '',
+      ].filter(Boolean).join(' ');
+    },
     kind() {
       if (this.external) return 'external';
+      if (this.maintenanceEnabled) return 'maintenance';
       const home = this.home || 'shop';
       if (String(home).startsWith('/')) return 'static';
       return ['shop', 'avocado', 'hyper', 'community', 'blog', 'map'].includes(home) ? home : 'landing';
     },
     homeLabel() {
+      if (this.maintenanceEnabled) return this.$t('domains_modern.maintenance.page_title');
       return this.external ? this.$t('domains_modern.map.externalHome') : this.GetDomainHomeName(this.home || 'shop');
     },
     storefrontTitle() {
