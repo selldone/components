@@ -367,6 +367,35 @@ async function renderEmptyFixture(
   );
   const legacySources = await renderEmptyFixture(paths.channels, {}, false);
   assert.equal(legacySources.querySelector(".b-dashboard-channels"), null);
+  // 30 days of 56px scroll inside a 300px chart viewport.
+  const channels = load(paths.channels).component;
+  const reveal = (day, scrollLeft, dayRect) => {
+    const container = {
+      scrollLeft,
+      getBoundingClientRect: () => ({ left: 0, right: 300 }),
+      querySelectorAll: () =>
+        Array.from({ length: 30 }, (_, i) => ({
+          getBoundingClientRect: () => dayRect(i),
+        })),
+    };
+    const s = state(channels, {
+      modern: true,
+      timeSeries: { raw_data: Array(30).fill({}) },
+    });
+    s.history_day = day;
+    s.$refs = { chart: { querySelector: () => container } };
+    s.revealHistoryDay();
+    return container.scrollLeft;
+  };
+  const ltr = (offset) => (i) => ({
+    left: 56 * i - offset,
+    right: 56 * (i + 1) - offset,
+  });
+  const rtl = (i) => ({ left: 300 - 56 * (i + 1), right: 300 - 56 * i });
+  assert.equal(reveal(null, 0, ltr(0)), 1380, "Latest day opens in view");
+  assert.equal(reveal(3, 0, ltr(0)), 0, "A visible day keeps the scroll");
+  assert.equal(reveal(2, 1380, ltr(1380)), 112, "Slider back to day 2");
+  assert.equal(reveal(null, 0, rtl), -1380, "RTL opens on the left end");
   const acq = load(paths.acquisition).component;
   const ac = state(acq, {
     modern: true,
@@ -927,7 +956,7 @@ async function renderEmptyFixture(
   );
 
   console.log(
-    "PASS: Acquisition/Channels empty plots retain neutral bodies, observed zero labels, real source data and legacy behavior; Acquisition endpoints preserve actual zero/missing/latest observations and native legend/zoom; Sessions preserves exact7/90-day, yesterday/custom bounds, recorded zero/gaps, stale-response protection and legacy/summary requests. No API calls.",
+    "PASS: Acquisition/Channels empty plots retain neutral bodies, observed zero labels, real source data and legacy behavior; Channels keeps the selected (latest) day in view in LTR/RTL; Acquisition endpoints preserve actual zero/missing/latest observations and native legend/zoom; Sessions preserves exact7/90-day, yesterday/custom bounds, recorded zero/gaps, stale-response protection and legacy/summary requests. No API calls.",
   );
 })().catch((e) => {
   console.error(e);

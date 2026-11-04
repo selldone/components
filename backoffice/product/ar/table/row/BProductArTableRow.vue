@@ -1161,12 +1161,12 @@ export default {
     }
   }
 }
-:global([dir="rtl"]) .b-product-ar-row__identity > .v-icon {
+.v-locale--is-rtl .b-product-ar-row__identity > .v-icon {
   transform: scaleX(-1);
 }
-:global([dir="rtl"])
+.v-locale--is-rtl
   .b-product-ar-row__identity
   > .b-product-ar-row__chevron--open {
-  transform: rotate(-90deg);
+  transform: rotate(90deg);
 }
 </style>

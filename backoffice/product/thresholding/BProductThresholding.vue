@@ -808,7 +808,7 @@ export default {
   }
 }
 
-:global(.smart-invert) .b-product-thresholds--modern {
+.smart-invert .b-product-thresholds--modern {
   .b-product-thresholds__custom-dot,
   .b-product-thresholds__track > i,
   .b-product-thresholds__level-dot {

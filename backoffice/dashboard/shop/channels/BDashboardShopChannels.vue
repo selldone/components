@@ -49,6 +49,7 @@
       </header>
       <div
         v-if="social_keys?.length && timeSeries.raw_data?.length"
+        ref="chart"
         :class="modern ? 'b-dashboard-channels__chart' : 'mx-n5'"
       >
         <!-- Native paths are drawn on creation; keep them in sync with plot size. -->
@@ -190,6 +191,19 @@ export default {
 
   created() {},
 
+  mounted() {
+    this.revealHistoryDay();
+  },
+
+  watch: {
+    // New data, a size remount (chart key), the slider and a direction flip
+    // (resets the scroll) can each move the day out of view.
+    values: { handler: "revealHistoryDay", flush: "post" },
+    height: { handler: "revealHistoryDay", flush: "post" },
+    history_day_index: { handler: "revealHistoryDay", flush: "post" },
+    "$vuetify.locale.isRtl": { handler: "revealHistoryDay", flush: "post" },
+  },
+
   computed: {
     history_day_index() {
       const last = Math.max(0, (this.timeSeries.raw_data?.length || 1) - 1);
@@ -272,7 +286,22 @@ export default {
       return colorSet3.map((color) => [color, ShadeColor(color, -20)]);
     },
   },
-  methods: {},
+  methods: {
+    // Keep the selected day (latest by default) visible in the scrolling chart.
+    revealHistoryDay() {
+      const container = this.$refs.chart?.querySelector(
+        ".u--chart-funnel > .--container",
+      );
+      const days = container?.querySelectorAll(".--segment-container");
+      const day = days?.[this.history_day_index];
+      if (!day) return;
+      const view = container.getBoundingClientRect();
+      const rect = day.getBoundingClientRect();
+      if (rect.left < view.left) container.scrollLeft -= view.left - rect.left;
+      else if (rect.right > view.right)
+        container.scrollLeft += rect.right - view.right;
+    },
+  },
 };
 </script>
 
@@ -358,8 +387,16 @@ export default {
     max-width: 100%;
   }
 
-  :deep(.u--chart-funnel > .--container) {
+  // Long ranges keep their day width and scroll inside the card.
+  :deep(.u--chart-funnel.-modern > .--container) {
     max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  // The scroll edge would clip an outside focus ring.
+  :deep(.u--chart-funnel.-modern .--segment-container:focus-visible) {
+    outline-offset: -2px;
   }
 
   :deep(.u--chart-funnel > .--legend) {

@@ -266,6 +266,8 @@
           </v-btn>
         </div>
       </div>
+      <!-- A page may add its own digest under the queues; the shop dashboard adds its order mix. -->
+      <slot name="footer"></slot>
     </section>
     <template v-if="!summary">
       <section class="b-dashboard-orders-detail sd-modern-widget text-start">

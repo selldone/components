@@ -167,6 +167,9 @@ const SmartSwitch = await component(
   "../../../ui/smart/switch/USmartSwitch.vue",
   { "../select/USmartSelect.vue": { default: SelectBoundary } },
 );
+const samplesModule = execute(
+  readFileSync(new URL("./domain-loading-samples.ts", import.meta.url), "utf8"),
+);
 const shell = (tag) =>
   Vue.defineComponent({
     inheritAttrs: false,
@@ -192,26 +195,27 @@ const Button = Vue.defineComponent({
         slots.default?.(),
       ),
 });
-const Textarea = Vue.defineComponent({
+// Renders its content only while open; the extra control stands in for Escape or an outside click.
+const Dialog = Vue.defineComponent({
   inheritAttrs: false,
-  props: ["modelValue", "readonly", "disabled", "label", "errorMessages"],
+  props: ["modelValue"],
   emits: ["update:modelValue"],
   setup:
-    (props, { attrs, emit }) =>
+    (props, { attrs, emit, slots }) =>
     () =>
-      Vue.h("label", { class: attrs.class }, [
-        props.label,
-        Vue.h("textarea", {
-          value: props.modelValue,
-          readonly: props.readonly,
-          disabled: props.disabled,
-          dir: attrs.dir,
-          onInput: (event) => emit("update:modelValue", event.target.value),
-        }),
-        props.errorMessages
-          ? Vue.h("span", { role: "alert" }, props.errorMessages)
-          : null,
-      ]),
+      props.modelValue
+        ? Vue.h("div", { role: "dialog", "aria-label": attrs["aria-label"] }, [
+            slots.default?.(),
+            Vue.h(
+              "button",
+              {
+                type: "button",
+                onClick: () => emit("update:modelValue", false),
+              },
+              "dismiss-dialog",
+            ),
+          ])
+        : null,
 });
 const coreSource = readFileSync(
   new URL("../../../mixin/CoreMixin.ts", import.meta.url),
@@ -239,7 +243,10 @@ async function fixture(t, initial = {}) {
     };
   const Loading = await component(
     "./BDomainLoading.vue",
-    { "../../../ui/smart/switch/USmartSwitch.vue": { default: SmartSwitch } },
+    {
+      "../../../ui/smart/switch/USmartSwitch.vue": { default: SmartSwitch },
+      "./domain-loading-samples.ts": samplesModule,
+    },
     {
       window: {
         API: {
@@ -281,7 +288,10 @@ async function fixture(t, initial = {}) {
   app.component("v-icon", shell("span"));
   app.component("v-progress-linear", shell("span"));
   app.component("v-btn", Button);
-  app.component("v-textarea", Textarea);
+  app.component("v-dialog", Dialog);
+  for (const name of ["v-card", "v-card-text", "v-card-actions", "v-btn-group"])
+    app.component(name, shell("div"));
+  app.component("v-tooltip", { render: () => null });
   app.mount(dom.window.document.getElementById("app"));
   let mounted = true;
   const unmount = () => {
@@ -875,4 +885,222 @@ test("unmount invalidates late source and save responses without saved events or
   g.writes[0].resolve({ data });
   await settle();
   assert.equal(g.events.filter(([name]) => name === "saved").length, 0);
+});
+
+const pickButton = (f, id) =>
+  f.root().querySelector("#" + f.owner.value.fieldId("sample", id));
+const emptyPage = () =>
+  page({
+    code: { head: "", body: "" },
+    loading_summary: summary({ head_bytes: 0, body_bytes: 0, has_code: false }),
+  });
+
+test("samples are tiny inert HTML/CSS that pass the API validation, respect reduced motion and escape shop text", async (t) => {
+  const f = await fixture(t, { shop: { id: 7, title: 'Tom & "Jerry" <b>' } });
+  await f.open();
+  const samples = f.owner.value.samples;
+  assert.deepEqual(plain(samples.map((sample) => sample.id)), [
+    "pulse",
+    "ring",
+    "bar",
+    "skeleton",
+    "bag",
+    "midnight",
+  ]);
+  for (const sample of samples) {
+    const code = sample.head + sample.body;
+    assert.equal(f.owner.value.validateCode(sample.head, 15360), "");
+    assert.equal(f.owner.value.validateCode(sample.body, 3072), "");
+    assert(bytes(code) < 3072, sample.id + " stays under 3 KB");
+    assert.match(sample.head, /@media \(prefers-reduced-motion: reduce\)/);
+    assert.doesNotMatch(
+      code,
+      /<script|<link|<img|<iframe|@import|url\(|https?:|\bsrc=/i,
+    );
+    assert.match(sample.body, /role="status"/);
+    assert.doesNotMatch(code, /\{\{|<b>/);
+    // The API trims fragments; untrimmed samples would stop matching after a save.
+    assert.equal(sample.head.trim(), sample.head);
+    assert.equal(sample.body.trim(), sample.body);
+  }
+  assert.match(samples[0].body, /Tom &#38; &#34;Jerry&#34; &#60;b&#62;/);
+  assert.match(samples[1].body, />global\.commons\.loading…</);
+});
+
+test("picking a sample fills both fragments, marks it current and swaps unmodified samples without asking", async (t) => {
+  const f = await fixture(t, { shop: { id: 7, title: "Rocketlox" } });
+  await f.open(emptyPage());
+  await f.choose(true);
+  const frames = [
+    ...f.root().querySelectorAll(".b-domain-loading__thumb iframe"),
+  ];
+  assert.equal(frames.length, 6);
+  for (const frame of frames) {
+    // Even trusted samples get no scripts and no same-origin access.
+    assert.equal(frame.getAttribute("sandbox"), "");
+    assert.match(
+      frame.getAttribute("srcdoc"),
+      /^<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none';/,
+    );
+    assert.match(frame.getAttribute("srcdoc"), /animation-play-state:paused/);
+  }
+  pickButton(f, "pulse").click();
+  await settle();
+  const pulse = f.owner.value.samples[0];
+  const [head, body] = f.root().querySelectorAll("textarea");
+  assert.equal(head.value, pulse.head);
+  assert.equal(body.value, pulse.body);
+  assert.equal(
+    f.root().querySelector(".b-domain-loading__lines").textContent,
+    pulse.head
+      .split("\n")
+      .map((_, index) => index + 1)
+      .join("\n"),
+  );
+  assert.equal(pickButton(f, "pulse").getAttribute("aria-pressed"), "true");
+  assert.equal(pickButton(f, "ring").getAttribute("aria-pressed"), "false");
+  assert.equal(f.root().querySelector(".b-domain-loading__replace"), null);
+  pickButton(f, "pulse").dispatchEvent(new dom.window.Event("mouseenter"));
+  await settle();
+  assert.doesNotMatch(frames[0].getAttribute("srcdoc"), /animation-play-state/);
+  pickButton(f, "pulse").dispatchEvent(new dom.window.Event("mouseleave"));
+  pickButton(f, "ring").click();
+  await settle();
+  assert.equal(f.owner.value.currentSampleId, "ring");
+  assert.equal(f.owner.value.pendingSample, null);
+  const ring = f.owner.value.samples[1];
+  f.button("save_changes").click();
+  await settle();
+  assert.deepEqual(plain(f.writes[0].args), [
+    "/shops/7/domain/11/loading",
+    { mode: "custom", head: ring.head, body: ring.body },
+  ]);
+});
+
+test("a sample never silently replaces custom code: cancel keeps it, replace swaps it and discard restores it", async (t) => {
+  const f = await fixture(t);
+  const saved = { head: "<style>p{color:red}</style>", body: "<p>Mine</p>" };
+  await f.open(
+    page({
+      code: saved,
+      loading_summary: summary({
+        mode: "custom",
+        head_bytes: bytes(saved.head),
+        body_bytes: bytes(saved.body),
+      }),
+    }),
+  );
+  pickButton(f, "bag").click();
+  await settle();
+  const notice = f.root().querySelector(".b-domain-loading__replace");
+  assert.equal(notice.getAttribute("role"), "alert");
+  assert.equal(dom.window.document.activeElement, notice);
+  assert.deepEqual(
+    [f.owner.value.head, f.owner.value.body],
+    [saved.head, saved.body],
+  );
+  f.button("global.actions.cancel").click();
+  await settle();
+  assert.equal(f.root().querySelector(".b-domain-loading__replace"), null);
+  assert.equal(dom.window.document.activeElement, pickButton(f, "bag"));
+  assert.equal(f.owner.value.dirty, false);
+  pickButton(f, "bag").click();
+  await settle();
+  f.button("domains_modern.loading.replace").click();
+  await settle();
+  assert.equal(f.owner.value.currentSampleId, "bag");
+  assert.equal(f.owner.value.dirty, true);
+  assert.equal(dom.window.document.activeElement, pickButton(f, "bag"));
+  // An edited sample is the merchant's own code again.
+  await f.input("body", f.owner.value.body + "<p>Edited</p>");
+  pickButton(f, "pulse").click();
+  await settle();
+  assert.equal(f.owner.value.pendingSample, "pulse");
+  f.button("discard").click();
+  await settle();
+  assert.equal(f.owner.value.pendingSample, null);
+  assert.deepEqual(
+    [f.owner.value.head, f.owner.value.body],
+    [saved.head, saved.body],
+  );
+  pickButton(f, "pulse").click();
+  await settle();
+  f.props.item = item({ domain: { id: 12 } });
+  await settle();
+  assert.equal(f.owner.value.pendingSample, null);
+  assert.equal(f.writes.length, 0);
+});
+
+test("Show preview renders the current draft only inside the storefront's sandboxed loading document", async (t) => {
+  const f = await fixture(t);
+  await f.open(emptyPage());
+  await f.choose(true);
+  const preview = () => f.button("domains_modern.loading.preview");
+  assert.equal(preview().disabled, true);
+  const body = f.root().querySelectorAll("textarea")[1];
+  assert.equal(body.getAttribute("aria-invalid"), "true");
+  const described = body.getAttribute("aria-describedby").split(" ");
+  assert.equal(described.length, 2);
+  assert.equal(
+    dom.window.document.getElementById(described[1]).getAttribute("role"),
+    "alert",
+  );
+  assert.equal(
+    f.root().querySelector(`label[for="${body.id}"]`).textContent,
+    "domains_modern.loading.body",
+  );
+  const head =
+    '<style>p{color:red}</style><script>parent.document.title="owned"</script>';
+  const draft = '<p>Draft "quoted" & </iframe><img src=x onerror=alert(1)></p>';
+  await f.input("head", head);
+  await f.input("body", draft);
+  preview().click();
+  await settle();
+  const frame = f.root().querySelector('[role="dialog"] iframe');
+  assert.equal(frame.getAttribute("sandbox"), "allow-scripts");
+  assert.equal(frame.getAttribute("referrerpolicy"), "no-referrer");
+  assert.equal(
+    frame.getAttribute("srcdoc"),
+    `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https:; img-src https:; font-src https:; connect-src 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1">${head}</head><body>${draft}</body></html>`,
+  );
+  // The draft never becomes dashboard DOM.
+  assert.equal(f.root().querySelector("script,img,object"), null);
+  assert(f.root().querySelector(".b-domain-loading__screen--desktop iframe"));
+  f.owner.value.device = "phone";
+  await settle();
+  assert(f.root().querySelector(".b-domain-loading__screen--phone iframe"));
+  f.button("dismiss-dialog").click();
+  await settle();
+  assert.equal(f.root().querySelector('[role="dialog"]'), null);
+  assert.equal(dom.window.document.activeElement, preview());
+  preview().click();
+  await settle();
+  assert(f.root().querySelector('[role="dialog"] iframe'));
+  f.props.item = item({ domain: { id: 12 } });
+  await settle();
+  assert.equal(f.root().querySelector('[role="dialog"]'), null);
+  assert.equal(f.writes.length, 0);
+});
+
+test("read-only staff can preview saved custom code without samples or save actions", async (t) => {
+  const f = await fixture(t, { readOnly: true });
+  const saved = { head: "", body: "<p>Saved</p>" };
+  await f.open(
+    page({
+      code: saved,
+      loading_summary: summary({
+        mode: "custom",
+        body_bytes: bytes(saved.body),
+      }),
+    }),
+  );
+  assert.equal(f.root().querySelector(".b-domain-loading__samples"), null);
+  assert.equal(f.button("save_changes"), undefined);
+  f.button("domains_modern.loading.preview").click();
+  await settle();
+  assert.match(
+    f.root().querySelector('[role="dialog"] iframe').getAttribute("srcdoc"),
+    /<body><p>Saved<\/p><\/body>/,
+  );
+  assert.equal(f.writes.length, 0);
 });
