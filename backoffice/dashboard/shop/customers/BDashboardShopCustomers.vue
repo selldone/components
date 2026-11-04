@@ -642,6 +642,8 @@
             </p>
           </v-col>
         </v-row>
+        <!-- A page may add its own digest under the clubs; the shop dashboard adds marketing and community. -->
+        <slot name="footer"></slot>
       </v-container>
     </template>
 

@@ -80,10 +80,10 @@
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Pending payment check button ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
+          <!-- COD is collected offline, so it has no provider status to refresh. -->
+          <template v-for="(item, index) in transactions_pending" :key="index">
           <v-btn
-            v-for="(item, index) in transactions_pending"
-            v-if="!isRolePanel"
-            :key="index"
+            v-if="!isRolePanel && !(modern && item.cod)"
             :disabled="!item.unique_id"
             :loading="busy_check"
             :class="modern ? 'sd-modern-button sd-modern-button--compact b-order-payment__check' : 'me-2 tnt'"
@@ -102,6 +102,7 @@
               {{ $t('process_center.modern.payment_check_help', { gateway: item.name }) }}
             </v-tooltip>
           </v-btn>
+          </template>
 
           <span :class="{ 'b-order-payment__currency': modern }">
             <u-currency-icon :currency="order.currency" flag small />
@@ -544,15 +545,9 @@
 
       <!-- █████████████████████ COD Action █████████████████████ -->
 
-      <div v-if="!isRolePanel && isCOD && !payment" class="p-2">
+      <div v-if="!modern && !isRolePanel && isCOD && !payment" class="p-2">
         <v-btn
-          :class="{
-            disabled:
-              !isPOS &&
-              order.delivery_state !==
-                PhysicalOrderStates.ToCustomer
-                  .code /*For online order payment can be accepted after delivery*/,
-          }"
+          :class="{ disabled: cod_locked }"
           class="my-5 text-capitalize"
           color="success"
           rounded
@@ -586,7 +581,8 @@
 
       <!-- █████████████████████ Payment summery █████████████████████ -->
 
-      <v-row class="text-subtitle-2" :class="{ 'b-order-payment__facts': modern }" no-gutters>
+      <!-- Every fact comes from the recorded payment; an unpaid order would leave an empty band. -->
+      <v-row v-if="payment" class="text-subtitle-2" :class="{ 'b-order-payment__facts': modern }" no-gutters>
         <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Summery > Date ▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
         <v-col
           v-if="payment"
@@ -797,6 +793,105 @@
       </div>
     </div>
 
+    <!-- █████████████████████ COD Action > Modern █████████████████████ -->
+    <!-- The customer pays offline at delivery; the seller records it here once the order is delivered. -->
+
+    <section
+      v-if="modern && !isRolePanel && isCOD && !payment"
+      class="b-order-payment__cod"
+      :aria-labelledby="`b-order-payment-cod-${order.id}`"
+    >
+      <h3 :id="`b-order-payment-cod-${order.id}`">
+        {{ $t("process_center.modern.cod_title") }}
+      </h3>
+      <p class="sd-modern-subtitle">
+        {{ $t("process_center.modern.cod_subtitle") }}
+      </p>
+
+      <div class="b-order-payment__cod-action">
+        <!-- A disabled button gets no pointer events, so its explanation is anchored on this wrapper. -->
+        <span class="b-order-payment__cod-trigger">
+          <v-btn
+            :disabled="cod_locked"
+            :color="cod_locked ? undefined : 'primary'"
+            :size="cod_locked ? undefined : 'x-large'"
+            :variant="cod_locked ? 'outlined' : 'flat'"
+            :class="{ 'sd-modern-button--x-large': !cod_locked }"
+            :aria-describedby="
+              cod_locked ? `b-order-payment-cod-status-${order.id}` : undefined
+            "
+            class="sd-modern-button"
+            rounded
+            @click="
+              accept_action = false;
+              dialog_customer_pay_money_cod = true;
+            "
+          >
+            <v-icon start aria-hidden="true">paid</v-icon>
+            {{ $t("process_center.payment_widget.action_cod_pay") }}
+            <v-tooltip
+              v-if="!cod_locked"
+              activator="parent"
+              location="top"
+              :open-on-focus="true"
+              content-class="sd-modern-tooltip text-start"
+              >{{ $t("process_center.modern.cod_ready_help") }}</v-tooltip
+            >
+          </v-btn>
+          <v-tooltip
+            v-if="cod_locked"
+            activator="parent"
+            location="top"
+            :open-on-click="true"
+            content-class="sd-modern-tooltip text-start"
+            >{{ $t("process_center.modern.cod_locked_help") }}</v-tooltip
+          >
+        </span>
+        <span
+          v-if="cod_locked"
+          :id="`b-order-payment-cod-status-${order.id}`"
+          class="sd-modern-status sd-modern-status--plain"
+        >
+          <span
+            class="sd-modern-status__dot sd-modern-status__dot--warning"
+            aria-hidden="true"
+          />
+          {{ $t("process_center.modern.cod_locked") }}
+        </span>
+      </div>
+
+      <details
+        v-if="isPhysical"
+        class="b-order-payment__cod-guide"
+        @toggle="cod_guide_open = $event.target.open"
+      >
+        <summary>{{ $t("process_center.modern.cod_guide") }}</summary>
+        <s-article-flow
+          v-if="cod_guide_open"
+          :block="cod_flow"
+          :rail-columns="cod_flow.nodes.length"
+          :legend-labels="cod_flow_legend"
+          class="b-order-payment__cod-flow"
+        >
+          <template #caption>
+            <figcaption class="sd-modern-subtitle">
+              {{ $t("process_center.modern.cod_guide_hint") }}
+            </figcaption>
+          </template>
+          <template #node-icon="{ node }">
+            <span
+              v-if="node.id === 'confirm'"
+              class="b-order-payment__cod-outline no-inv"
+              aria-hidden="true"
+            />
+            <v-icon class="b-order-payment__cod-icon" size="18" aria-hidden="true">{{
+              node.icon
+            }}</v-icon>
+          </template>
+        </s-article-flow>
+      </details>
+    </section>
+
     <!-- █████████████████████ Payment detail table █████████████████████ -->
 
     <div
@@ -904,8 +999,12 @@
     width="680"
     content-class="rounded-t-xl"
   >
-    <v-card class="text-start" rounded="t-xl">
-      <v-card-title class="d-flex align-center">
+    <v-card
+      class="text-start"
+      :class="{ 'b-order-payment-cod-dialog': modern }"
+      rounded="t-xl"
+    >
+      <v-card-title class="d-flex align-center text-wrap">
         <v-icon class="me-2">paid</v-icon>
         {{ $t("process_center.payment_widget.pay_cod_dialog.title") }}
         <v-spacer></v-spacer>
@@ -917,7 +1016,34 @@
           {{ $t("process_center.payment_widget.pay_cod_dialog.message") }}
         </div>
 
-        <div v-if="!codGateways?.length">
+        <div
+          v-if="!codGateways?.length && modern"
+          class="sd-modern-notice"
+          role="alert"
+        >
+          <v-icon size="18" aria-hidden="true">error_outline</v-icon>
+          <div class="sd-modern-notice__content">
+            <p class="ma-0">
+              {{
+                $t("process_center.modern.cod_no_gateway", {
+                  currency: order.currency,
+                })
+              }}
+            </p>
+            <v-btn
+              :to="{ name: 'BPageShopFinanceGateways' }"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="text"
+              color="primary"
+              class="sd-modern-button sd-modern-button--inline mt-1"
+            >
+              {{ $t("process_center.modern.cod_add_gateway") }}
+              <v-icon end size="16" aria-hidden="true">north_east</v-icon>
+            </v-btn>
+          </div>
+        </div>
+        <div v-else-if="!codGateways?.length">
           <div class="text-red py-2 text-h5">
             <v-icon>report_gmailerrorred</v-icon>
             We can not find any COD gateway to pay. Please add a COD gateway to
@@ -935,13 +1061,19 @@
           {{ $t("global.commons.currency") }}:
           <u-currency-icon :currency="order.currency" flag></u-currency-icon>
         </div>
-        <u-smart-verify v-else v-model="accept_action"></u-smart-verify>
+        <u-smart-verify
+          v-else
+          v-model="accept_action"
+          :true-title="$t('process_center.modern.cod_verify')"
+          :true-description="$t('process_center.modern.cod_verify_description')"
+        ></u-smart-verify>
       </v-card-text>
 
       <v-card-actions>
         <div class="widget-buttons">
           <v-btn
-            size="x-large"
+            :class="{ 'sd-modern-button sd-modern-button--compact': modern }"
+            :size="modern ? undefined : 'x-large'"
             variant="text"
             @click="dialog_customer_pay_money_cod = false"
           >
@@ -952,18 +1084,24 @@
           <v-btn
             v-for="item in codGateways"
             :key="item.code"
-            :class="{ disabled: !accept_action }"
+            :class="{
+              disabled: !modern && !accept_action,
+              'sd-modern-button': modern,
+              'sd-modern-button--x-large': modern && accept_action,
+            }"
+            :disabled="modern ? !accept_action : undefined"
             :loading="busy_pay"
-            color="success"
-            height="64"
+            :color="modern ? (accept_action ? 'primary' : undefined) : 'success'"
+            :height="modern ? undefined : 64"
             rounded
-            size="x-large"
-            variant="elevated"
+            :size="modern && !accept_action ? undefined : 'x-large'"
+            :variant="modern ? (accept_action ? 'flat' : 'outlined') : 'elevated'"
             @click="confirmCODPaymentCompleted(item.gateway.code)"
           >
             <img
               :src="getShopImagePath(item.gateway.icon)"
               :width="24"
+              alt=""
               class="mx-2"
             />
 
@@ -1019,6 +1157,11 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
+import SArticleFlow from "@selldone/components-vue/article/add-on/flowchart/SArticleFlow.vue";
+import type {
+  ApiDocFlowBlock,
+  ApiDocFlowOutcome,
+} from "@selldone/components-vue/article/add-on/flowchart/flow-content";
 
 export default {
   name: "BOrderDashboardPayment",
@@ -1027,6 +1170,7 @@ export default {
 
   components: {
     UWidgetHeader,
+    SArticleFlow,
     UChartSankey,
     BOrderPaymentTable,
     UTextValueBox,
@@ -1086,6 +1230,7 @@ export default {
 
       dialog_customer_pay_money_cod: false,
       accept_action: false,
+      cod_guide_open: false,
 
       busy_check: false,
 
@@ -1294,6 +1439,61 @@ export default {
 
     isCOD() {
       return this.codEnable && this.order.status === Basket.Status.COD.code;
+    },
+
+    /** Online COD payments are confirmed after delivery; POS orders can be confirmed at any time. */
+    cod_locked() {
+      return (
+        !this.isPOS &&
+        this.order.delivery_state !== Basket.PhysicalOrderStates.ToCustomer.code
+      );
+    },
+
+    /** This order's COD steps; the shared flowchart owns layout, motion and step help. */
+    cod_flow(): ApiDocFlowBlock {
+      const t = (key: string) =>
+        this.$t(`process_center.modern.cod_flow_${key}`);
+      const states = Basket.PhysicalOrderStates;
+      const delivered = this.order.delivery_state === states.ToCustomer.code;
+      const sent =
+        delivered || this.order.delivery_state === states.SentOrder.code;
+      const status = (done: boolean, now: boolean): ApiDocFlowOutcome =>
+        done
+          ? { label: t("done"), tone: "success" }
+          : now
+            ? { label: t("now"), tone: "warning" }
+            : { label: t("next"), tone: "neutral" };
+      const step = (id: string, icon: string, outcome: ApiDocFlowOutcome) => ({
+        id,
+        icon,
+        label: t(id),
+        caption: t(`${id}_caption`),
+        description: t(`${id}_help`),
+        outcome,
+      });
+      return {
+        type: "flow",
+        title: this.$t("process_center.modern.cod_guide"),
+        description: this.$t("process_center.modern.cod_guide_hint"),
+        animated: true,
+        nodes: [
+          step("placed", "shopping_basket", status(true, false)),
+          step("ship", "local_shipping", status(sent, true)),
+          step("delivered", "done_all", status(delivered, sent)),
+          step("confirm", "paid", status(false, delivered)),
+        ],
+        edges: [
+          { from: "placed", to: "ship", label: "" },
+          { from: "ship", to: "delivered", label: "" },
+          { from: "delivered", to: "confirm", label: "" },
+        ],
+      };
+    },
+
+    cod_flow_legend() {
+      const t = (key: string) =>
+        this.$t(`process_center.modern.cod_flow_${key}`);
+      return { data: t("moving"), success: t("done"), warning: t("now") };
     },
 
     codGateways() {
@@ -2121,6 +2321,26 @@ export default {
   .b-order-payment__identities :deep(small) { font-size: 10px; line-height: 15px; font-weight: 400; letter-spacing: .65px; text-transform: uppercase; color: var(--sd-modern-muted); }
   .b-order-payment__review { margin-block: 16px; padding: 11px 12px; gap: 9px; align-items: flex-start; font-size: 11px; line-height: 17px; }
   .b-order-payment__review p { margin: 0; }
+  .b-order-payment__cod { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-block: 2px 16px; }
+  .b-order-payment__cod > h3 { margin: 0; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 20px; }
+  .b-order-payment__cod > .sd-modern-subtitle { margin: 0; font-size: 12px; font-weight: 400; line-height: 18px; }
+  .b-order-payment__cod-action { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; margin-block-start: 10px; }
+  .b-order-payment__cod-trigger { display: inline-flex; max-width: 100%; }
+  .b-order-payment__cod-action > .sd-modern-status { gap: 6px; font-size: 12px; line-height: 18px; }
+  .b-order-payment__cod-guide { margin-block-start: 4px; }
+  .b-order-payment__cod-guide > summary { display: list-item; width: fit-content; min-height: 44px; padding-block: 12px; color: rgb(var(--v-theme-primary)); font-size: 12px; line-height: 20px; cursor: pointer; }
+  .b-order-payment__cod-guide > summary:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; border-radius: 4px; }
+  // Keep the link hue in the inverted dashboard window, with the lighter ink of modern text buttons.
+  .smart-invert .s--card-window-content & .b-order-payment__cod-guide > summary { filter: invert(1); color: color-mix(in srgb, rgb(var(--v-theme-primary)) 70%, rgb(var(--v-theme-surface))); }
+  .b-order-payment__cod-flow figcaption { margin: 0; font-size: 12px; line-height: 18px; }
+  // Four tiles share one row, so labels wrap instead of truncating.
+  .b-order-payment__cod-flow :deep(.api-doc-content__tile-head) { border-radius: inherit; }
+  .b-order-payment__cod-flow :deep(.api-doc-content__tile-head strong),
+  .b-order-payment__cod-flow :deep(.api-doc-content__tile-caption) { white-space: normal; overflow-wrap: anywhere; }
+  // Same icon treatment as the flowchart's default tile icon (its size comes from the v-icon prop).
+  .b-order-payment__cod-icon { flex: none; border-radius: 8px; color: rgb(var(--doc-flow-accent-rgb)); background: rgba(var(--doc-flow-accent-rgb), .08); }
+  // The blue outline marks the step this card performs (process-action border rule).
+  .b-order-payment__cod-outline { position: absolute; inset: -1px; border: 1px solid rgb(var(--v-theme-primary)); border-radius: inherit; pointer-events: none; }
   .b-order-payment__facts { display: flex; flex-wrap: wrap; padding-block: 17px; row-gap: 18px; }
   .b-order-payment__facts > div { flex: 1 1 135px; min-width: 0; max-width: none; padding: 0 12px !important; font-size: 12px; line-height: 18px; }
   .b-order-payment__facts > div:first-child { padding-inline-start: 0 !important; }
@@ -2226,8 +2446,9 @@ export default {
       // Keep the original table, footer and chart mounted while changing their placement.
       .b-order-payment__ledger { display: contents; }
       .b-order-payment__ledger > :deep(.b-order-payment-table--modern) { grid-column: 1; grid-row: 2; min-width: 0; align-self: start; }
-      .b-order-payment__footer { grid-column: 1 / -1; grid-row: 3; margin-block-start: 16px; }
-      .b-order-payment__recurring { grid-column: 1 / -1; grid-row: 4; }
+      .b-order-payment__cod { grid-column: 1 / -1; grid-row: 3; margin-block-start: 16px; }
+      .b-order-payment__footer { grid-column: 1 / -1; grid-row: 4; margin-block-start: 16px; }
+      .b-order-payment__recurring { grid-column: 1 / -1; grid-row: 5; }
       .b-order-payment__identities { gap: 15px; }
       .b-order-payment__identities > div { flex-basis: 100%; max-width: 100%; }
       .b-order-payment__identity { padding-inline-end: 0; }
@@ -2242,5 +2463,20 @@ export default {
       .b-order-payment__review p { flex: 1; min-width: 0; }
     }
   }
+}
+
+// The sheet is teleported outside the widget, so it declares the modern tokens its notice and buttons use.
+.b-order-payment-cod-dialog {
+  --sd-modern-border: rgba(var(--v-theme-on-surface), 0.09);
+  --sd-modern-muted: rgba(var(--v-theme-on-surface), 0.66);
+  --sd-modern-inset: rgba(var(--v-theme-on-surface), 0.025);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+  :deep(.v-card-title) { font-family: inherit; font-size: 18px; font-weight: 500; line-height: 24px; }
+  :deep(.v-card-text) { font-size: 13px; line-height: 20px; }
+  :deep(.widget-buttons) { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 8px; padding: 0 12px 12px; }
+  // The legacy .widget-buttons rule capitalizes every word of a button label.
+  :deep(.widget-buttons .v-btn) { text-transform: none; }
 }
 </style>

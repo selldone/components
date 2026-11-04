@@ -431,7 +431,13 @@ const compiledRender = evaluate(template.code, (path) =>
 ).render;
 async function paymentScreen(
   overrides = {},
-  { modern = true, role = false, vendor = false, brokenAvatars = false } = {},
+  {
+    modern = true,
+    role = false,
+    vendor = false,
+    brokenAvatars = false,
+    codEnable = false,
+  } = {},
 ) {
   const order = {
     type: ProductType.PHYSICAL.code,
@@ -511,6 +517,7 @@ async function paymentScreen(
       order,
       modern,
       isRolePanel: role,
+      codEnable,
       shop: { shop_gateways: [], accounts: [] },
     },
   );
@@ -716,6 +723,60 @@ assert(posScreen.body.textContent.includes("process_center.modern.pos_payment_re
 assert.equal(posScreen.querySelectorAll(".b-order-payment__check").length, 0,
   "Cash records without a transaction identifier do not get a Check action");
 assert.equal(full.querySelectorAll(".b-order-payment__currency-notice").length, 0);
+
+// Cash on delivery: confirmation unlocks once the order is delivered; POS orders confirm at any time.
+const codStages = [
+  ["CheckQueue", ["success", "warning", "neutral", "neutral"]],
+  ["PreparingOrder", ["success", "warning", "neutral", "neutral"]],
+  ["SentOrder", ["success", "success", "warning", "neutral"]],
+  ["ToCustomer", ["success", "success", "success", "warning"]],
+];
+for (const [delivery_state, tones] of codStages) {
+  const cod = fixture({ type: ProductType.PHYSICAL.code, status: "COD", payment: null, delivery_state });
+  assert.equal(cod.cod_locked, delivery_state !== "ToCustomer", delivery_state);
+  assert.deepEqual([...cod.cod_flow.nodes].map((step) => step.outcome.tone), tones, delivery_state);
+  assert.deepEqual([...cod.cod_flow.nodes].map((step) => step.id), ["placed", "ship", "delivered", "confirm"]);
+}
+assert.equal(fixture({ type: "POS", status: "COD", payment: null, delivery_state: "CheckQueue" }).cod_locked, false);
+const codOrder = {
+  id: 7,
+  status: "COD",
+  payment: null,
+  delivery_state: "CheckQueue",
+  transactions_pending: [{ status: "RequireAction", cod: true, unique_id: null, name: "Cash on delivery", gateway_code: "cod_usd" }],
+};
+const codLocked = await paymentScreen(codOrder, { codEnable: true });
+const lockedAction = codLocked.querySelector(".b-order-payment__cod-trigger > button");
+assert(lockedAction.hasAttribute("disabled"), "The COD confirmation stays disabled before delivery");
+assert.equal(lockedAction.getAttribute("variant"), "outlined");
+assert.equal(lockedAction.classList.contains("sd-modern-button--x-large"), false);
+const lockedReason = codLocked.querySelector(".b-order-payment__cod-action > .sd-modern-status");
+assert.equal(lockedAction.getAttribute("aria-describedby"), lockedReason.id, "The visible reason describes the disabled button");
+assert(lockedReason.textContent.includes("process_center.modern.cod_locked"));
+assert(codLocked.querySelector(".b-order-payment__cod-trigger").textContent.includes("process_center.modern.cod_locked_help"));
+assert(codLocked.querySelector(".b-order-payment__cod-guide > summary").textContent.includes("process_center.modern.cod_guide"));
+assert.equal(codLocked.querySelectorAll(".b-order-payment__check").length, 0, "COD has no provider status to check");
+assert.equal(codLocked.body.textContent.includes("process_center.payment_widget.cod_pay_info"), false);
+assert.equal(codLocked.querySelectorAll(".b-order-payment__facts").length, 0, "An unpaid order has no empty payment-facts band");
+assert(full.querySelector(".b-order-payment__facts"), "Recorded payments keep their facts");
+assert(codLocked.querySelector(".b-order-payment-cod-dialog [role='alert']").textContent.includes("process_center.modern.cod_no_gateway"),
+  "A missing COD gateway is explained with translated copy");
+const codReady = await paymentScreen({ ...codOrder, delivery_state: "ToCustomer" }, { codEnable: true });
+const readyAction = codReady.querySelector(".b-order-payment__cod-trigger > button");
+assert.equal(readyAction.hasAttribute("disabled"), false);
+assert(readyAction.classList.contains("sd-modern-button--x-large"), "The delivered COD confirmation is the current X-large action");
+assert.equal(readyAction.getAttribute("color"), "primary");
+assert(readyAction.textContent.includes("process_center.modern.cod_ready_help"));
+assert.equal(codReady.querySelectorAll(".b-order-payment__cod-action > .sd-modern-status").length, 0);
+const codPos = await paymentScreen({ ...codOrder, type: "POS" }, { codEnable: true });
+assert.equal(codPos.querySelector(".b-order-payment__cod-trigger > button").hasAttribute("disabled"), false);
+assert.equal(codPos.querySelectorAll(".b-order-payment__cod-guide").length, 0, "POS COD has no delivery steps");
+assert.equal((await paymentScreen(codOrder, { codEnable: true, role: true })).querySelectorAll(".b-order-payment__cod").length, 0);
+assert.equal((await paymentScreen(codOrder)).querySelectorAll(".b-order-payment__cod").length, 0);
+const codLegacy = await paymentScreen(codOrder, { codEnable: true, modern: false });
+assert.equal(codLegacy.querySelectorAll(".b-order-payment__cod").length, 0);
+assert(codLegacy.body.textContent.includes("process_center.payment_widget.cod_pay_info"));
+
 console.log(
-  "Payment: adaptive Sankey/currency formatting, separate mixed-currency order composition, gated identities, cash metadata and zero/missing risk passed.",
+  "Payment: adaptive Sankey/currency formatting, separate mixed-currency order composition, gated identities, cash metadata, zero/missing risk and delivery-gated COD confirmation passed.",
 );

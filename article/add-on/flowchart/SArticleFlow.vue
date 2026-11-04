@@ -171,7 +171,7 @@
           >
           <span v-for="tone in legend(block)" :key="tone"
             ><span
-              class="api-doc-content__dot"
+              class="api-doc-content__dot no-inv"
               :class="`api-doc-content__dot--${tone}`"
             ></span
             >{{ legendLabel(tone) }}</span
