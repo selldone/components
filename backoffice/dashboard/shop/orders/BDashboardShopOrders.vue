@@ -81,191 +81,97 @@
           $t("admin_shop.dashboard.modern.pending_enabled_types")
         }}</span>
       </div>
-      <div class="b-dashboard-orders-summary__rows">
-        <div
-          v-for="item in available_types"
-          :key="item.code"
-          class="b-dashboard-orders-summary__row"
-        >
-          <v-btn
-            :to="{ name: item.process_page }"
-            variant="text"
-            class="sd-modern-button b-dashboard-orders-summary__link"
+      <!-- One aligned table: a column per processing stage, and each queue row opens its orders. -->
+      <table class="b-dashboard-orders-summary__table">
+        <thead>
+          <tr>
+            <th
+              scope="col"
+              class="sd-modern-list-header b-dashboard-orders-summary__type"
+            >
+              {{ $t("global.commons.type") }}
+            </th>
+            <th
+              v-for="stage in queue_stages"
+              :key="stage.code"
+              scope="col"
+              class="sd-modern-list-header b-dashboard-orders-summary__stage"
+            >
+              <v-icon
+                class="b-dashboard-orders-summary__stage-icon"
+                size="14"
+                aria-hidden="true"
+                >{{ stage.icon }}</v-icon
+              ><span class="b-dashboard-orders-summary__stage-name">{{
+                $t(stage.name)
+              }}</span>
+            </th>
+            <th
+              scope="col"
+              class="sd-modern-list-header b-dashboard-orders-summary__count"
+            >
+              {{ $t("global.commons.pending") }}
+            </th>
+            <td
+              v-if="can_open_process"
+              class="b-dashboard-orders-summary__go"
+            ></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="row in queue_rows"
+            :key="row.key"
+            :class="{ 'sd-modern-clickable-item': can_open_process }"
           >
-            <img
-              :src="item.basket"
-              width="20"
-              height="20"
-              alt=""
-              class="me-2"
-            />
-            {{ $t(item.name) }}
-            <v-tooltip
-              activator="parent"
-              location="top"
-              open-on-focus
-              :max-width="360"
-              content-class="sd-modern-tooltip text-start"
-              >{{
-                $t(
-                  `admin_shop.dashboard.active_orders.${item.code.toLowerCase()}`,
-                )
-              }}</v-tooltip
+            <th scope="row" class="b-dashboard-orders-summary__type">
+              <component
+                :is="can_open_process ? 'router-link' : 'span'"
+                :to="can_open_process ? { name: row.page } : undefined"
+                :aria-label="
+                  can_open_process
+                    ? $t('admin_shop.dashboard.modern.process_orders') +
+                      ' · ' +
+                      row.label
+                    : undefined
+                "
+                class="b-dashboard-orders-summary__link"
+                ><img :src="row.icon" width="20" height="20" alt="" /><span>{{
+                  row.label
+                }}</span></component
+              >
+            </th>
+            <td
+              v-if="row.note"
+              :colspan="queue_stages.length"
+              class="b-dashboard-orders-summary__note"
             >
-          </v-btn>
-          <orders-que
-            :order-que="orderQue"
-            :type="item.code"
-            :show-distribution="!summary"
-            class="b-dashboard-orders-summary__queue"
-          />
-          <b class="b-dashboard-orders-summary__count">{{
-            numeralFormat(getTotalPendingOrders(item), "0,0")
-          }}</b>
-          <v-btn
-            v-if="can_open_process"
-            :to="{ name: item.process_page }"
-            :active="false"
-            class="sd-modern-icon-button b-dashboard-orders-summary__action"
-            icon
-            variant="text"
-            :aria-label="
-              $t('admin_shop.dashboard.modern.process_orders') +
-              ' · ' +
-              $t(item.name)
-            "
-          >
-            <v-icon size="18" class="flip-rtl" aria-hidden="true"
-              >arrow_forward</v-icon
+              {{ row.note }}
+            </td>
+            <template v-else>
+              <td
+                v-for="(value, index) in row.stages"
+                :key="queue_stages[index].code"
+                class="b-dashboard-orders-summary__stage"
+                :class="{ '-muted': !value }"
+              >
+                {{ value === null ? "—" : numeralFormat(value, "0,0") }}
+              </td>
+            </template>
+            <td
+              class="b-dashboard-orders-summary__count"
+              :class="{ '-muted': !row.total }"
             >
-            <v-tooltip
-              activator="parent"
-              location="top"
-              open-on-focus
-              content-class="sd-modern-tooltip text-start"
-              >{{ $t("admin_shop.dashboard.modern.process_orders") }} ·
-              {{ $t(item.name) }}</v-tooltip
-            >
-          </v-btn>
-        </div>
-        <div
-          v-if="has_avocado && avocadoQue"
-          class="b-dashboard-orders-summary__row"
-        >
-          <v-btn
-            :to="{ name: 'BPageShopOrdersAvocado' }"
-            variant="text"
-            class="sd-modern-button b-dashboard-orders-summary__link"
-          >
-            <img
-              :src="require('../../../../assets/icons/avocado.svg')"
-              width="20"
-              height="20"
-              alt=""
-              class="me-2"
-            />
-            {{ $t("global.commons.avocado") }}
-            <v-tooltip
-              activator="parent"
-              location="top"
-              open-on-focus
-              :max-width="360"
-              content-class="sd-modern-tooltip text-start"
-              >{{ $t("avocado_orders.avocado") }}</v-tooltip
-            >
-          </v-btn>
-          <orders-que
-            :order-que="avocadoQue"
-            type="AVO"
-            :show-distribution="!summary"
-            class="b-dashboard-orders-summary__queue"
-          />
-          <b class="b-dashboard-orders-summary__count">{{
-            numeralFormat(totalPendingOrders_Avocado, "0,0")
-          }}</b>
-          <v-btn
-            v-if="can_open_process"
-            :to="{ name: 'BPageShopOrdersAvocado' }"
-            :active="false"
-            class="sd-modern-icon-button b-dashboard-orders-summary__action"
-            icon
-            variant="text"
-            :aria-label="
-              $t('admin_shop.dashboard.modern.process_orders') +
-              ' · ' +
-              $t('global.commons.avocado')
-            "
-          >
-            <v-icon size="18" class="flip-rtl" aria-hidden="true"
-              >arrow_forward</v-icon
-            >
-            <v-tooltip
-              activator="parent"
-              location="top"
-              open-on-focus
-              content-class="sd-modern-tooltip text-start"
-              >{{ $t("admin_shop.dashboard.modern.process_orders") }} ·
-              {{ $t("global.commons.avocado") }}</v-tooltip
-            >
-          </v-btn>
-        </div>
-        <div v-if="has_hyper" class="b-dashboard-orders-summary__row">
-          <v-btn
-            :to="{ name: 'BPageShopOrdersHyper' }"
-            variant="text"
-            class="sd-modern-button b-dashboard-orders-summary__link"
-          >
-            <img
-              :src="require('../../../../assets/icons/hyper.svg')"
-              width="20"
-              height="20"
-              alt=""
-              class="me-2"
-            />
-            {{ $t("global.commons.hyper") }}
-            <v-tooltip
-              activator="parent"
-              location="top"
-              open-on-focus
-              :max-width="360"
-              content-class="sd-modern-tooltip text-start"
-              >{{ $t("global.commons.hyper") }}</v-tooltip
-            >
-          </v-btn>
-          <span class="sd-modern-subtitle b-dashboard-orders-summary__queue"
-            >{{ $t("global.commons.today") }} ·
-            {{ $t("global.commons.paid") }}</span
-          >
-          <b class="b-dashboard-orders-summary__count">{{
-            numeralFormat(todayOrders_Hyper ?? 0, "0,0")
-          }}</b>
-          <v-btn
-            v-if="can_open_process"
-            :to="{ name: 'BPageShopOrdersHyper' }"
-            :active="false"
-            class="sd-modern-icon-button b-dashboard-orders-summary__action"
-            icon
-            variant="text"
-            :aria-label="
-              $t('admin_shop.dashboard.modern.process_orders') +
-              ' · ' +
-              $t('global.commons.hyper')
-            "
-          >
-            <v-icon size="18" class="flip-rtl" aria-hidden="true"
-              >arrow_forward</v-icon
-            >
-            <v-tooltip
-              activator="parent"
-              location="top"
-              open-on-focus
-              content-class="sd-modern-tooltip text-start"
-              >{{ $t("admin_shop.dashboard.modern.process_orders") }} ·
-              {{ $t("global.commons.hyper") }}</v-tooltip
-            >
-          </v-btn>
-        </div>
-      </div>
+              {{ numeralFormat(row.total, "0,0") }}
+            </td>
+            <td v-if="can_open_process" class="b-dashboard-orders-summary__go">
+              <v-icon size="18" class="flip-rtl" aria-hidden="true"
+                >chevron_right</v-icon
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <!-- A page may add its own digest under the queues; the shop dashboard adds its order mix. -->
       <slot name="footer"></slot>
     </section>
@@ -1238,6 +1144,17 @@ import {
   getReportDailyValues,
   getReportStartDate,
 } from "../performance/periodComparison";
+import { Basket } from "@selldone/core-js";
+import avocadoIcon from "../../../../assets/icons/avocado.svg";
+import hyperIcon from "../../../../assets/icons/hyper.svg";
+
+// Queue stages in processing order; delivered orders have left the queue.
+const QUEUE_STAGES = [
+  "CheckQueue",
+  "OrderConfirm",
+  "PreparingOrder",
+  "SentOrder",
+];
 
 export default {
   name: "BDashboardShopOrders",
@@ -1331,6 +1248,66 @@ export default {
 
     hasInsufficientData() {
       return this.timeSeries.raw_data.length > 1;
+    },
+
+    queue_stages() {
+      return QUEUE_STAGES.map((code) => Basket.PhysicalOrderStates[code]);
+    },
+    // A row per queue: its orders at each stage (null where its type has no such stage) and in total.
+    queue_rows() {
+      const count = (row) => {
+        const value = Number(row?.count);
+        return Number.isFinite(value) && value > 0 ? value : 0;
+      };
+      const queue = (states, rows) => ({
+        stages: states
+          ? QUEUE_STAGES.map((code) => {
+              const value = rows
+                .filter((row) => row.delivery_state === code)
+                .reduce((sum, row) => sum + count(row), 0);
+              return code in states || value ? value : null;
+            })
+          : null,
+        // File orders are delivered automatically, so they have no stage to show.
+        note: states ? null : this.$t("global.commons.auto"),
+        total: rows.reduce((sum, row) => sum + count(row), 0),
+      });
+      const states = {
+        PHYSICAL: Basket.PhysicalOrderStates,
+        VIRTUAL: Basket.VirtualOrderStates,
+        SERVICE: Basket.ServiceOrderStates,
+        SUBSCRIPTION: Basket.SubscriptionOrderStates,
+      };
+      const rows = this.available_types.map((type) => ({
+        key: type.code,
+        label: this.$t(type.name),
+        icon: type.basket,
+        page: type.process_page,
+        ...queue(
+          states[type.code],
+          this.orderQue.filter((row) => row.type === type.code),
+        ),
+      }));
+      if (this.has_avocado && this.avocadoQue)
+        rows.push({
+          key: "AVOCADO",
+          label: this.$t("global.commons.avocado"),
+          icon: avocadoIcon,
+          page: "BPageShopOrdersAvocado",
+          // Avocado splits each stage by payment status; both belong to the stage.
+          ...queue(Basket.PhysicalOrderStates, this.avocadoQue),
+        });
+      if (this.has_hyper)
+        rows.push({
+          key: "HYPER",
+          label: this.$t("global.commons.hyper"),
+          icon: hyperIcon,
+          page: "BPageShopOrdersHyper",
+          stages: null,
+          note: `${this.$t("global.commons.today")} · ${this.$t("global.commons.paid")}`,
+          total: this.todayOrders_Hyper ?? 0,
+        });
+      return rows;
     },
 
     //▘▘▘▘▘▘▘▘▘▘▘▘▘   Total pending orders  ▘▘▘▘▘▘▘▘▘▘▘▘▘
@@ -1712,58 +1689,149 @@ export default {
     color: var(--sd-modern-muted);
     font-size: 12px;
   }
-  &__row {
-    display: grid;
-    grid-template-columns:
-      minmax(150px, 1fr) minmax(0, 1.3fr) minmax(38px, auto)
-      auto;
-    align-items: center;
-    gap: 12px;
-    padding-block: 4px;
-    border-block-start: 1px solid var(--sd-modern-border);
-  }
-
-  &__link.sd-modern-button {
-    justify-self: start;
-    max-width: 100%;
-    min-height: 36px;
-    padding-block: 6px;
-  }
-  &__count {
-    text-align: end;
-    font-size: 17px;
-    font-weight: 400;
+  &__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
     font-variant-numeric: tabular-nums;
   }
-  &__queue {
-    min-width: 0;
-    font-size: 12px;
+  &__table th,
+  &__table td {
+    padding: 6px 12px;
+    text-align: start;
+    vertical-align: middle;
   }
-  &__queue :deep(b) {
+  // Captions keep the shared list-header typography; only body cells set theirs.
+  &__table thead th {
+    padding-block: 0 8px;
+    vertical-align: bottom;
+  }
+  &__table tbody th,
+  &__table tbody td {
+    border-block-start: 1px solid var(--sd-modern-border);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+  &__table &__stage {
+    width: 14%;
+    text-align: end;
+  }
+  &__table &__count {
+    width: 11%;
+    text-align: end;
+  }
+  &__table tbody &__count {
+    font-size: 15px;
+    font-weight: 500;
+  }
+  &__table &__go {
+    width: 30px;
+    padding-inline: 0 8px;
+    color: var(--sd-modern-muted);
+  }
+  &__table &__note {
+    color: var(--sd-modern-muted);
+    font-size: 13px;
+    text-align: center;
+  }
+  &__table tbody .-muted {
+    color: var(--sd-modern-muted);
     font-weight: 400;
   }
+  &__stage-icon {
+    display: none;
+  }
+  &__link {
+    // Block-level, so the 20px icon never adds an inline line box to the row height.
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+    img {
+      flex-shrink: 0;
+    }
+    // The whole row opens the queue; the row (sd-modern-clickable-item) positions this layer.
+    &[href]::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+    &:focus-visible {
+      outline: none;
+    }
+    &:focus-visible::after {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: -2px;
+    }
+  }
 
+  // Phones: the stages move under their row and the caption row, in the same four columns.
   @media (max-width: 600px) {
-    &__link.sd-modern-button {
+    &__table,
+    &__table thead,
+    &__table tbody {
+      display: block;
+    }
+    &__table tr {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto auto;
+      align-items: center;
+      gap: 2px 8px;
+      padding: 6px 12px;
+    }
+    &__table tbody tr {
       min-height: 44px;
-      padding-block: 8px;
+      border-block-start: 1px solid var(--sd-modern-border);
     }
-    &__row {
-      grid-template-columns: minmax(0, 1fr) auto auto;
-      gap: 4px 12px;
+    &__table thead th,
+    &__table tbody th,
+    &__table tbody td,
+    &__table &__go {
+      padding: 0;
+      border: 0;
     }
-    &__queue {
-      grid-row: 2;
-      grid-column: 1 / -1;
-      padding-block: 2px;
+    &__table &__stage,
+    &__table &__count,
+    &__table &__go {
+      width: auto;
+    }
+    &__table &__stage {
+      text-align: start;
+    }
+    // Four captions do not fit a phone; the stage icons stand in, the names stay for screen readers.
+    &__stage-icon {
+      display: inline-flex;
+    }
+    &__stage-name {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    &__type {
+      grid-row: 1;
+      grid-column: 1 / 5;
+      min-height: 28px;
+      display: flex;
+      align-items: center;
     }
     &__count {
-      grid-column: 2;
       grid-row: 1;
+      grid-column: 5;
     }
-    &__action {
-      grid-column: 3;
+    &__go {
       grid-row: 1;
+      grid-column: 6;
+    }
+    &__table &__note {
+      grid-row: 2;
+      grid-column: 1 / 5;
+      text-align: start;
     }
   }
 }
