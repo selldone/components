@@ -479,9 +479,10 @@ export default {
     },
     canSyncBills() {
       // Provider synchronization writes bills; the server retains ORDER_WRITE and ORDERS permission checks.
+      const gateway_code = this.basket.payment?.gateway?.code;
       return !!(!this.IS_VENDOR_PANEL && this.isSubscription &&
         ["Payed", "Canceled"].includes(this.basket.status) &&
-        this.basket.payment?.gateway?.code?.startsWith("stripe_"));
+        ["stripe_", "razorpay_"].some((prefix) => gateway_code?.startsWith(prefix)));
     },
     isService() {
       return this.basket.type === ProductType.SERVICE.code;

@@ -68,12 +68,9 @@ export default {
 
       const options = {
         key: this.pack.public_key, // Enter the Key ID generated from the Dashboard
-        amount: this.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-        currency: this.currency,
         name: this.pack.name,
         description: this.pack.description,
         image: this.pack.image,
-        order_id: this.pack.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
         callback_url: this.pack.callback_url, // Post method: /payment/razorpay/@{shop_name}/callback
         prefill: {
           name: this.billingName,
@@ -92,6 +89,16 @@ export default {
 
         remember_customer: true, // Determines whether to allow saving of cards.
       };
+
+      if (this.pack.subscription_id) {
+        // 🎗️ Subscription: Checkout authorizes the recurring mandate; the amount comes from the Razorpay plan.
+        options.subscription_id = this.pack.subscription_id;
+      } else {
+        options.amount = this.amount; // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        options.currency = this.currency;
+        options.order_id = this.pack.id; //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      }
+
       const rzp1 = new Razorpay(options);
       rzp1.open();
     },
