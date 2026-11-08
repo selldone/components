@@ -18,45 +18,22 @@
     class="b-customer-activity-map text-start"
     :class="{ 'b-customer-activity-map--modern': modern }"
   >
-    <label v-if="modern" class="b-customer-activity-map__filter">
-      <img
-        :src="keys.find((item) => item.code === key_selected)?.image"
-        width="18"
-        height="18"
-        alt=""
-      />
-      <select
-        v-model="key_selected"
-        :aria-label="$t('shop_crm_report.country_activity')"
-      >
-        <option v-for="item in keys" :key="item.code" :value="item.code">
-          {{ activityLabel(item) }}
-        </option>
-      </select>
-    </label>
+    <!-- One activity at a time colors the map; the same segmented control as the hourly heatmap. -->
     <v-btn-toggle
-      v-else
       v-model="key_selected"
-      class="mb-3"
-      rounded="xl"
-      style="height: 64px"
-      variant="flat"
+      :aria-label="$t('shop_crm_report.country_activity')"
+      class="sd-modern-segmented b-customer-activity-map__types"
+      mandatory
+      variant="text"
     >
       <v-btn
         v-for="item in keys"
         :key="item.code"
-        :title="$t(item.name)"
         :value="item.code"
         size="small"
-        stacked
       >
-        <img
-          :class="{ 'img-grayscale': key_selected !== item.code }"
-          :src="item.image"
-          class="mx-2"
-          width="24px"
-        />
-        <div class="mt-1 tnt">{{ $t(item.name) }}</div>
+        <img :src="item.image" width="18" height="18" alt="" />
+        {{ activityLabel(item) }}
       </v-btn>
     </v-btn-toggle>
 
@@ -329,12 +306,15 @@ export default {
   font-family: inherit;
   font-size: 13px;
 
+  .b-customer-activity-map__types {
+    margin-block-end: 14px;
+  }
+
   .b-customer-activity-map__filter {
     display: flex;
     align-items: center;
     gap: 8px;
     min-height: 36px;
-    margin-block-end: 14px;
     width: fit-content;
     max-width: 100%;
 

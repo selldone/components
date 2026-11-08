@@ -34,15 +34,15 @@ class CheckDate extends Date {
     super(...(args.length ? args : [fixedNow]));
   }
 }
-const calendar = (days, end = false) => {
-  const d = new CheckDate();
+const calendar = (days, end = false, origin = null) => {
+  const d = origin ? new CheckDate(origin) : new CheckDate();
   d.setDate(d.getDate() - days);
   d.setHours(end ? 23 : 0, end ? 59 : 0, end ? 59 : 0, end ? 999 : 0);
   return d;
 };
 const dc = {
   convertToLocalTime: (v) => (v == null ? null : new CheckDate(v.date || v)),
-  GetStartOfDateBefore: (d) => calendar(d),
+  GetStartOfDateBefore: (d, origin) => calendar(d, false, origin),
   GetEndOfDateBefore: (d) => calendar(d, true),
 };
 class Series {
@@ -68,8 +68,18 @@ const axios = {
   get: (url, options) =>
     new Promise((resolve) => requests.push({ url, options, resolve })),
 };
+const loadTs = (path) => {
+  const exports = {};
+  vm.runInNewContext(transpile(read(base + path)), { exports, require: req });
+  return exports;
+};
 const req = (name) => {
   if (name === "vue") return Vue;
+  if (name.endsWith("customRange.ts")) return customRange;
+  if (name.endsWith("donutSlices.ts"))
+    return loadTs("ui/chart/donut-leader/donutSlices.ts");
+  if (name.endsWith("periodComparison.ts"))
+    return loadTs("backoffice/dashboard/shop/performance/periodComparison.ts");
   if (name.endsWith(".svg")) return { default: "fixture.svg" };
   if (name.includes("/Brands.ts")) return { Brands: [] };
   if (name === "@selldone/core-js/helper")
@@ -83,7 +93,16 @@ const req = (name) => {
   if (name === "@selldone/core-js") return { Analytics: { DeviceType: [] } };
   return {
     default: {},
-    ProductType: {},
+    ProductType: Object.fromEntries(
+      ["PHYSICAL", "VIRTUAL", "FILE", "SERVICE"].map((code) => [
+        code,
+        {
+          code,
+          color: `#${code.length}0${code.length}0${code.length}0`,
+          image: `${code}.svg`,
+        },
+      ]),
+    ),
     ChartAnnotations: {},
     CampaignHelper: {
       GetTotalSocials: () => 0,
@@ -102,6 +121,20 @@ const transpile = (src) =>
       target: ts.ScriptTarget.ES2022,
     },
   }).outputText;
+// The shared custom-range helper on the fixture calendar (its "today" is the fixed date).
+const customRange = (() => {
+  const exports = {};
+  vm.runInNewContext(
+    transpile(read(base + "ui/time/span/custom/customRange.ts")),
+    {
+      exports,
+      Date: CheckDate,
+      require: (name) =>
+        name.includes("DateConverter") ? { DateConverter: dc } : {},
+    },
+  );
+  return exports;
+})();
 function load(path) {
   const source = read(base + path);
   const p = parse(source, { filename: path });
@@ -178,6 +211,23 @@ async function renderEmptyFixture(
   );
   components.BSessionChartSankey = chart("sankey");
   components.UChartFunnel = chart("funnel");
+  // The shared no-data ghost renders its kind, note and minimum height.
+  components.UChartPlaceholder = {
+    inheritAttrs: false,
+    props: ["kind", "text", "minHeight"],
+    setup:
+      (props, { attrs }) =>
+      () =>
+        Vue.h(
+          "div",
+          {
+            ...attrs,
+            "data-ghost": props.kind,
+            style: { minHeight: `${props.minHeight}px` },
+          },
+          props.text,
+        ),
+  };
   const app = Vue.createSSRApp(
     {
       ...component,
@@ -215,7 +265,10 @@ async function renderEmptyFixture(
     $i18n: { locale: "en" },
     $vuetify: {
       display: { smAndDown: false },
-      theme: { name: "light", current: { dark: false } },
+      theme: {
+        name: "light",
+        current: { dark: false, colors: { primary: "#1976d2" } },
+      },
     },
     numeralFormat: (value) => String(value),
     truncate: (value) => Math.trunc(value),
@@ -252,42 +305,53 @@ async function renderEmptyFixture(
     true,
     [0, 0, 0, 0, 0],
   );
-  const ring = composition.querySelector(
-    ".b-dashboard-acquisition__composition-zero",
-  );
-  assert.equal(ring.textContent.trim(), "0");
-  assert.equal(
-    ring.getAttribute("aria-label"),
-    "shop_visitors_widget.page_views: 0",
-  );
-  assert.equal(ring.getAttribute("role"), "img");
-  assert.equal(
-    composition.querySelector("[data-chart=donut]").getAttribute("data-series"),
-    "[0,0,0,0,0]",
-    "Apex keeps its native zero series and legend rather than fabricated proportions",
-  );
+  const legend = [
+    ...composition.querySelectorAll(
+      ".b-dashboard-acquisition__composition-legend li",
+    ),
+  ];
+  assert.equal(legend.length, 5, "Every page type is listed, zero included");
   assert.ok(
-    composition.querySelector(".b-dashboard-acquisition__composition-range"),
-    "Native date selector remains rendered",
+    legend.every((row) => row.textContent.includes("—")),
+    "No share is invented for an empty period",
   );
-  for (const values of [
-    [],
-    [null, 0, 0, 0, 0],
-    [NaN, 0, 0, 0, 0],
-    [Infinity, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0],
+  assert.equal(
+    composition.querySelector("[data-chart=donut]"),
+    null,
+    "The dashboard draws the leader-line donut instead of Apex",
+  );
+  assert.equal(
+    composition.querySelector(".b-dashboard-acquisition__composition-range"),
+    null,
+    "No range slider: Custom opens the shared date dialog",
+  );
+  const acquisition = load(paths.acquisition).component;
+  for (const [values, shares] of [
+    [
+      [3, 1, 0, 0, 4],
+      [3, 1, 0, 0, 4],
+    ],
+    [
+      [null, NaN, Infinity, -2, 5],
+      [0, 0, 0, 0, 5],
+    ],
   ]) {
-    const normal = await renderEmptyFixture(
-      paths.acquisition,
-      {},
-      true,
-      values,
+    const slices = acquisition.computed.composition_slices.call({
+      series_pie: values,
+      $t: (key) => key,
+    });
+    assert.deepEqual(
+      plain(slices.map((slice) => slice.value)),
+      shares,
+      "Invalid or negative page counts count as no page view",
     );
-    assert.equal(
-      normal.querySelector(".b-dashboard-acquisition__composition-zero"),
-      null,
-    );
-    assert.ok(normal.querySelector("[data-chart=donut]"));
+    assert.deepEqual(plain(slices.map((slice) => slice.key)), [
+      "PHYSICAL",
+      "VIRTUAL",
+      "FILE",
+      "SERVICE",
+      "OTHER",
+    ]);
   }
   const legacyComposition = await renderEmptyFixture(
     paths.acquisition,
@@ -296,26 +360,39 @@ async function renderEmptyFixture(
     [0, 0, 0, 0, 0],
   );
   assert.equal(
-    legacyComposition.querySelector(
-      ".b-dashboard-acquisition__composition-zero",
-    ),
-    null,
+    legacyComposition
+      .querySelector("[data-chart=donut]")
+      .getAttribute("data-series"),
+    "[0,0,0,0,0]",
+    "Other callers keep the native Apex donut",
   );
+  // The flow grows with its end branches and stays within 140-260px.
+  const flow = (organic, direct, other, socials) =>
+    acquisition.computed.flow_height.call({
+      calcTotalOrganicSearch: organic,
+      calcTotalDirect: direct,
+      calcTotalOther: other,
+      calSocialDetails: socials,
+    });
+  assert.equal(flow(0, 5, 0, {}), "140px");
+  assert.equal(flow(3, 0, 9, { instagram: 2, pinterest: 1 }), "152px");
+  assert.equal(flow(3, 1, 9, { a: 1, b: 1, c: 1, d: 1, e: 1 }), "260px");
   for (const socials of [{}, { direct: 0 }]) {
     const empty = await renderEmptyFixture(paths.acquisition, socials);
     assert.equal(
       empty.querySelectorAll(".b-dashboard-acquisition__flow-empty").length,
       1,
     );
+    const ghost = empty.querySelector(".b-dashboard-acquisition__flow-empty");
     assert.equal(
-      empty.querySelector(".b-dashboard-acquisition__flow-empty-count")
-        .textContent,
-      "0",
+      ghost.getAttribute("data-ghost"),
+      "flow",
+      "A gray flow stands in for the chart",
     );
     assert.ok(
-      empty
-        .querySelector(".b-dashboard-acquisition__flow-empty")
-        .textContent.includes("global.commons.no_data"),
+      ghost.textContent.includes(
+        "admin_shop.dashboard.modern.placeholder_flow",
+      ),
     );
     assert.equal(empty.querySelector("[data-chart=sankey]"), null);
   }
@@ -345,9 +422,15 @@ async function renderEmptyFixture(
       "admin_shop.dashboard.modern.channel_history_empty",
     ),
   );
+  assert.equal(
+    noSources
+      .querySelector(".b-dashboard-channels__empty")
+      .getAttribute("data-ghost"),
+    "stream",
+  );
   assert.equal(noSources.querySelector("[data-chart=funnel]"), null);
   assert.equal(
-    noSources.querySelector(".b-dashboard-channels__day-table"),
+    noSources.querySelector(".b-dashboard-channels__insights"),
     null,
   );
   const zeroSource = await renderEmptyFixture(paths.channels, { direct: 0 });
@@ -360,16 +443,24 @@ async function renderEmptyFixture(
     zeroSource.querySelector("[data-chart=funnel]").getAttribute("data-values"),
     "[[0]]",
   );
+  const zeroInsights = zeroSource.querySelector(
+    ".b-dashboard-channels__insights",
+  );
   assert.ok(
-    zeroSource
-      .querySelector(".b-dashboard-channels__day-table")
-      .textContent.includes("direct"),
+    zeroInsights.textContent.includes(
+      "admin_shop.dashboard.modern.channel_insights_none",
+    ),
+    "A source without sessions has no top or rising channel",
+  );
+  assert.equal(
+    zeroInsights.querySelectorAll(".b-dashboard-channels__shares li").length,
+    0,
   );
   const legacySources = await renderEmptyFixture(paths.channels, {}, false);
   assert.equal(legacySources.querySelector(".b-dashboard-channels"), null);
   // 30 days of 56px scroll inside a 300px chart viewport.
   const channels = load(paths.channels).component;
-  const reveal = (day, scrollLeft, dayRect) => {
+  const reveal = (scrollLeft, dayRect) => {
     const container = {
       scrollLeft,
       getBoundingClientRect: () => ({ left: 0, right: 300 }),
@@ -382,9 +473,8 @@ async function renderEmptyFixture(
       modern: true,
       timeSeries: { raw_data: Array(30).fill({}) },
     });
-    s.history_day = day;
     s.$refs = { chart: { querySelector: () => container } };
-    s.revealHistoryDay();
+    s.revealLatestDay();
     return container.scrollLeft;
   };
   const ltr = (offset) => (i) => ({
@@ -392,10 +482,95 @@ async function renderEmptyFixture(
     right: 56 * (i + 1) - offset,
   });
   const rtl = (i) => ({ left: 300 - 56 * (i + 1), right: 300 - 56 * i });
-  assert.equal(reveal(null, 0, ltr(0)), 1380, "Latest day opens in view");
-  assert.equal(reveal(3, 0, ltr(0)), 0, "A visible day keeps the scroll");
-  assert.equal(reveal(2, 1380, ltr(1380)), 112, "Slider back to day 2");
-  assert.equal(reveal(null, 0, rtl), -1380, "RTL opens on the left end");
+  assert.equal(reveal(0, ltr(0)), 1380, "Latest day opens in view");
+  assert.equal(
+    reveal(1380, ltr(1380)),
+    1380,
+    "A visible latest day keeps the scroll",
+  );
+  assert.equal(reveal(0, rtl), -1380, "RTL opens on the left end");
+  // Insights: totals per channel, the rise over equal recorded halves, the busiest day.
+  const days = [24, 25, 26, 27].map((day) => `2026-10-${day}T00:00:00`);
+  const socialRows = [
+    { google: 10, reddit: 1 },
+    { google: 10, reddit: 1 },
+    { google: 8, reddit: 4 },
+    { google: 6, reddit: 6 },
+  ].map((social, index) => ({ created_at: days[index], social }));
+  const insights = state(channels, {
+    modern: true,
+    timeSeries: {
+      raw_data: socialRows,
+      socialTotalKeys: () => ({ google: 34, reddit: 12 }),
+    },
+    $t: (key, values) => (values ? `${key}:${JSON.stringify(values)}` : key),
+    getName: (key) => key,
+    truncate: Math.trunc,
+    getLocalTimeString: (value) => value,
+  });
+  assert.deepEqual(
+    plain(insights.channels.map((item) => [item.key, item.value])),
+    [
+      ["google", 34],
+      ["reddit", 12],
+    ],
+  );
+  assert.equal(insights.channel_total, 46);
+  assert.equal(insights.top_channel.key, "google");
+  assert.equal(
+    insights.rising_channel.key,
+    "reddit",
+    "Reddit doubled its share of the latest two days",
+  );
+  assert.equal(Math.round(insights.rising_channel.comparison.value), 400);
+  assert.equal(
+    insights.total_comparison.value.toFixed(1),
+    "9.1",
+    "24 sessions after 22",
+  );
+  assert.equal(
+    insights.peak_day.date,
+    days[2],
+    "The first of the busiest days (12 sessions)",
+  );
+  assert.deepEqual(
+    plain(
+      insights.share_slices.map((slice) => [slice.key, slice.share.toFixed(3)]),
+    ),
+    [
+      ["google", "0.739"],
+      ["reddit", "0.261"],
+    ],
+  );
+  assert.deepEqual(
+    plain(insights.daily_series[1].data.map(([, value]) => value)),
+    [null, null, null, null],
+    "The 7-day average waits for seven recorded days",
+  );
+  const week = state(channels, {
+    modern: true,
+    timeSeries: {
+      raw_data: Array.from({ length: 8 }, (_, index) => ({
+        created_at: `2026-10-${20 + index}T00:00:00`,
+        social: { google: index },
+      })),
+      socialTotalKeys: () => ({ google: 28 }),
+    },
+    $t: (key) => key,
+    getName: (key) => key,
+    truncate: Math.trunc,
+    getLocalTimeString: (value) => value,
+  });
+  assert.deepEqual(plain(week.daily_series[1].data.map(([, value]) => value)), [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    3,
+    4,
+  ]);
   const acq = load(paths.acquisition).component;
   const ac = state(acq, {
     modern: true,
@@ -441,7 +616,11 @@ async function renderEmptyFixture(
     [0, 1, 2],
   );
   ac.shop = { options: [{ code: "amp", value: true }] };
-  assert.equal(ac.endpointPoints.length, 3, "The retired option cannot restore an AMP series");
+  assert.equal(
+    ac.endpointPoints.length,
+    3,
+    "The retired option cannot restore an AMP series",
+  );
   assert.equal(ac.endpointPoints[1].y, 0);
   assert.deepEqual(plain(ac.endpointPoints.map((p) => p.marker.strokeColor)), [
     "#FFA000",
@@ -508,20 +687,13 @@ async function renderEmptyFixture(
     s.calendarDayNumber("2026-10-27") - s.calendarDayNumber("2026-10-20"),
     7,
   );
-  assert.equal(
-    s.calendarDayNumber(s.report_min_date),
-    s.calendarDayNumber(calendar(89)),
-  );
-  s.custom_report_start = calendar(89);
-  s.custom_report_end = calendar(0, true);
   assert.deepEqual(
-    plain(s.custom_report_window),
+    plain(customRange.customRangeWindow(calendar(89), calendar(0, true))),
     { offset: 0, days: 89 },
     "Custom Last90days contains90 inclusive calendar dates",
   );
-  s.custom_report_start = calendar(90);
   assert.equal(
-    s.custom_report_window,
+    customRange.customRangeWindow(calendar(90), calendar(0, true)),
     null,
     "The91st calendar date is outside Last90days",
   );
@@ -574,10 +746,17 @@ async function renderEmptyFixture(
   s.selectReportPeriod({ title: "time_spans.custom" });
   assert.equal(s.custom_report_dialog, true);
   const before = requests.length;
-  s.custom_report_start = new CheckDate("2026-10-20T12:00:00");
-  s.custom_report_end = new CheckDate("2026-10-23T12:00:00");
-  assert.deepEqual(plain(s.custom_report_window), { offset: 4, days: 3 });
-  s.applyCustomReport();
+  assert.equal(requests.length, before, "Custom waits for the dialog");
+  assert.deepEqual(
+    plain(
+      customRange.customRangeWindow(
+        new CheckDate("2026-10-20T12:00:00"),
+        new CheckDate("2026-10-23T12:00:00"),
+      ),
+    ),
+    { offset: 4, days: 3 },
+  );
+  s.applyCustomReport({ offset: 4, days: 3 });
   assert.equal(requests.length, before + 1);
   assert.deepEqual(plain(requests.at(-1).options.params), {
     offset: 4,
@@ -601,11 +780,8 @@ async function renderEmptyFixture(
     ["2026-10-20", "2026-10-28"],
     ["2026-01-01", "2026-10-20"],
     ["invalid", "2026-10-20"],
-  ]) {
-    s.custom_report_start = start;
-    s.custom_report_end = end;
-    assert.equal(s.custom_report_window, null);
-  }
+  ])
+    assert.equal(customRange.customRangeWindow(start, end), null);
   s.selectReportPeriod({ title: "time_spans.last_90", from: 90, to: 0 });
   assert.equal(s.days, 89);
   assert.deepEqual(plain(requests.at(-1).options.params), {
@@ -641,10 +817,37 @@ async function renderEmptyFixture(
     14,
     "Slower previous range cannot overwrite the selected range",
   );
-  for (const props of [
-    { modern: false, summary: false },
-    { modern: true, summary: true },
-  ]) {
+  {
+    const summary = state(sessions, {
+      modern: true,
+      summary: true,
+      url: "/isolated",
+      datKey: "sessions",
+      fullDetails: false,
+    });
+    const p = summary.fetchShopSessions(0, 29);
+    const r = requests.at(-1);
+    assert.deepEqual(
+      plain(r.options.params),
+      { offset: 0, days: 30, details: true },
+      "The overview card reads daily rows for its map and hover trends",
+    );
+    r.resolve({
+      data: {
+        sessions: [
+          { created_at: "2026-09-27", US: 99 },
+          { created_at: "2026-10-27", US: 7 },
+        ],
+      },
+    });
+    await p;
+    assert.deepEqual(
+      plain(summary.timeSeries.raw_data.map((row) => row.US)),
+      [7],
+      "Rows outside the selected calendar range are dropped",
+    );
+  }
+  for (const props of [{ modern: false, summary: false }]) {
     const old = state(sessions, {
       ...props,
       url: "/isolated",
@@ -656,7 +859,7 @@ async function renderEmptyFixture(
     assert.deepEqual(
       plain(r.options.params),
       { offset: 2, days: 30, details: false },
-      "Legacy/summary request remains exact previous API shape",
+      "Legacy request remains the exact previous API shape",
     );
     r.resolve({ data: { sessions: { US: 7 } } });
     await p;

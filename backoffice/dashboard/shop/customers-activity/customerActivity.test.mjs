@@ -119,7 +119,7 @@ for (const [name, path] of [
   });
 }
 
-test("hourly activity preserves selected series and exposes all four exact counters", () => {
+test("hourly activity grids one activity by weekday and hour and exposes all four exact counters", () => {
   const s = loaded.heatmap.state;
   assert.equal(s.series, null);
   s.timeline = [
@@ -131,6 +131,7 @@ test("hourly activity preserves selected series and exposes all four exact count
       remove_baskets: 2,
       buys: 3,
     },
+    { day: 6, hour: 0, buys: 1 },
   ];
   s.selected_day = 2;
   s.selected_hour = 13;
@@ -140,14 +141,55 @@ test("hourly activity preserves selected series and exposes all four exact count
     remove_baskets: 2,
     buys: 3,
   });
-  s.keys_selected = ["buys"];
-  assert.equal(s.series.length, 1);
-  assert.equal(s.series[0].name, "shop_crm_report.purchase_actions");
-  assert.deepEqual(JSON.parse(JSON.stringify(s.series[0].data)), [[13, 2, 3]]);
+  s.key_selected = "buys";
+  assert.equal(s.series.length, 7, "One row per weekday");
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(s.series.map((row) => row.name))),
+    [
+      "Saturday",
+      "Friday",
+      "Thursday",
+      "Wednesday",
+      "Tuesday",
+      "Monday",
+      "Sunday",
+    ],
+    "Sunday is drawn on top",
+  );
+  const tuesday = s.series.find((row) => row.name === "Tuesday");
+  assert.equal(tuesday.data.length, 24);
+  assert.deepEqual(JSON.parse(JSON.stringify(tuesday.data[13])), {
+    x: "13",
+    y: 3,
+  });
+  assert.equal(tuesday.data[12].y, 0, "Missing hours are observed zeros");
+  assert.equal(s.series[0].data[0].y, 1);
+  assert.equal(s.max_value, 3);
+  assert.deepEqual(
+    JSON.parse(
+      JSON.stringify(s.heat_ranges.map((range) => [range.from, range.to])),
+    ),
+    [
+      [0, 0],
+      [1, 1],
+      [2, 2],
+      [3, 3],
+    ],
+    "Zero stays neutral; counts split into bands up to the busiest cell",
+  );
+  assert.equal(s.chartOptions.colors[0], "#689F38");
+  assert.equal(s.chartOptions.plotOptions.heatmap.enableShades, false);
+  assert.equal(s.chartOptions.chart.toolbar.show, false);
+  s.key_selected = "products_views";
+  assert.equal(s.max_value, 0);
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(s.heat_ranges.map((range) => range.from))),
+    [0],
+    "No band without activity",
+  );
   s.timeline = [];
-  assert.deepEqual(JSON.parse(JSON.stringify(s.series)), [
-    { name: "shop_crm_report.purchase_actions", data: [] },
-  ]);
+  assert.equal(s.series.length, 7);
+  assert.ok(s.series.every((row) => row.data.every((cell) => cell.y === 0)));
 });
 
 test("country activity uses the selected counter without mutating country records", () => {
@@ -199,61 +241,64 @@ test("real Vuetify light/dark themes supply generated activity colors", () => {
     state.$vuetify.theme.name = "light";
 });
 
-test("report heatmap reduces visible hour labels without removing hourly observations", () => {
+test("the heatmap reduces visible hour labels without removing hourly observations", () => {
   const s = loaded.heatmap.state;
   s.timeline = Array.from({ length: 24 }, (_, hour) => ({
     day: 0,
     hour,
     buys: hour + 1,
   }));
-  s.keys_selected = ["buys"];
-  s.modern = true;
-  s.report = true;
+  s.key_selected = "buys";
   const options = s.chartOptions,
     mobile = options.responsive.find((item) => item.breakpoint === 600).options,
     narrow = options.responsive.find((item) => item.breakpoint === 380).options;
-  const hours = Array.from({ length: 24 }, (_, hour) => hour);
-  assert.equal(
-    hours.map(options.xaxis.labels.formatter).filter(Boolean).length,
-    6,
+  const labels = Array.from({ length: 24 }, (_, hour) =>
+    String(hour).padStart(2, "0"),
   );
-  assert.deepEqual(hours.map(mobile.xaxis.labels.formatter).filter(Boolean), [
+  assert.deepEqual(labels.map(options.xaxis.labels.formatter).filter(Boolean), [
+    "00:00",
+    "04:00",
+    "08:00",
+    "12:00",
+    "16:00",
+    "20:00",
+  ]);
+  assert.deepEqual(labels.map(mobile.xaxis.labels.formatter).filter(Boolean), [
     "00:00",
     "06:00",
     "12:00",
     "18:00",
   ]);
-  assert.deepEqual(hours.map(narrow.xaxis.labels.formatter).filter(Boolean), [
+  assert.deepEqual(labels.map(narrow.xaxis.labels.formatter).filter(Boolean), [
     "00:00",
     "08:00",
     "16:00",
   ]);
-  assert.ok(narrow.grid.padding.top >= 92);
-  assert.ok(narrow.chart.height - narrow.grid.padding.top >= 223);
-  assert.equal(s.series[0].data.length, 24);
+  const sunday = s.series.find((row) => row.name === "Sunday");
+  assert.equal(sunday.data.length, 24);
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(sunday.data.map((cell) => cell.y))),
+    Array.from({ length: 24 }, (_, hour) => hour + 1),
+  );
   assert.equal(s.hourLabel(1), "01:00–01:59");
-  assert.equal(options.tooltip.x.formatter(1), "01:00–01:59");
-  assert.ok(
-    mobile.grid.padding.top >= 92,
-    "Two rows of 44px native tools fit above the plot",
-  );
-  assert.ok(
-    mobile.chart.height - mobile.grid.padding.top >= 223,
-    "Weekday rows and readable axes retain plot space",
+  assert.equal(options.tooltip.x.formatter("01"), "01:00–01:59");
+  assert.deepEqual(
+    JSON.parse(
+      JSON.stringify(s.heat_ranges.map((range) => [range.from, range.to])),
+    ),
+    [
+      [0, 0],
+      [1, 6],
+      [7, 12],
+      [13, 18],
+      [19, 24],
+    ],
   );
   assert.equal(
-    options.yaxis.tickAmount,
-    6,
-    "Seven weekday positions use six intervals",
+    new Set(s.heat_ranges.map((range) => range.color)).size,
+    5,
+    "Every band has its own shade",
   );
-  s.report = false;
-  assert.equal(
-    s.chartOptions.responsive,
-    undefined,
-    "Other consumers keep their original axis/tool layout",
-  );
-  assert.equal(s.chartOptions.xaxis.labels.formatter(1), "1AM");
-  s.report = true;
   s.timeline = [];
 });
 
@@ -297,6 +342,7 @@ test("modern rendering keeps native activity selections and keyboard count inspe
             ...component.data.call(this),
             timeline: [{ day: 0, hour: 0, buys: 3 }],
             countries: [{ country_code: "US", products_views: 12, buys: 3 }],
+            key_selected: "buys",
           };
         },
       },
@@ -327,11 +373,23 @@ test("modern rendering keeps native activity selections and keyboard count inspe
     assert.ok(html.includes("shop_crm_report.purchase_actions"));
     assert.equal(html.includes("confirmed orders"), false);
     if (name === "heatmap") {
-      assert.equal((html.match(/type="checkbox"/g) || []).length, 4);
+      assert.equal(html.includes("checkbox"), false);
+      assert.ok(html.includes("shop_crm_report.activity_type"));
       assert.ok(html.includes("shop_crm_report.inspect_hourly"));
       assert.ok(html.includes('aria-live="polite"'));
+      assert.ok(html.includes("shop_crm_report.fewer"));
     } else {
       assert.ok(html.includes("shop_crm_report.country_activity"));
+      assert.equal(
+        html.includes("<select"),
+        true,
+        "Inspect country keeps its native select",
+      );
+      assert.equal(
+        (html.match(/<select/g) || []).length,
+        1,
+        "The activity choice is a segmented control",
+      );
       assert.ok(html.includes("shop_crm_report.inspect_country"));
       assert.ok(html.includes('aria-pressed="false"'));
     }

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (c) 2023. Selldone® Business OS™
+  - Copyright (c) 2023-2024. Selldone® Business OS™
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
@@ -12,52 +12,35 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
+<!--
+  When customers are active: one activity at a time on a weekday × hour grid, each cell shaded
+  by its count in that activity's color. The details disclosure keeps every exact counter
+  reachable by keyboard.
+-->
 <template>
   <div
     v-intersect.once="onIntersect"
     class="b-customer-activity-heatmap text-start"
-    :class="{
-      'b-customer-activity-heatmap--modern': modern,
-      'b-customer-activity-heatmap--report': modern && report,
-    }"
+    :class="{ 'b-customer-activity-heatmap--report': report }"
   >
-    <div v-if="modern" class="b-customer-activity-heatmap__filters">
-      <label v-for="item in keys" :key="item.code">
-        <input v-model="keys_selected" type="checkbox" :value="item.code" />
-        <img :src="item.image" width="18" height="18" alt="" />
-        <span>{{ activityLabel(item) }}</span>
-      </label>
-    </div>
     <v-btn-toggle
-      v-else
-      v-model="keys_selected"
-      class="mb-3"
-      multiple
-      rounded="xl"
-      style="height: 64px"
-      variant="flat"
+      v-model="key_selected"
+      :aria-label="$t('shop_crm_report.activity_type')"
+      class="sd-modern-segmented b-customer-activity-heatmap__types"
+      mandatory
+      variant="text"
     >
       <v-btn
         v-for="item in keys"
         :key="item.code"
-        :title="$t(item.name)"
         :value="item.code"
         size="small"
-        stacked
       >
-        <img :src="item.image" class="mx-2" width="24px" />
-        <div class="mt-1 tnt">
-          <v-icon
-            :color="keys_selected.includes(item.code) ? item.color : '#333'"
-            class="me-1"
-            size="10"
-            >circle
-          </v-icon>
-          {{ $t(item.name) }}
-        </div>
+        <img :src="item.image" width="18" height="18" alt="" />
+        {{ activityLabel(item) }}
       </v-btn>
     </v-btn-toggle>
-    <div v-if="modern && fetch_error" class="sd-modern-notice" role="alert">
+    <div v-if="fetch_error" class="sd-modern-notice" role="alert">
       <v-icon size="18" aria-hidden="true">error_outline</v-icon>
       <span>{{ $t("shop_crm_report.activity_error") }}</span>
       <v-btn
@@ -68,21 +51,44 @@
         {{ $t("geo_map.live.retry") }}
       </v-btn>
     </div>
-    <apexchart
-      v-else-if="!busy && series"
-      :key="modern ? $vuetify.theme.current.dark : 'legacy'"
-      :options="chartOptions"
-      :series="series"
-      :height="modern && report ? 350 : modern ? 300 : 350"
-      type="bubble"
-    />
+    <template v-else-if="!busy && series">
+      <u-chart-placeholder
+        v-if="!max_value"
+        kind="bars"
+        :title="$t('admin_shop.dashboard.modern.placeholder_title')"
+        :text="$t('shop_crm_report.placeholder_activity')"
+        :min-height="260"
+      />
+      <template v-else>
+        <!-- Cells and key swatches share the country map's colors, so Smart invert treats them alike. -->
+        <div dir="ltr">
+          <apexchart
+            :key="chart_key"
+            :options="chartOptions"
+            :series="series"
+            :height="report ? 320 : 280"
+            type="heatmap"
+          />
+        </div>
+        <div class="b-customer-activity-heatmap__key" aria-hidden="true">
+          <span>{{ $t("shop_crm_report.fewer") }}</span>
+          <span
+            v-for="range in heat_ranges.slice(1)"
+            :key="range.from"
+            class="b-customer-activity-heatmap__swatch"
+            :style="{ background: range.color }"
+          />
+          <span>{{ $t("shop_crm_report.more") }}</span>
+        </div>
+      </template>
+    </template>
     <u-loading-ellipsis
       v-else
       class="ma-auto"
-      height="350px"
+      height="320px"
     ></u-loading-ellipsis>
     <details
-      v-if="modern && timeline && !fetch_error"
+      v-if="timeline && !fetch_error"
       class="b-customer-activity-heatmap__details"
     >
       <summary>{{ $t("shop_crm_report.inspect_hourly") }}</summary>
@@ -121,13 +127,19 @@
 
 <script lang="ts">
 import ULoadingEllipsis from "../../../../../ui/loading/ellipsis/ULoadingEllipsis.vue";
+import UChartPlaceholder from "../../../../../ui/chart/placeholder/UChartPlaceholder.vue";
 import { UserActivityKeys } from "@selldone/core-js/enums/user/UserActivityKeys";
 import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
+import { mix } from "chroma-js";
+
+// Four steps of the activity's color over the surface; zero cells stay neutral.
+const HEAT_STEPS = [0.22, 0.42, 0.66, 1];
 
 export default {
   name: "BDashboardShopCustomersActivityHeatmap",
   components: {
     ULoadingEllipsis,
+    UChartPlaceholder,
   },
   props: {
     modern: Boolean,
@@ -144,7 +156,7 @@ export default {
     selected_day: 0,
     selected_hour: 0,
 
-    keys_selected: ["products_views", "add_baskets", "remove_baskets", "buys"],
+    key_selected: "products_views",
     keys: UserActivityKeys,
 
     days: [
@@ -159,222 +171,160 @@ export default {
   }),
 
   computed: {
+    selected_key() {
+      return (
+        this.keys.find((item) => item.code === this.key_selected) ||
+        this.keys[0]
+      );
+    },
     hourly_counts() {
-      const record = this.timeline?.find(
-        (item) =>
-          item.day === this.selected_day && item.hour === this.selected_hour,
-      );
       return Object.fromEntries(
-        this.keys.map((item) => [item.code, record?.[item.code] ?? 0]),
+        this.keys.map((item) => [
+          item.code,
+          this.countAt(this.selected_day, this.selected_hour, item.code),
+        ]),
       );
     },
-    colors() {
-      let out = [];
-      UserActivityKeys.filter((item) =>
-        this.keys_selected.includes(item.code),
-      ).forEach((item) => out.push(item.color));
-      return out;
+    max_value() {
+      return Math.max(
+        0,
+        ...(this.timeline || []).map(
+          (row) => Number(row[this.key_selected]) || 0,
+        ),
+      );
     },
-    chartOptions() {
+    theme_colors() {
+      const theme = this.$vuetify.theme;
+      // Vuetify generates on-surface in the resolved theme, not every raw theme.
+      const colors =
+        theme.computedThemes?.[theme.name]?.colors || theme.current.colors;
+      const surface =
+        colors.surface || (theme.current.dark ? "#212121" : "#FFFFFF");
+      const onSurface =
+        colors["on-surface"] || (theme.current.dark ? "#FFFFFF" : "#000000");
       return {
-        chart: {
-          height: 350,
-          type: "bubble",
-          fontFamily: "var(--font)",
-          ...(this.modern
-            ? {
-                foreColor:
-                  this.$vuetify.theme.computedThemes?.[this.$vuetify.theme.name]
-                    ?.colors?.["on-surface"] ||
-                  this.$vuetify.theme.current.colors["on-surface"] ||
-                  (this.$vuetify.theme.current.dark ? "#FFFFFF" : "#000000"),
-                animations: { enabled: false },
-              }
-            : {}),
-        },
-        ...(this.modern
-          ? {
-              theme: {
-                mode: this.$vuetify.theme.current.dark ? "dark" : "light",
-              },
-              tooltip: {
-                theme: this.$vuetify.theme.current.dark ? "dark" : "light",
-                ...(this.report
-                  ? {
-                      x: {
-                        formatter: (value) =>
-                          this.hourLabel(Math.round(Number(value))),
-                      },
-                    }
-                  : {}),
-              },
-            }
-          : {}),
-        colors: this.colors,
-
-        legend: {
-          show: true,
-          position: "bottom",
-          horizontalAlign: "center",
-
-          offsetX: 0,
-          offsetY: 0,
-        },
-
-        dataLabels: {
-          enabled: false,
-        },
-        fill: {
-          opacity: 0.8,
-        },
-        grid: {
-          borderColor: this.modern
-            ? "rgba(var(--v-theme-on-surface), .10)"
-            : "rgba(0,0,0,0.3)",
-          strokeDashArray: this.modern ? 3 : 7,
-
-          xaxis: {
-            lines: {
-              show: !(this.modern && this.report),
-            },
-          },
-
-          padding: {
-            top: this.modern && this.report ? 52 : 10,
-            right: 10,
-            bottom: 20,
-            left: 10,
-          },
-        },
-
-        xaxis: {
-          min: -1,
-          max: 24,
-          rotate: -45,
-          rotateAlways: false,
-          type: "numeric",
-          forceNiceScale: true,
-          // Keep hourly positions exact while the formatter reduces visible labels.
-          tickAmount: this.modern && this.report ? 25 : 12,
-          labels: {
-            hideOverlappingLabels: true,
-            formatter: (value) => {
-              if (this.modern && this.report)
-                return this.reportHourLabel(value, 4);
-              if (value < 0 || value > 23) return "";
-              let i = Math.round(value);
-              return (i % 12 || 12) + (i < 12 ? "AM" : "PM");
-            },
-
-            offsetX: 0,
-            offsetY: 0,
-            ...(this.modern && this.report
-              ? {
-                  rotate: 0,
-                  rotateAlways: false,
-                  trim: false,
-                  style: {
-                    fontSize: "12px",
-                    fontWeight: 400,
-                    fontFamily: "var(--font)",
-                  },
-                }
-              : {}),
-          },
-          ...(this.modern
-            ? {
-                title: {
-                  text: this.$t("shop_crm_report.recorded_hour"),
-                  style: { fontSize: "11px", fontWeight: 400 },
-                },
-              }
-            : {}),
-        },
-
-        yaxis: {
-          type: "numeric",
-          reversed: true,
-          min: 0,
-          max: 6,
-          tickAmount: this.modern && this.report ? 6 : 7,
-          decimalsInFloat: 0,
-          floating: false,
-          forceNiceScale: true,
-          labels: {
-            ...(this.modern && this.report
-              ? {
-                  minWidth: 60,
-                  maxWidth: 74,
-                  style: {
-                    fontSize: "12px",
-                    fontWeight: 400,
-                    fontFamily: "var(--font)",
-                  },
-                }
-              : {}),
-            formatter: (value) => {
-              value = Math.round(value);
-              return this.days[value] ? this.$t(this.days[value].name) : value;
-            },
-          },
-        },
-        ...(this.modern && this.report
-          ? {
-              responsive: [
-                {
-                  breakpoint: 380,
-                  options: {
-                    chart: { height: 400 },
-                    grid: { padding: { top: 104 } },
-                    xaxis: {
-                      labels: {
-                        formatter: (value) => this.reportHourLabel(value, 8),
-                      },
-                    },
-                  },
-                },
-                {
-                  breakpoint: 600,
-                  options: {
-                    chart: { height: 400 },
-                    grid: { padding: { top: 104 } },
-                    xaxis: {
-                      labels: {
-                        formatter: (value) => this.reportHourLabel(value, 6),
-                      },
-                    },
-                  },
-                },
-              ],
-            }
-          : {}),
+        surface,
+        onSurface,
+        empty: mix(surface, onSurface, 0.045).hex(),
       };
     },
+    // Count ranges of the grid: zero, then four equal bands up to the busiest cell.
+    heat_ranges() {
+      const ranges = [{ from: 0, to: 0, color: this.theme_colors.empty }];
+      let from = 1;
+      HEAT_STEPS.forEach((step, index) => {
+        const to = Math.ceil(
+          (this.max_value * (index + 1)) / HEAT_STEPS.length,
+        );
+        if (to < from) return;
+        ranges.push({
+          from,
+          to,
+          color: mix(
+            this.theme_colors.surface,
+            this.selected_key.color,
+            step,
+          ).hex(),
+        });
+        from = to + 1;
+      });
+      return ranges;
+    },
+    chart_key() {
+      return `${this.key_selected}:${this.$vuetify.theme.name}:${this.$i18n?.locale}`;
+    },
+    chartOptions() {
+      const label = {
+        fontSize: "12px",
+        fontWeight: 400,
+        fontFamily: "var(--font)",
+      };
+      const hourTicks = (step) => ({
+        xaxis: { labels: { formatter: (value) => this.hourTick(value, step) } },
+      });
+      return {
+        chart: {
+          type: "heatmap",
+          background: "transparent",
+          fontFamily: "var(--font)",
+          foreColor: this.theme_colors.onSurface,
+          toolbar: { show: false },
+          zoom: { enabled: false },
+          animations: { enabled: false },
+          redrawOnParentResize: true,
+        },
+        theme: { mode: this.$vuetify.theme.current.dark ? "dark" : "light" },
+        colors: [this.selected_key.color],
+        plotOptions: {
+          heatmap: {
+            radius: 3,
+            enableShades: false,
+            colorScale: { ranges: this.heat_ranges },
+          },
+        },
+        dataLabels: { enabled: false },
+        stroke: { width: 2, colors: [this.theme_colors.surface] },
+        legend: { show: false },
+        grid: {
+          show: false,
+          padding: { top: 0, right: 8, bottom: 0, left: 8 },
+        },
+        xaxis: {
+          type: "category",
+          tickPlacement: "on",
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+          tooltip: { enabled: false },
+          labels: {
+            rotate: 0,
+            rotateAlways: false,
+            hideOverlappingLabels: false,
+            trim: false,
+            formatter: (value) => this.hourTick(value, 4),
+            style: label,
+          },
+          title: {
+            text: this.$t("shop_crm_report.recorded_hour"),
+            style: { fontSize: "11px", fontWeight: 400 },
+          },
+        },
+        yaxis: { labels: { style: label } },
+        tooltip: {
+          theme: this.$vuetify.theme.current.dark ? "dark" : "light",
+          x: { formatter: (value) => this.hourLabel(Number(value)) },
+          y: { formatter: (value) => this.$n(value) },
+        },
+        responsive: [
+          { breakpoint: 600, options: hourTicks(6) },
+          { breakpoint: 380, options: hourTicks(8) },
+        ],
+      };
+    },
+    // Apex draws the first series at the bottom; the week reads Sunday to Saturday from the top.
     series() {
       if (!this.timeline) return null;
-
-      let out = [];
-      UserActivityKeys.filter((item) =>
-        this.keys_selected.includes(item.code),
-      ).forEach((item) => {
-        out.push({
-          name: this.activityLabel(item),
-          data: this.getDataSeries(item.code),
-        });
-      });
-
-      return out;
+      return [...this.days].reverse().map((day) => ({
+        name: this.$t(day.name),
+        data: Array.from({ length: 24 }, (_, hour) => ({
+          x: String(hour).padStart(2, "0"),
+          y: this.countAt(day.day, hour, this.key_selected),
+        })),
+      }));
     },
   },
 
-  created() {},
   methods: {
     activityLabel(item) {
       return this.$t(
-        this.modern && item.code === "buys"
-          ? "shop_crm_report.purchase_actions"
-          : item.name,
+        item.code === "buys" ? "shop_crm_report.purchase_actions" : item.name,
       );
+    },
+    countAt(day, hour, key) {
+      const record = this.timeline?.find(
+        (item) => item.day === day && item.hour === hour,
+      );
+      const value = Number(record?.[key]);
+      return Number.isFinite(value) ? value : 0;
     },
     hourLabel(hour) {
       return (
@@ -384,34 +334,11 @@ export default {
         ":59"
       );
     },
-    reportHourLabel(value, step) {
-      const numeric = Number(value),
-        hour = Math.round(numeric);
-      if (
-        !Number.isFinite(numeric) ||
-        Math.abs(numeric - hour) > 0.000001 ||
-        hour < 0 ||
-        hour > 23 ||
-        hour % step !== 0
-      )
-        return "";
-      return String(hour).padStart(2, "0") + ":00";
-    },
-    getDataSeries(key) {
-      let series = [];
-      this.days.forEach((item_day) => {
-        let i = 0;
-        while (i < 24) {
-          const item = this.timeline.find(
-            (item) => item.day === item_day.day && item.hour === i,
-          );
-          if (item && item[key]) series.push([item.hour, item.day, item[key]]);
-
-          i++;
-        }
-      });
-
-      return series;
+    hourTick(value, step) {
+      const hour = Number(value);
+      return Number.isInteger(hour) && hour % step === 0
+        ? String(hour).padStart(2, "0") + ":00"
+        : "";
     },
 
     onIntersect(isIntersecting) {
@@ -440,72 +367,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.b-customer-activity-heatmap--modern.b-customer-activity-heatmap--report {
-  :deep(.apexcharts-toolbar) {
-    --sd-report-chart-tool-size: 36px;
-    max-width: 100%;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 4px;
-    padding: 0;
-    background: transparent;
-    backdrop-filter: none;
-  }
-  :deep(.apexcharts-toolbar > [class*="-icon"]) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 var(--sd-report-chart-tool-size);
-    width: var(--sd-report-chart-tool-size);
-    height: var(--sd-report-chart-tool-size);
-    padding: 0;
-    margin: 0;
-    border: 1px solid var(--sd-modern-border);
-    border-radius: 9px;
-    color: rgb(var(--v-theme-on-surface)) !important;
-    background: rgb(var(--v-theme-surface));
-  }
-  :deep(.apexcharts-toolbar > [class*="-icon"] svg) {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
-  }
-  :deep(.apexcharts-toolbar > .apexcharts-selected) {
-    border-color: rgb(var(--v-theme-primary));
-    background: var(--sd-modern-inset);
-  }
-  @media (max-width: 600px), (pointer: coarse) {
-    :deep(.apexcharts-toolbar) {
-      --sd-report-chart-tool-size: 44px;
-    }
-  }
-}
-.b-customer-activity-heatmap--modern {
+.b-customer-activity-heatmap {
   min-width: 0;
   font-family: inherit;
   font-size: 13px;
 
-  .b-customer-activity-heatmap__filters {
+  .b-customer-activity-heatmap__types {
+    margin-block-end: 14px;
+  }
+
+  .b-customer-activity-heatmap__key {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 8px 18px;
-    margin-block-end: 16px;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-block-start: 4px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
 
-    label {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      min-height: 36px;
-      font-size: 12px;
+    > span:first-child {
+      margin-inline-end: 4px;
     }
+    > span:last-child {
+      margin-inline-start: 4px;
+    }
+  }
 
-    input {
-      accent-color: rgb(var(--v-theme-on-surface));
-    }
-    img {
-      object-fit: contain;
-    }
+  .b-customer-activity-heatmap__swatch {
+    width: 18px;
+    height: 8px;
+    border-radius: 2px;
   }
 
   .b-customer-activity-heatmap__details {
@@ -566,8 +457,7 @@ export default {
     }
   }
 
-  :deep(.apexcharts-tooltip),
-  :deep(.apexcharts-menu) {
+  :deep(.apexcharts-tooltip) {
     color: rgb(var(--v-theme-on-surface));
     background: rgb(var(--v-theme-surface));
     border-color: var(--sd-modern-border);
@@ -576,11 +466,8 @@ export default {
   }
 
   @media (max-width: 600px), (pointer: coarse) {
-    .b-customer-activity-heatmap__filters label,
     .b-customer-activity-heatmap__inspectors select {
       min-height: 44px;
-    }
-    .b-customer-activity-heatmap__inspectors select {
       font-size: 16px;
     }
   }

@@ -66,6 +66,7 @@
     <b-product-inventory-management-subscription
       v-if="isSubscription"
       :for-studio="forStudio"
+      :modern="modern"
       :product="product"
       :shop="shop"
       :vendor="vendor"

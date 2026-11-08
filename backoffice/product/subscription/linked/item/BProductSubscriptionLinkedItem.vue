@@ -13,17 +13,8 @@
   -->
 
 <template>
-  <v-list-item class="position-relative" density="compact">
-    <img
-      v-if="type"
-      :src="type.image"
-      :title="$t(type.name)"
-      class="absolute-top-end"
-      height="16"
-      width="16"
-    />
-
-    <template v-slot:prepend>
+  <div class="b-sub-linked-item">
+    <div class="b-sub-linked-item__identity">
       <u-avatar-flip
         :size="44"
         :src="getShopImagePath(image_path, IMAGE_SIZE_SMALL)"
@@ -31,49 +22,82 @@
           name: 'BPageProductDashboard',
           params: { product_id: item['product_id'] },
         }"
-        class="me-3"
+        class="b-sub-linked-item__avatar"
       >
       </u-avatar-flip>
-    </template>
+      <div class="b-sub-linked-item__text">
+        <div class="b-sub-linked-item__title">
+          <span class="b-sub-linked-item__name">{{
+            product
+              ? product.title
+              : $t("b_product_subscription.linked_invalid_product")
+          }}</span>
+          <img
+            v-if="type"
+            :src="type.image"
+            :title="$t(type.name)"
+            :alt="$t(type.name)"
+            width="16"
+            height="16"
+          />
+        </div>
+        <div class="b-sub-linked-item__meta">
+          <span v-if="variant?.sku || product?.sku"
+            >{{ $t("global.commons.sku") }}:
+            {{ variant?.sku ? variant.sku : product.sku }}</span
+          >
+          <span v-if="variant?.mpn || product?.mpn"
+            >{{ $t("global.commons.mpn") }}:
+            {{ variant?.mpn ? variant.mpn : product.mpn }}</span
+          >
+          <span v-if="!product"
+            >ID <b>{{ item["product_id"] }}</b>
+            <template v-if="item['variant_id']">
+              / <b>{{ item["variant_id"] }}</b></template
+            ></span
+          >
+        </div>
+        <product-variants-view
+          v-if="variant"
+          :variants="[variant]"
+          dense
+          small
+          class="b-sub-linked-item__variant"
+        />
+      </div>
+    </div>
 
-    <v-list-item-title
-      >{{ product ? product.title : `Invalid or removed product!` }}
-    </v-list-item-title>
-    <v-list-item-subtitle class="d-flex"
-      ><span v-if="variant?.sku || product?.sku" class="w-50"
-        >SKU: {{ variant?.sku ? variant.sku : product.sku }}
-      </span>
-      <span v-if="variant?.mpn || product?.mpn" class="w-50"
-        >MPN: {{ variant?.mpn ? variant.mpn : product.mpn }}
-      </span>
-      <span v-if="!product"
-        >Product ID: <b>{{ item["product_id"] }}</b> / Variant ID:
-        <b>{{ item["variant_id"] }}</b></span
-      >
-    </v-list-item-subtitle>
+    <u-number-input
+      v-model="item.count"
+      :min="1"
+      :title="$t('b_product_subscription.linked_count')"
+      :aria-label="$t('b_product_subscription.linked_count')"
+      class="b-sub-linked-item__count"
+      dense
+      flat
+      hide-details
+      variant="plain"
+    ></u-number-input>
 
-    <product-variants-view v-if="variant" :variants="[variant]" dense />
-
-    <template v-slot:append>
-      <v-list-item-action end>
-        <u-number-input
-          v-model="item.count"
-          :min="1"
-          class="strong-field"
-          flat
-          hide-details
-          title="Items count"
-          variant="plain"
-        ></u-number-input>
-      </v-list-item-action>
-
-      <v-list-item-action end>
-        <v-btn icon title="Remove item" variant="text" @click="$emit('clear')">
-          <v-icon>close</v-icon>
-        </v-btn>
-      </v-list-item-action>
-    </template>
-  </v-list-item>
+    <v-tooltip
+      location="top"
+      content-class="sd-modern-tooltip text-start"
+      open-on-focus
+    >
+      <template #activator="{ props }">
+        <v-btn
+          v-bind="props"
+          icon
+          variant="text"
+          class="sd-modern-icon-button b-sub-linked-item__remove"
+          :aria-label="$t('b_product_subscription.linked_remove')"
+          @click="$emit('clear')"
+          ><v-icon size="17" aria-hidden="true">close</v-icon></v-btn
+        >
+      </template>
+      {{ $t("b_product_subscription.linked_remove") }}
+    </v-tooltip>
+  </div>
 </template>
 
 <script lang="ts">
@@ -85,6 +109,7 @@ import UAvatarFlip from "../../../../../ui/avatar/flip/UAvatarFlip.vue";
 export default {
   name: "BProductSubscriptionLinkedItem",
   components: { UAvatarFlip, UNumberInput, ProductVariantsView },
+  emits: ["change", "clear"],
   props: {
     item: {
       type: Object,
@@ -122,4 +147,93 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.b-sub-linked-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 136px 36px;
+  align-items: center;
+  gap: 14px;
+  min-height: 68px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0;
+
+  & + & {
+    border-block-start: 1px solid
+      var(--sd-modern-border, rgba(var(--v-theme-on-surface), 0.09));
+  }
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  &__avatar {
+    flex: none;
+  }
+  &__text {
+    min-width: 0;
+  }
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  &__title > img {
+    flex: none;
+  }
+  &__name {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    margin-block-start: 2px;
+    color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), 0.66));
+    font-size: 12px;
+    line-height: 18px;
+  }
+  &__variant {
+    margin-block-start: 4px;
+  }
+  &__count {
+    min-width: 0;
+  }
+  &__count :deep(.v-field__input) {
+    font-weight: 500;
+    text-align: center;
+  }
+  &__remove {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 8px;
+    flex: none;
+  }
+}
+@media (max-width: 560px) {
+  .b-sub-linked-item {
+    grid-template-columns: minmax(0, 1fr) 36px;
+    gap: 10px 12px;
+    &__count {
+      grid-column: 1 / -1;
+      max-width: 160px;
+    }
+    &__remove {
+      width: 44px !important;
+      height: 44px !important;
+    }
+  }
+}
+@media (pointer: coarse) {
+  .b-sub-linked-item__remove {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
+</style>

@@ -29,12 +29,111 @@
         style="min-height: 180px"
       />
       <template v-if="timeSeries">
-        <div class="b-sessions-map__summary-total">
-          <span class="sd-modern-eyebrow">{{
-            activityLabel || $t("shop_session_widget.total_sessions")
-          }}</span>
-          <strong>{{ numeralFormat(total_sessions_map, "0,0.[0]a") }}</strong>
+        <div class="b-sessions-map__summary-head">
+          <div class="b-sessions-map__summary-total">
+            <span class="sd-modern-eyebrow">{{
+              activityLabel || $t("shop_session_widget.total_sessions")
+            }}</span>
+            <strong>{{ numeralFormat(total_sessions_map, "0,0.[0]a") }}</strong>
+          </div>
+          <div class="b-sessions-map__summary-period">
+            <u-time-span-selector
+              v-if="!externalFeed"
+              :date-range="report_selector_range"
+              :max-days="90"
+              variant="text"
+              button-class="sd-modern-button sd-modern-button--inline sd-modern-button--secondary"
+              menu-class="sd-modern-select-menu"
+              @select="selectReportPeriod"
+            />
+            <span class="b-sessions-map__report-dates">
+              {{ getLocalDateString(report_start) }} –
+              {{ getLocalDateString(report_end) }}
+            </span>
+          </div>
         </div>
+        <v-progress-linear
+          v-if="busy"
+          indeterminate
+          color="on-surface"
+          height="2"
+          class="b-sessions-map__summary-busy"
+        />
+        <!-- Where the sessions came from: the color scale, a hover card per country and the top three. -->
+        <div class="b-sessions-map__summary-map" :class="{ disabled: busy }">
+          <div
+            v-if="!total_sessions_map && !busy"
+            class="b-sessions-map__map-note"
+            role="status"
+          >
+            <strong>{{
+              $t("admin_shop.dashboard.modern.placeholder_title")
+            }}</strong>
+            <span>{{ $t("admin_shop.dashboard.modern.placeholder_map") }}</span>
+          </div>
+          <u-map-countries-heatmap
+            :country-data="map_data"
+            :high-color="h_color"
+            :low-color="modern_map_colors.low"
+            :country-stroke-color="modern_map_colors.stroke"
+            :default-country-fill-color="modern_map_colors.empty"
+            has-tooltip
+            class="b-sessions-map__world"
+          >
+            <template v-slot="{ country }">
+              <div
+                v-if="country"
+                class="b-sessions-map__tip sd-modern-chart-colors"
+              >
+                <strong>{{
+                  numeralFormat(getCountrySessions(country), "0,0")
+                }}</strong>
+                <span>{{ $t("global.commons.sessions") }}</span>
+                <span class="b-sessions-map__tip-meta"
+                  >{{ countryShare(country) }} ·
+                  {{ countryRank(country) }}</span
+                >
+                <time-series-inline-chart
+                  :colors="[h_color]"
+                  :days="days"
+                  :height="34"
+                  :keys="[country]"
+                  :offset_day="offset"
+                  :time-series="timeSeries"
+                  :value-titles="[getCountryName(country)]"
+                  class="b-sessions-map__tip-trend"
+                  dir="ltr"
+                  flat-color
+                  type="line"
+                />
+              </div>
+            </template>
+          </u-map-countries-heatmap>
+          <div class="b-sessions-map__map-key" aria-hidden="true">
+            <span>{{ $t("shop_session_widget.modern.fewer") }}</span
+            ><span
+              class="b-sessions-map__map-scale"
+              :style="{
+                '--session-map-low': modern_map_colors.low,
+                '--session-map-high': h_color,
+              }"
+            /><span>{{ $t("shop_session_widget.modern.more_sessions") }}</span>
+          </div>
+        </div>
+        <ol
+          v-if="top_countries.length"
+          class="b-sessions-map__summary-countries"
+        >
+          <li v-for="item in top_countries.slice(0, 3)" :key="item[0]">
+            <flag :iso="item[0]" :squared="false" />
+            <span class="b-sessions-map__country-name">{{
+              getCountryName(item[0])
+            }}</span>
+            <span class="b-sessions-map__share">{{
+              countryShare(item[0])
+            }}</span>
+          </li>
+        </ol>
         <dl class="b-sessions-map__devices">
           <div
             v-for="type in types"
@@ -160,7 +259,10 @@
                 class="b-sessions-map__geographic-total"
               >
                 <span class="sd-modern-label"
-                  >{{ activityLabel || $t("shop_session_widget.modern.geographic_sessions") }}
+                  >{{
+                    activityLabel ||
+                    $t("shop_session_widget.modern.geographic_sessions")
+                  }}
                   <v-btn
                     v-if="!activityLabel"
                     class="sd-modern-icon-button sd-modern-info-button"
@@ -218,7 +320,9 @@
               :country-data="
                 service_countries
                   ? map_data_service
-                  : ma_data_selected_day || map_data
+                  : ma_data_selected_day
+                    ? countriesOf(ma_data_selected_day)
+                    : map_data
               "
               :high-color="h_color"
               :low-color="modern_map_colors.low"
@@ -230,7 +334,33 @@
             >
               <template v-slot="{ country }">
                 <slot :country="country" />
-                <div v-if="country" class="text-start">
+                <div
+                  v-if="country && (dashboard || report)"
+                  class="b-sessions-map__tip sd-modern-chart-colors"
+                >
+                  <strong>{{
+                    numeralFormat(getCountrySessions(country), "0,0")
+                  }}</strong>
+                  <span>{{ $t("global.commons.sessions") }}</span>
+                  <span class="b-sessions-map__tip-meta"
+                    >{{ countryShare(country) }} ·
+                    {{ countryRank(country) }}</span
+                  >
+                  <time-series-inline-chart
+                    :colors="[h_color]"
+                    :days="days"
+                    :height="34"
+                    :keys="[country]"
+                    :offset_day="offset"
+                    :time-series="timeSeries"
+                    :value-titles="[getCountryName(country)]"
+                    class="b-sessions-map__tip-trend"
+                    dir="ltr"
+                    flat-color
+                    type="line"
+                  />
+                </div>
+                <div v-else-if="country" class="text-start">
                   <p class="mb-1">
                     {{ activityLabel || $t("global.commons.sessions") }}:
                     <strong>{{
@@ -252,7 +382,103 @@
                 </div>
               </template>
             </u-map-countries-heatmap>
-            <div v-if="fullDetails" class="b-sessions-map__playback">
+            <div
+              v-if="dashboard && !total_sessions_map && !busy"
+              class="b-sessions-map__map-note"
+              role="status"
+            >
+              <strong>{{
+                $t("admin_shop.dashboard.modern.placeholder_title")
+              }}</strong>
+              <span>{{
+                $t("admin_shop.dashboard.modern.placeholder_map")
+              }}</span>
+            </div>
+            <div
+              v-if="dashboard && !service_countries"
+              class="b-sessions-map__map-key"
+              aria-hidden="true"
+            >
+              <span>{{ $t("shop_session_widget.modern.fewer") }}</span
+              ><span
+                class="b-sessions-map__map-scale"
+                :style="{
+                  '--session-map-low': modern_map_colors.low,
+                  '--session-map-high': h_color,
+                }"
+              /><span>{{
+                $t("shop_session_widget.modern.more_sessions")
+              }}</span>
+            </div>
+            <!-- Dashboard and CRM Report: a strip of daily sessions; point at a day to preview it, select to keep it. -->
+            <div
+              v-if="fullDetails && (dashboard || report) && day_bars.length"
+              class="b-sessions-map__days"
+            >
+              <div class="b-sessions-map__days-head">
+                <span>{{
+                  ma_data_selected_day
+                    ? getLocalDateString(ma_data_selected_day.created_at)
+                    : $t("admin_shop.dashboard.modern.session_all_days")
+                }}</span>
+                <span
+                  v-if="ma_data_selected_day"
+                  class="b-sessions-map__count"
+                  >{{
+                    numeralFormat(day_total(ma_data_selected_day), "0,0")
+                  }}</span
+                >
+                <v-btn
+                  v-if="custom_selected_day >= 0"
+                  class="sd-modern-button sd-modern-button--inline"
+                  variant="text"
+                  size="small"
+                  @click="custom_selected_day = -1"
+                  >{{
+                    $t("admin_shop.dashboard.modern.session_all_days")
+                  }}</v-btn
+                >
+              </div>
+              <div
+                ref="dayBars"
+                class="b-sessions-map__days-bars"
+                role="group"
+                :aria-label="$t('admin_shop.dashboard.modern.session_map_day')"
+                @mouseleave="day_preview = null"
+                @keydown="onDayKey"
+              >
+                <button
+                  v-for="bar in day_bars"
+                  :key="bar.day"
+                  type="button"
+                  class="b-sessions-map__day"
+                  :class="{
+                    '-selected': custom_selected_day === bar.day,
+                    '-dimmed':
+                      custom_selected_day >= 0 &&
+                      custom_selected_day !== bar.day,
+                  }"
+                  :tabindex="bar.day === day_focus ? 0 : -1"
+                  :aria-pressed="custom_selected_day === bar.day"
+                  :aria-label="`${bar.date}: ${numeralFormat(bar.total, '0,0')}`"
+                  :title="`${bar.date} · ${numeralFormat(bar.total, '0,0')}`"
+                  @mouseenter="day_preview = bar.day"
+                  @focus="day_preview = bar.day"
+                  @blur="day_preview = null"
+                  @click="selectDay(bar.day)"
+                >
+                  <span :style="{ height: bar.height }" />
+                </button>
+              </div>
+              <div class="b-sessions-map__days-axis" aria-hidden="true">
+                <span>{{ day_bars[0].date }}</span>
+                <span>{{ day_bars[day_bars.length - 1].date }}</span>
+              </div>
+            </div>
+            <div
+              v-else-if="fullDetails && !dashboard && !report"
+              class="b-sessions-map__playback"
+            >
               <v-slider
                 v-model="custom_selected_day"
                 :max="timeSeries.days"
@@ -371,7 +597,11 @@
                 </v-btn>
               </template>
               <span v-else class="sd-modern-label">{{
-                $t(activityLabel ? "shop_session_widget.modern.select_country_activity" : "shop_session_widget.modern.select_country")
+                $t(
+                  activityLabel
+                    ? "shop_session_widget.modern.select_country_activity"
+                    : "shop_session_widget.modern.select_country",
+                )
               }}</span>
             </div>
           </section>
@@ -498,7 +728,10 @@
               </v-btn>
             </h3>
             <span v-if="report" class="sd-modern-label"
-              >{{ activityLabel || $t("shop_session_widget.modern.device_sessions") }}
+              >{{
+                activityLabel ||
+                $t("shop_session_widget.modern.device_sessions")
+              }}
               <span class="b-sessions-map__count">{{
                 numeralFormat(total_sessions_keys, "0,0.[0]a")
               }}</span></span
@@ -572,24 +805,30 @@
                 }}</strong>
               </div>
             </div>
-            <slot name="device-composition" :desktop="desktop" :mobile="mobile" :tablet="tablet">
-            <b-session-devices-pie
+            <slot
+              name="device-composition"
               :desktop="desktop"
-              :full-details="fullDetails"
               :mobile="mobile"
               :tablet="tablet"
-              :tick-amount="2"
-              modern
-              small
-              :type="
-                audience
-                  ? 'polarArea'
-                  : report || activityLabel
-                    ? 'donut'
-                    : 'polarArea'
-              "
-              class="b-sessions-map__device-composition"
-            />
+            >
+              <u-chart-donut-leader
+                v-if="dashboard || report"
+                :slices="device_slices"
+                :unit="$t('global.commons.sessions')"
+                class="b-sessions-map__device-donut"
+              />
+              <b-session-devices-pie
+                v-else
+                :desktop="desktop"
+                :full-details="fullDetails"
+                :mobile="mobile"
+                :tablet="tablet"
+                :tick-amount="2"
+                modern
+                small
+                :type="activityLabel && !audience ? 'donut' : 'polarArea'"
+                class="b-sessions-map__device-composition"
+              />
             </slot>
           </div>
         </section>
@@ -813,7 +1052,7 @@
       </v-row>
     </template>
     <u-time-span
-      v-if="!externalFeed && (!modern || summary)"
+      v-if="!externalFeed && !modern"
       v-model:days="days"
       v-model:offset="offset"
       :loading="busy"
@@ -823,69 +1062,14 @@
       trigger-on-end
       @onChange="fetchShopSessions(offset, days)"
     ></u-time-span>
-    <v-dialog
-      v-if="modern && !summary && !externalFeed"
+    <u-time-span-custom-dialog
+      v-if="modern && !externalFeed"
       v-model="custom_report_dialog"
-      max-width="600"
-    >
-      <v-card class="sd-modern-widget text-start">
-        <v-card-title class="sd-modern-title-text">{{
-          $t("time_spans.custom")
-        }}</v-card-title>
-        <v-card-text>
-          <u-date-range-picker
-            v-model:start="custom_report_start"
-            v-model:end="custom_report_end"
-            :start-label="$t('global.commons.start_date')"
-            :end-label="$t('global.commons.end_date')"
-            :min="report_min_date"
-            :max="report_max_date"
-          />
-          <p
-            v-if="
-              custom_report_start && custom_report_end && !custom_report_window
-            "
-            class="sd-modern-notice mt-3"
-            role="alert"
-          >
-            {{ $t("admin_shop.dashboard.modern.session_range_invalid") }}
-          </p>
-        </v-card-text>
-        <v-card-actions class="sd-modern-actions">
-          <v-spacer />
-          <v-btn
-            class="sd-modern-button sd-modern-button--secondary"
-            variant="text"
-            @click="custom_report_dialog = false"
-          >
-            {{ $t("global.actions.cancel") }}
-            <v-tooltip
-              activator="parent"
-              location="top"
-              open-on-focus
-              content-class="sd-modern-tooltip text-start"
-              >{{ $t("global.actions.cancel") }}</v-tooltip
-            >
-          </v-btn>
-          <v-btn
-            class="sd-modern-button sd-modern-button--primary"
-            variant="flat"
-            :disabled="!custom_report_window"
-            @click="applyCustomReport"
-          >
-            {{ $t("global.actions.apply") }}
-            <v-tooltip
-              activator="parent"
-              location="top"
-              open-on-focus
-              :disabled="!custom_report_window"
-              content-class="sd-modern-tooltip text-start"
-              >{{ $t("global.actions.apply") }}</v-tooltip
-            >
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      :start="report_start"
+      :end="report_end"
+      :max-days="90"
+      @apply="applyCustomReport"
+    />
   </div>
 </template>
 
@@ -896,7 +1080,8 @@ import { TimeSeries } from "@selldone/core-js/timeserie/TimeSeries";
 import TimeSeriesInlineChart from "../../chart/TimeSeriesInlineChart.vue";
 import UTimeSpan from "../../../ui/time/span/UTimeSpan.vue";
 import UTimeSpanSelector from "../../../ui/time/span/selector/UTimeSpanSelector.vue";
-import UDateRangePicker from "../../../ui/date/range-picker/UDateRangePicker.vue";
+import UTimeSpanCustomDialog from "../../../ui/time/span/custom/UTimeSpanCustomDialog.vue";
+import { calendarDayNumber } from "../../../ui/time/span/custom/customRange.ts";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import BSessionDevicesPie from "../../session/devices/pie/BSessionDevicesPie.vue";
 import USmartToggle from "../../../ui/smart/toggle/USmartToggle.vue";
@@ -904,17 +1089,22 @@ import { Analytics } from "@selldone/core-js";
 import { CountriesResourceHelper } from "@selldone/components-vue/utils/country/CountriesResourceHelper.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import { mix } from "chroma-js";
+import UChartDonutLeader from "../../../ui/chart/donut-leader/UChartDonutLeader.vue";
+
+// Two-letter keys of a sessions row that are not countries.
+const NOT_COUNTRIES = ["id", "pc"];
 
 export default {
   name: "BSessionsMap",
   mixins: [DateMixin],
 
   components: {
+    UChartDonutLeader,
     USmartToggle,
     BSessionDevicesPie,
     UTimeSpan,
     UTimeSpanSelector,
-    UDateRangePicker,
+    UTimeSpanCustomDialog,
     TimeSeriesInlineChart,
     ULoadingEllipsis,
     UMapCountriesHeatmap,
@@ -960,8 +1150,6 @@ export default {
     days: 30,
     session_request: 0,
     custom_report_dialog: false,
-    custom_report_start: null,
-    custom_report_end: null,
 
     service_countries: false,
 
@@ -969,37 +1157,72 @@ export default {
 
     play: false,
     selected_country: null,
+    // Dashboard day strip: the day under the pointer or keyboard focus, previewed on the map.
+    day_preview: null,
   }),
 
   computed: {
+    // The shop dashboard's own layout (not CRM Report, audiences or activity maps).
+    dashboard() {
+      return (
+        this.modern && !this.report && !this.audience && !this.activityLabel
+      );
+    },
+    device_slices() {
+      return this.types.map((type) => ({
+        key: type.code,
+        label: this.$t(type.title),
+        value: this.timeSeries?.totalOf(type.code) || 0,
+        color: type.color,
+      }));
+    },
+    // Rank of each country by sessions in the period, 1 for the most.
+    country_ranks() {
+      return new Map(
+        this.top_all_countries.map(([code], index) => [code, index + 1]),
+      );
+    },
+    top_all_countries() {
+      return Object.entries(this.map_data)
+        .filter(([code, value]) => code !== "base" && value > 0)
+        .sort((a, b) => b[1] - a[1]);
+    },
+    // Oldest day first; `day` counts days before today, like the map's selected day.
+    day_bars() {
+      if (!this.timeSeries || !(this.dashboard || this.report)) return [];
+      const bars = [];
+      for (let day = this.timeSeries.days; day >= 0; day--) {
+        const row = this.timeSeries.findDataOnDay(this.timeSeries.offset + day);
+        bars.push({
+          day,
+          total: row ? this.day_total(row) : 0,
+          date: row
+            ? this.getLocalDateString(row.created_at)
+            : this.getLocalDateString(
+                DateConverter.GetStartOfDateBefore(
+                  this.timeSeries.offset + day,
+                ),
+              ),
+        });
+      }
+      const max = Math.max(1, ...bars.map((bar) => bar.total));
+      return bars.map((bar) => ({
+        ...bar,
+        height: `${bar.total ? Math.max(8, (100 * bar.total) / max) : 3}%`,
+      }));
+    },
+    // The one bar in the tab order: the selected day, else the newest.
+    day_focus() {
+      return this.custom_selected_day >= 0 ? this.custom_selected_day : 0;
+    },
     report_start() {
       return DateConverter.GetStartOfDateBefore(this.offset + this.days);
     },
     report_end() {
       return DateConverter.GetEndOfDateBefore(this.offset);
     },
-    report_min_date() {
-      return DateConverter.GetStartOfDateBefore(89);
-    },
-    report_max_date() {
-      return DateConverter.GetEndOfDateBefore(0);
-    },
     report_selector_range() {
       return [this.offset, this.offset + (this.days === 0 ? 0 : this.days + 1)];
-    },
-    custom_report_window() {
-      const start = this.calendarDayNumber(this.custom_report_start);
-      const end = this.calendarDayNumber(this.custom_report_end);
-      const today = this.calendarDayNumber(new Date());
-      if (
-        start == null ||
-        end == null ||
-        start > end ||
-        start < today - 89 ||
-        end > today
-      )
-        return null;
-      return { offset: today - end, days: end - start };
     },
     countries_count() {
       return Object.keys(this.map_data).filter(
@@ -1077,9 +1300,10 @@ export default {
     },
 
     ma_data_selected_day() {
-      if (this.custom_selected_day >= 0) {
+      const day = this.day_preview ?? this.custom_selected_day;
+      if (day >= 0) {
         const item = this.timeSeries.findDataOnDay(
-          this.timeSeries.offset + this.custom_selected_day,
+          this.timeSeries.offset + day,
         );
         // console.log('find:',this.custom_selected_day,item)
         return item ? item : { base: 0 };
@@ -1132,7 +1356,7 @@ export default {
     CountriesResourceHelper.FetchCountries(this);
 
     if (this.externalFeed) this.syncExternalTimeSeries(this.externalTimeSeries);
-    else if (this.modern && !this.summary) this.fetchShopSessions(0, 29);
+    else if (this.modern) this.fetchShopSessions(0, 29);
   },
   beforeUnmount() {
     this.stopAnimate();
@@ -1158,26 +1382,17 @@ export default {
       if (path) this.selectCountry(path.id);
     },
     calendarDayNumber(value) {
-      if (value == null) return null;
-      const date = DateConverter.convertToLocalTime(value);
-      if (!date || !Number.isFinite(date.getTime())) return null;
-      return (
-        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000
-      );
+      return calendarDayNumber(value);
     },
     selectReportPeriod(item) {
       if (item.title === "time_spans.custom") {
-        this.custom_report_start = this.report_start;
-        this.custom_report_end = this.report_end;
         this.custom_report_dialog = true;
         return;
       }
       this.fetchShopSessions(item.to, Math.max(0, item.from - item.to - 1));
     },
-    applyCustomReport() {
-      if (!this.custom_report_window) return;
-      const { offset, days } = this.custom_report_window;
-      this.custom_report_dialog = false;
+    // The shared Custom dialog hands over the same {offset, days} window the presets use.
+    applyCustomReport({ offset, days }) {
       this.fetchShopSessions(offset, days);
     },
     startAnimate() {
@@ -1199,16 +1414,79 @@ export default {
 
     getCountrySessions(country) {
       if (
-        (this.report || this.audience || this.activityLabel) &&
+        (this.report ||
+          this.audience ||
+          this.activityLabel ||
+          this.dashboard) &&
         !this.service_countries &&
         this.ma_data_selected_day
       )
         return this.ma_data_selected_day[country] || 0;
       return this.map_data[country] ? this.map_data[country] : 0;
     },
+    // A day's row carries device counters too; the map and its scale read countries only.
+    countriesOf(row) {
+      const out = { base: 0 };
+      Object.keys(row || {}).forEach((key) => {
+        if (key.length === 2 && !NOT_COUNTRIES.includes(key))
+          out[key] = row[key];
+      });
+      return out;
+    },
+    day_total(row) {
+      return Object.values(this.countriesOf(row)).reduce(
+        (sum, value) => sum + (Number(value) || 0),
+        0,
+      );
+    },
+    countryShare(country) {
+      const total = this.ma_data_selected_day
+        ? this.day_total(this.ma_data_selected_day)
+        : this.total_sessions_map;
+      const share = total
+        ? (100 * this.getCountrySessions(country)) / total
+        : 0;
+      return `${share.toFixed(1)}%`;
+    },
+    countryRank(country) {
+      const rank = this.country_ranks.get(country);
+      return rank
+        ? this.$t("admin_shop.dashboard.modern.session_rank", {
+            rank,
+            count: this.top_all_countries.length,
+          })
+        : this.$t("global.commons.no_data");
+    },
+    selectDay(day) {
+      this.service_countries = false;
+      this.custom_selected_day = this.custom_selected_day === day ? -1 : day;
+    },
+    // Arrows walk the days in reading order (newest last), Home/End jump, Escape shows all days.
+    onDayKey(event) {
+      if (event.key === "Escape") {
+        this.custom_selected_day = -1;
+        return;
+      }
+      const older = this.$vuetify.locale.isRtl ? "ArrowRight" : "ArrowLeft";
+      const newer = this.$vuetify.locale.isRtl ? "ArrowLeft" : "ArrowRight";
+      const last = this.timeSeries.days;
+      const day = {
+        [older]: this.day_focus + 1,
+        [newer]: this.day_focus - 1,
+        Home: last,
+        End: 0,
+      }[event.key];
+      if (day === undefined) return;
+      event.preventDefault();
+      this.service_countries = false;
+      this.custom_selected_day = Math.min(last, Math.max(0, day));
+      this.$nextTick(() =>
+        this.$refs.dayBars?.querySelector('[tabindex="0"]')?.focus(),
+      );
+    },
 
     fetchShopSessions(offset, days) {
-      const exactRange = this.modern && !this.summary;
+      const exactRange = this.modern;
       const request = ++this.session_request;
       this.busy = true;
       this.fetch_error = false;
@@ -1983,6 +2261,308 @@ export default {
     .b-sessions-map__device-row {
       min-height: 44px;
     }
+  }
+}
+// Shop dashboard map (Overview and Acquisition): a hover card per country, the color key and,
+// on Acquisition, the strip of daily sessions that replaced playback.
+.b-sessions-map--modern {
+  .b-sessions-map__world :deep(.map-tooltip) {
+    width: 232px;
+    padding: 10px 12px;
+  }
+
+  .b-sessions-map__world :deep(.map-tooltip > .d-flex) {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .b-sessions-map__world :deep(.map-tooltip > .d-flex small) {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .b-sessions-map__tip {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    gap: 0 6px;
+    margin-block-start: 6px;
+    text-align: start;
+
+    > strong {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 1.3;
+      font-variant-numeric: tabular-nums;
+    }
+
+    > span {
+      color: var(--sd-modern-muted);
+      font-size: 12px;
+    }
+  }
+
+  .b-sessions-map__tip-meta,
+  .b-sessions-map__tip-trend {
+    grid-column: 1 / -1;
+  }
+
+  .b-sessions-map__tip-trend {
+    margin-block-start: 6px;
+  }
+
+  .b-sessions-map__device-donut {
+    max-width: 360px;
+    margin: auto;
+  }
+
+  .b-sessions-map__summary-map,
+  .b-sessions-map__map-panel {
+    position: relative;
+  }
+
+  // No sessions yet: the map stays as a gray outline under a short note.
+  .b-sessions-map__map-note {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    width: max-content;
+    max-width: min(300px, 86%);
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: rgba(var(--v-theme-surface), 0.88);
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+    transform: translate(-50%, -50%);
+
+    strong {
+      color: rgb(var(--v-theme-on-surface));
+      font-size: 13px;
+      font-weight: 500;
+    }
+  }
+
+  .v-locale--is-rtl & .b-sessions-map__map-note {
+    transform: translate(50%, -50%);
+  }
+
+  .b-sessions-map__map-key {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-block-start: 6px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+  }
+
+  .b-sessions-map__map-scale {
+    width: 64px;
+    height: 5px;
+    border-radius: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--session-map-low),
+      var(--session-map-high)
+    );
+  }
+
+  .b-sessions-map__days {
+    margin-block-start: 10px;
+  }
+
+  .b-sessions-map__days-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 30px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+
+    .b-sessions-map__count {
+      color: rgb(var(--v-theme-on-surface));
+    }
+
+    .v-btn {
+      margin-inline-start: auto;
+    }
+  }
+
+  .b-sessions-map__days-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 40px;
+  }
+
+  .b-sessions-map__day {
+    display: flex;
+    flex: 1 1 0;
+    align-items: flex-end;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+
+    > span {
+      display: block;
+      width: 100%;
+      border-radius: 2px 2px 0 0;
+      background: rgba(var(--v-theme-primary), 0.32);
+      transition: background-color 120ms ease;
+    }
+
+    &:hover > span,
+    &:focus-visible > span {
+      background: rgba(var(--v-theme-primary), 0.65);
+    }
+
+    &.-selected > span {
+      background: rgb(var(--v-theme-primary));
+    }
+
+    &.-dimmed > span {
+      opacity: 0.6;
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: 1px;
+    }
+  }
+
+  .b-sessions-map__days-axis {
+    display: flex;
+    justify-content: space-between;
+    margin-block-start: 4px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+  }
+
+  // Smart invert: the bars keep the primary hue of the light theme.
+  .smart-invert & .b-sessions-map__day > span {
+    filter: invert(1);
+  }
+
+  @media (pointer: coarse) {
+    .b-sessions-map__days-bars {
+      height: 44px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .b-sessions-map__day > span {
+      transition: none;
+    }
+  }
+}
+
+// Overview card: total and period, the map with its key, the top three countries, devices.
+.b-sessions-map--modern.b-sessions-map--summary {
+  .b-sessions-map__summary-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px 16px;
+  }
+
+  .b-sessions-map__summary-head .b-sessions-map__summary-total {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .b-sessions-map__summary-period {
+    display: grid;
+    justify-items: end;
+    gap: 2px;
+  }
+
+  // Phones wrap the period under the total; it then starts at the card's edge.
+  @media (max-width: 600px) {
+    .b-sessions-map__summary-period {
+      justify-items: start;
+    }
+  }
+
+  .b-sessions-map__report-dates {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+  }
+
+  .b-sessions-map__summary-busy {
+    margin-block-start: 6px;
+  }
+
+  // The map grows into any height its row leaves, so the card ends level with its neighbor.
+  .b-sessions-map__summary-map {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    margin-block: 12px 14px;
+  }
+
+  .b-sessions-map__world {
+    flex: 1 1 190px;
+    height: auto;
+    min-height: 190px;
+    max-height: 320px;
+  }
+
+  .b-sessions-map__world :deep(.map-tooltip) {
+    color: rgb(var(--v-theme-on-surface));
+    background: rgb(var(--v-theme-surface));
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(var(--v-theme-on-surface), 0.12);
+    filter: none;
+    font-size: 13px;
+    text-shadow: none;
+  }
+
+  .b-sessions-map__world :deep(.land:hover) {
+    fill: rgb(var(--v-theme-primary)) !important;
+    filter: none !important;
+  }
+
+  .b-sessions-map__summary-countries {
+    margin: 0 0 20px;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+
+    li {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 30px;
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+
+    li:last-child {
+      border-block-end: 1px solid var(--sd-modern-border);
+    }
+  }
+
+  .b-sessions-map__country-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .b-sessions-map__share {
+    color: var(--sd-modern-muted);
+    font-variant-numeric: tabular-nums;
   }
 }
 </style>

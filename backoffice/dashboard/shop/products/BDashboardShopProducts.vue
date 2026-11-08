@@ -148,6 +148,13 @@
       </div>
     </div>
     <template v-if="!summary">
+      <!-- Operations: the catalog as a part-to-whole when three or more types hold products. -->
+      <u-chart-donut-leader
+        v-if="product_slices.length >= 3"
+        :slices="product_slices"
+        :unit="$t('global.commons.products')"
+        class="b-dashboard-products-summary__share"
+      />
       <v-expansion-panels
         variant="accordion"
         class="b-dashboard-products-summary__histories"
@@ -191,6 +198,14 @@
       <div class="b-dashboard-products-summary__imports">
         <b-shop-products-import-processing :shop="shop" modern />
       </div>
+      <!-- No recorded products: a gray ghost of the history keeps the card's height meaningful. -->
+      <u-chart-placeholder
+        v-if="!total_products"
+        kind="bars"
+        :text="$t('admin_shop.dashboard.modern.placeholder_catalog')"
+        :min-height="180"
+        class="b-dashboard-products-summary__placeholder"
+      />
     </template>
   </section>
   <s-widget-box
@@ -340,6 +355,8 @@
 import BShopProductsImportProcessing from "../../../product/importer/processing/BShopProductsImportProcessing.vue";
 
 import UChartBar from "../../../../ui/chart/bar/UChartBar.vue";
+import UChartPlaceholder from "../../../../ui/chart/placeholder/UChartPlaceholder.vue";
+import UChartDonutLeader from "../../../../ui/chart/donut-leader/UChartDonutLeader.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
@@ -353,6 +370,8 @@ export default {
   name: "BDashboardShopProducts",
   components: {
     UChartBar,
+    UChartPlaceholder,
+    UChartDonutLeader,
     BShopProductsImportProcessing,
     SWidgetBox,
   },
@@ -390,6 +409,20 @@ export default {
       );
     },
 
+    // Products by type on the latest recorded day, in the types' own colors.
+    product_slices() {
+      return this.available_types
+        .map((type) => ({
+          key: type.code,
+          label: this.$t(type.name),
+          value: Number(
+            this.lastDayData[`total_products_${type.code.toLowerCase()}`],
+          ),
+          color: type.color,
+          image: type.image,
+        }))
+        .filter((slice) => Number.isFinite(slice.value) && slice.value > 0);
+    },
     lastDayData() {
       return this.timeSeries.lastDayData();
     },
@@ -439,6 +472,16 @@ export default {
 
 .b-dashboard-products-summary {
   container-type: inline-size;
+  // A column, so the empty catalog's ghost can take the height its row leaves.
+  display: flex;
+  flex-direction: column;
+  &__placeholder {
+    flex: 1 1 auto;
+  }
+  &__share {
+    max-width: 380px;
+    margin: 12px auto 4px;
+  }
   &__total {
     display: flex;
     align-items: baseline;

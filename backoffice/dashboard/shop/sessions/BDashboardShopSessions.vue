@@ -19,12 +19,13 @@
     :class="{
       'sd-modern-widget b-dashboard-sessions--modern': modern,
       'b-dashboard-sessions--report': report,
+      'b-dashboard-sessions--summary': modern && summary,
     }"
   >
     <header v-if="modern && !report" class="sd-modern-header">
       <div class="sd-modern-title">
         <span class="sd-modern-icon sd-modern-icon--plain" aria-hidden="true">
-          <v-icon :icon="summary ? 'devices' : 'public'" size="20" />
+          <v-icon icon="public" size="20" />
         </span>
         <div>
           <div class="d-flex align-center ga-1">
@@ -32,7 +33,7 @@
               {{
                 $t(
                   summary
-                    ? "admin_shop.dashboard.modern.device_summary"
+                    ? "admin_shop.dashboard.modern.session_summary_title"
                     : "global.commons.sessions",
                 )
               }}
@@ -44,7 +45,7 @@
               :aria-label="
                 $t(
                   summary
-                    ? 'admin_shop.dashboard.modern.device_summary'
+                    ? 'admin_shop.dashboard.modern.session_summary_title'
                     : 'global.commons.sessions',
                 )
               "
@@ -140,6 +141,16 @@ export default {
 
   :deep(.b-sessions-map .apexcharts-legend-text) {
     color: rgb(var(--v-theme-on-surface)) !important;
+  }
+}
+
+// Overview: the card fills its row and the map takes the height left over.
+.b-dashboard-sessions--summary {
+  display: flex;
+  flex-direction: column;
+
+  > .b-sessions-map {
+    flex: 1 1 auto;
   }
 }
 

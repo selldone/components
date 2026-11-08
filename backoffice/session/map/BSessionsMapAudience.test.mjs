@@ -66,6 +66,9 @@ function fixture(props = {}) {
     exports = {};
   const require = (name) => {
     if (name === "vue") return Vue;
+    // Audiences never fetch or draft a custom period, so the range helper stays inert.
+    if (name.endsWith("customRange.ts"))
+      return { calendarDayNumber: () => null, customRangeWindow: () => null };
     if (name === "chroma-js") return { mix: () => ({ hex: () => "#ddd" }) };
     if (name === "@selldone/core-js")
       return {
@@ -171,7 +174,7 @@ test("audience playback includes both boundaries and external updates stop it an
   assert.equal(f.requests.length, 0);
 });
 
-test("audience remains opt-in and renders native geography, country controls, trends and polar-area devices", async () => {
+test("audience remains opt-in with native geography, country controls, trends and polar-area devices; the dashboard gets the day strip and donut", async () => {
   const f = fixture();
   assert.equal(f.component.props.audience.name, "Boolean");
   const template = compileTemplate({
@@ -254,13 +257,33 @@ test("audience remains opt-in and renders native geography, country controls, tr
       audience,
     );
     assert.ok(document.querySelector(".b-sessions-map__world"));
-    assert.ok(document.querySelector(".b-sessions-map__playback"));
-    assert.equal(
-      document
-        .querySelector("[data-device-chart]")
-        .getAttribute("data-device-chart"),
-      "polarArea",
-    );
+    if (audience) {
+      assert.ok(document.querySelector(".b-sessions-map__playback"));
+      assert.equal(
+        document
+          .querySelector("[data-device-chart]")
+          .getAttribute("data-device-chart"),
+        "polarArea",
+      );
+    } else {
+      assert.equal(
+        document.querySelector(".b-sessions-map__playback"),
+        null,
+        "The dashboard's day strip replaces playback",
+      );
+      const bars = document.querySelectorAll(".b-sessions-map__day");
+      assert.equal(bars.length, 2, "One bar per day, oldest first");
+      assert.equal(
+        [...bars].filter((bar) => bar.getAttribute("tabindex") === "0").length,
+        1,
+        "One bar in the tab order",
+      );
+      assert.equal(
+        document.querySelector("[data-device-chart]"),
+        null,
+        "The dashboard draws the leader-line device donut",
+      );
+    }
     assert.equal(
       document.querySelectorAll(".b-sessions-map__device-trend").length,
       3,

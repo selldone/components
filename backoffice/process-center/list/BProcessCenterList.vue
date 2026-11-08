@@ -306,7 +306,7 @@
               :aria-label="getBasketOrderCode(item)"
               @click.stop
             >
-              <v-img :src="basket_image" :width="21" :height="27" />
+              <v-img :src="basket_image" :width="18" :height="23" />
             </router-link>
             <!-- Avocado -->
             <div v-if="isAvocado" class="flex-grow-1 b-process-center-list__avocado">
@@ -323,9 +323,9 @@
                   :ids="getItemsImages(item)"
                   big-scale
                   border
-                  class="py-1"
+                  :class="modern ? 'py-0' : 'py-1'"
                   raw-images-path
-                  :size="modern ? 27 : 32"
+                  :size="modern ? 22 : 32"
                   style="vertical-align: super; display: inline"
                 ></products-dense-images-circles>
                 <return-request-button-badge
@@ -404,10 +404,10 @@
                 <b-process-center-customer v-if="modernMarketplace" :item="item" :shop="shop" :is-affiliate-pos="isAffiliatePos" />
                 <products-dense-images-circles
                   :ids="getProductsIDs(item)"
-                  :size="modern ? 27 : 32"
+                  :size="modern ? 22 : 32"
                   big-scale
                   border
-                  class="py-1"
+                  :class="modern ? 'py-0' : 'py-1'"
                   style="vertical-align: super; display: inline"
                 ></products-dense-images-circles>
                 <!-- Preserve the vendor endpoint's existing customer projection and Guest fallback. -->
@@ -591,7 +591,10 @@
       </template>
 
       <template v-slot:item.price="{ item }">
-        <div class="py-1 b-process-center-list__amount">
+        <div
+          class="py-1 b-process-center-list__amount"
+          :class="{ 'b-process-center-list__amount--subscription': modern && isSubscribed(item) }"
+        >
           <!-- Need pricing -->
           <span
             v-if="isService && item.status === 'Reserved'"
@@ -632,7 +635,7 @@
               size="small"
               variant="text"
             >
-              <v-icon start>credit_score</v-icon>
+              <v-icon v-if="!modern" start>credit_score</v-icon>
 
               <v-icon
                 :color="getPeriodColor(item.meta.subscription_period)"
@@ -729,8 +732,9 @@
           <!-- 🎗️ Progress to the next auto payment in subscription -->
           <div
             v-if="isSubscribed(item) && nextPaymentDate(item)"
-            class="text-center"
-            :title="modern ? $t('admin_shop.orders.modern.subscription.next_payment') : 'The next payment'"
+            class="b-process-center-list__next-payment"
+            :class="{ 'text-center': !modern }"
+            :title="modern ? `${$t('admin_shop.orders.modern.subscription.next_payment')} ~ ${getLocalDateString(nextPaymentDate(item))}` : 'The next payment'"
           >
             <div class="max-w-120 mx-auto mt-1">
               <v-progress-linear
@@ -741,12 +745,15 @@
                 striped
               ></v-progress-linear>
             </div>
+            <!-- Refined rows keep one short relative label; the exact date is in the title. -->
             <small class="my-1">{{
-              nextPaymentDate(item)
-                ? `~ ${getLocalDateString(
-                    nextPaymentDate(item),
-                  )} ● ${getFromNowString(nextPaymentDate(item))}.`
-                : ""
+              modern
+                ? getFromNowString(nextPaymentDate(item))
+                : nextPaymentDate(item)
+                  ? `~ ${getLocalDateString(
+                      nextPaymentDate(item),
+                    )} ● ${getFromNowString(nextPaymentDate(item))}.`
+                  : ""
             }}</small>
           </div>
 
@@ -1026,9 +1033,13 @@
           <br v-if="!modern" />
           <small>
             {{
-              getLocalTimeString(
-                item.reserved_at ? item.reserved_at : item.created_at,
-              )
+              modern
+                ? getLocalTimeStringSmall(
+                    item.reserved_at ? item.reserved_at : item.created_at,
+                  )
+                : getLocalTimeString(
+                    item.reserved_at ? item.reserved_at : item.created_at,
+                  )
             }}
           </small>
         </div>
@@ -2322,13 +2333,14 @@ export default {
     :deep(table) { table-layout: fixed; }
 
     :deep(.v-table__wrapper > table > thead > tr > th) {
-      height: 40px;
-      padding: 10px 14px !important;
+      height: 36px;
+      padding: 8px 14px !important;
     }
 
+    // Dense rows: 60px floor and 6px cell padding so more orders fit on a screen.
     :deep(.v-table__wrapper > table > tbody > tr > td) {
-      height: 82px;
-      padding: 9px 14px;
+      height: 60px;
+      padding: 6px 14px !important;
       font-family: inherit;
       font-size: 13px;
       font-weight: 400;
@@ -2339,13 +2351,13 @@ export default {
   .b-process-center-list__order {
     min-width: 0 !important;
     flex-wrap: wrap;
-    gap: 4px 6px;
+    gap: 2px 6px;
 
     > .v-spacer { display: none; }
     > .fa-circle-notch { margin-inline: 0 !important; font-size: 11px; }
   }
 
-  .b-process-center-list__basket { flex: 0 0 21px; }
+  .b-process-center-list__basket { flex: 0 0 18px; }
   .b-process-center-list__attribution {
     display: inline-flex;
     align-items: center;
@@ -2372,7 +2384,7 @@ export default {
     .text-subtitle-2 { font-family: inherit; font-size: 11px !important; font-weight: 400; line-height: 16px; }
   }
   .b-process-center-list__code { flex: 0 1 auto !important; font-size: 13px; font-weight: 500; }
-  .b-process-center-list__products { display: flex; align-items: center; flex-wrap: wrap; flex-basis: 100%; order: 2; gap: 4px 8px; min-width: 0; padding: 0 !important; padding-inline-start: 25px !important; }
+  .b-process-center-list__products { display: flex; align-items: center; flex-wrap: wrap; flex-basis: 100%; order: 2; gap: 4px 8px; min-width: 0; padding: 0 !important; padding-inline-start: 24px !important; }
   .b-process-center-list__return { flex: 0 0 auto; margin-inline-start: auto; }
   .b-process-center-list__withdrawal {
     height: 18px;
@@ -2393,12 +2405,14 @@ export default {
   }
   :deep(.b-process-center-customer > .dashed-flex-space) { display: none; }
   :deep(.b-process-center-customer__identity) { gap: 3px; }
+  :deep(.b-process-center-customer__identity .v-avatar) { width: 22px !important; height: 22px !important; }
   :deep(.b-process-center-customer__name) { font-size: 12px; font-weight: 400; overflow-wrap: anywhere; }
-  :deep(.b-process-center-customer__contact) { flex-wrap: wrap; gap: 3px; margin-block-start: 7px; font-size: 11px; color: var(--sd-modern-muted); }
-  :deep(.b-process-center-customer__email) { width: 24px; height: 24px; color: var(--sd-modern-muted) !important; }
+  :deep(.b-process-center-customer__contact) { flex-wrap: wrap; gap: 3px; margin-block-start: 2px; font-size: 11px; color: var(--sd-modern-muted); }
+  :deep(.b-process-center-customer__contact .v-btn) { width: 22px !important; height: 22px !important; }
+  :deep(.b-process-center-customer__email) { color: var(--sd-modern-muted) !important; }
   :deep(.b-process-center-customer__email .v-icon) { font-size: 15px !important; }
 
-  .b-process-center-list__amount { text-align: end; }
+  .b-process-center-list__amount { padding-block: 0 !important; text-align: end; }
   .b-process-center-list__amount-value {
     min-width: 0 !important;
     flex-wrap: wrap;
@@ -2406,16 +2420,29 @@ export default {
     gap: 4px;
     font-size: 14px;
     font-weight: 400 !important;
+    line-height: 18px;
     > .v-spacer { display: none; }
     > .b-process-center-list__subscription-meta { flex-basis: 100%; order: 2; justify-content: flex-end; margin: 0 !important; font-size: 10px; }
     :deep(.u--price) { font-size: 14px; font-weight: 400; white-space: nowrap; }
   }
+  // Subscription rows: the period chip sits beside the amount and the next-payment bar shares a line
+  // with its relative label, so the cell stays two lines tall instead of stacking four.
+  .b-process-center-list__amount--subscription {
+    .b-process-center-list__amount-value { align-items: center; gap: 4px 6px; }
+    .b-process-center-list__amount-value > .b-process-center-list__subscription-meta { flex: 0 1 auto; order: 0; min-width: 0; height: 18px; margin-inline-end: auto !important; padding-inline: 0; font-size: 10px; :deep(.v-chip__content) { overflow: hidden; text-overflow: ellipsis; } }
+    .b-process-center-list__next-payment { display: flex; align-items: center; gap: 6px; margin-block-start: 3px; }
+    .b-process-center-list__next-payment > div { flex: 1 1 32px; min-width: 24px; max-width: none !important; margin: 0 !important; }
+    .b-process-center-list__next-payment > small { flex: 0 1 auto; min-width: 0; margin: 0 !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; line-height: 14px; color: var(--sd-modern-muted); }
+  }
   .b-process-center-list__amount-details {
-    flex-direction: column-reverse;
-    align-items: flex-end;
-    gap: 4px;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0 10px;
+    margin-block-start: 2px !important;
     font-size: 11px;
-    line-height: 16px;
+    line-height: 14px;
     > .v-spacer { display: none; }
     :deep(.u--price) { font-size: inherit; font-weight: 400; }
   }
@@ -2426,17 +2453,18 @@ export default {
     :deep(.s--order-status-view > .inline-block > img) { filter: var(--sd-order-status-filter, none); }
     :deep(.s--order-status-view) { display: flex; align-items: center; gap: 7px; margin: 0 !important; text-align: start; }
     :deep(.s--order-status-view small) { font-size: 11px; line-height: 16px; white-space: normal; }
-    :deep(.s--order-status-view + .d-flex) { justify-content: flex-start !important; margin-block-start: 7px; font-size: 10px; }
+    :deep(.s--order-status-view + .d-flex) { justify-content: flex-start !important; margin-block-start: 3px; font-size: 10px; }
     :deep(.v-chip) { background: rgb(var(--v-theme-surface)) !important; color: rgb(var(--v-theme-on-surface)); }
     &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 4px; border-radius: 4px; }
   }
 
   .b-process-center-list__stepper {
     display: flow-root;
-    :deep(.container-stepper > div:not(.top-chain)) { top: 12px !important; height: 1px !important; }
+    margin-block: 0 !important;
+    :deep(.container-stepper > div:not(.top-chain)) { top: 11px !important; height: 1px !important; }
     :deep(.container-stepper > div:nth-child(2)) { background: rgb(var(--v-theme-on-surface)) !important; }
     :deep(.top-chain) { --chain-color: rgb(var(--v-theme-on-surface)); font-size: 10px; font-weight: 500; }
-    :deep(.progressbar li::before) { width: 25px; height: 25px; line-height: 23px; border-width: 1px; background: rgb(var(--v-theme-surface)); }
+    :deep(.progressbar li::before) { width: 22px; height: 22px; line-height: 20px; border-width: 1px; background: rgb(var(--v-theme-surface)); }
     :deep(.progressbar li.active::before) { background: rgb(var(--v-theme-on-surface)); }
     :deep(.progressbar li.active .v-icon) { color: rgb(var(--v-theme-surface)) !important; }
   }
@@ -2446,7 +2474,7 @@ export default {
     align-items: center !important;
     justify-content: flex-start !important;
     gap: 4px 8px;
-    padding-block-end: 0 !important;
+    padding-block: 0 !important;
     font-size: 11px;
     line-height: 16px;
     > .dashed-flex-space { display: none; }
@@ -2455,6 +2483,7 @@ export default {
   }
   .b-process-center-list__checkout {
     min-width: 0 !important;
+    padding-block: 0 !important;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
@@ -2462,9 +2491,9 @@ export default {
     font-size: 11px;
     line-height: 16px;
     > span { float: none !important; display: inline-flex; align-items: center; }
-    > small { grid-column: 1 / -1; display: block; width: 100%; margin-block-start: 5px; font-size: 10px; color: var(--sd-modern-muted); text-wrap: balance; }
+    > small { grid-column: 1 / -1; display: block; width: 100%; margin-block-start: 2px; font-size: 10px; color: var(--sd-modern-muted); text-wrap: balance; }
   }
-  .b-process-center-list__chat { width: 25px; height: 25px; color: var(--sd-modern-muted) !important; :deep(.v-icon) { font-size: 15px; } }
+  .b-process-center-list__chat { width: 22px; height: 22px; color: var(--sd-modern-muted) !important; :deep(.v-icon) { font-size: 15px; } }
   .b-process-center-list__attention { width: 28px; height: 20px; padding: 0; vertical-align: middle; }
   .b-process-center-list__footer { padding: 17px 18px; gap: 12px; color: var(--sd-modern-muted); font-size: 11px; line-height: 16px; }
 
@@ -2556,8 +2585,9 @@ export default {
     :deep(> .v-btn:focus-visible) { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; }
   }
   .b-process-center-list__table {
-    :deep(.v-table__wrapper > table > thead > tr > th) { height: 40px; padding: 12px 12px 9px !important; }
-    :deep(.v-table__wrapper > table > tbody > tr:not(.v-data-table__tr--mobile):not(.v-data-table-progress) > td) { height: 78px; padding: 12px; line-height: 20px; }
+    :deep(.v-table__wrapper > table > thead > tr > th) { height: 36px; padding: 8px 12px !important; }
+    // Dense rows, as the shop's order lists: 60px floor and 6px cell padding.
+    :deep(.v-table__wrapper > table > tbody > tr:not(.v-data-table__tr--mobile):not(.v-data-table-progress) > td) { height: 60px; padding: 6px 12px !important; line-height: 18px; }
   }
   .b-process-center-list__code { color: inherit; text-decoration: none; font-weight: 500; }
   .b-process-center-list__code:hover { color: rgb(var(--v-theme-primary)); text-decoration: underline; }

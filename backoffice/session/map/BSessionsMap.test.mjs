@@ -100,12 +100,37 @@ const theme = {
   current: { dark: false, colors: { surface: "#fff", "on-surface": "#222" } },
 };
 
+// The shared custom-range helper, on the same fixture calendar.
+const customRange = (() => {
+  const exports = {};
+  vm.runInNewContext(
+    transpile(
+      readFileSync(
+        new URL("../../../ui/time/span/custom/customRange.ts", import.meta.url),
+        "utf8",
+      ),
+    ),
+    {
+      exports,
+      Date: FixtureDate,
+      require: () => ({
+        DateConverter: {
+          convertToLocalTime: (value) =>
+            value == null ? null : new FixtureDate(value),
+        },
+      }),
+    },
+  );
+  return exports;
+})();
+
 function fixture(props = {}) {
   const requests = [];
   let timer;
   const exports = {};
   const require = (name) => {
     if (name === "vue") return Vue;
+    if (name.endsWith("customRange.ts")) return customRange;
     if (name.includes("TimeSeries")) return { TimeSeries: Series };
     if (name.includes("DateConverter"))
       return {
@@ -196,7 +221,12 @@ test("daily map inspection preserves full-period country and device counters", (
 
 test("external affiliate feeds synchronize their period and reset day playback without fetching shop sessions", () => {
   const initial = sample();
-  const f = fixture({ externalFeed: true, externalTimeSeries: initial, report: false, activityLabel: "Tracked activity" });
+  const f = fixture({
+    externalFeed: true,
+    externalTimeSeries: initial,
+    report: false,
+    activityLabel: "Tracked activity",
+  });
   f.component.created.call(f.state);
   assert.equal(f.state.timeSeries, initial);
   assert.equal(f.state.days, 2);
@@ -209,7 +239,12 @@ test("external affiliate feeds synchronize their period and reset day playback w
   assert.equal(f.state.getCountrySessions("US"), 4);
   f.state.selected_country = "US";
   f.state.service_countries = true;
-  const next = new Series([{ created_at: dateBefore(3), US: 2, mobile: 1 }], "Affiliate", 3, 6);
+  const next = new Series(
+    [{ created_at: dateBefore(3), US: 2, mobile: 1 }],
+    "Affiliate",
+    3,
+    6,
+  );
   f.component.watch.externalTimeSeries.call(f.state, next);
   assert.equal(f.state.timeSeries, next);
   assert.equal(f.state.offset, 3);
@@ -295,11 +330,23 @@ test("report requests retain exact dates, stale-response guards and failure reco
   assert.equal(f.state.total_sessions_keys, 0);
 });
 
-test("legacy and summary request contracts remain unchanged", async () => {
-  for (const props of [
-    { modern: false, report: false },
-    { modern: true, report: false, summary: true },
-  ]) {
+test("legacy request contract remains unchanged; the dashboard summary reads exact days", async () => {
+  const summary = fixture({
+    modern: true,
+    report: false,
+    summary: true,
+    fullDetails: false,
+  });
+  const pending = summary.state.fetchShopSessions(2, 30);
+  assert.deepEqual(plain(summary.requests[0].options.params), {
+    offset: 2,
+    days: 31,
+    details: true,
+  });
+  summary.requests[0].resolve({ data: { sessions: [] } });
+  await pending;
+  assert.equal(summary.state.total_sessions_map, 0);
+  for (const props of [{ modern: false, report: false }]) {
     const f = fixture({ ...props, fullDetails: false });
     const request = f.state.fetchShopSessions(2, 30);
     assert.deepEqual(plain(f.requests[0].options.params), {
@@ -313,7 +360,7 @@ test("legacy and summary request contracts remain unchanged", async () => {
   }
 });
 
-test("report renders native country buttons and the separate device chart", async () => {
+test("report renders native country buttons, the daily strip and the leader-line device donut", async () => {
   const f = fixture();
   const compiled = compileTemplate({
     source: descriptor.template.content,
@@ -332,12 +379,15 @@ test("report renders native country buttons and the separate device chart", asyn
   const components = Object.fromEntries(
     Object.keys(f.component.components).map((name) => [name, wrapper]),
   );
-  components.BSessionDevicesPie = {
-    props: ["type", "desktop", "mobile", "tablet"],
+  components.UChartDonutLeader = {
+    props: ["slices", "unit"],
     setup: (props) => () =>
       Vue.h("div", {
-        "data-device-type": props.type,
-        "data-device-total": props.desktop + props.mobile + props.tablet,
+        "data-device-donut": props.slices.map((slice) => slice.key).join(","),
+        "data-device-total": props.slices.reduce(
+          (sum, slice) => sum + slice.value,
+          0,
+        ),
       }),
   };
   const app = Vue.createSSRApp(
@@ -392,9 +442,9 @@ test("report renders native country buttons and the separate device chart", asyn
   assert.ok(document.querySelector(".sd-modern-list-header"));
   assert.equal(
     document
-      .querySelector("[data-device-type]")
-      .getAttribute("data-device-type"),
-    "donut",
+      .querySelector("[data-device-donut]")
+      .getAttribute("data-device-donut"),
+    "desktop,mobile,tablet",
   );
   assert.equal(
     document
@@ -402,6 +452,13 @@ test("report renders native country buttons and the separate device chart", asyn
       .getAttribute("data-device-total"),
     "20",
   );
+  assert.equal(
+    document.querySelector(".b-sessions-map__playback"),
+    null,
+    "The report shares the dashboard's daily strip instead of playback",
+  );
+  assert.ok(document.querySelectorAll(".b-sessions-map__day").length > 0);
+  assert.equal(document.querySelector("[data-device-chart]"), null);
   for (const block of descriptor.styles) {
     const style = await compileStyleAsync({
       source: block.content,

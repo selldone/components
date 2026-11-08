@@ -272,38 +272,94 @@
             </div>
           </div>
         </header>
-        <div :class="{ 'b-dashboard-acquisition__composition-plot': modern }">
-          <apexchart
-            :height="240"
-            :options="report ? report_composition_options : options_pie"
-            :series="report ? report_composition_series : series_pie"
-            :key="modern ? chartThemeKey : 'legacy-pages'"
-            :type="report ? 'bar' : 'donut'"
-            width="100%"
-            :class="{ 'b-dashboard-acquisition__composition-chart': modern }"
-          />
-          <div
-            v-if="modern && !report && composition_is_zero"
-            class="b-dashboard-acquisition__composition-zero"
-            role="img"
-            :aria-label="$t('shop_visitors_widget.page_views') + ': 0'"
-          >
-            <span aria-hidden="true">0</span>
+        <!-- Modern: a leader-line donut of page types behind a preset menu; Custom opens the shared date dialog. -->
+        <template v-if="modern">
+          <div class="b-dashboard-acquisition__composition-period">
+            <span
+              >{{ getLocalDateString(start_date) }} –
+              {{ getLocalDateString(end_date) }}</span
+            >
+            <u-time-span-selector
+              :date-range="composition_range"
+              :max-days="30"
+              variant="text"
+              button-class="sd-modern-button sd-modern-button--inline sd-modern-button--secondary"
+              menu-class="sd-modern-select-menu"
+              @select="selectCompositionRange"
+            />
           </div>
-        </div>
-        <u-time-span
-          v-model:end-date="end_date"
-          v-model:start-date="start_date"
-          :color="modern ? 'on-surface' : undefined"
-          :class="{ 'b-dashboard-acquisition__composition-range': modern }"
-          small-width
-        ></u-time-span>
-        <p
-          v-if="modern && report"
-          class="b-dashboard-acquisition__scope b-dashboard-acquisition__composition-scope"
-        >
-          {{ $t("shop_crm_report.composition_scope") }}
-        </p>
+          <div class="b-dashboard-acquisition__composition-body">
+            <u-chart-donut-leader
+              :slices="composition_slices"
+              :unit="$t('shop_visitors_widget.page_views')"
+              :aria-label="
+                $t('admin_shop.dashboard.modern.page_composition_title') +
+                ': ' +
+                composition_slices
+                  .map(
+                    (slice) =>
+                      `${slice.label} ${numeralFormat(slice.value, '0,0')}`,
+                  )
+                  .join(', ')
+              "
+              class="b-dashboard-acquisition__composition-donut"
+            />
+            <ul class="b-dashboard-acquisition__composition-legend">
+              <li v-for="slice in composition_slices" :key="slice.key">
+                <span
+                  class="b-dashboard-acquisition__composition-swatch"
+                  :style="{ background: slice.color }"
+                  aria-hidden="true"
+                />
+                <img :src="slice.image" alt="" width="16" height="16" />
+                <span class="b-dashboard-acquisition__composition-name">{{
+                  slice.label
+                }}</span>
+                <span class="b-dashboard-acquisition__composition-count">{{
+                  numeralFormat(slice.value, "0,0.[0]a")
+                }}</span>
+                <span class="b-dashboard-acquisition__composition-share">{{
+                  composition_total
+                    ? numeralFormat(
+                        (100 * slice.value) / composition_total,
+                        "0.[0]",
+                      ) + "%"
+                    : "—"
+                }}</span>
+              </li>
+            </ul>
+          </div>
+          <p
+            v-if="report"
+            class="b-dashboard-acquisition__scope b-dashboard-acquisition__composition-scope"
+          >
+            {{ $t("shop_crm_report.composition_scope") }}
+          </p>
+          <u-time-span-custom-dialog
+            v-model="composition_dialog"
+            :start="start_date"
+            :end="end_date"
+            :max-days="30"
+            @apply="applyCompositionRange"
+          />
+        </template>
+        <template v-else>
+          <div>
+            <apexchart
+              :height="240"
+              :options="options_pie"
+              :series="series_pie"
+              key="legacy-pages"
+              type="donut"
+              width="100%"
+            />
+          </div>
+          <u-time-span
+            v-model:end-date="end_date"
+            v-model:start-date="start_date"
+            small-width
+          ></u-time-span>
+        </template>
       </v-col>
 
       <component
@@ -367,23 +423,15 @@
               :other="calcTotalOther"
               :search="calcTotalOrganicSearch"
               :social-details="calSocialDetails"
-              :height="modern ? '260px' : '150px'"
+              :height="modern ? (report ? '260px' : flow_height) : '150px'"
             ></b-session-chart-sankey>
-            <div
+            <u-chart-placeholder
               v-else-if="modern"
+              kind="flow"
+              :text="$t('admin_shop.dashboard.modern.placeholder_flow')"
+              :min-height="220"
               class="b-dashboard-acquisition__flow-empty"
-              role="status"
-            >
-              <span>{{ $t("global.commons.sessions") }}</span>
-              <span class="b-dashboard-acquisition__flow-empty-count">{{
-                numeralFormat(all_new_visitors + all_returning_visitors, "0,0")
-              }}</span>
-              <span
-                class="b-dashboard-acquisition__flow-empty-line"
-                aria-hidden="true"
-              />
-              <span>{{ $t("global.commons.no_data") }}</span>
-            </div>
+            />
           </div>
         </v-col>
         <!-- ━━━━━━━━━━━━━━━━━━ Channels ━━━━━━━━━━━━━━━━━━ -->
@@ -404,7 +452,9 @@
           </component>
           <div
             class="overflow-auto thin-scroll pe-3"
-            :style="{ maxHeight: modern ? '300px' : '150px' }"
+            :style="{
+              maxHeight: modern ? (report ? '300px' : '264px') : '150px',
+            }"
           >
             <div
               v-for="(item, i) in sorted_socials"
@@ -473,14 +523,25 @@ import BCampaignSourceIcon from "../../../campaign/source/icon/BCampaignSourceIc
 import { ChartAnnotations } from "../../../../ui/chart/helper/ChartAnnotations";
 import pagesIcon from "../../../../assets/icons/pages.svg";
 import { getPeriodComparison } from "../performance/periodComparison.ts";
+import UTimeSpanSelector from "../../../../ui/time/span/selector/UTimeSpanSelector.vue";
+import UTimeSpanCustomDialog from "../../../../ui/time/span/custom/UTimeSpanCustomDialog.vue";
+import UChartDonutLeader from "../../../../ui/chart/donut-leader/UChartDonutLeader.vue";
+import UChartPlaceholder from "../../../../ui/chart/placeholder/UChartPlaceholder.vue";
+import { REST_COLOR } from "../../../../ui/chart/donut-leader/donutSlices.ts";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 
 export default {
   name: "BDashboardShopAcquisition",
+  mixins: [DateMixin],
   components: {
     BCampaignSourceIcon,
     BSessionChartSankey,
     UpDownIcon,
     UTimeSpan,
+    UTimeSpanSelector,
+    UTimeSpanCustomDialog,
+    UChartDonutLeader,
+    UChartPlaceholder,
     SWidgetBox,
   },
   props: {
@@ -503,6 +564,9 @@ export default {
     start_date: null,
     end_date: null,
     has_annotaion: true,
+    // Modern page-view composition: a preset [to, from] in days before today, or Custom dates.
+    composition_range: [0, 30],
+    composition_dialog: false,
   }),
 
   computed: {
@@ -558,17 +622,8 @@ export default {
         },
         grid: {
           ...options.grid,
-          padding: { top: 52, right: 24, bottom: 12, left: 24 },
+          padding: { top: 14, right: 24, bottom: 12, left: 24 },
         },
-        responsive: [
-          {
-            breakpoint: 600,
-            options: {
-              chart: { height: 340 },
-              grid: { padding: { top: 104, right: 24, bottom: 12, left: 24 } },
-            },
-          },
-        ],
         legend: {
           ...options.legend,
           markers: {
@@ -582,46 +637,6 @@ export default {
       return {
         visitors: plot(["#C2185B", "#1976D2"], ["person_add", "history"]),
         views: plot(["#FFA000"], ["visibility"]),
-      };
-    },
-    report_composition_series() {
-      return this.options_pie.labels.map((name, index) => ({
-        name,
-        data: [this.series_pie[index]],
-      }));
-    },
-    report_composition_options() {
-      return {
-        ...this.options_pie,
-        chart: {
-          ...this.options_pie.chart,
-          type: "bar",
-          stacked: true,
-          stackType: "100%",
-          toolbar: { show: false },
-          redrawOnParentResize: true,
-          redrawOnWindowResize: true,
-        },
-        plotOptions: { bar: { horizontal: true, barHeight: "42%" } },
-        stroke: { width: 1, colors: ["rgb(var(--v-theme-surface))"] },
-        dataLabels: { enabled: false },
-        xaxis: {
-          categories: [this.$t("shop_visitors_widget.page_views")],
-          labels: { show: false },
-          axisBorder: { show: false },
-          axisTicks: { show: false },
-        },
-        yaxis: { show: false },
-        grid: {
-          show: false,
-          padding: { top: -20, bottom: -15, left: 0, right: 0 },
-        },
-        legend: {
-          ...this.options_pie.legend,
-          formatter: (name, { seriesIndex }) =>
-            `${name}: ${numeral(this.series_pie[seriesIndex]).format("0,0")}`,
-        },
-        tooltip: { y: { formatter: (value) => numeral(value).format("0,0") } },
       };
     },
     has_channel_data() {
@@ -691,6 +706,17 @@ export default {
     calSocialDetails() {
       return CampaignHelper.GetSocialsOnly({ social: this.socials }, 5);
     },
+    // The dashboard flow grows with its end branches (organic search, direct, other and up to
+    // five networks), so a few channels never stretch into tall bands.
+    flow_height() {
+      const leaves = [
+        this.calcTotalOrganicSearch,
+        this.calcTotalDirect,
+        this.calcTotalOther,
+        ...Object.values(this.calSocialDetails),
+      ].filter((value) => Number(value) > 0).length;
+      return `${Math.min(260, Math.max(140, 40 + 28 * leaves))}px`;
+    },
     //-------------------------------
     all_views() {
       return this.timeSeries.totalOf("views", this.start_date, this.end_date);
@@ -736,10 +762,37 @@ export default {
             this.all_view_products_service),
       ];
     },
-    composition_is_zero() {
-      return (
-        this.series_pie.length > 0 &&
-        this.series_pie.every((value) => Number.isFinite(value) && value === 0)
+    // Dashboard donut: page views by product type in their identity colors, then other pages.
+    composition_slices() {
+      const types = ["PHYSICAL", "VIRTUAL", "FILE", "SERVICE"].map(
+        (code) => ProductType[code],
+      );
+      return [
+        ...types.map((type) => ({
+          key: type.code,
+          label: this.$t(`global.product_types.${type.code.toLowerCase()}`),
+          color: type.color,
+          image: type.image,
+        })),
+        {
+          key: "OTHER",
+          label: this.$t("shop_visitors_widget.other_pages"),
+          color: REST_COLOR,
+          image: pagesIcon,
+        },
+      ].map((slice, index) => {
+        const value = Number(this.series_pie[index]);
+        return {
+          ...slice,
+          // Other pages are views minus product views; a negative gap is no page view.
+          value: Number.isFinite(value) && value > 0 ? value : 0,
+        };
+      });
+    },
+    composition_total() {
+      return this.composition_slices.reduce(
+        (sum, slice) => sum + slice.value,
+        0,
       );
     },
 
@@ -942,6 +995,9 @@ export default {
           stacked: false,
           background: "transparent", // Set the background to transparent
           fontFamily: "var(--font)",
+          // Modern charts keep no zoom/pan/download toolbar; the footer exports the data.
+          toolbar: { show: !this.modern },
+          zoom: { enabled: !this.modern },
 
           events: this.modern
             ? {
@@ -1084,7 +1140,6 @@ export default {
           ),
         },
       ];
-
     },
 
     //new_visitors:
@@ -1268,8 +1323,30 @@ export default {
         DateConverter.GetEndOfDateBefore(end),
       );
     },
+    // Presets set the page-view range directly; Custom opens the shared date dialog.
+    selectCompositionRange(item) {
+      if (item.title === "time_spans.custom") {
+        this.composition_dialog = true;
+        return;
+      }
+      this.composition_range = [item.to, item.from];
+      this.start_date = DateConverter.GetStartOfDateBefore(item.from);
+      this.end_date = DateConverter.GetEndOfDateBefore(item.to);
+    },
+    applyCompositionRange({ offset, days }) {
+      this.composition_range = [offset, offset + days];
+      this.start_date = DateConverter.GetStartOfDateBefore(offset + days);
+      this.end_date = DateConverter.GetEndOfDateBefore(offset);
+    },
   },
-  created() {},
+  created() {
+    if (this.modern && !this.summary)
+      this.selectCompositionRange({
+        title: "time_spans.last_30",
+        from: 30,
+        to: 0,
+      });
+  },
   mounted() {
     if (!this.report || this.summary || typeof ResizeObserver === "undefined")
       return;
@@ -1392,12 +1469,18 @@ export default {
     font-size: 11px;
     line-height: 17px;
   }
-  .b-dashboard-acquisition__composition-range {
-    max-width: 440px;
-    width: 100%;
+  // The ring beside its legend; the dashboard card stacks them.
+  .b-dashboard-acquisition__composition-body {
+    display: grid;
+    grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 16px 28px;
+  }
+  .b-dashboard-acquisition__composition-donut {
+    margin-block: 0;
   }
   .b-dashboard-acquisition__composition-scope {
-    order: 1;
+    margin-block-start: 12px;
   }
   .b-dashboard-acquisition__flow-scope {
     grid-column: 1 / -1;
@@ -1415,7 +1498,8 @@ export default {
   }
 
   @media (max-width: 780px) {
-    .b-dashboard-acquisition__report-plots {
+    .b-dashboard-acquisition__report-plots,
+    .b-dashboard-acquisition__composition-body {
       grid-template-columns: minmax(0, 1fr);
       gap: 23px;
     }
@@ -1505,32 +1589,59 @@ export default {
     flex-direction: column;
   }
 
-  .b-dashboard-acquisition__composition-range {
-    order: 1;
+  // Page-view donut: dates under the header, the ring, then every page type.
+  .b-dashboard-acquisition__composition-period {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-block: -8px 4px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
   }
 
-  .b-dashboard-acquisition__composition-plot {
-    position: relative;
-    order: 2;
-    margin-block-start: 16px;
+  .b-dashboard-acquisition__composition-donut {
+    max-width: 380px;
+    margin: 4px auto 8px;
   }
 
-  .b-dashboard-acquisition__composition-zero {
-    position: absolute;
-    inset-block-start: 16px;
-    inset-inline: 0;
-    display: grid;
-    place-items: center;
-    width: min(124px, 70%);
-    aspect-ratio: 1;
-    margin-inline: auto;
-    border: 18px solid rgba(var(--v-theme-on-surface), 0.1);
-    border-radius: 50%;
-    color: rgb(var(--v-theme-on-surface));
-    font-size: 22px;
-    font-weight: 400;
+  .b-dashboard-acquisition__composition-legend {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
     font-variant-numeric: tabular-nums;
-    pointer-events: none;
+
+    li {
+      display: grid;
+      grid-template-columns: 8px 16px minmax(0, 1fr) auto 44px;
+      align-items: center;
+      gap: 8px;
+      min-height: 30px;
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+
+    img {
+      object-fit: contain;
+    }
+  }
+
+  .b-dashboard-acquisition__composition-swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .b-dashboard-acquisition__composition-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .b-dashboard-acquisition__composition-share {
+    color: var(--sd-modern-muted);
+    text-align: end;
   }
 
   .b-dashboard-acquisition__flow-layout {
@@ -1562,30 +1673,6 @@ export default {
     margin-block-start: 0;
   }
 
-  .b-dashboard-acquisition__flow-empty {
-    display: flex;
-    min-height: 260px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 24px 8px;
-    color: var(--sd-modern-muted);
-    font-size: 12px;
-  }
-
-  .b-dashboard-acquisition__flow-empty-count {
-    color: rgb(var(--v-theme-on-surface));
-    font-size: 20px;
-    font-weight: 400;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .b-dashboard-acquisition__flow-empty-line {
-    align-self: stretch;
-    border-block-start: 1px solid var(--sd-modern-border);
-  }
-
   :deep(.snaky-chart) {
     min-width: 440px;
   }
@@ -1612,6 +1699,12 @@ export default {
 
   .b-dashboard-acquisition__source:last-child {
     border: 0;
+  }
+
+  // Dashboard list: dense rows; more than eight sources scroll inside the list.
+  &:not(.b-dashboard-acquisition--report) .b-dashboard-acquisition__source {
+    min-height: 32px;
+    padding-block: 5px;
   }
 
   .b-dashboard-acquisition__source-count {

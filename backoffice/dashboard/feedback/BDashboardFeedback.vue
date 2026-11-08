@@ -187,6 +187,7 @@
     <apexchart
       :options="engagement_options"
       :series="engagement_series"
+      class="sd-modern-chart-colors"
       type="line"
       height="260"
       width="100%"
@@ -519,15 +520,30 @@ export default {
     daily_start_date() {
       return getReportStartDate(this.timeSeries);
     },
+    // Two lines read at a glance: every reaction summed, against page views on their own scale
+    // (the tiles above keep each reaction's own history).
     engagement_series() {
-      return this.types.map((item) => ({
-        name: this.$t(item.name),
-        data: this.timeSeries.arrayOfForceInterpolateZero(
-          item.key,
-          true,
-          "created_at",
-        ),
-      }));
+      const daily = (key) =>
+        this.timeSeries.arrayOfForceInterpolateZero(key, true, "created_at");
+      const reactions = this.types.filter((item) => item.key !== "views");
+      const sums = daily(reactions[0].key).map(([time]) => [time, 0]);
+      reactions.forEach((item) =>
+        daily(item.key).forEach(([, value], index) => {
+          if (sums[index]) sums[index][1] += Number(value) || 0;
+        }),
+      );
+      return [
+        {
+          name: this.$t("admin_shop.dashboard.modern.store_engagement"),
+          type: "area",
+          data: sums,
+        },
+        {
+          name: this.$t("widgets.overview.views"),
+          type: "line",
+          data: daily("views"),
+        },
+      ];
     },
     engagement_options() {
       return {
@@ -536,12 +552,20 @@ export default {
           background: "transparent",
           fontFamily: "var(--font)",
           foreColor: this.$vuetify.theme.current.colors["on-surface"],
-          zoom: { enabled: true },
-          toolbar: { show: true },
+          // Modern charts keep no zoom/pan/download toolbar.
+          zoom: { enabled: false },
+          toolbar: { show: false },
         },
         theme: { mode: this.$vuetify.theme.current.dark ? "dark" : "light" },
-        colors: this.types.map((item) => item.color),
-        stroke: { width: 2, curve: "straight" },
+        colors: [
+          this.$vuetify.theme.current.colors.primary,
+          this.types.find((item) => item.key === "views").color,
+        ],
+        stroke: { width: [2, 2], curve: "smooth", dashArray: [0, 5] },
+        fill: {
+          type: ["gradient", "solid"],
+          gradient: { opacityFrom: 0.28, opacityTo: 0.02, stops: [0, 100] },
+        },
         markers: { size: 0 },
         dataLabels: { enabled: false },
         legend: { show: true, position: "bottom", fontWeight: 400 },
@@ -552,9 +576,20 @@ export default {
               DateConverter.ConvertTimestampToShortString(value),
           },
         },
-        yaxis: {
-          labels: { formatter: (value) => this.numeralFormat(value, "0.[0]a") },
-        },
+        // Views run far above reactions, so they read on their own right-hand scale.
+        yaxis: [
+          {
+            labels: {
+              formatter: (value) => this.numeralFormat(value, "0.[0]a"),
+            },
+          },
+          {
+            opposite: true,
+            labels: {
+              formatter: (value) => this.numeralFormat(value, "0.[0]a"),
+            },
+          },
+        ],
         tooltip: {
           x: {
             formatter: (value) =>

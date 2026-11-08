@@ -214,39 +214,118 @@
             </div>
           </div>
         </header>
+        <div class="b-dashboard-orders-detail__period">
+          <span
+            >{{ getLocalDateString(funnel_start) }} –
+            {{ getLocalDateString(funnel_end) }}</span
+          >
+          <u-time-span-selector
+            :date-range="funnel_range"
+            :max-days="max_days_data_exist"
+            variant="text"
+            button-class="sd-modern-button sd-modern-button--inline sd-modern-button--secondary"
+            menu-class="sd-modern-select-menu"
+            @select="selectFunnelRange"
+          />
+        </div>
         <u-time-span
+          v-if="funnel_custom"
           v-model:end-date="end_date"
           v-model:start-date="start_date"
           :max-days="max_days_data_exist"
-          :days="max_days_data_exist"
-          :offset="0"
+          :days="funnel_range[1] - funnel_range[0]"
+          :offset="funnel_range[0]"
           :origin-date="origin_date_data_exist"
           color="rgb(var(--v-theme-on-surface))"
           class="b-dashboard-orders-detail__range"
+          @update:date-range="funnel_range = [...$event]"
           @onChange="calculate_funnel()"
         />
-        <dl class="sd-modern-stat-grid b-dashboard-orders-detail__funnel-stats">
-          <div v-for="(label, index) in funnel_labels" :key="label">
-            <dt>{{ label }}</dt>
-            <dd>
-              {{
-                Number.isFinite(funnel_totals[index])
-                  ? numeralFormat(funnel_totals[index], "0,0")
-                  : "—"
+        <!-- Each stage as a bar against the first, split by order type; the rate kept from the step before. -->
+        <template v-if="funnel_stages[0]?.total > 0">
+          <dl
+            class="sd-modern-stat-grid b-dashboard-orders-detail__funnel-stats"
+          >
+            <div>
+              <dt>{{ funnel_labels[0] }}</dt>
+              <dd>{{ numeralFormat(funnel_stages[0].total, "0,0") }}</dd>
+            </div>
+            <div>
+              <dt>{{ funnel_labels[funnel_labels.length - 1] }}</dt>
+              <dd>
+                {{
+                  numeralFormat(
+                    funnel_stages[funnel_stages.length - 1].total,
+                    "0,0",
+                  )
+                }}
+              </dd>
+            </div>
+            <div>
+              <dt>{{ $t("global.commons.conversion") }}</dt>
+              <dd>{{ funnelPercent(funnel_conversion) }}</dd>
+            </div>
+            <div v-if="funnel_drop">
+              <dt>
+                {{ $t("admin_shop.dashboard.modern.funnel_biggest_drop") }}
+              </dt>
+              <dd>
+                −{{ funnelPercent(1 - funnel_drop.step) }}
+                <small
+                  >{{ funnel_stages[funnel_drop.index - 1].label }} →
+                  {{ funnel_drop.label }}</small
+                >
+              </dd>
+            </div>
+          </dl>
+          <ol class="b-dashboard-orders-detail__stages">
+            <li class="sd-modern-list-header" aria-hidden="true">
+              <span />
+              <span />
+              <span>{{ $t("global.commons.count") }}</span>
+              <span>{{
+                $t("admin_shop.dashboard.modern.funnel_step_rate")
+              }}</span>
+            </li>
+            <li v-for="(stage, index) in funnel_stages" :key="stage.key">
+              <span class="b-dashboard-orders-detail__stage-name">{{
+                stage.label
+              }}</span>
+              <span class="b-dashboard-orders-detail__stage-track">
+                <span
+                  class="b-dashboard-orders-detail__stage-bar"
+                  :style="{ width: stage.width }"
+                  ><span
+                    v-for="part in stage.parts"
+                    :key="part.key"
+                    :style="{ flexGrow: part.value, background: part.color }"
+                    :title="`${part.label} · ${numeralFormat(part.value, '0,0')}`"
+                /></span>
+              </span>
+              <span class="b-dashboard-orders-detail__stage-count">{{
+                numeralFormat(stage.total, "0,0")
+              }}</span>
+              <span class="b-dashboard-orders-detail__stage-step">{{
+                index ? funnelPercent(stage.step) : "—"
+              }}</span>
+            </li>
+          </ol>
+          <ul class="b-dashboard-orders-detail__funnel-legend">
+            <li v-for="type in available_types" :key="type.code">
+              <span
+                :style="{ background: type.color }"
+                aria-hidden="true"
+              /><img :src="type.basket" alt="" width="16" height="16" />{{
+                $t(type.name)
               }}
-            </dd>
-          </div>
-        </dl>
-        <u-chart-funnel-simple
-          modern
-          :colors="available_types.map((item) => item.colors)"
-          :labels="funnel_labels"
-          :sub-labels="available_types.map((item) => $t(item.name))"
-          :value="funnel_value"
-          :width="280"
-          :is-dark="$vuetify.theme.current.dark"
-          display-percentage
-          height="280"
+            </li>
+          </ul>
+        </template>
+        <u-chart-placeholder
+          v-else
+          kind="funnel"
+          :text="$t('admin_shop.dashboard.modern.placeholder_funnel')"
+          :min-height="200"
         />
       </section>
       <section class="b-dashboard-orders-detail sd-modern-widget text-start">
@@ -1130,6 +1209,10 @@
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import UTimeSpan from "../../../../ui/time/span/UTimeSpan.vue";
 import UChartFunnelSimple from "../../../../ui/chart/funnel/simple/UChartFunnelSimple.vue";
+import UTimeSpanSelector from "../../../../ui/time/span/selector/UTimeSpanSelector.vue";
+import UChartPlaceholder from "../../../../ui/chart/placeholder/UChartPlaceholder.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import UFadeScroll from "../../../../ui/fade-scroll/UFadeScroll.vue";
 import UChartBar from "../../../../ui/chart/bar/UChartBar.vue";
@@ -1158,6 +1241,7 @@ const QUEUE_STAGES = [
 
 export default {
   name: "BDashboardShopOrders",
+  mixins: [DateMixin],
   components: {
     BDashboardShopOrdersHyper,
     BDashboardShopOrdersAvocado,
@@ -1166,6 +1250,8 @@ export default {
     BDashboardShopOrdersBasket,
     UChartFunnelSimple,
     UTimeSpan,
+    UTimeSpanSelector,
+    UChartPlaceholder,
     TimeSeriesInlineChart,
     OrdersQue,
     SWidgetBox,
@@ -1198,6 +1284,9 @@ export default {
     selected_type: null,
     show_extra: false,
     expanded_types: ["PHYSICAL"],
+    // Operations funnel: a preset [to, from] in days before the report's end, or Custom.
+    funnel_range: [0, 30],
+    funnel_custom: false,
   }),
 
   computed: {
@@ -1207,6 +1296,70 @@ export default {
     funnel_labels() {
       return ["leads", "new_carts", "checkouts", "sells"].map((key) =>
         this.$t(`global.commons.${key}`),
+      );
+    },
+    funnel_start() {
+      return (
+        this.start_date ||
+        DateConverter.GetStartOfDateBefore(
+          this.funnel_range[1],
+          this.origin_date_data_exist,
+        )
+      );
+    },
+    funnel_end() {
+      return (
+        this.end_date ||
+        DateConverter.GetEndOfDateBefore(
+          this.funnel_range[0],
+          this.origin_date_data_exist,
+        )
+      );
+    },
+    // Stages against the first one, each split by order type in the type's color.
+    funnel_stages() {
+      const totals = this.funnel_totals.map((total) =>
+        Number.isFinite(total) && total > 0 ? total : 0,
+      );
+      return this.funnel_labels.map((label, index) => {
+        const values = Array.isArray(this.funnel_value[index])
+          ? this.funnel_value[index]
+          : [];
+        return {
+          key: index,
+          label,
+          total: totals[index],
+          width: totals[0]
+            ? `${Math.max(totals[index] ? 1 : 0, Math.min(100, (100 * totals[index]) / totals[0]))}%`
+            : "0%",
+          step:
+            index && totals[index - 1]
+              ? totals[index] / totals[index - 1]
+              : null,
+          parts: this.available_types
+            .map((type, i) => ({
+              key: type.code,
+              label: this.$t(type.name),
+              value: Math.max(0, Number(values[i]) || 0),
+              color: type.color,
+            }))
+            .filter((part) => part.value > 0),
+        };
+      });
+    },
+    funnel_conversion() {
+      const first = this.funnel_stages[0]?.total;
+      return first
+        ? this.funnel_stages[this.funnel_stages.length - 1].total / first
+        : 0;
+    },
+    // The step that keeps the smallest share of the one before it.
+    funnel_drop() {
+      return (
+        this.funnel_stages
+          .map((stage, index) => ({ ...stage, index }))
+          .filter((stage) => stage.step !== null)
+          .sort((a, b) => a.step - b.step)[0] || null
       );
     },
     funnel_totals() {
@@ -1349,6 +1502,24 @@ export default {
     this.calculate_funnel();
   },
   methods: {
+    funnelPercent(fraction) {
+      return `${this.numeralFormat(100 * (fraction || 0), "0.[0]")}%`;
+    },
+    // Presets set the funnel period directly; Custom shows the range slider instead.
+    selectFunnelRange(item) {
+      this.funnel_custom = item.title === "time_spans.custom";
+      if (this.funnel_custom) return;
+      this.funnel_range = [item.to, item.from];
+      this.start_date = DateConverter.GetStartOfDateBefore(
+        item.from,
+        this.origin_date_data_exist,
+      );
+      this.end_date = DateConverter.GetEndOfDateBefore(
+        item.to,
+        this.origin_date_data_exist,
+      );
+      this.calculate_funnel();
+    },
     getActivityHistory(type) {
       const code = type.code.toLowerCase();
       return getReportDailyValues(this.timeSeries, [
@@ -1508,9 +1679,96 @@ export default {
     max-width: 620px;
     margin: 0 auto 12px;
   }
+  &__period {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-block: -8px 4px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+  }
   &__funnel-stats {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-block: 16px;
+    margin-block: 12px 16px;
+    padding-block: 4px;
+  }
+  &__funnel-stats small {
+    display: block;
+    margin-block-start: 2px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+  }
+  &__stages {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+
+    > li {
+      display: grid;
+      grid-template-columns: minmax(90px, 140px) minmax(0, 1fr) 80px 110px;
+      align-items: center;
+      gap: 12px;
+      min-height: 40px;
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+    > li.sd-modern-list-header {
+      min-height: 0;
+      padding-block-end: 6px;
+      border: 0;
+    }
+    > li > :nth-child(n + 3) {
+      text-align: end;
+    }
+  }
+  &__stage-track {
+    display: block;
+    height: 14px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--sd-modern-inset, rgba(var(--v-theme-on-surface), 0.05));
+  }
+  &__stage-bar {
+    display: flex;
+    gap: 1px;
+    height: 100%;
+    border-radius: inherit;
+    overflow: hidden;
+
+    > span {
+      min-width: 2px;
+    }
+  }
+  &__stage-step {
+    color: var(--sd-modern-muted);
+  }
+  &__funnel-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 12px;
+
+    li {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    li > span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+  }
+  // Smart invert keeps the order types' own colors in the bars and the legend.
+  .smart-invert & .b-dashboard-orders-detail__stage-bar > span,
+  .smart-invert & .b-dashboard-orders-detail__funnel-legend li > span {
+    filter: invert(1);
   }
   &__funnel-stats dt {
     font-size: 12px;
@@ -1611,6 +1869,14 @@ export default {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 16px;
     }
+    &__stages > li {
+      grid-template-columns: minmax(0, 1fr) 64px 72px;
+    }
+    &__stage-track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      margin-block-end: 8px;
+    }
     &__table {
       min-width: 520px;
     }
@@ -1672,6 +1938,14 @@ export default {
 }
 
 .b-dashboard-orders-summary {
+  // A column, so a page's footer can take the height its row leaves.
+  display: flex;
+  flex-direction: column;
+
+  > :deep(.u-chart-placeholder) {
+    flex: 1 1 auto;
+  }
+
   &__total {
     display: flex;
     align-items: baseline;

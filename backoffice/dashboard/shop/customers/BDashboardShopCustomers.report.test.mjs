@@ -17,7 +17,7 @@ const levels = Object.fromEntries(
 const productTypes = Object.fromEntries(
   ["PHYSICAL", "VIRTUAL", "FILE", "SERVICE"].map((code) => [
     code,
-    { color: "#123456", image: `${code}.svg` },
+    { code, color: "#123456", image: `${code}.svg` },
   ]),
 );
 const files = {
@@ -232,7 +232,11 @@ test("report acquisition splits the original series and preserves independent co
   value.start_date = "composition-start";
   value.end_date = "composition-end";
   assert.equal(value.report_series.visitors.length, 2);
-  assert.equal(value.report_series.views.length, 1, "Historical AMP options do not add a view series");
+  assert.equal(
+    value.report_series.views.length,
+    1,
+    "Historical AMP options do not add a view series",
+  );
   series.raw_data[0].new_visitors = 100;
   series.raw_data[1].new_visitors = null;
   series.raw_data[0].returning_visitors = 0;
@@ -248,9 +252,11 @@ test("report acquisition splits the original series and preserves independent co
     ],
   );
   assert.deepEqual(
-    plain(value.report_composition_series.map((row) => row.data[0])),
+    plain(value.composition_slices.map((slice) => slice.value)),
     [200, 100, 50, 25, 125],
+    "The report donut reads the same composition totals",
   );
+  assert.equal(value.composition_total, 500);
   assert.ok(
     calls
       .filter(([key]) => key.startsWith("view"))
@@ -264,15 +270,10 @@ test("report acquisition splits the original series and preserves independent co
     60,
     "Flow denominator remains 100 new + 50 returning visitors",
   );
-  assert.equal(
-    value.report_composition_options.legend.formatter("Physical", {
-      seriesIndex: 0,
-    }),
-    "Physical: 200",
-  );
-  assert.ok(
-    value.report_composition_options.legend.markers.customHTML.length === 5,
-  );
+  for (const options of Object.values(value.report_plot_options)) {
+    assert.equal(options.chart.toolbar.show, false);
+    assert.equal(options.chart.zoom.enabled, false);
+  }
 });
 
 test("report overview omits all detailed plots/date components while retaining its three metrics", async () => {
@@ -294,7 +295,7 @@ test("report overview omits all detailed plots/date components while retaining i
   assert.ok(!html.includes('data-route="BPageShopCrmReport"'));
 });
 
-test("report customer plots preserve unknown stock, zero additions and native tools", () => {
+test("report customer plots preserve unknown stock and zero additions without library toolbars", () => {
   const { component } = load("customers");
   const value = state(component, {
     modern: true,
@@ -313,10 +314,8 @@ test("report customer plots preserve unknown stock, zero additions and native to
   assert.equal(value.change_today, 0);
   assert.equal(value.change_week, 7);
   for (const options of Object.values(value.report_chart_options)) {
-    assert.equal(options.chart.toolbar.tools.download, true);
-    assert.equal(options.chart.toolbar.tools.selection, true);
-    assert.equal(options.chart.toolbar.tools.pan, true);
-    assert.equal(options.chart.toolbar.tools.reset, true);
+    assert.equal(options.chart.toolbar.show, false);
+    assert.equal(options.chart.zoom.enabled, false);
     assert.equal(options.tooltip.y.formatter(1234), "1,234");
   }
   assert.equal(component.props.report.default, false);

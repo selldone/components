@@ -13,7 +13,198 @@
   -->
 
 <template>
+  <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Refined row (Pricings tab) ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
   <div
+    v-if="modern"
+    class="b-pricing-plan"
+    :class="{ 'b-pricing-plan--deleted': is_deleted }"
+  >
+    <div
+      class="b-pricing-plan__row"
+      :class="{ 'sd-modern-clickable-item': !is_deleted, disabled: loading }"
+      :role="is_deleted ? undefined : 'button'"
+      :tabindex="is_deleted ? undefined : 0"
+      :aria-label="`${$t('b_product_pricing.open_plan')} ${code}`"
+      :aria-disabled="loading || undefined"
+      @click="is_deleted ? undefined : $emit('select')"
+      @keydown.enter.self.prevent="is_deleted ? undefined : $emit('select')"
+      @keydown.space.self.prevent="is_deleted ? undefined : $emit('select')"
+    >
+      <div class="b-pricing-plan__plan">
+        <div class="b-pricing-plan__title">
+          <span
+            class="sd-modern-status__dot"
+            :class="`sd-modern-status__dot--${state.tone}`"
+            aria-hidden="true"
+          ></span>
+          <b>{{ subscriptionPrice.title }}</b>
+        </div>
+        <span
+          v-if="subscriptionPrice.description"
+          class="b-pricing-plan__description"
+          >{{ subscriptionPrice.description }}</span
+        >
+        <span class="b-pricing-plan__state"
+          >{{ state.label
+          }}<template v-if="is_deleted">
+            ·
+            {{
+              $t("b_product_pricing.deleted_at", {
+                date: getLocalTimeString(subscriptionPrice.deleted_at),
+              })
+            }}</template
+          ></span
+        >
+      </div>
+
+      <div class="b-pricing-plan__ids">
+        <span class="sd-modern-list-header b-pricing-plan__caption">{{
+          $t("b_product_pricing.col_identifiers")
+        }}</span>
+        <b dir="ltr">{{ code }}</b>
+        <span
+          >{{ $t("global.commons.sku") }}: <bdi>{{ sku || "—" }}</bdi></span
+        >
+      </div>
+
+      <div class="b-pricing-plan__price">
+        <span class="sd-modern-list-header b-pricing-plan__caption">{{
+          $t("b_product_pricing.col_price")
+        }}</span>
+        <b><u-price :amount="price" :currency="currency"></u-price></b>
+        <span
+          ><i
+            class="b-pricing-plan__period-dot"
+            :style="{ background: period?.color }"
+            aria-hidden="true"
+          ></i
+          >{{ period ? $t(period.title) : subscriptionPrice.period }}</span
+        >
+      </div>
+
+      <div class="b-pricing-plan__provider">
+        <span class="sd-modern-list-header b-pricing-plan__caption">{{
+          $t("b_product_pricing.col_provider")
+        }}</span>
+        <template v-if="gateway">
+          <img
+            v-if="gateway.icon"
+            :src="getShopImagePath(gateway.icon)"
+            width="22"
+            height="22"
+            alt=""
+          />
+          <v-icon v-else size="22" aria-hidden="true">credit_card</v-icon>
+          <div>
+            <b>{{ gateway.name }}</b>
+            <span class="sd-modern-status sd-modern-status--plain"
+              ><span
+                class="sd-modern-status__dot"
+                :class="`sd-modern-status__dot--${provider_state.tone}`"
+                aria-hidden="true"
+              ></span
+              >{{ provider_state.label }}</span
+            >
+          </div>
+        </template>
+        <span v-else class="b-pricing-plan__muted">{{
+          $t("b_product_pricing.provider_missing")
+        }}</span>
+      </div>
+
+      <div class="b-pricing-plan__sync">
+        <span class="sd-modern-list-header b-pricing-plan__caption">{{
+          $t("b_product_pricing.col_sync")
+        }}</span>
+        <template v-if="meta_entries.length">
+          <span
+            v-for="[key, value] in meta_entries"
+            :key="key"
+            class="b-pricing-plan__chip"
+            @click.stop
+            @keydown.stop
+            ><span>{{ key }}</span
+            ><code
+              v-copy
+              tabindex="0"
+              :aria-label="$t('b_product_pricing.copy_value', { key })"
+              >{{ value }}</code
+            ></span
+          >
+        </template>
+        <span
+          v-else
+          class="b-pricing-plan__muted"
+          tabindex="0"
+          @click.stop
+          @keydown.stop
+          ><v-icon size="14" aria-hidden="true">cloud_off</v-icon
+          >{{ $t("b_product_pricing.not_synced") }}
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+            open-on-focus
+            open-on-click
+            >{{ $t("b_product_pricing.not_synced_help") }}</v-tooltip
+          ></span
+        >
+      </div>
+
+      <div class="b-pricing-plan__actions">
+        <v-btn
+          v-if="!is_deleted"
+          class="sd-modern-icon-button"
+          icon="edit"
+          variant="text"
+          size="small"
+          :disabled="loading"
+          :aria-label="$t('b_product_pricing.edit_plan')"
+          @click.stop="$emit('select')"
+        >
+          <v-icon size="16">edit</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+            open-on-focus
+            >{{ $t("b_product_pricing.edit_plan") }}</v-tooltip
+          >
+        </v-btn>
+        <v-btn
+          v-if="hasDelete"
+          class="sd-modern-icon-button"
+          :icon="is_deleted ? 'restore' : 'delete_outline'"
+          variant="text"
+          size="small"
+          :loading="loading"
+          :aria-label="
+            $t(is_deleted ? 'global.actions.restore' : 'global.actions.delete')
+          "
+          @click.stop="is_deleted ? showRestoreDialog() : showDeleteDialog()"
+        >
+          <v-icon size="16">{{
+            is_deleted ? "restore" : "delete_outline"
+          }}</v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+            content-class="sd-modern-tooltip text-start"
+            open-on-focus
+            >{{
+              $t(
+                is_deleted ? "global.actions.restore" : "global.actions.delete",
+              )
+            }}</v-tooltip
+          >
+        </v-btn>
+      </div>
+    </div>
+  </div>
+
+  <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Legacy card ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+  <div
+    v-else
     class="product-variant-card widget widget-hover rounded-18px d-flex flex-wrap my-2 p-3"
     @click="$emit('select')"
   >
@@ -147,6 +338,7 @@ import UTextValueDashed from "../../../../../ui/text/value-dashed/UTextValueDash
 export default {
   name: "BProductSubscriptionPricingItem",
   components: { UTextValueDashed },
+  emits: ["select", "delete", "restore"],
   props: {
     shop: {
       required: true,
@@ -165,6 +357,8 @@ export default {
       default: false,
       type: Boolean,
     },
+    // Refined data-table row (Pricings tab); the legacy card stays for Studio and Vendor.
+    modern: { type: Boolean, default: false },
     badge: {},
     loading: {},
 
@@ -209,6 +403,41 @@ export default {
     },
     gateway() {
       return this.shop_gateway?.gateway;
+    },
+
+    code() {
+      return `PRC${this.subscriptionPrice.id}`;
+    },
+    is_deleted() {
+      return !!this.subscriptionPrice.deleted_at;
+    },
+    state() {
+      if (this.is_deleted)
+        return {
+          tone: "error",
+          label: this.$t("b_product_pricing.state_deleted"),
+        };
+      if (this.enable)
+        return {
+          tone: "success",
+          label: this.$t("b_product_pricing.state_available"),
+        };
+      return {
+        tone: "warning",
+        label: this.$t("b_product_pricing.state_unavailable"),
+      };
+    },
+    provider_state() {
+      const sg = this.shop_gateway;
+      if (!sg?.enable || !sg.gateway?.enable)
+        return { tone: "error", label: this.$t("b_product_pricing.disabled") };
+      if (!sg.livemode)
+        return { tone: "warning", label: this.$t("b_product_pricing.sandbox") };
+      return { tone: "success", label: this.$t("b_product_pricing.live") };
+    },
+    meta_entries() {
+      const meta = this.subscriptionPrice.meta;
+      return meta && typeof meta === "object" ? Object.entries(meta) : [];
     },
   },
   methods: {
@@ -288,5 +517,241 @@ export default {
     border-radius: 5px;
     padding: 2px 6px;
   }
+}
+
+// Refined row: same geometry as the refined variant rows (87px, 12px inset, column captions on phones).
+.b-pricing-plan {
+  border-block-end: 1px solid var(--sd-modern-border);
+  padding-block: 2px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  text-align: start;
+
+  &__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--pricing-columns);
+    align-items: center;
+    gap: 12px;
+    min-height: 87px;
+    padding: 12px;
+    border-radius: 8px;
+  }
+  &__row > div {
+    min-width: 0;
+  }
+  &__row[role="button"]:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: -2px;
+  }
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+  }
+  &__title > .sd-modern-status__dot {
+    flex: 0 0 7px;
+    width: 7px;
+    height: 7px;
+  }
+  &__title > b {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__description {
+    display: block;
+    margin-block-start: 2px;
+    color: var(--sd-modern-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__state {
+    display: inline-block;
+    margin-block-start: 3px;
+    font-size: 10px;
+    line-height: 15px;
+    color: var(--sd-modern-muted);
+  }
+  &__ids > b {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  &__ids > span {
+    display: flex;
+    gap: 3px;
+    font-size: 10px;
+    line-height: 16px;
+    color: var(--sd-modern-muted);
+  }
+  &__ids bdi {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__price > b {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+  }
+  &__price > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-block-start: 2px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    line-height: 16px;
+  }
+  &__period-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex: none;
+  }
+  &__provider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  &__provider > img {
+    flex: none;
+    border-radius: 5px;
+    object-fit: contain;
+  }
+  &__provider > div {
+    min-width: 0;
+  }
+  &__provider b {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__provider .sd-modern-status {
+    font-size: 10px;
+    line-height: 15px;
+  }
+  &__sync {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    max-width: 100%;
+    padding: 2px 7px;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 6px;
+    background: var(--sd-modern-inset);
+    font-size: 11px;
+    line-height: 16px;
+  }
+  &__chip > span {
+    flex: none;
+    color: var(--sd-modern-muted);
+  }
+  &__chip > code {
+    min-width: 0;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    cursor: copy;
+    border-radius: 3px;
+  }
+  &__chip > code:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 1px;
+  }
+  &__muted {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(var(--v-theme-on-surface), 0.45);
+    font-size: 11px;
+    line-height: 16px;
+    border-radius: 4px;
+  }
+  &__muted:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+  &__actions .v-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+  }
+  // Beats the shared .sd-modern-data-table caption rule on desktop; phones show the captions.
+  &__caption.sd-modern-list-header {
+    display: none;
+  }
+  &--deleted &__plan,
+  &--deleted &__ids,
+  &--deleted &__price,
+  &--deleted &__provider,
+  &--deleted &__sync {
+    opacity: 0.6;
+  }
+
+  @media (max-width: 959px) {
+    &__row {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px 16px;
+      padding: 12px;
+    }
+    &__plan {
+      grid-column: 1 / -1;
+      padding-inline-end: 92px;
+    }
+    &__ids,
+    &__price,
+    &__provider,
+    &__sync {
+      align-self: start;
+    }
+    &__provider {
+      flex-wrap: wrap;
+    }
+    &__caption.sd-modern-list-header {
+      display: block;
+      flex-basis: 100%;
+      margin-block-end: 3px;
+    }
+    &__actions {
+      position: absolute;
+      inset-inline-end: 12px;
+      top: 12px;
+    }
+    &__actions .v-btn {
+      width: 44px;
+      height: 44px;
+    }
+  }
+}
+.smart-invert .b-pricing-plan__period-dot {
+  filter: invert(1);
 }
 </style>

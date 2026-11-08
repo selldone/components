@@ -91,6 +91,7 @@ function dependency(name) {
   if (name === "@selldone/core-js") return { Basket, Avocado, ShopURLs: { MainShopUrl: () => "https://example.test" } };
   if (name.includes("enums/order/OrderType")) return { OrderType };
   if (name.includes("ProductType")) return { ProductType };
+  if (name.includes("BillingPeriod")) return { default: { Daily: { code: "Daily", title: "Daily", color: "#1976d2", hours: 24 } } };
   if (name === "lodash-es") return { debounce: (fn) => fn, throttle: (fn) => fn };
   if (name.includes("DateConverter")) return { DateConverter: { getFromNowNumber: () => 11 } };
   if (name.includes("CurrencyHelper")) return { CurrencyHelper: { NeedToSHowCurrencyFlag: () => true } };
@@ -145,13 +146,13 @@ async function render(component, props, rows = [], data = {}) {
     getVendorOrderCode: (item) => `VND-${item.id}`,
     getUserAvatar: (id) => `/avatar/${id}`, copyToClipboard: (value) => copied.push(value),
     cacheRouteState: (id) => cached.push(id), $router: { push: (target) => navigations.push(target) },
-    getDeliveryStateString: (state) => state, getFromNowString: () => "ago", getLocalTimeString: (date) => date,
+    getDeliveryStateString: (state) => state, getFromNowString: () => "ago", getLocalTimeString: (date) => date, getLocalTimeStringSmall: (date) => date,
     getLocalDateString: (date) => date,
     getCountryName: (country) => country,
   });
   if (focusedPos) {
     // Missing optional helpers must fail instead of being supplied by test globals.
-    for (const name of ['getDeliveryStateString', 'getFromNowString', 'getLocalTimeString', 'getLocalDateString', 'cacheRouteState', 'HIGHLIGHT_ID']) delete app.config.globalProperties[name];
+    for (const name of ['getDeliveryStateString', 'getFromNowString', 'getLocalTimeString', 'getLocalTimeStringSmall', 'getLocalDateString', 'cacheRouteState', 'HIGHLIGHT_ID']) delete app.config.globalProperties[name];
     app.config.warnHandler = message => { throw new Error(message); };
   }
   return renderToString(app);
@@ -337,7 +338,7 @@ test("Vendor rows preserve native identity, payment, thumbnails, stages, Guest, 
   const headers = calls.find(call => call.name === "v-data-table-server").attrs.headers;
   assert.deepEqual(plain(headers.map(header => header.value)), ["id", "price", "status", "delivery_state", "reserved_at"]);
   const images = calls.find(call => call.name === "ProductsDenseImagesCircles").attrs;
-  assert.equal(images.size, 27);
+  assert.equal(images.size, 22, "dense modern rows draw 22px product circles");
   assert.deepEqual(plain(images.ids), ["8", "10"]);
   assert.equal(calls.find(call => call.name === "SOrderStatusView").attrs.status, "Payed");
   assert.equal(calls.some(call => call.name === "ReturnRequestButtonBadge"), true);
@@ -700,6 +701,28 @@ test("service Reserved orders remain selected for review and display waiting rev
   const html = await render(List, { modern: true, shop: { id: 7 }, type: ProductType.SERVICE }, [{ id: 23, status: "Reserved", delivery_state: "CheckQueue", currency: "USD", price: 0, items: [] }]);
   assert.match(html, /global.commons.waiting_review/);
   assert.equal(calls.some(call => call.name === "u-price"), false);
+});
+
+test("refined subscription rows keep the amount, period and next-payment bar in one compact cell", async () => {
+  const due = { isBeforeToday: () => false, diffHours: () => 12, toString: () => "2026-11-20" };
+  const row = {
+    id: 23, status: "Payed", delivery_state: "PreparingOrder", currency: "USD", price: 20, delivery_price: 0, items: [], contents: [],
+    meta: { subscription_period: "Daily", subscription_payment_at: { convertToLocalDate: () => ({ addHours: () => due }) } },
+  };
+  const modern = await render(List, { modern: true, shop: { id: 7 }, type: ProductType.SUBSCRIPTION }, [row]);
+  assert.match(modern, /b-process-center-list__amount b-process-center-list__amount--subscription/);
+  assert.match(modern, /b-process-center-list__next-payment/);
+  assert.doesNotMatch(modern, /b-process-center-list__next-payment text-center/);
+  assert.match(modern, /title="admin_shop.orders.modern.subscription.next_payment ~ 2026-11-20"/);
+  assert.match(modern, /<small class="my-1">ago<\/small>/);
+  assert.doesNotMatch(modern, /credit_score|● ago/);
+  assert.ok(calls.some(call => call.name === "v-progress-linear" && call.attrs["model-value"] === 50));
+  assert.ok(calls.some(call => call.name === "u-price" && call.attrs.amount === 20 && call.attrs.currency === "USD"));
+  const legacy = await render(List, { shop: { id: 7 }, type: ProductType.SUBSCRIPTION }, [row]);
+  assert.match(legacy, /b-process-center-list__next-payment text-center/);
+  assert.match(legacy, /credit_score/);
+  assert.match(legacy, /<small class="my-1">~ 2026-11-20 ● ago\.<\/small>/);
+  assert.doesNotMatch(legacy, /b-process-center-list__amount--subscription/);
 });
 
 test("modern supplier lists initialize with only the visible Paid selection", () => {

@@ -14,7 +14,7 @@
 
 <template>
   <div>
-    <div class="widget-box mb-5">
+    <div v-show="showSection('profile')" class="widget-box mb-5">
       <u-widget-header
         :icon="customer ? 'person_outline' : 'person_add_alt'"
         :title="
@@ -64,7 +64,7 @@
       ></u-tel-input>
     </div>
 
-    <div v-if="!expanded" class="widget-buttons mb-5">
+    <div v-if="!expanded && !sections" class="widget-buttons mb-5">
       <v-btn
         color="primary"
         size="x-large"
@@ -89,7 +89,7 @@
     <v-expand-transition>
       <div v-if="show_detail">
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Detail ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-        <div class="widget-box mb-5">
+        <div v-show="showSection('profile')" class="widget-box mb-5">
           <u-widget-header
             :title="$t('global.commons.personal_info')"
             icon="badge"
@@ -130,7 +130,7 @@
         </div>
 
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Preferences ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-        <div class="widget-box mb-5">
+        <div v-show="showSection('preferences')" class="widget-box mb-5">
           <u-widget-header
             :title="$t('global.commons.preferences')"
             icon="tune"
@@ -155,7 +155,7 @@
         </div>
 
         <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Address ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ -->
-        <div class="widget-box mb-5">
+        <div v-show="showSection('address')" class="widget-box mb-5">
           <u-widget-header
             :title="$t('global.commons.address')"
             icon="map"
@@ -344,6 +344,14 @@ export default {
       type: Boolean,
     },
     dialogMode: Boolean,
+    /**
+     * Show only these sections (profile, preferences, address) while every field keeps its
+     * state and one Save stores them all; null shows the whole form.
+     */
+    sections: {
+      type: Array as () => ("profile" | "preferences" | "address")[] | null,
+      default: null,
+    },
   },
 
   data: () => ({
@@ -432,10 +440,14 @@ export default {
       if (!this.address || !this.isObject(this.address))
         this.address = { country: this.defaultCountry };
     }
-    this.show_detail = this.expanded;
+    this.show_detail = this.expanded || !!this.sections;
   },
 
   methods: {
+    showSection(section: string) {
+      return !this.sections || this.sections.includes(section as any);
+    },
+
     addNewCustomer() {
       this.busy = true;
 

@@ -175,218 +175,248 @@
           >
         </v-btn>
       </header>
+      <!-- Report: members by level beside the full club table, like the dashboard card. -->
       <template v-if="report">
-        <table class="sd-modern-table b-dashboard-customers-detail__club-table">
-          <thead>
-            <tr>
-              <th>{{ $t("admin_shop.dashboard.modern.club_title") }}</th>
-              <th>{{ $t("global.commons.users") }}</th>
-              <th>{{ $t("shop_crm_report.monthly_threshold") }}</th>
-              <th>{{ $t("shop_crm_report.annual_threshold") }}</th>
-              <th>{{ $t("global.commons.discount") }}</th>
-              <th :aria-label="$t('global.commons.detail')"></th>
-            </tr>
-          </thead>
-          <tbody v-for="level in levels" :key="level.code">
-            <tr class="b-dashboard-customers-detail__club-row">
-              <td class="b-dashboard-customers-detail__club-id-cell">
-                <div class="b-dashboard-customers-detail__club-identity">
-                  <img
-                    :src="level.icon"
-                    :class="{ 'img-grayscale': !level.club }"
-                    alt=""
-                    width="28"
-                    height="28"
-                  />
-                  <div>
-                    <h3>{{ $t(level.name) }}</h3>
-                    <span class="sd-modern-status sd-modern-status--plain"
-                      ><span
-                        class="sd-modern-status__dot"
-                        :class="{
-                          'b-dashboard-customers-detail__inactive': !level.club,
-                        }"
-                        aria-hidden="true"
-                      />{{
-                        $t(level.club ? "global.active" : "global.inactive")
-                      }}</span
-                    >
-                  </div>
-                </div>
-              </td>
-              <td :data-label="$t('global.commons.users')">
-                {{ level.club ? numeralFormat(level.club.count, "0,0") : "—" }}
-              </td>
-              <td :data-label="$t('shop_crm_report.monthly_threshold')">
-                <u-price
-                  v-if="level.club"
-                  :amount="level.club.monthly"
-                  :currency="level.club.currency"
-                /><span v-else>—</span>
-              </td>
-              <td :data-label="$t('shop_crm_report.annual_threshold')">
-                <u-price
-                  v-if="level.club"
-                  :amount="level.club.annually"
-                  :currency="level.club.currency"
-                /><span v-else>—</span>
-              </td>
-              <td :data-label="$t('global.commons.discount')">
-                {{ level.club ? level.club.percent + "%" : "—" }}
-              </td>
-              <td class="b-dashboard-customers-detail__club-action">
-                <v-btn
-                  class="sd-modern-icon-button"
-                  icon
-                  variant="text"
-                  :aria-label="
-                    $t('shop_crm_report.club_details', { club: $t(level.name) })
-                  "
-                  :aria-expanded="expanded_clubs.includes(level.code)"
-                  :aria-controls="'crm-report-club-' + $.uid + '-' + level.code"
-                  @click="toggleClubDetails(level.code)"
-                >
-                  <v-icon size="18" aria-hidden="true">{{
-                    expanded_clubs.includes(level.code)
-                      ? "expand_less"
-                      : "expand_more"
-                  }}</v-icon>
-                  <v-tooltip
-                    activator="parent"
-                    location="top"
-                    open-on-focus
-                    content-class="sd-modern-tooltip text-start"
-                    >{{
-                      $t("shop_crm_report.club_details", {
-                        club: $t(level.name),
-                      })
-                    }}</v-tooltip
-                  >
-                </v-btn>
-              </td>
-            </tr>
-            <tr
-              v-show="expanded_clubs.includes(level.code)"
-              class="b-dashboard-customers-detail__club-expanded"
+        <div
+          class="b-dashboard-customers-detail__clubs"
+          :class="{ '-with-share': club_slices.length >= 3 }"
+        >
+          <u-chart-donut-leader
+            v-if="club_slices.length >= 3"
+            :slices="club_slices"
+            :unit="$t('global.commons.users')"
+            class="b-dashboard-customers-detail__club-share"
+          />
+          <div class="b-dashboard-customers-detail__club-scroll">
+            <table
+              class="sd-modern-table b-dashboard-customers-detail__club-table"
             >
-              <td
-                colspan="6"
-                :id="'crm-report-club-' + $.uid + '-' + level.code"
-              >
-                <div class="b-dashboard-customers-detail__expanded-content">
-                  <template v-if="level.club">
-                    <span
-                      >{{ $t("shop_crm_report.discount_cap") }}:
-                      <u-price
-                        v-if="level.club.limit"
-                        :amount="level.club.limit"
-                        :currency="level.club.currency"
-                      /><span v-else>{{
-                        $t("global.commons.unlimited")
-                      }}</span></span
+              <thead>
+                <tr>
+                  <th>{{ $t("admin_shop.dashboard.modern.club_title") }}</th>
+                  <th>{{ $t("global.commons.users") }}</th>
+                  <th>{{ $t("shop_crm_report.monthly_threshold") }}</th>
+                  <th>{{ $t("shop_crm_report.annual_threshold") }}</th>
+                  <th>{{ $t("global.commons.discount") }}</th>
+                  <th :aria-label="$t('global.commons.detail')"></th>
+                </tr>
+              </thead>
+              <tbody v-for="level in levels" :key="level.code">
+                <tr class="b-dashboard-customers-detail__club-row">
+                  <td class="b-dashboard-customers-detail__club-id-cell">
+                    <div class="b-dashboard-customers-detail__club-identity">
+                      <img
+                        :src="level.icon"
+                        :class="{ 'img-grayscale': !level.club }"
+                        alt=""
+                        width="28"
+                        height="28"
+                      />
+                      <div>
+                        <h3>{{ $t(level.name) }}</h3>
+                        <span class="sd-modern-status sd-modern-status--plain"
+                          ><span
+                            class="sd-modern-status__dot"
+                            :class="{
+                              'b-dashboard-customers-detail__inactive':
+                                !level.club,
+                            }"
+                            aria-hidden="true"
+                          />{{
+                            $t(level.club ? "global.active" : "global.inactive")
+                          }}</span
+                        >
+                      </div>
+                    </div>
+                  </td>
+                  <td :data-label="$t('global.commons.users')">
+                    {{
+                      level.club ? numeralFormat(level.club.count, "0,0") : "—"
+                    }}
+                  </td>
+                  <td :data-label="$t('shop_crm_report.monthly_threshold')">
+                    <u-price
+                      v-if="level.club"
+                      :amount="level.club.monthly"
+                      :currency="level.club.currency"
+                    /><span v-else>—</span>
+                  </td>
+                  <td :data-label="$t('shop_crm_report.annual_threshold')">
+                    <u-price
+                      v-if="level.club"
+                      :amount="level.club.annually"
+                      :currency="level.club.currency"
+                    /><span v-else>—</span>
+                  </td>
+                  <td :data-label="$t('global.commons.discount')">
+                    {{ level.club ? level.club.percent + "%" : "—" }}
+                  </td>
+                  <td class="b-dashboard-customers-detail__club-action">
+                    <v-btn
+                      class="sd-modern-icon-button"
+                      icon
+                      variant="text"
+                      :aria-label="
+                        $t('shop_crm_report.club_details', {
+                          club: $t(level.name),
+                        })
+                      "
+                      :aria-expanded="expanded_clubs.includes(level.code)"
+                      :aria-controls="
+                        'crm-report-club-' + $.uid + '-' + level.code
+                      "
+                      @click="toggleClubDetails(level.code)"
                     >
-                    <span v-if="level.club.description">{{
-                      level.club.description
-                    }}</span>
-                  </template>
-                  <span v-else>{{ $t("global.inactive") }}</span>
-                  <v-btn
-                    :to="{ name: 'BPageShopCrmClub' }"
-                    :active="false"
-                    class="sd-modern-button sd-modern-button--inline"
-                    variant="text"
-                    >{{ $t("admin_shop.dashboard.modern.manage_clubs") }}</v-btn
+                      <v-icon size="18" aria-hidden="true">{{
+                        expanded_clubs.includes(level.code)
+                          ? "expand_less"
+                          : "expand_more"
+                      }}</v-icon>
+                      <v-tooltip
+                        activator="parent"
+                        location="top"
+                        open-on-focus
+                        content-class="sd-modern-tooltip text-start"
+                        >{{
+                          $t("shop_crm_report.club_details", {
+                            club: $t(level.name),
+                          })
+                        }}</v-tooltip
+                      >
+                    </v-btn>
+                  </td>
+                </tr>
+                <tr
+                  v-show="expanded_clubs.includes(level.code)"
+                  class="b-dashboard-customers-detail__club-expanded"
+                >
+                  <td
+                    colspan="6"
+                    :id="'crm-report-club-' + $.uid + '-' + level.code"
                   >
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                    <div class="b-dashboard-customers-detail__expanded-content">
+                      <template v-if="level.club">
+                        <span
+                          >{{ $t("shop_crm_report.discount_cap") }}:
+                          <u-price
+                            v-if="level.club.limit"
+                            :amount="level.club.limit"
+                            :currency="level.club.currency"
+                          /><span v-else>{{
+                            $t("global.commons.unlimited")
+                          }}</span></span
+                        >
+                        <span v-if="level.club.description">{{
+                          level.club.description
+                        }}</span>
+                      </template>
+                      <span v-else>{{ $t("global.inactive") }}</span>
+                      <v-btn
+                        :to="{ name: 'BPageShopCrmClub' }"
+                        :active="false"
+                        class="sd-modern-button sd-modern-button--inline"
+                        variant="text"
+                        >{{
+                          $t("admin_shop.dashboard.modern.manage_clubs")
+                        }}</v-btn
+                      >
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
         <p class="b-dashboard-customers-detail__scope">
           {{ $t("shop_crm_report.club_threshold_help") }}
         </p>
       </template>
-      <div v-else class="b-dashboard-customers-detail__clubs">
-        <section
-          v-for="level in levels"
-          :key="level.code"
-          class="b-dashboard-customers-detail__club"
-        >
-          <div class="d-flex align-center ga-2">
-            <img
-              :src="level.icon"
-              :class="{ 'img-grayscale': !level.club }"
-              alt=""
-              width="28"
-              height="28"
-            />
-            <h3>{{ $t(level.name) }}</h3>
-          </div>
-          <template v-if="level.club">
-            <dl class="b-dashboard-customers-detail__benefits">
-              <div>
-                <dt>{{ $t("global.commons.users") }}</dt>
-                <dd>{{ numeralFormat(level.club.count, "0,0") }}</dd>
-              </div>
-              <div>
-                <dt>{{ $t("global.commons.discount") }}</dt>
-                <dd>{{ level.club.percent }}%</dd>
-              </div>
-              <div>
-                <dt>{{ $t("global.commons.monthly") }}</dt>
-                <dd>
-                  <u-price
-                    :amount="level.club.monthly"
-                    :currency="level.club.currency"
-                  />
-                </dd>
-              </div>
-              <div>
-                <dt>{{ $t("global.commons.annually") }}</dt>
-                <dd>
-                  <u-price
-                    :amount="level.club.annually"
-                    :currency="level.club.currency"
-                  />
-                </dd>
-              </div>
-              <div>
-                <dt>{{ $t("global.commons.limit") }}</dt>
-                <dd>
-                  <u-price
-                    v-if="level.club.limit"
-                    :amount="level.club.limit"
-                    :currency="level.club.currency"
-                  />
-                  <span v-else>{{ $t("global.commons.unlimited") }}</span>
-                </dd>
-              </div>
-            </dl>
-            <p
-              v-if="level.club.description"
-              class="b-dashboard-customers-detail__description"
-            >
-              {{ level.club.description }}
-            </p>
-          </template>
-          <p v-else class="sd-modern-subtitle">{{ $t("global.inactive") }}</p>
-          <v-btn
-            :to="{ name: 'BPageShopCrmClub' }"
-            :active="false"
-            class="sd-modern-button sd-modern-button--inline"
-            variant="text"
-          >
-            {{ $t("admin_shop.dashboard.modern.manage_clubs") }}
-            <v-tooltip
-              activator="parent"
-              location="top"
-              open-on-focus
-              content-class="sd-modern-tooltip text-start"
-              >{{ $t("admin_shop.dashboard.modern.manage_clubs") }} ·
-              {{ $t(level.name) }}</v-tooltip
-            >
-          </v-btn>
-        </section>
+      <!-- Dashboard: members by level beside one compact list of every level. -->
+      <div
+        v-else
+        class="b-dashboard-customers-detail__clubs"
+        :class="{ '-with-share': club_slices.length >= 3 }"
+      >
+        <u-chart-donut-leader
+          v-if="club_slices.length >= 3"
+          :slices="club_slices"
+          :unit="$t('global.commons.users')"
+          class="b-dashboard-customers-detail__club-share"
+        />
+        <div class="b-dashboard-customers-detail__club-scroll">
+          <table class="b-dashboard-customers-detail__club-list">
+            <thead>
+              <tr class="sd-modern-list-header">
+                <th>{{ $t("admin_shop.dashboard.modern.club_title") }}</th>
+                <th>{{ $t("global.commons.users") }}</th>
+                <th>{{ $t("global.commons.discount") }}</th>
+                <th>{{ $t("global.commons.monthly") }}</th>
+                <th>{{ $t("global.commons.annually") }}</th>
+                <th>{{ $t("global.commons.limit") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="level in levels" :key="level.code">
+                <th scope="row">
+                  <span class="b-dashboard-customers-detail__club-identity">
+                    <img
+                      :src="level.icon"
+                      :class="{ 'img-grayscale': !level.club }"
+                      alt=""
+                      width="24"
+                      height="24"
+                    />
+                    <span>
+                      <strong>{{ $t(level.name) }}</strong>
+                      <small
+                        v-if="level.club?.description"
+                        class="b-dashboard-customers-detail__description"
+                        :title="level.club.description"
+                        >{{ level.club.description }}</small
+                      >
+                      <small
+                        v-else-if="!level.club"
+                        class="b-dashboard-customers-detail__description"
+                        >{{ $t("global.inactive") }}</small
+                      >
+                    </span>
+                  </span>
+                </th>
+                <template v-if="level.club">
+                  <td>{{ numeralFormat(level.club.count, "0,0") }}</td>
+                  <td>{{ level.club.percent }}%</td>
+                  <td>
+                    <u-price
+                      :amount="level.club.monthly"
+                      :currency="level.club.currency"
+                    />
+                  </td>
+                  <td>
+                    <u-price
+                      :amount="level.club.annually"
+                      :currency="level.club.currency"
+                    />
+                  </td>
+                  <td>
+                    <u-price
+                      v-if="level.club.limit"
+                      :amount="level.club.limit"
+                      :currency="level.club.currency"
+                    />
+                    <span v-else>{{ $t("global.commons.unlimited") }}</span>
+                  </td>
+                </template>
+                <td
+                  v-else
+                  colspan="5"
+                  class="b-dashboard-customers-detail__muted"
+                >
+                  —
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   </div>
@@ -737,12 +767,23 @@ import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 import UpDownIcon from "../../../../ui/icon/UpDownIcon.vue";
 import { Club } from "@selldone/core-js";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import UChartDonutLeader from "../../../../ui/chart/donut-leader/UChartDonutLeader.vue";
+
+// Each club level in its metal; a level keeps its color in every shop.
+const CLUB_COLORS = {
+  BRONZE: "#b8743c",
+  SILVER: "#8f99a3",
+  GOLD: "#d6a514",
+  PLATINUM: "#5f7f99",
+  DIAMOND: "#2fa8d5",
+};
 
 export default {
   name: "BDashboardShopCustomers",
   mixins: [TemplateMixin],
   components: {
     UpDownIcon,
+    UChartDonutLeader,
     SWidgetBox,
   },
   props: {
@@ -794,24 +835,22 @@ export default {
           redrawOnParentResize: true,
           redrawOnWindowResize: true,
         },
-        yaxis: [{ ...options.yaxis[index], title: { text: undefined } }],
+        // Each report plot stands alone, so its axis sits at the start like the other charts.
+        yaxis: [
+          {
+            ...options.yaxis[index],
+            opposite: false,
+            title: { text: undefined },
+          },
+        ],
         xaxis: {
           ...options.xaxis,
           labels: { ...options.xaxis.labels, trim: false, rotate: 0 },
         },
         grid: {
           ...options.grid,
-          padding: { top: 52, right: 24, bottom: 10, left: 24 },
+          padding: { top: 14, right: 24, bottom: 10, left: 24 },
         },
-        responsive: [
-          {
-            breakpoint: 600,
-            options: {
-              chart: { height: 340 },
-              grid: { padding: { top: 104, right: 24, bottom: 10, left: 24 } },
-            },
-          },
-        ],
         legend: { ...options.legend, show: false },
         tooltip: {
           ...options.tooltip,
@@ -905,13 +944,14 @@ export default {
 
           stacked: false,
 
+          // Modern charts keep no zoom/pan/download toolbar; the footer exports the data.
           zoom: {
-            enabled: true,
+            enabled: !this.modern,
           },
 
           // 🞇 Toolbar (for line)
           toolbar: {
-            show: true,
+            show: !this.modern,
             tools: {
               download: true,
               selection: true,
@@ -1118,6 +1158,18 @@ export default {
         club: this.clubs?.find((club) => club.level === level.code),
       }));
     },
+    // Members by level, for the levels that have any.
+    club_slices() {
+      return this.levels
+        .filter((level) => Number(level.club?.count) > 0)
+        .map((level) => ({
+          key: level.code,
+          label: this.$t(level.name),
+          value: Number(level.club.count),
+          color: CLUB_COLORS[level.code] || "#a3a3a3",
+          image: level.icon,
+        }));
+    },
   },
 
   watch: {
@@ -1293,6 +1345,9 @@ export default {
     width: 100%;
     border-collapse: collapse;
   }
+  .b-dashboard-customers-detail__clubs {
+    margin-block-end: 4px;
+  }
   .b-dashboard-customers-detail__club-table th {
     text-align: start;
     padding: 0 10px 10px !important;
@@ -1408,8 +1463,7 @@ export default {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     margin: 0 0 16px;
   }
-  &__stats dt,
-  &__benefits dt {
+  &__stats dt {
     font-size: 12px;
     color: var(--sd-modern-muted);
   }
@@ -1421,50 +1475,85 @@ export default {
   }
   &__clubs {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 20px;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 16px 28px;
   }
-  &__club {
+  &__clubs.-with-share {
+    grid-template-columns: minmax(240px, 0.8fr) minmax(0, 2fr);
+  }
+  &__club-share {
+    max-width: 360px;
+    margin-inline: auto;
+  }
+  &__club-scroll {
     min-width: 0;
+    overflow-x: auto;
   }
-  &__club h3 {
-    font: inherit;
-    font-size: 14px;
-    font-weight: 500;
-  }
-  &__benefits {
-    margin-block: 14px 8px;
-  }
-  &__benefits > div {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    column-gap: 8px;
-    padding-block: 4px;
-  }
-  &__benefits dd {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 400;
+  &__club-list {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    font-size: 13px;
     font-variant-numeric: tabular-nums;
-  }
-  &__benefits :deep(.u--price) {
-    font-weight: 400;
-  }
-  &__description {
-    font-size: 12px;
-    color: var(--sd-modern-muted);
-    overflow-wrap: anywhere;
-  }
-  @media (max-width: 1100px) {
-    &__clubs {
-      grid-template-columns: repeat(3, minmax(150px, 1fr));
+
+    th,
+    td {
+      padding: 7px 10px;
+      text-align: end;
+      white-space: nowrap;
+    }
+    thead th {
+      padding-block: 0 8px;
+    }
+    tbody > tr > * {
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+    th:first-child {
+      text-align: start;
+      white-space: normal;
+    }
+    tbody th {
+      font-weight: 400;
+    }
+    :deep(.u--price) {
+      font-weight: 400;
     }
   }
-  @media (max-width: 700px) {
-    &__clubs {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+  &__club-identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+
+    img {
+      flex-shrink: 0;
+    }
+    > span {
+      display: grid;
+      min-width: 0;
+    }
+    strong {
+      font-weight: 500;
+    }
+  }
+  &__muted {
+    color: var(--sd-modern-muted);
+  }
+  // One line under the level name; the full text stays in its title.
+  &__description {
+    display: -webkit-box;
+    overflow: hidden;
+    max-width: 260px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  @media (max-width: 900px) {
+    &__clubs.-with-share {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
   @media (max-width: 420px) {

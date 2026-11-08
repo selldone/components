@@ -73,84 +73,159 @@
           :hover-opacity-effect="!modern"
         />
       </div>
+      <!-- Day details live in the chart's hover; below it, what the period says about each channel. -->
       <section
         v-if="modern && social_keys?.length && timeSeries.raw_data?.length"
-        class="b-dashboard-channels__day-detail"
+        class="b-dashboard-channels__insights"
       >
-        <v-slider
-          v-if="timeSeries.raw_data.length > 1"
-          :model-value="history_day_index"
-          :max="timeSeries.raw_data.length - 1"
-          min="0"
-          step="1"
-          color="on-surface"
-          density="compact"
-          hide-details
-          :aria-label="$t('admin_shop.dashboard.modern.channel_history_day')"
-          @update:model-value="history_day = $event"
-        />
-        <div class="b-dashboard-channels__day-heading">
-          <span
-            ><v-icon icon="calendar_today" size="16" aria-hidden="true" />{{
-              getLocalDateString(
-                timeSeries.raw_data[history_day_index].created_at,
-              )
-            }}</span
-          >
-          <span
-            >{{ numeralFormat(history_day_total, "0,0") }}
-            {{ $t("global.commons.sessions") }}</span
-          >
-        </div>
-        <v-table
-          density="compact"
-          class="sd-modern-data-table b-dashboard-channels__day-table"
-        >
-          <thead>
-            <tr>
-              <th>{{ $t("global.commons.acquisition_channel") }}</th>
-              <th class="text-end">{{ $t("global.commons.sessions") }}</th>
-              <th class="text-end">
-                {{ $t("admin_shop.dashboard.modern.session_share") }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(key, i) in social_keys" :key="key">
-              <td>
+        <dl class="sd-modern-stat-grid b-dashboard-channels__kpis">
+          <div>
+            <dt class="sd-modern-label">
+              {{ $t("admin_shop.dashboard.modern.channel_insights_sessions") }}
+            </dt>
+            <dd class="b-dashboard-channels__kpi-value">
+              {{ numeralFormat(channel_total, "0,0.[0]a") }}
+            </dd>
+            <dd class="b-dashboard-channels__kpi-note">
+              <template v-if="total_comparison.available">
+                <up-down-icon :value="total_comparison.value ?? 1" small />
+                <span>{{ comparisonText(total_comparison) }}</span>
+              </template>
+            </dd>
+          </div>
+          <div v-if="top_channel">
+            <dt class="sd-modern-label">
+              {{ $t("admin_shop.dashboard.modern.channel_insights_top") }}
+            </dt>
+            <dd
+              class="b-dashboard-channels__kpi-value b-dashboard-channels__source"
+            >
+              <img :src="top_channel.image" width="20" height="20" alt="" />{{
+                top_channel.label
+              }}
+            </dd>
+            <dd class="b-dashboard-channels__kpi-note">
+              {{ percent(top_channel.value / channel_total) }} ·
+              {{ numeralFormat(top_channel.value, "0,0.[0]a") }}
+            </dd>
+          </div>
+          <div>
+            <dt class="sd-modern-label">
+              {{ $t("admin_shop.dashboard.modern.channel_insights_rising") }}
+            </dt>
+            <template v-if="rising_channel">
+              <dd
+                class="b-dashboard-channels__kpi-value b-dashboard-channels__source"
+              >
+                <img
+                  :src="rising_channel.image"
+                  width="20"
+                  height="20"
+                  alt=""
+                />{{ rising_channel.label }}
+              </dd>
+              <dd class="b-dashboard-channels__kpi-note">
+                <up-down-icon :value="1" small />
+                <span>{{ comparisonText(rising_channel.comparison) }}</span>
+              </dd>
+            </template>
+            <dd v-else class="b-dashboard-channels__kpi-note">
+              {{ $t("admin_shop.dashboard.modern.channel_insights_none") }}
+            </dd>
+          </div>
+          <div v-if="peak_day">
+            <dt class="sd-modern-label">
+              {{ $t("admin_shop.dashboard.modern.channel_insights_peak") }}
+            </dt>
+            <dd class="b-dashboard-channels__kpi-value">
+              {{ getLocalTimeString(peak_day.date, false, true) }}
+            </dd>
+            <dd class="b-dashboard-channels__kpi-note">
+              {{ numeralFormat(peak_day.total, "0,0") }}
+              {{ $t("global.commons.sessions") }}
+            </dd>
+          </div>
+        </dl>
+        <div class="b-dashboard-channels__insight-grid">
+          <section>
+            <header class="b-dashboard-channels__insight-head">
+              <h3 class="sd-modern-eyebrow">
+                {{ $t("admin_shop.dashboard.modern.channel_insights_share") }}
+              </h3>
+            </header>
+            <u-chart-donut-leader
+              :slices="share_slices"
+              :unit="$t('global.commons.sessions')"
+              class="b-dashboard-channels__donut"
+            />
+            <ul class="b-dashboard-channels__shares">
+              <li v-for="slice in share_slices" :key="slice.key">
+                <span
+                  class="b-dashboard-channels__swatch"
+                  :style="{ background: slice.color }"
+                  aria-hidden="true"
+                />
                 <span class="b-dashboard-channels__source"
                   ><img
-                    :src="subLabelImages[i]"
-                    width="18"
-                    height="18"
+                    v-if="slice.image"
+                    :src="slice.image"
+                    width="16"
+                    height="16"
                     alt=""
-                  />{{ subLabels[i] }}</span
+                  />{{ slice.label }}</span
                 >
-              </td>
-              <td class="text-end">
-                {{ numeralFormat(history_day_values[i], "0,0") }}
-              </td>
-              <td class="text-end">
-                {{
-                  (history_day_total
-                    ? (100 * history_day_values[i]) / history_day_total
-                    : 0
-                  ).toFixed(1)
-                }}%
-              </td>
-            </tr>
-          </tbody>
-        </v-table>
+                <span class="b-dashboard-channels__muted">{{
+                  numeralFormat(slice.value, "0,0.[0]a")
+                }}</span>
+                <span>{{ percent(slice.share) }}</span>
+                <span
+                  v-if="
+                    slice.comparison?.available &&
+                    slice.comparison.value !== null
+                  "
+                  class="b-dashboard-channels__change"
+                  :title="comparisonText(slice.comparison)"
+                  ><up-down-icon :value="slice.comparison.value" small />{{
+                    numeralFormat(Math.abs(slice.comparison.value), "0.[0]")
+                  }}%</span
+                >
+                <span v-else class="b-dashboard-channels__muted">—</span>
+              </li>
+            </ul>
+          </section>
+          <section class="sd-modern-chart-colors">
+            <header class="b-dashboard-channels__insight-head">
+              <h3 class="sd-modern-eyebrow">
+                {{ $t("admin_shop.dashboard.modern.channel_insights_daily") }}
+              </h3>
+              <span class="b-dashboard-channels__key" aria-hidden="true"
+                ><i class="-solid" />{{ $t("global.commons.sessions")
+                }}<i class="-dashed" />{{
+                  $t("admin_shop.dashboard.modern.channel_insights_average")
+                }}</span
+              >
+            </header>
+            <apexchart
+              :key="chart_theme_key"
+              :options="daily_options"
+              :series="daily_series"
+              :aria-label="
+                $t('admin_shop.dashboard.modern.channel_insights_daily')
+              "
+              height="250"
+              type="line"
+              width="100%"
+            />
+          </section>
+        </div>
       </section>
-      <div
+      <u-chart-placeholder
         v-else-if="modern"
+        kind="stream"
+        :text="$t('admin_shop.dashboard.modern.channel_history_empty')"
+        :min-height="height"
         class="b-dashboard-channels__empty"
-        :style="{ minHeight: height + 'px' }"
-        role="status"
-      >
-        <span class="b-dashboard-channels__empty-line" aria-hidden="true" />
-        <p>{{ $t("admin_shop.dashboard.modern.channel_history_empty") }}</p>
-      </div>
+      />
     </component>
   </div>
 </template>
@@ -164,12 +239,22 @@ import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import directIcon from "../../../../assets/icons/direct-enter.svg";
 import defaultSourceIcon from "../../../../assets/trademark/default.svg";
+import UpDownIcon from "../../../../ui/icon/UpDownIcon.vue";
+import UChartDonutLeader from "../../../../ui/chart/donut-leader/UChartDonutLeader.vue";
+import UChartPlaceholder from "../../../../ui/chart/placeholder/UChartPlaceholder.vue";
+import { foldSlices } from "../../../../ui/chart/donut-leader/donutSlices.ts";
+import { getPeriodComparison } from "../performance/periodComparison.ts";
+import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
+import numeral from "numeral";
 
 export default {
   name: "BDashboardShopChannels",
   mixins: [DateMixin, CurrencyMixin],
   components: {
     UChartFunnel,
+    UChartDonutLeader,
+    UChartPlaceholder,
+    UpDownIcon,
     SWidgetBox,
   },
   props: {
@@ -185,36 +270,164 @@ export default {
     },
   },
 
-  data() {
-    return { history_day: null };
-  },
-
-  created() {},
-
   mounted() {
-    this.revealHistoryDay();
+    this.revealLatestDay();
   },
 
   watch: {
-    // New data, a size remount (chart key), the slider and a direction flip
-    // (resets the scroll) can each move the day out of view.
-    values: { handler: "revealHistoryDay", flush: "post" },
-    height: { handler: "revealHistoryDay", flush: "post" },
-    history_day_index: { handler: "revealHistoryDay", flush: "post" },
-    "$vuetify.locale.isRtl": { handler: "revealHistoryDay", flush: "post" },
+    // New data, a size remount (chart key) and a direction flip (resets the scroll) can each
+    // move the latest day out of view.
+    values: { handler: "revealLatestDay", flush: "post" },
+    height: { handler: "revealLatestDay", flush: "post" },
+    "$vuetify.locale.isRtl": { handler: "revealLatestDay", flush: "post" },
   },
 
   computed: {
-    history_day_index() {
-      const last = Math.max(0, (this.timeSeries.raw_data?.length || 1) - 1);
-      return this.history_day == null ? last : Math.min(this.history_day, last);
+    // ━━━━━━━━━━ Insights: the period by channel ━━━━━━━━━━
+    channels() {
+      return this.social_keys.map((key, index) => ({
+        key,
+        label: this.subLabels[index],
+        image: this.subLabelImages[index],
+        // The same color as the channel's band in the chart above.
+        color: this.colors[index % this.colors.length][0],
+        value: this.values.reduce((sum, day) => sum + (day[index] || 0), 0),
+        comparison: getPeriodComparison(this.timeSeries, (row) =>
+          Number(row.social?.[key] || 0),
+        ),
+      }));
     },
-    history_day_values() {
-      return this.values[this.history_day_index] || [];
+    channel_total() {
+      return this.channels.reduce((sum, channel) => sum + channel.value, 0);
     },
-    history_day_total() {
-      return this.history_day_values.reduce((sum, value) => sum + value, 0);
+    total_comparison() {
+      return getPeriodComparison(this.timeSeries, (row) =>
+        this.social_keys.reduce(
+          (sum, key) => sum + Number(row.social?.[key] || 0),
+          0,
+        ),
+      );
     },
+    top_channel() {
+      const top = [...this.channels].sort((a, b) => b.value - a.value)[0];
+      return top?.value > 0 ? top : null;
+    },
+    // The largest recorded rise among channels that matter (at least 2% of the sessions).
+    rising_channel() {
+      return (
+        this.channels
+          .filter(
+            (channel) =>
+              channel.comparison.available &&
+              channel.comparison.value > 0 &&
+              channel.value >= 0.02 * this.channel_total,
+          )
+          .sort((a, b) => b.comparison.value - a.comparison.value)[0] || null
+      );
+    },
+    daily_totals() {
+      return (this.timeSeries.raw_data || []).map((row, index) => ({
+        date: row.created_at,
+        total: (this.values[index] || []).reduce(
+          (sum, value) => sum + value,
+          0,
+        ),
+      }));
+    },
+    peak_day() {
+      const peak = [...this.daily_totals].sort((a, b) => b.total - a.total)[0];
+      return peak?.total > 0 ? peak : null;
+    },
+    share_slices() {
+      return foldSlices(this.channels, (count) =>
+        this.$t("admin_shop.dashboard.modern.channel_insights_more", { count }),
+      );
+    },
+    daily_series() {
+      const points = this.daily_totals.map((day) => [
+        DateConverter.convertToLocalTime(day.date)?.getTime(),
+        day.total,
+      ]);
+      // Trailing average of up to seven recorded days, from the seventh day on.
+      const average = points.map(([time], index) => {
+        if (index < 6) return [time, null];
+        const week = points.slice(index - 6, index + 1);
+        return [
+          time,
+          Math.round(week.reduce((sum, [, value]) => sum + value, 0) / 7),
+        ];
+      });
+      return [
+        {
+          name: this.$t("global.commons.sessions"),
+          type: "area",
+          data: points,
+        },
+        {
+          name: this.$t("admin_shop.dashboard.modern.channel_insights_average"),
+          type: "line",
+          data: average,
+        },
+      ];
+    },
+    chart_theme_key() {
+      return this.$vuetify.theme.name + "-" + this.$i18n.locale;
+    },
+    daily_options() {
+      const colors = this.$vuetify.theme.current.colors;
+      const muted = this.$vuetify.theme.current.dark ? "#a6a9b2" : "#6b6f78";
+      return {
+        chart: {
+          type: "line",
+          background: "transparent",
+          fontFamily: "inherit",
+          toolbar: { show: false },
+          zoom: { enabled: false },
+          // No entry tween: Apex writes NaN paths when it animates series with gaps.
+          animations: { enabled: false },
+          parentHeightOffset: 0,
+        },
+        theme: { mode: this.$vuetify.theme.current.dark ? "dark" : "light" },
+        colors: [colors.primary, muted],
+        stroke: { curve: "smooth", width: [2, 2], dashArray: [0, 5] },
+        fill: {
+          type: ["gradient", "solid"],
+          gradient: { opacityFrom: 0.28, opacityTo: 0.02, stops: [0, 100] },
+        },
+        dataLabels: { enabled: false },
+        legend: { show: false },
+        markers: { size: 0, hover: { size: 4 } },
+        grid: {
+          borderColor: "rgba(127, 127, 127, 0.18)",
+          strokeDashArray: 4,
+          padding: { left: 4, right: 8 },
+        },
+        xaxis: {
+          type: "datetime",
+          labels: {
+            datetimeUTC: false,
+            style: { colors: muted, fontSize: "11px" },
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+        },
+        yaxis: {
+          labels: {
+            style: { colors: muted, fontSize: "11px" },
+            formatter: (value) => numeral(value).format("0.[0]a"),
+          },
+        },
+        tooltip: {
+          shared: true,
+          x: { formatter: (value) => this.getLocalDateString(new Date(value)) },
+          y: {
+            formatter: (value) =>
+              value == null ? "—" : numeral(value).format("0,0"),
+          },
+        },
+      };
+    },
+    // ━━━━━━━━━━ Chart ━━━━━━━━━━
     socials() {
       return this.timeSeries.socialTotalKeys();
     },
@@ -287,13 +500,27 @@ export default {
     },
   },
   methods: {
-    // Keep the selected day (latest by default) visible in the scrolling chart.
-    revealHistoryDay() {
+    percent(fraction) {
+      return `${numeral(100 * (fraction || 0)).format("0.[0]")}%`;
+    },
+    comparisonText(comparison) {
+      const change = comparison.new_activity
+        ? this.$t("admin_shop.dashboard.modern.new_activity")
+        : `${numeral(Math.abs(comparison.value ?? 0)).format("0.[0]")}%`;
+      return `${change} ${this.$t(
+        comparison.days === 1
+          ? "admin_shop.dashboard.modern.comparison_previous_day"
+          : "admin_shop.dashboard.modern.comparison_previous_days",
+        { days: comparison.days },
+      )}`;
+    },
+    // Keep the latest day visible in the scrolling chart.
+    revealLatestDay() {
       const container = this.$refs.chart?.querySelector(
         ".u--chart-funnel > .--container",
       );
       const days = container?.querySelectorAll(".--segment-container");
-      const day = days?.[this.history_day_index];
+      const day = days?.[days.length - 1];
       if (!day) return;
       const view = container.getBoundingClientRect();
       const rect = day.getBoundingClientRect();
@@ -316,70 +543,154 @@ export default {
     font-weight: 500;
   }
 
-  .b-dashboard-channels__day-detail {
-    margin-block-start: 12px;
-    padding-block-start: 12px;
+  // Insights under the chart: four figures, then shares beside the daily trend.
+  .b-dashboard-channels__insights {
+    margin-block-start: 16px;
+    padding-block-start: 20px;
     border-block-start: 1px solid var(--sd-modern-border);
   }
 
-  .b-dashboard-channels__day-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px 16px;
-    margin-block: 8px 12px;
-    color: var(--sd-modern-muted);
-    font-size: 12px;
-    font-weight: 400;
+  .b-dashboard-channels__kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0 0 24px;
+    padding: 0;
+    border: 0;
+
+    dd {
+      margin: 0;
+    }
   }
 
-  .b-dashboard-channels__day-heading > span:first-child,
+  .b-dashboard-channels__kpi-value {
+    margin-block: 6px 4px !important;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.3;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .b-dashboard-channels__kpi-value.b-dashboard-channels__source {
+    font-size: 18px;
+  }
+
+  .b-dashboard-channels__kpi-note {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 18px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+
   .b-dashboard-channels__source {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
   }
 
   .b-dashboard-channels__source > img {
-    flex: 0 0 18px;
+    flex: 0 0 auto;
     object-fit: contain;
   }
 
-  .b-dashboard-channels__day-table :deep(th),
-  .b-dashboard-channels__day-table :deep(td) {
-    height: 44px;
-    padding-inline: 8px;
+  .b-dashboard-channels__insight-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 28px;
   }
 
-  .b-dashboard-channels__day-table :deep(td) {
-    font-size: 12px;
-    font-weight: 400;
+  .b-dashboard-channels__insight-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-block-end: 8px;
+  }
+
+  .b-dashboard-channels__key {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+
+    i {
+      width: 16px;
+      margin-inline-start: 8px;
+      border-block-start: 2px solid rgb(var(--v-theme-primary));
+    }
+
+    i.-dashed {
+      border-block-start: 2px dashed var(--sd-modern-muted);
+    }
+  }
+
+  .b-dashboard-channels__donut {
+    max-width: 380px;
+    margin: 0 auto 8px;
+  }
+
+  .b-dashboard-channels__shares {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
     font-variant-numeric: tabular-nums;
+
+    li {
+      display: grid;
+      grid-template-columns: 8px minmax(0, 1fr) auto 44px 56px;
+      align-items: center;
+      gap: 8px;
+      min-height: 30px;
+      border-block-start: 1px solid var(--sd-modern-border);
+
+      > :nth-child(n + 3) {
+        text-align: end;
+      }
+    }
+  }
+
+  .b-dashboard-channels__swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .b-dashboard-channels__muted {
+    color: var(--sd-modern-muted);
+  }
+
+  .b-dashboard-channels__change {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+    font-size: 12px;
+  }
+
+  // Smart invert: the key's sample line keeps the chart's own colors.
+  .smart-invert & .b-dashboard-channels__key i {
+    filter: invert(1);
+  }
+
+  @media (max-width: 960px) {
+    .b-dashboard-channels__kpis {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .b-dashboard-channels__insight-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   .b-dashboard-channels__chart {
     min-width: 0;
     margin-inline: -8px;
-  }
-
-  .b-dashboard-channels__empty {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 16px;
-    padding: 24px 8px;
-    color: var(--sd-modern-muted);
-    font-size: 12px;
-    text-align: center;
-
-    p {
-      margin: 0;
-    }
-  }
-
-  .b-dashboard-channels__empty-line {
-    border-block-start: 1px solid var(--sd-modern-border);
   }
 
   :deep(.u--chart-funnel) {
