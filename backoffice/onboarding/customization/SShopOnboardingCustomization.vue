@@ -23,244 +23,257 @@
       <p class="s--shop-onboarding-customization__intro">
         {{ $t("onboarding.modern.customize.intro") }}
       </p>
-      <article
-        class="s--shop-onboarding-customization__level"
-        aria-labelledby="onboarding-customize-pages"
-      >
-        <header class="s--shop-onboarding-customization__heading">
-          <span
-            class="s--shop-onboarding-customization__number s--shop-onboarding-customization__number--primary"
-            aria-hidden="true"
-            >{{ $t("onboarding.modern.customize.level_1") }}</span
-          >
-          <div>
-            <h4
-              id="onboarding-customize-pages"
-              class="s--shop-onboarding-customization__level-title"
+      <!-- Order: custom layout (with the official layouts), landing pages, own frontend. -->
+      <template v-for="(path, index) in paths" :key="path.id">
+        <article
+          v-if="path.id === 'pages'"
+          class="s--shop-onboarding-customization__level"
+          aria-labelledby="onboarding-customize-pages"
+        >
+          <header class="s--shop-onboarding-customization__heading">
+            <span
+              class="s--shop-onboarding-customization__number"
+              aria-hidden="true"
+              >{{ $t(`onboarding.modern.customize.level_${index + 1}`) }}</span
             >
-              {{ $t("onboarding.modern.customize.pages.title") }}
-            </h4>
-            <p class="s--shop-onboarding-customization__meta">
-              <span
-                ><v-icon size="13">ads_click</v-icon
-                >{{ $t("onboarding.modern.customize.pages.human_ai") }}</span
+            <div>
+              <h4
+                id="onboarding-customize-pages"
+                class="s--shop-onboarding-customization__level-title"
               >
-              <span>{{
-                $t("onboarding.modern.customize.pages.visual_builder")
-              }}</span>
-            </p>
-          </div>
-          <l-templates-picker-dialog
-            :key="shop.id"
-            v-model="dialog_templates"
-            fullscreen
-            :selectable="false"
+                {{ $t("onboarding.modern.customize.pages.title") }}
+              </h4>
+              <p class="s--shop-onboarding-customization__meta">
+                <span
+                  ><v-icon size="13">ads_click</v-icon
+                  >{{ $t("onboarding.modern.customize.pages.human_ai") }}</span
+                >
+                <span>{{
+                  $t("onboarding.modern.customize.pages.visual_builder")
+                }}</span>
+              </p>
+            </div>
+            <l-templates-picker-dialog
+              :key="shop.id"
+              v-model="dialog_templates"
+              fullscreen
+              :selectable="false"
+            >
+              <template #activator="{ props }">
+                <v-btn
+                  v-bind="props"
+                  class="sd-modern-button sd-modern-button--inline"
+                  color="primary"
+                  variant="text"
+                >
+                  {{ $t("onboarding.modern.customize.templates_gallery") }}
+                  <v-icon end size="15" aria-hidden="true"
+                    >dashboard_customize</v-icon
+                  >
+                </v-btn>
+              </template>
+            </l-templates-picker-dialog>
+          </header>
+          <p class="s--shop-onboarding-customization__copy">
+            {{ $t("onboarding.modern.customize.pages.description") }}
+          </p>
+          <div
+            v-if="templates?.length"
+            class="s--shop-onboarding-customization__templates"
           >
-            <template #activator="{ props }">
+            <div
+              v-for="template in templates.slice(0, 2)"
+              :key="template.id"
+              class="s--shop-onboarding-customization__template"
+            >
+              <v-img
+                :src="getShopImagePath(template.image)"
+                width="28"
+                height="32"
+                cover
+                class="s--shop-onboarding-customization__thumbnail"
+                aria-hidden="true"
+              >
+                <template #placeholder
+                  ><v-icon size="22">layers</v-icon></template
+                >
+                <template #error><v-icon size="22">layers</v-icon></template>
+              </v-img>
+              <div class="s--shop-onboarding-customization__template-copy">
+                <h5 class="s--shop-onboarding-customization__template-name">
+                  {{ template.name }}
+                </h5>
+                <p>
+                  {{ $t("onboarding.modern.customize.template")
+                  }}<template v-if="template.premium">
+                    · {{ $t("onboarding.modern.customize.premium") }}</template
+                  >
+                </p>
+              </div>
               <v-btn
-                v-bind="props"
-                class="sd-modern-button sd-modern-button--inline"
+                v-if="template.preview"
+                :href="template.preview"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="sd-modern-button sd-modern-button--inline s--shop-onboarding-customization__preview"
                 color="primary"
                 variant="text"
               >
-                {{ $t("onboarding.modern.customize.templates_gallery") }}
-                <v-icon end size="15" aria-hidden="true"
-                  >dashboard_customize</v-icon
-                >
+                {{ $t("global.commons.preview") }}
+                <v-icon end size="14">north_east</v-icon>
               </v-btn>
-            </template>
-          </l-templates-picker-dialog>
-        </header>
-        <p class="s--shop-onboarding-customization__copy">
-          {{ $t("onboarding.modern.customize.pages.description") }}
-        </p>
-        <div
-          v-if="templates?.length"
-          class="s--shop-onboarding-customization__templates"
-        >
+            </div>
+          </div>
           <div
-            v-for="template in templates.slice(0, 2)"
-            :key="template.id"
-            class="s--shop-onboarding-customization__template"
+            v-if="busy_fetch"
+            class="s--shop-onboarding-customization__loading"
+            role="status"
+            :aria-label="$t('global.commons.loading')"
           >
-            <v-img
-              :src="getShopImagePath(template.image)"
-              width="28"
-              height="32"
-              cover
-              class="s--shop-onboarding-customization__thumbnail"
-              aria-hidden="true"
-            >
-              <template #placeholder
-                ><v-icon size="22">layers</v-icon></template
-              >
-              <template #error><v-icon size="22">layers</v-icon></template>
-            </v-img>
-            <div class="s--shop-onboarding-customization__template-copy">
-              <h5 class="s--shop-onboarding-customization__template-name">
-                {{ template.name }}
+            <v-progress-circular
+              color="primary"
+              indeterminate
+              size="24"
+              width="2"
+            />
+          </div>
+          <div class="s--shop-onboarding-customization__brand">
+            <div>
+              <h5 class="s--shop-onboarding-customization__label">
+                {{ $t("onboarding.modern.customize.theme") }}
               </h5>
-              <p>
-                {{ $t("onboarding.modern.customize.template")
-                }}<template v-if="template.premium">
-                  · {{ $t("onboarding.modern.customize.premium") }}</template
-                >
-              </p>
+              <p>{{ $t("onboarding.modern.customize.theme_description") }}</p>
             </div>
             <v-btn
-              v-if="template.preview"
-              :href="template.preview"
+              :to="{ name: 'BPageShopSettingTheme' }"
               target="_blank"
               rel="noopener noreferrer"
-              class="sd-modern-button sd-modern-button--inline s--shop-onboarding-customization__preview"
+              class="sd-modern-button sd-modern-button--inline"
               color="primary"
               variant="text"
             >
-              {{ $t("global.commons.preview") }}
-              <v-icon end size="14">north_east</v-icon>
+              <span
+                class="s--shop-onboarding-customization__palette"
+                aria-hidden="true"
+              >
+                <u-color-circle
+                  :color="color_light"
+                  :size="12"
+                  border-less
+                /><u-color-circle
+                  :color="color_dark"
+                  :size="12"
+                  border-less
+                /><u-color-circle
+                  :color="color_deep_dark"
+                  :size="12"
+                  border-less
+                />
+              </span>
+              {{ $t("onboarding.modern.customize.theme_action") }}
+              <v-icon end size="15">north_east</v-icon>
             </v-btn>
           </div>
-        </div>
-        <div
-          v-if="busy_fetch"
-          class="s--shop-onboarding-customization__loading"
-          role="status"
-          :aria-label="$t('global.commons.loading')"
-        >
-          <v-progress-circular
-            color="primary"
-            indeterminate
-            size="24"
-            width="2"
-          />
-        </div>
-        <div class="s--shop-onboarding-customization__brand">
-          <div>
-            <h5 class="s--shop-onboarding-customization__label">
-              {{ $t("onboarding.modern.customize.theme") }}
-            </h5>
-            <p>{{ $t("onboarding.modern.customize.theme_description") }}</p>
+          <div class="s--shop-onboarding-customization__tools">
+            <v-btn
+              :to="{ name: 'BPageLandingEditor', params: { page_id: 'new' } }"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="sd-modern-button sd-modern-button--inline"
+              color="primary"
+              variant="text"
+            >
+              <v-icon start size="15">web</v-icon>
+              {{ $t("onboarding.modern.customize.pages.open_builder") }}
+              <v-icon end size="15">north_east</v-icon>
+            </v-btn>
           </div>
-          <v-btn
-            :to="{ name: 'BPageShopSettingTheme' }"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="sd-modern-button sd-modern-button--inline"
-            color="primary"
-            variant="text"
-          >
+        </article>
+        <article
+          v-else
+          class="s--shop-onboarding-customization__level"
+          :aria-labelledby="`onboarding-customize-${path.id}`"
+        >
+          <header class="s--shop-onboarding-customization__heading">
             <span
-              class="s--shop-onboarding-customization__palette"
+              class="s--shop-onboarding-customization__number"
+              :class="{
+                's--shop-onboarding-customization__number--primary': index === 0,
+              }"
               aria-hidden="true"
+              >{{ $t(`onboarding.modern.customize.level_${index + 1}`) }}</span
             >
-              <u-color-circle
-                :color="color_light"
-                :size="12"
-                border-less
-              /><u-color-circle
-                :color="color_dark"
-                :size="12"
-                border-less
-              /><u-color-circle
-                :color="color_deep_dark"
-                :size="12"
-                border-less
-              />
-            </span>
-            {{ $t("onboarding.modern.customize.theme_action") }}
-            <v-icon end size="15">north_east</v-icon>
-          </v-btn>
-        </div>
-        <div class="s--shop-onboarding-customization__tools">
-          <v-btn
-            :to="{ name: 'BPageLandingEditor', params: { page_id: 'new' } }"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="sd-modern-button sd-modern-button--inline"
-            color="primary"
-            variant="text"
-          >
-            <v-icon start size="15">web</v-icon>
-            {{ $t("onboarding.modern.customize.pages.open_builder") }}
-            <v-icon end size="15">north_east</v-icon>
-          </v-btn>
-        </div>
-      </article>
-      <b-official-layout-showcase :shop="shop" class="s--shop-onboarding-customization__level" />
-      <article
-        v-for="path in advancedPaths"
-        :key="path.id"
-        class="s--shop-onboarding-customization__level"
-        :aria-labelledby="`onboarding-customize-${path.id}`"
-      >
-        <header class="s--shop-onboarding-customization__heading">
-          <span
-            class="s--shop-onboarding-customization__number"
-            aria-hidden="true"
-            >{{ $t(`onboarding.modern.customize.level_${path.number}`) }}</span
-          >
-          <div>
-            <h4
-              class="s--shop-onboarding-customization__level-title"
-              :id="`onboarding-customize-${path.id}`"
-            >
-              {{ $t(`onboarding.modern.customize.${path.id}.title`) }}
-            </h4>
-            <p class="s--shop-onboarding-customization__meta">
-              <span
-                ><v-icon size="13">auto_awesome</v-icon
-                >{{ $t("onboarding.modern.customize.build_ai") }}</span
+            <div>
+              <h4
+                class="s--shop-onboarding-customization__level-title"
+                :id="`onboarding-customize-${path.id}`"
               >
-              <span>{{ $t("onboarding.modern.customize.advanced") }}</span>
-            </p>
-          </div>
-          <v-btn
-            class="sd-modern-button s--shop-onboarding-customization__guide"
-            variant="outlined"
-            aria-haspopup="dialog"
-            @click="$emit('ai-build', path.id, $event)"
-          >
-            {{ $t(`onboarding.modern.customize.${path.id}.action`) }}
-            <v-icon
-              end
-              size="15"
-              class="s--shop-onboarding-customization__forward"
-              >arrow_forward</v-icon
+                {{ $t(`onboarding.modern.customize.${path.id}.title`) }}
+              </h4>
+              <p class="s--shop-onboarding-customization__meta">
+                <span
+                  ><v-icon size="13">auto_awesome</v-icon
+                  >{{ $t("onboarding.modern.customize.build_ai") }}</span
+                >
+                <span>{{
+                  $t(`onboarding.modern.customize.${path.id}.meta`)
+                }}</span>
+              </p>
+            </div>
+            <v-btn
+              class="sd-modern-button s--shop-onboarding-customization__guide"
+              variant="outlined"
+              aria-haspopup="dialog"
+              @click="$emit('ai-build', path.id, $event)"
             >
-          </v-btn>
-        </header>
-        <p class="s--shop-onboarding-customization__copy">
-          {{ $t(`onboarding.modern.customize.${path.id}.description`) }}
-        </p>
-        <div
-          v-if="path.id === 'custom'"
-          class="s--shop-onboarding-customization__tools"
-        >
-          <div class="s--shop-onboarding-customization__frameworks">
-            <span v-for="framework in frameworks" :key="framework.name">
+              {{ $t(`onboarding.modern.customize.${path.id}.action`) }}
               <v-icon
-                :icon="framework.icon"
-                size="17"
-                :class="`s--shop-onboarding-customization__${framework.name.toLowerCase()}`"
-              />
-              {{ framework.name }}
-            </span>
-            <span>{{ $t("onboarding.modern.customize.any_framework") }}</span>
-          </div>
-        </div>
-        <div class="s--shop-onboarding-customization__tools">
-          <a
-            :href="path.repository"
-            class="sd-modern-button sd-modern-button--inline s--shop-onboarding-customization__repository"
-            target="_blank"
-            rel="noopener noreferrer"
+                end
+                size="15"
+                class="s--shop-onboarding-customization__forward"
+                >arrow_forward</v-icon
+              >
+            </v-btn>
+          </header>
+          <p class="s--shop-onboarding-customization__copy">
+            {{ $t(`onboarding.modern.customize.${path.id}.description`) }}
+          </p>
+          <div
+            v-if="path.id === 'custom'"
+            class="s--shop-onboarding-customization__tools"
           >
-            <v-icon size="14">fa:fab fa-github</v-icon>
-            {{ $t(`onboarding.modern.customize.${path.id}.repository`) }}
-            <v-icon size="14">north_east</v-icon>
-          </a>
-        </div>
-      </article>
+            <div class="s--shop-onboarding-customization__frameworks">
+              <span v-for="framework in frameworks" :key="framework.name">
+                <v-icon
+                  :icon="framework.icon"
+                  size="17"
+                  :class="`s--shop-onboarding-customization__${framework.name.toLowerCase()}`"
+                />
+                {{ framework.name }}
+              </span>
+              <span>{{ $t("onboarding.modern.customize.any_framework") }}</span>
+            </div>
+          </div>
+          <div class="s--shop-onboarding-customization__tools">
+            <a
+              :href="path.repository"
+              class="sd-modern-button sd-modern-button--inline s--shop-onboarding-customization__repository"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <v-icon size="14">fa:fab fa-github</v-icon>
+              {{ $t(`onboarding.modern.customize.${path.id}.repository`) }}
+              <v-icon size="14">north_east</v-icon>
+            </a>
+          </div>
+        </article>
+        <!-- "Try a different storefront" belongs to option 1: official layouts before a custom one. -->
+        <b-official-layout-showcase
+          v-if="path.id === 'layout'"
+          :shop="shop"
+          class="s--shop-onboarding-customization__showcase"
+        />
+      </template>
       <footer class="s--shop-onboarding-customization__footer">
         <v-icon size="14">layers</v-icon
         ><span>{{ $t("onboarding.modern.customize.footer") }}</span>
@@ -418,15 +431,11 @@ export default {
 
     templates: null,
     busy_fetch: false,
-    advancedPaths: [
-      {
-        id: "layout",
-        number: 2,
-        repository: "https://github.com/selldone/storefront",
-      },
+    paths: [
+      { id: "layout", repository: "https://github.com/selldone/storefront" },
+      { id: "pages" },
       {
         id: "custom",
-        number: 3,
         repository:
           "https://github.com/pajuhaan/selldone-custom-storefront-backoffice-1",
       },
@@ -574,6 +583,10 @@ export default {
   &__level {
     padding-block: 21px;
     border-block-start: 1px solid var(--sd-modern-border);
+  }
+  &__showcase {
+    padding-block: 3px 21px;
+    margin-inline-start: 44px;
   }
   &__heading {
     display: grid;
@@ -765,7 +778,8 @@ export default {
     }
     &__tools,
     &__brand,
-    &__loading {
+    &__loading,
+    &__showcase {
       margin-inline-start: 38px;
     }
     &__brand {

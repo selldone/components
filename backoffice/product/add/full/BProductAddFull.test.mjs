@@ -58,6 +58,8 @@ vm.runInNewContext(compiled, {
           GetActiveTypes: (shop) => shop.types || Object.keys(productTypes),
         },
       };
+    if (name.includes("ProductThresholds"))
+      return { default: { PHYSICAL: { conditions: [{}] }, VIRTUAL: { conditions: [{}] }, FILE: { conditions: [{}] }, SERVICE: {}, SUBSCRIPTION: {} } };
     if (name.includes("TrackSeller")) return { TrackSeller: { onAddProduct() {} } };
     if (name.toLowerCase().includes("slugify")) return { Slugify: { apply: (value) => value } };
     if (name === "@selldone/core-js")
@@ -469,6 +471,27 @@ test("Guided sections keep the correct workflow for all five product types", () 
   assert.equal(legacy.tabs.filter(Boolean).some((tab) => tab.value === 1), false);
 });
 
+test("Edit shows the self-saving Sales locations and Urgency messages sections after Inventory, outside the save chain", () => {
+  const edit = fixture({ modern: false, modernGeneral: true, step: 14, visitedSteps: [14, 15] });
+  const order = Array.from(edit.flowTabs, (tab) => tab.value);
+  assert.deepEqual(order.slice(-3), [11, 14, 15], "Physical: Inventory, Sales locations, Urgency messages");
+  assert.equal(edit.flowTabs.find((tab) => tab.value === 14).icon, "MapPin");
+  assert.equal(edit.flowTabs.find((tab) => tab.value === 15).icon, "Flame");
+  assert.equal(edit.tabs_name.locations, 14);
+  assert.equal(edit.tabs_name.urgency, 15);
+  assert.equal(edit.isStepMounted(14), true);
+  assert.equal(edit.isStepMounted(15), true, "A visited Urgency messages tab keeps its draft mounted");
+  assert.equal(edit.canSelectStep(14), true, "The rail opens Sales locations directly");
+  assert.equal(edit.canSelectStep(15), true, "The rail opens Urgency messages directly");
+  const virtual = fixture({ modern: false, modernGeneral: true, type: "VIRTUAL" });
+  assert.deepEqual(Array.from(virtual.flowTabs, (tab) => tab.value).slice(-3), [11, 14, 15], "Virtual keeps the same tail");
+  const service = fixture({ modern: false, modernGeneral: true, type: "SERVICE" });
+  assert.equal(service.flowTabs.some((tab) => tab.value === 15), false, "No urgency messages for services");
+  for (const state of [fixture({ created: true }), fixture({ modern: false, modernGeneral: true, created: false })]) {
+    assert.equal(state.flowTabs.some((tab) => tab.value === 14 || tab.value === 15), false, "Guided creation and unsaved products have neither section");
+  }
+});
+
 test("Guided type selection waits for Continue, while legacy selection advances", () => {
   const guided = fixture({ created: false });
   guided.setType(productTypes.VIRTUAL);
@@ -727,7 +750,7 @@ test("Shipping shares its guarded dedicated save in Edit and Add and advances on
     await state.submitStep();
     assert.equal(saves, 2);
     state.nextStep(); // Native success emits next before its own finally releases busy.
-    assert.equal(state.step, 10);
+    assert.equal(state.step, 10, "Save & continue skips the self-saving Sales locations section");
     shipping.busy = false;
   }
 });

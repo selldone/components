@@ -26,6 +26,8 @@ The visible “Text version of the diagram” disclosure is opt-in through the r
 
 The optional runtime `railColumns` prop lets a linear workspace flow use more columns when its container has enough room. Domain Overview requests its current node count; measured narrow-width routing and the default article rail and branching layout remain unchanged. This is not a stored article field.
 
+The optional runtime `compact` prop is for dense product workspaces such as the product dashboard purchase flow. Tiles stack the icon over a two-line label with the step number in a corner, and the measured stage fits as many 84px tiles with 20px gaps as possible (`compactRailColumns`), capped by `railColumns`. When they don't all fit, the tiles spread evenly over the fewest rows. Below 480px the flow still stacks into one column, using shorter tiles and 24px gaps. Article callers never set it; it is not a stored field.
+
 Run the isolated authoring and API regression suites from the repository root:
 
 ```powershell

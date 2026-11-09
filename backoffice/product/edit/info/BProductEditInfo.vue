@@ -2040,6 +2040,12 @@ export default {
 
   mounted() {
     this.markSaved();
+    // Deep link (?section=profiles, e.g. the dashboard's "Included in the product" Edit): open Profiles in view.
+    const profiles = this.$refs.profiles_settings;
+    if (this.modern && this.$route?.query?.section === "profiles" && profiles) {
+      profiles.open = true;
+      this.$nextTick(() => profiles.scrollIntoView?.({ block: "start", behavior: "smooth" }));
+    }
   },
 
   methods: {

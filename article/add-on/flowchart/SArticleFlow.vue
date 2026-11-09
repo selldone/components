@@ -7,6 +7,7 @@
         :class="{
           'api-doc-content__flow--armed': block.animated && !played[blockIndex],
           'api-doc-content__flow--play': block.animated && played[blockIndex],
+          'api-doc-content__flow--compact': compact,
         }"
       >
         <slot v-if="$slots.caption" name="caption" />
@@ -21,7 +22,14 @@
         <div
           :ref="(el) => setStage(blockIndex, el)"
           class="api-doc-content__stage"
-          :class="`api-doc-content__stage--${layouts[blockIndex].kind}`"
+          :class="[
+            `api-doc-content__stage--${layouts[blockIndex].kind}`,
+            {
+              'api-doc-content__stage--compact': compact && !narrow[blockIndex],
+              'api-doc-content__stage--compact-column':
+                compact && narrow[blockIndex],
+            },
+          ]"
           :style="{
             '--doc-flow-columns': layouts[blockIndex].columns,
             '--doc-flow-rows': layouts[blockIndex].rows,
@@ -228,6 +236,7 @@ import {
   laneGutter,
   layoutFlow,
   narrowThreshold,
+  compactRailColumns,
   motionStep,
   type ApiDocFlowBlock,
   type ApiDocFlowBox,
@@ -262,6 +271,8 @@ export default defineComponent({
     showTextVersion: { type: Boolean, default: false },
     interactive: { type: Boolean, default: false },
     railColumns: { type: Number, default: 0 },
+    /** Runtime product rails: icon-over-label tiles, as many per row as the measured stage fits. */
+    compact: { type: Boolean, default: false },
     legendLabels: {
       type: Object as PropType<
         Partial<Record<ApiDocFlowTone | "data", string>>
@@ -282,6 +293,8 @@ export default defineComponent({
       stages: {} as Record<number, HTMLElement | null>,
       tiles: {} as Record<number, Record<string, HTMLElement | null>>,
       flips: {} as Record<number, number[]>,
+      /** Compact mode: rail columns chosen from the measured stage width. */
+      fits: {} as Record<number, number>,
       resize: null as ResizeObserver | null,
       resizeFrame: null as number | null,
       intersection: null as IntersectionObserver | null,
@@ -305,7 +318,7 @@ export default defineComponent({
           out[index] = layoutFlow(
             block,
             this.narrow[index] === true,
-            this.railColumns,
+            this.railColumnsFor(index),
           );
       });
       return out;
@@ -469,6 +482,9 @@ export default defineComponent({
         : 0.6;
     },
     /** Narrow columns reserve their bypass lanes at the inline end so a skip link never crosses a tile. */
+    railColumnsFor(index: number): number {
+      return (this.compact && this.fits[index]) || this.railColumns;
+    },
     stageGutter(index: number): number {
       const layout = this.layouts[index];
       return layout ? laneGutter(layout) : 0;
@@ -479,11 +495,30 @@ export default defineComponent({
         const stage = this.stages[index];
         if (!stage) return;
         const rect = stage.getBoundingClientRect();
+        // Compact rails fit their columns to the stage width; the stage width does not depend on them.
+        if (this.compact && rect.width > 0) {
+          const fit = compactRailColumns(
+            block.nodes.length,
+            rect.width,
+            this.railColumns,
+          );
+          if (fit !== this.fits[index]) {
+            this.fits[index] = fit;
+            this.$nextTick(() => this.measure());
+            return;
+          }
+        }
         // Stack in one column when the wide layout has no readable room per column (see narrowThreshold).
         const wasNarrow = this.narrow[index] === true;
         const narrow =
           rect.width > 0 &&
-          rect.width < narrowThreshold(block, wasNarrow, this.railColumns);
+          rect.width <
+            narrowThreshold(
+              block,
+              wasNarrow,
+              this.railColumnsFor(index),
+              this.compact,
+            );
         // A layout that keeps flipping (the container resizes with the column) stays as it is and is drawn.
         const now = Date.now();
         const recent = (this.flips[index] || []).filter((at) => now - at < 500);
@@ -612,6 +647,65 @@ export default defineComponent({
   }
   &__stage--layered &__tile {
     align-self: center;
+  }
+  // Compact runtime rails: icon over a two-line label, the step number in a corner, short gaps.
+  &__flow--compact {
+    padding: 16px 14px 14px;
+  }
+  &__stage--compact {
+    column-gap: 20px;
+    row-gap: calc(64px + var(--doc-flow-gap-extra, 0px));
+    margin-top: 0;
+  }
+  // Top-aligned, so icons and labels share one line across the row whatever the captions.
+  &__stage--compact &__tile {
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2px;
+    min-height: 88px;
+    padding: 16px 6px 10px;
+    text-align: center;
+  }
+  &__stage--compact &__tile-head {
+    flex-direction: column;
+    gap: 7px;
+    width: 100%;
+    strong {
+      flex: none;
+      display: -webkit-box;
+      width: 100%;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 16px;
+      white-space: normal;
+      overflow-wrap: break-word;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  }
+  &__stage--compact &__index {
+    position: absolute;
+    top: 5px;
+    inset-inline-start: 8px;
+  }
+  &__stage--compact &__tile-caption,
+  &__stage--compact &__outcome {
+    justify-content: center;
+    max-width: 100%;
+    text-align: center;
+  }
+  &__stage--compact &__tile-caption {
+    font-size: 11px;
+  }
+  // A compact flow stacked on a narrow screen: short tiles and gaps, so the steps stay one short list.
+  &__stage--compact-column {
+    row-gap: calc(24px + var(--doc-flow-gap-extra, 0px)) !important;
+    margin-top: 0;
+  }
+  &__stage--compact-column &__tile {
+    justify-content: center;
+    min-height: 0;
+    padding: 9px 12px;
   }
 
   &__wires {

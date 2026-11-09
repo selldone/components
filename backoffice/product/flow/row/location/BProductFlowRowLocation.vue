@@ -109,9 +109,8 @@
       </v-btn>
       <v-btn
         :to="{
-          name: IS_VENDOR_PANEL
-            ? 'Vendor_ProductInventoryPage'
-            : 'BPageProductInventory',
+          name: IS_VENDOR_PANEL ? 'Vendor_AddProduct' : 'BPageProductEdit',
+          hash: '#locations',
         }"
         class="tnt ma-1"
         :class="{ 'sd-modern-button sd-modern-button--small': modern }"

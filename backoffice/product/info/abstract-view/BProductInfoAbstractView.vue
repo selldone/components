@@ -55,12 +55,21 @@
         <span v-if="product.inputs?.length || product.outputs?.length" class="sd-modern-muted">{{ $t('product_admin.dashboard.info.user_data_form') }}</span>
       </div>
 
+      <!-- Where this product can be bought: its own rule, the store default or everywhere. -->
+      <div class="b-product-info-refined__locations">
+        <span class="b-product-info-refined__identity"><v-icon size="16" aria-hidden="true">mode_of_travel</v-icon>{{ $t('b_product_inventory.locations.title') }}</span>
+        <b-product-locations-summary :locations="product.locations" :countries="shop?.countries" />
+        <v-btn :to="{ name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/ ? 'Vendor_AddProduct' : 'BPageProductEdit', hash: '#locations' }" variant="text" color="primary" class="sd-modern-button sd-modern-button--small b-product-info-refined__row-edit" append-icon="arrow_forward">{{ $t('global.actions.edit') }}</v-btn>
+      </div>
+
       <div v-if="product.includes?.length" class="b-product-info-refined__included">
         <span>{{ $t('global.commons.included_in_the_product') }}</span>
         <v-avatar v-for="include in product.includes" :key="include.id" class="hover-scale" color="transparent" rounded size="32">
           <img :src="getShopImagePath(include.image)" :alt="include.title" />
           <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ include.title }}</v-tooltip>
         </v-avatar>
+        <!-- Included items are managed in the editor's General information ▸ Profiles section. -->
+        <v-btn :to="{ name: IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/ ? 'Vendor_AddProduct' : 'BPageProductEdit', hash: '#general', query: { section: 'profiles' } }" variant="text" color="primary" class="sd-modern-button sd-modern-button--small b-product-info-refined__row-edit" append-icon="arrow_forward">{{ $t('global.actions.edit') }}</v-btn>
       </div>
 
       <div v-if="product.reselling" class="sd-modern-notice b-product-info-refined__reselling">
@@ -803,6 +812,7 @@ import BProductTagsInput from "../../../product/tags/input/BProductTagsInput.vue
 import SFilesGroup from "../../../../ui/file/group/SFilesGroup.vue";
 
 import BProductBreadcrumbs from "../../../product/breadcrumbs/BProductBreadcrumbs.vue";
+import BProductLocationsSummary from "../../location/summary/BProductLocationsSummary.vue";
 import { ProductStatus } from "@selldone/core-js/enums/product/ProductStatus";
 import { ProductEmbedHelper } from "@selldone/core-js/helper/embed/ProductEmbedHelper";
 import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
@@ -821,6 +831,7 @@ export default {
     UChipDiscount,
     UAvatarFolder,
     BProductBreadcrumbs,
+    BProductLocationsSummary,
     SFilesGroup,
     BProductTagsInput,
     BNoteDialog,
@@ -1112,7 +1123,17 @@ export default {
     line-height: 19px;
   }
 
-  &__metadata, &__included { margin-block-start: 14px; }
+  &__metadata, &__included, &__locations { margin-block-start: 14px; }
+  &__locations {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    min-width: 0;
+    font-size: 12px;
+    line-height: 19px;
+  }
+  &__row-edit { margin-inline-start: auto; }
   :deep(.b-product-info-refined__breadcrumb.s--breadcrumb-image) {
     flex: 0 1 auto;
     width: auto;

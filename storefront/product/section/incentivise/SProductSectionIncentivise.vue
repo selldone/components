@@ -50,7 +50,10 @@
 <script lang="ts">
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import numeral from "numeral";
-import { GenerateProductThresholdsConditions } from "@selldone/core-js/enums/product/ProductThresholds.ts";
+import {
+  FindProductThresholdCondition,
+  GenerateProductThresholdsConditions,
+} from "@selldone/core-js/enums/product/ProductThresholds.ts";
 
 export default {
   name: "SProductSectionIncentivise",
@@ -145,20 +148,13 @@ export default {
             })
           : "";
 
-      for (const condition of conditions) {
-        const isSellsInRange =
-          condition.minSales == null || this.sells > condition.minSales;
-        const isQuantityInRange =
-          (condition.minQuantity == null ||
-            this.quantity >= condition.minQuantity) &&
-          (condition.maxQuantity == null ||
-            this.quantity <= condition.maxQuantity);
-
-        // console.log(condition,"isSellsInRange", isSellsInRange,'isQuantityInRange',isQuantityInRange);
-        if (isSellsInRange && isQuantityInRange) {
-          return `${this.$t(condition.message)} ${cartMessage}`;
-        }
-      }
+      // Same matcher as the product editor's Urgency messages preview.
+      const condition = FindProductThresholdCondition(
+        conditions,
+        this.quantity,
+        this.sells,
+      );
+      if (condition) return `${this.$t(condition.message)} ${cartMessage}`;
 
       return cartMessage;
     },

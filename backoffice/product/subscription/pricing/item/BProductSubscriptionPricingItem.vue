@@ -123,12 +123,20 @@
             class="b-pricing-plan__chip"
             @click.stop
             @keydown.stop
-            ><span>{{ key }}</span
-            ><code
-              v-copy
-              tabindex="0"
+            ><span>{{ key }}</span><code>{{ value }}</code
+            ><button
+              type="button"
+              class="b-pricing-plan__copy"
               :aria-label="$t('b_product_pricing.copy_value', { key })"
-              >{{ value }}</code
+              @click.stop="copyToClipboard(value)"
+              ><v-icon size="13" aria-hidden="true">content_copy</v-icon
+              ><v-tooltip
+                activator="parent"
+                location="top"
+                content-class="sd-modern-tooltip text-start"
+                open-on-focus
+                >{{ $t("b_product_pricing.copy_value", { key }) }}</v-tooltip
+              ></button
             ></span
           >
         </template>
@@ -655,7 +663,7 @@ export default {
     align-items: center;
     gap: 5px;
     max-width: 100%;
-    padding: 2px 7px;
+    padding: 2px 3px 2px 7px;
     border: 1px solid var(--sd-modern-border);
     border-radius: 6px;
     background: var(--sd-modern-inset);
@@ -673,10 +681,28 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 11px;
-    cursor: copy;
-    border-radius: 3px;
   }
-  &__chip > code:focus-visible {
+  &__copy {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 22px;
+    height: 22px;
+    margin-inline-start: 1px;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--sd-modern-muted);
+    cursor: pointer;
+  }
+  &__copy:hover,
+  &__copy:focus-visible {
+    background: rgba(var(--v-theme-on-surface), 0.06);
+    color: rgb(var(--v-theme-on-surface));
+  }
+  &__copy:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
     outline-offset: 1px;
   }
@@ -716,7 +742,8 @@ export default {
     opacity: 0.6;
   }
 
-  @media (max-width: 959px) {
+  // Two labelled columns when the plans list (BProductInventoryManagementSubscription) is too narrow for its grid.
+  @container pricing-plans (max-width: 784.98px) {
     &__row {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 10px 16px;

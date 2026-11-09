@@ -302,6 +302,7 @@
       >
         <b-order-connects-list
           :basket="basket"
+          :modern="modern"
           :shop="shop"
           @show-edit-address="showEditAddress"
         ></b-order-connects-list>

@@ -409,6 +409,51 @@ test("ratings leave unrated days empty and never clamp recorded scores", () => {
   assert.equal(state.options.chart.toolbar.show, false);
 });
 
+test("ratings show gray ghosts instead of blank space when nothing is rated", () => {
+  const options = component(files[4], { DateConverter });
+  const render = new Function("Vue", compileDom(descriptor(files[4]).template.content, { mode: "function" }).code)({ ...Vue, resolveComponent: (name) => name, resolveDynamicComponent: (name) => name });
+  const draw = (ratings, daily, modern = true) => {
+    const state = fixture(options, {
+      modern,
+      product: { id: 1, rate_count: 3, ratings },
+      timeSeries: {
+        raw_data: daily.map((count, index) => ({ created_at: `2026-10-0${index + 1}`, ratings: count, rating_star: count ? 4 : 0 })),
+        todayData: () => ({ ratings: 0, rating_star: 0 }),
+        lastWeekData: () => ({ ratings: 0, rating_star: 0 }),
+      },
+      numeralFormat: String,
+    });
+    const nodes = [];
+    const visit = (node) => {
+      if (!node || typeof node !== "object") return;
+      if (Array.isArray(node)) return node.forEach(visit);
+      nodes.push(node);
+      visit(node.children);
+      if (typeof node.children?.default === "function") visit(node.children.default());
+    };
+    visit(render.call(state, state, []));
+    return {
+      ghosts: Object.fromEntries(nodes.filter((node) => node.type === "u-chart-placeholder").map((node) => [node.props.kind, node.props.title || node.props.text])),
+      charts: nodes.filter((node) => node.type === "apexchart").map((node) => node.props.type),
+    };
+  };
+
+  // No criteria and no ratings in the period: both ghosts, no empty charts.
+  assert.deepEqual(draw([], [0, 0]), {
+    ghosts: { ratings: "b_product_dashboard.analytics.ratings_empty_criteria_title", bars: "b_product_dashboard.analytics.ratings_empty_period" },
+    charts: [],
+  });
+  // Criteria without votes say so; one rated day keeps the real period chart.
+  assert.deepEqual(draw([{ id: 1, name: "Quality", count: 0, value: 0 }], [0, 2]), {
+    ghosts: { ratings: "b_product_dashboard.analytics.ratings_empty_title" },
+    charts: ["line"],
+  });
+  // Recorded criterion scores keep the radar.
+  assert.deepEqual(draw([{ id: 1, name: "Quality", count: 2, value: 8 }], [0, 2]), { ghosts: {}, charts: ["radar", "line"] });
+  // The legacy widget keeps its text message and charts.
+  assert.deepEqual(draw([], [0, 0], false), { ghosts: {}, charts: ["line"] });
+});
+
 test("both expectation exports retain their separate shop and vendor endpoints", () => {
   const endpoint = (...args) => args.join("/");
   const options = component(files[5], {

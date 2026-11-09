@@ -33,12 +33,10 @@
     </v-list-item>
 
     <div class="text-end flex-grow-1">
+      <!-- Sales locations live in the product editor; no link while already there. -->
       <v-btn
-        :to="{
-          name: IS_VENDOR_PANEL
-            ? 'Vendor_ProductInventoryPage'
-            : 'BPageProductInventory',
-        }"
+        v-if="$route.name !== locations_route.name"
+        :to="locations_route"
         class="tnt ma-1"
         :class="{ 'sd-modern-button sd-modern-button--small': modern }"
         variant="text"
@@ -69,6 +67,13 @@ export default defineComponent({
         this.$route.params.vendor_id &&
         this.$route.matched.some((record) => record.meta.vendor)
       );
+    },
+
+    locations_route() {
+      return {
+        name: this.IS_VENDOR_PANEL ? "Vendor_AddProduct" : "BPageProductEdit",
+        hash: "#locations",
+      };
     },
 
     subtitle() {

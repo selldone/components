@@ -78,7 +78,24 @@
         >{{ $t("b_product_dashboard.analytics.rating_criteria") }}</v-btn
       >
     </header>
-    <div :class="{ 'b-product-ratings-modern__criteria': modern }">
+    <!-- No criterion scores: a gray ghost of the stars, criteria and radar takes the card's spare height. -->
+    <u-chart-placeholder
+      v-if="modern && !product_ratings_wit_value.length"
+      kind="ratings"
+      :title="
+        product_ratings.length
+          ? $t('b_product_dashboard.analytics.ratings_empty_title')
+          : $t('b_product_dashboard.analytics.ratings_empty_criteria_title')
+      "
+      :text="
+        product_ratings.length
+          ? $t('b_product_dashboard.analytics.ratings_empty')
+          : $t('b_product_dashboard.analytics.ratings_empty_criteria')
+      "
+      :min-height="360"
+      class="b-product-ratings-modern__placeholder"
+    />
+    <div v-else :class="{ 'b-product-ratings-modern__criteria': modern }">
       <template v-if="product_ratings_wit_value?.length">
         <s-shop-product-rating-view :product="product" class="mb-3" view-only />
 
@@ -95,7 +112,7 @@
       </div>
     </div>
 
-    <v-spacer></v-spacer>
+    <v-spacer v-if="!modern"></v-spacer>
     <v-container
       :class="modern ? 'b-product-ratings-modern__stats pa-0' : 'text-center'"
       fluid
@@ -181,7 +198,14 @@
       </v-row>
     </v-container>
 
+    <u-chart-placeholder
+      v-if="modern && !has_period_ratings"
+      kind="bars"
+      :text="$t('b_product_dashboard.analytics.ratings_empty_period')"
+      :min-height="200"
+    />
     <apexchart
+      v-else
       :options="options"
       :series="modern ? modernSeries : series"
       :class="modern ? '' : 'mt-1 mx-n6 mx-sm-0'"
@@ -196,13 +220,14 @@
 <script lang="ts">
 import SWidgetBox from "../../../../ui/widget/box/SWidgetBox.vue";
 import SShopProductRatingView from "../../../../storefront/product/rating/SShopProductRatingView.vue";
+import UChartPlaceholder from "../../../../ui/chart/placeholder/UChartPlaceholder.vue";
 
 import numeral from "numeral";
 import { DateConverter } from "@selldone/core-js/helper/date/DateConverter";
 
 export default {
   name: "BProductRatingCharts",
-  components: { SShopProductRatingView, SWidgetBox },
+  components: { SShopProductRatingView, SWidgetBox, UChartPlaceholder },
   props: {
     modern: Boolean,
     product: {
@@ -342,6 +367,10 @@ export default {
         this.$route.params.vendor_id &&
         this.$route.matched.some((record) => record.meta.vendor)
       );
+    },
+
+    has_period_ratings() {
+      return this.timeSeries.raw_data.some((row) => row.ratings > 0);
     },
 
     todayData() {
@@ -630,6 +659,13 @@ export default {
 
 <style scoped lang="scss">
 .b-product-ratings-modern {
+  // A column, so the no-ratings ghost can grow into the height the dashboard row leaves.
+  display: flex;
+  flex-direction: column;
+
+  &__placeholder {
+    flex: 1 1 auto;
+  }
   &__criteria {
     display: grid;
     gap: 20px;

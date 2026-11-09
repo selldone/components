@@ -255,6 +255,22 @@
                   {{ sidebarVariantLabel }}
                   <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('b_product_inventory.variant_count', { count: sidebarVariantCount }) }}</v-tooltip>
                 </span>
+                <!-- The product's own sales-location rule: its countries' flags, or a red dot when none is chosen. -->
+                <span v-if="tab.value === TAB_LOCATIONS && sidebarLocationCountries" class="b-product-add-full__locations-badge" role="img" :aria-label="sidebarLocationLabel">
+                  <flag v-for="iso in sidebarLocationCountries.slice(0, 2)" :key="iso" :iso="iso" :squared="false" />
+                  <span v-if="sidebarLocationCountries.length > 2" dir="ltr">+{{ sidebarLocationCountries.length - 2 }}</span>
+                  <i v-if="!sidebarLocationCountries.length" class="sd-modern-status__dot sd-modern-status__dot--error" />
+                  <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ sidebarLocationLabel }}</v-tooltip>
+                </span>
+                <!-- Subscription: logos of the payment services its plans use (two at most), or a red warning without plans. -->
+                <span v-if="tab.value === TAB_VARIANTS && isSubscription && sidebarPlanGateways.length" class="b-product-add-full__plans-badge" role="img" :aria-label="sidebarPlansLabel">
+                  <img v-for="gateway in sidebarPlanGateways.slice(0, 2)" :key="gateway.code" :src="getShopImagePath(gateway.icon)" alt="" width="18" height="18" :draggable="false" />
+                  <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ sidebarPlansLabel }}</v-tooltip>
+                </span>
+                <span v-else-if="tab.value === TAB_VARIANTS && isSubscription && !sidebarPlans.length && $product.id" class="b-product-add-full__plans-badge" role="img" :aria-label="$t('b_product_pricing.no_plans_warning')">
+                  <v-icon class="no-inv" color="error" size="18" aria-hidden="true">error</v-icon>
+                  <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('b_product_pricing.no_plans_warning') }}</v-tooltip>
+                </span>
                 <span v-if="tab.value === TAB_IMAGES && sidebarPictures.length" class="b-product-add-full__pictures" :data-count="sidebarPictures.length" aria-hidden="true">
                   <img v-for="path in sidebarPictures" :key="path" :src="getShopImagePath(path, 64)" class="hover-scale" alt="" width="24" height="24" :draggable="false" />
                 </span>
@@ -495,6 +511,18 @@
         }
       "
     />
+    </div>
+
+    <!-- ███████████████████████ Sales locations ███████████████████████ -->
+    <!-- Self-saving widget moved here from the Inventory tab; the flow footer stays hidden on this step. -->
+    <div v-if="hasStep__locations && isStepMounted(TAB_LOCATIONS)" v-show="step === TAB_LOCATIONS" :class="modernWorkspace ? 'b-product-add-full__locations' : undefined">
+      <b-product-location-restrictions-list :product="$product" :shop="shop" :vendor="vendor" :modern="modernWorkspace" />
+    </div>
+
+    <!-- ███████████████████████ Urgency messages ███████████████████████ -->
+    <!-- Self-saving storefront thresholds, moved here from the Inventory tab. -->
+    <div v-if="hasStep__urgency && isStepMounted(TAB_URGENCY)" v-show="step === TAB_URGENCY" :class="modernWorkspace ? 'b-product-add-full__urgency' : undefined">
+      <b-product-thresholding :modern="modernWorkspace" />
     </div>
 
     <!-- ███████████████████████ Product Article ███████████████████████ -->
@@ -845,6 +873,9 @@ import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHead
 import { mergeProps, useId } from "vue";
 import { VForm } from "vuetify/components";
 import BResourceMetadata from "../../../resource/metadata/BResourceMetadata.vue";
+import BProductLocationRestrictionsList from "../../location/restrictions/list/BProductLocationRestrictionsList.vue";
+import BProductThresholding from "../../thresholding/BProductThresholding.vue";
+import ProductThresholds from "@selldone/core-js/enums/product/ProductThresholds.ts";
 
 const TAB_TYPE = 1;
 const TAB_GENERAL_INFO = 2;
@@ -863,6 +894,8 @@ const TAB_REVIEW_BLOG = 10;
 const TAB_VARIANTS = 11;
 const TAB_DELETE = 12;
 const TAB_METADATA = 13;
+const TAB_LOCATIONS = 14; // Sales locations (moved here from the Inventory tab)
+const TAB_URGENCY = 15; // Urgency messages: storefront thresholds (moved here from the Inventory tab)
 
 /**
  * <b-product-add-full>
@@ -875,6 +908,8 @@ export default {
   mixins: [],
   components: {
     BResourceMetadata,
+    BProductLocationRestrictionsList,
+    BProductThresholding,
     VForm,
     UWidgetHeader,
     UPrice,
@@ -945,6 +980,8 @@ export default {
       TAB_VARIANTS: TAB_VARIANTS,
       TAB_DELETE: TAB_DELETE,
       TAB_METADATA: TAB_METADATA,
+      TAB_LOCATIONS: TAB_LOCATIONS,
+      TAB_URGENCY: TAB_URGENCY,
 
       tabs_name: {
         // use for hash url
@@ -961,6 +998,8 @@ export default {
         variants: TAB_VARIANTS,
         delete: TAB_DELETE,
         metadata: TAB_METADATA,
+        locations: TAB_LOCATIONS,
+        urgency: TAB_URGENCY,
       },
 
       busy: false, // Add or Edit button busy
@@ -1113,6 +1152,23 @@ export default {
               icon: "fa:fas fa-boxes",
             }
           : null,
+        // Secondary, edit-only settings sit after the core product tabs.
+        this.hasStep__locations
+          ? {
+              title: this.$t("add_product.menu.locations"),
+              value: TAB_LOCATIONS,
+              color: this.type?.color,
+              icon: "fa:fas fa-map-marker-alt",
+            }
+          : null,
+        this.hasStep__urgency
+          ? {
+              title: this.$t("add_product.menu.urgency"),
+              value: TAB_URGENCY,
+              color: this.type?.color,
+              icon: "fa:fas fa-fire",
+            }
+          : null,
       ];
     },
 
@@ -1127,6 +1183,8 @@ export default {
         [TAB_PRICE]: 'Tag',
         [TAB_OUTPUTS]: this.isService ? 'Settings2' : 'PackageCheck',
         [TAB_PHYSICAL_EXTRA_INFO]: 'Truck',
+        [TAB_LOCATIONS]: 'MapPin',
+        [TAB_URGENCY]: 'Flame',
         [TAB_REVIEW_BLOG]: 'AlignLeft',
         [TAB_VARIANTS]: 'Archive',
       };
@@ -1161,8 +1219,30 @@ export default {
     sidebarVariantCount() {
       return this.$product.product_variants?.filter((variant) => !variant.deleted_at).length || 0;
     },
+    sidebarLocationCountries() {
+      return this.$product.locations ? Object.keys(this.$product.locations) : null;
+    },
+    sidebarLocationLabel() {
+      const countries = this.sidebarLocationCountries || [];
+      return countries.length
+        ? this.$t('b_product_inventory.locations.sold_only_in', { countries: countries.map((iso) => this.getCountryName(iso)).join(', ') })
+        : this.$t('b_product_inventory.locations.scope.product_none');
+    },
     sidebarVariantLabel() {
       return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(this.sidebarVariantCount);
+    },
+    // Subscription plans (the plans list edits this same array, so the tab follows adds and deletes).
+    sidebarPlans() {
+      return (this.$product.subscription_prices || []).filter((plan) => !plan.deleted_at);
+    },
+    // The payment services those plans bill through, resolved like the plans list does.
+    sidebarPlanGateways() {
+      return [...new Set(this.sidebarPlans.map((plan) => plan.gateway_code))]
+        .map((code) => this.shop?.shop_gateways?.find((item) => item.gateway?.code === code)?.gateway)
+        .filter(Boolean);
+    },
+    sidebarPlansLabel() {
+      return this.$t('b_product_pricing.plans_billed_by', { providers: this.sidebarPlanGateways.map((gateway) => gateway.name).join(', ') });
     },
     sidebarPictures() {
       const gallery = (this.$product.images || [])
@@ -1219,6 +1299,9 @@ export default {
     isService() {
       return this.$product.type === ProductType.SERVICE.code;
     },
+    isSubscription() {
+      return this.$product.type === ProductType.SUBSCRIPTION.code;
+    },
 
     hasStep__Inputs() {
       // Inputs
@@ -1242,6 +1325,14 @@ export default {
 
     hasStep__inventory() {
       return true;
+    },
+    hasStep__locations() {
+      // Edit only: sales locations are saved per product (never in the guided creation flow).
+      return !this.modern && !!this.$product?.id && !!this.shop?.id;
+    },
+    hasStep__urgency() {
+      // Edit only, for types the storefront shows urgency messages for (physical, virtual and file).
+      return !this.modern && !!this.$product?.id && !!this.shop?.id && !!ProductThresholds[this.$product.type]?.conditions;
     },
 
     series() {
@@ -1444,7 +1535,7 @@ not need!
     isStepMounted(step) {
       // Keep modern draft snapshots; inactive editors have no save button or shortcut.
       return this.step === step ||
-        ((this.modern || (!!this.modernGeneral && ([TAB_GENERAL_INFO, TAB_INPUTS, TAB_OUTPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_METADATA].includes(step) || (step === TAB_VARIANTS && this.isPhysical)))) && this.visitedSteps.includes(step));
+        ((this.modern || (!!this.modernGeneral && ([TAB_GENERAL_INFO, TAB_INPUTS, TAB_OUTPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_LOCATIONS, TAB_URGENCY, TAB_REVIEW_BLOG, TAB_METADATA].includes(step) || (step === TAB_VARIANTS && this.isPhysical)))) && this.visitedSteps.includes(step));
     },
 
     setStepEditor(editor, step = this.step) {
@@ -2017,6 +2108,11 @@ not need!
   .b-product-add-full__metadata-divider { margin: 9px 10px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
   .b-product-add-full__variant-count { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-width: 20px; height: 18px; margin-inline-start: auto; padding-inline: 4px; border-radius: 4px; background: rgba(var(--v-theme-on-surface), 0.08); color: rgb(var(--v-theme-on-surface)); font-size: 10px; font-weight: 600; line-height: 16px; direction: ltr; unicode-bidi: isolate; }
   .b-product-add-full__variant-count + .b-product-add-full__saved { margin-inline-start: 0; }
+  .b-product-add-full__locations-badge { display: inline-flex; align-items: center; flex: 0 0 auto; gap: 3px; margin-inline-start: auto; color: var(--sd-modern-muted); font-size: 10px; font-weight: 600; line-height: 16px; }
+  .b-product-add-full__locations-badge + .b-product-add-full__saved { margin-inline-start: 0; }
+  .b-product-add-full__plans-badge { display: inline-flex; align-items: center; flex: 0 0 auto; gap: 4px; margin-inline-start: auto; }
+  .b-product-add-full__plans-badge > img { width: 18px; height: 18px; object-fit: contain; border-radius: 4px; }
+  .b-product-add-full__plans-badge + .b-product-add-full__saved { margin-inline-start: 0; }
   .b-product-add-full__nav > .b-product-add-full__pictures-tab { gap: 6px; }
   .b-product-add-full__pictures-tab > span:first-of-type { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .b-product-add-full__pictures { display: grid; grid-template-columns: 24px; grid-template-rows: 24px; align-items: center; flex: 0 0 auto; gap: 2px; margin-inline-start: auto; }

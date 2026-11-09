@@ -1605,3 +1605,41 @@ test("clipboard denial stays visible and retryable while late copy results canno
   await new Promise((resolve) => setImmediate(resolve));
   fixture.application.unmount();
 });
+
+test("compact rails fit one row when they can and otherwise balance their rows", () => {
+  const { compactRailColumns, narrowThreshold, COMPACT_TILE, COMPACT_GAP } =
+    flowHelpers;
+  // 9 tiles of 84px with 20px gaps need 916px.
+  assert.equal(compactRailColumns(9, 958), 9);
+  assert.equal(compactRailColumns(9, 915), 5); // 8 fit, spread as 5 + 4
+  assert.equal(compactRailColumns(9, 616), 5);
+  assert.equal(compactRailColumns(10, 958), 5); // 9 fit, spread as 5 + 5
+  assert.equal(compactRailColumns(9, 958, 6), 5); // a cap of 6 spreads as 5 + 4
+  assert.equal(compactRailColumns(3, 2000), 3);
+  assert.equal(compactRailColumns(0, 958), 1);
+  const nodes = Array.from({ length: 9 }, (_, index) => ({
+    id: `n${index}`,
+    label: `Step ${index}`,
+    description: "",
+    icon: "",
+    caption: "",
+    outcome: null,
+  }));
+  const block = {
+    type: "flow",
+    title: "",
+    description: "",
+    animated: false,
+    nodes,
+    edges: nodes
+      .slice(1)
+      .map((node, index) => ({ from: nodes[index].id, to: node.id, label: "" })),
+  };
+  assert.equal(
+    narrowThreshold(block, false, 9, true),
+    9 * COMPACT_TILE + 8 * COMPACT_GAP,
+  );
+  assert.equal(narrowThreshold(block, false, 2, true), 480);
+  // Article rails keep their readable 150px tiles and 40px gaps.
+  assert.equal(narrowThreshold(block, false, 9), 9 * 150 + 8 * 40);
+});

@@ -34,7 +34,12 @@
               $vuetify.display.smAndUp ? "arrow_right" : "arrow_drop_down"
             }}</v-icon></span
           >
-          <u-count-down :end="end_date" class="mx-2"></u-count-down>
+          <!-- Over: hide the bar, as the server does on the next page load. -->
+          <u-count-down
+            :end="end_date"
+            class="mx-2"
+            @end="show = false"
+          ></u-count-down>
         </template>
 
         <v-btn
@@ -106,6 +111,10 @@ export default {
         DateConverter.convertToLocalTime(this.notification.end_at)
       );
     },
+    // Already over when this page rendered: a cached page, or the end passed since.
+    ended() {
+      return !!this.end_date && this.end_date.getTime() <= Date.now();
+    },
     action_text() {
       return this.notification && this.notification.action_text;
     },
@@ -116,7 +125,7 @@ export default {
 
   watch: {},
   created() {
-    if (this.message) this.show = true;
+    if (this.message && !this.ended) this.show = true;
   },
 
   methods: {},

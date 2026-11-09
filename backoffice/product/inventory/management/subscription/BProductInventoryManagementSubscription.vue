@@ -630,8 +630,11 @@ export default {
     padding: 0 12px 9px;
     border-block-end: 1px solid var(--sd-modern-border);
   }
+  // The list adapts to its own width, not the viewport: the product editor's column is narrower
+  // than the Inventory page at the same window size (BProductSubscriptionPricingItem reads the same container).
   &__list {
     position: relative;
+    container: pricing-plans / inline-size;
   }
   &__footer {
     margin-block-start: 10px;
@@ -640,14 +643,20 @@ export default {
     gap: 12px;
   }
 
-  @media (max-width: 1100px) {
-    --pricing-columns: minmax(150px, 1.4fr) minmax(95px, 0.9fr)
-      minmax(100px, 0.9fr) minmax(130px, 1.1fr) minmax(150px, 1.3fr) 64px;
+  // Full columns need 880px (796px tracks, five 12px gaps, 24px insets); the tighter set needs 785px.
+  // Both keep 76px for the two 36px row actions and their 4px gap, so they never reach the sync column.
+  @container pricing-plans (max-width: 879.98px) {
+    &__list > * {
+      --pricing-columns: minmax(150px, 1.4fr) minmax(95px, 0.9fr)
+        minmax(100px, 0.9fr) minmax(130px, 1.1fr) minmax(150px, 1.3fr) 76px;
+    }
   }
-  @media (max-width: 959px) {
+  @container pricing-plans (max-width: 784.98px) {
     &__columns {
       display: none;
     }
+  }
+  @media (max-width: 959px) {
     &__overview {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }

@@ -191,7 +191,16 @@ test("EN/FA modern levels expose the real builder, settings and matching reposit
   for (const locale of ["en", "fa"]) {
     const f = fixture();
     const screen = await f.render({ locale });
-    assert.equal(screen.document.querySelectorAll("article[aria-labelledby]").length, 3);
+    const levels = [...screen.document.querySelectorAll("article[aria-labelledby]")];
+    // Custom layout first (with the official layouts right after it), then landing pages, then own frontend.
+    assert.deepEqual(levels.map((level) => level.getAttribute("aria-labelledby")), ["onboarding-customize-layout", "onboarding-customize-pages", "onboarding-customize-custom"]);
+    assert.equal(levels[0].nextElementSibling.getAttribute("data-child"), "BOfficialLayoutShowcase");
+    assert.equal(screen.document.querySelectorAll('[data-child="BOfficialLayoutShowcase"]').length, 1);
+    assert.ok(levels[0].querySelector(".s--shop-onboarding-customization__number--primary"));
+    assert.equal(levels[1].querySelector(".s--shop-onboarding-customization__number--primary"), null);
+    const t = translator(locale);
+    assert.ok(levels[0].textContent.includes(t("onboarding.modern.customize.layout.meta")));
+    assert.ok(levels[2].textContent.includes(t("onboarding.modern.customize.custom.meta")));
     const repositories = [...screen.document.querySelectorAll("a[href]")];
     assert.deepEqual(repositories.map((link) => link.getAttribute("href")), [
       "https://github.com/selldone/storefront",

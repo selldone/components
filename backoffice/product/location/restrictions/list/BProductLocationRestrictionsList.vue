@@ -17,7 +17,6 @@
     :class="{
       'text-start': modern,
       'b-product-locations--modern': modern,
-      'b-product-locations--expanded': modern && settings_open,
     }"
   >
     <div
@@ -27,79 +26,40 @@
           : 'widget-box -large mb-5'
       "
     >
-      <header
-        v-if="modern"
-        class="sd-modern-header b-product-locations__header"
-      >
-        <div class="sd-modern-title">
-          <v-icon class="sd-modern-icon" aria-hidden="true">location_on</v-icon>
-          <div class="flex-grow-1 min-width-0">
-            <h2>{{ $t("b_product_inventory.locations.title") }}</h2>
-            <p class="sd-modern-subtitle">
-              {{ $t("b_product_inventory.locations.subtitle") }}
-            </p>
-          </div>
-        </div>
-        <v-btn
-          variant="text"
-          color="primary"
-          class="sd-modern-button sd-modern-button--small"
-          :aria-expanded="settings_open"
-          :aria-controls="'product-locations-' + product.id"
-          @click="settings_open = !settings_open"
-        >
-          <v-icon start aria-hidden="true">{{
-            settings_open ? "expand_less" : "edit"
-          }}</v-icon>
-          {{
-            $t(settings_open ? "global.actions.close" : "global.actions.edit")
-          }}
-        </v-btn>
-      </header>
-      <div
-        v-if="modern"
-        v-show="!settings_open"
-        class="b-product-locations__summary"
-      >
-        <span class="sd-modern-status sd-modern-status--plain"
-          ><i
-            class="sd-modern-status__dot"
-            :class="locations ? 'sd-modern-status__dot--warning' : ''"
-          ></i
-          >{{
-            locations
-              ? $t("b_product_inventory.locations.restricted", {
-                  count: Object.keys(locations).length,
-                })
-              : $t("b_product_inventory.locations.uses_store")
-          }}</span
-        >
-      </div>
-      <div
-        v-show="!modern || settings_open"
-        :id="modern ? 'product-locations-' + product.id : undefined"
-        class="b-product-locations__details"
-      >
-        <div
-          v-if="modern"
-          class="sd-modern-actions b-product-locations__toolbar"
-        >
-          <v-btn
-            variant="text"
-            color="primary"
-            class="sd-modern-button sd-modern-button--small"
-            :disabled="!locations"
-            prepend-icon="add_location_alt"
-            @click="add_dialog = true"
-            >{{
-              $t("product_location_restrictions.add_location_action")
-            }}</v-btn
-          >
+      <!-- Same heading as the editor's other tabs (Specifications): outline icon, title, muted intro. -->
+      <header v-if="modern" class="b-product-locations__header">
+        <div class="b-product-locations__heading">
+          <b-product-edit-info-icon name="MapPin" />
+          <h2>{{ $t("b_product_inventory.locations.title") }}</h2>
+          <!-- Add country sits under the list (or in the empty state); the heading keeps the profile menu. -->
           <u-smart-menu
             v-if="locations && !IS_VENDOR_PANEL"
             :items="location_menu_items"
+            class="b-product-locations__menu"
           />
         </div>
+        <p class="b-product-locations__intro">
+          {{ $t("b_product_inventory.locations.subtitle") }}
+        </p>
+      </header>
+      <!-- Where the draft sells: the product rule, the store default or everywhere. -->
+      <div v-if="modern" class="b-product-locations__summary">
+        <b-product-locations-summary
+          :locations="locations"
+          :countries="shop.countries"
+          :limit="8"
+        />
+        <v-btn
+          v-if="!locations && !IS_VENDOR_PANEL"
+          :to="{ name: 'BPageShopSettingLocations' }"
+          variant="text"
+          color="primary"
+          class="sd-modern-button sd-modern-button--small"
+          append-icon="arrow_forward"
+          >{{ $t("product_flow.location.shop_locations") }}</v-btn
+        >
+      </div>
+      <div class="b-product-locations__details">
         <u-widget-header
           v-if="!modern"
           :disabled="!locations"
@@ -149,9 +109,10 @@
             ></b-product-flow-errors-location>
 
             <v-table
+              v-if="!modern || has_countries"
               :class="
                 modern
-                  ? 'sd-modern-table b-product-locations__table'
+                  ? 'sd-modern-table sd-modern-table--dense b-product-locations__table'
                   : 'bg-transparent mb-5'
               "
               density="compact"
@@ -170,15 +131,19 @@
                   </tr>
                 </thead>
                 <tbody class="text-start">
-                  <tr v-for="(zips, country) in locations" :key="country">
+                  <tr
+                    v-for="(zips, country) in locations"
+                    :key="country"
+                    :data-country="country"
+                  >
                     <td>
-                      <div
-                        :class="
-                          modern
-                            ? 'b-product-locations__country'
-                            : 'min-width-200'
-                        "
-                      >
+                      <!-- One line per country keeps the list dense. -->
+                      <div v-if="modern" class="b-product-locations__country">
+                        <flag :iso="country" :squared="false" />
+                        <span>{{ getCountryName(country) }}</span>
+                        <small>{{ country }}</small>
+                      </div>
+                      <div v-else class="min-width-200">
                         <b class="d-block">
                           <flag :iso="country" :squared="false" class="me-3" />
                           {{ country }}</b
@@ -194,6 +159,7 @@
                         chips
                         clearable
                         closable-chips
+                        :density="modern ? 'compact' : undefined"
                         flat
                         hide-details
                         :label="
@@ -231,6 +197,7 @@
                             : undefined
                         "
                         :class="modern ? 'sd-modern-icon-button' : undefined"
+                        :size="modern ? 'small' : undefined"
                         variant="text"
                         @click="deleteCountry(country)"
                       >
@@ -245,6 +212,29 @@
                           }}</v-tooltip
                         >
                       </v-btn>
+                    </td>
+                  </tr>
+                  <!-- The list's last row adds a country in place; the cursor then moves to its ZIP codes. -->
+                  <tr v-if="modern" class="b-product-locations__add-row">
+                    <td colspan="3">
+                      <s-country-select
+                        :model-value="null"
+                        :filter="addable_countries"
+                        item-value="alpha2"
+                        :placeholder="
+                          $t('b_product_inventory.locations.add_country')
+                        "
+                        variant="plain"
+                        dense
+                        hide-details
+                        @update:model-value="addCountry"
+                      >
+                        <template #prepend-inner>
+                          <v-icon size="20" aria-hidden="true"
+                            >add_location_alt</v-icon
+                          >
+                        </template>
+                      </s-country-select>
                     </td>
                   </tr>
                 </tbody>
@@ -264,9 +254,9 @@
               >
                 <v-icon class="me-1" size="large">wrong_location</v-icon>
 
-                {{
+                <span :class="{ 'sd-modern-notice__content': modern }">{{
                   $t("product_location_restrictions.no_country_selected_error")
-                }}
+                }}</span>
               </div>
 
               <div class="max-widget-width my-5">
@@ -286,9 +276,63 @@
                   variant="solo"
                   @update:model-value="setProfile()"
                 ></b-product-location-restrictions-input>
-                <div class="pa-3 text-muted">{{ $t("global.commons.or") }}</div>
+                <div v-if="!modern || !has_countries" class="pa-3 text-muted">
+                  {{ $t("global.commons.or") }}
+                </div>
 
-                <div v-html="$t('product_location_restrictions.tips')"></div>
+                <template v-if="modern">
+                  <s-country-select
+                    v-if="!has_countries"
+                    :model-value="null"
+                    :filter="addable_countries"
+                    item-value="alpha2"
+                    :label="$t('b_product_inventory.locations.add_country')"
+                    variant="solo"
+                    hide-details
+                    @update:model-value="addCountry"
+                  >
+                    <template #prepend-inner>
+                      <v-icon aria-hidden="true">add_location_alt</v-icon>
+                    </template>
+                  </s-country-select>
+                  <!-- What the profile picker above and the ⋮ menu do. -->
+                  <div class="b-product-locations__profiles text-start">
+                    <p class="sd-modern-eyebrow">
+                      {{ $t("b_product_inventory.locations.profiles_title") }}
+                    </p>
+                    <div class="b-product-locations__profile">
+                      <v-icon size="18" aria-hidden="true"
+                        >sim_card_download</v-icon
+                      >
+                      <span
+                        ><strong>{{
+                          $t("product_location_restrictions.import.title")
+                        }}</strong>
+                        {{
+                          $t("b_product_inventory.locations.profiles_load")
+                        }}</span
+                      >
+                    </div>
+                    <div
+                      v-if="!IS_VENDOR_PANEL"
+                      class="b-product-locations__profile"
+                    >
+                      <v-icon size="18" aria-hidden="true">save</v-icon>
+                      <span
+                        ><strong>{{
+                          $t("product_location_restrictions.export.title")
+                        }}</strong>
+                        {{
+                          $t("b_product_inventory.locations.profiles_save")
+                        }}</span
+                      >
+                    </div>
+                  </div>
+                </template>
+                <div
+                  v-else
+                  v-html="$t('product_location_restrictions.tips')"
+                ></div>
               </div>
             </div>
           </div>
@@ -576,6 +620,9 @@ import SCountrySelect from "../../../../../ui/country/select/SCountrySelect.vue"
 import USmartMenu from "../../../../../ui/smart/menu/USmartMenu.vue";
 import BProductLocationRestrictionsInput from "../../../../product/location/restrictions/input/BProductLocationRestrictionsInput.vue";
 import BProductFlowErrorsLocation from "../../../../product/flow/errors/location/BProductFlowErrorsLocation.vue";
+import BProductLocationsSummary from "../../summary/BProductLocationsSummary.vue";
+import BProductEditInfoIcon from "../../../edit/info/BProductEditInfoIcon.vue";
+import { getCodes } from "@selldone/core-js/models/general/country/country-helper.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
@@ -583,6 +630,8 @@ export default {
   name: "BProductLocationRestrictionsList",
   mixins: [],
   components: {
+    BProductEditInfoIcon,
+    BProductLocationsSummary,
     BProductFlowErrorsLocation,
     BProductLocationRestrictionsInput,
     USmartMenu,
@@ -603,7 +652,6 @@ export default {
     },
   },
   data: () => ({
-    settings_open: false,
     locations: null,
 
     has_location: false,
@@ -644,6 +692,15 @@ export default {
         },
       ];
     },
+    has_countries() {
+      return !!this.locations && Object.keys(this.locations).length > 0;
+    },
+    // Countries the store sells to that the rule does not list yet.
+    addable_countries() {
+      return (this.shop.countries || getCodes()).filter(
+        (iso) => !this.locations?.[iso],
+      );
+    },
     IS_VENDOR_PANEL() {
       /*🟢 Vendor Panel 🟢*/
       return (
@@ -681,16 +738,20 @@ export default {
       this.has_location = !!this.product.locations;
     },
 
-    addCountry() {
-      if (
-        !this.locations[this.country_input] ||
-        !Array.isArray(this.locations[this.country_input])
-      )
-        this.locations[this.country_input] = [];
+    addCountry(iso = this.country_input) {
+      // Keys are ISO 3166 alpha-2 codes, as ProductLocationRule requires on save.
+      if (typeof iso !== "string" || !/^[A-Z]{2}$/.test(iso)) return;
+      if (!Array.isArray(this.locations[iso])) this.locations[iso] = [];
 
       this.add_dialog = false;
       this.setting_changed = true;
       this.country_input = null;
+      // Continue with the new country's ZIP codes.
+      this.$nextTick(() =>
+        this.$el
+          .querySelector?.(`tr[data-country="${iso}"] input`)
+          ?.focus(),
+      );
     },
 
     deleteCountry(country) {
@@ -760,6 +821,7 @@ export default {
 
       this.locations = Object.assign({}, this.selected_profile.locations);
       this.dialog_load_profile = false;
+      this.setting_changed = true; // A loaded profile is a draft until saved.
       NotificationService.showSuccessAlert(
         null,
         "The location set has been successfully loaded.",
@@ -774,46 +836,60 @@ export default {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  // Card and heading geometry follow the editor's Specifications tab.
   .b-product-locations__widget {
     min-width: 0;
-    padding: 18px;
+    padding: 23px;
+    border-radius: 16px;
     flex: 1;
     display: flex;
     flex-direction: column;
   }
-  .b-product-locations__header {
-    align-items: flex-start;
-    gap: 12px;
-    margin: 0;
+  .b-product-locations__heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
-  .b-product-locations__header h2 {
+  .b-product-locations__heading > svg {
+    flex: 0 0 auto;
+    color: var(--sd-modern-muted);
+  }
+  .b-product-locations__heading h2 {
+    margin: 0;
     font-size: 16px;
-    line-height: 24px;
     font-weight: 500;
-    margin: 0;
+    line-height: 24px;
+    letter-spacing: -0.15px;
   }
-  .b-product-locations__header .sd-modern-subtitle {
-    font-size: 13px;
-    line-height: 20px;
-    margin: 4px 0 0;
+  .b-product-locations__menu {
+    margin-inline-start: auto;
   }
-  .b-product-locations__header > .v-btn {
-    flex-shrink: 0;
+  .b-product-locations__intro {
+    margin: 9px 0 0;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    line-height: 19px;
   }
   .b-product-locations__summary {
-    padding-block-start: 14px;
-    margin-block-start: auto;
-    font-size: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-block-start: 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--sd-modern-inset);
+    font-size: 13px;
     line-height: 20px;
-    color: var(--sd-modern-muted);
   }
   .b-product-locations__details {
     margin-block-start: 16px;
     min-width: 0;
   }
-  .b-product-locations__toolbar {
-    justify-content: flex-end;
-    margin-block-end: 10px;
+  .b-product-locations__details :deep(.v-list-subheader__text) {
+    white-space: normal;
+    overflow: visible;
   }
   .b-product-locations__details :deep(.v-list-subheader) {
     padding-inline: 0;
@@ -826,8 +902,68 @@ export default {
   .b-product-locations__table {
     margin-block: 16px;
   }
+  // Dense rows (shared --dense): one-line country, compact ZIP chips.
+  .b-product-locations__table :deep(.v-field__input) {
+    min-height: 36px;
+    padding-block: 4px;
+  }
+  .b-product-locations__table :deep(.v-chip) {
+    height: 24px;
+    padding-inline: 9px 6px;
+    font-size: 12px;
+  }
   .b-product-locations__country {
-    min-width: 120px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 150px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+  .b-product-locations__country small {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+    font-weight: 400;
+  }
+  // The add row reads as an action: primary icon and placeholder, quiet hover.
+  .b-product-locations__add-row :deep(.v-field__prepend-inner > .v-icon),
+  .b-product-locations__add-row :deep(input::placeholder) {
+    color: rgb(var(--v-theme-primary));
+    opacity: 1;
+  }
+  .b-product-locations__add-row :deep(input) {
+    font-size: 14px;
+  }
+  .b-product-locations__add-row:hover > td {
+    background: var(--sd-modern-inset);
+  }
+  // Load/Save profile guide under the empty state's pickers.
+  .b-product-locations__profiles {
+    display: grid;
+    gap: 8px;
+    margin-block-start: 16px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--sd-modern-inset);
+    font-size: 13px;
+    line-height: 20px;
+  }
+  .b-product-locations__profiles .sd-modern-eyebrow {
+    margin: 0;
+  }
+  .b-product-locations__profile {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .b-product-locations__profile > .v-icon {
+    margin-block-start: 1px;
+    color: var(--sd-modern-muted);
+  }
+  .b-product-locations__profile strong {
+    font-weight: 500;
   }
   .b-product-locations__notice {
     font-size: 13px;
@@ -842,8 +978,8 @@ export default {
     justify-content: flex-end;
   }
   @media (max-width: 639px) {
-    .b-product-locations__header {
-      flex-wrap: wrap;
+    .b-product-locations__widget {
+      padding: 18px;
     }
     .b-product-locations__table :deep(thead) {
       display: none;
@@ -868,6 +1004,9 @@ export default {
     .b-product-locations__table :deep(td:nth-child(3)) {
       grid-column: 2;
       grid-row: 1;
+    }
+    .b-product-locations__add-row > td {
+      grid-column: 1 / -1;
     }
   }
 }

@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
 import { parse, compileScript, compileTemplate } from "@vue/compiler-sfc";
-import * as Vue from "vue";
 import ts from "typescript";
 
 function source(name) {
@@ -39,6 +38,22 @@ assert.equal(linked.at(-1).backward, true);
 assert.equal(linked.at(-1).title, "Channel");
 assert.equal(linked.at(-2).image, "physical.svg");
 assert.equal(steps({ $product: { type: "FILE" } })[1].image, undefined);
+
+// Product-specific settings show on their step: its own sales locations, then per-order limits.
+const t = (key, values) => values ? `${key} ${JSON.stringify(values)}` : key;
+const located = steps({ $t: t, getCountryName: iso => `name:${iso}`, $product: { type: "PHYSICAL", locations: { DE: ["10115", "10117"], FR: [] }, limit_min: "2", limit_max: 0 } });
+assert.deepEqual(ids(located).slice(0, 3), ["purchase", "locations", "cart"]);
+assert.deepEqual([...located[1].flags], ["DE", "FR"]);
+assert.equal(located[1].note, undefined);
+assert.match(located[1].help, /^b_product_dashboard\.flow\.help\.locations b_product_dashboard\.flow\.locations_allowed /);
+assert.match(located[1].help, /name:DE\\",\\"count\\":2}, .*name:FR\\",\\"count\\":0}/);
+assert.equal(located[2].note, 'b_product_dashboard.flow.limit_min {"count":2}');
+assert.equal(located[2].help, 'b_product_dashboard.flow.help.cart b_product_dashboard.flow.limit_help_min {"min":2}');
+const unlocated = steps({ $t: t, $product: { type: "PHYSICAL", locations: {}, limit_min: 2, limit_max: 10 } });
+assert.equal(unlocated[1].note, "b_product_inventory.locations.scope.product_none");
+assert.equal(unlocated[2].note, 'b_product_dashboard.flow.limit_min {"count":2} · b_product_dashboard.flow.limit_max {"count":10}');
+assert.match(unlocated[2].help, /limit_help_range \{"min":2,"max":10\}$/);
+assert.match(steps({ $t: t, $product: { type: "PHYSICAL", limit_max: 5 } })[1].help, /limit_help_max \{"max":5\}$/);
 assert.ok(steps().every(step => step.help === `b_product_dashboard.flow.help.${step.id}`));
 
 function options(name) {
@@ -55,144 +70,18 @@ const location = options("errors/location/BProductFlowErrorsLocation.vue").compu
 assert.equal(location.call({ no_location_error: false, invalid_location_error: true, $t: key => key }), "product_flow.location_errors.invalid_location_error_subtitle");
 assert.equal(location.call({ no_location_error: true, invalid_location_error: false, $t: key => key }), "product_flow.location_errors.no_location_error_subtitle");
 
-function eventTarget() {
-  const listeners = new Map();
-  return {
-    listeners,
-    addEventListener(name, callback) { listeners.set(name, callback); },
-    removeEventListener(name, callback) { if (listeners.get(name) === callback) listeners.delete(name); },
-  };
-}
-
-function diagramFixture({ delayedImport = false, count = 8, width = 960 } = {}) {
-  const mounted = [], unmounting = [], frames = new Map(), lines = [], svgs = new Map(), observers = [];
-  let frameId = 0, resolveImport, state;
-  const settings = { width, visible: true, filter: "none" };
-  const rtl = Vue.ref(false), theme = Vue.ref({ name: "light" });
-  const props = Vue.reactive({ steps: Array.from({ length: count }, (_, index) => ({ id: `step-${index}`, title: `Step ${index}`, help: "Help", backward: index === count - 1 })) });
-  const rect = () => ({ top: 40, bottom: 600, left: 20, right: 20 + settings.width, width: settings.width });
-  const boundary = { parentElement: null, getBoundingClientRect: rect };
-  const nodes = props.steps.map((step, index) => Vue.markRaw({
-    getBoundingClientRect() {
-      const node = state.nodes.value[index], count = state.columns.value;
-      const column = rtl.value ? count - 1 - node.column : node.column;
-      const width = (settings.width - (count - 1) * 20) / count;
-      return { top: 40 + node.row * 128, bottom: 132 + node.row * 128, left: 20 + column * (width + 20), right: 20 + column * (width + 20) + width };
-    },
-  }));
-  const root = Vue.markRaw({
-    parentElement: boundary,
-    getClientRects: () => settings.visible ? [rect()] : [],
-    getBoundingClientRect: rect,
-    querySelectorAll: () => nodes,
-    closest: selector => selector === ".s--card-window-content" ? boundary : null,
-  });
-  const document = { ...eventTarget(), documentElement: { clientWidth: 1200 }, scrollingElement: {}, getElementById: id => svgs.get(id) };
-  const window = { ...eventTarget(), innerHeight: 800, scrollX: 0, scrollY: 0 };
-  class ResizeObserver {
-    constructor(callback) { this.callback = callback; this.disconnected = false; observers.push(this); }
-    observe() {}
-    disconnect() { this.disconnected = true; }
-  }
-  class MutationObserver extends ResizeObserver {}
-  class Line {
-    constructor(from, to, options) {
-      Object.assign(this, { from, to, options, removed: false, positions: 0 });
-      this.svg = { style: {}, setAttribute() {}, getBoundingClientRect: () => ({ top: 0, right: 1200, bottom: 800, left: 0 }) };
-      svgs.set(options.lineId, this.svg);
-      lines.push(this);
-    }
-    setOptions(options) { Object.assign(this.options, options); }
-    position() { this.positions++; }
-    remove() { this.removed = true; svgs.delete(this.options.lineId); }
-  }
-  const module = delayedImport ? new Promise(resolve => { resolveImport = resolve; }) : { __esModule: true, default: Line };
-  const exports = {};
-  vm.runInNewContext(source("BProductFlowDiagram.vue"), {
-    exports, document, window, ResizeObserver, MutationObserver,
-    getComputedStyle: element => ({ color: "rgb(64, 64, 64)", filter: element === boundary ? settings.filter : "none", overflowX: "visible", overflowY: "visible" }),
-    requestAnimationFrame: callback => { frames.set(++frameId, callback); return frameId; },
-    cancelAnimationFrame: id => frames.delete(id),
-    console: { warn: error => { throw new Error(error); } },
-    require: name => {
-      if (name === "vue") return { ...Vue, useId: () => "product", onMounted: callback => mounted.push(callback), onBeforeUnmount: callback => unmounting.push(callback) };
-      if (name === "vuetify") return { useLocale: () => ({ isRtl: rtl }), useTheme: () => ({ current: theme }) };
-      if (name === "vue3-leaderline") return module;
-      throw new Error(name);
-    },
-  });
-  const scope = Vue.effectScope();
-  state = scope.run(() => exports.default.setup(props, { expose() {} }));
-  state.diagram.value = root;
-  return {
-    state, settings, props, rtl, lines, frames, observers, document, window,
-    mount: () => mounted[0](),
-    unmount() { unmounting.forEach(callback => callback()); scope.stop(); },
-    resolveImport() { resolveImport({ __esModule: true, default: Line }); },
-    async flush() {
-      for (let i = 0; i < 5; i++) {
-        await Vue.nextTick();
-        const callbacks = [...frames.values()]; frames.clear();
-        callbacks.forEach(callback => callback());
-      }
-    },
-  };
-}
-
-const f = diagramFixture();
-await f.mount(); await f.flush();
-assert.equal(f.state.columns.value, 8);
-assert.deepEqual(Array.from(f.state.nodes.value, node => node.column), [0, 1, 2, 3, 4, 5, 6, 7]);
-assert.equal(f.lines.length, 7);
-assert.equal(f.lines.at(-1).options.startPlug, "arrow1");
-assert.equal(f.lines[0].options.startSocket, "right");
-f.settings.width = 800; f.state.schedulePosition(); await f.flush();
-assert.equal(f.state.columns.value, 4);
-assert.deepEqual(Array.from(f.state.nodes.value, node => node.column), [0, 1, 2, 3, 3, 2, 1, 0]);
-assert.equal(f.lines[3].options.startSocket, "bottom");
-assert.equal(f.lines[3].options.endSocket, "top");
-
-f.settings.width = 240; f.state.schedulePosition(); await f.flush();
-assert.equal(f.state.columns.value, 2);
-assert.deepEqual(Array.from(f.state.nodes.value, node => node.column), [0, 1, 1, 0, 0, 1, 1, 0]);
-f.settings.width = 180; f.state.schedulePosition(); await f.flush();
-assert.equal(f.state.columns.value, 1);
-assert.ok(f.lines.every(line => line.options.startSocket === "bottom" && line.options.endSocket === "top"));
-
-f.settings.width = 240; f.rtl.value = true; await f.flush();
-const active = f.lines.filter(line => !line.removed);
-assert.equal(active[0].options.startSocket, "left");
-assert.equal(active[0].options.endSocket, "right");
-f.settings.filter = "invert(1)"; f.state.schedulePosition(); await f.flush();
-assert.equal(active[0].svg.style.filter, "invert(1)");
-assert.match(active[0].svg.style.clipPath, /^inset\(/);
-f.settings.visible = false; f.state.schedulePosition(); await f.flush();
-assert.ok(active.every(line => line.svg.style.visibility === "hidden"));
-f.unmount();
-assert.ok(f.lines.every(line => line.removed));
-assert.ok(f.observers.every(observer => observer.disconnected));
-assert.equal(f.document.listeners.size, 0);
-assert.equal(f.window.listeners.size, 0);
-assert.equal(f.frames.size, 0);
-
-for (const [count, width, lengths] of [[10, 360, [3, 3, 2, 2]], [13, 700, [5, 4, 4]], [5, 360, [3, 2]], [0, 960, []]]) {
-  const balanced = diagramFixture({ count, width });
-  await balanced.mount(); await balanced.flush();
-  const nodes = Array.from(balanced.state.nodes.value);
-  assert.deepEqual(Array.from(balanced.state.rowLengths.value), lengths);
-  assert.deepEqual(nodes.map(node => node.id), Array.from({ length: count }, (_, index) => `step-${index}`));
-  assert.equal(balanced.lines.length, Math.max(0, count - 1));
-  for (let index = 1; index < nodes.length; index++) {
-    const previous = nodes[index - 1], current = nodes[index];
-    if (current.row !== previous.row) assert.equal(current.column, previous.column);
-    else assert.equal(Math.abs(current.column - previous.column), 1);
-  }
-  balanced.unmount();
-}
-
-const delayed = diagramFixture({ delayedImport: true });
-const mounting = delayed.mount();
-delayed.unmount(); delayed.resolveImport(); await mounting; await delayed.flush();
-assert.equal(delayed.lines.length, 0);
-assert.equal(delayed.frames.size, 0);
-console.log("Product flow: native step branches, responsive sockets, RTL, Smart invert and lifecycle checks passed.");
+// The modern diagram is the shared SArticleFlow: one linear block, compact, never stored in an article.
+const flowBlock = flowExports.default.computed.flowBlock;
+const located2 = steps({ $t: t, getCountryName: iso => iso, $product: { type: "PHYSICAL", locations: { CA: [], DK: [], US: [], AR: [], AM: [] }, limit_min: 10 } });
+const block = flowBlock.call({ flowSteps: located2, $t: key => key });
+assert.equal(block.type, "flow");
+assert.equal(block.animated, true);
+assert.deepEqual(Array.from(block.nodes, node => node.id), ["purchase", "locations", "cart", "pricing", "incentives", "tax", "checkout", "payment", "fulfillment"]);
+assert.equal(block.nodes[1].caption, 'b_product_dashboard.flow.locations_more {"count":2}');
+assert.equal(block.nodes[2].caption, 'b_product_dashboard.flow.limit_min {"count":10}');
+assert.equal(block.nodes[3].caption, "");
+assert.ok(block.nodes.every(node => node.description && node.outcome === null));
+assert.equal(JSON.stringify(block.edges), JSON.stringify(located2.slice(1).map((step, index) => ({ from: located2[index].id, to: step.id, label: "" }))));
+const connected = steps({ $t: t, connect: { name: "Channel", icon: "channel.png" } });
+assert.equal(connected.at(-1).note, "b_product_dashboard.flow.two_way");
+console.log("Product flow: native step branches, product notes and the shared flowchart block passed.");

@@ -294,17 +294,44 @@ const NARROW_STAGE = 480;
 const MIN_TILE = 150;
 const MIN_GAP = 40;
 const NARROW_RELEASE = 60;
+/** Compact runtime rails (product workspaces): icon-over-label tiles need less room per column. */
+export const COMPACT_TILE = 84;
+export const COMPACT_GAP = 20;
 
 export function narrowThreshold(
   block: ApiDocFlowBlock,
   narrow = false,
   preferredRailColumns = 0,
+  compact = false,
 ): number {
   const columns = layoutFlow(block, false, preferredRailColumns).columns;
+  const tile = compact ? COMPACT_TILE : MIN_TILE;
+  const gap = compact ? COMPACT_GAP : MIN_GAP;
   return (
-    Math.max(NARROW_STAGE, columns * MIN_TILE + (columns - 1) * MIN_GAP) +
+    Math.max(NARROW_STAGE, columns * tile + (columns - 1) * gap) +
     (narrow ? NARROW_RELEASE : 0)
   );
+}
+
+/**
+ * Columns of a compact rail at a stage width: every tile in one row when it fits, otherwise the fewest rows
+ * with the tiles spread evenly over them, so no row ends with a lone tile. `max` caps the columns (0 = no cap).
+ */
+export function compactRailColumns(
+  count: number,
+  width: number,
+  max = 0,
+): number {
+  if (count < 1) return 1;
+  const fit = Math.max(
+    1,
+    Math.min(
+      max || count,
+      count,
+      Math.floor((width + COMPACT_GAP) / (COMPACT_TILE + COMPACT_GAP)),
+    ),
+  );
+  return Math.ceil(count / Math.ceil(count / fit));
 }
 
 /** Animation stage of every edge: its source's place in a rail (reading order, or the column order when narrow), its source's depth in a layered flow. */

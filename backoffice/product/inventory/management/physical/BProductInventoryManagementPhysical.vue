@@ -273,6 +273,7 @@
           :min="0"
           :decimal="unit_float?3:0"
           :class="modern && productWorkspace ? 'sd-modern-underlined-field' : 'strong-field mt-5'"
+          :hide-details="modern && productWorkspace"
           show-buttons
         >
         </u-number-input>
@@ -302,7 +303,8 @@
         <v-btn
           :class="{ 'sd-modern-button sd-modern-button--primary': modern && productWorkspace }"
           :loading="busy_count"
-          :variant="modern && productWorkspace ? 'elevated' : quantity === old_quantity ? 'text' : 'elevated'"
+          :disabled="modern && productWorkspace && !quantity_changed"
+          :variant="modern && productWorkspace ? (quantity_changed ? 'elevated' : 'flat') : quantity === old_quantity ? 'text' : 'elevated'"
           color="primary"
           :size="modern && productWorkspace ? undefined : 'x-large'"
           @click.stop="setDefaultQuantity"
@@ -477,6 +479,10 @@ export default {
   computed: {
     workspaceBusy() {
       return this.busy_count || this.busy_save;
+    },
+    // Set count only matters once the typed quantity differs from the saved one (the input may emit strings).
+    quantity_changed() {
+      return Number(this.quantity) !== Number(this.old_quantity);
     },
     saveBlocked() {
       return this.dialog || this.dialog_bulk || this.edit_property_set_dialog;
@@ -930,10 +936,12 @@ export default {
   .b-product-inventory-refined__list-actions :deep(.sd-modern-icon-button .v-icon) { font-size: 16px; }
   .b-product-inventory-refined__columns { display: grid; grid-template-columns: var(--inventory-columns); gap: 10px; padding: 0 12px 10px; }
   .b-product-inventory-refined__footer { margin-block-start: 4px; padding-block-start: 15px; font-size: 11px; line-height: 18px; }
-  .b-product-inventory-refined__quantity { display: grid; grid-template-columns: minmax(0, 260px) max-content; gap: 20px; align-items: end; }
+  // Quantity at the start, Set count at the end; both centred on the field row (the field has no details area here).
+  .b-product-inventory-refined__quantity { display: grid; grid-template-columns: minmax(0, 260px) max-content; justify-content: space-between; gap: 20px; align-items: center; }
   .b-product-inventory-refined__quantity > header, .b-product-inventory-refined__stock-help { grid-column: 1 / -1; }
   .b-product-inventory-refined__quantity > header { margin: 0; }
-  .b-product-inventory-refined__quantity > .widget-buttons { margin: 0; }
+  .b-product-inventory-refined__quantity > .widget-buttons { margin: 0; padding: 0; }
+  .b-product-inventory-refined__quantity > .widget-buttons > .v-btn { min-width: 168px; }
   .b-product-inventory-refined__stock-input { min-width: 0; }
 
   @media (pointer: coarse) { --inventory-action-width: 96px; }

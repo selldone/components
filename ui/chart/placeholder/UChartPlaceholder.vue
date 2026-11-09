@@ -12,10 +12,18 @@
     <svg
       class="u-chart-placeholder__art"
       :viewBox="art.box"
-      :preserveAspectRatio="kind === 'donuts' ? 'xMidYMid meet' : 'none'"
+      :preserveAspectRatio="
+        kind === 'donuts' || kind === 'ratings' ? 'xMidYMid meet' : 'none'
+      "
       aria-hidden="true"
       focusable="false"
     >
+      <path
+        v-for="(d, index) in art.lines"
+        :key="'l' + index"
+        :d="d"
+        class="u-chart-placeholder__line"
+      />
       <path v-for="(d, index) in art.bands" :key="'b' + index" :d="d" />
       <rect
         v-for="(rect, index) in art.bars"
@@ -46,6 +54,17 @@
 </template>
 
 <script lang="ts">
+// A closed path around (cx, cy) with one radius per corner, evenly spaced from the top.
+const ring = (cx, cy, radii) =>
+  "M" +
+  radii
+    .map((r, index) => {
+      const angle = (2 * Math.PI * index) / radii.length - Math.PI / 2;
+      return `${(cx + r * Math.cos(angle)).toFixed(1)} ${(cy + r * Math.sin(angle)).toFixed(1)}`;
+    })
+    .join(" L") +
+  " Z";
+
 // Static shapes per chart kind, in their own coordinate box.
 const ART = {
   // Sessions on the left splitting into four channels on the right.
@@ -109,6 +128,29 @@ const ART = {
     bands: [],
     rings: [],
   },
+  // Product ratings: overall stars, a bar per criterion and the criteria radar below.
+  ratings: {
+    box: "0 0 400 490",
+    bars: [92, 128, 70, 118, 104].flatMap((label, index) => [
+      [20, 70 + index * 28, label, 9],
+      [210, 71 + index * 28, [118, 104, 130, 96, 110][index], 7],
+      [350, 70 + index * 28, 30, 9],
+    ]),
+    bands: [
+      ...[120, 160, 200, 240, 280].map((x) =>
+        ring(x, 28, [15, 7, 15, 7, 15, 7, 15, 7, 15, 7]),
+      ),
+      ring(200, 375, [104, 86, 112, 72, 94]),
+    ],
+    lines: [
+      ...[40, 80, 120].map((r) => ring(200, 375, [r, r, r, r, r])),
+      ...[0, 1, 2, 3, 4].map((index) => {
+        const angle = (2 * Math.PI * index) / 5 - Math.PI / 2;
+        return `M200 375 L${(200 + 120 * Math.cos(angle)).toFixed(1)} ${(375 + 120 * Math.sin(angle)).toFixed(1)}`;
+      }),
+    ],
+    rings: [],
+  },
   // Stacked daily bands over the period.
   stream: {
     box: "0 0 400 160",
@@ -125,7 +167,7 @@ const ART = {
 export default {
   name: "UChartPlaceholder",
   props: {
-    /** The chart it stands in for: flow, donuts, funnel, bars, rows or stream. */
+    /** The chart it stands in for: flow, donuts, funnel, bars, rows, ratings or stream. */
     kind: { type: String, default: "flow" },
     title: { type: String, default: "" },
     text: { type: String, default: "" },
@@ -180,6 +222,19 @@ export default {
   fill: none;
   stroke: currentColor;
   stroke-width: 16;
+}
+
+// Criterion labels lead from the right in RTL, as in the real ratings view.
+.v-locale--is-rtl .u-chart-placeholder--ratings .u-chart-placeholder__art {
+  transform: scaleX(-1);
+}
+
+// Radar grid and spokes stay hairlines however far the drawing scales.
+.u-chart-placeholder__art .u-chart-placeholder__line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5px;
+  vector-effect: non-scaling-stroke;
 }
 
 .u-chart-placeholder__note {

@@ -63,7 +63,40 @@
 
     <!-- --------------- Pods --------------- -->
 
-    <b-product-flow-diagram v-if="modern" :steps="flowSteps" />
+    <!-- Shared product flowchart renderer: one compact row when it fits, step help on hover/focus/tap. -->
+    <s-article-flow
+      v-if="modern"
+      class="b-product-flow__diagram"
+      :block="flowBlock"
+      :rail-columns="flowBlock.nodes.length"
+      compact
+      :legend-labels="{ data: $t('b_product_dashboard.flow.legend_path') }"
+    >
+      <template #caption />
+      <template #node-icon="{ node }">
+        <span
+          v-if="flowStepById[node.id]?.flags?.length"
+          class="b-product-flow__flags"
+          aria-hidden="true"
+        >
+          <flag
+            v-for="iso in flowStepById[node.id].flags.slice(0, 3)"
+            :key="iso"
+            :iso="iso"
+            :squared="false"
+          />
+        </span>
+        <img
+          v-else-if="flowStepById[node.id]?.image"
+          :src="flowStepById[node.id].image"
+          class="b-product-flow__node-image"
+          alt=""
+          width="26"
+          height="26"
+        />
+        <span v-else class="b-product-flow__node-icon" aria-hidden="true"><v-icon size="22">{{ node.icon }}</v-icon></span>
+      </template>
+    </s-article-flow>
     <u-pods-panel v-else color="#ddd">
       <u-pod-node
         icon="add_shopping_cart"
@@ -164,7 +197,7 @@
 </template>
 
 <script lang="ts">
-import BProductFlowDiagram from "./BProductFlowDiagram.vue";
+import SArticleFlow from "../../../article/add-on/flowchart/SArticleFlow.vue";
 import UPodsPanel from "../../../ui/pod/panel/UPodsPanel.vue";
 import UPodNode from "../../../ui/pod/node/UPodNode.vue";
 import UPodWire from "../../../ui/pod/wire/UPodWire.vue";
@@ -188,7 +221,7 @@ export default {
   name: "FlowProduct",
   mixins: [ProductMixin],
   components: {
-    BProductFlowDiagram,
+    SArticleFlow,
     BProductFlowErrorsSubscription,
     BProductFlowErrorsLocation,
     BProductFlowErrorsFile,
@@ -220,10 +253,33 @@ export default {
         id, title: this.$t(title), icon, image,
         help: this.$t(`b_product_dashboard.flow.help.${id}`),
       });
-      const steps = [
-        step("purchase", "global.commons.purchase", "add_shopping_cart"),
-        step("cart", "global.actions.add_to_cart", "inventory", this.$product.icon ? this.getShopImagePath(this.$product.icon, 64) : undefined),
-      ];
+      const steps = [step("purchase", "global.commons.purchase", "add_shopping_cart")];
+      // The product's own country/ZIP rule is checked before the item can enter a cart.
+      const locations = this.$product.locations;
+      if (locations) {
+        const countries = Object.keys(locations);
+        const places = countries.map((country) => this.$t("b_product_dashboard.flow.location_place", { country: this.getCountryName(country), count: locations[country]?.length || 0 }));
+        const location = step("locations", "b_product_inventory.locations.title", "mode_of_travel");
+        steps.push({
+          ...location,
+          flags: countries,
+          // The tile shows three flags; the caption counts the rest.
+          note: !countries.length
+            ? this.$t("b_product_inventory.locations.scope.product_none")
+            : countries.length > 3 ? this.$t("b_product_dashboard.flow.locations_more", { count: countries.length - 3 }) : undefined,
+          help: `${location.help} ${countries.length ? this.$t("b_product_dashboard.flow.locations_allowed", { places: places.join(", ") }) : this.$t("b_product_inventory.locations.scope.product_none")}`,
+        });
+      }
+      // Per-order quantity limits; zero means no limit.
+      const min = Number(this.$product.limit_min) || 0, max = Number(this.$product.limit_max) || 0;
+      const cart = step("cart", "global.actions.add_to_cart", "inventory", this.$product.icon ? this.getShopImagePath(this.$product.icon, 64) : undefined);
+      if (min || max) {
+        cart.note = [min && this.$t("b_product_dashboard.flow.limit_min", { count: min }), max && this.$t("b_product_dashboard.flow.limit_max", { count: max })].filter(Boolean).join(" · ");
+        cart.help += " " + (min && max
+          ? this.$t("b_product_dashboard.flow.limit_help_range", { min, max })
+          : min ? this.$t("b_product_dashboard.flow.limit_help_min", { min }) : this.$t("b_product_dashboard.flow.limit_help_max", { max }));
+      }
+      steps.push(cart);
       if (this.isMarketplace) steps.push(step("vendor", "global.commons.vendor", "storefront"));
       steps.push(step("pricing", "global.commons.pricing", "monetization_on"));
       if (this.has_valuation) steps.push(step("valuation", "global.commons.valuation", "tune", require("../../../assets/icons/valuation.svg")));
@@ -242,9 +298,31 @@ export default {
         steps.push({ ...step("linked", "global.commons.order", "shopping_bag", this.ribbon_link_type.image), title: "+ " + this.$t("global.commons.order") });
       }
       if (this.connect) {
-        steps.push({ ...step("connect", "global.commons.connect", "cable", this.getShopImagePath(this.connect.icon)), title: this.connect.name, backward: true });
+        steps.push({ ...step("connect", "global.commons.connect", "cable", this.getShopImagePath(this.connect.icon)), title: this.connect.name, backward: true, note: this.$t("b_product_dashboard.flow.two_way") });
       }
       return steps;
+    },
+    flowStepById() {
+      return Object.fromEntries(this.flowSteps.map((step) => [step.id, step]));
+    },
+    // The steps as a linear SArticleFlow block; trusted runtime data, never stored in an article.
+    flowBlock() {
+      const steps = this.flowSteps;
+      return {
+        type: "flow",
+        title: this.$t("product_flow.title"),
+        description: this.$t("b_product_dashboard.flow.subtitle"),
+        animated: true,
+        nodes: steps.map((step) => ({
+          id: step.id,
+          label: step.title,
+          description: step.help,
+          icon: step.icon,
+          caption: step.note || "",
+          outcome: null,
+        })),
+        edges: steps.slice(1).map((step, index) => ({ from: steps[index].id, to: step.id, label: "" })),
+      };
     },
     isMarketplace() {
       return this.$shop.model === BusinessModel.MARKETPLACE.code;
@@ -326,6 +404,12 @@ export default {
   :deep(.b-product-flow__alert) { background: var(--sd-modern-inset); border-radius: 10px; padding: 4px 12px; }
   :deep(.b-product-flow__alert .v-list-item__prepend > .v-icon) { color: rgb(var(--v-theme-error)); animation: none; }
   :deep(.b-product-flow__location) { background: var(--sd-modern-inset); color: rgb(var(--v-theme-on-surface)); }
+
+  // Shared flowchart: neutral glyphs or real artwork in a 26px slot, flags for the product's own countries.
+  .b-product-flow__diagram { margin-block-start: 18px; }
+  .b-product-flow__node-icon { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; color: rgb(var(--v-theme-on-surface)); }
+  .b-product-flow__node-image { width: 26px; height: 26px; object-fit: contain; }
+  .b-product-flow__flags { display: inline-flex; align-items: center; gap: 3px; height: 26px; }
 }
 @media (max-width: 600px) {
   .b--product-flow--modern {
