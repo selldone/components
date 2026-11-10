@@ -340,6 +340,9 @@ export default {
     },
 
     saveOrders(orders) {
+      // The selected variant can change while its order request is pending.
+      const images = this.images;
+      const variant = this.variant;
       if (this.modern) this.pending_orders++;
       axios
         .put(
@@ -361,13 +364,13 @@ export default {
           if (!data.error) {
             // Update live images order:
             orders.forEach((it) => {
-              const im = this.images.find((i) => i.id === parseInt(it.id));
+              const im = images.find((i) => i.id === parseInt(it.id));
               if (im) im.order = it.order;
               else console.error("Image not found to set order!", it);
             });
 
-            if (data.variant) {
-              Object.assign(this.variant, data.variant); // Update variant (change in its main image)
+            if (data.variant && variant) {
+              Object.assign(variant, data.variant); // Update variant (change in its main image)
             }
 
             NotificationService.showSuccessAlert(

@@ -23,9 +23,9 @@ const files = {
 function fixture(name = "images", { modern = true, vendorPanel = false, product = {}, premium = true, ...overrides } = {}) {
   const { descriptor, errors } = parse(readFileSync(new URL(files[name], import.meta.url), "utf8"));
   assert.deepEqual(errors, []);
-  const requests = [], metadata = [], dimensions = [], events = [], notices = [], confirmations = [];
+  const requests = [], metadata = [], dimensions = [], events = [], notices = [], confirmations = [], consoleErrors = [];
   const context = vm.createContext({
-    exports: {}, URL, console: { error() {}, log() {} },
+    exports: {}, URL, console: { error: (...args) => consoleErrors.push(args), log() {} },
     document: { head: { querySelector: () => null } },
     axios: Object.fromEntries(["post", "delete", "put"].map(method => [method, (url, payload) => new Promise((resolve, reject) => requests.push({ method, url, payload, reject, resolve: data => resolve({ data }) }))])),
     $: { ajax: options => metadata.push(options) },
@@ -68,7 +68,7 @@ function fixture(name = "images", { modern = true, vendorPanel = false, product 
   for (const [key, method] of Object.entries(component.methods || {})) state[key] = method.bind(state);
   for (const [key, getter] of Object.entries(component.computed || {})) Object.defineProperty(state, key, { configurable: true, get: getter.bind(state) });
   component.created?.call(state);
-  return { state, component, descriptor, requests, metadata, dimensions, events, notices, confirmations, context };
+  return { state, component, descriptor, requests, metadata, dimensions, events, notices, confirmations, consoleErrors, context };
 }
 
 function renderedNodes(descriptor, state) {
@@ -416,6 +416,39 @@ test("gallery AI excludes vendors and external image references before any reque
   assert.deepEqual(plain(events.at(-1)), ["activity", { busy: true, dialog: false }]);
   state.gallery_activity.busy = false; state.dialog_alt = true; state.emitActivity();
   assert.deepEqual(plain(events.at(-1)), ["activity", { busy: false, dialog: true }]);
+});
+
+test("gallery order responses update the submitted variant after selection changes", async () => {
+  for (const vendorPanel of [false, true]) {
+    for (const modern of [false, true]) {
+      const first = { id: 11, icon: "first.webp" };
+      const second = { id: 12, icon: "second.webp" };
+      const images = [
+        { id: 7, variant_id: first.id, order: 0 },
+        { id: 8, variant_id: first.id, order: 1 },
+        { id: 9, variant_id: second.id, order: 0 },
+      ];
+      const { state, requests, notices, consoleErrors } = fixture("gallery", {
+        vendorPanel, modern, variant: first, product: { images },
+      });
+      state.saveOrders([{ id: 8, order: 0 }, { id: 7, order: 1 }]);
+      assert.equal(requests[0].payload.variant_id, first.id);
+      state.variant = second;
+      state.refreshImages();
+      requests[0].resolve({ variant: { id: first.id, icon: "reordered.webp" } });
+      await setImmediate();
+
+      assert.equal(images[0].order, 1);
+      assert.equal(images[1].order, 0);
+      assert.equal(images[2].order, 0);
+      assert.equal(first.icon, "reordered.webp");
+      assert.deepEqual(second, { id: 12, icon: "second.webp" });
+      assert.equal(state.images[0].id, 9);
+      assert.equal(state.pending_orders, 0);
+      assert.deepEqual(consoleErrors, []);
+      assert.equal(notices.some(notice => notice.method === "showLaravelError"), false);
+    }
+  }
 });
 
 test("Pictures alone opts into six-dot drag handles and keyboard arrangement persists each move immediately", () => {
