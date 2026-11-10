@@ -77,8 +77,8 @@
         :class="{
           'row-hover': !modern && !viewOnly,
           'sd-modern-clickable-item': modern && !viewOnly,
-          'inactive-overlay': !item.quantity || !item.enable || item.missed,
-          '-red': item.missed,
+          'inactive-overlay': !modern && (!item.quantity || !item.enable || item.missed || hasMissingVariantParameter(item)),
+          '-red': item.missed || hasMissingVariantParameter(item),
           '-amber': !item.enable,
         }"
         :tabindex="modern && !viewOnly ? 0 : undefined"
@@ -88,7 +88,7 @@
         @keydown.enter.self.prevent="selectVariant(item)"
         @keydown.space.self.prevent="selectVariant(item)"
       >
-        <td v-if="modern" :data-label="$t('global.commons.Variants')" class="b-product-variants-refined__variant">
+        <td v-if="modern" :data-label="$t('global.commons.Variants')" class="b-product-variants-refined__variant" :class="{ 'inactive-overlay': !item.quantity || !item.enable || item.missed || hasMissingVariantParameter(item), '-red': item.missed || hasMissingVariantParameter(item), '-amber': !item.enable }">
           <span class="sd-modern-list-header b-product-variants-refined__caption">{{ $t('global.commons.Variants') }}</span>
           <div class="b-product-variants-refined__options">
             <button v-for="(val, key) in available_variants" :key="key" type="button" class="b-product-variants-refined__option"
@@ -110,8 +110,8 @@
               </v-tooltip>
             </button>
           </div>
-          <div v-if="item.missed || !item.enable" class="b-product-variants-refined__states">
-            <span v-if="item.missed">{{ $t('b_product_dashboard.identity.missing_parameter') }}</span>
+          <div v-if="item.missed || hasMissingVariantParameter(item) || !item.enable" class="b-product-variants-refined__states">
+            <span v-if="item.missed || hasMissingVariantParameter(item)">{{ $t('b_product_dashboard.identity.missing_parameter') }}</span>
             <span v-if="!item.enable">{{ $t('global.commons.inactive') }}</span>
           </div>
         </td>
@@ -280,18 +280,17 @@
             <button v-if="modern" v-copy type="button" class="b-product-variants-refined__code" dir="ltr" :aria-label="`MPN: ${item.mpn}`" @click.stop>{{ item.mpn }}<v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" :open-on-click="true">{{ item.mpn }}</v-tooltip></button>
             <b v-else v-copy class="mx-1" @click.stop>{{ item.mpn }}</b>
           </div>
-          <span v-if="modern && !item.sku" class="sd-modern-muted">{{ $t('b_product_dashboard.identity.sku_not_set') }}</span>
+          <span v-if="modern && !item.sku" class="b-product-variants-refined__no-sku">{{ $t('b_product_dashboard.identity.sku_not_set') }}</span>
         </td>
 
         <td class="text-center b-product-variants-refined__action-cell" :data-label="$t('global.commons.actions')">
-          <span v-if="modern" class="sd-modern-list-header b-product-variants-refined__caption">{{ $t('global.commons.actions') }}</span>
+          <span v-if="modern && item.sku" class="sd-modern-list-header b-product-variants-refined__caption">{{ $t('global.commons.actions') }}</span>
           <div :class="modern ? 'b-product-variants-refined__actions' : undefined">
-          <template v-if="item.sku || modern">
+          <template v-if="item.sku">
             <v-btn
               :class="modern ? 'sd-modern-icon-button' : 'mx-1 hover-scale-small'"
               :icon="modern"
               :aria-label="modern ? $t('b_product_dashboard.identity.sku_barcode') : undefined"
-              :disabled="!item.sku"
               min-width="32"
               variant="text"
               :width="modern ? undefined : 36"
@@ -307,7 +306,6 @@
               :class="modern ? 'sd-modern-icon-button' : 'mx-1 hover-scale-small'"
               :icon="modern"
               :aria-label="modern ? $t('b_product_dashboard.identity.sku_qr') : undefined"
-              :disabled="!item.sku"
               min-width="32"
               variant="text"
               :width="modern ? undefined : 36"
@@ -319,7 +317,7 @@
               </v-tooltip>
             </v-btn>
           </template>
-          <v-icon v-else title="The SKU is not set for variant!"
+          <v-icon v-else-if="!modern" title="The SKU is not set for variant!"
             >warning_amber
           </v-icon>
           </div>
@@ -471,7 +469,7 @@ export default {
       let out = {};
 
       Object.keys(ProductVariants).forEach((key) => {
-        if (this.all_variants_items.find((variant) => !!variant[key]))
+        if (this.all_variants_items.some((variant) => this.hasVariantValue(variant[key])))
           out[key] = ProductVariants[key];
       });
 
@@ -499,6 +497,12 @@ export default {
   },
 
   methods: {
+    hasVariantValue(value) {
+      return typeof value === 'string' ? !!value.trim() : !!value;
+    },
+    hasMissingVariantParameter(item) {
+      return Object.keys(this.available_variants).some(key => !this.hasVariantValue(item[key]));
+    },
     variantOptionName(key, value) {
       return key === 'color' ? GetNameOfColor(value) : value?.removeVariantAsset().trim() || '';
     },
@@ -577,9 +581,13 @@ export default {
   :deep(td .u--price) { font-size: 12px; white-space: nowrap; }
   :deep(td b) { font-size: 12px; font-weight: 500; }
   :deep(.inactive-overlay::after) { opacity: .12; background-size: 24px 24px; border-radius: 0; }
+  :deep(td.inactive-overlay) { isolation: isolate; }
+  :deep(td.inactive-overlay::after) { z-index: -1; mask-image: linear-gradient(to right, #000, transparent); }
+  :deep(td.inactive-overlay:dir(rtl)::after) { mask-image: linear-gradient(to left, #000, transparent); }
   :deep(.inactive-overlay.-red) { --color-1: rgb(var(--v-theme-error)); }
   :deep(.inactive-overlay.-amber:not(.-red)) { --color-1: rgb(var(--v-theme-warning)); }
   &__variant-column { width: 170px; }
+  &__no-sku { color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
   &__caption { display: none; }
   &__options { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 4px; }
   &__option {
@@ -629,6 +637,7 @@ export default {
     :deep(tbody > tr:not(.b-product-variants-refined__legend)) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px 14px; padding: 10px 12px; border-bottom: 1px solid var(--sd-modern-border); }
     &.v-data-table > :deep(.v-table__wrapper > table > tbody > tr > td) { display: block; height: auto; padding: 0 !important; width: auto; min-width: 0; border: 0; }
     &.v-data-table > :deep(.v-table__wrapper > table > tbody > tr > td:is(:first-child, :last-child)) { padding-inline: 0 !important; }
+    :deep(td.inactive-overlay::after) { left: auto; inset-inline-start: -12px; width: calc(100% + 12px); }
     .b-product-variants-refined__caption { display: block; margin-block-end: 3px; }
     .b-product-variants-refined__action-cell { align-self: end; }
     .b-product-variants-refined__legend { display: block; margin-top: 12px; }

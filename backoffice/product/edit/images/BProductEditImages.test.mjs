@@ -223,6 +223,65 @@ test("AI eligibility and live digests follow the selected image, studio, vendor 
   state.video_id = "9bZkp7q19f0"; assert.match(state.videosDigest, /youtube_linked/);
 });
 
+test("AI action buttons show the current main-image source and retain native actions, loading and guards", async () => {
+  const { state, descriptor, requests, confirmations } = fixture("images", {
+    product: { images: [{ id: 8, path: "products/gallery.webp" }] },
+    getShopImagePath: path => `/fixture/${path}`,
+  });
+  const tools = () => renderedNodes(descriptor, state).filter(node => node.type === "v-btn" && node.props?.class?.includes("b-product-edit-images__tool"));
+  function sources(path) {
+    const nodes = renderedNodes(descriptor, state);
+    const avatars = nodes.filter(node => node.type === "v-avatar" && node.props?.class === "b-product-edit-images__tool-source");
+    assert.equal(avatars.length, 2);
+    assert.ok(avatars.every(node => node.props.size === "42" && node.props.rounded === "lg"));
+    const images = nodes.filter(node => node.type === "v-img" && node.props?.alt === "add_product.images_modern.ai_source");
+    assert.equal(images.length, 2);
+    assert.ok(images.every(node => node.props.src === `/fixture/${path}` && node.props.cover === ""));
+  }
+  function descriptions(caption, help) {
+    const captions = renderedNodes(descriptor, state).filter(node => node.props?.class === "b-product-edit-images__tool-caption");
+    assert.deepEqual(captions.map(node => node.children), [`add_product.images_modern.${caption}`, "add_product.images_modern.ai_add_gallery"]);
+    const tips = tools().map(button => button.children.default().find(node => node.type?.name === "v-tooltip"));
+    for (const tip of tips) {
+      assert.equal(tip.props.activator, "parent");
+      assert.equal(tip.props.location, "top");
+      assert.equal(tip.props["open-on-focus"], true);
+      assert.equal(tip.props["content-class"], "sd-modern-tooltip text-start");
+    }
+    assert.deepEqual(tips.map(tip => tip.children.default()[0].children), [`add_product.images_modern.${help}`, "add_product.images_modern.reimagine_help"]);
+  }
+  sources("products/main.webp");
+  descriptions("ai_replace_main", "remove_bg_help");
+  assert.equal(tools().length, 2);
+  tools()[0].props.onClick();
+  assert.equal(requests.length, 0, "Remove background still requires its native confirmation");
+  assert.equal(confirmations.length, 1);
+  tools()[1].props.onClick();
+  assert.equal(state.dialog_replace_bg, true, "Reimagine still opens its native prompt dialog");
+  assert.equal(requests.length, 0);
+  state.dialog_replace_bg = false;
+  state.product.icon = "products/replacement.webp";
+  sources("products/replacement.webp");
+  state.busySave = true;
+  assert.ok(tools().every(node => node.props.disabled));
+  state.busySave = false;
+  state.busy_ai = true;
+  assert.equal(tools()[0].props.loading, true);
+  assert.ok(tools().every(node => node.props.disabled));
+  state.busy_ai = false;
+  state.need_upscale = true;
+  descriptions("ai_upscale_main", "upscale_help");
+  tools()[0].props.onClick();
+  assert.match(requests[0].url, /POST_AI_UPSCALE_BACKGROUND_PRODUCT_MAIN_IMAGE\/42\/31$/);
+  assert.equal(confirmations.length, 1, "Upscale retains its existing immediate action");
+  assert.equal(tools()[0].props.loading, true);
+  assert.ok(tools().every(node => node.props.disabled));
+  requests[0].resolve({ product: { icon: "products/upscaled.webp" } });
+  await setImmediate();
+  sources("products/upscaled.webp");
+  assert.equal(tools()[0].props.loading, false);
+});
+
 test("image dimensions ignore stale success, failure and callbacks after unmount", async () => {
   const { state, component, dimensions } = fixture();
   state.product.icon = "products/large.webp"; state.checkNeedsUpscale();
@@ -405,6 +464,37 @@ for (const vendorPanel of [false, true]) {
   });
 }
 
+test("modern variant galleries reuse the product queue while retaining selected-variant images and native endpoints", () => {
+  for (const vendorPanel of [false, true]) {
+    const variant = { id: 5, image: "variants/first.webp" };
+    const images = [
+      { id: 1, variant_id: null, order: 0, path: "products/main.webp" },
+      { id: 2, variant_id: 5, order: 1, path: "variants/second.webp" },
+      { id: 3, variant_id: 6, order: 0, path: "variants/other.webp" },
+      { id: 4, variant_id: 5, order: 0, path: "variants/first.webp" },
+    ];
+    const { state, descriptor, requests, events } = fixture("gallery", { vendorPanel, variant, product: { images } });
+    const gallery = renderedNodes(descriptor, state).find(node => node.type === "s-gallery-upload-grid");
+    assert.equal(gallery.props.modern, true);
+    assert.equal(gallery.props["has-alt"], true);
+    assert.equal(gallery.props["max-file-size"], "3MB");
+    assert.deepEqual(gallery.props.images.map(image => image.id), [4, 2]);
+    assert.match(gallery.props.uploadPath, vendorPanel ? /vendor\/POST_MY_VENDOR_UPLOAD_PRODUCT_COVER\/9\/31\/5$/ : /shop\/POST_UPLOAD_PRODUCT_COVER\/42\/31\/5$/);
+    const grid = fixture("grid", { hasAlt: true, images: gallery.props.images, uploadPath: gallery.props.uploadPath });
+    const uploader = renderedNodes(grid.descriptor, grid.state).find(node => node.type === "s-image-uploader");
+    assert.equal(uploader.props["compact-queue"], true);
+    assert.equal(uploader.props.server, gallery.props.uploadPath);
+    gallery.props["onAdd:image"]({ id: 8, variant_id: 5, order: 2, path: "variants/new.webp" });
+    assert.deepEqual(state.images.map(image => image.id), [2, 4, 8]);
+    gallery.props["onDelete:image"](2);
+    assert.deepEqual(state.images.map(image => image.id), [4, 8]);
+    assert.deepEqual(state.product.images.map(image => image.id), [1, 3, 4, 8]);
+    gallery.props.onActivity({ busy: true, dialog: false }); state.emitActivity();
+    assert.deepEqual(plain(events.at(-1)), ["activity", { busy: true, dialog: false }]);
+    assert.equal(requests.length, 0, "Rendering and immediate list updates do not submit the variant form");
+  }
+});
+
 test("gallery AI excludes vendors and external image references before any request", () => {
   for (const [vendorPanel, path] of [[true, "products/gallery.webp"], [false, "https://example.test/gallery.webp"]]) {
     const { state, requests } = fixture("gallery", { vendorPanel });
@@ -500,6 +590,36 @@ test("gallery upload activity follows all native queued and processing files wit
   files = [{ status: 5 }]; state.refreshUploadBusy(); await setImmediate(); assert.equal(state.mediaBusy, false);
   files = [{ status: 3 }]; state.refreshUploadBusy(); component.beforeUnmount.call(state);
   await setImmediate(); assert.equal(state.mediaBusy, false);
+});
+
+test("only the modern product gallery enables the compact queue while retaining native upload limits and activity", async () => {
+  for (const hasAlt of [true, false]) {
+    const { state, descriptor, events } = fixture("grid", { images: [], hasAlt, uploadPath: "/fixture/upload", maxFileSize: "3MB" });
+    const uploader = () => renderedNodes(descriptor, state).find(node => node.type === "s-image-uploader").props;
+    assert.equal(uploader()["compact-queue"], hasAlt);
+    assert.equal(uploader()["max-files"], 20);
+    assert.equal(uploader()["max-file-size"], "3MB");
+    assert.equal(uploader().server, "/fixture/upload");
+    assert.equal(uploader()["allow-multiple"], "");
+    assert.equal(uploader()["disable-past"], "");
+    state.show_images = false; assert.equal(uploader().disabled, true);
+    state.show_images = true; assert.equal(uploader().disabled, false);
+    for (const name of ["onOnAddFile", "onOnRemoveFile", "onOnProcessFileAbort", "onOnError"]) assert.equal(uploader()[name], state.refreshUploadBusy);
+    let files = [{ status: 3 }];
+    state.$refs.uploader = { $refs: { pond: { getFiles: () => files } } };
+    uploader().onOnAddFileStart();
+    assert.equal(state.busy_upload, hasAlt);
+    uploader().onOnProcessFileStart();
+    state.emitActivity();
+    assert.equal(events.some(([name, value]) => name === "activity" && value.busy), hasAlt);
+    files = [{ status: 5 }];
+    const item = { id: 18, path: "products/new-gallery.webp" };
+    uploader().onResponse({ files: { item } });
+    await setImmediate();
+    assert.equal(state.busy_upload, false);
+    assert.equal(events.find(([name]) => name === "add:image")[1], item);
+    assert.deepEqual(events.find(([name]) => name === "update:images")[1], [item]);
+  }
 });
 
 test("video FilePond activity stays pending across queued files and reports completion after emitting the immediate item", async () => {

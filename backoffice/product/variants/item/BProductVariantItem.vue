@@ -137,13 +137,13 @@
           <v-icon size="14">delete_outline</v-icon>{{ $t('b_product_inventory.deleted') }}
           <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-focus open-on-click>{{ $t('b_product_inventory.deleted_at', { date: getLocalTimeString(productVariant.deleted_at) }) }}</v-tooltip>
         </span>
-        <span v-else-if="enable != null" class="b-inventory-variant__status"><i :class="enable ? '-active' : '-inactive'"></i>{{ $t(enable ? 'b_product_inventory.active' : 'b_product_inventory.inactive') }}</span>
+        <span v-else-if="enable != null" class="b-inventory-variant__status"><i class="b-inventory-variant__dot" :class="enable ? '-active' : '-inactive'"></i>{{ $t(enable ? 'b_product_inventory.active' : 'b_product_inventory.inactive') }}</span>
         <span v-if="quantity <= 0" class="b-inventory-variant__status"><v-icon size="14">inventory_2</v-icon>{{ $t('b_product_inventory.out_of_stock') }}</span>
-        <span v-if="missing_options.length" class="b-inventory-variant__status" tabindex="0" @click.stop @keydown.stop>
+        <span v-if="missing_options.length" class="b-inventory-variant__status b-inventory-variant__issue b-inventory-variant__issue--error no-inv" tabindex="0" @click.stop @keydown.stop>
           <v-icon size="14">warning_amber</v-icon>{{ $t('b_product_inventory.missing_option') }}
           <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-focus open-on-click>{{ $t('b_product_inventory.options_missing_help') }}</v-tooltip>
         </span>
-        <span v-if="is_duplicated" class="b-inventory-variant__status"><v-icon size="14">content_copy</v-icon>{{ $t('b_product_inventory.duplicate_options') }}</span>
+        <span v-if="is_duplicated" class="b-inventory-variant__status b-inventory-variant__issue b-inventory-variant__issue--warning no-inv"><v-icon size="14">content_copy</v-icon>{{ $t('b_product_inventory.duplicate_options') }}</span>
         <span v-if="badge || loading" class="b-inventory-variant__status"><v-progress-circular v-if="loading" size="18" width="2" indeterminate /><span v-else>{{ badge }}</span></span>
       </div>
 
@@ -929,6 +929,10 @@ export default {
 
   &__row { position: relative; display: grid; grid-template-columns: var(--inventory-columns); align-items: center; gap: 12px; min-height: 87px; padding: 12px; border-radius: 8px; }
   &__row > div { min-width: 0; }
+  // Keep the hatch behind row content and fade within the logical first column.
+  &__row.inactive-overlay { isolation: isolate; }
+  &__row.inactive-overlay::after { grid-column: 1 / 2; left: auto; inset-inline-start: -12px; width: calc(100% + 12px); z-index: -1; mask-image: linear-gradient(to right, #000, transparent); }
+  &__row.inactive-overlay:dir(rtl)::after { mask-image: linear-gradient(to left, #000, transparent); }
   &__identity { display: flex; gap: 10px; align-items: center; }
   &__image { flex: 0 0 auto; }
   &__identifiers { min-width: 0; flex: 1; }
@@ -962,14 +966,26 @@ export default {
   &__availability { display: flex; flex-direction: column; gap: 4px; }
   &__caption { display: none; }
   &__status { display: flex; align-items: center; gap: 4px; font-size: 10px; line-height: 15px; }
-  &__status i { display: inline-block; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; background: #999; }
-  &__status i.-active { background: #43a859; }
-  &__status i.-inactive { background: #d19a38; }
+  &__dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; background: #999; }
+  &__dot.-active { background: #43a859; }
+  &__dot.-inactive { background: #d19a38; }
+  &__issue { align-self: flex-start; max-width: 100%; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: 500; line-height: 16px; }
+  &__issue--error { background: color-mix(in srgb, rgb(var(--v-theme-error)) 80%, #000); color: rgb(var(--v-theme-on-error)); }
+  &__issue--warning { background: rgb(var(--v-theme-warning)); color: rgb(var(--v-theme-on-warning)); }
   &__actions { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
   &__actions .v-btn { width: 32px; height: 32px; border-radius: 7px; }
 
+  @media (min-width: 960px) {
+    &:not(.b-inventory-variant--workspace) {
+      .b-inventory-variant__row { min-height: 72px; padding-block: 6px; }
+      .b-inventory-variant__options { gap: 1px; }
+      .b-inventory-variant__option { min-height: 21px; }
+      .b-inventory-variant__availability { gap: 2px; }
+    }
+  }
   @media (max-width: 959px) {
     &__row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 16px; padding: 12px; }
+    &__row.inactive-overlay::after { grid-column: 1 / -1; grid-row: 1 / 2; }
     &__identity { grid-column: 1 / -1; padding-inline-end: 92px; min-height: 48px; }
     &__identifier { max-width: 240px; }
     &__options, &__pricing, &__stock, &__availability { align-self: start; }

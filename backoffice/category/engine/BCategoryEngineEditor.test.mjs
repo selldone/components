@@ -66,6 +66,10 @@ async function fixture(t, { modern = true, embedded = false, vendor = false, cat
   } }, axios: Object.fromEntries(["get", "put"].map((method) => [method, (url, body) => new Promise((resolve, reject) => calls.requests.push({ method, url, body: body && plain(body), resolve, reject }))])),
     require(name) {
       if (name === "vue") return Vue;
+      if (name.includes("DirectiveCtrlKeydown")) return { default: {
+        mounted(el, binding) { el.shortcut = binding.value; },
+        beforeUnmount(el) { delete el.shortcut; },
+      } };
       if (name.includes("BackofficeLocalStorages")) return { BackofficeLocalStorages: { GetProductCachedTags: (path) => { calls.cache.push(path); return cache; } } };
       if (name.includes("NotificationService")) return { default: Object.fromEntries(["showSuccessAlert", "showErrorAlert", "showLaravelError"].map((method) => [method, (...args) => calls.notifications.push({ method, args })])) };
       if (name.endsWith("BCategoryEngineExplanation.vue")) return { default: explanation };
@@ -175,6 +179,24 @@ test("Save preserves exact native PUT, both result events, loading and open edit
     assert.equal(f.classNodes("b-category-engine-editor__matching").length, 1, "Successful save leaves editor mounted");
     await f.changeTags(["later draft"]); await f.click(f.action("cancelEngine")); assert.deepEqual(plain(f.state.engine_tags), engine.tags);
   }
+});
+
+test("embedded engine shortcut preserves unchanged, vendor and busy guards", async (t) => {
+  const f = await fixture(t, { embedded: true });
+  const save = f.action("saveEngine").shortcut;
+  assert.equal(typeof save, "function");
+  save(); assert.deepEqual(f.calls.requests, []);
+  await f.changeTags(["shortcut draft"]);
+  for (const guard of ["busy_engine", "busy_auto"]) {
+    f.state[guard] = true; save(); assert.deepEqual(f.calls.requests, []); f.state[guard] = false;
+  }
+  save(); save(); assert.equal(f.calls.requests.length, 1);
+  assert.deepEqual(f.calls.requests[0].body, { categories: [11, 23], tags: ["shortcut draft"] });
+  f.calls.requests[0].reject(new Error("Fixture engine failure")); await settle();
+  assert.equal(f.state.engine_changed, true); assert.deepEqual(f.calls.emitted, []);
+  const vendor = await fixture(t, { embedded: true, vendor: true });
+  await vendor.changeTags(["vendor draft"]);
+  vendor.action("saveEngine").shortcut(); assert.deepEqual(vendor.calls.requests, []);
 });
 
 test("embedded category engine keeps one inline Save with localized scope and no Cancel or fixed footer", async (t) => {
@@ -291,8 +313,7 @@ test("Auto add errors release loading and preserve draft; vendor Save stays disa
   }
   const vendor = await fixture(t, { vendor: true }); await vendor.changeTags(["draft"]);
   assert.ok(enabled(prop(vendor.action("saveEngine"), "disabled"))); assert.equal(vendor.calls.requests.length, 0);
-  vendor.state.saveEngine(); assert.equal(vendor.calls.requests[0].url, null, "Existing direct-call vendor branch never chooses the shop endpoint");
-  vendor.calls.requests[0].resolve({ data: { error: true, error_msg: "Fixture vendor denial" } }); await settle();
+  vendor.state.saveEngine(); assert.deepEqual(vendor.calls.requests, [], "Direct calls also preserve the disabled vendor boundary");
 });
 
 test("legacy opt-out keeps original aliases, preview, conditional actions and cache fallback", async (t) => {

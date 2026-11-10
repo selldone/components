@@ -55,8 +55,20 @@
       <details v-if="imageToolsAvailable" class="sd-modern-widget sd-modern-disclosure b-product-edit-images__disclosure">
         <summary class="sd-modern-disclosure__summary"><b-product-edit-info-icon name="WandSparkles" /><span class="b-product-edit-images__summary-copy"><span class="b-product-edit-images__summary-title">{{ $t('add_product.images_modern.tools') }}</span><span class="b-product-edit-images__digest">{{ imageToolsDigest }}</span></span><b-product-edit-info-icon name="ChevronDown" :size="16" class="b-product-edit-images__chevron" /></summary>
         <div class="b-product-edit-images__disclosure-body">
-          <div class="b-product-edit-images__tool"><b-product-edit-info-icon :name="need_upscale ? 'Maximize2' : 'ScanLine'" /><div><h3>{{ $t(need_upscale ? 'ai.upscale.title' : 'ai.remove_bg.title') }}</h3><p>{{ $t(need_upscale ? 'add_product.images_modern.upscale_help' : 'add_product.images_modern.remove_bg_help') }}</p></div><v-btn class="sd-modern-button" variant="outlined" :loading="need_upscale ? busy_upscale : busy_ai" :disabled="mediaBusy || busySave" @click="need_upscale ? upscaleImage() : removeBackground()">{{ $t(need_upscale ? 'ai.upscale.title' : 'ai.remove_bg.title') }}</v-btn></div>
-          <div class="b-product-edit-images__tool"><b-product-edit-info-icon name="Sparkles" /><div><h3>{{ $t('ai.reimagine.title') }}</h3><p>{{ $t('add_product.images_modern.reimagine_help') }}</p></div><v-btn class="sd-modern-button" variant="outlined" :disabled="mediaBusy || busySave" @click="showReplaceBg">{{ $t('ai.reimagine.title') }}</v-btn></div>
+          <div class="b-product-edit-images__tools">
+            <v-btn class="sd-modern-button b-product-edit-images__tool" variant="outlined" :loading="need_upscale ? busy_upscale : busy_ai" :disabled="mediaBusy || busySave" @click="need_upscale ? upscaleImage() : removeBackground()">
+              <v-avatar class="b-product-edit-images__tool-source" size="42" rounded="lg"><v-img :src="getShopImagePath(product.icon)" :alt="$t('add_product.images_modern.ai_source')" cover /></v-avatar>
+              <span class="b-product-edit-images__tool-copy"><span class="b-product-edit-images__tool-title">{{ $t(need_upscale ? 'ai.upscale.title' : 'ai.remove_bg.title') }}</span><span class="b-product-edit-images__tool-caption">{{ $t(need_upscale ? 'add_product.images_modern.ai_upscale_main' : 'add_product.images_modern.ai_replace_main') }}</span></span>
+              <b-product-edit-info-icon :name="need_upscale ? 'Maximize2' : 'ScanLine'" :size="16" />
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">{{ $t(need_upscale ? 'add_product.images_modern.upscale_help' : 'add_product.images_modern.remove_bg_help') }}</v-tooltip>
+            </v-btn>
+            <v-btn class="sd-modern-button b-product-edit-images__tool" variant="outlined" :disabled="mediaBusy || busySave" @click="showReplaceBg">
+              <v-avatar class="b-product-edit-images__tool-source" size="42" rounded="lg"><v-img :src="getShopImagePath(product.icon)" :alt="$t('add_product.images_modern.ai_source')" cover /></v-avatar>
+              <span class="b-product-edit-images__tool-copy"><span class="b-product-edit-images__tool-title">{{ $t('ai.reimagine.title') }}</span><span class="b-product-edit-images__tool-caption">{{ $t('add_product.images_modern.ai_add_gallery') }}</span></span>
+              <b-product-edit-info-icon name="Sparkles" :size="16" />
+              <v-tooltip activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">{{ $t('add_product.images_modern.reimagine_help') }}</v-tooltip>
+            </v-btn>
+          </div>
           <p class="b-product-edit-images__help">{{ $t('add_product.images_modern.ai_quota') }}</p>
         </div>
       </details>
@@ -1209,11 +1221,15 @@ export default {
   .b-product-edit-images__disclosure[open] .b-product-edit-images__digest { display: none; }
   .b-product-edit-images__disclosure[open] .b-product-edit-images__chevron { transform: rotate(180deg); }
   .b-product-edit-images__disclosure-body { padding: 0 23px 21px; }
-  .b-product-edit-images__tool { display: flex; align-items: center; gap: 13px; padding-block: 13px; }
-  .b-product-edit-images__tool > svg { flex-shrink: 0; color: var(--sd-modern-muted); }
-  .b-product-edit-images__tool > div { flex: 1; min-width: 0; }
-  .b-product-edit-images__tool p, .b-product-edit-images__help { font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); margin: 5px 0 0; }
-  .b-product-edit-images__tool > .v-btn { min-height: 38px; height: auto; font-size: 12px; line-height: 18px; padding: 9px 13px; }
+  .b-product-edit-images__tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-block: 13px; }
+  .b-product-edit-images__tool.v-btn { min-width: 0; min-height: 64px; height: auto; padding: 9px 11px; justify-content: stretch; border-color: var(--sd-modern-border); border-radius: 10px; text-align: start; white-space: normal; }
+  .b-product-edit-images__tool :deep(.v-btn__content) { display: grid; grid-template-columns: 42px minmax(0, 1fr) 16px; align-items: center; gap: 11px; width: 100%; }
+  .b-product-edit-images__tool-source { background: var(--sd-modern-inset); border-radius: 7px !important; }
+  .b-product-edit-images__tool-copy { display: grid; gap: 2px; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+  .b-product-edit-images__tool-title { font-size: 13px; font-weight: 500; line-height: 20px; }
+  .b-product-edit-images__tool-caption { color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; white-space: normal; }
+  .b-product-edit-images__tool :deep(svg) { color: var(--sd-modern-muted); }
+  .b-product-edit-images__help { font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); margin: 5px 0 0; }
   .b-product-edit-images__gallery-note { margin-block-start: 18px; }
   .b-product-edit-images__youtube-field { margin-block: 17px 12px; }
   .b-product-edit-images__youtube-field :deep(input.v-field__input) { box-sizing: border-box; }
@@ -1241,9 +1257,7 @@ export default {
     .b-product-edit-images__card { padding: 19px; }
     .b-product-edit-images__disclosure > summary { padding-inline: 19px; }
     .b-product-edit-images__disclosure-body { padding-inline: 19px; }
-    .b-product-edit-images__tool { flex-wrap: wrap; }
-    .b-product-edit-images__tool > div { flex-basis: calc(100% - 36px); }
-    .b-product-edit-images__tool > .v-btn { margin-inline-start: 31px; min-height: 44px; }
+    .b-product-edit-images__tools { grid-template-columns: minmax(0, 1fr); }
     .b-product-edit-images__youtube-field :deep(input) { font-size: 16px; }
     .b-product-edit-images__footer { align-items: stretch; flex-direction: column; }
     .b-product-edit-images__footer > .v-btn { width: 100%; }

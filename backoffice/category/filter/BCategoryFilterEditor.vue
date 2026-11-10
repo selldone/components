@@ -108,6 +108,7 @@
               color="primary"
               variant="elevated"
               @click="editCategoryFilter"
+              v-ctrl.s="editCategoryFilter"
             >
               <v-icon start aria-hidden="true">save</v-icon>
               {{ $t("add_category.edit_filter.modern.save_regenerate") }}
@@ -414,6 +415,7 @@
             color="primary"
             variant="elevated"
             @click="editCategoryFilter"
+            v-ctrl.s="editCategoryFilter"
           >
             <v-icon start aria-hidden="true">save</v-icon
             >{{ $t("add_category.edit_filter.modern.save_regenerate") }}
@@ -442,6 +444,7 @@
         color="primary"
         variant="elevated"
         @click="editCategoryFilter"
+        v-ctrl.s="editCategoryFilter"
       >
         <v-icon start aria-hidden="true">save</v-icon>
         {{ $t("add_category.edit_filter.modern.save_regenerate") }}
@@ -459,9 +462,11 @@ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import DirectiveCtrlKeydown from "@selldone/components-vue/directives/keyboard/DirectiveCtrlKeydown.ts";
 
 export default {
   name: "BCategoryFilterEditor",
+  directives: { ctrl: DirectiveCtrlKeydown },
   mixins: [CurrencyMixin],
 
   components: { UCurrencyIcon, UVariantAssetImage },

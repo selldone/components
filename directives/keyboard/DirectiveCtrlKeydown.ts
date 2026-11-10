@@ -62,8 +62,25 @@ export default {
         for (const modifier of modifiers) {
           const expectedCode = modifierCodes[modifier.toLowerCase()];
           if (expectedCode && event.code === expectedCode) {
+            const isSaveButton = modifier.toLowerCase() === 's' && el.tagName === 'BUTTON' && el.classList.contains('v-btn');
+            if (isSaveButton) {
+              if (
+                event.defaultPrevented || !el.isConnected || !el.getClientRects().length ||
+                window.getComputedStyle(el).visibility !== 'visible'
+              ) return;
+
+              // Only the foremost interactive overlay owns its Save shortcut.
+              const overlays = Array.from(document.querySelectorAll<HTMLElement>('.v-overlay--active:not(.v-tooltip)'));
+              const topOverlay = overlays.reduce<HTMLElement | null>((top, overlay) =>
+                !top || (Number.parseInt(window.getComputedStyle(overlay).zIndex, 10) || 0) >=
+                  (Number.parseInt(window.getComputedStyle(top).zIndex, 10) || 0) ? overlay : top,
+              null);
+              if (topOverlay && !topOverlay.contains(el)) return;
+            }
+
             // Override the default behavior of the key press
             event.preventDefault();
+            if (isSaveButton && el.matches(':disabled, [aria-disabled="true"], [aria-busy="true"], .v-btn--loading')) return;
 
             // Execute the provided function in the binding value
             if (typeof binding.value === 'function') {

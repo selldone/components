@@ -47,7 +47,8 @@
         variant="text"
         class="sd-modern-icon-button"
         :aria-label="$t('global.actions.close')"
-        @click="$emit('close')"
+        :disabled="editorBusy"
+        @click="closeEditor"
       >
         <v-icon>close</v-icon>
         <v-tooltip
@@ -113,11 +114,117 @@
             :aria-current="
               editor_tab === section.value ? 'location' : undefined
             "
+            :aria-label="
+              section.value === 'pricing' && pricingOverridden
+                ? $t(section.label) +
+                  ' · ' +
+                  $t('b_product_inventory.editor.pricing_override')
+                : section.value === 'shipping' && shippingOverridden
+                  ? $t(section.label) +
+                    ' · ' +
+                    $t('b_product_inventory.editor.shipping_override')
+                  : undefined
+            "
             aria-controls="b-product-variant-editor-panel"
             @click="editor_tab = section.value"
           >
             <v-icon aria-hidden="true">{{ section.icon }}</v-icon
-            >{{ $t(section.label) }}
+            ><span class="b-product-variant-editor__nav-label">{{
+              $t(section.label)
+            }}</span>
+            <span
+              v-if="section.value === 'images' && sidebarPictures.length"
+              class="b-product-variant-editor__pictures"
+              :data-count="sidebarPictures.length"
+              aria-hidden="true"
+            >
+              <img
+                v-for="path in sidebarPictures"
+                :key="path"
+                :src="getShopImagePath(path, 64)"
+                class="hover-scale"
+                alt=""
+                width="24"
+                height="24"
+                :draggable="false"
+              />
+            </span>
+            <template
+              v-if="
+                (section.value === 'pricing' && pricingOverridden) ||
+                (section.value === 'shipping' && shippingOverridden)
+              "
+            >
+              <v-icon
+                class="b-product-variant-editor__override"
+                color="primary"
+                size="16"
+                aria-hidden="true"
+                >edit_note</v-icon
+              >
+              <v-tooltip
+                activator="parent"
+                location="top"
+                :open-on-focus="true"
+                :open-on-click="true"
+                content-class="sd-modern-tooltip text-start"
+              >
+                <div class="b-product-variant-editor__comparison-title">
+                  {{
+                    $t(
+                      section.value === "pricing"
+                        ? "b_product_inventory.editor.pricing_override"
+                        : "b_product_inventory.editor.shipping_override",
+                    )
+                  }}
+                </div>
+                <table class="b-product-variant-editor__comparison">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>
+                        {{
+                          $t("b_product_inventory.editor.comparison_product")
+                        }}
+                      </th>
+                      <th>
+                        {{
+                          $t("b_product_inventory.editor.comparison_variant")
+                        }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="row in section.value === 'pricing'
+                        ? pricingComparison
+                        : shippingComparison"
+                      :key="row.key"
+                    >
+                      <th scope="row">{{ $t(row.label) }}</th>
+                      <td>
+                        <u-price
+                          v-if="row.type === 'money' && row.product !== null"
+                          :amount="row.product"
+                          :currency="product.currency"
+                        /><span v-else>{{
+                          comparisonValue(row, row.product)
+                        }}</span>
+                      </td>
+                      <td>
+                        <u-price
+                          v-if="row.type === 'money' && row.variant !== null"
+                          :amount="row.variant"
+                          :currency="price_object.currency"
+                        /><span v-else>{{
+                          comparisonValue(row, row.variant)
+                        }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </v-tooltip>
+            </template>
           </v-btn>
         </nav>
         <u-smart-toggle
@@ -165,8 +272,8 @@
             <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅  Defining Product Variant ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
             <template
               v-for="group in modern
-                ? ['options', 'identity', 'stock']
-                : ['identity', 'options', 'stock']"
+                ? ['options', 'identity']
+                : ['identity', 'options']"
               :key="group"
             >
               <div
@@ -602,104 +709,126 @@
                   </v-row>
                 </div>
               </fieldset>
-
-              <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Inventory ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
-              <fieldset
-                :disabled="modern && (!enable || !!loading)"
-                v-if="group === 'stock' && isPhysical"
-                :class="[
-                  { disabled: !enable },
-                  modern
-                    ? 'b-product-variant-editor__section b-product-variant-editor__stock'
-                    : 'widget-box mb-5',
-                ]"
-              >
-                <header
-                  v-if="modern"
-                  class="b-product-variant-editor__group-header"
-                >
-                  <div>
-                    <v-icon size="18">inventory_2</v-icon>
-                    <h3>{{ $t("b_product_inventory.editor.stock_title") }}</h3>
-                  </div>
-                </header>
-                <u-widget-header
-                  v-else
-                  :class="{ 'sd-modern-form-header': modern }"
-                  :title="
-                    $t(
-                      'product_admin.inventory.variant_add_edit.quantity.title',
-                    )
-                  "
-                  icon="inventory_2"
-                >
-                </u-widget-header>
-
-                <v-list-subheader v-if="!modern"
-                  >{{
-                    $t(
-                      "product_admin.inventory.variant_add_edit.quantity.subtitle",
-                    )
-                  }}
-                </v-list-subheader>
-
-                <div
-                  :class="{ 'b-product-variant-editor__stock-fields': modern }"
-                >
-                  <v-text-field
-                    v-model="quantity"
-                    :disabled="
-                      add_by_dropShipping ||
-                      is_marketplace ||
-                      (modern && (!enable || !!loading))
-                    "
-                    :label="
-                      $t(
-                        modern
-                          ? 'b_product_inventory.editor.stock_quantity'
-                          : 'product_admin.inventory.variant_add_edit.inventory',
-                      )
-                    "
-                    :suffix="
-                      $t(
-                        'product_admin.inventory.variant_add_edit.inventory_unit',
-                      )
-                    "
-                    class="mt-5 mx-auto input-variant sm-suffix strong-field"
-                    :class="{ 'sd-modern-underlined-field': modern }"
-                    color="#0288D1"
-                    variant="underlined"
-                  >
-                  </v-text-field>
-                  <p v-if="modern" class="b-product-variant-editor__hint">
-                    {{ $t("b_product_inventory.editor.stock_help") }}
-                  </p>
-                </div>
-
-                <!-- ▀▀▀▀▀▀▀▀▀ 🟣 Marketplace 🟣 ▀▀▀▀▀▀▀▀▀ -->
-                <div v-if="is_marketplace" class="widget-box pa-3 my-5">
-                  <v-icon class="me-1">info_outline</v-icon>
-                  Change inventory in the
-                  <b>
-                    <router-link
-                      :to="{
-                        name: IS_VENDOR_PANEL
-                          ? 'Vendor_ProductPage_Vendors'
-                          : 'BPageProductVendors',
-                        params: product
-                          ? { product_id: product.id }
-                          : undefined,
-                      }"
-                      >Vendors
-                    </router-link>
-                  </b>
-                  tab.
-                </div>
-                <!-- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
-              </fieldset>
             </template>
           </section>
+
+          <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Inventory ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
+
+          <fieldset
+            :disabled="modern && (!enable || !!loading)"
+            v-if="isPhysical"
+            v-show="!modern || editor_tab === 'stock'"
+            :class="[
+              { disabled: !enable },
+              modern
+                ? 'b-product-variant-editor__section b-product-variant-editor__stock'
+                : 'widget-box mb-5',
+            ]"
+          >
+            <header
+              v-if="modern"
+              class="b-product-variant-editor__group-header"
+            >
+              <div>
+                <v-icon size="18">inventory_2</v-icon>
+                <h3>{{ $t("b_product_inventory.editor.stock_title") }}</h3>
+              </div>
+            </header>
+            <u-widget-header
+              v-else
+              :class="{ 'sd-modern-form-header': modern }"
+              :title="
+                $t('product_admin.inventory.variant_add_edit.quantity.title')
+              "
+              icon="inventory_2"
+            >
+            </u-widget-header>
+
+            <v-list-subheader v-if="!modern"
+              >{{
+                $t("product_admin.inventory.variant_add_edit.quantity.subtitle")
+              }}
+            </v-list-subheader>
+
+            <div :class="{ 'b-product-variant-editor__stock-fields': modern }">
+              <div>
+                <v-text-field
+                  v-model="quantity"
+                  :disabled="
+                    add_by_dropShipping ||
+                    is_marketplace ||
+                    (modern && (!enable || !!loading))
+                  "
+                  :label="
+                    $t(
+                      modern
+                        ? 'b_product_inventory.editor.stock_quantity'
+                        : 'product_admin.inventory.variant_add_edit.inventory',
+                    )
+                  "
+                  :suffix="
+                    $t('product_admin.inventory.variant_add_edit.inventory_unit')
+                  "
+                  class="mt-5 mx-auto input-variant sm-suffix strong-field"
+                  :class="{ 'sd-modern-underlined-field': modern }"
+                  color="#0288D1"
+                  variant="underlined"
+                >
+                </v-text-field>
+                <p v-if="modern" class="b-product-variant-editor__hint">
+                  {{ $t("b_product_inventory.editor.stock_help") }}
+                </p>
+              </div>
+              <figure v-if="modern" class="b-product-variant-editor__stock-preview">
+                <template v-if="stockPreview">
+                  <figcaption>
+                    <span>{{ $t('b_product_inventory.editor.stock_total') }}</span>
+                    <span :aria-label="$t('b_product_inventory.editor.stock_totals_help', { before: formatStock(stockPreview.before), after: formatStock(stockPreview.after) })">
+                      {{ formatStock(stockPreview.before) }}
+                      <template v-if="stockPreview.change">
+                        <v-icon size="14" aria-hidden="true">arrow_forward</v-icon>
+                        <strong>{{ formatStock(stockPreview.after) }}</strong>
+                      </template>
+                    </span>
+                  </figcaption>
+                  <u-chart-donut-leader
+                    :slices="stockSlices"
+                    :unit="$t(stockPreview.change > 0 ? 'b_product_inventory.editor.stock_after_save' : 'b_product_inventory.editor.stock_current_total')"
+                    :format="formatStock"
+                    :labels="3"
+                    :min-label-share="0"
+                    :aria-label="$t('b_product_inventory.editor.stock_totals_help', { before: formatStock(stockPreview.before), after: formatStock(stockPreview.after) })"
+                  />
+                  <dl class="b-product-variant-editor__stock-breakdown">
+                    <div v-for="slice in stockSlices" :key="slice.key">
+                      <dt><i :style="{ background: slice.color }" aria-hidden="true"></i>{{ slice.label }}</dt>
+                      <dd>{{ slice.key === 'change' ? (stockPreview.change > 0 ? '+' : '−') : '' }}{{ formatStock(slice.value) }}</dd>
+                    </div>
+                  </dl>
+                </template>
+                <p v-else class="b-product-variant-editor__hint">{{ $t('b_product_inventory.editor.stock_preview_unavailable') }}</p>
+              </figure>
+            </div>
+
+            <!-- ▀▀▀▀▀▀▀▀▀ 🟣 Marketplace 🟣 ▀▀▀▀▀▀▀▀▀ -->
+            <div v-if="is_marketplace" class="widget-box pa-3 my-5">
+              <v-icon class="me-1">info_outline</v-icon>
+              Change inventory in the
+              <b>
+                <router-link
+                  :to="{
+                    name: IS_VENDOR_PANEL
+                      ? 'Vendor_ProductPage_Vendors'
+                      : 'BPageProductVendors',
+                    params: product ? { product_id: product.id } : undefined,
+                  }"
+                  >Vendors
+                </router-link>
+              </b>
+              tab.
+            </div>
+            <!-- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀ -->
+          </fieldset>
 
           <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Pricing ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
 
@@ -708,7 +837,9 @@
             v-show="!modern || editor_tab === 'pricing'"
             :class="[
               { disabled: !enable },
-              modern ? 'b-product-variant-editor__section' : 'widget-box mb-5',
+              modern
+                ? 'b-product-variant-editor__section b-product-variant-editor__pricing'
+                : 'widget-box mb-5',
             ]"
           >
             <u-widget-header
@@ -727,40 +858,110 @@
               }}
             </v-list-subheader>
 
-            <u-smart-toggle
-              v-model="pricing"
-              :disabled="modern && (!enable || !!loading)"
-              :accessible="modern"
-              :border="modern"
-              :false-title="
-                $t(
+            <div
+              :class="{
+                'sd-modern-widget b-product-variant-editor__pricing-scope':
+                  modern,
+              }"
+            >
+              <u-smart-toggle
+                v-model="pricing"
+                :disabled="modern && (!enable || !!loading)"
+                :accessible="modern"
+                :false-title="
+                  $t(
+                    modern
+                      ? 'b_product_inventory.editor.product_pricing'
+                      : 'global.commons.inactive',
+                  )
+                "
+                :false-description="
                   modern
-                    ? 'b_product_inventory.editor.product_pricing'
-                    : 'global.commons.inactive',
-                )
-              "
-              :false-description="
-                modern
-                  ? $t('b_product_inventory.editor.inherited_price')
-                  : undefined
-              "
-              :true-description="
-                $t(
-                  modern
-                    ? 'b_product_inventory.editor.custom_pricing_help'
-                    : 'product_admin.inventory.variant_add_edit.has_pricing_input',
-                )
-              "
-              :true-title="
-                $t(
-                  modern
-                    ? 'b_product_inventory.editor.custom_pricing'
-                    : 'global.commons.active',
-                )
-              "
-              color="success"
-              false-gray
-            ></u-smart-toggle>
+                    ? $t('b_product_inventory.editor.inherited_price')
+                    : undefined
+                "
+                :true-description="
+                  $t(
+                    modern
+                      ? 'b_product_inventory.editor.custom_pricing_help'
+                      : 'product_admin.inventory.variant_add_edit.has_pricing_input',
+                  )
+                "
+                :true-title="
+                  $t(
+                    modern
+                      ? 'b_product_inventory.editor.custom_pricing'
+                      : 'global.commons.active',
+                  )
+                "
+                color="success"
+                false-gray
+              ></u-smart-toggle>
+              <section
+                v-if="modern"
+                class="b-product-variant-editor__product-price-reference"
+                :aria-label="
+                  $t('b_product_inventory.editor.product_price_reference')
+                "
+              >
+                <h3>
+                  {{ $t("b_product_inventory.editor.product_price_reference") }}
+                </h3>
+                <dl>
+                  <div>
+                    <dt>
+                      {{ $t("add_product.pricing.workspace.base_price") }}
+                    </dt>
+                    <dd>
+                      <u-price
+                        v-if="product.price != null && product.price !== ''"
+                        :amount="product.price"
+                        :currency="product.currency"
+                      /><span v-else>{{ $t("global.commons.not_set") }}</span>
+                    </dd>
+                  </div>
+                  <div v-if="product.commission">
+                    <dt>{{ $t("add_product.pricing.commission_input") }}</dt>
+                    <dd>
+                      <u-price
+                        :amount="product.commission"
+                        :currency="product.currency"
+                      />
+                    </dd>
+                  </div>
+                  <div v-if="product.discount">
+                    <dt>{{ $t("add_product.pricing.discount_input") }}</dt>
+                    <dd>
+                      <u-price
+                        :amount="product.discount"
+                        :currency="product.currency"
+                      />
+                    </dd>
+                  </div>
+                  <template
+                    v-if="
+                      product.discount && (product.dis_start || product.dis_end)
+                    "
+                  >
+                    <div>
+                      <dt>{{ $t("add_product.pricing.start_input") }}</dt>
+                      <dd>
+                        {{
+                          comparisonValue({ type: "date" }, product.dis_start)
+                        }}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>{{ $t("add_product.pricing.end_input") }}</dt>
+                      <dd>
+                        {{ comparisonValue({ type: "date" }, product.dis_end) }}
+                      </dd>
+                    </div>
+                  </template>
+                </dl>
+                <p v-if="product.price_label">{{ product.price_label }}</p>
+              </section>
+            </div>
 
             <v-expand-transition>
               <b-product-edit-price
@@ -886,7 +1087,10 @@
                 ref="variantGallery"
                 :product="product"
                 :variant="productVariant"
+                :modern="modern"
+                :inert="modern && (!enable || !!loading)"
                 class="mt-3"
+                @activity="gallery_activity = $event"
               />
             </div>
             <div
@@ -940,7 +1144,8 @@
           :size="modern ? 'default' : 'x-large'"
           :class="{ 'sd-modern-button': modern }"
           variant="text"
-          @click="$emit('close')"
+          :disabled="editorBusy"
+          @click="closeEditor"
         >
           <v-icon start>close</v-icon>
           {{ $t("global.actions.close") }}
@@ -952,6 +1157,8 @@
           :size="modern ? 'default' : 'x-large'"
           :class="{ 'sd-modern-button': modern }"
           variant="elevated"
+          :disabled="editorBusy"
+          v-ctrl.s="addItem"
           @click="addItem()"
         >
           <v-icon class="me-1">{{ productVariant ? "save" : "add" }}</v-icon>
@@ -1024,11 +1231,19 @@ import { GetNameOfColor } from "@selldone/core-js/helper/color/ColorHelper.ts";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import BProductVariantValueInput from "@selldone/components-vue/backoffice/product/variants/value-input/BProductVariantValueInput.vue";
+import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
+import UChartDonutLeader from "@selldone/components-vue/ui/chart/donut-leader/UChartDonutLeader.vue";
+import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+import DirectiveCtrlKeydown from "@selldone/components-vue/directives/keyboard/DirectiveCtrlKeydown.ts";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 
 export default {
   name: "BProductVariantAdd",
-  mixins: [],
+  mixins: [DateMixin],
+  directives: { ctrl: DirectiveCtrlKeydown },
   components: {
+    UChartDonutLeader,
+    UPrice,
     BProductVariantValueInput,
     UAvatarFolder,
 
@@ -1134,10 +1349,134 @@ export default {
 
       // Add image on add new variant mode
       image_file: null,
+      gallery_activity: { busy: false, dialog: false },
     };
   },
 
   computed: {
+    stockPreview() {
+      const variants = this.product.product_variants;
+      if (!Array.isArray(variants) || this.productVariant?.deleted_at) return null;
+      const draft = this.stockQuantity(this.quantity);
+      const current = this.productVariant?.id != null ? this.stockQuantity(this.productVariant.quantity) : 0;
+      if (draft === null || current === null) return null;
+      let others = 0;
+      for (const variant of variants) {
+        if (variant.deleted_at || (this.productVariant?.id != null && String(variant.id) === String(this.productVariant.id))) continue;
+        const quantity = this.stockQuantity(variant.quantity);
+        if (quantity === null) return null;
+        others += quantity;
+      }
+      const before = others + current;
+      const after = others + draft;
+      if (!Number.isSafeInteger(before) || !Number.isSafeInteger(after)) return null;
+      return { current, others, before, after, retained: Math.min(current, draft), change: draft - current };
+    },
+    stockSlices() {
+      const preview = this.stockPreview;
+      if (!preview) return [];
+      const slices = [
+        { key: 'current', label: this.$t(preview.change < 0 ? 'b_product_inventory.editor.stock_retained' : 'b_product_inventory.editor.stock_this_variant'), value: preview.retained, color: 'rgb(var(--v-theme-primary))' },
+        { key: 'others', label: this.$t('b_product_inventory.editor.stock_other_variants'), value: preview.others, color: 'rgba(var(--v-theme-on-surface), 0.22)' },
+      ];
+      if (preview.change) slices.push({ key: 'change', label: this.$t(preview.change > 0 ? 'b_product_inventory.editor.stock_added' : 'b_product_inventory.editor.stock_removed'), value: Math.abs(preview.change), color: preview.change > 0 ? 'rgb(var(--v-theme-success))' : 'rgb(var(--v-theme-error))' });
+      return slices;
+    },
+    sidebarPictures() {
+      if (!this.productVariant) return [];
+      // A loaded gallery is authoritative, including an empty one after deletion.
+      if (!Array.isArray(this.product.images))
+        return this.productVariant.image ? [this.productVariant.image] : [];
+      const images = this.product.images
+        .filter(
+          (image) =>
+            image.variant_id != null &&
+            String(image.variant_id) === String(this.productVariant.id),
+        )
+        .sort((a, b) => Number(a.order || 0) - Number(b.order || 0));
+      return [
+        ...new Set(images.map((image) => image.path).filter(Boolean)),
+      ].slice(0, 3);
+    },
+    pricingOverridden() {
+      return !!this.pricing;
+    },
+    pricingComparison() {
+      if (!this.pricingOverridden) return [];
+      const fields = [
+        ["price", "price_input", "money"],
+        ["discount", "discount_input", "money"],
+        ["commission", "commission_input", "money"],
+        ["currency", "currency_input", "text"],
+        ["dis_start", "start_input", "date"],
+        ["dis_end", "end_input", "date"],
+        ["price_label", "price_label_input", "text"],
+      ];
+      return fields
+        .map(([key, label, type]) => ({
+          key,
+          label: "add_product.pricing." + label,
+          type,
+          product:
+            type === "money"
+              ? this.product[key] == null || this.product[key] === ""
+                ? null
+                : this.comparisonNumber(this.product[key])
+              : this.product[key],
+          variant:
+            type === "money"
+              ? this.price_object[key] == null || this.price_object[key] === ""
+                ? null
+                : this.comparisonNumber(this.price_object[key])
+              : this.price_object[key],
+        }))
+        .filter(
+          (row) =>
+            row.key === "price" ||
+            (row.type === "date"
+              ? this.comparisonTimestamp(row.product) !==
+                this.comparisonTimestamp(row.variant)
+              : row.type === "money"
+                ? this.comparisonNumber(row.product) !==
+                  this.comparisonNumber(row.variant)
+                : (row.product ?? "") !== (row.variant ?? "")),
+        );
+    },
+    shippingComparison() {
+      if (!this.isPhysical) return [];
+      const dimensions = ["weight", "width", "length", "height"].map((key) => ({
+        key,
+        label: "product_extra_physical." + key,
+        type: "number",
+        product: this.comparisonNumber(this.product.extra?.[key]),
+        variant: this.comparisonNumber(this.extra?.[key]),
+        unit:
+          key === "weight"
+            ? ShopOptionsHelper.GetMassUnit(this.shop)
+            : ShopOptionsHelper.GetSizeUnit(this.shop),
+      }));
+      return [
+        ...dimensions,
+        {
+          key: "lead",
+          label: "product_extra_physical.lead_time",
+          type: "lead",
+          product: this.comparisonNumber(this.product.lead),
+          variant: this.comparisonNumber(this.lead),
+        },
+      ].filter((row) => row.product !== row.variant);
+    },
+    shippingOverridden() {
+      return this.isPhysical && this.shippingComparison.length > 0;
+    },
+    editorBusy() {
+      return (
+        this.modern &&
+        (!!this.loading ||
+          this.gallery_activity.busy ||
+          this.gallery_activity.dialog)
+      );
+    },
     unitPriceAvailable() {
       return [
         [this.hasWeight, this.weight],
@@ -1159,6 +1498,17 @@ export default {
           heading: "b_product_inventory.editor.details_title",
           description: "b_product_inventory.editor.details_help",
         },
+        ...(this.isPhysical
+          ? [
+              {
+                value: "stock",
+                icon: "inventory_2",
+                label: "b_product_inventory.editor.stock_title",
+                heading: "b_product_inventory.editor.stock_title",
+                description: "b_product_inventory.editor.stock_description",
+              },
+            ]
+          : []),
         {
           value: "pricing",
           icon: "sell",
@@ -1170,7 +1520,7 @@ export default {
           ? [
               {
                 value: "shipping",
-                icon: "inventory_2",
+                icon: "local_shipping",
                 label: "b_product_inventory.editor.shipping",
                 heading: "b_product_inventory.editor.shipping_title",
                 description: "b_product_inventory.editor.shipping_help",
@@ -1252,7 +1602,52 @@ export default {
   },
 
   methods: {
+    stockQuantity(value) {
+      if ((typeof value !== 'number' && typeof value !== 'string') || String(value).trim() === '') return null;
+      const quantity = Number(value);
+      return Number.isSafeInteger(quantity) && quantity >= 0 ? quantity : null;
+    },
+    formatStock(value) {
+      return value.toLocaleString(this.$vuetify?.locale?.isRtl ? 'fa-IR' : 'en-US');
+    },
+    comparisonNumber(value) {
+      const number = Number(value ?? 0);
+      return Number.isFinite(number) ? number : String(value ?? "");
+    },
+    comparisonTimestamp(value) {
+      if (value == null || value === "") return null;
+      const timestamp = this.convertToLocalTime(value)?.getTime();
+      return Number.isFinite(timestamp) ? timestamp : String(value);
+    },
+    comparisonValue(row, value) {
+      if (row.type === "date") {
+        const timestamp = this.comparisonTimestamp(value);
+        return timestamp == null
+          ? this.$t("global.commons.not_set")
+          : typeof timestamp === "number"
+            ? this.getLocalTimeStringSmall(new Date(timestamp).toISOString())
+            : timestamp;
+      }
+      if (row.type === "lead") {
+        if (value === -1)
+          return this.$t("product_extra_physical.dynamic_lead_time");
+        if (value === 0)
+          return this.$t("add_product.shipping_modern.ready_digest");
+        return this.$t("add_product.shipping_modern.hours_digest", {
+          hours: value,
+        });
+      }
+      if (row.type === "number")
+        return `${typeof value === "number" ? value.toLocaleString(this.$vuetify.locale?.isRtl ? "fa-IR" : "en-US", { maximumFractionDigits: 3 }) : value} ${row.unit}`;
+      return value == null || value === ""
+        ? this.$t("global.commons.not_set")
+        : value;
+    },
+    closeEditor() {
+      if (!this.editorBusy) this.$emit("close");
+    },
     addItem() {
+      if (this.editorBusy) return;
       if (
         this.modern &&
         this.enable &&
@@ -1383,7 +1778,8 @@ export default {
 
         if (!this.product.extra || Array.isArray(this.product.extra))
           this.product.extra = {};
-        this.extra = this.product.extra;
+        // New-variant packaging is a draft, separate from the product comparison baseline.
+        this.extra = Object.assign({}, this.product.extra);
       }
     },
 
@@ -1495,6 +1891,87 @@ export default {
       font-size: 18px;
     }
   }
+  &__navigation :deep(.v-btn__content) {
+    width: 100%;
+    gap: 8px;
+  }
+  &__nav-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__override {
+    margin-inline-start: auto;
+    flex-shrink: 0;
+  }
+  &__pictures {
+    display: grid;
+    grid-template-columns: 24px;
+    grid-template-rows: 24px;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 2px;
+    margin-inline-start: auto;
+  }
+  &__pictures[data-count="2"],
+  &__pictures[data-count="3"] {
+    grid-template-columns: 24px 10px;
+  }
+  &__pictures[data-count="3"] {
+    grid-template-rows: 11px 11px;
+  }
+  &__pictures > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 1px solid var(--sd-modern-border);
+    border-radius: 3px;
+    background: rgb(var(--v-theme-surface));
+    transform-origin: right center;
+  }
+  &__pictures:dir(rtl) > img {
+    transform-origin: left center;
+  }
+  &__pictures > img:first-child {
+    grid-row: 1 / -1;
+  }
+  &__pictures[data-count="2"] > img:last-child {
+    height: 11px;
+  }
+  &__comparison-title {
+    margin-block-end: 6px;
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 500;
+  }
+  &__comparison {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 12px;
+    line-height: 18px;
+  }
+  &__comparison th,
+  &__comparison td {
+    padding: 4px;
+    text-align: start;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    font: inherit;
+  }
+  &__comparison th:first-child {
+    width: 32%;
+    padding-inline-start: 0;
+  }
+  &__comparison thead th {
+    color: var(--sd-modern-muted);
+    font-size: 11px;
+  }
+  &__comparison :deep(.u--price) {
+    white-space: normal;
+    font: inherit;
+  }
   &__body.v-card-text {
     flex: 1 1 auto;
     min-height: 0;
@@ -1526,7 +2003,11 @@ export default {
     margin-block-end: 18px;
   }
   &__details,
-  &__content > fieldset:not(.b-product-variant-editor__media),
+  &__content
+    > fieldset:not(.b-product-variant-editor__media):not(
+      .b-product-variant-editor__pricing
+    ),
+  &__pricing-scope,
   &__media > .b-product-variant-editor__section {
     min-width: 0;
     padding: 24px;
@@ -1588,12 +2069,64 @@ export default {
     column-gap: 22px;
     align-items: start;
   }
+  &__pricing-scope {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+    margin-block-end: 24px;
+  }
+  &__product-price-reference {
+    min-width: 0;
+    h3 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      line-height: 21px;
+      font-weight: 500;
+    }
+    dl {
+      margin: 0;
+    }
+    dl > div {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-block-start: 6px;
+      font-size: 13px;
+      line-height: 20px;
+    }
+    dt {
+      color: var(--sd-modern-muted);
+    }
+    dd {
+      margin: 0;
+      text-align: end;
+      overflow-wrap: anywhere;
+    }
+    p {
+      margin: 10px 0 0;
+      font-size: 13px;
+      line-height: 20px;
+      overflow-wrap: anywhere;
+    }
+  }
   &__stock-fields {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
     gap: 22px;
     align-items: center;
+    > div > .b-product-variant-editor__hint { margin-block-start: 12px; }
   }
+  &__stock-preview { width: 100%; max-width: 360px; min-width: 0; margin: 0 auto; }
+  &__stock-preview figcaption { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; font-size: 12px; line-height: 18px; }
+  &__stock-preview figcaption > span:last-child { display: flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+  &__stock-preview figcaption strong { font-weight: 500; }
+  &__stock-preview:dir(rtl) figcaption .v-icon { transform: scaleX(-1); }
+  &__stock-breakdown { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; margin: 0; font-size: 12px; line-height: 18px; }
+  &__stock-breakdown > div { min-width: 0; }
+  &__stock-breakdown dt { display: flex; align-items: center; gap: 5px; color: var(--sd-modern-muted); }
+  &__stock-breakdown i { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; }
+  &__stock-breakdown dd { margin: 0; padding-inline-start: 12px; font-variant-numeric: tabular-nums; }
   &__hint {
     margin: 0;
     color: var(--sd-modern-muted);
@@ -1761,16 +2294,27 @@ export default {
       font-size: 12px;
       padding: 10px 4px;
     }
-    &__navigation .v-icon {
+    &__navigation.sd-modern-section-nav {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    &__navigation .v-icon:not(.b-product-variant-editor__override) {
       display: none;
     }
     &__details,
-    &__content > fieldset:not(.b-product-variant-editor__media),
+    &__content
+      > fieldset:not(.b-product-variant-editor__media):not(
+        .b-product-variant-editor__pricing
+      ),
+    &__pricing-scope,
     &__media > .b-product-variant-editor__section {
       padding: 18px 16px;
     }
     &__option-fields,
     &__identifiers,
+    &__pricing-scope {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+    }
     &__stock-fields {
       grid-template-columns: minmax(0, 1fr);
       gap: 18px;
@@ -1788,6 +2332,11 @@ export default {
     }
     :deep(.v-field__input) {
       font-size: 16px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &__pictures > img {
+      --duration: 0s;
     }
   }
 }

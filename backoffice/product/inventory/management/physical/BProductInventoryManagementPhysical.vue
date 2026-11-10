@@ -230,10 +230,19 @@
       </div>
 
       <p v-if="modern && !product_variants.length" class="b-product-inventory-refined__empty">{{ $t('b_product_inventory.empty') }}</p>
+      <div v-if="modern && !productWorkspace && product_variants.length" class="b-product-inventory-refined__legend" role="group" :aria-label="$t('b_product_inventory.row_shading')">
+        <span>{{ $t('b_product_inventory.row_shading') }}</span>
+        <span><i class="b-product-inventory-refined__swatch inactive-overlay -amber" aria-hidden="true"></i>{{ $t('b_product_inventory.inactive') }}</span>
+        <span><i class="b-product-inventory-refined__swatch inactive-overlay -red" aria-hidden="true"></i>{{ $t('b_product_inventory.missing_option') }}</span>
+        <span><i class="b-product-inventory-refined__swatch inactive-overlay" aria-hidden="true"></i>{{ $t('b_product_inventory.shading_unavailable') }}</span>
+      </div>
       <footer v-if="modern" class="sd-modern-table-footer b-product-inventory-refined__footer">
         <span>{{ $t('b_product_inventory.variant_count', { count: product_variants.length }) }}</span>
         <div class="b-product-inventory-refined__pagination">
-          <v-select v-model="page_size" :items="[10, 20, 50]" :label="$t('b_product_dashboard.identity.per_page')" density="compact" variant="outlined" hide-details />
+          <div class="b-product-inventory-refined__page-size">
+            <span aria-hidden="true">{{ $t('b_product_dashboard.identity.per_page') }}</span>
+            <v-select v-model="page_size" :items="[10, 20, 50]" :aria-label="$t('b_product_dashboard.identity.per_page')" density="compact" variant="plain" single-line hide-details />
+          </div>
           <v-pagination v-model="page" :length="Math.max(1, pages_count)" :total-visible="3" class="sd-modern-pagination" density="comfortable" variant="text" />
         </div>
       </footer>
@@ -866,9 +875,16 @@ export default {
   &__attributes { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
   &__columns { display: grid; grid-template-columns: var(--inventory-columns); gap: 12px; padding: 0 12px 9px; border-block-end: 1px solid var(--sd-modern-border); }
   &__empty { margin: 0; padding: 30px 12px; text-align: center; color: var(--sd-modern-muted); }
+  &__legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 12px 12px 0; font-size: 12px; line-height: 18px; color: var(--sd-modern-muted); }
+  &__legend > span { display: inline-flex; align-items: center; gap: 6px; }
+  &__swatch { flex: 0 0 22px; width: 22px; height: 14px; border-radius: 3px; overflow: hidden; }
   &__footer { margin-block-start: 10px; padding-block-start: 12px; font-size: 12px; gap: 12px; }
   &__pagination { display: flex; align-items: center; gap: 12px; }
-  &__pagination .v-select { width: 90px; flex: 0 0 90px; }
+  &__page-size { display: flex; align-items: center; gap: 8px; white-space: nowrap; color: var(--sd-modern-muted); font-size: 12px; }
+  &__page-size .v-select { width: 64px; flex: 0 0 64px; color: rgb(var(--v-theme-on-surface)); }
+  &__page-size :deep(.v-field) { --v-input-padding-top: 0px; font-size: 12px; line-height: 18px; }
+  &__page-size :deep(.v-field__append-inner) { align-items: center; }
+  &__page-size .v-select:focus-within { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; border-radius: 4px; }
   &__quantity { margin: 0; }
   &__quantity .v-list-subheader { min-height: 0; padding-inline: 0; }
   &__quantity .widget-buttons { margin-block-end: 0; }
@@ -889,6 +905,9 @@ export default {
     &__pagination { width: 100%; justify-content: space-between; gap: 4px; }
     &__pagination :deep(.v-pagination__item), &__pagination :deep(.v-pagination__prev), &__pagination :deep(.v-pagination__next) { margin-inline: 0; }
     &__header :deep(.v-btn), &__section-header :deep(.v-btn) { min-height: 44px; }
+  }
+  @media (max-width: 599px), (pointer: coarse) {
+    &__page-size :deep(.v-field) { --v-input-control-height: 44px; }
   }
 }
 

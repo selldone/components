@@ -9,26 +9,25 @@
         :key="staff.id"
         :open-on-focus="true"
         :persistent="false"
-        open-on-click
+        :open-on-click="!staffTo?.(staff)"
         location="top"
         content-class="sd-modern-tooltip text-start"
       >
         <template #activator="{ props }">
-          <span
+          <component
+            :is="staffTo?.(staff) ? 'router-link' : 'button'"
             v-bind="props"
+            :to="staffTo?.(staff) || undefined"
+            :type="staffTo?.(staff) ? undefined : 'button'"
             class="b-dashboard-online-staffs__avatar"
-            tabindex="0"
-            role="img"
             :aria-label="`${staff.name}, ${staff.email}, ${$t('admin_shop.dashboard.ai_agents.staff')}, ${$t('global.commons.online')}`"
-            @keydown.enter.prevent="$event.currentTarget.click()"
-            @keydown.space.prevent="$event.currentTarget.click()"
           >
             <v-avatar size="30" class="b-dashboard-online-staffs__image">
               <v-img :src="getUserAvatar(staff.id)" alt="">
                 <template #error><v-icon size="20">person</v-icon></template>
               </v-img>
             </v-avatar>
-          </span>
+          </component>
         </template>
         <div class="b-dashboard-online-staffs__tooltip-name">
           {{ staff.name }}
@@ -95,28 +94,35 @@
             </header>
             <ul class="b-dashboard-online-staffs__list">
               <li v-for="staff in staffs" :key="staff.id">
-                <v-avatar size="36" class="b-dashboard-online-staffs__image">
-                  <v-img :src="getUserAvatar(staff.id)" alt="">
-                    <template #error
-                      ><v-icon size="22">person</v-icon></template
-                    >
-                  </v-img>
-                </v-avatar>
-                <div class="b-dashboard-online-staffs__identity">
-                  <div class="b-dashboard-online-staffs__name">
-                    {{ staff.name }}
-                  </div>
-                  <div class="b-dashboard-online-staffs__email">
-                    {{ staff.email }}
-                  </div>
-                </div>
-                <span
-                  class="sd-modern-status b-dashboard-online-staffs__status"
+                <component
+                  :is="staffTo?.(staff) ? 'router-link' : 'div'"
+                  :to="staffTo?.(staff) || undefined"
+                  class="b-dashboard-online-staffs__row"
+                  @click="closeStaffListOnNavigation($event, staff, isActive)"
                 >
-                  <span class="sd-modern-status__dot text-success" />{{
-                    $t("global.commons.online")
-                  }}
-                </span>
+                  <v-avatar size="36" class="b-dashboard-online-staffs__image">
+                    <v-img :src="getUserAvatar(staff.id)" alt="">
+                      <template #error
+                        ><v-icon size="22">person</v-icon></template
+                      >
+                    </v-img>
+                  </v-avatar>
+                  <div class="b-dashboard-online-staffs__identity">
+                    <div class="b-dashboard-online-staffs__name">
+                      {{ staff.name }}
+                    </div>
+                    <div class="b-dashboard-online-staffs__email">
+                      {{ staff.email }}
+                    </div>
+                  </div>
+                  <span
+                    class="sd-modern-status b-dashboard-online-staffs__status"
+                  >
+                    <span class="sd-modern-status__dot text-success" />{{
+                      $t("global.commons.online")
+                    }}
+                  </span>
+                </component>
               </li>
             </ul>
           </v-card>
@@ -127,14 +133,16 @@
         :key="agent.id"
         :open-on-focus="true"
         :persistent="false"
-        open-on-click
+        :open-on-click="!agentTo?.(agent)"
         location="top"
         content-class="sd-modern-tooltip text-start"
       >
         <template #activator="{ props }">
-          <button
+          <component
+            :is="agentTo?.(agent) ? 'router-link' : 'button'"
             v-bind="props"
-            type="button"
+            :to="agentTo?.(agent) || undefined"
+            :type="agentTo?.(agent) ? undefined : 'button'"
             class="b-dashboard-online-staffs__avatar b-dashboard-online-staffs__avatar--agent"
             :class="{
               'b-dashboard-online-staffs__avatar--recent':
@@ -152,7 +160,7 @@
                 </template>
               </v-img>
             </v-avatar>
-          </button>
+          </component>
         </template>
         <div class="b-dashboard-online-staffs__tooltip-name">
           {{ agent.name }}
@@ -204,12 +212,17 @@
       </button>
     </div>
     <div class="b-dashboard-online-staffs__labels">
-      <span class="b-dashboard-online-staffs__label">
+      <component
+        :is="staffListTo ? 'router-link' : 'span'"
+        :to="staffListTo || undefined"
+        class="b-dashboard-online-staffs__label"
+        :class="{ 'b-dashboard-online-staffs__label-link': staffListTo }"
+      >
         {{ $t("admin_shop.dashboard.ai_agents.staff") }}
         <span class="b-dashboard-online-staffs__count">{{
           staffs.length
         }}</span>
-      </span>
+      </component>
       <button
         v-if="connected_agents.length"
         type="button"
@@ -244,6 +257,9 @@ export default {
     staffs: { type: Array, default: () => [] },
     agents: { type: Array, default: () => [] },
     serverTime: { type: String, default: null },
+    staffTo: { type: Function, default: null },
+    agentTo: { type: Function, default: null },
+    staffListTo: { type: Object, default: null },
   },
   data: () => ({
     activity_now: Date.now(),
@@ -293,6 +309,17 @@ export default {
     },
   },
   methods: {
+    closeStaffListOnNavigation(event, staff, isActive) {
+      if (
+        this.staffTo?.(staff) &&
+        event.button === 0 &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.shiftKey &&
+        !event.altKey
+      )
+        isActive.value = false;
+    },
     recentlyActive(agent) {
       const lastRequest = Date.parse(agent.last_used_at);
       const age = this.activity_now - lastRequest;
@@ -421,11 +448,13 @@ export default {
       animation: none;
     }
   }
-  &__agents-link {
+  &__agents-link,
+  &__label-link {
     min-height: 44px;
     padding-inline: 6px;
     border-radius: 8px;
     cursor: pointer;
+    text-decoration: none;
 
     &:hover {
       color: rgb(var(--v-theme-on-surface));
@@ -482,14 +511,25 @@ export default {
     overflow-y: auto;
     list-style: none;
 
-    > li {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding-block: 10px;
-    }
     > li + li {
       border-block-start: 1px solid var(--sd-modern-border);
+    }
+  }
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 8px;
+
+    &:is(a):hover {
+      background: var(--sd-modern-inset);
+    }
+    &:focus-visible {
+      outline: 2px solid rgb(var(--v-theme-primary));
+      outline-offset: -2px;
     }
   }
   &__identity {

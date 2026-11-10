@@ -56,6 +56,10 @@ async function fixture(t, { category = savedCategory(), vendor = false, parentFo
   const context = vm.createContext({ exports: {}, console, window, FormData, Blob, axios: Object.fromEntries(["get", "post", "put", "delete"].map((method) => [method, request(method)])),
     require(name) {
       if (name === "vue") return Vue;
+      if (name.includes("DirectiveCtrlKeydown")) return { default: {
+        mounted(el, binding) { el.shortcut = binding.value; },
+        beforeUnmount(el) { delete el.shortcut; },
+      } };
       if (name.includes("NotificationService")) return { default: notifications };
       if (name.includes("slugify")) return { Slugify: { apply: (value) => value.toLowerCase().trim().replace(/\s+/g, "-") } };
       if (name.includes("ShopCategoryHelper")) return { ShopCategoryHelper: { GetCategoryIconById: (id) => `/fixture-images/${id}` } };
@@ -111,11 +115,74 @@ async function templateDraft(f, page = { id: 64 }, augment = [{ name: "headline"
   }
 }
 
+test("active section controls the heading, icon and guidance in English and Persian", async (t) => {
+  for (const language of ["en", "fa"]) {
+    const f = await fixture(t, { language });
+    for (const section of f.state.sections) {
+      await f.tab(section.value);
+      assert.equal(f.nodes("h1")[0].text, section.title);
+      const heading = f.nodes("header").find((node) => String(node.props.class).includes("b-category-add__heading"));
+      const icon = descendants(heading).find((node) => node.type === "v-icon");
+      assert.equal(descendants(icon).map((node) => node.text).join("").trim(), section.icon);
+      assert.ok(descendants(heading).some((node) => node.text === section.subtitle));
+      assert.equal(f.nodes("v-btn").filter((node) => typeof node.shortcut === "function").length, ["setting", "template"].includes(section.value) ? 1 : 0);
+    }
+    assert.deepEqual(f.calls.requests, []);
+  }
+  const f = await fixture(t, { category: null });
+  assert.equal(f.nodes("h1")[0].text, "add_category.modern.create_category");
+  assert.ok(descendants(f.action("addCategory")).some((node) => node.text.includes("add_category.modern.create_category")));
+});
+
+test("Settings shortcut preserves validity, active section and duplicate-request guards for shop and vendor create/edit", async (t) => {
+  for (const category of [null, savedCategory()]) for (const vendor of [false, true]) {
+    const f = await fixture(t, { category, vendor });
+    const method = category ? "editCategory" : "addCategory";
+    const save = f.action(method).shortcut;
+    assert.equal(typeof save, "function", "The locally owned Ctrl+S directive receives the native save method");
+    f.state.title = ""; save(); assert.deepEqual(f.calls.requests, []);
+    Object.assign(f.state, { title: "Valid draft", name: "valid-draft", busy: true });
+    save(); assert.deepEqual(f.calls.requests, []);
+    f.state.busy = false; f.state.busy_save = true; save(); assert.deepEqual(f.calls.requests, []);
+    f.state.busy_save = false;
+    await f.tab("critical"); save(); assert.deepEqual(f.calls.requests, []);
+    await f.tab("setting");
+    f.action(method).shortcut(); f.action(method).shortcut();
+    assert.equal(f.calls.requests.length, 1);
+    const request = f.calls.requests[0];
+    assert.equal(request.method, category ? "put" : "post");
+    assert.equal(request.url, `/fixture/${vendor ? "vendors/7" : "shops/19"}/categories${category ? "/31" : ""}`);
+    request.reject(new Error("Fixture save failure")); await settle();
+    assert.equal(f.state.title, "Valid draft"); assert.deepEqual(f.calls.emitted, []);
+  }
+});
+
+test("Template shortcut saves only its active independent draft and respects loading/errors", async (t) => {
+  const f = await fixture(t);
+  await templateDraft(f);
+  const save = f.action("saveTemplate").shortcut;
+  assert.equal(typeof save, "function");
+  const reads = f.calls.requests.length;
+  await f.tab("setting"); save(); assert.equal(f.calls.requests.length, reads);
+  await f.tab("template");
+  for (const guard of ["busy", "busy_save", "busy_load", "augment_load_error"]) {
+    f.state[guard] = true; save(); assert.equal(f.calls.requests.length, reads); f.state[guard] = false;
+  }
+  save(); save();
+  assert.equal(f.calls.requests.length, reads + 1);
+  const request = f.calls.requests.at(-1);
+  assert.deepEqual(plain(request.body), { page_id: 64, augment: [{ name: "headline", value: "Draft page value" }] });
+  request.resolve({ data: { category: { ...savedCategory(), ...plain(request.body) } } }); await settle();
+  assert.equal(f.state.tab, "template"); assert.equal(f.state.templateChanged, false);
+  save(); assert.equal(f.calls.requests.length, reads + 1);
+});
+
 test("creation preserves required title/URL, parent context, native file picker and multipart shop/vendor routes", async (t) => {
   for (const vendor of [false, true]) {
     const f = await fixture(t, { category: null, vendor, parentFolder: { id: 5, title: "Parent" }, hideTopBar: true });
     assert.equal(f.state.title, ""); assert.equal(f.state.name, ""); assert.equal(f.state.star, true); assert.equal(f.state.parent_id, 5);
     assert.equal(f.nodes("b-category-add-header").length, 0); assert.equal(f.nodes("s-image-uploader").length, 0);
+    assert.equal(f.nodes("nav").length, 0, "Embedded creation has no section rail");
     assert.equal(f.nodes("v-file-input").length, 1); assert.ok(enabled(prop(f.action("addCategory"), "disabled")));
     const title = f.nodes("v-text-field").find((node) => prop(node, "label") === "add_category.title_input");
     await f.emit(title, "onUpdate:modelValue", "Draft title"); await f.emit(title, "onBlur");
@@ -317,19 +384,28 @@ test("clearing the page clears augment loading/errors and ignores a late success
 
 test("tab switches retain routine drafts and native filter/engine result propagation", async (t) => {
   const f = await fixture(t);
+  const navigation = f.nodes("nav")[0];
+  const tabs = descendants(navigation).filter((node) => node.type === "v-btn");
+  assert.equal(tabs.length, 5);
+  assert.equal(tabs[0].props["aria-current"], "location");
   Object.assign(f.state, { title: "Unsaved title", name: "unsaved-url", description: "Unsaved description", parent_id: 5 });
-  await f.tab("filter");
+  f.state.$refs.workspace.scrollTop = 320;
+  await f.click(tabs[1]);
+  assert.equal(f.state.tab, "filter");
+  assert.equal(f.state.$refs.workspace.scrollTop, 0, "The next section starts at the top of the shared scroller");
+  assert.equal(tabs[1].props["aria-current"], "location");
+  assert.equal(tabs[0].props["aria-current"], undefined);
   assert.ok(enabled(prop(f.nodes("b-category-filter-editor")[0], "embedded")));
   await f.emit(f.nodes("b-category-filter-editor")[0], "onEditFilters", { brands: ["Saved brand"] });
   assert.deepEqual(plain(f.props.category.filters), { brands: ["Saved brand"] });
-  await f.tab("engine");
+  await f.click(tabs[3]);
   const engine = f.nodes("b-category-engine-editor")[0]; assert.ok(enabled(prop(engine, "modern"))); assert.ok(enabled(prop(engine, "embedded")));
   await f.emit(engine, "onEditEngine", { categories: [5], tags: ["saved"] });
   assert.deepEqual(plain(f.props.category.engine), { categories: [5], tags: ["saved"] });
   await f.emit(engine, "onEditFilters", { brands: ["Engine brand"] });
   assert.deepEqual(plain(f.props.category.filters), { brands: ["Engine brand"] });
   assert.equal(f.state.tab, "engine", "An embedded engine result stays in its current section");
-  await f.tab("setting");
+  await f.click(tabs[0]);
   assert.equal(f.state.title, "Unsaved title"); assert.equal(f.state.name, "unsaved-url"); assert.equal(f.state.description, "Unsaved description"); assert.equal(f.state.parent_id, 5);
   assert.equal(f.calls.requests.length, 0); assert.deepEqual(f.calls.emitted, []);
 });

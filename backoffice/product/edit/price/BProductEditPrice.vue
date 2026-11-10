@@ -77,11 +77,11 @@
         </div>
       </section>
       <section class="sd-modern-widget b-product-edit-price__workspace-card">
-        <header v-if="!variantFormMode" class="b-product-edit-price__workspace-heading">
+        <header class="b-product-edit-price__workspace-heading">
           <b-product-edit-info-icon name="Coins" />
           <div>
             <h2>{{ $t("add_product.pricing.workspace.selling_title") }}</h2>
-            <p>{{ $t("add_product.pricing.workspace.selling_intro") }}</p>
+            <p>{{ $t(variantFormMode ? "b_product_inventory.editor.custom_pricing_help" : "add_product.pricing.workspace.selling_intro") }}</p>
           </div>
           <v-btn
             class="sd-modern-icon-button sd-modern-info-button"
@@ -3087,74 +3087,12 @@ export default {
 .b-product-edit-price--modern.b-product-edit-price--workspace.b-product-edit-price--variant-form {
   max-width: none;
 
-  .b-product-edit-price__workspace-card {
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    margin-block-end: 28px;
-  }
   .b-product-edit-price__workspace-fields > .b-product-edit-price__workspace-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .b-product-edit-price__workspace-layout {
-    grid-template-columns: minmax(0, 1fr) 240px;
-    gap: 24px;
-  }
-  .b-product-edit-price__workspace-receipt {
-    border: 0;
-    border-radius: 10px;
-    padding: 20px;
-    background: var(--sd-modern-inset);
-  }
   .b-product-edit-price__workspace-note {
-    margin-block-start: 18px;
     flex-wrap: wrap;
-    font-size: 13px;
-    line-height: 20px;
-  }
-  .b-product-edit-price__workspace-heading p,
-  .b-product-edit-price__workspace-subtitle p,
-  .b-product-edit-price__workspace-receipt-help,
-  .b-product-edit-price__workspace-period-state,
-  .b-product-edit-price__workspace-tier-toolbar p,
-  .b-product-edit-price__workspace-date-help,
-  .b-product-edit-price__workspace-empty p {
-    font-size: 13px;
-    line-height: 20px;
-  }
-  .b-product-edit-price__workspace-disclosure {
-    margin-block-end: 10px;
-    padding: 0;
-    border-radius: 12px;
-  }
-  .sd-modern-disclosure__summary {
-    min-height: 68px;
-    padding: 14px 18px;
-  }
-  .b-product-edit-price__workspace-summary > span {
-    font-size: 13px;
-    line-height: 20px;
-  }
-  .b-product-edit-price__workspace-summary > small {
-    font-size: 13px;
-    line-height: 20px;
-  }
-  .b-product-edit-price__workspace-disclosure-body {
-    padding: 0 18px 18px;
-  }
-  @media (max-width: 720px) {
-    .b-product-edit-price__workspace-layout {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 22px;
-    }
-    .b-product-edit-price__workspace-receipt {
-      display: block;
-    }
-    .b-product-edit-price__workspace-lines {
-      margin-block-start: 16px;
-    }
   }
 }
+
 </style>

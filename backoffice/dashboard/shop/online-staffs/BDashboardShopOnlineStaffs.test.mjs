@@ -5,6 +5,7 @@ import * as Vue from "vue";
 import { renderToString } from "vue/server-renderer";
 import { compileTemplate, parse } from "@vue/compiler-sfc";
 import ts from "typescript";
+import { JSDOM } from "jsdom";
 
 // Compile and render only; this test never reads a shop or opens a connection.
 const filename = new URL("./BDashboardShopOnlineStaffs.vue", import.meta.url);
@@ -122,6 +123,32 @@ const dialog = Vue.defineComponent({
     () =>
       slots.activator?.({ props: {} }),
 });
+const routerLink = Vue.defineComponent({
+  inheritAttrs: false,
+  props: ["to"],
+  setup:
+    (props, { attrs, slots }) =>
+    () =>
+      Vue.h(
+        "a",
+        {
+          ...attrs,
+          href: `/native/${props.to.name}`,
+          "data-route": JSON.stringify(props.to),
+        },
+        slots.default?.(),
+      ),
+});
+const openStaffDialog = Vue.defineComponent({
+  inheritAttrs: false,
+  setup:
+    (_, { slots }) =>
+    () =>
+      Vue.h(Vue.Fragment, [
+        slots.activator?.({ props: {} }),
+        slots.default?.({ isActive: Vue.ref(true) }),
+      ]),
+});
 const identities = [
   { provider: "ChatGPT" },
   {
@@ -162,6 +189,10 @@ async function presence({
   mobile = false,
   connections = agents,
   staffs = [{ id: 1, name: "Test staff", email: "staff@example.test" }],
+  staffTo = null,
+  agentTo = null,
+  staffListTo = null,
+  includeStaffDialog = false,
 } = {}) {
   let vnode;
   let navigations = 0;
@@ -176,6 +207,9 @@ async function presence({
     {
       staffs,
       agents: connections,
+      staffTo,
+      agentTo,
+      staffListTo,
       onAgents: () => navigations++,
     },
   );
@@ -186,12 +220,13 @@ async function presence({
   });
   for (const [name, stub] of Object.entries({
     "v-tooltip": tooltip,
-    "v-dialog": dialog,
+    "v-dialog": includeStaffDialog ? openStaffDialog : dialog,
     "v-avatar": wrapper("span"),
     "v-img": wrapper("img"),
     "v-icon": wrapper("span"),
     "v-btn": wrapper("button"),
     "v-card": wrapper("article"),
+    "router-link": routerLink,
   }))
     app.component(name, stub);
   app.directive("tooltip", { getSSRProps: () => ({}) });
@@ -203,7 +238,12 @@ async function presence({
     if (Array.isArray(node.children)) node.children.forEach(visit);
   }
   visit(vnode);
-  return { html, buttons, navigations: () => navigations };
+  return {
+    html,
+    buttons,
+    document: new JSDOM(html).window.document,
+    navigations: () => navigations,
+  };
 }
 
 const desktop = await presence();
@@ -272,6 +312,195 @@ assert.match(crowded.html, />\s*\+10/);
 const empty = await presence({ connections: [] });
 assert.equal(empty.html.includes("Connected AI agents"), false);
 assert.equal(empty.html.includes("__avatar--agent"), false);
+
+// The caller supplies authorized, shop-scoped destinations; the shared component keeps native link semantics.
+const staffDestination = (staff) =>
+  Number.isSafeInteger(staff.id) && [1, 3].includes(staff.id)
+    ? { name: "BPageStaffOverview", params: { shop_id: 7, staff_id: staff.id } }
+    : null;
+const agentDestination = (agent) =>
+  Number.isSafeInteger(agent.id) &&
+  agent.id > 0 &&
+  !agent.is_sample &&
+  !agent.display_only
+    ? {
+        name: "BPageShopAutomationAiAgentOverview",
+        params: { shop_id: 7, connection_id: agent.id },
+      }
+    : null;
+const staffListDestination = {
+  name: "BPageShopPermissionStaff",
+  params: { shop_id: 7 },
+};
+const linked = await presence({
+  staffTo: staffDestination,
+  agentTo: agentDestination,
+  staffListTo: staffListDestination,
+});
+const staffLink = linked.document.querySelector(
+  "a.b-dashboard-online-staffs__avatar:not(.b-dashboard-online-staffs__avatar--agent)",
+);
+assert.deepEqual(JSON.parse(staffLink.dataset.route), {
+  name: "BPageStaffOverview",
+  params: { shop_id: 7, staff_id: 1 },
+});
+assert.equal(staffLink.getAttribute("role"), null);
+assert.equal(staffLink.getAttribute("type"), null);
+assert.equal(staffLink.getAttribute("tabindex"), null);
+const agentLinks = [
+  ...linked.document.querySelectorAll(
+    "a.b-dashboard-online-staffs__avatar--agent",
+  ),
+];
+assert.equal(agentLinks.length, 8); // Preview contains IDs0..8; ID0 is never a real destination.
+for (const link of agentLinks) {
+  const to = JSON.parse(link.dataset.route);
+  assert.equal(to.name, "BPageShopAutomationAiAgentOverview");
+  assert.equal(to.params.shop_id, 7);
+  assert.ok(to.params.connection_id > 0);
+  assert.ok(link.getAttribute("href"));
+  assert.equal(link.getAttribute("type"), null);
+}
+const staffCount = linked.document.querySelector(
+  "a.b-dashboard-online-staffs__label",
+);
+assert.deepEqual(JSON.parse(staffCount.dataset.route), staffListDestination);
+assert.equal(staffCount.textContent.trim().replace(/\s+/g, " "), "Staff 1");
+assert.equal(linked.navigations(), 0);
+linked.buttons
+  .filter((button) => button.props.onClick)
+  .forEach((button) => button.props.onClick());
+assert.equal(
+  linked.navigations(),
+  2,
+  "Agent overview count/overflow retain their existing action",
+);
+
+const listed = await presence({
+  staffs: Array.from({ length: 12 }, (_, index) => ({
+    id: index + 1,
+    name: `Staff ${index + 1}`,
+    email: `staff${index + 1}@example.test`,
+  })),
+  connections: [],
+  staffTo: staffDestination,
+  staffListTo: staffListDestination,
+  includeStaffDialog: true,
+});
+assert.equal(
+  listed.document.querySelectorAll("a.b-dashboard-online-staffs__avatar")
+    .length,
+  2,
+);
+assert.equal(
+  listed.document.querySelectorAll("button.b-dashboard-online-staffs__avatar")
+    .length,
+  8,
+);
+assert.equal(
+  listed.document.querySelectorAll("li a.b-dashboard-online-staffs__row")
+    .length,
+  2,
+);
+assert.equal(
+  listed.document.querySelectorAll("li div.b-dashboard-online-staffs__row")
+    .length,
+  10,
+);
+for (const flags of [
+  { button: 1 },
+  { button: 2 },
+  { ctrlKey: true },
+  { metaKey: true },
+  { shiftKey: true },
+  { altKey: true },
+]) {
+  const active = Vue.ref(true);
+  component.methods.closeStaffListOnNavigation.call(
+    { staffTo: staffDestination },
+    { button: 0, ...flags },
+    { id: 1 },
+    active,
+  );
+  assert.equal(
+    active.value,
+    true,
+    "Modifier/middle clicks preserve the open staff list",
+  );
+}
+const active = Vue.ref(true);
+let intercepted = 0;
+const click = {
+  button: 0,
+  preventDefault: () => intercepted++,
+  stopPropagation: () => intercepted++,
+};
+component.methods.closeStaffListOnNavigation.call(
+  { staffTo: staffDestination },
+  click,
+  { id: 2 },
+  active,
+);
+assert.equal(
+  active.value,
+  true,
+  "An unavailable destination does not dismiss the list",
+);
+component.methods.closeStaffListOnNavigation.call(
+  { staffTo: staffDestination },
+  click,
+  { id: 1 },
+  active,
+);
+assert.equal(active.value, false);
+assert.equal(
+  intercepted,
+  0,
+  "The shared dialog never intercepts the RouterLink's native click",
+);
+
+const invalid = await presence({
+  staffs: [],
+  agentTo: agentDestination,
+  connections: [
+    { id: 0 },
+    { id: -1 },
+    { id: "55" },
+    { id: 55, is_sample: true },
+    { id: 56, display_only: true },
+    { id: 57 },
+  ].map((agent) => ({
+    name: "Identity",
+    provider: "Codex",
+    is_active: true,
+    request_count: 0,
+    ...agent,
+  })),
+});
+assert.equal(
+  invalid.document.querySelectorAll(
+    "a.b-dashboard-online-staffs__avatar--agent",
+  ).length,
+  1,
+);
+assert.equal(
+  JSON.parse(
+    invalid.document.querySelector("a.b-dashboard-online-staffs__avatar--agent")
+      .dataset.route,
+  ).params.connection_id,
+  57,
+);
+assert.equal(
+  invalid.document.querySelectorAll(
+    "button.b-dashboard-online-staffs__avatar--agent",
+  ).length,
+  5,
+);
+assert.equal(
+  desktop.document.querySelectorAll("a").length,
+  0,
+  "No authorized destinations keeps the original tooltip-only presentation",
+);
 
 const activity = { ...component.data() };
 const recent = (overrides = {}) =>
@@ -347,5 +576,5 @@ for (const value of [null, "invalid"]) {
   );
 }
 console.log(
-  "AI agent presence: projection, preview, navigation and recent activity checks passed.",
+  "AI agent presence: projection, native scoped staff/agent links, Staff list count, overflow modifiers, bounded previews and real-date activity checks passed.",
 );

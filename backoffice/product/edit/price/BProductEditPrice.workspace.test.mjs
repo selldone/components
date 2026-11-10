@@ -333,7 +333,7 @@ test("actual native PriceHelper preserves fixed discount, currency precision and
   assert.equal(state.workspaceTierProduct.currency, "USD");
 });
 
-test("Focused variant form keeps local price drafts, fixed product currency and separately scoped tiers", () => {
+test("variant uses the shared product workspace controls with a local draft, fixed currency and scoped tiers", () => {
   const draft = { price: 13.14, currency: "USD", commission: 0, discount: 5, pricing: true };
   const f = fixture("price", {
     customObject: draft,
@@ -353,12 +353,40 @@ test("Focused variant form keeps local price drafts, fixed product currency and 
   assert.equal(draft.currency, "USD");
   assert.deepEqual(Array.from(f.state.extra_pricings_to_show, item => item.id), [9]);
   const nodes = renderedNodes(f.descriptor, f.state);
+  for (const className of ["b-product-edit-price__workspace-heading", "b-product-edit-price__workspace-card", "b-product-edit-price__workspace-receipt"])
+    assert.ok(nodes.some(node => node.props?.class?.includes?.(className)), `The shared ${className} stays available for the variant`);
+  const money = nodes.filter(node => node.type === "u-price-input");
+  assert.equal(money.length, 3, "Base price, monetary discount and commission use the same native inputs");
+  assert.ok(money.every(node => node.props.currency === f.state.currencyObject));
+  assert.equal(nodes.filter(node => node.type === "details" && node.props?.class?.includes?.("b-product-edit-price__workspace-disclosure")).length, 3, "Discount/schedule, price details and quantity pricing retain their native disclosures");
   assert.equal(nodes.some(node => node.type === "u-currency-input"), false);
   assert.equal(nodes.some(node => node.props?.class?.includes?.("b-product-edit-price__workspace-footer")), false);
+  f.state.$refs.workspaceStartDate = { dialog: true };
+  assert.equal(f.state.prepareSave(), false, "The parent's existing priceEditor ref can still block unconfirmed date input");
+  f.state.$refs.workspaceStartDate.dialog = false;
+  assert.equal(f.state.prepareSave(), true);
   f.state.showAddExtraPrice();
   assert.equal(f.state.show_add_extra_price, true);
   assert.equal(f.state.selected_extra_price.price, 17);
   assert.equal(f.requests.length, 0);
+});
+
+test("remounting a variant price workspace retains its amount, schedule and label draft without editing the parent product", () => {
+  const draft = { price: 0, currency: "USD", commission: 2, discount: 0, dis_start: "2026-11-01", dis_end: "2026-11-30", price_label: "Per item" };
+  const f = fixture("price", { customObject: draft, variant: { id: 2 } });
+  const productBefore = plain(f.state.product);
+  edit(f.state, "price", 17);
+  edit(f.state, "discount", 0);
+  edit(f.state, "commission", 0);
+  edit(f.state, "price_label", "Per parcel");
+  f.component.beforeUnmount.call(f.state);
+  const reopened = fixture("price", { customObject: draft, variant: { id: 2 }, product: f.state.product });
+  for (const key of ["price", "commission", "discount", "dis_start", "dis_end", "price_label"])
+    assert.equal(reopened.state[key], draft[key]);
+  assert.equal(reopened.state.has_discount_period, true);
+  assert.equal(reopened.state.currency.code, "USD");
+  assert.deepEqual(plain(f.state.product), productBefore);
+  assert.equal(f.requests.length + reopened.requests.length, 0);
 });
 
 test("Focused unsaved variant cannot display or edit product-level quantity tiers", () => {

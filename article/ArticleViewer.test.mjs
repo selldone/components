@@ -1027,6 +1027,8 @@ function workspaceShortcutFixture(t) {
   const dom = new JSDOM('<!doctype html><body><div contenteditable="true" tabindex="0">Article draft</div><button class="v-btn" type="button"><span class="v-btn__content">Save changes</span></button></body>');
   const f = fixture({ state: 'changed' }, { window: dom.window, document: dom.window.document });
   const directive = f.component.directives.ctrl, button = dom.window.document.querySelector('button');
+  // JSDOM has no layout; the real workspace Save button has a visible browser box.
+  button.getClientRects = () => [new dom.window.DOMRect(0, 0, 160, 42)];
   directive.mounted(button, { modifiers: { s: true }, value: f.state.saveWorkspaceShortcut });
   t.after(() => { directive.beforeUnmount(button); dom.window.close(); });
   const editor = dom.window.document.querySelector('[contenteditable]');

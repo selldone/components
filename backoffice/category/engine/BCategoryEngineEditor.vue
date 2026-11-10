@@ -131,7 +131,8 @@
             prepend-icon="save"
             variant="elevated"
             @click="saveEngine()"
-            >{{ $t("category_engine_editor.actions.save_engine") }}</v-btn
+            v-ctrl.s="saveEngine"
+            >{{ $t("global.actions.save_changes") }}</v-btn
           >
         </footer>
       </div>
@@ -194,9 +195,11 @@ import BCategoryEnginePreview from "@selldone/components-vue/backoffice/category
 import BCategoryEngineExplanation from "./preview/BCategoryEngineExplanation.vue";
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import DirectiveCtrlKeydown from "@selldone/components-vue/directives/keyboard/DirectiveCtrlKeydown.ts";
 
 export default {
   name: "BCategoryEngineEditor",
+  directives: { ctrl: DirectiveCtrlKeydown },
   mixins: [],
   components: {
     BCategoryEnginePreview,
@@ -296,7 +299,13 @@ export default {
     },
 
     saveEngine() {
-      if (this.busy_engine || this.busy_auto) return;
+      if (
+        this.IS_VENDOR_PANEL ||
+        (this.modern && !this.engine_changed) ||
+        this.busy_engine ||
+        this.busy_auto
+      )
+        return;
       this.busy_engine = true;
 
       axios

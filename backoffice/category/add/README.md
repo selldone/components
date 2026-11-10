@@ -4,16 +4,31 @@ The approved Refined layout is shared by category creation and editing in shop
 and vendor contexts. It uses the opt-in Backoffice modern primitives and keeps
 the existing uploader, translation buttons, category selector and advanced editors.
 
-The header and content share an 800px maximum width. Settings use a 1.45:1 grid
-with a 16px gap: category details span the two image/parent rows. Below 660px the
-cards stack naturally. Cards have 22px insets (20px on narrow screens), 16px
+Editing follows the product editor's sidebar composition: an independently
+scrolling gray workspace, sticky 168px section rail, 26px gap and 800px content
+column inside a 1050px layout. The rail narrows to 148px below 800px and becomes
+a wrapping top row at 720px. Creation and embedded forms use the 800px content
+column without a rail. The Back/public-page toolbar and routine form actions
+stay outside the workspace scroll, with desktop actions aligned to the content.
+Each section supplies its own title, purpose icon and concise guidance. Creation
+uses Create category; routine and template edits use Save changes.
+
+Settings use a 1.45:1 grid with a 16px gap: category details span the two
+image/parent rows. The cards stack below 940px with a rail or 660px without one.
+Cards have 22px insets (20px on narrow screens), 16px
 corners, 15px/22px section titles, and 12px/19px supporting copy. The page title
-uses 21px/28px type; form actions use 13px/20px labels and native modern 42px
+uses 23px/31px type (21px/29px on narrow screens); form actions use 13px/20px labels and native modern 42px
 desktop/44px touch controls. The application's selected font is retained.
 
 Creation submits the native selected file with FormData. Editing retains immediate
 image uploads, parent selection/clearing, star, slug, translations, custom pages
-and page augment data. Routine drafts stay mounted while navigating sections.
+and page augment data. Routine drafts stay mounted while navigating sections;
+each newly selected section starts at the top of the shared scroll area.
+The active Save/Create action supports Ctrl+S through the shared directive and
+its standard inline shortcut hint. Settings actions unmount outside their tab;
+all save methods retain validity/loading guards. Filters retain Save & regenerate
+and Engine uses its own independent save. Disabled/loading buttons cannot submit,
+and a child dialog/menu owns Ctrl+S while it is above this workspace.
 Settings saves only the category's routine fields, emits the result before Back,
 and keeps input after a failed request. It cannot commit an unsaved Template draft.
 

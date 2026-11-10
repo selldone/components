@@ -19,23 +19,19 @@
     :class="{ 's-gallery-upload-grid--modern text-start': modern, 's-gallery-upload-grid--product': modernProductGallery }"
   >
   <template v-if="modern">
-    <div v-if="modernProductGallery" class="s-gallery-upload-grid__product-tools">
-      <v-btn class="sd-modern-button sd-modern-button--compact" variant="outlined" :aria-expanded="show_upload" @click="show_upload = !show_upload">
-        <b-product-edit-info-icon name="Upload" :size="16" />
-        {{ $t('add_product.images_modern.add_images') }}
-      </v-btn>
-      <v-btn v-if="allowUrlInput" class="sd-modern-button sd-modern-button--compact sd-modern-button--inline" color="primary" variant="text" @click="showUrlDialog()">
+    <div v-if="modernProductGallery && allowUrlInput" class="s-gallery-upload-grid__product-tools">
+      <v-btn class="sd-modern-button sd-modern-button--compact sd-modern-button--inline" color="primary" variant="text" @click="showUrlDialog()">
         <b-product-edit-info-icon name="Link" :size="16" />
         {{ $t('add_product.images_modern.add_url') }}
       </v-btn>
     </div>
     <s-image-uploader
       ref="uploader"
-      v-show="!modernProductGallery || show_upload"
       :max-file-size="maxFileSize"
       :max-files="20"
       :server="uploadPath"
       :idle-label="uploadLabel"
+      :compact-queue="modernProductGallery"
       :disabled="!show_images"
       allow-multiple
       disable-past
@@ -474,7 +470,6 @@ export default {
 
     last_orders: null,
     active: true,
-    show_upload: false,
     dialog_order: false,
     busy_upload: false,
     suppress_handle_click: false,
@@ -823,7 +818,7 @@ export default {
   .s-gallery-upload-grid__delete { --sd-modern-icon-button-size: 32px; }
 
   .s-gallery-upload-grid__upload {
-    :deep(.uploader-container) {
+    :deep(.uploader-container:not(.s-image-uploader__queue-transport)) {
       max-width: none;
       min-width: 0;
       padding: 0;
@@ -846,6 +841,8 @@ export default {
       top: auto;
       bottom: auto;
       max-height: none;
+      // FilePond reserves queue height on its root; its absolute items leave this scroller at zero height.
+      overflow: visible;
       pointer-events: auto;
     }
     :deep(.filepond--panel-root) { background: transparent; background-image: none; }
@@ -911,9 +908,8 @@ export default {
 
 .s-gallery-upload-grid--product {
   --gallery-columns: 3;
-  .s-gallery-upload-grid__product-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 20px; margin-block-end: 18px; }
+  .s-gallery-upload-grid__product-tools { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px 20px; margin-block-end: 12px; }
   .s-gallery-upload-grid__product-tools .v-btn { gap: 7px; height: 38px; min-height: 38px; padding: 9px 13px; font-size: 12px; line-height: 18px; }
-  .s-gallery-upload-grid__product-tools .sd-modern-button--inline { padding-inline: 0; }
   .s-gallery-upload-grid__product-tools :deep(.v-btn__content) { gap: 7px; }
   .s-gallery-upload-grid__upload { margin-block-end: 18px; }
   .b--gallery-grid { width: calc(100% + 12px); margin-inline: -6px; }

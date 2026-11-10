@@ -83,6 +83,10 @@ async function fixture(t, { filters = saved(), categoryId = 31, language = "en",
   } }, axios: Object.fromEntries(["get", "put"].map((method) => [method, (url, body) => new Promise((resolve, reject) => calls.requests.push({ method, url, body: body && plain(body), resolve, reject }))])),
     require(name) {
       if (name === "vue") return Vue;
+      if (name.includes("DirectiveCtrlKeydown")) return { default: {
+        mounted(el, binding) { el.shortcut = binding.value; },
+        beforeUnmount(el) { delete el.shortcut; },
+      } };
       if (name.includes("ProductVariants")) return { ProductVariants: variants };
       if (name.includes("ShopOptionsHelper")) return { ShopOptionsHelper: { GetCustomVariants: (shop) => shop.options?.find((option) => option.code === "variants")?.value || {} } };
       if (name.includes("ColorHelper")) return { GetNameOfColor: (value) => { calls.colors.push(value); return `Color name ${value}`; } };
@@ -152,6 +156,25 @@ async function fixture(t, { filters = saved(), categoryId = 31, language = "en",
   const setDimension = async (key, value) => { const node = dimension(key); assert.ok(node, `Native dimension ${key} is available`); node.props["onUpdate:modelValue"](value); await settle(); };
   return { state, props, calls, root, host, nodes, action, click, read, checks, dimension, setDimension, component, variants, originals, translate };
 }
+
+test("embedded filter shortcut uses the current Save action and preserves read and busy guards", async (t) => {
+  for (const filters of [null, saved()]) {
+    const f = await fixture(t, { embedded: true, filters });
+    assert.equal(typeof f.action("editCategoryFilter").shortcut, "function");
+    f.action("editCategoryFilter").shortcut();
+    assert.equal(f.calls.requests.length, 1, "A pending read cannot regenerate filters");
+    await f.read({ filters, spec_keys: filters ? ["Finish"] : [] });
+    const save = f.action("editCategoryFilter").shortcut;
+    assert.equal(typeof save, "function", "Both the compact empty and configured actions install Ctrl+S");
+    save(); save();
+    assert.equal(f.calls.requests.length, 2);
+    const request = f.calls.requests[1];
+    assert.equal(request.method, "put");
+    assert.equal(request.url, "/fixture/19/categories/31/edit/filter");
+    request.reject(new Error("Fixture regeneration failure")); await settle();
+    assert.equal(f.state.busy_edit, false); assert.deepEqual(f.calls.emitted, []);
+  }
+});
 
 test("category and root reads use native routes and loading controls without mutating saved data", async (t) => {
   for (const categoryId of [31, "root"]) {

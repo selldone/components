@@ -13,10 +13,13 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-card flat class="b-category-add text-start">
+  <v-card
+    flat
+    class="b-category-add text-start"
+    :class="{ 'b-category-add--sidebar': category && !hideTopBar }"
+  >
     <b-category-add-header
       key="header"
-      v-model:tab="tab"
       :category="category"
       :shop="shop"
       :vendor="vendor"
@@ -24,284 +27,507 @@
       @back="back"
     >
     </b-category-add-header>
-    <!-- ███████████████████████████ Engine ███████████████████████████ -->
-    <template v-if="tab === 'engine'">
-      <div class="b-category-add__engine sd-modern-canvas text-start">
-        <b-category-engine-editor
-          v-if="category.engine !== undefined"
-          :category="category"
-          :shop="shop"
-          modern
-          embedded
-          @edit-engine="(_engine) => (category.engine = _engine)"
-          @edit-filters="category.filters = $event"
-        ></b-category-engine-editor>
-        <div
-          v-else
-          class="b-category-add__content b-category-add__engine-loading sd-modern-notice"
-          :role="engine_load_error ? 'alert' : 'status'"
-        >
-          <v-icon size="20" aria-hidden="true">info_outline</v-icon>
-          <div class="sd-modern-notice__content">
-            {{
-              $t(
-                engine_load_error
-                  ? "add_category.modern.engine_load_error"
-                  : "global.commons.loading",
-              )
-            }}
-          </div>
-          <v-btn
-            v-if="engine_load_error"
-            class="sd-modern-button"
-            variant="text"
-            @click="loadEngine"
-            >{{ $t("global.actions.refresh") }}</v-btn
-          >
-        </div>
-      </div>
-    </template>
-
-    <!-- ███████████████████████████ Setting ███████████████████████████ -->
-    <v-card-text
-      v-show="tab === 'setting'"
-      class="b-category-add__body sd-modern-canvas"
-    >
-      <header
-        v-if="hideTopBar"
-        class="b-category-add__embedded-heading b-category-add__content"
+    <div ref="workspace" class="b-category-add__workspace sd-modern-canvas">
+      <div
+        class="b-category-add__layout"
+        :class="{ 'b-category-add__layout--sidebar': category && !hideTopBar }"
       >
-        <v-icon size="22" aria-hidden="true">tune</v-icon>
-        <div>
-          <h1>
-            {{
-              $t(
-                category
-                  ? "add_category.title_edit"
-                  : "add_category.title_update",
-              )
-            }}
-          </h1>
-          <p class="sd-modern-subtitle">
-            {{ $t("add_category.modern.page_header_subtitle") }}
-          </p>
-        </div>
-      </header>
-      <div class="b-category-add__content b-category-add__grid">
-        <section class="sd-modern-widget b-category-add__details">
-          <header class="b-category-add__section-heading">
-            <v-icon aria-hidden="true">notes</v-icon>
-            <div>
-              <h2>{{ $t("add_category.modern.details_title") }}</h2>
-              <p class="sd-modern-subtitle">
-                {{ $t("add_category.modern.details_subtitle") }}
-              </p>
-            </div>
-          </header>
-
-          <v-text-field
-            v-model="title"
-            :counter="24"
-            :error-messages="
-              !title ? $t('add_category.title_input_error') : null
-            "
-            :label="$t('add_category.title_input')"
-            :placeholder="$t('add_category.modern.title_placeholder')"
-            class="sd-modern-underlined-field"
-            required
-            variant="underlined"
-            @blur="
-              () => {
-                if (!name) name = Slugify.apply(title);
-              }
-            "
+        <aside v-if="category && !hideTopBar" class="b-category-add__sidebar">
+          <nav
+            class="sd-modern-section-nav b-category-add__nav"
+            :aria-label="$t('add_category.title_edit')"
           >
-            <template v-slot:append-inner>
-              <b-translation-button-category
-                v-if="category?.id"
-                :category="category"
-                :label="$t('add_category.title_input')"
-                :shop="shop"
-                translation-key="title"
-              ></b-translation-button-category>
-
-              <v-btn
-                class="b-category-add__star"
-                :aria-pressed="star"
-                :aria-label="$t('add_category.star')"
-                variant="text"
-                type="button"
-                @click="star = !star"
-              >
-                <v-icon
-                  :color="star ? 'warning' : undefined"
-                  size="18"
-                  aria-hidden="true"
-                >
-                  {{ star ? "star" : "star_border" }}
-                </v-icon>
-                <span>{{ $t("add_category.star") }}</span>
-              </v-btn>
-            </template>
-          </v-text-field>
-
-          <v-btn
-            class="sd-modern-button sd-modern-button--inline b-category-add__url"
-            color="primary"
-            variant="text"
-            :aria-expanded="edit_name"
-            :aria-label="`${$t('global.actions.edit')}: ${ShopURLs.MainShopUrl(shop)}/${name}-category`"
-            @click="edit_name = !edit_name"
-          >
-            <v-icon size="16" aria-hidden="true">link</v-icon>
-            <span class="b-category-add__url-value" dir="ltr"
-              >{{ ShopURLs.MainShopUrl(shop) }}/{{ name }}-category</span
+            <v-btn
+              v-for="section in sections"
+              :key="section.value"
+              class="sd-modern-section-nav__item"
+              :class="{
+                'b-category-add__critical-tab': section.value === 'critical',
+              }"
+              variant="text"
+              :aria-current="tab === section.value ? 'location' : undefined"
+              @click="tab = section.value"
             >
-            <v-icon size="16" aria-hidden="true">edit</v-icon>
-            <v-tooltip
-              activator="parent"
-              :text="`${ShopURLs.MainShopUrl(shop)}/${name}-category`"
-              location="top"
-              :open-on-focus="true"
-              content-class="sd-modern-tooltip text-start"
-            />
-          </v-btn>
-          <v-expand-transition>
-            <div v-if="edit_name">
-              <v-text-field
-                v-model="name"
-                :counter="24"
-                :error-messages="
-                  !valid_name ? $t('add_category.name_input_error') : null
-                "
-                :label="$t('add_category.name_input')"
-                class="sd-modern-underlined-field mt-2"
-                suffix="-category"
-                variant="underlined"
-              />
+              <v-icon size="16" aria-hidden="true">{{ section.icon }}</v-icon>
+              {{ section.title }}
+            </v-btn>
+          </nav>
+        </aside>
+        <div class="b-category-add__main">
+          <header class="b-category-add__heading b-category-add__content">
+            <v-icon size="22" aria-hidden="true">{{
+              currentSection.icon
+            }}</v-icon>
+            <div>
+              <h1>
+                {{ currentSection.title }}
+              </h1>
+              <p class="sd-modern-subtitle">
+                {{ currentSection.subtitle }}
+              </p>
             </div>
-          </v-expand-transition>
-
-          <v-textarea
-            v-model="description"
-            class="sd-modern-underlined-field b-category-add__description"
-            :label="$t('add_category.description_input')"
-            :messages="$t('add_category.description_input_message')"
-            auto-grow
-            persistent-placeholder
-            rows="3"
-            variant="underlined"
-          >
-            <template v-slot:append-inner>
-              <b-translation-button-category
-                v-if="category?.id"
+          </header>
+          <!-- ███████████████████████████ Engine ███████████████████████████ -->
+          <template v-if="tab === 'engine'">
+            <div class="b-category-add__engine sd-modern-canvas text-start">
+              <b-category-engine-editor
+                v-if="category.engine !== undefined"
                 :category="category"
-                :label="$t('add_category.description_input')"
                 :shop="shop"
-                translation-key="description"
-              ></b-translation-button-category>
-            </template>
-          </v-textarea>
-        </section>
-
-        <!-- Image -->
-        <section class="sd-modern-widget b-category-add__image">
-          <header class="b-category-add__section-heading">
-            <v-icon aria-hidden="true">image</v-icon>
-            <div>
-              <h2>{{ $t("add_category.image_input") }}</h2>
-              <p class="sd-modern-subtitle">
-                {{ $t("add_category.modern.image_subtitle") }}
-              </p>
-            </div>
-          </header>
-
-          <s-image-uploader
-            v-if="category && category.id"
-            :image="getShopImagePath(icon)"
-            :label="$t('add_category.image_input')"
-            :server="
-              IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
-                ? window.VAPI.POST_MY_VENDOR_UPLOAD_CATEGORY_IMAGE(
-                    vendor.id,
-                    category.id,
-                  )
-                : window.API.POST_UPLOAD_CATEGORY_IMAGE(shop.id, category.id)
-            "
-            auto-compact
-            dense
-            modern
-            max-file-size="2MB"
-            @new-path="handleProcessFile"
-          >
-          </s-image-uploader>
-
-          <v-file-input
-            v-else
-            v-model="selected_file"
-            :label="$t('add_category.image_input')"
-            :placeholder="$t('add_category.image_input_placeholder')"
-            accept="image/*"
-            append-inner-icon="attach_file"
-            class="sd-modern-underlined-field"
-            clearable
-            color="primary"
-            prepend-icon=""
-            variant="underlined"
-          />
-          <p
-            v-if="category?.id"
-            class="sd-modern-subtitle b-category-add__image-limit"
-          >
-            {{ $t("add_category.modern.image_size") }}
-          </p>
-        </section>
-
-        <!-- Parent folder -->
-        <section class="sd-modern-widget b-category-add__parent">
-          <header class="b-category-add__section-heading">
-            <v-icon aria-hidden="true">account_tree</v-icon>
-            <div>
-              <h2>{{ $t("add_category.parent_input") }}</h2>
-              <p class="sd-modern-subtitle">
-                {{ $t("add_category.modern.parent_subtitle") }}
-              </p>
-            </div>
-          </header>
-          <template v-if="parentFolder">
-            <p class="sd-modern-subtitle">
-              {{ $t("add_category.parent.subtitle") }}
-            </p>
-            <div class="b-category-add__parent-context">
-              <circle-image
-                :size="36"
-                :src="ShopCategoryHelper.GetCategoryIconById(parentFolder.id)"
-                class="me-2 avatar-gradient -thin -category"
-                scale-on-hover
-              />
-              <div>
-                <b>{{ parentFolder.title }}</b>
-                <p class="sd-modern-subtitle">{{ parentFolder.description }}</p>
+                modern
+                embedded
+                @edit-engine="(_engine) => (category.engine = _engine)"
+                @edit-filters="category.filters = $event"
+              ></b-category-engine-editor>
+              <div
+                v-else
+                class="b-category-add__content b-category-add__engine-loading sd-modern-notice"
+                :role="engine_load_error ? 'alert' : 'status'"
+              >
+                <v-icon size="20" aria-hidden="true">info_outline</v-icon>
+                <div class="sd-modern-notice__content">
+                  {{
+                    $t(
+                      engine_load_error
+                        ? "add_category.modern.engine_load_error"
+                        : "global.commons.loading",
+                    )
+                  }}
+                </div>
+                <v-btn
+                  v-if="engine_load_error"
+                  class="sd-modern-button"
+                  variant="text"
+                  @click="loadEngine"
+                  >{{ $t("global.actions.refresh") }}</v-btn
+                >
               </div>
             </div>
           </template>
-          <div class="sd-modern-underlined-field b-category-add__parent-input">
-            <b-category-input
-              v-model="parent_id"
-              :label="$t('add_category.parent_input')"
-              :messages="
-                parent_id ? '' : $t('add_category.parent_input_message')
-              "
-              clearable
-            >
-            </b-category-input>
-          </div>
-        </section>
-      </div>
-    </v-card-text>
 
+          <!-- ███████████████████████████ Setting ███████████████████████████ -->
+          <v-card-text
+            v-show="tab === 'setting'"
+            class="b-category-add__body sd-modern-canvas"
+          >
+            <div class="b-category-add__content b-category-add__grid">
+              <section class="sd-modern-widget b-category-add__details">
+                <header class="b-category-add__section-heading">
+                  <v-icon aria-hidden="true">notes</v-icon>
+                  <div>
+                    <h2>{{ $t("add_category.modern.details_title") }}</h2>
+                    <p class="sd-modern-subtitle">
+                      {{ $t("add_category.modern.details_subtitle") }}
+                    </p>
+                  </div>
+                </header>
+
+                <v-text-field
+                  v-model="title"
+                  :counter="24"
+                  :error-messages="
+                    !title ? $t('add_category.title_input_error') : null
+                  "
+                  :label="$t('add_category.title_input')"
+                  :placeholder="$t('add_category.modern.title_placeholder')"
+                  class="sd-modern-underlined-field"
+                  required
+                  variant="underlined"
+                  @blur="
+                    () => {
+                      if (!name) name = Slugify.apply(title);
+                    }
+                  "
+                >
+                  <template v-slot:append-inner>
+                    <b-translation-button-category
+                      v-if="category?.id"
+                      :category="category"
+                      :label="$t('add_category.title_input')"
+                      :shop="shop"
+                      translation-key="title"
+                    ></b-translation-button-category>
+
+                    <v-btn
+                      class="b-category-add__star"
+                      :aria-pressed="star"
+                      :aria-label="$t('add_category.star')"
+                      variant="text"
+                      type="button"
+                      @click="star = !star"
+                    >
+                      <v-icon
+                        :color="star ? 'warning' : undefined"
+                        size="18"
+                        aria-hidden="true"
+                      >
+                        {{ star ? "star" : "star_border" }}
+                      </v-icon>
+                      <span>{{ $t("add_category.star") }}</span>
+                    </v-btn>
+                  </template>
+                </v-text-field>
+
+                <v-btn
+                  class="sd-modern-button sd-modern-button--inline b-category-add__url"
+                  color="primary"
+                  variant="text"
+                  :aria-expanded="edit_name"
+                  :aria-label="`${$t('global.actions.edit')}: ${ShopURLs.MainShopUrl(shop)}/${name}-category`"
+                  @click="edit_name = !edit_name"
+                >
+                  <v-icon size="16" aria-hidden="true">link</v-icon>
+                  <span class="b-category-add__url-value" dir="ltr"
+                    >{{ ShopURLs.MainShopUrl(shop) }}/{{ name }}-category</span
+                  >
+                  <v-icon size="16" aria-hidden="true">edit</v-icon>
+                  <v-tooltip
+                    activator="parent"
+                    :text="`${ShopURLs.MainShopUrl(shop)}/${name}-category`"
+                    location="top"
+                    :open-on-focus="true"
+                    content-class="sd-modern-tooltip text-start"
+                  />
+                </v-btn>
+                <v-expand-transition>
+                  <div v-if="edit_name">
+                    <v-text-field
+                      v-model="name"
+                      :counter="24"
+                      :error-messages="
+                        !valid_name ? $t('add_category.name_input_error') : null
+                      "
+                      :label="$t('add_category.name_input')"
+                      class="sd-modern-underlined-field mt-2"
+                      suffix="-category"
+                      variant="underlined"
+                    />
+                  </div>
+                </v-expand-transition>
+
+                <v-textarea
+                  v-model="description"
+                  class="sd-modern-underlined-field b-category-add__description"
+                  :label="$t('add_category.description_input')"
+                  :messages="$t('add_category.description_input_message')"
+                  auto-grow
+                  persistent-placeholder
+                  rows="3"
+                  variant="underlined"
+                >
+                  <template v-slot:append-inner>
+                    <b-translation-button-category
+                      v-if="category?.id"
+                      :category="category"
+                      :label="$t('add_category.description_input')"
+                      :shop="shop"
+                      translation-key="description"
+                    ></b-translation-button-category>
+                  </template>
+                </v-textarea>
+              </section>
+
+              <!-- Image -->
+              <section class="sd-modern-widget b-category-add__image">
+                <header class="b-category-add__section-heading">
+                  <v-icon aria-hidden="true">image</v-icon>
+                  <div>
+                    <h2>{{ $t("add_category.image_input") }}</h2>
+                    <p class="sd-modern-subtitle">
+                      {{ $t("add_category.modern.image_subtitle") }}
+                    </p>
+                  </div>
+                </header>
+
+                <s-image-uploader
+                  v-if="category && category.id"
+                  :image="getShopImagePath(icon)"
+                  :label="$t('add_category.image_input')"
+                  :server="
+                    IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
+                      ? window.VAPI.POST_MY_VENDOR_UPLOAD_CATEGORY_IMAGE(
+                          vendor.id,
+                          category.id,
+                        )
+                      : window.API.POST_UPLOAD_CATEGORY_IMAGE(
+                          shop.id,
+                          category.id,
+                        )
+                  "
+                  auto-compact
+                  dense
+                  modern
+                  max-file-size="2MB"
+                  @new-path="handleProcessFile"
+                >
+                </s-image-uploader>
+
+                <v-file-input
+                  v-else
+                  v-model="selected_file"
+                  :label="$t('add_category.image_input')"
+                  :placeholder="$t('add_category.image_input_placeholder')"
+                  accept="image/*"
+                  append-inner-icon="attach_file"
+                  class="sd-modern-underlined-field"
+                  clearable
+                  color="primary"
+                  prepend-icon=""
+                  variant="underlined"
+                />
+                <p
+                  v-if="category?.id"
+                  class="sd-modern-subtitle b-category-add__image-limit"
+                >
+                  {{ $t("add_category.modern.image_size") }}
+                </p>
+              </section>
+
+              <!-- Parent folder -->
+              <section class="sd-modern-widget b-category-add__parent">
+                <header class="b-category-add__section-heading">
+                  <v-icon aria-hidden="true">account_tree</v-icon>
+                  <div>
+                    <h2>{{ $t("add_category.parent_input") }}</h2>
+                    <p class="sd-modern-subtitle">
+                      {{ $t("add_category.modern.parent_subtitle") }}
+                    </p>
+                  </div>
+                </header>
+                <template v-if="parentFolder">
+                  <p class="sd-modern-subtitle">
+                    {{ $t("add_category.parent.subtitle") }}
+                  </p>
+                  <div class="b-category-add__parent-context">
+                    <circle-image
+                      :size="36"
+                      :src="
+                        ShopCategoryHelper.GetCategoryIconById(parentFolder.id)
+                      "
+                      class="me-2 avatar-gradient -thin -category"
+                      scale-on-hover
+                    />
+                    <div>
+                      <b>{{ parentFolder.title }}</b>
+                      <p class="sd-modern-subtitle">
+                        {{ parentFolder.description }}
+                      </p>
+                    </div>
+                  </div>
+                </template>
+                <div
+                  class="sd-modern-underlined-field b-category-add__parent-input"
+                >
+                  <b-category-input
+                    v-model="parent_id"
+                    :label="$t('add_category.parent_input')"
+                    :messages="
+                      parent_id ? '' : $t('add_category.parent_input_message')
+                    "
+                    clearable
+                  >
+                  </b-category-input>
+                </div>
+              </section>
+            </div>
+          </v-card-text>
+
+          <!-- ███████████████████████████ Filter ███████████████████████████ -->
+
+          <div
+            v-if="tab === 'filter' && category"
+            class="b-category-add__filter sd-modern-canvas text-start"
+          >
+            <b-category-filter-editor
+              :category="category"
+              :shop="shop"
+              embedded
+              @edit-filters="category.filters = $event"
+            />
+          </div>
+
+          <!-- ███████████████████████████ Template ███████████████████████████ -->
+
+          <template v-if="tab === 'template' && category">
+            <v-card-text class="b-category-add__body sd-modern-canvas">
+              <div class="b-category-add__content sd-modern-widget">
+                <u-widget-header
+                  :add-caption="
+                    page
+                      ? $t('add_category.template.edit_page')
+                      : $t('add_category.template.Pages_list')
+                  "
+                  :add-icon="page ? 'edit' : 'add_box'"
+                  :to="
+                    page
+                      ? {
+                          name: 'BPageLandingEditor',
+                          params: { page_id: page.id },
+                        }
+                      : { name: 'BPageShopPagesLandings' }
+                  "
+                  add-text
+                  icon="web_asset"
+                  class="sd-modern-form-header"
+                  :title="$t('add_category.modern.custom_page')"
+                ></u-widget-header>
+
+                <p class="sd-modern-subtitle mb-4">
+                  {{ $t("add_category.template.subtitle") }}
+                </p>
+
+                <b-page-input
+                  v-model="page"
+                  modern
+                  :shop="shop"
+                  background-color="transparent"
+                  clearable
+                  :label="$t('global.commons.page')"
+                  :disabled="busy_save"
+                ></b-page-input>
+              </div>
+              <v-expand-transition>
+                <div v-if="page">
+                  <div class="b-category-add__content sd-modern-widget mt-4">
+                    <l-augment-form
+                      v-model="augment"
+                      :loading="busy_load || busy_save"
+                      @change="changed = true"
+                    ></l-augment-form>
+                  </div>
+                </div>
+              </v-expand-transition>
+              <div
+                v-if="augment_load_error"
+                class="b-category-add__content sd-modern-notice mt-4"
+                role="alert"
+              >
+                <v-icon size="20" aria-hidden="true">info_outline</v-icon>
+                <div class="sd-modern-notice__content">
+                  {{ $t("add_category.modern.template_load_error") }}
+                </div>
+                <v-btn
+                  class="sd-modern-button"
+                  variant="text"
+                  @click="loadArgumentStructure(page)"
+                  >{{ $t("global.actions.refresh") }}</v-btn
+                >
+              </div>
+              <div
+                class="b-category-add__content b-category-add__inline-actions sd-modern-actions"
+              >
+                <p class="sd-modern-subtitle">
+                  {{ $t("add_category.modern.template_save_scope") }}
+                </p>
+                <v-btn
+                  :loading="busy_save"
+                  :disabled="
+                    !templateChanged ||
+                    busy ||
+                    busy_save ||
+                    busy_load ||
+                    augment_load_error
+                  "
+                  class="sd-modern-button sd-modern-button--primary"
+                  color="primary"
+                  variant="elevated"
+                  @click="saveTemplate"
+                  v-ctrl.s="saveTemplate"
+                >
+                  <v-icon start>save</v-icon>
+                  {{ $t("global.actions.save_changes") }}
+                </v-btn>
+              </div>
+            </v-card-text>
+          </template>
+
+          <!-- ███████████████████████████ Critical ███████████████████████████ -->
+
+          <template v-if="tab === 'critical' && category">
+            <v-card-text class="b-category-add__body sd-modern-canvas">
+              <details
+                class="b-category-add__content sd-modern-widget sd-modern-disclosure sd-modern-critical"
+                :open="critical_open"
+                @toggle="critical_open = $event.target.open"
+              >
+                <summary class="sd-modern-disclosure__summary">
+                  <v-icon
+                    class="sd-modern-disclosure__icon"
+                    color="error"
+                    aria-hidden="true"
+                    >warning_amber</v-icon
+                  >
+                  <span class="sd-modern-disclosure__copy">
+                    <span class="sd-modern-disclosure__title">{{
+                      $t("add_category.critical_zone.title")
+                    }}</span>
+                    <span
+                      class="sd-modern-subtitle d-block"
+                      v-html="
+                        $t('add_category.critical_zone.subtitle', {
+                          parent: parentFolder
+                            ? parentFolder.title
+                            : $t('global.commons.home'),
+                        })
+                      "
+                    ></span>
+                  </span>
+                  <v-icon
+                    class="sd-modern-disclosure__chevron"
+                    aria-hidden="true"
+                    >expand_more</v-icon
+                  >
+                </summary>
+                <div class="b-category-add__critical-body">
+                  <u-smart-verify
+                    v-model="accept_delete"
+                    role="checkbox"
+                    tabindex="0"
+                    :aria-checked="accept_delete"
+                    :aria-disabled="busy_delete"
+                    :aria-label="
+                      $t('add_category.critical_zone.accept_delete.true_title')
+                    "
+                    :disabled="busy_delete"
+                    @keydown.space.prevent="
+                      !busy_delete && (accept_delete = !accept_delete)
+                    "
+                    @keydown.enter.prevent="
+                      !busy_delete && (accept_delete = !accept_delete)
+                    "
+                    color="error"
+                    false-gray
+                    :true-description="
+                      $t(
+                        'add_category.critical_zone.accept_delete.true_description',
+                      )
+                    "
+                    :true-title="
+                      $t('add_category.critical_zone.accept_delete.true_title')
+                    "
+                  ></u-smart-verify>
+                  <div class="b-category-add__critical-actions">
+                    <v-btn
+                      :disabled="!accept_delete"
+                      :loading="busy_delete"
+                      class="sd-modern-button sd-modern-button--danger"
+                      color="error"
+                      variant="elevated"
+                      @click="deleteCategoryDialog()"
+                    >
+                      <v-icon class="me-1">delete</v-icon>
+                      {{ $t("add_category.menu.delete") }}
+                    </v-btn>
+                  </div>
+                </div>
+              </details>
+            </v-card-text>
+          </template>
+        </div>
+      </div>
+    </div>
     <v-card-actions
-      v-show="tab === 'setting'"
+      v-if="tab === 'setting'"
       class="sd-modern-form-actions b-category-add__actions"
     >
       <div class="widget-buttons">
@@ -313,11 +539,12 @@
         <v-btn
           v-if="category"
           class="sd-modern-button sd-modern-button--primary"
-          :disabled="!canConfirm || busy_save"
+          :disabled="!canConfirm || busy || busy_save"
           :loading="busy"
           color="primary"
           variant="elevated"
           @click="editCategory()"
+          v-ctrl.s="editCategory"
         >
           <v-icon start>save</v-icon>
           {{ $t("global.actions.save_changes") }}
@@ -326,201 +553,19 @@
         <v-btn
           v-else
           class="sd-modern-button sd-modern-button--primary"
-          :disabled="!canConfirm"
+          :disabled="!canConfirm || busy || busy_save"
           :loading="busy"
           color="primary"
           variant="elevated"
           @click="addCategory()"
+          v-ctrl.s="addCategory"
         >
           <v-icon start>add</v-icon>
 
-          {{ $t("add_category.add_action") }}
+          {{ $t("add_category.modern.create_category") }}
         </v-btn>
       </div>
     </v-card-actions>
-    <!-- ███████████████████████████ Filter ███████████████████████████ -->
-
-    <div
-      v-if="tab === 'filter' && category"
-      class="b-category-add__filter sd-modern-canvas text-start"
-    >
-      <b-category-filter-editor
-        :category="category"
-        :shop="shop"
-        embedded
-        @edit-filters="category.filters = $event"
-      />
-    </div>
-
-    <!-- ███████████████████████████ Template ███████████████████████████ -->
-
-    <template v-if="tab === 'template' && category">
-      <v-card-text class="b-category-add__body sd-modern-canvas">
-        <div class="b-category-add__content sd-modern-widget">
-          <u-widget-header
-            :add-caption="
-              page
-                ? $t('add_category.template.edit_page')
-                : $t('add_category.template.Pages_list')
-            "
-            :add-icon="page ? 'edit' : 'add_box'"
-            :to="
-              page
-                ? { name: 'BPageLandingEditor', params: { page_id: page.id } }
-                : { name: 'BPageShopPagesLandings' }
-            "
-            add-text
-            icon="layers"
-            class="sd-modern-form-header"
-            :title="$t('add_category.template.title')"
-          ></u-widget-header>
-
-          <p class="sd-modern-subtitle mb-4">
-            {{ $t("add_category.template.subtitle") }}
-          </p>
-
-          <b-page-input
-            v-model="page"
-            modern
-            :shop="shop"
-            background-color="transparent"
-            clearable
-            :label="$t('global.commons.page')"
-            :disabled="busy_save"
-          ></b-page-input>
-        </div>
-        <v-expand-transition>
-          <div v-if="page">
-            <div class="b-category-add__content sd-modern-widget mt-4">
-              <l-augment-form
-                v-model="augment"
-                :loading="busy_load || busy_save"
-                @change="changed = true"
-              ></l-augment-form>
-            </div>
-          </div>
-        </v-expand-transition>
-        <div
-          v-if="augment_load_error"
-          class="b-category-add__content sd-modern-notice mt-4"
-          role="alert"
-        >
-          <v-icon size="20" aria-hidden="true">info_outline</v-icon>
-          <div class="sd-modern-notice__content">
-            {{ $t("add_category.modern.template_load_error") }}
-          </div>
-          <v-btn
-            class="sd-modern-button"
-            variant="text"
-            @click="loadArgumentStructure(page)"
-            >{{ $t("global.actions.refresh") }}</v-btn
-          >
-        </div>
-        <div
-          class="b-category-add__content b-category-add__inline-actions sd-modern-actions"
-        >
-          <p class="sd-modern-subtitle">
-            {{ $t("add_category.modern.template_save_scope") }}
-          </p>
-          <v-btn
-            :loading="busy_save"
-            :disabled="
-              !templateChanged ||
-              busy ||
-              busy_save ||
-              busy_load ||
-              augment_load_error
-            "
-            class="sd-modern-button sd-modern-button--primary"
-            color="primary"
-            variant="elevated"
-            @click="saveTemplate"
-          >
-            <v-icon start>save</v-icon>
-            {{ $t("global.actions.save") }}
-          </v-btn>
-        </div>
-      </v-card-text>
-    </template>
-
-    <!-- ███████████████████████████ Critical ███████████████████████████ -->
-
-    <template v-if="tab === 'critical' && category">
-      <v-card-text class="b-category-add__body sd-modern-canvas">
-        <details
-          class="b-category-add__content sd-modern-widget sd-modern-disclosure sd-modern-critical"
-          :open="critical_open"
-          @toggle="critical_open = $event.target.open"
-        >
-          <summary class="sd-modern-disclosure__summary">
-            <v-icon
-              class="sd-modern-disclosure__icon"
-              color="error"
-              aria-hidden="true"
-              >warning_amber</v-icon
-            >
-            <span class="sd-modern-disclosure__copy">
-              <span class="sd-modern-disclosure__title">{{
-                $t("add_category.critical_zone.title")
-              }}</span>
-              <span
-                class="sd-modern-subtitle d-block"
-                v-html="
-                  $t('add_category.critical_zone.subtitle', {
-                    parent: parentFolder
-                      ? parentFolder.title
-                      : $t('global.commons.home'),
-                  })
-                "
-              ></span>
-            </span>
-            <v-icon class="sd-modern-disclosure__chevron" aria-hidden="true"
-              >expand_more</v-icon
-            >
-          </summary>
-          <div class="b-category-add__critical-body">
-            <u-smart-verify
-              v-model="accept_delete"
-              role="checkbox"
-              tabindex="0"
-              :aria-checked="accept_delete"
-              :aria-disabled="busy_delete"
-              :aria-label="
-                $t('add_category.critical_zone.accept_delete.true_title')
-              "
-              :disabled="busy_delete"
-              @keydown.space.prevent="
-                !busy_delete && (accept_delete = !accept_delete)
-              "
-              @keydown.enter.prevent="
-                !busy_delete && (accept_delete = !accept_delete)
-              "
-              color="error"
-              false-gray
-              :true-description="
-                $t('add_category.critical_zone.accept_delete.true_description')
-              "
-              :true-title="
-                $t('add_category.critical_zone.accept_delete.true_title')
-              "
-            ></u-smart-verify>
-            <div class="b-category-add__critical-actions">
-              <v-btn
-                :disabled="!accept_delete"
-                :loading="busy_delete"
-                class="sd-modern-button sd-modern-button--danger"
-                color="error"
-                variant="elevated"
-                @click="deleteCategoryDialog()"
-              >
-                <v-icon class="me-1">delete</v-icon>
-                {{ $t("add_category.menu.delete") }}
-              </v-btn>
-            </div>
-          </div>
-        </details>
-      </v-card-text>
-    </template>
   </v-card>
 </template>
 
@@ -541,10 +586,12 @@ import { ShopCategoryHelper } from "@selldone/core-js/helper/category/ShopCatego
 
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { Slugify } from "@selldone/core-js/utils/slugify/slugify.ts";
+import DirectiveCtrlKeydown from "@selldone/components-vue/directives/keyboard/DirectiveCtrlKeydown.ts";
 
 export default {
   name: "BCategoryAdd",
   mixins: [],
+  directives: { ctrl: DirectiveCtrlKeydown },
   components: {
     BCategoryEngineEditor,
 
@@ -629,6 +676,52 @@ export default {
     engine_load_error: false,
   }),
   computed: {
+    sections() {
+      return [
+        {
+          value: "setting",
+          icon: "settings",
+          title: this.$t("add_category.menu.settings"),
+          subtitle: this.$t("add_category.modern.settings_subtitle"),
+        },
+        {
+          value: "filter",
+          icon: "filter_alt",
+          title: this.$t("add_category.menu.filter"),
+          subtitle: this.$t("add_category.modern.filters_subtitle"),
+        },
+        {
+          value: "template",
+          icon: "layers",
+          title: this.$t("global.commons.template"),
+          subtitle: this.$t("add_category.modern.template_subtitle"),
+        },
+        {
+          value: "engine",
+          icon: "auto_mode",
+          title: this.$t("global.commons.engine"),
+          subtitle: this.$t("add_category.modern.engine_subtitle"),
+        },
+        {
+          value: "critical",
+          icon: "warning_amber",
+          title: this.$t("global.commons.critical_zone"),
+          subtitle: this.$t("add_category.modern.critical_subtitle"),
+        },
+      ];
+    },
+    currentSection() {
+      if (!this.category)
+        return {
+          icon: "create_new_folder",
+          title: this.$t("add_category.modern.create_category"),
+          subtitle: this.$t("add_category.modern.create_subtitle"),
+        };
+      return (
+        this.sections.find((section) => section.value === this.tab) ||
+        this.sections[0]
+      );
+    },
     ShopCategoryHelper() {
       return ShopCategoryHelper;
     },
@@ -663,6 +756,9 @@ export default {
       this.critical_open = false;
       this.accept_delete = false;
       if (tab === "engine") this.loadEngine();
+      this.$nextTick(() => {
+        if (this.$refs.workspace) this.$refs.workspace.scrollTop = 0;
+      });
     },
     critical_open(open) {
       if (!open) this.accept_delete = false;
@@ -690,6 +786,14 @@ export default {
     },
 
     addCategory() {
+      if (
+        this.tab !== "setting" ||
+        this.category ||
+        !this.canConfirm ||
+        this.busy ||
+        this.busy_save
+      )
+        return;
       this.busy = true;
 
       let formData = new FormData();
@@ -747,6 +851,14 @@ export default {
         });
     },
     editCategory() {
+      if (
+        this.tab !== "setting" ||
+        !this.category ||
+        !this.canConfirm ||
+        this.busy ||
+        this.busy_save
+      )
+        return;
       this.busy = true;
 
       const old_parent_id = this.category.parent_id;
@@ -811,6 +923,7 @@ export default {
 
     saveTemplate() {
       if (
+        this.tab !== "template" ||
         !this.category ||
         !this.templateChanged ||
         this.busy_save ||
@@ -1076,8 +1189,61 @@ export default {
   flex-direction: column;
   min-height: 0;
 
-  &.v-card > .b-category-add__body.v-card-text {
-    padding: 0 30px 30px;
+  &__workspace {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 26px;
+    width: 100%;
+    max-width: 856px;
+    margin-inline: auto;
+    padding: 30px 28px 34px;
+  }
+  &__layout--sidebar {
+    grid-template-columns: 168px minmax(0, 1fr);
+    max-width: 1050px;
+  }
+  &__sidebar {
+    position: sticky;
+    top: 30px;
+    min-width: 0;
+    max-height: calc(100dvh - 170px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding: 3px;
+  }
+  &__nav {
+    gap: 5px;
+    padding-block: 3px;
+    .sd-modern-section-nav__item {
+      min-height: 42px;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 20px;
+    }
+    .sd-modern-section-nav__item[aria-current="location"] {
+      font-weight: 500;
+    }
+  }
+  &__critical-tab {
+    margin-block-start: 14px;
+  }
+  &__main {
+    min-width: 0;
+  }
+  &__main > .b-category-add__body.v-card-text {
+    padding: 0;
+  }
+  &__filter :deep(.b-category-filter-editor__content) {
+    width: 100%;
+    max-width: none;
+    margin: 0;
   }
   &__content {
     width: 100%;
@@ -1199,20 +1365,34 @@ export default {
       font-weight: 500;
     }
   }
-  &__embedded-heading {
+  &__heading {
     display: flex;
+    align-items: flex-start;
     gap: 12px;
-    margin-block: 26px 22px;
+    margin-bottom: 24px;
+    > .v-icon {
+      margin-top: 4px;
+    }
+    > div {
+      min-width: 0;
+    }
     h1 {
       margin: 0;
-      font-size: 21px;
-      font-weight: 600;
-      line-height: 28px;
+      font-size: 23px;
+      font-weight: 500;
+      line-height: 31px;
+      letter-spacing: -0.45px;
+    }
+    .sd-modern-subtitle {
+      margin-top: 4px;
+      font-size: 13px;
+      line-height: 21px;
     }
   }
   &__actions {
     flex: 0 0 auto;
-    padding: 16px 30px;
+    padding: 16px 28px;
+    border-block-start: 1px solid var(--sd-modern-border);
     background: rgb(var(--v-theme-surface));
   }
   &__actions .widget-buttons {
@@ -1235,6 +1415,10 @@ export default {
     font-size: 13px;
     line-height: 20px;
     padding-inline: 20px;
+  }
+  &--sidebar &__actions .widget-buttons {
+    max-width: 994px;
+    padding-inline-start: 194px;
   }
   &__critical-body {
     margin-top: 22px;
@@ -1264,11 +1448,66 @@ export default {
     margin-top: 20px;
   }
 
-  @media (max-width: 660px) {
-    &.v-card > .b-category-add__body.v-card-text {
-      padding-inline: 16px;
-      padding-bottom: 22px;
+  @media (max-width: 800px) {
+    &__layout--sidebar {
+      grid-template-columns: 148px minmax(0, 1fr);
+      gap: 18px;
+      padding-inline: 18px;
     }
+    &__actions {
+      padding-inline: 18px;
+    }
+    &--sidebar &__actions .widget-buttons {
+      padding-inline-start: 166px;
+    }
+  }
+  @media (max-width: 720px) {
+    &__layout,
+    &__layout--sidebar {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+      padding: 20px 16px 26px;
+    }
+    &__sidebar {
+      position: static;
+      max-height: none;
+      overflow: visible;
+    }
+    &__nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      .sd-modern-section-nav__item {
+        min-height: 44px;
+      }
+    }
+    &__critical-tab {
+      margin-block-start: 0;
+    }
+    &__heading {
+      margin-bottom: 20px;
+      h1 {
+        font-size: 21px;
+        line-height: 29px;
+      }
+    }
+    &__actions {
+      padding-inline: 16px;
+    }
+    &--sidebar &__actions .widget-buttons {
+      max-width: 800px;
+      padding-inline-start: 0;
+    }
+  }
+  @media (max-width: 940px) {
+    &__layout--sidebar &__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    &__layout--sidebar &__details {
+      grid-row: auto;
+    }
+  }
+  @media (max-width: 660px) {
     &__grid {
       grid-template-columns: minmax(0, 1fr);
     }

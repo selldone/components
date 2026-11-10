@@ -1,6 +1,6 @@
 # Product pricing editor
 
-`BProductEditPrice` is shared by Edit Product, Guided Add and Inventory. All
+`BProductEditPrice` is shared by Edit Product, Guided Add, the variant editor and Inventory. All
 use the native currency/price/date inputs and existing save endpoints.
 `modern && !instanceMode` selects the approved product workspace below;
 `modern && instanceMode` retains the Inventory Unified layout. Legacy callers
@@ -116,6 +116,24 @@ This change touches this editor, `BProductEditPrice.workspace.test.mjs`,
 tier components listed below, `../info/BProductEditInfoIcon.vue`, this README
 and dashboard `en.ts`/`fa.ts` under `@selldone/translate`. No backend endpoint,
 authentication, permission or pricing payload changes are required.
+
+## Variant editor
+
+Customized variant pricing uses the same selling-price card, calculation
+receipt, discount/schedule, additional details and quantity-pricing disclosures
+as the product workspace. It retains its local `customObject` draft and the
+product's fixed currency; it does not expose a second currency selector or
+local Save/Discard footer. The variant form owns Save and calls the existing
+`priceEditor.prepareSave()` guard, including pending tiers and unconfirmed date
+inputs. Switching inheritance off and on remounts the workspace from the retained
+amount, date and label draft without writing the parent product.
+
+The variant form keeps a read-only parent-product price reference in inherited
+and customized modes. Inherited mode does not mount an editable pricing
+workspace. Saved quantity tiers remain scoped to the actual variant and vendor;
+a new variant cannot edit product-level tiers before it has its own ID. Tier
+operations keep their existing independent requests. Inventory instance mode
+and legacy pricing retain their separate layouts and save behavior.
 
 ## Inventory Unified layout
 

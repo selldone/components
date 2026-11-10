@@ -21,21 +21,18 @@
       'x-large': xLarge,
       dark: dark,
       '-invalid': !is_valid_amount,
+      'u--price--line-through': lineThrough && is_valid_amount,
     }"
     :style="{ 'min-height': minHeight }"
     class="u--price"
   >
-    <template v-if="is_valid_amount">
+    <span v-if="is_valid_amount" class="u--price__value">
       <span v-if="isUnicode && !at_end">{{
         GetUserSelectedCurrencyName(currency_code, true)
-      }}</span>
-
-      <span :class="{ 'line-through': lineThrough }">
-        {{ compact ? formatCompactAmount(absolute_part) : absolute_part
+      }}</span>{{ compact ? formatCompactAmount(absolute_part) : absolute_part
         }}<span v-if="!compact" class="small">{{
           is_valid_amount ? getAmountAfterPoint(formatted_number) : ""
         }}</span>
-      </span>
       <span v-if="!isUnicode" class="mx-2 cur-name">{{
         GetUserSelectedCurrencyName(currency_code, true)
       }}</span>
@@ -43,7 +40,7 @@
       <span v-if="isUnicode && at_end" class="mx-1">{{
         GetUserSelectedCurrencyName(currency_code, true)
       }}</span>
-    </template>
+    </span>
     <template v-else>
       {{ amount }}
       <small class="font-weight-medium text-red" style="font-size: 10px"
@@ -227,20 +224,11 @@ export default {
 
   &.dark {
     color: #fff;
-
-    .line-through {
-      text-decoration-color: rgba(255, 255, 255, 0.8);
-    }
   }
 
   .small {
     font-size: 0.65em !important;
     font-weight: 500;
-  }
-
-  .line-through {
-    text-decoration-line: line-through;
-    text-decoration-color: #666;
   }
 
   &.medium {
@@ -257,6 +245,26 @@ export default {
 
   .cur-name {
     font-size: 10px !important;
+  }
+}
+
+// One intrinsic box keeps the stroke level across currency and smaller decimals.
+.u--price--line-through > .u--price__value,
+.text-decoration-line-through .u--price__value,
+.line-through .u--price__value {
+  display: inline-block;
+  position: relative;
+  vertical-align: baseline;
+  white-space: nowrap;
+  text-decoration: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 50%;
+    border-block-start: 1px solid currentColor;
+    pointer-events: none;
   }
 }
 </style>

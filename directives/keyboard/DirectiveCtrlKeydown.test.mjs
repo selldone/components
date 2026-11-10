@@ -18,7 +18,14 @@ function fixture(t, options = {}) {
   vm.runInNewContext(script, { exports, window, document: window.document,
     HTMLElement: window.HTMLElement, HTMLButtonElement: window.HTMLButtonElement });
   const directive = exports.default;
-  const el = window.document.body.firstElementChild;
+  const el = options.selector ? window.document.querySelector(options.selector) : window.document.body.firstElementChild;
+  // JSDOM does not lay out elements; model the browser's display-none geometry boundary.
+  el.getClientRects = () => {
+    for (let node = el; node; node = node.parentElement) {
+      if (window.getComputedStyle(node).display === "none") return [];
+    }
+    return [{}];
+  };
   const calls = [];
   const binding = { modifiers, value: (...args) => calls.push(args) };
   directive.mounted(el, binding);
@@ -28,7 +35,7 @@ function fixture(t, options = {}) {
     window.dispatchEvent(event);
     return event;
   };
-  return { directive, el, calls, press };
+  return { directive, el, calls, press, window };
 }
 
 test("Ctrl+S uses the physical key, passes no event argument and leaves other key combinations alone", t => {
@@ -102,4 +109,88 @@ test("a directive with no modifier has no visual hint and does not intercept key
   assert.equal(f.el.childElementCount, 0);
   assert.equal(f.press({ code: "KeyS", ctrlKey: true }).defaultPrevented, false);
   assert.deepEqual(f.calls, []);
+});
+
+test("hidden, visibility-hidden and disconnected Save buttons do not intercept Ctrl+S", t => {
+  for (const hide of [
+    f => { f.el.style.display = "none"; },
+    f => { f.el.parentElement.style.display = "none"; },
+    f => { f.el.style.visibility = "hidden"; },
+    f => { f.el.remove(); },
+  ]) {
+    const f = fixture(t);
+    hide(f);
+    assert.equal(f.press({ code: "KeyS", ctrlKey: true }).defaultPrevented, false);
+    assert.deepEqual(f.calls, []);
+  }
+});
+
+test("disabled and loading Save buttons suppress browser Save without invoking their callback", t => {
+  for (const block of [
+    el => { el.disabled = true; },
+    el => { el.setAttribute("aria-disabled", "true"); },
+    el => { el.setAttribute("aria-busy", "true"); },
+    el => { el.classList.add("v-btn--loading"); },
+    el => { const fieldset = el.ownerDocument.createElement("fieldset"); fieldset.disabled = true; el.replaceWith(fieldset); fieldset.append(el); },
+  ]) {
+    const f = fixture(t);
+    block(f.el);
+    assert.equal(f.press({ code: "KeyS", ctrlKey: true }).defaultPrevented, true);
+    assert.deepEqual(f.calls, []);
+  }
+});
+
+test("the highest active non-tooltip overlay owns Save independently of DOM order", t => {
+  const f = fixture(t, {
+    html: '<div class="v-overlay v-dialog v-overlay--active" style="z-index: 2020"><button id="front" class="v-btn">Front Save</button></div><div class="v-overlay v-dialog v-overlay--active" style="z-index: 2010"><button id="underlying" class="v-btn">Underlying Save</button></div><div class="v-overlay v-tooltip v-overlay--active" style="z-index: 9000"></div>',
+    selector: "#underlying",
+  });
+  const front = f.window.document.querySelector("#front");
+  front.getClientRects = () => [{}];
+  const frontCalls = [];
+  f.directive.mounted(front, { modifiers: { s: true }, value: () => frontCalls.push("save") });
+  t.after(() => f.directive.beforeUnmount(front));
+  assert.equal(f.press({ code: "KeyS", ctrlKey: true }).defaultPrevented, true);
+  assert.deepEqual(f.calls, []);
+  assert.deepEqual(frontCalls, ["save"]);
+});
+
+test("an active dialog blocks a page Save button while tooltips alone do not", t => {
+  const f = fixture(t);
+  const overlay = f.window.document.createElement("div");
+  overlay.className = "v-overlay v-overlay--active v-dialog";
+  overlay.style.zIndex = "2000";
+  f.window.document.body.append(overlay);
+  assert.equal(f.press({ code: "KeyS", ctrlKey: true }).defaultPrevented, false);
+  assert.deepEqual(f.calls, []);
+  overlay.classList.replace("v-dialog", "v-tooltip");
+  assert.equal(f.press({ code: "KeyS", ctrlKey: true }).defaultPrevented, true);
+  assert.deepEqual(f.calls, [[]]);
+});
+
+test("only one eligible Save directive handles Ctrl+S and already handled events are ignored", t => {
+  const f = fixture(t);
+  const second = f.window.document.createElement("button");
+  second.className = "v-btn";
+  second.getClientRects = () => [{}];
+  f.window.document.body.append(second);
+  const secondCalls = [];
+  f.directive.mounted(second, { modifiers: { s: true }, value: () => secondCalls.push("save") });
+  t.after(() => f.directive.beforeUnmount(second));
+  assert.equal(f.press({ code: "KeyS", ctrlKey: true }).defaultPrevented, true);
+  assert.deepEqual(f.calls, [[]]);
+  assert.deepEqual(secondCalls, []);
+  const handled = new f.window.KeyboardEvent("keydown", { code: "KeyS", ctrlKey: true, cancelable: true });
+  handled.preventDefault();
+  f.window.dispatchEvent(handled);
+  assert.deepEqual(f.calls, [[]]);
+  assert.deepEqual(secondCalls, []);
+});
+
+test("non-S Vuetify shortcuts retain their existing callback behavior", t => {
+  const f = fixture(t, { modifiers: { k: true } });
+  f.el.disabled = true;
+  f.el.style.display = "none";
+  assert.equal(f.press({ code: "KeyK", ctrlKey: true }).defaultPrevented, true);
+  assert.deepEqual(f.calls, [[]]);
 });

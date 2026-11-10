@@ -118,6 +118,8 @@ export default {
     slices: { type: Array, default: () => [] },
     /** How many of the largest slices are named on leader lines. */
     labels: { type: Number, default: 3 },
+    /** Keep tiny but meaningful changes labeled when the caller opts in. */
+    minLabelShare: { type: Number, default: 0.03 },
     unit: { type: String, default: "" },
     format: { type: Function, default: (value) => compact.format(value || 0) },
     ariaLabel: { type: String, default: "" },
@@ -157,7 +159,7 @@ export default {
       const picked = [...this.arcs]
         .sort((a, b) => b.value - a.value)
         .slice(0, this.labels)
-        .filter((arc) => arc.value / this.total >= 0.03)
+        .filter((arc) => arc.value / this.total >= this.minLabelShare)
         .map((arc) => {
           const angle = arc.mid * 2 * Math.PI - Math.PI / 2;
           const cos = Math.cos(angle);
