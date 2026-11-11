@@ -94,7 +94,7 @@
               <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="$t('add_product.images_modern.delete_video', { number: index + 1 })" :loading="busy_remove_video === product_video.id" :disabled="mediaBusy || busySave" @click="removeVideo(product_video)"><b-product-edit-info-icon name="Trash2" :size="16" /><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('add_product.images_modern.delete_video', { number: index + 1 }) }}</v-tooltip></v-btn>
             </div>
           </div>
-          <s-video-uploader v-if="max_videos_count > 0 && (product.videos?.length || 0) < max_videos_count" :server="upload_video_url" class="b-product-edit-images__video-upload" :idle-label="$t('add_product.images_modern.upload_video')" min-height="88px" rounded="lg" :disabled="busySave" auto-compact max-file-size="20MB" @new-item="onUploadVideoItem" @activity="video_uploading = $event" />
+          <s-video-uploader v-if="max_videos_count > 0 && (product.videos?.length || 0) < max_videos_count" :server="upload_video_url" class="b-product-edit-images__video-upload" :idle-label="$t('add_product.images_modern.upload_video')" modern min-height="88px" rounded="lg" :disabled="busySave" auto-compact max-file-size="20MB" @new-item="onUploadVideoItem" @activity="video_uploading = $event" />
           <p v-if="max_videos_count === 0" class="b-product-edit-images__help">{{ $t('add_product.images_modern.upgrade_videos') }}</p>
           <p class="b-product-edit-images__help">{{ $t('add_product.images_modern.video_immediate') }} <a href="https://handbrake.fr" target="_blank" rel="noopener noreferrer">HandBrake<v-icon icon="north_east" size="14" aria-hidden="true" /></a></p>
         </div>
@@ -1241,8 +1241,6 @@ export default {
   .b-product-edit-images__video-copy > a { display: inline-flex; gap: 5px; align-items: center; font-size: 13px; line-height: 20px; color: inherit; text-decoration: none; }
   .b-product-edit-images__video-copy > small { font-size: 11px; line-height: 17px; color: var(--sd-modern-muted); }
   .b-product-edit-images__video-upload { margin-block-start: 18px; }
-  .b-product-edit-images__video-upload :deep(.uploader-container) { padding: 0; max-width: none; background: var(--sd-modern-inset); border: 1px dashed var(--sd-modern-border); }
-  .b-product-edit-images__video-upload :deep(.file-size-limit) { font-size: 11px; line-height: 18px; }
   .b-product-edit-images__video-path { font-size: 11px; line-height: 17px; color: var(--sd-modern-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 3px 0 0; direction: ltr; }
   .b-product-edit-images__help a { display: inline-flex; align-items: center; gap: 4px; color: rgb(var(--v-theme-primary)); }
   .b-product-edit-images__footer { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 10px 2px 0; }

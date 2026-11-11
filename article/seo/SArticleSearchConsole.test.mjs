@@ -6,6 +6,7 @@ import * as Vue from "vue";
 import { renderToString } from "@vue/server-renderer";
 import { parse, compileTemplate, compileStyle } from "@vue/compiler-sfc";
 import ts from "typescript";
+import numeral from "numeral";
 
 // Deferred synthetic reads only; never contact Search Console or start authorization.
 const filename = new URL("./SArticleSearchConsole.vue", import.meta.url);
@@ -21,6 +22,8 @@ const transpile = (source) => ts.transpileModule(source, {
 const templateExports = {};
 vm.runInNewContext(transpile(template.code), { exports: templateExports, require: (path) => path === "vue" ? Vue : { default: path } });
 const plain = (value) => JSON.parse(JSON.stringify(value));
+const searchHelpers = {};
+vm.runInNewContext(transpile(readFileSync(new URL("./article-search-console.ts", import.meta.url), "utf8")), { exports: searchHelpers });
 const settle = () => new Promise((resolve) => setImmediate(resolve));
 const passthrough = { render() { return Vue.h("div", this.$attrs, this.$slots.default?.()); } };
 const report = () => ({
@@ -49,23 +52,25 @@ function fixture(props = {}) {
     require(path) {
       if (path.includes("NotificationService")) return { default: { showLaravelError: (error) => notices.push(error) } };
       if (path.includes("DateConverter")) return { DateConverter: { ConvertTimestampToShortString: (value) => String(value) } };
-      if (path === "numeral") return { default: (value) => ({ format: () => String(value) }) };
+      if (path === "numeral") return { default: numeral };
+      if (path === "./article-search-console") return searchHelpers;
       return { default: passthrough };
     },
   });
   const component = exports.default;
-  const state = { ...component.data(), workspace: true, shop: { id: 7, search_console: true }, article: { id: 12 }, ...props,
+  const state = { ...component.data(), blog: false, workspace: true, shop: { id: 7, search_console: true }, article: { id: 12 }, ...props,
     $route: { params: { shop_id: 7 } }, $t: (key) => key, $vuetify: { locale: { isRtl: false } } };
   for (const [key, method] of Object.entries(component.methods)) state[key] = method.bind(state);
   for (const [key, getter] of Object.entries(component.computed)) Object.defineProperty(state, key, { get: () => getter.call(state) });
-  return { component, state, requests, notices };
+  return { component, state, requests, notices, charts: [] };
 }
 
 async function render(f) {
+  f.charts.length = 0;
   const app = Vue.createSSRApp({ ...f.component, created: undefined, beforeUnmount: undefined,
     data: () => Object.fromEntries(Object.keys(f.component.data()).map((key) => [key, f.state[key]])),
     render: templateExports.render,
-  }, { workspace: f.state.workspace, article: f.state.article, shop: f.state.shop });
+  }, { blog: f.state.blog, workspace: f.state.workspace, article: f.state.article, shop: f.state.shop });
   Object.assign(app.config.globalProperties, {
     $t: f.state.$t, $route: f.state.$route,
     getCountryName: (code) => `Country ${code}`, getName: (value) => value,
@@ -73,7 +78,7 @@ async function render(f) {
   });
   for (const tag of new Set(Array.from(descriptor.template.content.matchAll(/<([a-z][\w-]*-[\w-]+)/g), ([, name]) => name))) if (tag !== "v-btn") app.component(tag, passthrough);
   app.component("flag", passthrough);
-  app.component("apexchart", { props: ["series", "options"], render() { return Vue.h("div", { "data-chart": "performance" }); } });
+  app.component("apexchart", { props: ["series", "options"], render() { f.charts.push({ series: this.series, options: this.options, key: this.$.vnode.key }); return Vue.h("div", { "data-chart": "performance" }); } });
   app.component("v-btn", { props: ["to", "disabled"], render() {
     return Vue.h(this.to ? "a" : "button", { ...this.$attrs, "data-route-name": this.to?.name, disabled: this.disabled }, this.$slots.default?.());
   } });
@@ -220,4 +225,131 @@ test("legacy title, HTML error display, load behavior and admin endpoint remain 
   assert.equal(f.requests.length, 3, "Legacy prop changes retain the existing load-once behavior");
   f.requests[2].resolve(report()); await settle();
   assert.equal(f.state.busy, false, "A legacy prop change cannot leave an accepted read permanently busy");
+});
+
+test("Blog audit calculations preserve observed zero, missing fields and leading or internal calendar gaps", () => {
+  const input = [
+    { keys: "2026-10-04", clicks: "0", impressions: "0", position: null },
+    { keys: "2026-10-02", clicks: "3", impressions: "30", ctr: 0.1, position: "2" },
+    { keys: "2026-10-05", clicks: 1, impressions: 10, position: 4 },
+  ];
+  const original = JSON.stringify(input);
+  const days = searchHelpers.searchDays(input);
+  assert.deepEqual(plain(searchHelpers.searchTotals(days)), { clicks: 4, impressions: 40, ctr: 0.1, position: 2.5 });
+  const points = searchHelpers.searchPoints(days, "clicks", "2026-10-01", "2026-10-06");
+  assert.deepEqual(plain(points.map((point) => point.y)), [null, 3, null, 0, 1, null]);
+  assert.equal(JSON.stringify(input), original);
+  assert.equal(searchHelpers.searchDays([{ keys: "2026-02-30", clicks: 3 }]).length, 0);
+  const missing = searchHelpers.searchDays([{ keys: "2026-10-01", clicks: null, impressions: 20 },
+    { keys: "2026-10-02", clicks: 1, impressions: 10, position: 4 }]);
+  assert.deepEqual(plain(searchHelpers.searchTotals(missing)), { clicks: null, impressions: 30, ctr: null, position: null });
+  assert.deepEqual(plain(searchHelpers.searchTotals([])), { clicks: null, impressions: null, ctr: null, position: null });
+  const invalid = searchHelpers.searchDays([{ keys: "2026-10-01", clicks: 2, impressions: 1, ctr: 0.5, position: 0 },
+    { keys: "2026-10-02", ctr: 1.5, position: -1 }]);
+  assert.deepEqual(plain(invalid.map(({ ctr, position }) => ({ ctr, position }))), [{ ctr: null, position: null }, { ctr: null, position: null }]);
+  assert.equal(searchHelpers.searchTotals(invalid.slice(0, 1)).ctr, null);
+  for (const value of [null, undefined, "", "bad", Infinity, -1]) assert.equal(searchHelpers.searchNumber(value), null);
+});
+
+test("Blog click shares use only returned rows and never replace unavailable clicks with zero", () => {
+  const shares = searchHelpers.searchShares([{ keys: "us", clicks: "2" }, { keys: "gb", clicks: 1 }, { keys: "de", clicks: 0 }]);
+  assert.equal(shares.total, 3);
+  assert.deepEqual(plain(shares.rows.map((row) => row.share)), [2 / 3, 1 / 3, 0]);
+  assert.equal(searchHelpers.searchShares([{ keys: "us", clicks: null }, { keys: "gb", clicks: 1 }]).total, null);
+  assert.equal(searchHelpers.searchShares([{ keys: "us", clicks: 0 }]).rows[0].share, null);
+});
+
+test("Blog opt-in renders the approved metrics, selected daily line, scientific shares and every returned table dimension", async () => {
+  const f = fixture({ blog: true, workspace: false, shop: null });
+  assert.equal(f.component.props.blog.default, false);
+  f.component.created.call(f.state);
+  assert.equal(f.requests[0].url, "/admin/article/12/audit");
+  f.requests[0].resolve({ ...report(), countries: [{ keys: "us", clicks: 6 }, { keys: "gb", clicks: 1 }] }); await settle();
+  let html = await render(f);
+  assert.match(html, /s-article-search-blog__header/);
+  assert.match(html, /back_to_article/);
+  assert.match(html, /returned_days/);
+  assert.equal(f.charts.length, 5);
+  assert.equal(f.charts.at(-1).options.chart.type, "line");
+  assert.equal(f.charts.at(-1).options.chart.animations.enabled, false);
+  assert.deepEqual(plain(f.charts.at(-1).series[0].data.map((point) => point.y)), [7, null]);
+  assert.match(html, /s-article-search-blog__callout/);
+  assert.match(html, /85\.71%/);
+  assert.match(html, /distribution_hint/);
+  assert.match(html, /delivery guide/);
+  assert.doesNotMatch(html, /py-16|shadow-paper|u-progress-score/);
+  const clicksChartKey = f.charts.at(-1).key;
+  f.state.blogMetric = "ctr";
+  f.state.blogDistribution = "appearance";
+  f.state.tab = 2;
+  html = await render(f);
+  assert.match(html, /video/);
+  assert.equal(f.charts.at(-1).series[0].data[0].y, 7 / 42);
+  assert.equal(f.charts.at(-1).options.yaxis.labels.formatter(0.25), "25%");
+  assert.notEqual(f.charts.at(-1).key, clicksChartKey, "Changing metric units must mount a new chart so the installed wrapper preserves formatter callbacks");
+  f.state.blogMetric = "position";
+  await render(f);
+  assert.equal(f.charts.at(-1).options.yaxis.labels.formatter(7.3999999999999995), "7.4");
+  const previousReportKey = f.charts.at(-1).key;
+  f.component.watch.date.call(f.state);
+  await render(f);
+  assert.notEqual(f.charts.at(-1).key, previousReportKey, "A refreshed daily report must also preserve formatter callbacks");
+  assert.equal(f.state.blogRowLimit, null);
+  f.state.tab = 1;
+  assert.match(await render(f), /Country us/);
+  assert.equal(f.state.blogRowLimit, 30);
+  assert.equal(f.state.rowLabel({ keys: "%E0%A4%A" }, "queries"), "%E0%A4%A");
+  f.state.start = { invalid: true };
+  f.state.end = 42;
+  assert.doesNotMatch(await render(f), /s-article-search-blog__period/);
+});
+
+test("Blog missing article context never queries, then clears previous data on reset and ignores stale responses", async () => {
+  const f = fixture({ blog: true, workspace: false, shop: null, article: null });
+  f.component.created.call(f.state);
+  assert.equal(f.requests.length, 0);
+  assert.match(await render(f), /search_console.loading/);
+  f.state.article = { id: 12 }; f.component.watch.audit_scope.call(f.state);
+  f.requests[0].resolve(report()); await settle();
+  assert.equal(f.state.has_data, true);
+  f.state.fetch();
+  f.state.article = null; f.component.watch.audit_scope.call(f.state);
+  assert.equal(f.state.has_data, false);
+  assert.equal(f.requests.length, 2);
+  f.requests[1].resolve(report()); await settle();
+  assert.equal(f.state.has_data, false);
+  assert.equal(f.state.busy, false);
+  assert.doesNotMatch(await render(f), /data-chart|delivery guide/);
+});
+
+test("Blog errors, null reports, empty dimensions and same-scope retries remain honest and safe", async () => {
+  const f = fixture({ blog: true, workspace: false, shop: null });
+  f.state.fetch(); f.requests[0].resolve({ error: true, error_msg: '<img src=x onerror="bad()">Local Search Console unavailable' }); await settle();
+  let html = await render(f);
+  assert.match(html, /Local Search Console unavailable/);
+  assert.doesNotMatch(html, /<img src="x"|onerror="bad\(\)"|data-chart/);
+  f.state.fetch(); f.requests[1].resolve({ queries: [], date: null, countries: [], appearance: [] }); await settle();
+  assert.match(await render(f), /search_console.empty_title/);
+  f.state.fetch(); f.requests[2].resolve({ ...report(), date: [], countries: [] }); await settle();
+  html = await render(f);
+  assert.match(html, /daily_empty/);
+  assert.match(html, /distribution_empty/);
+  assert.doesNotMatch(html, /data-chart/);
+  f.state.fetch();
+  assert.match(await render(f), /delivery guide/);
+  f.requests[3].reject({ response: { data: { error_msg: "Permission denied" } }, config: { private: "not displayed" } }); await settle();
+  html = await render(f);
+  assert.match(html, /Permission denied/);
+  assert.doesNotMatch(html, /not displayed/);
+  for (const malformed of [null, {}, { message: "denied" }]) {
+    f.state.fetch(); f.requests.at(-1).resolve(malformed); await settle();
+    html = await render(f);
+    assert.equal(f.state.error, true);
+    assert.match(html, /unavailable_title/);
+    assert.doesNotMatch(html, /data-chart|delivery guide|empty_title/);
+  }
+  f.state.fetch();
+  f.requests.at(-1).resolve({ queries: [], date: [], countries: [], appearance: [] }); await settle();
+  assert.equal(f.state.error, false);
+  assert.match(await render(f), /search_console.empty_title/);
 });

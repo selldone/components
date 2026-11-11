@@ -34,7 +34,7 @@ const book = () => ({ "@context": "https://schema.org", "@type": "Book", name: "
 
 function fixture(props = {}) {
   const events = [], removals = [];
-  const state = { ...component.data(), workspace: true, editMode: true, modelValue: [book()], ...props,
+  const state = { ...component.data(), workspace: true, blog: false, active: true, disabled: false, editMode: true, modelValue: [book()], ...props,
     $t: (key) => key,
     $emit(name, value) { events.push([name, value]); if (name === "update:modelValue") state.modelValue = value; },
     remove(list, value) { removals.push([list, value]); list.splice(list.indexOf(value), 1); },
@@ -46,7 +46,7 @@ function fixture(props = {}) {
 async function render(f) {
   const data = Object.fromEntries(Object.keys(component.data()).map((key) => [key, f.state[key]]));
   const app = Vue.createSSRApp({ ...component, data: () => data, render: templateExports.render }, {
-    workspace: f.state.workspace, editMode: f.state.editMode, modelValue: f.state.modelValue,
+    workspace: f.state.workspace, blog: f.state.blog, active: f.state.active, disabled: f.state.disabled, editMode: f.state.editMode, modelValue: f.state.modelValue,
   });
   app.config.globalProperties.$t = (key) => key;
   app.config.globalProperties.$vuetify = { display: { smAndDown: false } };
@@ -212,4 +212,42 @@ test("tab visibility hides a staged dialog without throwing away typed data", ()
   assert.equal(f.state.structure_data.name, 'Pending title');
   component.watch.dialogDirty.call(f.state, true);
   assert.deepEqual(f.events[0], ['pending-change', true]);
+});
+
+test("temporary busy and inactive sections block mutations while keeping the staged schema", () => {
+  assert.equal(component.props.blog.default, false);
+  assert.equal(component.props.disabled.default, false);
+  for (const blocked of [{ disabled: true }, { active: false }]) {
+    const f = fixture(); const original = f.state.modelValue[0];
+    f.state.showDialog(original); f.state.structure_data.name = 'Retained draft';
+    Object.assign(f.state, blocked);
+    f.state.saveChange(); f.state.removeStructure(original); f.state.showDialog();
+    assert.equal(f.state.structure_data.name, 'Retained draft');
+    assert.equal(f.state.dialogDirty, true);
+    assert.equal(f.events.length, 0);
+    Object.assign(f.state, { active: true, disabled: false });
+    f.state.saveChange();
+    assert.equal(f.state.modelValue[0].name, 'Retained draft');
+    assert.deepEqual(f.events.map(([name]) => name), ['update:modelValue', 'change']);
+  }
+});
+
+test("Blog rendering groups native type and metadata without changing unsupported JSON access", async () => {
+  const custom = { '@type': 'CustomType', name: 'Saved extension', description: 'Preserved metadata', extension: { keep: [1, 2] } };
+  const f = fixture({ blog: true, modelValue: [custom] });
+  const html = await render(f);
+  assert.match(html, /s-article-structures-refined--blog/);
+  assert.match(html, /s-article-structures-refined__type-label[^>]*>CustomType/);
+  assert.match(html, /Saved extension/);
+  assert.match(html, /Preserved metadata/);
+  assert.match(html, /structure_json/);
+  assert.match(html, /delete_outline/);
+  assert.doesNotMatch(html, /aria-label="global.article.workspace.structure_edit"/);
+  assert.doesNotMatch(html, /s-article-structures-refined__list-heading|s-article-structures-refined__status/);
+  f.state.showJson(custom);
+  assert.deepEqual(plain(f.state.structure_data), custom);
+  assert.deepEqual(plain(custom.extension), { keep: [1, 2] });
+  assert.match(await render(f), /s-article-structures-refined__dialog--blog/);
+  f.state.removeStructure(custom);
+  assert.deepEqual(plain(f.state.modelValue), []);
 });

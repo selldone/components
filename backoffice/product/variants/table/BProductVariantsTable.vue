@@ -203,7 +203,7 @@
           <span v-if="modern" class="sd-modern-list-header b-product-variants-refined__caption">{{ $t('global.commons.customer_price') }}</span>
           <u-price
             :amount="
-              priceProductByCurrency(shop, product, item, product.currency)
+              priceProductByCurrency(shop, product, item, product.currency, null, product.valuation)
             "
             :currency="product.currency"
           ></u-price>

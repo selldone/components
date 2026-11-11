@@ -13,9 +13,10 @@
   -->
 
 <template>
-  <div :class="{ rtl: $vuetify.locale.isRtl }">
+  <div :class="{ rtl: $vuetify.locale.isRtl, 's-article-faqs--guidebook': guidebook && (editMode || (faqs && faqs.length)) }">
+    <h2 v-if="guidebook && (editMode || (faqs && faqs.length))" class="s-article-faqs__heading">{{ $t('global.commons.faq') }}</h2>
     <p
-      v-if="editMode || (faqs && faqs.length)"
+      v-if="!guidebook && (editMode || (faqs && faqs.length))"
       :data-content="$t('global.commons.faq')"
       :style="{
         '--bg-color': color,
@@ -28,7 +29,7 @@
       v-model="panel"
       :dark="dark"
       :readonly="editMode"
-      class="justify-start mb-12"
+      :class="guidebook ? 's-article-faqs__panels' : 'justify-start mb-12'"
       multiple
       variant="accordion"
     >
@@ -40,7 +41,7 @@
           elevation="0"
           bg-color="transparent"
         >
-          <v-expansion-panel-title class="question" hide-actions>
+          <v-expansion-panel-title class="question" :hide-actions="!guidebook || editMode">
             <v-text-field
               v-if="editMode"
               v-model="faq.question"
@@ -51,7 +52,7 @@
               single-line
               variant="solo"
             ></v-text-field>
-            <div v-else v-text="faq.question"></div>
+            <div v-else :dir="guidebook ? 'auto' : undefined" v-text="faq.question"></div>
             <div v-if="editMode" style="min-width: max-content">
               <v-btn
                 :disabled="i === faqs.length - 1"
@@ -98,7 +99,7 @@
               "
               v-text="faq.answer"
             ></div>
-            <div v-else v-html="faq.answer"></div>
+            <div v-else :dir="guidebook ? 'auto' : undefined" v-html="faq.answer"></div>
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-slide-y-reverse-transition>
@@ -150,6 +151,7 @@ export default {
   name: "SArticleFaqs",
   mixins: [InlineEditorMixin],
   props: {
+    guidebook: { type: Boolean, default: false },
     workspace: { type: Boolean, default: false },
     editMode: {
       type: Boolean,
@@ -342,5 +344,28 @@ export default {
       }
     }
   }*/
+}
+
+.s-article-faqs--guidebook {
+  max-width: 620px;
+  margin-block: 40px 28px;
+  color: var(--help-ink, rgb(var(--v-theme-on-surface)));
+  font-family: inherit;
+  .s-article-faqs__heading { margin: 0 0 16px; font-family: inherit; font-size: 20px !important; font-weight: 600; line-height: 1.4; letter-spacing: -0.02em; }
+  .s-article-faqs__panels { margin: 0; }
+  .faq-item { margin: 0; padding: 0; border-block-end: 1px solid var(--help-line, rgba(var(--v-theme-on-surface), 0.1)); border-radius: 0; }
+  .faq-item:last-child { border-block-end: 0; }
+  .question { min-height: 52px; padding: 16px 0; border: 0; border-radius: 0; color: inherit; font-family: inherit; font-size: 15px; font-weight: 500; line-height: 1.65; text-align: start; }
+  .question > div { min-width: 0; overflow-wrap: anywhere; }
+  .question :deep(.v-expansion-panel-title__icon) { margin-inline-start: 16px; color: var(--help-muted, rgba(var(--v-theme-on-surface), 0.64)); }
+  .question:focus-visible { outline: 2px solid var(--help-accent, rgb(var(--v-theme-primary))); outline-offset: 4px; }
+  .answer { padding: 0; border: 0; color: var(--help-muted, rgba(var(--v-theme-on-surface), 0.72)); font-family: inherit; font-size: 15px; line-height: 1.85; text-align: start; overflow-wrap: anywhere; }
+  .answer :deep(.v-expansion-panel-text__wrapper) { padding: 0 0 18px !important; }
+  .answer :deep(p), .answer :deep(div) { margin-block: 0 10px; font-size: inherit !important; line-height: inherit; }
+  .answer :deep(p:last-child), .answer :deep(div:last-child) { margin-block-end: 0; }
+  .answer :deep(h1), .answer :deep(h2), .answer :deep(h3), .answer :deep(h4), .answer :deep(h5), .answer :deep(h6) { margin-block: 16px 8px; color: var(--help-ink, rgb(var(--v-theme-on-surface))); font-size: 17px !important; font-weight: 600; line-height: 1.5; }
+  .answer :deep(ol), .answer :deep(ul) { margin-block: 8px; margin-inline: 0; padding-inline-start: 22px; }
+  .answer :deep(li) { padding-inline-start: 0; }
+  &.rtl .s-article-faqs__heading { letter-spacing: 0; }
 }
 </style>

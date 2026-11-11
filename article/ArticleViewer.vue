@@ -248,26 +248,23 @@
       <slot v-if="helpReaderActive" name="help-reader" v-bind="helpReaderSlot" />
 
       <section v-if="helpReaderActive && article && helpReaderSlot.canEdit" v-show="in_edit_mode && helpEditorSection === 'settings'" :id="`help-panel-settings-${targetId}`" :role="in_edit_mode ? 'tabpanel' : undefined" :aria-labelledby="in_edit_mode ? `help-tab-settings-${targetId}` : undefined" class="s-article-help-settings text-start" :inert="helpReaderBusy">
-        <div class="s-article-help-settings__publication">
-          <v-select :model-value="published_state" :items="workspace_statuses" :label="$t('global.article.workspace.status')" :disabled="helpReaderBusy || !!schedule_at" variant="underlined" class="sd-modern-underlined-field" hide-details @update:model-value="helpReaderSlot.setPublished" />
-          <v-select :model-value="isPrivate" :items="workspace_visibilities" :label="$t('global.article.workspace.visibility')" :disabled="helpReaderBusy" variant="underlined" class="sd-modern-underlined-field" hide-details @update:model-value="helpReaderSlot.setPrivate" />
-          <u-language-input :model-value="article.lang" :label="$t('global.article.workspace.language')" :disabled="helpReaderBusy || !can_change_article_language" variant="underlined" class="sd-modern-underlined-field" hide-details @update:model-value="helpReaderSlot.setLanguage" />
-        </div>
         <div class="s-article-help-settings__schedule">
           <u-date-input :model-value="schedule_at" :label="$t('global.article.schedule_input')" :min="new Date().toISOString()" :disabled="helpReaderBusy" clearable return-utc class="sd-modern-underlined-field" @update:model-value="helpReaderSlot.setScheduleAt" />
           <v-btn v-if="article.id" variant="text" class="sd-modern-button sd-modern-button--compact" :disabled="helpReaderBusy" prepend-icon="timeline" @click="helpReaderSlot.schedule()">{{ $t('global.article.schedule_view_action') }}</v-btn>
         </div>
         <v-row class="s-article-help-settings__placement" dense>
-          <slot name="extra-header-options" :categoryId="category" :setCategoryId="helpReaderSlot.setCategory" :setCategoryObject="helpReaderSlot.setCategoryObject" :clusterId="cluster_id" :setClusterId="helpReaderSlot.setCluster" :menu="menu" :inEditMode="in_edit_mode" :state="state" :onChange="helpReaderSlot.changed" :disabled="helpReaderBusy || !in_edit_mode" />
+          <slot name="extra-header-options" :categoryId="category" :setCategoryId="helpReaderSlot.setCategory" :setCategoryObject="helpReaderSlot.setCategoryObject" :clusterId="cluster_id" :setClusterId="helpReaderSlot.setCluster" :menu="menu" :inEditMode="in_edit_mode" :state="state" :onChange="helpReaderSlot.changed" :disabled="helpReaderBusy || helpReaderPending || !in_edit_mode" />
         </v-row>
-        <s-article-seo-editor ref="helpSeoEditor" :article="article" :images="images_in_article" workspace :disabled="helpReaderBusy || !in_edit_mode" @change="helpReaderSlot.changed" @open-menu="$refs.editorContainer?.findAllImages()" />
-        <details class="s-article-help-settings__schema">
-          <summary>{{ $t('global.json.structures') }}</summary>
-          <s-article-structured-data :model-value="article.structures" workspace :active="active && in_edit_mode && helpEditorSection === 'settings'" :edit-mode="in_edit_mode && !helpReaderBusy" @update:model-value="helpReaderSlot.setStructures" @pending-change="help_schema_pending = $event" />
-        </details>
       </section>
-      <s-article-workspace-faqs v-if="helpReaderActive && article && helpReaderSlot.canEdit" :key="'help-faq-' + targetId" v-show="in_edit_mode && helpEditorSection === 'faq'" :id="`help-panel-faq-${targetId}`" :role="in_edit_mode ? 'tabpanel' : undefined" :aria-labelledby="in_edit_mode ? `help-tab-faq-${targetId}` : undefined" :model-value="article.faqs" :active="active && in_edit_mode && helpEditorSection === 'faq'" :edit-mode="in_edit_mode" :disabled="helpReaderBusy" @update:model-value="helpReaderSlot.setFaqs" @pending-change="help_faq_pending = $event" />
-      <section v-if="helpReaderActive && article && helpReaderSlot.canEdit" v-show="in_edit_mode && helpEditorSection === 'languages'" class="s-article-help-languages text-start">
+      <section v-if="helpReaderActive && article && helpReaderSlot.canEdit" v-show="in_edit_mode && helpEditorSection === 'seo'" :id="`help-panel-seo-${targetId}`" :role="in_edit_mode ? 'tabpanel' : undefined" :aria-labelledby="in_edit_mode ? `help-tab-seo-${targetId}` : undefined" class="s-article-help-settings text-start" :inert="helpReaderBusy">
+        <s-article-seo-editor ref="helpSeoEditor" :article="article" :images="images_in_article" workspace :disabled="helpReaderBusy || !in_edit_mode" @change="helpReaderSlot.changed" @open-menu="$refs.editorContainer?.findAllImages()" />
+        <div class="s-article-help-settings__schema">
+          <s-article-structured-data :model-value="article.structures" workspace :active="active && in_edit_mode && helpEditorSection === 'seo'" :edit-mode="in_edit_mode && !helpReaderBusy" @update:model-value="helpReaderSlot.setStructures" @pending-change="help_schema_pending = $event" />
+        </div>
+      </section>
+      <s-article-workspace-faqs v-if="helpReaderActive && article && helpReaderSlot.canEdit" :key="'help-faq-' + targetId" v-show="in_edit_mode && helpEditorSection === 'faq'" :id="`help-panel-faq-${targetId}`" :role="in_edit_mode ? 'tabpanel' : undefined" :aria-labelledby="in_edit_mode ? `help-tab-faq-${targetId}` : undefined" :model-value="article.faqs" :active="active && in_edit_mode && helpEditorSection === 'faq'" :edit-mode="in_edit_mode" :disabled="helpReaderBusy" :preview="false" @update:model-value="helpReaderSlot.setFaqs" @pending-change="help_faq_pending = $event" />
+      <section v-if="helpReaderActive && article && helpReaderSlot.canEdit" v-show="in_edit_mode && helpEditorSection === 'languages'" :id="`help-panel-languages-${targetId}`" :role="in_edit_mode ? 'tabpanel' : undefined" :aria-labelledby="in_edit_mode ? `help-tab-languages-${targetId}` : undefined" class="s-article-help-languages text-start">
+        <u-language-input :model-value="article.lang" :label="$t('global.article.workspace.language')" :disabled="helpReaderBusy || helpReaderPending || !in_edit_mode || !can_change_article_language" variant="underlined" class="sd-modern-underlined-field s-article-help-languages__language" hide-details @update:model-value="helpReaderSlot.setLanguage" />
         <slot name="help-editor-languages" v-bind="helpReaderSlot" />
       </section>
 
@@ -641,9 +638,40 @@
       </v-toolbar>
 
       <v-expand-transition>
+        <section
+          v-if="blogReaderActive && in_edit_mode && showContent"
+          v-show="reader_settings_open"
+          class="s-article-viewer__settings s-article-blog-settings text-start"
+          :aria-label="readerSettingsTitle"
+          :inert="readerBusy || !active || !can_edit || !canEdit"
+        >
+          <div class="s-article-blog-settings__layout">
+            <div class="s-article-blog-settings__panel">
+              <header>
+                <h2>{{ readerSettingsTitle }}</h2>
+                <v-btn icon variant="text" :aria-label="$t('global.actions.close')" @click="readerSlot.toggleSettings(reader_settings_panel)">
+                  <v-icon size="18" aria-hidden="true">close</v-icon>
+                  <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('global.actions.close') }}</v-tooltip>
+                </v-btn>
+              </header>
+              <div v-show="reader_settings_panel === 'category'" data-reader-panel="category">
+                <slot name="extra-header-options" :categoryId="category" :setCategoryId="readerSlot.setCategory" :setCategoryObject="readerSlot.setCategoryObject" :clusterId="cluster_id" :setClusterId="readerSlot.setCluster" :menu="menu" :inEditMode="in_edit_mode" :state="state" :onChange="readerSlot.changed" :disabled="readerBusy || readerPending || !active || !can_edit || !canEdit" settingsPanel="category" />
+              </div>
+              <div v-show="reader_settings_panel === 'schedule'" data-reader-panel="schedule">
+                <p>{{ $t('global.article.workspace.schedule_hint') }}</p>
+                <u-date-input :model-value="schedule_at" :label="$t('global.article.schedule_input')" :min="new Date().toISOString()" :placeholder="$t('global.article.schedule_input_placeholder')" variant="outlined" clearable return-utc :disabled="readerBusy || readerPending" @update:model-value="readerSlot.setScheduleAt" />
+                <p v-if="schedule_at">{{ getLocalTimeString(schedule_at) }}</p>
+              </div>
+              <s-article-seo-editor v-if="article && canEdit" v-show="reader_settings_panel === 'seo'" ref="readerSeoEditor" data-reader-panel="seo" :article="article" :images="images_in_article" workspace :disabled="readerBusy || readerPending" @change="readerSlot.changed" @open-menu="$refs.editorContainer?.findAllImages()" />
+              <p class="s-article-blog-settings__hint">{{ $t('global.article.workspace.article_draft_hint') }}</p>
+            </div>
+          </div>
+        </section>
+      </v-expand-transition>
+      <v-expand-transition>
         <component
           :is="'div'"
-          v-if="!workspace && !helpReaderActive && in_edit_mode"
+          v-if="!workspace && !helpReaderActive && !blogReaderActive && in_edit_mode"
           v-show="!readerToolbarActive || reader_settings_open"
           class="s-article-viewer__settings"
         >
@@ -930,20 +958,23 @@
         </component>
       </v-expand-transition>
 
-      <hr v-if="!workspace && !helpReaderActive && canEdit" />
+      <hr v-if="!workspace && !helpReaderActive && !blogReaderActive && canEdit" />
 
       <!-- ――――――――――――――――――――― 🔍 Google search rank ――――――――――――――――――――― -->
       <v-expand-transition v-if="!product_workspace || !productSectionTabs">
         <div
-          v-show="show_google_tank && (!workspace || (product_workspace && canEdit && !IS_VENDOR_PANEL && article?.id))"
-          :class="product_workspace ? 's-article-product__search sd-modern-widget' : 'shadow-paper rounded-14-12 max-width-container-1280px mx-auto'"
+          v-show="show_google_tank && (blogReaderActive ? active && showContent && USER() && can_edit && canEdit : !workspace || (product_workspace && canEdit && !IS_VENDOR_PANEL && article?.id))"
+          :class="blogReaderActive ? 's-article-blog-search' : product_workspace ? 's-article-product__search sd-modern-widget' : 'shadow-paper rounded-14-12 max-width-container-1280px mx-auto'"
         >
           <s-article-search-console
-            v-if="article?.id && first_load_seo_audit && (!workspace || (product_workspace && canEdit && !IS_VENDOR_PANEL))"
-            :key="'seo' + article?.id"
+            v-if="article?.id && first_load_seo_audit && (blogReaderActive ? active && showContent && USER() && can_edit && canEdit : !workspace || (product_workspace && canEdit && !IS_VENDOR_PANEL))"
+            :key="blogReaderActive ? `blog-seo:${article.id}:${USER_ID()}` : 'seo' + article.id"
             :article="article"
             :shop="$shop"
             :workspace="workspace"
+            :blog="blogReaderActive"
+            :class="{ 's-article-blog-search__report': blogReaderActive }"
+            @close="show_google_tank = false"
           >
           </s-article-search-console>
         </div>
@@ -1089,20 +1120,39 @@
           <template v-slot:end="{ edit }">
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Article FAQ ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
+            <s-article-workspace-faqs
+              v-if="blogReaderActive && in_edit_mode && showContent"
+              :key="`blog-faqs:${article.id}:${article.lang}:${USER_ID()}`"
+              :model-value="article.faqs"
+              :active="active && in_edit_mode"
+              :edit-mode="readerSlot.canEdit"
+              :disabled="readerBusy"
+              blog
+              @update:model-value="readerSlot.setFaqs"
+              @pending-change="reader_faq_pending = $event"
+            />
             <s-article-faqs
-              v-if="(!workspace || workspaceSection === 'article') && (!helpReaderActive || !in_edit_mode)"
+              v-else-if="(!workspace || workspaceSection === 'article') && (!helpReaderActive || !in_edit_mode)"
               v-model:faqs="article.faqs"
               :editMode="edit"
+              :guidebook="helpReaderActive"
               @change="onChangeNote"
               color="var(--background)"
             ></s-article-faqs>
 
             <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Structured Data ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
             <s-article-structured-data
-              v-if="!workspace && !helpReaderActive && in_edit_mode"
-              v-show="!readerToolbarActive || reader_settings_open"
-              v-model="article.structures"
-              :editMode="edit"
+              v-if="!workspace && !helpReaderActive && in_edit_mode && (!blogReaderActive || showContent)"
+              :key="blogReaderActive ? `blog-schema:${article.id}:${article.lang}:${USER_ID()}` : undefined"
+              v-show="blogReaderActive || !readerToolbarActive || reader_settings_open"
+              :model-value="article.structures"
+              :workspace="blogReaderActive"
+              :blog="blogReaderActive"
+              :active="active && in_edit_mode"
+              :disabled="blogReaderActive && readerBusy"
+              :editMode="edit && (!blogReaderActive || readerSlot.canEdit)"
+              @update:model-value="blogReaderActive ? readerSlot.setStructures($event) : article.structures = $event"
+              @pending-change="reader_schema_pending = $event"
             ></s-article-structured-data>
           </template>
         </s-article-editor>
@@ -1439,7 +1489,7 @@ export default {
     workspace: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
     workspaceSection: { type: String, default: "edit" },
-    helpEditorSection: { type: String, default: "content", validator: (value) => ['content', 'faq', 'settings', 'languages'].includes(value) },
+    helpEditorSection: { type: String, default: "content", validator: (value) => ['content', 'faq', 'settings', 'seo', 'languages'].includes(value) },
     productSectionTabs: { type: Boolean, default: false },
     initialArticlePack: {
       required: false,
@@ -1669,6 +1719,9 @@ export default {
       workspace_saved_schedule: null,
       product_panels: { seo: false, faq: false, schema: false },
       reader_settings_open: false,
+      reader_settings_panel: null,
+      reader_faq_pending: false,
+      reader_schema_pending: false,
     };
   },
 
@@ -1679,11 +1732,20 @@ export default {
     readerToolbarActive() {
       return this.hasReaderHeading && !!this.$slots?.['reader-toolbar'];
     },
+    blogReaderActive() {
+      return this.readerToolbarActive && this.articleType === Article.Types.SelldoneBlog.code;
+    },
+    readerPending() {
+      return this.flowchart_pending || this.reader_faq_pending || this.reader_schema_pending;
+    },
+    readerSettingsTitle() {
+      return this.$t(({ category: 'global.commons.category', schedule: 'global.article.workspace.schedule', seo: 'global.article.workspace.seo_title' })[this.reader_settings_panel] || 'global.article.workspace.details');
+    },
     readerBusy() {
       return this.inLoading || this.state === 'saving' || this.busy_fix || this.auto_generate_busy || !!this.$refs.editorContainer?.word_import_busy;
     },
     readerSaveBlocked() {
-      return !this.active || !this.showContent || !this.USER() || !this.can_edit || !this.canEdit || !this.in_edit_mode || this.readerBusy || this.flowchart_pending
+      return !this.active || !this.showContent || !this.USER() || !this.can_edit || !this.canEdit || !this.in_edit_mode || this.readerBusy || this.readerPending
         || (this.state === 'no-change' && this.published_state === this.article.published && this.isPrivate === this.article.private);
     },
     readerSlot() {
@@ -1694,20 +1756,27 @@ export default {
         category: this.category_obj, readingTime: this.reading_time, editing: this.in_edit_mode,
         published: this.published_state, private: this.isPrivate, language: this.article.lang,
         canChangeLanguage: this.can_change_article_language, scheduleAt: this.schedule_at, state: this.state,
-        settingsOpen: this.reader_settings_open, canEdit: !!this.USER() && !!this.can_edit && !!this.canEdit,
+        settingsOpen: this.reader_settings_open, settingsPanel: this.reader_settings_panel, searchOpen: this.show_google_tank, canEdit: !!this.USER() && !!this.can_edit && !!this.canEdit,
         canSearch: !this.isNew && !!this.article?.id && !this.IS_VENDOR_PANEL,
         canAutoFix: this.in_edit_mode && (!!this.article?.body?.trim() || this.$refs.editorContainer?.state === 'changed'),
         canDelete: !this.isNew && !!this.article?.id,
-        busy: this.readerBusy, pending: this.flowchart_pending, saveBlocked: this.readerSaveBlocked, isNew: this.isNew,
+        busy: this.readerBusy, pending: this.readerPending, saveBlocked: this.readerSaveBlocked, isNew: this.isNew,
         clapped: this.catch_power, powerBusy: this.power_busy,
         relatedCount: this.relatives?.length || 0,
         edit: action('edit'), preview: action('preview'), save: action('save'), importWord: action('word'),
         saveShortcut: this.saveReaderShortcut,
-        openSearch: action('search'), openTimeline: action('timeline'), toggleSettings: action('settings'),
+        openSearch: action('search'), openTimeline: action('timeline'), toggleSettings: (panel = 'category') => this.invokeReaderAction('settings', context, panel),
         autoFix: action('autoFix'), delete: action('delete'), clap: action('clap'),
         setPublished: (value) => this.setReaderField('published', value, context),
         setPrivate: (value) => this.setReaderField('private', value, context),
         setLanguage: (value) => this.setReaderField('language', value, context),
+        setScheduleAt: (value) => this.setReaderField('schedule', value, context),
+        setCategory: (value) => this.setReaderField('category', value, context),
+        setCategoryObject: (value) => this.setReaderField('categoryObject', value, context),
+        setCluster: (value) => this.setReaderField('cluster', value, context),
+        setFaqs: (value) => this.setReaderCollection('faqs', value, context),
+        setStructures: (value) => this.setReaderCollection('structures', value, context),
+        changed: action('changed'),
       };
     },
     helpReaderActive() {
@@ -1735,7 +1804,9 @@ export default {
         canDelete: canEdit && !this.isNew && !!this.article?.id,
         busy: this.helpReaderBusy, dirty: this.helpReaderDirty, pending: this.helpReaderPending,
         published: this.published_state, private: this.isPrivate, scheduleAt: this.schedule_at,
+        canPublish: !this.schedule_at && (this.isNew || !this.published_state || !this.article.published),
         edit: action('edit'), preview: action('preview'), save: action('save'), discard: action('discard'),
+        publish: action('publish'), saveDraft: action('saveDraft'),
         delete: action('delete'), schedule: action('schedule'), googleSearch: action('googleSearch'), word: action('word'), autoFix: action('autoFix'), insert: action('insert'),
         setDescription: field('description'), setPublished: field('published'), setPrivate: field('private'), setLanguage: field('language'), setScheduleAt: field('schedule'),
         setFaqs: field('faqs'), setStructures: field('structures'), setCategory: field('category'), setCategoryObject: field('categoryObject'), setCluster: field('cluster'), changed: action('changed'),
@@ -1976,8 +2047,8 @@ export default {
       handler(value) { if (value) this.$emit('help-reader-state', value); },
     },
     helpEditorSection(value) {
-      if (this.helpReaderActive && this.in_edit_mode && value === 'settings') this.$nextTick(() => {
-        if (!this.helpReaderActive || !this.in_edit_mode || this.helpEditorSection !== 'settings') return;
+      if (this.helpReaderActive && this.in_edit_mode && value === 'seo') this.$nextTick(() => {
+        if (!this.helpReaderActive || !this.in_edit_mode || this.helpEditorSection !== 'seo') return;
         this.$refs.editorContainer?.findAllImages();
         this.$refs.helpSeoEditor?.refresh();
       });
@@ -2050,13 +2121,13 @@ export default {
       // Deferred slot actions must still belong to the current authorized article.
       return this.readerContextCurrent(context) && this.active && this.showContent && !this.readerBusy && !!this.USER() && this.can_edit && this.canEdit;
     },
-    invokeReaderAction(action, context) {
+    invokeReaderAction(action, context, settingsPanel = 'category') {
       if (action === 'clap') {
         if (!this.readerContextCurrent(context) || !this.active || !this.showContent || this.isNew || !this.article?.id || this.catch_power || this.power_busy) return false;
         this.getPower();
         return true;
       }
-      if (!this.readerContextValid(context) || this.flowchart_pending) return false;
+      if (!this.readerContextValid(context) || this.readerPending) return false;
       if (action === 'edit') this.render_state = 'editing';
       else if (action === 'preview') {
         if (!this.in_edit_mode || !this.$refs.editorContainer) return false;
@@ -2073,7 +2144,7 @@ export default {
         if (!this.$refs.editorContainer) return false;
         this.render_state = 'editing';
         this.$nextTick(() => {
-          if (this.readerContextValid(context) && this.in_edit_mode && !this.flowchart_pending) this.$refs.editorContainer?.showSelectWord();
+          if (this.readerContextValid(context) && this.in_edit_mode && !this.readerPending) this.$refs.editorContainer?.showSelectWord();
         });
       } else if (action === 'search') {
         if (this.isNew || !this.article?.id || this.IS_VENDOR_PANEL) return false;
@@ -2082,11 +2153,17 @@ export default {
         if (this.isNew || !this.article?.id) return false;
         this.showTimeline();
       } else if (action === 'settings') {
-        if (!this.in_edit_mode) return false;
-        this.reader_settings_open = !this.reader_settings_open;
-        if (this.reader_settings_open) this.$nextTick(() => {
-          if (this.readerContextValid(context) && this.reader_settings_open) this.$refs.editorContainer?.findAllImages();
+        if (!this.in_edit_mode || !['category', 'schedule', 'seo'].includes(settingsPanel)) return false;
+        this.reader_settings_open = !this.reader_settings_open || this.reader_settings_panel !== settingsPanel;
+        this.reader_settings_panel = this.reader_settings_open ? settingsPanel : null;
+        if (this.reader_settings_open && settingsPanel === 'seo') this.$nextTick(() => {
+          if (!this.readerContextValid(context) || this.reader_settings_panel !== 'seo') return;
+          this.$refs.editorContainer?.findAllImages();
+          this.$refs.readerSeoEditor?.refresh();
         });
+      } else if (action === 'changed') {
+        if (!this.in_edit_mode) return false;
+        this.onChangeNote();
       } else if (action === 'autoFix') {
         if (!this.in_edit_mode || (!this.article?.body?.trim() && this.$refs.editorContainer?.state !== 'changed')) return false;
         this.autoFixArticle();
@@ -2097,7 +2174,7 @@ export default {
       return true;
     },
     setReaderField(field, value, context) {
-      if (!this.readerContextValid(context) || !this.in_edit_mode || this.flowchart_pending) return false;
+      if (!this.readerContextValid(context) || !this.in_edit_mode || this.readerPending) return false;
       if (field === 'language') {
         if (!this.can_change_article_language || typeof value !== 'string' || !/^[a-z]{2,3}(?:-[a-z0-9]{2,8})?$/i.test(value)) return false;
         if (this.article.lang !== value) { this.article.lang = value; this.onChangeNote(); }
@@ -2105,7 +2182,24 @@ export default {
         if (field === 'published' && this.schedule_at) return false;
         const key = field === 'published' ? 'published_state' : 'isPrivate';
         if (this[key] !== value) { this[key] = value; this.onChangeNote(); }
+      } else if (field === 'schedule') {
+        if (value !== null && (typeof value !== 'string' || !Number.isFinite(Date.parse(value)))) return false;
+        if (this.schedule_at !== value) { this.schedule_at = value; this.onChangeNote(); }
+      } else if (['category', 'cluster'].includes(field)) {
+        if (value !== null && typeof value !== 'string' && !Number.isSafeInteger(value)) return false;
+        const key = field === 'category' ? 'category' : 'cluster_id';
+        if (this[key] !== value) { this[key] = value; this.onChangeNote(); }
+      } else if (field === 'categoryObject') {
+        if (value !== null && (typeof value !== 'object' || Array.isArray(value))) return false;
+        if (this.category_obj !== value) { this.category_obj = value; this.onChangeNote(); }
       } else return false;
+      return true;
+    },
+    setReaderCollection(field, value, context) {
+      // Apply may arrive while that child's staged form still reports pending.
+      if (!this.blogReaderActive || !this.readerContextValid(context) || !this.in_edit_mode || !['faqs', 'structures'].includes(field) || !Array.isArray(value)) return false;
+      this.article[field] = value;
+      this.onChangeNote();
       return true;
     },
     captureHelpReaderContext() {
@@ -2133,8 +2227,15 @@ export default {
           this.state = 'changed';
         }
         this.render_state = 'review';
-      } else if (action === 'save') {
+      } else if (['save', 'publish', 'saveDraft'].includes(action)) {
         if (!this.in_edit_mode || !this.$refs.editorContainer) return false;
+        if (action !== 'save' && (this.schedule_at || (!this.isNew && this.article.published && this.published_state))) return false;
+        if (action !== 'save') {
+          // Explicit public publication uses the native save payload and never removes a schedule.
+          this.published_state = action === 'publish';
+          if (action === 'publish') this.isPrivate = false;
+          this.onChangeNote();
+        }
         this.saveChange(() => {
           if (this.helpReaderContextValid(context)) this.render_state = 'review';
         });
@@ -2176,15 +2277,20 @@ export default {
       if (field === 'description' && (typeof value !== 'string' || value.length > 256)) return false;
       if (field === 'language' && (!this.can_change_article_language || typeof value !== 'string' || !/^[a-z]{2,3}(?:-[a-z0-9]{2,8})?$/i.test(value))) return false;
       if (['published', 'private'].includes(field) && typeof value !== 'boolean') return false;
+      if (['published', 'private'].includes(field) && this.helpReaderPending) return false;
       if (field === 'published' && this.schedule_at) return false;
       if (field === 'schedule' && value !== null && value !== '' && (typeof value !== 'string' || !Number.isFinite(Date.parse(value)))) return false;
       if (['faqs', 'structures'].includes(field) && !Array.isArray(value)) return false;
       if (field === 'faqs' && this.helpEditorSection !== 'faq') return false;
-      if (field === 'structures' && this.helpEditorSection !== 'settings') return false;
+      if (field === 'structures' && this.helpEditorSection !== 'seo') return false;
       const target = Object.hasOwn(articleFields, field) ? this.article : this;
       const key = articleFields[field] || viewFields[field];
       if (!key) return false;
-      if (target[key] !== value) { target[key] = value; this.onChangeNote(); }
+      if (target[key] !== value) {
+        target[key] = value;
+        if (field === 'schedule' && value && Date.parse(value) > Date.now()) this.published_state = false;
+        this.onChangeNote();
+      }
       return true;
     },
     onProductPanelToggle(key, event) {
@@ -2343,7 +2449,7 @@ export default {
       if (this.workspace && (this.saveBlocked || !this.$refs.editorContainer)) return;
       if (this.flowchart_pending) return;
       if (this.helpReaderActive && (!this.helpReaderContextValid(this.captureHelpReaderContext()) || !this.in_edit_mode || this.helpReaderPending || !this.$refs.editorContainer)) return;
-      if (this.hasReaderHeading && (!this.readerContextValid(this.captureReaderContext()) || !this.in_edit_mode || !this.$refs.editorContainer)) return;
+      if (this.hasReaderHeading && (!this.readerContextValid(this.captureReaderContext()) || !this.in_edit_mode || this.readerPending || !this.$refs.editorContainer)) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article, shopId = this.shop_id;
       const helpContext = this.captureHelpReaderContext();
       const readerContext = this.captureReaderContext();
@@ -2859,7 +2965,7 @@ export default {
       const generation = this._workspaceGeneration, sourceArticle = this.article;
       const helpContext = this.captureHelpReaderContext();
       const readerContext = this.captureReaderContext();
-      if (readerContext && (!this.readerContextValid(readerContext) || !this.in_edit_mode || this.flowchart_pending)) return;
+      if (readerContext && (!this.readerContextValid(readerContext) || !this.in_edit_mode || this.readerPending)) return;
       if (helpContext && (!this.helpReaderContextValid(helpContext) || !this.in_edit_mode || this.helpReaderPending)) return;
       if ((helpContext || readerContext) && this.$refs.editorContainer?.state === 'changed') {
         this.article.title = this.$refs.editorContainer.purifyTitle();
@@ -3020,6 +3126,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.s-article-blog-settings,
+.s-article-blog-search {
+  display: flow-root;
+  min-width: 0;
+}
+.s-article-blog-settings {
+  &__layout { max-width: 1200px; margin-inline: auto; padding-inline: 44px; }
+  &__panel { max-width: 660px; margin-block: 16px 24px; padding: 20px; border: 1px solid var(--blog-line, rgba(var(--v-theme-on-surface), .12)); border-radius: 12px; background: var(--blog-surface, rgb(var(--v-theme-surface))); color: var(--blog-ink, rgb(var(--v-theme-on-surface))); }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-block-end: 16px; }
+  h2 { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.5; }
+  header .v-btn { width: 36px; height: 36px; min-height: 36px; flex: none; }
+  p { margin: 0 0 12px; font-size: 12px; line-height: 1.7; color: var(--blog-secondary, rgba(var(--v-theme-on-surface), .72)); }
+  &__hint { margin-block: 16px 0 !important; font-size: 11px !important; }
+  @media(max-width: 700px) { &__layout { padding-inline: 20px; } }
+  @media(pointer: coarse) { header .v-btn { width: 44px; height: 44px; min-height: 44px; } }
+}
+.s-article-blog-search__report { width: calc(100% - 88px); max-width: 1112px; margin: 24px auto; }
+@media(max-width: 700px) { .s-article-blog-search__report { width: calc(100% - 40px); } }
 .s-article-workspace {
   width: 100%;
   max-width: 1040px;

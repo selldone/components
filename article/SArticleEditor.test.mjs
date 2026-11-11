@@ -35,9 +35,16 @@ const script = ts.transpileModule(descriptor.script.content, {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const flowchartExports = {};
+const flowContentExports = {};
+vm.runInNewContext(ts.transpileModule(readFileSync(new URL('./add-on/flowchart/flow-content.ts', import.meta.url), 'utf8'), {
+  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+}).outputText, { exports: flowContentExports });
 vm.runInNewContext(ts.transpileModule(readFileSync(new URL('./add-on/flowchart/article-flowchart.ts', import.meta.url), 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
-}).outputText, { exports: flowchartExports, TextEncoder });
+}).outputText, { exports: flowchartExports, TextEncoder, require(name) {
+  assert.equal(name, './flow-content');
+  return flowContentExports;
+} });
 const documentFile = (name = "story.docx", size = 100) => ({ name, size });
 const plain = (value) => JSON.parse(JSON.stringify(value));
 

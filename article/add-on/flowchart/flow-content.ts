@@ -1,5 +1,8 @@
 export type ApiDocFlowTone = "success" | "error" | "warning" | "neutral";
 
+export const MAX_FLOW_NODES = 24;
+export const MAX_FLOW_EDGES = 48;
+
 export interface ApiDocFlowOutcome {
   label: string;
   tone: ApiDocFlowTone;
@@ -103,9 +106,9 @@ export function normalizeDocFlow(value: unknown): ApiDocFlowBlock | null {
     block.type !== "flow" ||
     !Array.isArray(block.nodes) ||
     block.nodes.length < 2 ||
-    block.nodes.length > 6 ||
+    block.nodes.length > MAX_FLOW_NODES ||
     !Array.isArray(block.edges) ||
-    block.edges.length > 12
+    block.edges.length > MAX_FLOW_EDGES
   )
     return null;
   const nodes: ApiDocFlowNode[] = block.nodes.map((node) => ({
@@ -143,21 +146,27 @@ export function normalizeDocFlow(value: unknown): ApiDocFlowBlock | null {
   };
 }
 
-/** Longest-path depth of every node from the sources (edges form a DAG; cycles stop at the node count). */
-function depths(block: ApiDocFlowBlock): Map<string, number> {
+/** Longest-path ranks for a DAG; retry cycles use authored reading order instead of inflating ranks. */
+function depths(block: ApiDocFlowBlock): Map<string, number> | null {
   const depth = new Map(block.nodes.map((node) => [node.id, 0]));
-  for (let pass = 0; pass < block.nodes.length; pass++) {
-    let changed = false;
-    for (const edge of block.edges) {
-      const next = (depth.get(edge.from) ?? 0) + 1;
-      if (next > (depth.get(edge.to) ?? 0) && next < block.nodes.length) {
-        depth.set(edge.to, next);
-        changed = true;
-      }
+  const incoming = new Map(block.nodes.map((node) => [node.id, 0]));
+  for (const edge of block.edges)
+    incoming.set(edge.to, (incoming.get(edge.to) ?? 0) + 1);
+  const ready = block.nodes
+    .filter((node) => incoming.get(node.id) === 0)
+    .map((node) => node.id);
+  for (const id of ready) {
+    for (const edge of block.edges.filter((edge) => edge.from === id)) {
+      depth.set(
+        edge.to,
+        Math.max(depth.get(edge.to) ?? 0, (depth.get(id) ?? 0) + 1),
+      );
+      const remaining = (incoming.get(edge.to) ?? 0) - 1;
+      incoming.set(edge.to, remaining);
+      if (remaining === 0) ready.push(edge.to);
     }
-    if (!changed) break;
   }
-  return depth;
+  return ready.length === block.nodes.length ? depth : null;
 }
 
 function rail(block: ApiDocFlowBlock, columns: number): ApiDocFlowLayout {
@@ -178,7 +187,7 @@ function rail(block: ApiDocFlowBlock, columns: number): ApiDocFlowLayout {
 const LANES = 3;
 
 /**
- * One column for narrow containers. Tiles follow their depth so every link points down; a link that skips a
+ * One column for narrow containers. DAGs follow depth; cycles keep authored reading order. A link that skips a
  * tile leaves the column and runs down a bypass lane beside it (overlapping spans get their own lane, touching
  * spans share one), with its label stacked in the gap above the target.
  */
@@ -186,7 +195,7 @@ function column(block: ApiDocFlowBlock): ApiDocFlowLayout {
   const index = new Map(
     block.nodes.map((node, position) => [node.id, position]),
   );
-  const depth = depths(block);
+  const depth = depths(block) ?? index;
   const order = [...block.nodes].sort(
     (a, b) =>
       (depth.get(a.id) ?? 0) - (depth.get(b.id) ?? 0) ||
@@ -268,6 +277,7 @@ export function layoutFlow(
   );
   if (!branching) return rail(block, railColumns);
   const depth = depths(block);
+  if (!depth) return rail(block, railColumns);
   const columns = Math.max(...depth.values()) + 1;
   if (columns > 4) return rail(block, railColumns);
   const byColumn: string[][] = Array.from({ length: columns }, () => []);
@@ -345,7 +355,7 @@ export function edgeStages(
       cell.row * layout.columns + cell.column,
     ]),
   );
-  const depth = layout.kind === "layered" ? depths(block) : order;
+  const depth = layout.kind === "layered" ? (depths(block) ?? order) : order;
   return block.edges.map((edge) => depth.get(edge.from) ?? 0);
 }
 
@@ -468,6 +478,8 @@ export function connectorPath(
     /** Narrow column: the bypass lane (0-based) of a link that skips a tile and its pill's place in the gap above the target. */
     lane?: number;
     stack?: number;
+    /** Large wrapped rails: measured tiles used to keep long links outside intervening rows. */
+    railBoxes?: ApiDocFlowBox[];
   } = {},
 ): ApiDocFlowConnector {
   const rtl = options.rtl === true;
@@ -479,7 +491,83 @@ export function connectorPath(
   ];
   const end: [number, number] = [rtl ? to.x + to.w : to.x, to.y + to.h / 2];
   const sameRow = Math.abs(from.y - to.y) < 2;
+  const boxes = options.railBoxes;
+  if (
+    boxes &&
+    sameRow &&
+    ((rtl ? to.x > from.x : to.x < from.x) ||
+      boxes.some(
+        (box) =>
+          Math.abs(box.y - from.y) < 2 &&
+          box.x > Math.min(from.x, to.x) &&
+          box.x < Math.max(from.x, to.x),
+      ))
+  ) {
+    const top: [number, number] = [from.x + from.w / 2, from.y];
+    const end: [number, number] = [to.x + to.w / 2, to.y];
+    return cubic(top, [top[0], top[1] - 32], [end[0], end[1] - 32], end);
+  }
+  if (
+    boxes &&
+    !sameRow &&
+    boxes.some(
+      (box) =>
+        box.y > Math.min(from.y, to.y) + 2 &&
+        box.y < Math.max(from.y, to.y) - 2,
+    )
+  ) {
+    const down = to.y > from.y;
+    const row = (tile: ApiDocFlowBox) =>
+      boxes.filter((box) => Math.abs(box.y - tile.y) < 2);
+    const exit = down
+      ? Math.max(...row(from).map((box) => box.y + box.h)) + 24
+      : from.y - 24;
+    const entry = down
+      ? to.y - 24
+      : Math.max(...row(to).map((box) => box.y + box.h)) + 24;
+    const outside = rtl
+      ? Math.min(...boxes.map((box) => box.x)) - 20
+      : Math.max(...boxes.map((box) => box.x + box.w)) + 20;
+    const points = [
+      [from.x + from.w / 2, down ? from.y + from.h : from.y],
+      [from.x + from.w / 2, exit],
+      [outside, exit],
+      [outside, entry],
+      [to.x + to.w / 2, entry],
+      [to.x + to.w / 2, down ? to.y : to.y + to.h],
+    ];
+    return {
+      d: points
+        .map(
+          (point, index) =>
+            `${index ? "L" : "M"}${round(point[0])},${round(point[1])}`,
+        )
+        .join(" "),
+      mid: { x: outside + (rtl ? 6 : -6), y: entry },
+      horizontal: false,
+      align: "end",
+      length: Math.max(
+        1,
+        Math.ceil(
+          points
+            .slice(1)
+            .reduce(
+              (length, point, index) =>
+                length +
+                Math.hypot(
+                  point[0] - points[index][0],
+                  point[1] - points[index][1],
+                ),
+              0,
+            ),
+        ),
+      ),
+    };
+  }
   if (sameRow && Math.abs(start[0] - end[0]) >= 8) {
+    // Feedback links use the actual facing edges, including links against the reading direction.
+    start[0] = from.x < to.x ? from.x + from.w : from.x;
+    end[0] = from.x < to.x ? to.x : to.x + to.w;
     const dx = (end[0] - start[0]) * 0.5;
     return {
       ...cubic(start, [start[0] + dx, start[1]], [end[0] - dx, end[1]], end),

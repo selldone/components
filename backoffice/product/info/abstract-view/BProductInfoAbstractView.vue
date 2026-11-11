@@ -136,7 +136,7 @@
           <td :data-label="$t('global.commons.Price')"><u-price :amount="product.price" :currency="product.currency" /></td>
           <td :data-label="$t('global.commons.commission')"><u-price :amount="product.commission" :currency="product.currency" /></td>
           <td :data-label="$t('global.commons.Discount')"><u-price :amount="product.discount" :currency="product.currency" /><u-chip-discount :percent="(100 * product.discount) / (product.price + product.commission)" class="ms-2" size="small" :start="product.dis_start" :end="product.dis_end" /><u-time-progress-bar :created-time="product.created_at" :end-time="product.dis_end" :start-time="product.dis_start" small /></td>
-          <td :data-label="$t('global.commons.customer_price')"><u-price :amount="priceProductByCurrency(shop, product, null, product.currency)" :currency="product.currency" /></td>
+          <td :data-label="$t('global.commons.customer_price')"><u-price :amount="priceProductByCurrency(shop, product, null, product.currency, null, product.valuation)" :currency="product.currency" /></td>
           <td :data-label="$t('global.commons.In_Stock')"><span v-if="isPhysical || isVirtual || isService">{{ numeralFormat(product.quantity, '0.[0] a') }}</span><s-files-group v-else-if="isFile" :files="product.files" /><span v-else>—</span></td>
           <td data-label="SKU / MPN"><div v-if="product.sku">SKU: <span v-copy @click.stop>{{ product.sku }}</span></div><div v-if="product.mpn">MPN: <span v-copy @click.stop>{{ product.mpn }}</span></div></td>
           <td :data-label="$t('global.commons.actions')"><div class="b-product-info-refined__utilities">
@@ -976,6 +976,8 @@ export default {
         this.product,
         variant,
         this.product.currency,
+        null,
+        this.product.valuation,
       );
       const main_product_cost =
         this.priceProductByCurrency(
@@ -983,6 +985,8 @@ export default {
           this.parent,
           parent_variant,
           this.parent.currency,
+          null,
+          this.parent.valuation,
         ) - this.parent.commission; // Commission is for middle seller!
 
       return current_product_cost - main_product_cost;

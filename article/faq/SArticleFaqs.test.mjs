@@ -51,16 +51,16 @@ vm.runInNewContext(ts.transpileModule(template.code, { compilerOptions: { module
   exports: templateExports, require: () => Vue,
 });
 
-async function renderReader(faqs, workspace = false) {
+async function renderReader(faqs, workspace = false, guidebook = false, rtl = false) {
   const events = [], panelChanges = [];
   const app = Vue.createSSRApp({ ...component, render: templateExports.render }, {
-    faqs, workspace, editMode: false,
+    faqs, workspace, guidebook, editMode: false,
     "onUpdate:faqs": (value) => events.push(["update:faqs", value]),
     onChange: () => events.push(["change"]),
   });
   Object.assign(app.config.globalProperties, {
     $t: (key) => key,
-    $vuetify: { display: { mdAndUp: true }, locale: { isRtl: false } },
+    $vuetify: { display: { mdAndUp: true }, locale: { isRtl: rtl } },
   });
   const pass = { render() { return Vue.h("div", this.$attrs, this.$slots.default?.()); } };
   for (const tag of ["v-slide-y-reverse-transition", "v-expansion-panel", "v-expansion-panel-title", "v-expansion-panel-text", "v-icon"]) app.component(tag, pass);
@@ -113,4 +113,33 @@ test("empty persisted reader renders no FAQ heading, editing controls or parent 
   const reader = await renderReader(Object.freeze([]));
   assert.equal(reader.document.querySelectorAll(".faq-item,.hr-text,button,input,textarea,[contenteditable]").length, 0);
   assert.deepEqual(reader.events, []);
+});
+
+test("Help Guidebook reader has a plain heading and native accordion controls while preserving rich answers and RTL", async () => {
+  assert.equal(component.props.guidebook.default, false);
+  const faqs = Object.freeze([
+    Object.freeze({ question: 'پرسش اول؟', answer: '<p>یک <strong>پاسخ</strong> و <a href="https://selldone.test/help">راهنما</a>.</p>' }),
+    Object.freeze({ question: 'Second question?', answer: '<ol><li>Keep order</li></ol>' }),
+  ]);
+  for (const rtl of [false, true]) {
+    const reader = await renderReader(faqs, false, true, rtl);
+    const root = reader.document.querySelector('.s-article-faqs--guidebook');
+    assert.ok(root);
+    assert.equal(root.classList.contains('rtl'), rtl);
+    assert.equal(root.querySelector('h2').textContent, 'global.commons.faq');
+    assert.equal(root.querySelector('.hr-text'), null);
+    const questions = [...root.querySelectorAll('.question')];
+    assert.equal(questions[0].getAttribute('hide-actions'), 'false');
+    assert.deepEqual(questions.map(question => question.querySelector('[dir="auto"]').textContent), faqs.map(faq => faq.question));
+    assert.ok(root.querySelector('.answer strong'));
+    assert.equal(root.querySelector('.answer a').getAttribute('href'), 'https://selldone.test/help');
+    assert.ok(root.querySelector('.answer ol > li'));
+    reader.panelChanges[0]([]);
+    assert.deepEqual(reader.events, []);
+  }
+  const legacy = await renderReader(faqs);
+  assert.ok(legacy.document.querySelector('.hr-text'));
+  assert.equal(legacy.document.querySelector('.s-article-faqs__heading'), null);
+  const empty = await renderReader(Object.freeze([]), false, true);
+  assert.equal(empty.document.querySelector('.s-article-faqs--guidebook,.s-article-faqs__heading,.hr-text'), null);
 });

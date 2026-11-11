@@ -15,6 +15,7 @@
 <template>
   <v-autocomplete
     :clearable="clearable"
+    :disabled="disabled"
     :flat="flat"
     :items="categories"
     :label="$t('global.article.category_input')"

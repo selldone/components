@@ -28,6 +28,11 @@
               'api-doc-content__stage--compact': compact && !narrow[blockIndex],
               'api-doc-content__stage--compact-column':
                 compact && narrow[blockIndex],
+              'api-doc-content__stage--extended':
+                !compact &&
+                block.nodes.length > 6 &&
+                layouts[blockIndex].kind === 'rail' &&
+                layouts[blockIndex].columns > 1,
             },
           ]"
           :style="{
@@ -560,6 +565,13 @@ export default defineComponent({
             layered: this.layouts[index].kind === "layered",
             lane: this.layouts[index].edgeLanes?.[edgeIndex] ?? -1,
             stack: this.layouts[index].edgeStacks?.[edgeIndex] ?? 0,
+            railBoxes:
+              !this.compact &&
+              block.nodes.length > 6 &&
+              this.layouts[index].kind === "rail" &&
+              this.layouts[index].columns > 1
+                ? Object.values(boxes)
+                : undefined,
           });
           return [
             {
@@ -644,6 +656,10 @@ export default defineComponent({
   }
   &__stage--layered {
     row-gap: 24px;
+  }
+  &__stage--extended {
+    padding-block: 34px;
+    padding-inline-end: 34px;
   }
   &__stage--layered &__tile {
     align-self: center;

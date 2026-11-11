@@ -13,9 +13,19 @@
   -->
 
 <template>
-  <div>
+  <div :class="{ 's-video-uploader--modern text-start': modern }">
+    <div v-if="modern" class="s-video-uploader__drop" @dragover.prevent @drop.prevent="dropVideo">
+      <v-icon icon="cloud_upload" size="24" aria-hidden="true" />
+      <div class="s-video-uploader__drop-copy">
+        <strong>{{ $t('global.video_uploader.drop') }}</strong>
+        <small>{{ $t('global.video_uploader.limit', { size: maxFileSize }) }}</small>
+      </div>
+      <v-btn class="sd-modern-button sd-modern-button--primary" color="primary" variant="flat" prepend-icon="add" :disabled="!pond_ready || disabled || upload_active" @click="browseVideo">
+        {{ $t('global.video_uploader.choose') }}
+      </v-btn>
+    </div>
     <!-- --------- Compact mode --------- -->
-    <v-list-item v-if="on_compact" class="text-start py-5" lines="two">
+    <v-list-item v-if="!modern && on_compact" class="text-start py-5" lines="two">
       <template v-slot:prepend>
         <a :href="video" target="_blank" class="me-3">
           <v-avatar class="border pa-1 bg-white" rounded="lg" size="64">
@@ -72,27 +82,27 @@
     <!-- --------- Normal mode --------- -->
 
     <v-expand-transition>
-      <div v-if="!on_compact">
-        <div class="label-top" v-html="label"></div>
+      <div v-if="modern || !on_compact">
+        <div v-if="!modern" class="label-top" v-html="label"></div>
 
         <div
           :class="[
-            {
+            modern ? 's-video-uploader__transport' : 'uploader-container mx-auto rounded-18px overflow-hidden',
+            !modern && {
               dense: dense,
               dark: dark,
               disabled: disabled,
               'has-value': true,
               ctrl: ctrl,
             },
-            rounded ? `rounded-${rounded}` : '',
+            !modern && rounded ? `rounded-${rounded}` : '',
           ]"
-          :style="{
+          :style="modern ? undefined : {
             minHeight: minHeight,
             border: border ? 'dashed thin #ddd' : undefined,
           }"
-          class="uploader-container mx-auto rounded-18px overflow-hidden"
         >
-          <v-slide-y-transition>
+          <v-slide-y-transition v-if="!modern">
             <div class="small">
               <v-icon class="me-1" size="large">smart_display</v-icon>
               {{ last_video }}
@@ -100,7 +110,7 @@
           </v-slide-y-transition>
 
           <file-pond
-            v-if="!clearable || !last_video"
+            v-if="modern || !clearable || !last_video"
             ref="pond"
             :accepted-file-types="acceptedFileTypes"
             :allow-multiple="false"
@@ -111,10 +121,11 @@
             :server="server_credential"
             :disabled="disabled"
             check-validity="true"
-            class="pointer-pointer fadeIn filepond-style"
+            :class="modern ? { 's-video-uploader__pond--empty': !has_files } : 'pointer-pointer fadeIn filepond-style'"
             credits="false"
             :label-idle="idleLabel || 'Upload video file'"
-            style="min-height: 84px"
+            :style="modern ? undefined : { minHeight: '84px' }"
+            @init="pond_ready = true"
             @error="handleFilePondError"
             @processfile="handleProcessFile"
             @addfilestart="refreshActivity"
@@ -124,12 +135,12 @@
             @processfileabort="refreshActivity"
           />
 
-          <p class="small file-size-limit">
+          <p v-if="!modern" class="small file-size-limit">
             {{ $t("global.image_uploader.max_size", { size: maxFileSize }) }}
           </p>
 
           <v-btn
-            v-if="clearable && last_video"
+            v-if="!modern && clearable && last_video"
             class="absolute-top-end m-2 z2"
             icon
             size="small"
@@ -161,6 +172,7 @@ export default {
   },
   emits: ["response", "new-path", "new-url", "onClear", "new-item", "activity"],
   props: {
+    modern: { type: Boolean, default: false },
     idleLabel: String,
     label: {
       required: false,
@@ -232,6 +244,10 @@ export default {
   },
 
   data: () => ({
+    active: true,
+    pond_ready: false,
+    has_files: false,
+    upload_active: false,
     logo: null,
 
     last_video: null,
@@ -292,13 +308,29 @@ export default {
 
   mounted() {},
 
-  beforeUnmount() {},
+  beforeUnmount() {
+    this.active = false;
+    this.$emit('activity', false);
+  },
 
   methods: {
+    browseVideo() {
+      if (!this.pond_ready || this.disabled || this.upload_active) return;
+      this.$refs.pond?.browse();
+    },
+    dropVideo(event) {
+      if (!this.pond_ready || this.disabled || this.upload_active) return;
+      const file = event.dataTransfer?.files?.[0];
+      // FilePond owns type/size validation and reports rejected files through its error event.
+      if (file) this.$refs.pond?.addFile(file).catch(() => {});
+    },
     refreshActivity() {
       this.$nextTick(() => {
-        const pending = this.$refs.pond?.getFiles?.().some(file => [1, 3, 7, 9].includes(file.status));
-        this.$emit('activity', !!pending);
+        if (!this.active) return;
+        const files = this.$refs.pond?.getFiles?.() || [];
+        this.has_files = files.length > 0;
+        this.upload_active = files.some(file => [1, 3, 7, 9].includes(file.status));
+        this.$emit('activity', this.upload_active);
       });
     },
     handleFilePondError(error) {
@@ -342,4 +374,26 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.s-video-uploader--modern {
+  min-width: 0;
+  .s-video-uploader__drop { display: flex; align-items: center; gap: 12px; padding: 15px; border: 1px dashed var(--sd-modern-border, rgba(var(--v-theme-on-surface), .16)); border-radius: 10px; background: var(--sd-modern-inset, rgba(var(--v-theme-on-surface), .03)); }
+  .s-video-uploader__drop > .v-icon { flex-shrink: 0; color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), .65)); }
+  .s-video-uploader__drop-copy { flex: 1; min-width: 0; }
+  .s-video-uploader__drop-copy strong { display: block; font-size: 13px; line-height: 21px; font-weight: 500; }
+  .s-video-uploader__drop-copy small { display: block; margin-block-start: 2px; color: var(--sd-modern-muted, rgba(var(--v-theme-on-surface), .65)); font-size: 11px; line-height: 18px; }
+  .s-video-uploader__drop .v-btn { flex-shrink: 0; }
+  .s-video-uploader__transport { position: relative; }
+  .s-video-uploader__transport :deep(.filepond--root) { margin: 12px 0 0; font-family: inherit; }
+  .s-video-uploader__transport :deep(.filepond--panel-root) { background: var(--sd-modern-inset, rgba(var(--v-theme-on-surface), .03)); border-radius: 10px; }
+  .s-video-uploader__transport :deep(.filepond--item-panel) { background: var(--sd-modern-inset, rgba(var(--v-theme-on-surface), .03)); }
+  .s-video-uploader__transport :deep(.filepond--file) { color: rgb(var(--v-theme-on-surface)); }
+  .s-video-uploader__transport :deep(.filepond--drop-label) { display: none; }
+  .s-video-uploader__transport :deep(.filepond--list-scroller) { margin-block-start: 0; }
+  .s-video-uploader__transport :deep(.s-video-uploader__pond--empty) { position: absolute; width: 100%; height: 0 !important; min-height: 0; margin: 0; visibility: hidden; pointer-events: none; }
+  @media (max-width: 560px) {
+    .s-video-uploader__drop { flex-wrap: wrap; padding: 13px; gap: 10px; }
+    .s-video-uploader__drop .v-btn { width: 100%; }
+  }
+}
+</style>

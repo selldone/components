@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <div style="line-height: normal">
+  <div :class="{ 's-article-comments--official': isSelldone }" style="line-height: normal">
     <div class="mx-auto px-2">
       <div v-if="user" class="comment-form">
         <v-expand-transition>
@@ -500,4 +500,59 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.s-article-comments--official {
+  font-family: inherit;
+
+  .comment-form,
+  :deep(.comment-item) {
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  h2 {
+    font-family: inherit;
+    font-size: 18px !important;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .comment-placeholder {
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+
+    &:hover { font-weight: 500; }
+  }
+
+  :deep(.comment-author-info) {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  :deep(.comment-author-info time) {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  :deep(.comment-body .typo-body) {
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.7;
+    letter-spacing: normal;
+  }
+
+  :deep(.comment-form textarea),
+  :deep(.comment-body textarea) {
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  @media (max-width: 600px) {
+    :deep(.comment-form textarea),
+    :deep(.comment-body textarea) { font-size: 16px; }
+  }
+}
+</style>

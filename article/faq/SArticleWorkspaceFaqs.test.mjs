@@ -31,7 +31,7 @@ function fixture(props = {}, browser = true) {
     ResizeObserver: class { constructor(callback) { this.callback = callback; observers.push(this); } observe(element) { this.element = element; } disconnect() { this.disconnected = true; } },
   });
   const component = exports.default;
-  const state = { ...component.data(), modelValue: source(), editMode: true, disabled: false, active: true, dialog_id: 'faq-editor-test', ...props, $refs: {}, $vuetify: { display: { width: 1200 } }, $t: (key) => key,
+  const state = { ...component.data(), modelValue: source(), blog: false, preview: true, editMode: true, disabled: false, active: true, dialog_id: 'faq-editor-test', ...props, $refs: {}, $vuetify: { display: { width: 1200 } }, $t: (key) => key,
     $nextTick: (callback) => ticks.push(callback), $emit: (...args) => events.push(args) };
   for (const [key, method] of Object.entries(component.methods)) state[key] = method.bind(state);
   for (const [key, getter] of Object.entries(component.computed)) Object.defineProperty(state, key, { get: () => getter.call(state) });
@@ -152,8 +152,8 @@ test('local reader preview preserves allowed formatting but removes active HTML,
 });
 
 async function render(f) {
-  const component = { ...f.component, render: templateExports.render, data: () => ({ ...f.component.data() }) };
-  const app = Vue.createSSRApp(component, { modelValue: f.state.modelValue, editMode: f.state.editMode, disabled: f.state.disabled });
+  const component = { ...f.component, render: templateExports.render, data: () => ({ ...f.component.data(), expanded_index: f.state.expanded_index }) };
+  const app = Vue.createSSRApp(component, { modelValue: f.state.modelValue, blog: f.state.blog, preview: f.state.preview, active: f.state.active, editMode: f.state.editMode, disabled: f.state.disabled });
   Object.assign(app.config.globalProperties, { $t: (key) => key, $vuetify: { display: { width: 1200 } } });
   const pass = { render() { return Vue.h('div', this.$attrs, this.$slots.default?.()); } };
   for (const tag of new Set(Array.from(descriptor.template.content.matchAll(/<([a-z][\w-]*-[\w-]+)/g), ([, name]) => name))) if (!['v-dialog', 'v-tooltip', 'v-btn'].includes(tag)) app.component(tag, pass);
@@ -196,4 +196,50 @@ test('clipping help follows measured two-line overflow and releases observers', 
   const directive = f.component.directives.overflowCheck; directive.mounted(element, { value: (value) => seen.push(value) });
   assert.deepEqual(seen, [true]); element.scrollHeight = 38; f.observers[0].callback(); assert.equal(seen.at(-1), false);
   directive.beforeUnmount(element); assert.equal(f.observers[0].disconnected, true); assert.equal(element._articleFaqOverflow, undefined);
+});
+
+test('Blog rows expand safe answer HTML in place and keep the original workspace preview opt-in', async () => {
+  const f = fixture({ blog: true, modelValue: [{ question: 'Shipping?', answer: '<p>Safe <b>answer</b></p><script>bad()</script>' }] });
+  assert.equal(f.component.props.blog.default, false);
+  let document = new JSDOM(await render(f)).window.document;
+  assert.ok(document.querySelector('.s-article-workspace-faqs--blog'));
+  assert.equal(document.querySelector('aside'), null);
+  assert.equal(document.querySelector('.s-article-workspace-faqs__question').getAttribute('aria-expanded'), 'false');
+  f.state.toggleAnswer(0);
+  document = new JSDOM(await render(f)).window.document;
+  const question = document.querySelector('.s-article-workspace-faqs__question');
+  assert.equal(question.getAttribute('aria-expanded'), 'true');
+  const answer = document.getElementById(question.getAttribute('aria-controls'));
+  assert.ok(answer.querySelector('b'));
+  assert.equal(answer.querySelector('script'), null);
+  assert.equal(f.events.length, 0);
+  f.state.active = false; f.state.toggleAnswer(0);
+  assert.equal(f.state.expanded_index, 0);
+  f.component.watch.modelValue.call(f.state);
+  assert.equal(f.state.expanded_index, -1);
+  assert.ok(new JSDOM(await render(fixture())).window.document.querySelector('aside'));
+});
+
+test('Help editor can remove its separate preview while keeping inline answers and staged Apply semantics', async () => {
+  const f = fixture({ preview: false });
+  assert.equal(f.component.props.preview.default, true);
+  let document = new JSDOM(await render(f)).window.document;
+  assert.ok(document.querySelector('.s-article-workspace-faqs--single'));
+  assert.equal(document.querySelector('aside,.s-article-workspace-faqs__reader'), null);
+  assert.equal(document.querySelector('.s-article-workspace-faqs__question').getAttribute('aria-expanded'), 'false');
+  f.state.toggleAnswer(0);
+  document = new JSDOM(await render(f)).window.document;
+  assert.equal(document.querySelector('.s-article-workspace-faqs__question').getAttribute('aria-expanded'), 'true');
+  assert.ok(document.querySelector('.s-article-workspace-faqs__answer strong'));
+  assert.equal(f.events.length, 0);
+  const original = plain(f.state.modelValue);
+  f.state.openEditor(0); f.state.answer += '<p>Unsaved addition.</p>';
+  f.state.toggleAnswer(1);
+  assert.equal(f.state.pendingDraft, true);
+  assert.deepEqual(plain(f.state.modelValue), original);
+  f.state.apply();
+  const next = f.events.find(([name]) => name === 'update:modelValue')[1];
+  assert.match(next[0].answer, /Unsaved addition/);
+  assert.deepEqual(plain(next[0].context), { keep: true });
+  assert.deepEqual(plain(f.state.modelValue), original);
 });

@@ -1,0 +1,136 @@
+[
+  {
+    "id": "linear",
+    "title": "Linear steps",
+    "description": "A simple sequence from a new request to completion.",
+    "flowchart": {
+      "type": "flow",
+      "title": "Prepare an order",
+      "description": "Follow each step from receiving the order to handing it to the carrier.",
+      "animated": true,
+      "nodes": [
+        { "id": "order", "label": "Order received", "description": "The customer completes checkout.", "icon": "shopping_bag", "caption": "New order" },
+        { "id": "pack", "label": "Pack the items", "description": "The fulfillment team checks and packs the ordered items.", "icon": "inventory_2", "caption": "Ready for dispatch" },
+        { "id": "dispatch", "label": "Hand to the carrier", "description": "The carrier receives the parcel and its tracking information.", "icon": "local_shipping", "outcome": { "label": "Dispatched", "tone": "success" } }
+      ],
+      "edges": [
+        { "from": "order", "to": "pack", "label": "Prepare" },
+        { "from": "pack", "to": "dispatch", "label": "Parcel ready" }
+      ]
+    }
+  },
+  {
+    "id": "branching",
+    "title": "Decision branches",
+    "description": "A decision with separate successful and unsuccessful outcomes.",
+    "flowchart": {
+      "type": "flow",
+      "title": "Check a payment",
+      "description": "Inspect the payment result before confirming the order.",
+      "animated": true,
+      "nodes": [
+        { "id": "payment", "label": "Payment submitted", "description": "The payment provider returns a result.", "icon": "payments" },
+        { "id": "verify", "label": "Verify the result", "description": "Check the payment status and the expected amount.", "icon": "fact_check", "outcome": { "label": "Decision", "tone": "neutral" } },
+        { "id": "confirmed", "label": "Confirm the order", "description": "A verified payment allows fulfillment to continue.", "icon": "task_alt", "outcome": { "label": "Paid", "tone": "success" } },
+        { "id": "unpaid", "label": "Keep the order unpaid", "description": "Explain the payment failure to the customer.", "icon": "error_outline", "outcome": { "label": "Payment failed", "tone": "error" } }
+      ],
+      "edges": [
+        { "from": "payment", "to": "verify", "label": "Check" },
+        { "from": "verify", "to": "confirmed", "label": "Verified" },
+        { "from": "verify", "to": "unpaid", "label": "Failed" }
+      ]
+    }
+  },
+  {
+    "id": "retry",
+    "title": "Retry loop",
+    "description": "A correction path returns to an earlier validation step.",
+    "flowchart": {
+      "type": "flow",
+      "title": "Review an application",
+      "description": "Request missing details and check the corrected application again.",
+      "animated": true,
+      "nodes": [
+        { "id": "submit", "label": "Application submitted", "description": "The applicant sends the required information.", "icon": "inbox" },
+        { "id": "review", "label": "Review the details", "description": "The reviewer checks the application for completeness.", "icon": "manage_search", "caption": "Check required information" },
+        { "id": "correct", "label": "Request a correction", "description": "The applicant supplies the missing or corrected details.", "icon": "edit_note", "outcome": { "label": "Needs attention", "tone": "warning" } },
+        { "id": "approve", "label": "Approve the application", "description": "The complete application is accepted.", "icon": "task_alt", "outcome": { "label": "Approved", "tone": "success" } }
+      ],
+      "edges": [
+        { "from": "submit", "to": "review", "label": "Start review" },
+        { "from": "review", "to": "correct", "label": "Incomplete" },
+        { "from": "correct", "to": "review", "label": "Corrected details" },
+        { "from": "review", "to": "approve", "label": "Complete" }
+      ]
+    }
+  },
+  {
+    "id": "parallel",
+    "title": "Parallel paths",
+    "description": "Several checks run alongside one another and join before completion.",
+    "flowchart": {
+      "type": "flow",
+      "title": "Prepare a shop launch",
+      "description": "Complete the catalog, payment and delivery checks before the final launch review.",
+      "animated": true,
+      "nodes": [
+        { "id": "start", "label": "Start the launch checks", "description": "The shop owner begins preparing the shop for its first customers.", "icon": "storefront" },
+        { "id": "catalog", "label": "Review the catalog", "description": "Check product details, prices and availability.", "icon": "inventory_2", "caption": "Catalog team" },
+        { "id": "payments", "label": "Check payments", "description": "Confirm that the intended payment methods are ready.", "icon": "payments", "caption": "Finance team" },
+        { "id": "delivery", "label": "Check delivery", "description": "Confirm the delivery areas, methods and rates.", "icon": "local_shipping", "caption": "Operations team" },
+        { "id": "review", "label": "Review all checks", "description": "The owner confirms that every required check is complete.", "icon": "fact_check" },
+        { "id": "launch", "label": "Open the shop", "description": "The shop is ready to receive customers.", "icon": "rocket_launch", "outcome": { "label": "Ready to launch", "tone": "success" } }
+      ],
+      "edges": [
+        { "from": "start", "to": "catalog", "label": "Products" },
+        { "from": "start", "to": "payments", "label": "Payments" },
+        { "from": "start", "to": "delivery", "label": "Delivery" },
+        { "from": "catalog", "to": "review", "label": "Catalog checked" },
+        { "from": "payments", "to": "review", "label": "Payments checked" },
+        { "from": "delivery", "to": "review", "label": "Delivery checked" },
+        { "from": "review", "to": "launch", "label": "All ready" }
+      ]
+    }
+  },
+  {
+    "id": "complex",
+    "title": "Order workflow",
+    "description": "A larger workflow combines parallel checks, a merge, a retry and separate final outcomes.",
+    "flowchart": {
+      "type": "flow",
+      "title": "From checkout to delivery",
+      "description": "Review payment, stock and address details, resolve problems, then prepare and track delivery. This diagram explains the workflow; it does not execute any operation.",
+      "animated": true,
+      "nodes": [
+        { "id": "checkout", "label": "Receive the order", "description": "The customer submits an order at checkout.", "icon": "shopping_bag", "caption": "Customer" },
+        { "id": "payment", "label": "Verify payment", "description": "Finance checks the provider result and the expected amount.", "icon": "payments", "caption": "Finance" },
+        { "id": "stock", "label": "Check stock", "description": "Fulfillment checks that the requested items are available.", "icon": "inventory_2", "caption": "Fulfillment" },
+        { "id": "address", "label": "Check the address", "description": "Operations checks that delivery is available for the supplied address.", "icon": "location_on", "caption": "Operations" },
+        { "id": "review", "label": "Review the order", "description": "Continue only after reviewing payment, stock and address checks.", "icon": "fact_check", "outcome": { "label": "Decision", "tone": "neutral" } },
+        { "id": "correction", "label": "Resolve missing details", "description": "Customer support requests corrected information, then sends the order back for review.", "icon": "support_agent", "outcome": { "label": "Needs attention", "tone": "warning" } },
+        { "id": "pack", "label": "Pack the items", "description": "Fulfillment picks and packs the approved order.", "icon": "inventory", "caption": "Fulfillment" },
+        { "id": "ship", "label": "Dispatch the parcel", "description": "The carrier receives the parcel and tracking information.", "icon": "local_shipping", "caption": "Carrier" },
+        { "id": "track", "label": "Check delivery", "description": "Use the carrier status to identify delivery or a delivery exception.", "icon": "travel_explore" },
+        { "id": "delivered", "label": "Delivery complete", "description": "The parcel reaches its destination.", "icon": "task_alt", "outcome": { "label": "Delivered", "tone": "success" } },
+        { "id": "exception", "label": "Handle a delivery issue", "description": "Support investigates the carrier exception and agrees on the next action.", "icon": "error_outline", "outcome": { "label": "Delivery issue", "tone": "error" } },
+        { "id": "cancelled", "label": "Cancel the order", "description": "An order that cannot proceed is cancelled through the normal order workflow.", "icon": "cancel", "outcome": { "label": "Cancelled", "tone": "neutral" } }
+      ],
+      "edges": [
+        { "from": "checkout", "to": "payment", "label": "Payment check" },
+        { "from": "checkout", "to": "stock", "label": "Stock check" },
+        { "from": "checkout", "to": "address", "label": "Address check" },
+        { "from": "payment", "to": "review", "label": "Payment result" },
+        { "from": "stock", "to": "review", "label": "Stock result" },
+        { "from": "address", "to": "review", "label": "Address result" },
+        { "from": "review", "to": "correction", "label": "Missing details" },
+        { "from": "correction", "to": "review", "label": "Details corrected" },
+        { "from": "review", "to": "pack", "label": "Ready to fulfill" },
+        { "from": "review", "to": "cancelled", "label": "Cannot proceed" },
+        { "from": "pack", "to": "ship", "label": "Packed" },
+        { "from": "ship", "to": "track", "label": "Dispatched" },
+        { "from": "track", "to": "delivered", "label": "Delivered" },
+        { "from": "track", "to": "exception", "label": "Delivery exception" }
+      ]
+    }
+  }
+]

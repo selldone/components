@@ -1,13 +1,13 @@
 <template>
   <v-dialog
     :model-value="modelValue && available"
-    max-width="1180"
+    fullscreen
     scrollable
     :aria-labelledby="`${uid}-title`"
     @update:model-value="$emit('update:modelValue', $event)"
     @after-enter="labelEditor"
   >
-    <v-card class="a-article-flowchart-dialog text-start" rounded="xl">
+    <v-card class="a-article-flowchart-dialog text-start">
       <v-card-title class="a-article-flowchart-dialog__heading">
         <h2 :id="`${uid}-title`">
           {{
@@ -61,6 +61,25 @@
             }}
           </p>
         </div>
+        <div class="a-article-flowchart-dialog__samples">
+          <p class="a-article-flowchart-dialog__label">
+            {{ $t("global.article.flowchart.samples") }}
+          </p>
+          <div class="a-article-flowchart-dialog__sample-actions">
+            <v-btn
+              v-for="sample in samples"
+              :key="sample.id"
+              variant="tonal"
+              :disabled="!available"
+              :data-sample="sample.id"
+              @click="loadSample(sample.id)"
+              >{{ $t(`global.article.flowchart.sample_${sample.id}`) }}</v-btn
+            >
+          </div>
+          <p class="a-article-flowchart-dialog__sample-hint">
+            {{ $t("global.article.flowchart.sample_hint") }}
+          </p>
+        </div>
         <div class="a-article-flowchart-dialog__grid">
           <section class="a-article-flowchart-dialog__definition">
             <label
@@ -91,18 +110,48 @@
             class="a-article-flowchart-dialog__preview"
             :aria-label="$t('global.article.flowchart.preview')"
           >
-            <p class="a-article-flowchart-dialog__label">
-              {{ $t("global.article.flowchart.preview") }}
-            </p>
-            <s-article-flow
-              v-if="parsed"
-              :block="parsed"
-              :legend-labels="legendLabels"
-              show-text-version
-            />
-            <p v-else class="a-article-flowchart-dialog__empty">
-              {{ $t("global.article.flowchart.preview_empty") }}
-            </p>
+            <div class="a-article-flowchart-dialog__preview-heading">
+              <p class="a-article-flowchart-dialog__label">
+                {{ $t("global.article.flowchart.preview") }}
+              </p>
+              <div
+                class="a-article-flowchart-dialog__preview-modes"
+                role="group"
+                :aria-label="$t('global.article.flowchart.preview')"
+              >
+                <v-btn
+                  v-for="mode in ['desktop', 'mobile']"
+                  :key="mode"
+                  :variant="previewMode === mode ? 'tonal' : 'text'"
+                  :prepend-icon="
+                    mode === 'desktop' ? 'desktop_windows' : 'smartphone'
+                  "
+                  :aria-pressed="previewMode === mode"
+                  :data-preview-mode="mode"
+                  @click="previewMode = mode"
+                  >{{ $t(`global.article.flowchart.${mode}`) }}</v-btn
+                >
+              </div>
+            </div>
+            <div class="a-article-flowchart-dialog__preview-viewport">
+              <div
+                class="a-article-flowchart-dialog__preview-frame"
+                :class="{
+                  'a-article-flowchart-dialog__preview-frame--mobile':
+                    previewMode === 'mobile',
+                }"
+              >
+                <s-article-flow
+                  v-if="parsed"
+                  :block="parsed"
+                  :legend-labels="legendLabels"
+                  show-text-version
+                />
+                <p v-else class="a-article-flowchart-dialog__empty">
+                  {{ $t("global.article.flowchart.preview_empty") }}
+                </p>
+              </div>
+            </div>
           </section>
         </div>
       </v-card-text>
@@ -129,6 +178,7 @@ import "prismjs/components/prism-json";
 import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css";
 import SArticleFlow from "./SArticleFlow.vue";
+import samples from "./article-flowchart-samples.json";
 import {
   ARTICLE_FLOWCHART_SCHEMA,
   MAX_FLOWCHART_BYTES,
@@ -154,6 +204,8 @@ export default {
     code: "",
     copyState: "",
     copyGeneration: 0,
+    samples,
+    previewMode: "desktop",
   }),
   computed: {
     available() {
@@ -206,6 +258,7 @@ export default {
     },
     resetDefinition() {
       this.resetCopy();
+      this.previewMode = "desktop";
       const flow =
         this.definition === null
           ? createArticleFlowchart()
@@ -217,6 +270,15 @@ export default {
           ? this.definition
           : JSON.stringify(this.definition, null, 2) || "";
       this.$nextTick(() => this.labelEditor());
+    },
+    loadSample(id: string) {
+      if (!this.modelValue || !this.available) return;
+      const flow = parseArticleFlowchart(
+        this.samples.find((sample) => sample.id === id)?.flowchart,
+      );
+      if (!flow) return;
+      this.resetCopy();
+      this.code = JSON.stringify(flow, null, 2);
     },
     highlight(code: string) {
       return Prism.highlight(
@@ -240,7 +302,7 @@ export default {
     async copyPrompt() {
       if (!this.modelValue || !this.available || this.copyState === "copying")
         return;
-      const prompt = `${this.$t("global.article.flowchart.ai_prompt")}\n\n${ARTICLE_FLOWCHART_SCHEMA}\n\n${JSON.stringify(createArticleFlowchart(), null, 2)}`;
+      const prompt = `${this.$t("global.article.flowchart.ai_prompt")}\n\n${ARTICLE_FLOWCHART_SCHEMA}\n\n${JSON.stringify(this.parsed || createArticleFlowchart(), null, 2)}`;
       const generation = ++this.copyGeneration;
       this.copyState = "copying";
       try {
@@ -273,6 +335,8 @@ export default {
 .a-article-flowchart-dialog {
   color: rgb(var(--v-theme-on-surface));
   background: rgb(var(--v-theme-surface));
+  height: 100dvh;
+  border-radius: 0;
 
   &__heading {
     display: flex;
@@ -299,7 +363,7 @@ export default {
     align-items: flex-start;
     flex-wrap: wrap;
     gap: 12px;
-    margin-bottom: 22px;
+    margin-bottom: 16px;
     p {
       flex: 1 1 300px;
       margin: 0;
@@ -312,10 +376,31 @@ export default {
     }
   }
   &__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 24px;
-    align-items: start;
+  }
+  &__samples {
+    margin-bottom: 20px;
+  }
+  &__sample-actions,
+  &__preview-modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    .v-btn {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+  }
+  &__samples &__label {
+    margin-bottom: 8px;
+  }
+  &__sample-hint {
+    margin: 8px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(var(--v-theme-on-surface), 0.72);
   }
   &__intro &__copy-status {
     flex-basis: 100%;
@@ -326,6 +411,35 @@ export default {
   &__definition,
   &__preview {
     min-width: 0;
+    width: 100%;
+  }
+  &__preview-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    .a-article-flowchart-dialog__label {
+      margin: 0;
+    }
+  }
+  &__preview-viewport {
+    min-height: 340px;
+    max-height: 65dvh;
+    overflow: auto;
+    padding: 12px;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+    border-radius: 10px;
+    background: rgba(var(--v-theme-on-surface), 0.025);
+  }
+  &__preview-frame {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    &--mobile {
+      max-width: 390px;
+    }
   }
   &__label {
     display: block;
@@ -335,8 +449,8 @@ export default {
     line-height: 1.6;
   }
   &__code {
-    min-height: 420px;
-    max-height: 62vh;
+    min-height: 180px;
+    max-height: 28dvh;
     padding: 14px;
     overflow: auto;
     border: 1px solid rgba(var(--v-theme-on-surface), 0.16);
@@ -373,12 +487,7 @@ export default {
     }
   }
   @media (max-width: 800px) {
-    &__grid {
-      grid-template-columns: minmax(0, 1fr);
-    }
     &__code {
-      min-height: 300px;
-      max-height: 48vh;
       font-size: 13px;
     }
   }
@@ -390,6 +499,9 @@ export default {
     }
     .v-btn {
       min-height: 44px;
+    }
+    &__preview-viewport {
+      padding: 8px;
     }
   }
 }

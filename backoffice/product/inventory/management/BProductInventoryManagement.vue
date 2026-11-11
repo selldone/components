@@ -45,6 +45,7 @@
 
     <b-product-inventory-management-file
       v-if="isFile"
+      :modern="modern && !productWorkspace"
       :for-studio="forStudio"
       :product="product"
       :shop="shop"

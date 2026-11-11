@@ -13,26 +13,45 @@
     :class="{ 'b-donut--pre-inverted': preInverted }"
     class="b-donut"
     dir="ltr"
-    role="img"
+    :role="$slots.tooltip ? 'group' : 'img'"
     :viewBox="ringOnly ? RING_BOX : '0 0 360 180'"
   >
     <circle :cx="CX" :cy="CY" :r="R" class="b-donut__track" />
     <g :transform="`rotate(-90 ${CX} ${CY})`">
-      <circle
-        v-for="arc in arcs"
-        :key="arc.key"
-        :cx="CX"
-        :cy="CY"
-        :r="R"
-        :stroke="arc.color"
-        :stroke-dasharray="arc.dash"
-        :stroke-dashoffset="arc.offset"
-        class="b-donut__arc"
-      >
-        <title>
-          {{ arc.label }} · {{ arc.percent }} · {{ format(arc.value) }}
-        </title>
-      </circle>
+      <template v-for="(arc, index) in arcs" :key="arc.key">
+        <circle
+          v-if="$slots.tooltip"
+          :id="`u-donut-arc-${uid}-${index}`"
+          :cx="CX"
+          :cy="CY"
+          :r="R"
+          :stroke="arc.color"
+          :stroke-dasharray="arc.dash"
+          :stroke-dashoffset="arc.offset"
+          :aria-label="`${arc.label} · ${arc.percent} · ${format(arc.value)}`"
+          class="b-donut__arc b-donut__arc--help"
+          tabindex="0"
+          role="img"
+          @click.stop="setTooltip(arc.key, true)"
+          @keydown.enter.prevent="setTooltip(arc.key, true)"
+          @keydown.space.prevent="setTooltip(arc.key, true)"
+          @keydown.esc.stop="setTooltip(arc.key, false)"
+        />
+        <circle
+          v-else
+          :cx="CX"
+          :cy="CY"
+          :r="R"
+          :stroke="arc.color"
+          :stroke-dasharray="arc.dash"
+          :stroke-dashoffset="arc.offset"
+          class="b-donut__arc"
+        >
+          <title>
+            {{ arc.label }} · {{ arc.percent }} · {{ format(arc.value) }}
+          </title>
+        </circle>
+      </template>
     </g>
 
     <!-- Leader lines: out of the ring, then along to the label. -->
@@ -82,6 +101,25 @@
     <text v-if="unit" :x="CX" :y="CY + 20" class="b-donut__unit">
       {{ unit }}
     </text>
+    <!-- HTML context keeps teleported tooltip content out of the SVG namespace. -->
+    <foreignObject v-if="$slots.tooltip" width="0" height="0">
+      <div xmlns="http://www.w3.org/1999/xhtml">
+        <v-tooltip
+          v-for="(arc, index) in arcs"
+          :key="arc.key"
+          :activator="`#u-donut-arc-${uid}-${index}`"
+          :model-value="tooltipKey === arc.key"
+          :open-on-focus="true"
+          :open-on-click="false"
+          interactive
+          location="top"
+          content-class="sd-modern-tooltip text-start"
+          @update:model-value="setTooltip(arc.key, $event)"
+        >
+          <slot name="tooltip" :slice="arc" :total="total" />
+        </v-tooltip>
+      </div>
+    </foreignObject>
   </svg>
 </template>
 
@@ -104,8 +142,10 @@ const compact = new Intl.NumberFormat(undefined, {
 });
 
 const round = (n: number) => Math.round(n * 100) / 100;
-const percentText = (fraction: number) =>
-  `${Math.round(fraction * 1000) / 10}%`;
+const percentText = (fraction: number) => {
+  const percent = Math.round(fraction * 1000) / 10;
+  return fraction > 0 && percent === 0 ? "<0.1%" : `${percent}%`;
+};
 const truncate = (text: string, length: number) =>
   text.length > length ? `${text.slice(0, length - 1)}…` : text;
 // Clip ids stay unique when several donuts share a page.
@@ -129,7 +169,14 @@ export default {
     ringOnly: { type: Boolean, default: false },
   },
 
-  data: () => ({ CX, CY, R, RING_BOX, uid: ++instances }),
+  data: () => ({ CX, CY, R, RING_BOX, uid: ++instances, tooltipKey: null }),
+
+  methods: {
+    setTooltip(key, open) {
+      if (open) this.tooltipKey = key;
+      else if (this.tooltipKey === key) this.tooltipKey = null;
+    },
+  },
 
   computed: {
     total() {
@@ -224,6 +271,7 @@ export default {
 <style lang="scss" scoped>
 .b-donut {
   display: block;
+  direction: ltr;
   width: 100%;
   height: auto;
   overflow: visible;
@@ -237,6 +285,15 @@ export default {
 
 .b-donut__track {
   stroke: var(--sd-modern-border);
+}
+
+.b-donut__arc--help {
+  cursor: help;
+
+  &:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 3px;
+  }
 }
 
 .b-donut__callout polyline {
@@ -263,6 +320,7 @@ export default {
   font-size: 20px;
   font-weight: 600;
   text-anchor: middle;
+  unicode-bidi: isolate;
 }
 
 .b-donut__unit {

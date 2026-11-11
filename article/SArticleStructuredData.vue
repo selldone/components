@@ -13,7 +13,7 @@
   -->
 
 <template>
-  <section v-if="workspace" v-bind="$attrs" class="s-article-structures-refined sd-modern-widget text-start">
+  <section v-if="workspace" v-bind="$attrs" class="s-article-structures-refined sd-modern-widget text-start" :class="{ 's-article-structures-refined--blog': blog }">
     <header class="s-article-structures-refined__heading">
       <div>
         <div class="s-article-structures-refined__title-row">
@@ -25,29 +25,29 @@
         </div>
         <p>{{ t('structure_subtitle') }}</p>
       </div>
-      <v-btn v-if="editMode" class="sd-modern-button sd-modern-button--compact" variant="text" prepend-icon="add" @click="showDialog()">{{ t('structure_add') }}</v-btn>
+      <v-btn v-if="editMode" class="sd-modern-button sd-modern-button--compact" :variant="blog ? 'outlined' : 'text'" prepend-icon="add" :disabled="!mayEdit" @click="showDialog()">{{ t(blog ? 'structure_blog_add' : 'structure_add') }}</v-btn>
     </header>
     <div v-if="Array.isArray(modelValue) && modelValue.length">
-      <div class="s-article-structures-refined__list-heading sd-modern-list-header">
+      <div v-if="!blog" class="s-article-structures-refined__list-heading sd-modern-list-header">
         <span>{{ t('structure_content') }}</span><span>{{ t('structure_status') }}</span><span>{{ t('structure_actions') }}</span>
       </div>
       <div v-for="(structure, index) in modelValue" :key="index" class="s-article-structures-refined__row">
         <div class="s-article-structures-refined__record">
-          <span class="s-article-structures-refined__icon"><v-icon size="17" aria-hidden="true">{{ typeIcon(structure?.['@type']) }}</v-icon></span>
+          <span v-if="!blog" class="s-article-structures-refined__icon"><v-icon size="17" aria-hidden="true">{{ typeIcon(structure?.['@type']) }}</v-icon></span>
           <div class="s-article-structures-refined__copy">
-            <h3>{{ typeTitle(structure) }}</h3>
-            <p>{{ structure?.name || structure?.description || t('structure_no_name') }}</p>
+            <h3><span v-if="blog" class="s-article-structures-refined__type-label">{{ structure?.['@type'] || t('structure_unknown') }}</span>{{ blog ? structure?.name || typeTitle(structure) : typeTitle(structure) }}</h3>
+            <p v-if="!blog || structure?.description">{{ blog ? structure.description : structure?.name || structure?.description || t('structure_no_name') }}</p>
           </div>
         </div>
-        <span class="s-article-structures-refined__status"><span class="sd-modern-status__dot sd-modern-status__dot--success"></span>{{ t('structure_added') }}</span>
+        <span v-if="!blog" class="s-article-structures-refined__status"><span class="sd-modern-status__dot sd-modern-status__dot--success"></span>{{ t('structure_added') }}</span>
         <div class="s-article-structures-refined__actions">
-          <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="t('structure_json')" @click="showJson(structure)">
+          <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="t('structure_json')" :disabled="!active" @click="showJson(structure)">
             <v-icon>data_object</v-icon><v-tooltip activator="parent" content-class="sd-modern-tooltip" location="top">{{ t('structure_json') }}</v-tooltip>
           </v-btn>
-          <v-btn v-if="editMode && findType(structure)" class="sd-modern-icon-button" icon variant="text" :aria-label="t('structure_edit')" @click="showDialog(structure)">
+          <v-btn v-if="editMode && findType(structure)" class="sd-modern-icon-button" icon variant="text" :aria-label="t('structure_edit')" :disabled="!mayEdit" @click="showDialog(structure)">
             <v-icon>edit</v-icon><v-tooltip activator="parent" content-class="sd-modern-tooltip" location="top">{{ t('structure_edit') }}</v-tooltip>
           </v-btn>
-          <v-btn v-if="editMode" class="sd-modern-icon-button" icon variant="text" :aria-label="$t('global.actions.delete')" @click="removeStructure(structure)">
+          <v-btn v-if="editMode" class="sd-modern-icon-button" icon variant="text" :aria-label="$t('global.actions.delete')" :disabled="!mayEdit" @click="removeStructure(structure)">
             <v-icon>delete_outline</v-icon><v-tooltip activator="parent" content-class="sd-modern-tooltip" location="top">{{ $t('global.actions.delete') }}</v-tooltip>
           </v-btn>
         </div>
@@ -56,10 +56,10 @@
     <div v-else class="s-article-structures-refined__empty">
       <v-icon size="24" aria-hidden="true">data_object</v-icon><h3>{{ t('structure_empty') }}</h3><p>{{ t('structure_empty_hint') }}</p>
     </div>
-    <p class="s-article-structures-refined__foot"><v-icon size="14" aria-hidden="true">info_outline</v-icon>{{ t('structure_faq_note') }}</p>
+    <p class="s-article-structures-refined__foot"><v-icon v-if="!blog" size="14" aria-hidden="true">info_outline</v-icon>{{ t(blog ? 'article_draft_hint' : 'structure_faq_note') }}</p>
 
     <v-dialog :model-value="dialog && active" max-width="720" :content-props="dialogContentProps" scrollable @update:model-value="!$event && requestClose()">
-      <v-card class="s-article-structures-refined__dialog text-start">
+      <v-card class="s-article-structures-refined__dialog text-start" :class="{ 's-article-structures-refined__dialog--blog': blog }">
         <header class="s-article-structures-refined__dialog-head">
           <div><h2>{{ jsonView ? t('structure_json') : t(selected ? 'structure_edit' : 'structure_add') }}</h2><p v-if="selected_type">{{ $t(selected_type.title) }}</p></div>
           <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="$t('global.actions.close')" @click="requestClose()"><v-icon>close</v-icon><v-tooltip activator="parent" content-class="sd-modern-tooltip" location="top">{{ $t('global.actions.close') }}</v-tooltip></v-btn>
@@ -73,17 +73,17 @@
             </div>
           </div>
           <pre v-if="jsonView" class="s-article-structures-refined__json" dir="ltr">{{ structure_data_pretty }}</pre>
-          <template v-else-if="selected_type">
+          <fieldset v-else-if="selected_type" class="s-article-structures-refined__fields" :disabled="!mayEdit">
             <v-btn v-if="!selected" class="sd-modern-button sd-modern-button--compact s-article-structures-refined__change-type" variant="text" @click="changeType()">{{ t('structure_change_type') }}</v-btn>
-            <s-structure-data-input v-for="(type, name) in primaryInputs" :key="name" v-model="structure_data[name]" :name="name" :type="type" workspace />
+            <s-structure-data-input v-for="(type, name) in primaryInputs" :key="name" v-model="structure_data[name]" :name="name" :type="type" :blog="blog" workspace />
             <details v-if="Object.keys(extraInputs).length" class="s-article-structures-refined__more" @toggle="extraExpanded = $event.target.open">
               <summary>{{ t('structure_more_properties') }}</summary>
-              <template v-if="extraExpanded"><s-structure-data-input v-for="(type, name) in extraInputs" :key="name" v-model="structure_data[name]" :name="name" :type="type" workspace /></template>
+              <template v-if="extraExpanded"><s-structure-data-input v-for="(type, name) in extraInputs" :key="name" v-model="structure_data[name]" :name="name" :type="type" :blog="blog" workspace /></template>
             </details>
             <details class="s-article-structures-refined__more"><summary>{{ t('structure_json_preview') }}</summary><pre class="s-article-structures-refined__json" dir="ltr">{{ structure_data_pretty }}</pre></details>
-          </template>
+          </fieldset>
           <div v-else class="s-article-structures-refined__types">
-            <button v-for="type in types" :key="type['@type']" type="button" class="s-article-structures-refined__type sd-modern-clickable-item" @click="selectType(type)">
+            <button v-for="type in types" :key="type['@type']" type="button" class="s-article-structures-refined__type sd-modern-clickable-item" :disabled="!mayEdit" @click="selectType(type)">
               <span class="s-article-structures-refined__icon"><v-icon size="18" aria-hidden="true">{{ typeIcon(type['@type']) }}</v-icon></span>
               <span><strong>{{ $t(type.title) }}</strong><small>{{ $t(type.desc) }}</small></span>
               <v-icon size="17" aria-hidden="true">{{ $t('icons.angle_next') }}</v-icon>
@@ -91,11 +91,11 @@
           </div>
         </v-card-text>
         <footer class="s-article-structures-refined__dialog-foot">
-          <p v-if="!jsonView">{{ t('structure_draft_hint') }}</p>
+          <p v-if="!jsonView">{{ t(blog ? 'article_draft_hint' : 'structure_draft_hint') }}</p>
           <div class="s-article-structures-refined__actions">
             <v-btn v-if="jsonView" v-copy="structure_data_pretty" class="sd-modern-button sd-modern-button--compact" variant="outlined" prepend-icon="content_copy">{{ $t('global.actions.copy') }}</v-btn>
             <v-btn class="sd-modern-button sd-modern-button--compact" variant="text" @click="requestClose()">{{ $t(jsonView ? 'global.actions.close' : 'global.actions.cancel') }}</v-btn>
-            <v-btn v-if="!jsonView && selected_type" class="sd-modern-button sd-modern-button--compact" color="primary" variant="flat" prepend-icon="check" :disabled="!editMode || !!pendingAction" @click="saveChange()">{{ t('structure_apply') }}</v-btn>
+            <v-btn v-if="!jsonView && selected_type" class="sd-modern-button sd-modern-button--compact" color="primary" variant="flat" prepend-icon="check" :disabled="!mayEdit || !!pendingAction" @click="saveChange()">{{ t('structure_apply') }}</v-btn>
           </div>
         </footer>
       </v-card>
@@ -305,8 +305,10 @@ export default {
   components: { SWidgetButtons, SStructureDataInput, UButtonAdd },
   emits: ["update:modelValue", "change", "pending-change"],
   props: {
+    blog: { type: Boolean, default: false },
     workspace: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
+    disabled: { type: Boolean, default: false },
     modelValue: {},
 
     editMode: {
@@ -408,6 +410,7 @@ export default {
   },
 
   computed: {
+    mayEdit() { return this.active && this.editMode && !this.disabled; },
     dialogContentProps() { return this.$vuetify.display.width <= 580 ? { style: { width: 'calc(100% - 16px)', maxWidth: 'calc(100% - 16px)', margin: '8px' } } : undefined; },
     dialogDirty() {
       return this.workspace && this.dialog && !this.jsonView && !!this.selected_type && JSON.stringify(this.structure_data) !== this.workspace_baseline;
@@ -451,6 +454,7 @@ export default {
       return { Book: 'menu_book', Occupation: 'work_outline', Course: 'school', HowTo: 'checklist', Recipe: 'restaurant_menu' }[type] || 'data_object';
     },
     showJson(structure) {
+      if (this.workspace && !this.active) return;
       this.jsonView = true;
       this.selected_type = this.findType(structure);
       this.structure_data = JSON.parse(JSON.stringify(structure));
@@ -463,7 +467,7 @@ export default {
       else this.closeDialog();
     },
     changeType() {
-      if (this.selected || !this.editMode) return;
+      if (this.selected || !this.mayEdit) return;
       if (this.dialogDirty) this.pendingAction = 'type';
       else this.resetType();
     },
@@ -479,7 +483,7 @@ export default {
       else this.closeDialog();
     },
     showDialog(jsonld = null) {
-      if (this.workspace && !this.editMode) return;
+      if (this.workspace && !this.mayEdit) return;
       this.selected_type = null;
       this.dialog = true;
       this.selected = null;
@@ -501,7 +505,7 @@ export default {
       if (this.workspace) this.workspace_baseline = JSON.stringify(this.structure_data);
     },
     selectType(type) {
-      if (this.workspace && (!this.editMode || !this.dialog || this.selected || this.jsonView)) return;
+      if (this.workspace && (!this.mayEdit || !this.dialog || this.selected || this.jsonView)) return;
       this.selected_type = type;
 
       // New jsonld:
@@ -514,7 +518,7 @@ export default {
     },
 
     saveChange() {
-      if (this.workspace && (!this.editMode || !this.dialog || this.jsonView || this.pendingAction || !this.selected_type || !this.structure_data || this.workspace_source !== this.modelValue)) return;
+      if (this.workspace && (!this.mayEdit || !this.dialog || this.jsonView || this.pendingAction || !this.selected_type || !this.structure_data || this.workspace_source !== this.modelValue)) return;
       if (this.workspace) {
         const values = Array.isArray(this.modelValue) ? [...this.modelValue] : [];
         if (this.selected) {
@@ -559,7 +563,7 @@ export default {
 
     removeStructure(structure) {
       if (!this.workspace) return this.remove(this.modelValue, structure);
-      if (!this.editMode || !Array.isArray(this.modelValue)) return;
+      if (!this.mayEdit || !Array.isArray(this.modelValue)) return;
       const index = this.modelValue.indexOf(structure);
       if (index < 0) return;
       this.$emit('update:modelValue', this.modelValue.filter((_, i) => i !== index));
@@ -608,6 +612,7 @@ export default {
   &__empty > .v-icon { color: var(--sd-modern-muted); margin-bottom: 10px; }
   &__empty h3 { margin: 0; font-family: inherit; font-size: 13px !important; font-weight: 500; line-height: 20px; }
   &__empty p { margin: 5px 0 0; font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
+  &__fields { min-width: 0; margin: 0; padding: 0; border: 0; }
 }
 .s-article-structures-refined__dialog {
   --sd-modern-icon-button-size: 32px;
@@ -646,6 +651,33 @@ export default {
   .sd-modern-button.sd-modern-button--compact { min-height: 36px; height: auto; padding: 7px 12px; border-radius: 8px; font-family: inherit; font-size: 12px !important; font-weight: 500; line-height: 20px !important; letter-spacing: 0; text-transform: none; }
   .sd-modern-button :deep(.v-btn__content) { font-family: inherit; font-size: 12px !important; font-weight: 500; line-height: 20px !important; }
 }
+.s-article-structures-refined--blog {
+  width: 100%; max-width: 660px; margin: 26px auto 0; border-radius: 14px;
+  .s-article-structures-refined__heading { margin-bottom: 16px; }
+  .s-article-structures-refined__title-row h2 { font-size: 18px !important; font-weight: 600; line-height: 1.4; letter-spacing: -0.25px; }
+  .s-article-structures-refined__row { grid-template-columns: minmax(0, 1fr) 100px; gap: 12px; }
+  .s-article-structures-refined__copy h3 { font-size: 13px !important; font-weight: 500; line-height: 1.65; }
+  .s-article-structures-refined__copy p { margin-block-start: 5px; font-size: 12px; line-height: 1.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .s-article-structures-refined__type-label { display: inline-block; margin-inline-end: 7px; padding: 3px 6px; border-radius: 4px; background: var(--article-structures-soft); color: var(--sd-modern-muted); font-size: 10px; line-height: 1.5; font-weight: 400; }
+  .s-article-structures-refined__actions { gap: 4px; }
+  .s-article-structures-refined__foot { margin-block-start: 18px; padding: 0; border: 0; line-height: 1.7; }
+  .sd-modern-info-button { width: 24px; height: 24px; color: var(--sd-modern-muted); }
+}
+.s-article-structures-refined--blog, .s-article-structures-refined__dialog--blog {
+  --sd-modern-border: var(--blog-line, rgba(var(--v-theme-on-surface), 0.1));
+  --sd-modern-muted: var(--blog-muted, rgba(var(--v-theme-on-surface), 0.56));
+  --article-structures-soft: var(--blog-cloud, color-mix(in srgb, rgb(var(--v-theme-on-surface)) 3%, rgb(var(--v-theme-surface))));
+  .sd-modern-button.sd-modern-button--compact { min-height: 36px; padding: 8px 12px; border-radius: 10px; }
+  .sd-modern-icon-button { --sd-modern-icon-button-size: 30px; width: 30px; min-width: 30px; height: 30px; padding: 6px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--blog-secondary, rgba(var(--v-theme-on-surface), 0.72)); box-shadow: none; }
+  .sd-modern-icon-button:hover { background: var(--article-structures-soft); }
+}
+.s-article-structures-refined__dialog--blog {
+  border-radius: 16px !important;
+  .s-article-structures-refined__dialog-head h2 { font-size: 18px !important; font-weight: 600; line-height: 1.4; letter-spacing: -0.25px; }
+  .s-article-structures-refined__type strong { font-size: 13px; }
+  .s-article-structures-refined__type small { font-size: 12px; line-height: 1.7; }
+  .s-article-structures-refined__json { padding: 14px; border: 0; border-radius: 8px; font-size: 12px; line-height: 1.8; }
+}
 @media (max-width: 580px) {
   .s-article-structures-refined {
     padding: 18px;
@@ -661,9 +693,13 @@ export default {
     .s-article-structures-refined__dialog-foot { padding: 16px 20px; flex-wrap: wrap; }
     .s-article-structures-refined__dialog-foot > p { max-width: none; }
   }
+  .s-article-structures-refined--blog { padding: 20px; }
+  .s-article-structures-refined--blog .s-article-structures-refined__row { grid-template-columns: minmax(0, 1fr); }
+  .s-article-structures-refined--blog .s-article-structures-refined__actions { grid-column: 1; grid-row: auto; justify-content: flex-start; }
 }
 @media (max-width: 580px), (pointer: coarse) {
   .s-article-structures-refined, .s-article-structures-refined__dialog { --sd-modern-icon-button-size: 44px; .sd-modern-button { min-height: 44px !important; } }
+  .s-article-structures-refined--blog .sd-modern-icon-button, .s-article-structures-refined__dialog--blog .sd-modern-icon-button { width: 44px; min-width: 44px; height: 44px; }
 }
 .s-article-structures--workspace {
   .s-article-structures__heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }

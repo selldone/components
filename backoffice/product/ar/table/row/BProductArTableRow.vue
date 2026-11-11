@@ -151,43 +151,26 @@
     <section v-if="!variant" class="sd-modern-widget b-product-ar-row__main">
       <header class="b-product-ar-row__main-header">
         <div class="b-product-ar-row__main-title">
-          <v-avatar rounded="lg" size="40"
-            ><img
-              v-if="product.icon"
-              :src="getShopImagePath(product.icon)"
-              :alt="product.title"
-            /><v-icon v-else>inventory_2</v-icon></v-avatar
-          >
+          <v-icon class="b-product-ar-row__purpose" icon="inventory_2" size="18" aria-hidden="true" />
           <div>
             <div class="b-product-ar-row__heading-line">
               <h2>{{ $t("product_ar.main_model") }}</h2>
-              <span class="sd-modern-tag">{{
-                $t("product_ar.default_model")
-              }}</span>
             </div>
             <p>{{ $t("product_ar.main_subtitle") }}</p>
           </div>
         </div>
-        <v-btn
-          v-if="editable && enabled"
-          color="primary"
-          variant="flat"
-          class="sd-modern-button sd-modern-button--small sd-modern-button--primary"
-          prepend-icon="upload"
-          @click="openEditor('src')"
-          >{{ $t("product_ar.manage_files") }}</v-btn
-        >
+        <v-btn icon variant="text" class="sd-modern-icon-button sd-modern-info-button" :aria-label="$t('product_ar.main_about')"><v-icon icon="info_outline" size="15" /><v-tooltip activator="parent" location="top" :open-on-click="true" content-class="sd-modern-tooltip text-start">{{ $t('product_ar.help_main') }}</v-tooltip></v-btn>
       </header>
-      <b-product-ar-files
-        :files="files"
-        :editable="editable"
-        :enabled="enabled"
-        :busy-delete-src="busy_delete_src"
-        :busy-delete-ios="busy_delete_ios"
-        @preview="openPreview"
-        @upload="openEditor"
-        @remove="deleteFile"
-      />
+      <div class="b-product-ar-row__model-layout">
+        <b-product-ar-files :files="files" :ar="ar" :editable="editable" :enabled="enabled" :busy-delete-src="busy_delete_src" :busy-delete-ios="busy_delete_ios" @preview="openPreview" @remove="deleteFile" @upload-busy="setUploadBusy" @update:ar="updateAr" />
+        <div class="b-product-ar-row__preview-pane">
+          <v-icon icon="view_in_ar" size="37" aria-hidden="true" />
+          <p>{{ $t(hasSrc ? 'product_ar.preview_ready' : 'product_ar.preview_empty_title') }}</p>
+          <v-btn v-if="hasSrc" class="sd-modern-button sd-modern-button--small b-product-ar-row__preview-button" variant="outlined" prepend-icon="visibility" :disabled="!enabled" :aria-label="$t('product_ar.preview')" @click="openPreview">{{ $t('product_ar.preview_model') }}</v-btn>
+          <small>{{ $t(hasSrc ? 'product_ar.web_android' : 'product_ar.preview_empty_help') }}</small>
+        </div>
+      </div>
+      <p class="b-product-ar-row__immediate"><v-icon icon="check_circle_outline" size="14" aria-hidden="true" />{{ $t('product_ar.upload_immediate') }}</p>
     </section>
     <template v-else>
       <tr
@@ -201,23 +184,16 @@
             :aria-expanded="expanded"
             :aria-controls="detail_id"
             :aria-describedby="`${detail_id}-code`"
-            @click="expanded = !expanded"
+            :disabled="workspaceBusy"
+            @click="toggleExpanded"
           >
-            <v-icon
-              size="14"
-              :class="{ 'b-product-ar-row__chevron--open': expanded }"
-              >chevron_right</v-icon
-            >
-            <variant-item-view-micro :product-variant="variant" />
+            <span class="b-product-ar-row__variant-name"><variant-item-view-micro :product-variant="variant" /><small :id="`${detail_id}-code`"><bdi>SPV{{ variant.id }}</bdi></small></span>
           </button>
-        </td>
-        <td :id="`${detail_id}-code`" class="b-product-ar-row__code">
-          <bdi>SPV{{ variant.id }}</bdi>
         </td>
         <td class="b-product-ar-row__source">
           <span class="b-product-ar-row__state"
             ><i
-              :class="{ 'b-product-ar-row__dot--ready': hasSrc || hasIos }"
+              :class="{ 'b-product-ar-row__dot--ready': hasSrc || hasIos || inherited_ar }"
             ></i
             >{{
               $t(
@@ -230,59 +206,36 @@
             }}</span
           >
         </td>
-        <td class="b-product-ar-row__formats">
-          <template v-if="ar"
-            ><span
-              ><v-icon size="12">{{ hasSrc ? "check" : "remove" }}</v-icon
-              ><bdi>{{ files[0].format }}</bdi></span
-            ><span
-              ><v-icon size="12">{{ hasIos ? "check" : "remove" }}</v-icon
-              ><bdi>USDZ</bdi></span
-            ></template
-          ><span v-else>—</span>
-        </td>
         <td class="b-product-ar-row__action">
           <v-btn
-            v-if="editable && enabled"
             variant="text"
-            color="primary"
-            class="sd-modern-button sd-modern-button--small"
-            :prepend-icon="hasSrc || hasIos ? 'edit' : 'add'"
-            @click="openEditor('src')"
-            >{{
-              $t(
-                hasSrc || hasIos
-                  ? "product_ar.edit_files"
-                  : "product_ar.add_model",
-              )
-            }}</v-btn
+            icon
+            class="sd-modern-icon-button"
+            :aria-label="$t('product_ar.variant_files', { code: `SPV${variant.id}` })"
+            :aria-expanded="expanded"
+            :aria-controls="detail_id"
+            :disabled="workspaceBusy"
+            @click="toggleExpanded"
+            ><v-icon :icon="expanded ? 'expand_less' : 'expand_more'" size="16" /><v-tooltip activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">{{ $t('product_ar.variant_files', { code: `SPV${variant.id}` }) }}</v-tooltip></v-btn
           >
         </td>
       </tr>
       <tr v-if="expanded" :id="detail_id" class="b-product-ar-row__detail">
-        <td colspan="5">
+        <td colspan="3">
+          <div class="b-product-ar-row__inline-editor">
+          <p v-if="!ar" class="b-product-ar-row__inherited"><v-icon :icon="inherited_ar ? 'subdirectory_arrow_right' : 'view_in_ar'" size="18" aria-hidden="true" />{{ $t(inherited_ar ? 'product_ar.inherited_note' : 'product_ar.no_model') }}</p>
           <b-product-ar-files
-            v-if="ar"
             :files="files"
+            :ar="ar"
             :editable="editable"
             :enabled="enabled"
             :busy-delete-src="busy_delete_src"
             :busy-delete-ios="busy_delete_ios"
             @preview="openPreview"
-            @upload="openEditor"
             @remove="deleteFile"
+            @upload-busy="setUploadBusy"
+            @update:ar="updateAr"
           />
-          <div v-else class="b-product-ar-row__inherited">
-            <v-icon size="18">{{
-              inherited_ar ? "subdirectory_arrow_right" : "view_in_ar"
-            }}</v-icon
-            ><span>{{
-              $t(
-                inherited_ar
-                  ? "product_ar.inherited_note"
-                  : "product_ar.no_model",
-              )
-            }}</span>
           </div>
         </td>
       </tr>
@@ -292,20 +245,21 @@
   <v-dialog
     v-if="hasSrc"
     v-model="show"
-    fullscreen
-    scrollable
+    :fullscreen="!modern || $vuetify.display.smAndDown"
+    :max-width="modern ? 1180 : undefined"
+    :aria-labelledby="modern ? `${detail_id}-preview-title` : undefined"
+    :scrollable="!modern"
     transition="dialog-bottom-transition"
   >
     <v-card
       :color="modern ? undefined : '#eee'"
-      :class="modern ? 'sd-modern-canvas b-product-ar-row__dialog' : undefined"
+      :class="modern ? ['sd-modern-canvas b-product-ar-preview__card text-start', { 'b-product-ar-preview__card--fullscreen': $vuetify.display.smAndDown }] : undefined"
     >
-      <header v-if="modern" class="b-product-ar-row__dialog-header">
-        <div>
-          <h2>{{ $t("product_ar.preview_title") }}</h2>
-          <p>
-            {{ product.title }}<bdi v-if="variant"> · SPV{{ variant.id }}</bdi>
-          </p>
+      <header v-if="modern" class="b-product-ar-preview__header">
+        <v-icon icon="view_in_ar" size="23" aria-hidden="true" />
+        <div class="b-product-ar-preview__heading">
+          <h2 :id="`${detail_id}-preview-title`">{{ $t("product_ar.preview_title") }}</h2>
+          <p>{{ product.title }}<bdi v-if="variant"> · SPV{{ variant.id }}</bdi></p>
         </div>
         <v-btn
           icon
@@ -313,39 +267,28 @@
           class="sd-modern-icon-button"
           :aria-label="$t('global.actions.close')"
           @click="show = false"
-          ><v-icon>close</v-icon></v-btn
+          ><v-icon icon="close" size="18" aria-hidden="true" /><v-tooltip activator="parent" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start">{{ $t('global.actions.close') }}</v-tooltip></v-btn
         >
       </header>
-      <v-card-text>
-        <v-container style="max-width: 1200px">
+      <v-card-text :class="modern ? 'b-product-ar-preview__body' : undefined">
+        <component :is="modern ? 'div' : 'v-container'" :class="modern ? 'b-product-ar-preview__stage' : undefined" :style="modern ? undefined : { maxWidth: '1200px' }">
           <iframe
+            v-if="!modern || (show && enabled)"
             :src="getArViewUrl()"
+            :class="modern ? 'b-product-ar-preview__frame' : undefined"
             allowfullscreen="1"
             frameborder="0"
             scrolling="no"
-            style="
-              display: block;
-              min-height: 320px;
-              background: #fff;
-              border-radius: 18px;
-              height: 70vh;
-            "
+            :style="modern ? undefined : { display: 'block', minHeight: '320px', background: '#fff', borderRadius: '18px', height: '70vh' }"
             :title="modern ? $t('product_ar.preview_title') : '3D View'"
             width="100%"
           ></iframe>
-        </v-container>
+        </component>
       </v-card-text>
-      <v-card-title>
-        <div
-          :class="
-            modern ? 'b-product-ar-row__dialog-actions' : 'widget-buttons'
-          "
-        >
+      <v-card-title v-if="!modern">
+        <div class="widget-buttons">
           <v-btn
-            :size="modern ? undefined : 'x-large'"
-            :class="
-              modern ? 'sd-modern-button sd-modern-button--small' : undefined
-            "
+            size="x-large"
             variant="text"
             @click="show = false"
           >
@@ -358,7 +301,7 @@
   </v-dialog>
 
   <v-dialog
-    v-if="editable && enabled"
+    v-if="!modern && editable && enabled"
     v-model="item_edit"
     fullscreen
     scrollable
@@ -384,108 +327,7 @@
         >
       </header>
       <v-card-text>
-        <div v-if="modern" class="b-product-ar-row__upload sd-modern-form">
-          <variant-item-view-micro v-if="variant" :product-variant="variant" />
-          <p class="b-product-ar-row__upload-copy">
-            {{ $t("product_ar.upload_copy") }}
-          </p>
-          <div class="b-product-ar-row__upload-cards">
-            <section
-              v-for="file in files"
-              :key="file.type"
-              class="sd-modern-widget b-product-ar-row__upload-widget"
-              :aria-label="file.type === 'src' ? 'GLB' : 'USDZ'"
-            >
-              <header class="b-product-ar-row__upload-heading">
-                <v-icon size="22">{{
-                  file.type === "src" ? "view_in_ar" : "smartphone"
-                }}</v-icon>
-                <div>
-                  <h3>
-                    <bdi>{{ file.type === "src" ? "GLB" : "USDZ" }}</bdi>
-                  </h3>
-                  <p>
-                    {{
-                      $t(
-                        file.type === "src"
-                          ? "product_ar.web_android"
-                          : "product_ar.ios",
-                      )
-                    }}
-                  </p>
-                </div>
-              </header>
-              <div class="b-product-ar-row__current-file">
-                <i
-                  class="b-product-ar-row__file-dot"
-                  :class="{ 'b-product-ar-row__dot--ready': file.available }"
-                ></i>
-                <div class="b-product-ar-row__current-details">
-                  <span>{{
-                    $t(
-                      file.available
-                        ? "product_ar.current_file"
-                        : "product_ar.no_file",
-                    )
-                  }}</span>
-                  <template v-if="file.available">
-                    <v-tooltip location="top" content-class="sd-modern-tooltip"
-                      ><template #activator="{ props }"
-                        ><span
-                          v-bind="props"
-                          class="b-product-ar-row__current-name"
-                          tabindex="0"
-                          ><bdi>{{ file.name }}</bdi></span
-                        ></template
-                      >{{ file.name }}</v-tooltip
-                    >
-                    <small
-                      ><bdi>{{
-                        numeralFormat(file.size, "0.[0] ib")
-                      }}</bdi></small
-                    >
-                  </template>
-                </div>
-              </div>
-              <s-ar-model-uploader
-                :key="file.type"
-                :ar="ar"
-                :server="getUploadServer(file.type)"
-                :disabled="isOtherUploadBusy(file.type)"
-                :label="
-                  $t(
-                    file.type === 'src'
-                      ? 'product_ar.select_glb'
-                      : 'product_ar.select_usdz',
-                  )
-                "
-                class="b-product-ar-row__card-uploader"
-                max-file-size="20MB"
-                @busy="setUploadBusy(file.type, $event)"
-                @update:ar="updateAr"
-              />
-              <p
-                class="b-product-ar-row__upload-copy"
-                :role="isOtherUploadBusy(file.type) ? 'status' : undefined"
-              >
-                {{
-                  isOtherUploadBusy(file.type)
-                    ? $t("product_ar.upload_wait")
-                    : file.available
-                      ? $t("product_ar.replace_hint")
-                      : ""
-                }}
-              </p>
-            </section>
-          </div>
-          <div class="sd-modern-notice">
-            <v-icon>check_circle_outline</v-icon>
-            <div class="sd-modern-notice__content">
-              {{ $t("product_ar.upload_immediate") }}
-            </div>
-          </div>
-        </div>
-        <div v-else class="widget-box w-100 my-5">
+        <div class="widget-box w-100 my-5">
           <u-widget-header icon="cloud_upload" title="Upload 3D models">
           </u-widget-header>
 
@@ -581,6 +423,7 @@ import BProductArFiles from "../files/BProductArFiles.vue";
 
 export default {
   name: "BProductArTableRow",
+  emits: ['activity'],
   components: {
     BProductArFiles,
     UWidgetHeader,
@@ -607,6 +450,7 @@ export default {
     },
   },
   data: () => ({
+    active: true,
     expanded: false,
     item_edit: false,
     show: false,
@@ -617,6 +461,9 @@ export default {
     busy_delete_ios: false,
   }),
   computed: {
+    workspaceBusy() {
+      return this.show || this.upload_busy.src || this.upload_busy.ios || this.busy_delete_src || this.busy_delete_ios;
+    },
     server() {
       return this.getUploadServer(this.file_type);
     },
@@ -660,12 +507,25 @@ export default {
         folder: this.ar?.[type],
         size: this.ar?.[type === "src" ? "size_src" : "size_ios"],
         url: this.enabled ? this.getFileUrl(type) : undefined,
+        server: this.getUploadServer(type),
+        uploadBusy: this.upload_busy[type],
+        uploadDisabled: this.isOtherUploadBusy(type) || this.busy_delete_src || this.busy_delete_ios,
       }));
     },
   },
+  watch: {
+    workspaceBusy: { immediate: true, handler(busy) { this.$emit('activity', busy); } },
+  },
+  beforeUnmount() {
+    this.active = false;
+    this.$emit('activity', false);
+  },
   methods: {
+    toggleExpanded() {
+      if (!this.workspaceBusy) this.expanded = !this.expanded;
+    },
     getUploadServer(type) {
-      if (!this.editable || !this.enabled || !["src", "ios"].includes(type))
+      if (!this.active || !this.editable || !this.enabled || !["src", "ios"].includes(type))
         return null;
       return window.API.POST_UPLOAD_PRODUCT_3D_MODEL(
         this.shop.id,
@@ -682,12 +542,13 @@ export default {
       this.upload_busy[type] = busy;
     },
     openEditor(type = "src") {
-      if (!this.editable || !this.enabled) return;
+      if (!this.active || !this.editable || !this.enabled) return;
       this.file_type = type;
-      this.item_edit = true;
+      if (this.modern) this.expanded = true;
+      else this.item_edit = true;
     },
     openPreview() {
-      if (this.enabled && this.hasSrc) this.show = true;
+      if (this.active && this.enabled && this.hasSrc) this.show = true;
     },
     getFileUrl(type) {
       if (!this.ar || !this.ar[type]) return null;
@@ -728,25 +589,28 @@ export default {
     getArViewUrl() {
       if (!this.ar) return null;
 
-      return this.window.URLS.ARViewURL(
+      const url = this.window.URLS.ARViewURL(
         this.shop.name,
         this.product.id,
         this.variant ? this.variant.id : "default",
         this.ar.src,
       );
+      // The same renderer serves storefronts; only this editor opts into preview controls.
+      return this.modern ? `${url}?preview=modern&lang=${this.$i18n?.locale === 'fa' ? 'fa' : 'en'}` : url;
     },
     updateAr(ar) {
-      if (!this.editable || !this.enabled) return;
+      if (!this.active || !this.editable || !this.enabled) return;
       if (this.variant) this.variant.ar = ar;
       else this.product.ar = ar;
 
-      this.item_edit = true;
+      if (!this.modern) this.item_edit = true;
     },
 
     deleteFile(file_type) {
       if (
-        !this.editable ||
+        !this.active || !this.editable ||
         !this.enabled ||
+        this.upload_busy.src || this.upload_busy.ios || this.busy_delete_src || this.busy_delete_ios ||
         !["src", "ios"].includes(file_type)
       )
         return;
@@ -757,7 +621,7 @@ export default {
           : "Are you sure to remove this file?",
         this.$t("global.actions.delete"),
         () => {
-          if (!this.editable || !this.enabled) return;
+          if (!this.active || !this.editable || !this.enabled || this.upload_busy.src || this.upload_busy.ios || this.busy_delete_src || this.busy_delete_ios) return;
           if (file_type === "src") this.busy_delete_src = true;
           else this.busy_delete_ios = true;
 
@@ -770,6 +634,7 @@ export default {
             )
 
             .then(({ ar }) => {
+              if (!this.active) return;
               if (this.variant) {
                 this.variant.ar = ar;
               } else {
@@ -791,382 +656,86 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.b-product-ar-preview__card {
+  --sd-modern-icon-button-size: 36px;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr);
+  flex: none !important;
+  height: min(860px, calc(100dvh - 64px));
+  max-height: calc(100dvh - 64px);
+  min-height: 0;
+  overflow: hidden !important;
+  border-radius: 20px !important;
+  .b-product-ar-preview__header { display: flex; align-items: flex-start; gap: 12px; padding: 19px 21px; border-block-end: 1px solid var(--sd-modern-border); }
+  .b-product-ar-preview__header > .v-icon { flex-shrink: 0; margin-block-start: 3px; color: var(--sd-modern-muted); }
+  .b-product-ar-preview__heading { flex: 1; min-width: 0; }
+  .b-product-ar-preview__heading h2 { margin: 0; font-size: 18px; line-height: 26px; font-weight: 500; }
+  .b-product-ar-preview__heading p { margin: 3px 0 0; font-size: 13px; line-height: 20px; color: var(--sd-modern-muted); overflow-wrap: anywhere; }
+  .b-product-ar-preview__header > .v-btn { flex-shrink: 0; }
+  .b-product-ar-preview__body { min-height: 0; padding: 0 !important; overflow: hidden !important; display: grid; }
+  .b-product-ar-preview__stage { display: grid; min-width: 0; min-height: 0; height: 100%; background: var(--sd-modern-inset); }
+  .b-product-ar-preview__frame { display: block; width: 100%; height: 100%; min-width: 0; min-height: 0; border: 0; }
+  &--fullscreen {
+    --sd-modern-icon-button-size: 44px;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0 !important;
+    .b-product-ar-preview__header { padding-block: calc(13px + env(safe-area-inset-top)) 13px; padding-inline: max(16px, env(safe-area-inset-left), env(safe-area-inset-right)); gap: 10px; }
+  }
+  @media (pointer: coarse) { --sd-modern-icon-button-size: 44px; }
+}
 .b-product-ar-row {
-  td {
-    padding: 7px 12px !important;
-    height: 52px !important;
-    font-size: 13px;
-    line-height: 20px;
-    border-radius: 0;
-  }
-  &--expanded {
-    background: var(--sd-modern-inset);
-  }
-  &__main {
-    padding: 0 20px 12px;
-  }
-  &__main-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 14px;
-    padding: 19px 0 16px;
-  }
-  &__main-title {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    min-width: 0;
-  }
-  &__main-title .v-avatar {
-    flex-shrink: 0;
-    background: var(--sd-modern-inset);
-    border: 1px solid var(--sd-modern-border);
-  }
-  &__main-title img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-  &__heading-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  &__main-header h2 {
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: 500;
-  }
-  &__main-header p {
-    font-size: 13px;
-    line-height: 20px;
-    color: var(--sd-modern-muted);
-    margin: 5px 0 0;
-  }
-  &__main-header > .v-btn {
-    flex-shrink: 0;
-  }
-  &__identity {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    text-align: start;
-    width: 100%;
-    color: inherit;
-    min-width: 0;
-  }
-  &__code {
-    color: var(--sd-modern-muted);
-    font-size: 12px !important;
-    white-space: nowrap;
-  }
-  &__identity > .v-icon {
-    flex-shrink: 0;
-    color: var(--sd-modern-muted);
-  }
-  &__identity :deep(.product-variant-card-micro) {
-    min-width: 0;
-    flex-wrap: wrap;
-    gap: 3px;
-    font-size: 13px;
-    font-weight: 400;
-  }
-  &__identity:focus-visible {
-    outline: 2px solid rgb(var(--v-theme-primary));
-    outline-offset: 3px;
-    border-radius: 6px;
-  }
-  &__chevron--open {
-    transform: rotate(90deg);
-  }
-  &__state {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-  }
-  &__state i {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    background: var(--sd-modern-muted);
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  &__dot--ready {
-    background: rgb(var(--v-theme-success)) !important;
-  }
-  &__formats > span {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    margin-inline-end: 8px;
-    font-size: 11px;
-    color: var(--sd-modern-muted);
-  }
-  &__action {
-    text-align: end;
-  }
-  &__detail > td {
-    padding: 0 0 12px !important;
-    height: auto !important;
-    border-bottom: 1px solid var(--sd-modern-border);
-  }
-  &__detail :deep(.b-product-ar-files) {
-    background: var(--sd-modern-inset);
-  }
-  &__detail :deep(thead) {
-    display: none;
-  }
-  &__inherited {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px;
-    background: var(--sd-modern-inset);
-    color: var(--sd-modern-muted);
-    border-radius: 8px;
-    font-size: 12px;
-  }
-  &__dialog-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 20px max(24px, calc((100% - 1040px) / 2));
-    background: rgb(var(--v-theme-surface));
-    border-bottom: 1px solid var(--sd-modern-border);
-  }
-  &__dialog-header h2 {
-    font-family: inherit;
-    font-size: 20px;
-    line-height: 28px;
-    font-weight: 500;
-    margin: 0;
-  }
-  &__dialog {
-    --sd-modern-icon-button-size: 32px;
-    text-align: start;
-  }
-  &__dialog .sd-modern-button--small {
-    font-size: 13px;
-    line-height: 20px;
-    min-height: 36px;
-    padding: 7px 12px;
-  }
-  &__dialog :deep(.sd-modern-icon-button .v-icon) {
-    font-size: 16px;
-  }
-  &__dialog-header p {
-    font-size: 12px;
-    line-height: 19px;
-    color: var(--sd-modern-muted);
-    margin-top: 4px;
-  }
-  &__dialog :deep(.v-card-text) {
-    min-height: 0;
-    padding: 28px 20px;
-  }
-  &__dialog :deep(.v-card-title) {
-    padding: 12px max(24px, calc((100% - 1040px) / 2));
-    border-top: 1px solid var(--sd-modern-border);
-    background: rgb(var(--v-theme-surface));
-  }
-  &__dialog-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-  &__upload {
-    width: 100%;
-    max-width: 1040px;
-    display: grid;
-    gap: 18px;
-  }
-  &__upload-cards {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-  }
-  &__upload-widget {
-    display: grid;
-    grid-row: span 4;
-    grid-template-rows: subgrid;
-    min-width: 0;
-    padding: 22px;
-  }
-  &__upload-heading {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  &__upload-heading > .v-icon {
-    color: var(--sd-modern-muted);
-    margin-top: 2px;
-    flex-shrink: 0;
-  }
-  &__upload-heading p {
-    color: var(--sd-modern-muted);
-    font-size: 12px;
-    line-height: 19px;
-    margin: 2px 0 0;
-  }
-  &__card-uploader {
-    width: 100%;
-    min-width: 0;
-    align-self: start;
-  }
-  &__upload-copy,
-  &__current-file {
-    color: var(--sd-modern-muted);
-    font-size: 13px;
-    line-height: 20px;
-    margin: 0;
-  }
-  &__current-file {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding-block: 4px;
-  }
-  &__current-details {
-    min-width: 0;
-    flex: 1;
-  }
-  &__current-name {
-    display: block;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: rgb(var(--v-theme-on-surface));
-  }
-  &__current-details small {
-    font-size: 11px;
-    line-height: 17px;
-  }
-  &__file-dot {
-    width: 6px;
-    height: 6px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    margin-top: 7px;
-    background: var(--sd-modern-muted);
-  }
-  &__upload-widget h3 {
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 24px;
-  }
-  @media (max-width: 760px) {
-    &__upload-cards {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    &__upload-widget {
-      padding: 18px;
-    }
-  }
+  td { padding: 11px 10px !important; height: 59px !important; font-size: 12px; line-height: 19px; border-radius: 0; border-bottom: 1px solid var(--sd-modern-border); }
+  &__main { padding: 21px; }
+  &__main-header { display: flex; align-items: flex-start; gap: 10px; margin-block-end: 20px; }
+  &__main-title { display: flex; align-items: flex-start; gap: 10px; min-width: 0; flex: 1; }
+  &__purpose { flex-shrink: 0; color: var(--sd-modern-muted); margin-block-start: 3px; }
+  &__main-header h2 { margin: 0; font-size: 15px; line-height: 23px; font-weight: 500; }
+  &__main-header p { margin: 3px 0 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  &__model-layout { display: grid; grid-template-columns: minmax(0, 1fr) 220px; align-items: start; gap: 21px; }
+  &__preview-pane { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; min-width: 0; min-height: 218px; padding: 17px 10px; background: var(--sd-modern-inset); border-radius: 11px; }
+  &__preview-pane > .v-icon { color: var(--sd-modern-muted); }
+  &__preview-pane p { margin: 0; font-size: 12px; line-height: 19px; }
+  &__preview-pane small { max-width: 145px; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
+  &__preview-button { max-inline-size: 100%; min-width: 0; white-space: normal; height: auto; }
+  &__preview-button :deep(.v-btn__content) { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+  &__immediate { display: flex; align-items: flex-start; gap: 6px; margin: 14px 0 0; color: var(--sd-modern-muted); font-size: 11px; line-height: 18px; }
+  &__immediate .v-icon { flex-shrink: 0; margin-block-start: 2px; }
+  &__identity { display: flex; align-items: center; gap: 8px; width: 100%; text-align: start; color: inherit; min-width: 0; }
+  &__identity:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; border-radius: 6px; }
+  &__variant-name { display: block; min-width: 0; }
+  &__variant-name small { display: block; margin-block-start: 1px; color: var(--sd-modern-muted); font-size: 10px; line-height: 17px; }
+  &__identity :deep(.product-variant-card-micro) { min-width: 0; flex-wrap: wrap; gap: 3px; font-size: 12px; font-weight: 400; }
+  &__state { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; line-height: 18px; color: var(--sd-modern-muted); }
+  &__state i { width: 5px; height: 5px; flex-shrink: 0; background: var(--sd-modern-muted); border-radius: 50%; }
+  &__dot--ready { background: rgb(var(--v-theme-success)) !important; }
+  &__action { text-align: end; }
+  &__detail > td { height: auto !important; padding: 0 10px 12px !important; }
+  &__inline-editor { padding: 17px; background: var(--sd-modern-inset); border-radius: 9px; }
+  &__inherited { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 11px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  &__inherited .v-icon { flex-shrink: 0; }
+  &__dialog { --sd-modern-icon-button-size: 32px; text-align: start; }
+  &__dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px max(24px, calc((100% - 1040px) / 2)); background: rgb(var(--v-theme-surface)); border-bottom: 1px solid var(--sd-modern-border); }
+  &__dialog-header h2 { margin: 0; font-family: inherit; font-size: 20px; line-height: 28px; font-weight: 500; }
+  &__dialog-header p { margin: 4px 0 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
+  &__dialog :deep(.v-card-text) { min-height: 0; padding: 28px 20px; }
+  &__dialog :deep(.v-card-title) { padding: 12px max(24px, calc((100% - 1040px) / 2)); border-top: 1px solid var(--sd-modern-border); background: rgb(var(--v-theme-surface)); }
+  &__dialog-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
   @media (max-width: 680px) {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 6px 10px;
-    padding: 11px 12px;
-    border-bottom: 1px solid var(--sd-modern-border);
-    td {
-      height: auto !important;
-      min-width: 0;
-      padding: 0 !important;
-      border: 0 !important;
-    }
-    &__identity-cell {
-      grid-column: 1;
-    }
-    &__code {
-      grid-column: 2;
-      grid-row: 1;
-      text-align: end;
-      align-self: center;
-    }
-    &__source {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    &__formats {
-      grid-column: 1;
-      grid-row: 3;
-    }
-    &__action {
-      grid-column: 2;
-      grid-row: 2 / 4;
-      align-self: center;
-    }
-    &__detail {
-      display: block;
-    }
-    &__detail > td {
-      display: block;
-      width: 100%;
-      padding-top: 6px !important;
-    }
-    &__main {
-      padding: 0 14px 10px;
-    }
-    &__main-header {
-      padding-top: 16px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    &__main-header > .v-btn {
-      margin-inline-start: auto;
-    }
-    &__dialog-header {
-      padding: 17px 18px;
-    }
-    &__dialog .sd-modern-button--small {
-      min-height: 44px;
-    }
-    &__dialog-header h2 {
-      font-size: 18px;
-    }
-    &__dialog :deep(.v-card-text) {
-      padding: 20px 16px;
-    }
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 44px; align-items: center; gap: 8px; padding: 11px 2px; border-bottom: 1px solid var(--sd-modern-border);
+    td { height: auto !important; min-width: 0; padding: 0 !important; border: 0 !important; }
+    &__detail { display: block; }
+    &__detail > td { display: block; width: 100%; padding: 0 0 12px !important; }
+    &__main { padding: 17px; }
+    &__model-layout { grid-template-columns: minmax(0, 1fr); }
+    &__preview-pane { min-height: 135px; }
+    &__dialog-header { padding: 17px 18px; }
+    &__dialog-header h2 { font-size: 18px; }
+    &__dialog :deep(.v-card-text) { padding: 20px 16px; }
   }
-  @media (pointer: coarse) {
-    &__identity {
-      min-height: 44px;
-    }
-    &__dialog {
-      --sd-modern-icon-button-size: 44px;
-    }
-    &__dialog .sd-modern-button--small {
-      min-height: 44px;
-    }
+  @media (max-width: 680px), (pointer: coarse) {
+    &__identity { min-height: 44px; }
+    &__dialog { --sd-modern-icon-button-size: 44px; }
   }
-  @media (max-width: 380px) {
-    &__source {
-      grid-column: 1 / -1;
-    }
-    &__formats {
-      grid-column: 1 / -1;
-      grid-row: 3;
-    }
-    &__action {
-      grid-column: 1 / -1;
-      grid-row: 4;
-      justify-self: end;
-    }
-  }
-}
-.v-locale--is-rtl .b-product-ar-row__identity > .v-icon {
-  transform: scaleX(-1);
-}
-.v-locale--is-rtl
-  .b-product-ar-row__identity
-  > .b-product-ar-row__chevron--open {
-  transform: rotate(90deg);
 }
 </style>

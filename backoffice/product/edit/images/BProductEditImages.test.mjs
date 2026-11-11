@@ -326,6 +326,10 @@ test("the actual modern template binds immediate upload callbacks and defers its
   const nodes = renderedNodes(descriptor, state);
   const uploader = nodes.find(node => node.type === "s-image-uploader");
   assert.equal(uploader.props.modern, "");
+  const videoUploader = nodes.find(node => node.type === "s-video-uploader");
+  assert.equal(videoUploader.props.modern, "");
+  assert.equal(videoUploader.props.server, state.upload_video_url);
+  assert.equal(videoUploader.props["max-file-size"], "20MB");
   uploader.props.onNewPath("products/rendered.webp");
   assert.equal(state.product.icon, "products/rendered.webp");
   const save = nodes.filter(node => node.props?.["aria-keyshortcuts"] === "Control+s");
@@ -643,4 +647,74 @@ test("video upload abort/error refreshes native activity and its input honors di
   files = [{ status: 6 }];
   state.handleFilePondError({ body: "Fixture upload failed" }); await setImmediate();
   assert.equal(notices.at(-1).method, "showErrorAlert"); assert.deepEqual(events.at(-1), ["activity", false]);
+});
+
+test("modern video selection and drop retain FilePond validation, credentials and its single-file queue", async () => {
+  const { state, component, descriptor } = fixture("video", { modern: true, server: "/fixture/video-upload", maxFileSize: "20MB" });
+  const calls = [];
+  state.$refs.pond = {
+    browse: () => calls.push("browse"),
+    addFile: file => { calls.push(file); return Promise.resolve(); },
+    getFiles: () => [],
+  };
+  const nodes = () => renderedNodes(descriptor, state);
+  const picker = () => nodes().find(node => node.type === "v-btn" && node.props.onClick === state.browseVideo);
+  const pond = () => nodes().find(node => node.type === "file-pond").props;
+  assert.equal(component.props.modern.default, false);
+  assert.equal(picker().props.disabled, true, "The asynchronous FilePond component must be ready before browsing");
+  state.browseVideo(); state.dropVideo({ dataTransfer: { files: [{}] } });
+  assert.deepEqual(calls, []);
+  pond().onInit();
+  assert.equal(picker().props.disabled, false);
+  picker().props.onClick();
+  const first = { name: "first.mp4" }, second = { name: "second.mp4" };
+  await state.dropVideo({ dataTransfer: { files: [first, second] } });
+  assert.deepEqual(calls, ["browse", first], "Native validation receives the first file without enabling multiple uploads");
+  for (const key of ["disabled", "upload_active"]) {
+    state[key] = true;
+    assert.equal(picker().props.disabled, true);
+    state.browseVideo(); state.dropVideo({ dataTransfer: { files: [second] } });
+    assert.deepEqual(calls, ["browse", first], key);
+    state[key] = false;
+  }
+  state.dropVideo({}); state.dropVideo({ dataTransfer: { files: [] } });
+  assert.deepEqual(calls, ["browse", first]);
+  assert.equal(pond()["allow-multiple"], false);
+  assert.equal(pond()["max-files"], 1);
+  assert.equal(pond().maxFileSize, "20MB");
+  assert.equal(pond().name, "video");
+  assert.deepEqual(plain(pond()["accepted-file-types"]), plain(state.acceptedFileTypes));
+  assert.equal(pond().server.url, "/fixture/video-upload");
+  assert.equal(pond().server.process.method, "POST");
+  assert.equal(pond().server.process.withCredentials, true);
+  assert.equal(pond().server.revert, null, "Removing a queue receipt cannot delete a saved video");
+  state.modern = false;
+  assert.equal(picker(), undefined, "Legacy callers keep their native uploader");
+  assert.equal(pond().disabled, false);
+});
+
+test("modern video queue follows native pending, failure, removal and unmount lifecycle", async () => {
+  const { state, component, events } = fixture("video", { modern: true });
+  let files = [];
+  state.$refs.pond = { getFiles: () => files };
+  for (const status of [1, 3, 7, 9]) {
+    files = [{ status }]; state.refreshActivity(); await setImmediate();
+    assert.equal(state.has_files, true);
+    assert.equal(state.upload_active, true);
+    assert.deepEqual(events.at(-1), ["activity", true]);
+  }
+  for (const status of [2, 5, 6]) {
+    files = [{ status }]; state.refreshActivity(); await setImmediate();
+    assert.equal(state.has_files, true, "Failed, aborted or complete queue rows stay visible for their native actions");
+    assert.equal(state.upload_active, false);
+    assert.deepEqual(events.at(-1), ["activity", false]);
+  }
+  files = []; state.refreshActivity(); await setImmediate();
+  assert.equal(state.has_files, false);
+  assert.equal(state.upload_active, false);
+  files = [{ status: 3 }]; state.refreshActivity(); component.beforeUnmount.call(state);
+  assert.deepEqual(events.at(-1), ["activity", false], "Unmount releases any parent upload guard");
+  const eventCount = events.length;
+  await setImmediate();
+  assert.equal(events.length, eventCount, "A pending callback cannot publish activity after the uploader leaves the product");
 });

@@ -64,6 +64,10 @@ const flowHelpers = load(
 );
 const helpers = load(
   readFileSync(new URL("./article-flowchart.ts", import.meta.url), "utf8"),
+  { "./flow-content": flowHelpers },
+);
+const samples = JSON.parse(
+  readFileSync(new URL("./article-flowchart-samples.json", import.meta.url), "utf8"),
 );
 let enabled = true;
 let nativeInputs = 0;
@@ -163,6 +167,7 @@ const Dialog = await component(
     "vue-prism-editor/dist/prismeditor.min.css": {},
     "./SArticleFlow.vue": { default: SharedFlow },
     "./article-flowchart": helpers,
+    "./article-flowchart-samples.json": { default: samples },
   },
   { navigator: dom.window.navigator },
 );
@@ -363,7 +368,7 @@ test("malformed or executable definitions fail closed without silently dropping 
     },
     { ...sample, edges: [{ from: "request", to: "unknown" }] },
     { ...sample, edges: [{ from: "request", to: "request" }] },
-    { ...sample, edges: Array(13).fill(sample.edges[0]) },
+    { ...sample, edges: Array(49).fill(sample.edges[0]) },
     { ...sample, edges: [{ ...sample.edges[0], action: "fetch" }] },
   ];
   for (const value of cases)
@@ -404,6 +409,43 @@ test("serialization reconstructs only inert metadata and escaped canonical JSON"
   assert.equal(saved.querySelectorAll("svg, button, script").length, 0);
   element.setAttribute("data-version", "2");
   assert.equal(helpers.parseArticleFlowchartElement(element), null);
+});
+
+test("larger diagrams round-trip at the 24-node and 48-edge bounds", () => {
+  const nodes = Array.from({ length: 24 }, (_, index) => ({
+    id: `step${index}`,
+    label: `Step ${index + 1}`,
+  }));
+  const edges = [1, 2].flatMap((distance) =>
+    nodes.map((node, index) => ({
+      from: node.id,
+      to: nodes[(index + distance) % nodes.length].id,
+      label: `Path ${distance}`,
+    })),
+  );
+  const input = { type: "flow", title: "A larger workflow", nodes, edges };
+  const flow = helpers.parseArticleFlowchart(input);
+  assert(flow);
+  assert.equal(flow.nodes.length, 24);
+  assert.equal(flow.edges.length, 48);
+  assert.deepEqual(plain(flowHelpers.normalizeDocFlow(flow)), plain(flow));
+  assert.deepEqual(
+    plain(helpers.parseArticleFlowchartElement(JSDOM.fragment(
+      helpers.serializeArticleFlowchart(flow),
+    ).firstElementChild)),
+    plain(flow),
+  );
+  for (const invalid of [
+    { ...input, nodes: [...nodes, { id: "extra", label: "Extra step" }] },
+    { ...input, edges: [...edges, { from: "step0", to: "step3" }] },
+  ]) {
+    assert.equal(helpers.parseArticleFlowchart(invalid), null);
+    assert.equal(flowHelpers.normalizeDocFlow(invalid), null);
+  }
+  for (const sample of samples) {
+    assert(helpers.parseArticleFlowchart(sample.flowchart), sample.id);
+    assert(flowHelpers.normalizeDocFlow(sample.flowchart), sample.id);
+  }
 });
 
 test("the real article figure uses API Docs branching, outcomes and text explanation and excludes shop Blog", async () => {
@@ -1548,6 +1590,40 @@ test("unsupported article types never open the authoring dialog and closed callb
     $emit: (...args) => events.push(args),
   });
   assert.equal(events.length, 0);
+});
+
+test("sample actions load editable JSON and responsive preview modes preserve the draft", async () => {
+  const fixture = dialogApp();
+  await Vue.nextTick();
+  assert.equal(dom.window.document.querySelectorAll("[data-sample]").length, 5);
+  for (const sample of samples) {
+    dom.window.document.querySelector(`[data-sample="${sample.id}"]`).click();
+    await Vue.nextTick();
+    assert.deepEqual(plain(fixture.dialog.parsed), plain(helpers.parseArticleFlowchart(sample.flowchart)));
+    assert.equal(dom.window.document.querySelectorAll(".api-doc-content__tile").length, sample.flowchart.nodes.length);
+    assert.equal(fixture.events.length, 0, "Loading a sample must not apply it to the article.");
+  }
+  const draft = fixture.dialog.code;
+  await fixture.dialog.copyPrompt();
+  assert.match(copied.at(-1), /From checkout to delivery/);
+  assert.match(copied.at(-1), /2–24 nodes/);
+  dom.window.document.querySelector('[data-preview-mode="mobile"]').click();
+  await Vue.nextTick();
+  assert(dom.window.document.querySelector(".a-article-flowchart-dialog__preview-frame--mobile"));
+  assert.equal(dom.window.document.querySelector('[data-preview-mode="mobile"]').getAttribute("aria-pressed"), "true");
+  assert.equal(fixture.dialog.code, draft);
+  dom.window.document.querySelector('[data-preview-mode="desktop"]').click();
+  await Vue.nextTick();
+  assert.equal(dom.window.document.querySelector(".a-article-flowchart-dialog__preview-frame--mobile"), null);
+  assert.equal(fixture.dialog.code, draft);
+  fixture.dialog.loadSample("unknown");
+  assert.equal(fixture.dialog.code, draft);
+  fixture.props.modelValue = false;
+  await Vue.nextTick();
+  fixture.dialog.loadSample("linear");
+  assert.equal(fixture.dialog.code, "", "A stale sample callback cannot reopen or populate a closed editor.");
+  await new Promise((resolve) => setImmediate(resolve));
+  fixture.application.unmount();
 });
 
 test("clipboard denial stays visible and retryable while late copy results cannot cross dialog contexts", async () => {

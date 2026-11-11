@@ -4,17 +4,22 @@ import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 import test from 'node:test';
 import { parse, compileScript, compileTemplate, compileStyle } from '@vue/compiler-sfc';
+import * as Vue from 'vue';
+import { renderToString } from '@vue/server-renderer';
 import ts from 'typescript';
 
 const filename = fileURLToPath(new URL('./SStructureDataInput.vue', import.meta.url));
 const { descriptor, errors } = parse(readFileSync(filename, 'utf8'), { filename });
 assert.deepEqual(errors, []);
 const script = compileScript(descriptor, { id: 'structure-input-test' });
-assert.deepEqual(compileTemplate({ source: descriptor.template.content, filename, id: 'structure-input-test', compilerOptions: { bindingMetadata: script.bindings } }).errors, []);
+const template = compileTemplate({ source: descriptor.template.content, filename, id: 'structure-input-test', compilerOptions: { bindingMetadata: script.bindings } });
+assert.deepEqual(template.errors, []);
 for (const style of descriptor.styles) assert.deepEqual(compileStyle({ source: style.content, filename, id: 'structure-input-test', scoped: style.scoped, preprocessLang: style.lang }).errors, []);
 const exports = {};
 vm.runInNewContext(ts.transpileModule(descriptor.script.content, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { exports, require: () => ({ default: {} }) });
 const component = exports.default;
+const templateExports = {};
+vm.runInNewContext(ts.transpileModule(template.code, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { exports: templateExports, require: () => Vue });
 const plain = value => JSON.parse(JSON.stringify(value));
 function fixture(props = {}) {
   const events = [];
@@ -111,4 +116,20 @@ test('legacy initialization retains the existing eager value contract', () => {
   const f = fixture({ workspace: false, type: '@Person' });
   component.created.call(f.state);
   assert.deepEqual(plain(f.events[0]), ['update:modelValue', { '@type': 'Person' }]);
+});
+
+test('Blog appearance reaches nested editable fields while other workspaces retain underlined controls', async () => {
+  assert.equal(component.props.blog.default, false);
+  const saved = { '@type': 'Person', name: 'Saved author', custom: 'Preserved' };
+  for (const blog of [true, false]) {
+    const app = Vue.createSSRApp({ ...component, render: templateExports.render }, { workspace: true, blog, type: '@Person', name: 'author', modelValue: saved });
+    app.config.globalProperties.$t = key => key;
+    app.component('v-text-field', { render() { return Vue.h('input', this.$attrs); } });
+    const html = await renderToString(app);
+    assert.match(html, /model-value="Saved author"/);
+    assert.match(html, /aria-label="global.article.workspace.structure_fields.name"/);
+    assert.match(html, blog ? /variant="outlined" density="compact"/ : /variant="underlined"/);
+    assert.equal(html.includes('s-structure-input--blog'), blog);
+  }
+  assert.deepEqual(saved, { '@type': 'Person', name: 'Saved author', custom: 'Preserved' });
 });

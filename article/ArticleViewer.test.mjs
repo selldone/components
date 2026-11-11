@@ -133,12 +133,13 @@ function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp, c
     }, SArticleComments: {
       render() { return Vue.h("section", { "data-public-comments": "true" }, this.$slots.login?.()); },
     }, SArticleSearchConsole: {
-      props: { workspace: Boolean },
-      render() { return Vue.h("div", { ...this.$attrs, "data-search-console-workspace": this.workspace }); },
+      props: { workspace: Boolean, blog: Boolean },
+      render() { return Vue.h("div", { ...this.$attrs, "data-search-console-workspace": this.workspace,
+        "data-search-console-blog": this.blog, "data-search-console-key": this.$.vnode.key }); },
     }, SArticleWorkspaceFaqs: {
-      props: ["modelValue", "active", "editMode", "disabled"],
+      props: { modelValue: Array, active: Boolean, editMode: Boolean, disabled: Boolean, blog: Boolean, preview: { type: Boolean, default: true } },
       render() { return Vue.h("div", { ...this.$attrs, "data-workspace-faqs": "true",
-        "data-faqs-active": this.active, "data-faqs-editable": this.editMode && !this.disabled },
+        "data-faqs-active": this.active, "data-faqs-editable": this.editMode && !this.disabled, "data-faqs-blog": this.blog, "data-faqs-preview": this.preview },
         (this.modelValue || []).map((item) => Vue.h("p", item.question))); },
     }, ...components },
     data: () => Object.fromEntries(Object.keys(f.component.data()).map((key) => [key, f.state[key]])),
@@ -262,7 +263,7 @@ test("Help reader callbacks recheck current authorization, operation state and c
     (state) => { state.USER_ID = () => 4; },
     (state) => { state._workspaceGeneration++; },
   ];
-  const actions = ["edit", "preview", "save", "discard", "delete", "schedule", "googleSearch", "word", "autoFix"];
+  const actions = ["edit", "preview", "save", "publish", "saveDraft", "discard", "delete", "schedule", "googleSearch", "word", "autoFix"];
   for (const mutate of mutations) {
     const f = helpReaderFixture({ render_state: "editing" });
     const slot = f.state.helpReaderSlot;
@@ -291,6 +292,80 @@ test("Help reader preview preserves untouched rich blocks and captures changed e
   assert.equal(f.state.article.title, "Edited Help title");
   assert.equal(f.state.article.body, "<h2>Edited content</h2><p>Keep this edit.</p>");
   assert.equal(f.state.helpReaderDirty, true);
+});
+
+test('Help publishes an unscheduled draft publicly in one native save and keeps failed publication editable', async () => {
+  const richBody = '<div data-block="catalog" data-value="saved">Stored rich block</div>';
+  const f = helpReaderFixture({ render_state: 'editing', isPrivate: true,
+    article: { ...pack().article, private: true, body: richBody } });
+  f.state.$refs.editorContainer.state = 'no-change';
+  assert.equal(f.state.helpReaderSlot.canPublish, true);
+  assert.equal(f.state.helpReaderSlot.publish(), true);
+  assert.equal(f.requests.length, 1);
+  assert.equal(f.requests[0].url, '/POST_ADD_EDIT_ARTICLE/help');
+  assert.equal(f.requests[0].payload.published, true);
+  assert.equal(f.requests[0].payload.private, false);
+  assert.equal(f.requests[0].payload.schedule_at, null);
+  assert.equal(f.requests[0].payload.body, richBody);
+  assert.equal(f.state.article.published, false, 'The local action is not a confirmed publication');
+  assert.equal(f.state.render_state, 'editing');
+  assert.equal(f.state.helpReaderSlot.publish(), false, 'Double activation cannot submit while saving');
+  f.requests[0].resolve({ data: { error: true, error_msg: 'Synthetic validation error' } }); await settle();
+  assert.equal(f.state.render_state, 'editing'); assert.equal(f.state.helpReaderDirty, true);
+  assert.equal(f.state.helpReaderSlot.publish(), true);
+  f.requests[1].resolve({ data: { id: 12, changes: { published: true, private: false }, menu: {} } }); await settle();
+  assert.equal(f.state.article.published, true); assert.equal(f.state.article.private, false);
+  assert.equal(f.state.render_state, 'review'); assert.equal(f.state.helpReaderSlot.canPublish, false);
+});
+
+test('Help Save draft preserves visibility and scheduled publication cannot be replaced by Publish', () => {
+  const draft = helpReaderFixture({ render_state: 'editing', published_state: true, isPrivate: true });
+  assert.equal(draft.state.helpReaderSlot.saveDraft(), true);
+  assert.equal(draft.requests[0].payload.published, false);
+  assert.equal(draft.requests[0].payload.private, true);
+  const privatePublication = helpReaderFixture({ render_state: 'editing', published_state: true, isPrivate: true });
+  assert.equal(privatePublication.state.helpReaderSlot.canPublish, true);
+  assert.equal(privatePublication.state.helpReaderSlot.save(), true);
+  assert.equal(privatePublication.requests[0].payload.published, true);
+  assert.equal(privatePublication.requests[0].payload.private, true, 'Ordinary Save retains explicitly selected private publication');
+  for (const mutate of [
+    (state) => { state.schedule_at = '2027-01-01T12:00:00Z'; },
+    (state) => { state.article.published = true; state.published_state = true; },
+    (state) => { state.help_faq_pending = true; },
+    (state) => { state.help_schema_pending = true; },
+    (state) => { state.flowchart_pending = true; },
+    (state) => { state.render_state = 'review'; },
+  ]) {
+    const f = helpReaderFixture({ render_state: 'editing' }), actions = f.state.helpReaderSlot;
+    mutate(f.state);
+    const published = f.state.published_state;
+    assert.equal(actions.publish(), false); assert.equal(actions.saveDraft(), false);
+    assert.equal(f.state.published_state, published); assert.equal(f.requests.length, 0);
+  }
+  const pending = helpReaderFixture({ render_state: 'editing', help_schema_pending: true });
+  assert.equal(pending.state.helpReaderSlot.setPublished(true), false);
+  assert.equal(pending.state.helpReaderSlot.setPrivate(true), false);
+  assert.equal(pending.requests.length, 0);
+});
+
+test('Help future scheduling follows native unpublished semantics and stays clean after confirmed save', async () => {
+  const f = helpReaderFixture({ render_state: 'editing', published_state: true,
+    article: { ...pack().article, published: true } });
+  const future = new Date(Date.now() + 86_400_000).toISOString();
+  assert.equal(f.state.helpReaderSlot.setScheduleAt(future), true);
+  assert.equal(f.state.published_state, false);
+  assert.equal(f.state.helpReaderSlot.canPublish, false);
+  assert.equal(f.state.helpReaderSlot.setPublished(true), false);
+  assert.equal(f.requests.length, 0, 'Scheduling only updates the current draft');
+  f.state.helpReaderSlot.save();
+  assert.equal(f.requests[0].payload.published, false);
+  assert.equal(f.requests[0].payload.schedule_at, `utc:${future}`);
+  f.requests[0].resolve({ data: { id: 12, menu: {}, changes: { published: false } } }); await settle();
+  assert.equal(f.state.helpReaderDirty, false);
+  f.state.render_state = 'editing';
+  assert.equal(f.state.helpReaderSlot.setScheduleAt(null), true);
+  assert.equal(f.state.published_state, false, 'Removing a schedule does not publish a guide');
+  assert.equal(f.state.helpReaderSlot.canPublish, true);
 });
 
 test("Help reader saves preserve untouched rich body for metadata edits and serialize actual content edits", async () => {
@@ -457,7 +532,7 @@ test("Help reader confirmed discard uses the saved article endpoint and state ev
   assert.equal(f.state.helpReaderState.showContent, false);
 });
 
-test('Help tabs keep the native editor, settings and FAQ mounted while protecting pending dialog drafts', async () => {
+test('Help tabs isolate details and SEO while keeping native content and unapplied forms mounted', async () => {
   const node = (type, text = '') => ({ type, text, props: {}, style: { display: '' }, children: [], parent: null });
   const renderer = Vue.createRenderer({
     createElement: node, createText: (text) => node('text', text), createComment: (text) => node('comment', text),
@@ -489,10 +564,15 @@ test('Help tabs keep the native editor, settings and FAQ mounted while protectin
     const editor = nativeEditor, writing = nodes(container).find((item) => item.props.id === 'help-panel-content-8');
     const settings = nodes(container).find((item) => item.props.id === 'help-panel-settings-8');
     const faq = nodes(container).find((item) => item.props.id === 'help-panel-faq-8');
+    const seo = nodes(container).find((item) => item.props.id === 'help-panel-seo-8');
+    const languages = nodes(container).find((item) => item.props.id === 'help-panel-languages-8');
+    assert.equal(faq.props['data-faqs-preview'], false);
+    assert.equal(seo.props.role, 'tabpanel'); assert.equal(seo.props['aria-labelledby'], 'help-tab-seo-8');
+    assert.equal(languages.props['aria-labelledby'], 'help-tab-languages-8');
     assert.equal(writing.props.role, 'tabpanel'); assert.equal(writing.props['aria-labelledby'], 'help-tab-content-8');
     nativeEditor.$emit('change');
     assert.equal(viewer.state, 'changed', 'An immediate native input must be seen before any tab click');
-    for (const section of ['faq', 'settings', 'languages', 'content']) {
+    for (const section of ['faq', 'settings', 'seo', 'languages', 'content']) {
       f.state.helpEditorSection = section; await Vue.nextTick();
       assert.equal(nativeEditor, editor); assert.equal(editorMounts, 1); assert.equal(settingsMounts, 1);
       assert.equal(nativeEditor.liveTitle, 'Fast pending title');
@@ -500,12 +580,14 @@ test('Help tabs keep the native editor, settings and FAQ mounted while protectin
       assert.equal(viewer.article.title, 'Article 12', 'Switching tabs must not overwrite or serialize pending native DOM');
       assert.equal(writing.style.display === 'none', section !== 'content');
       assert.equal(settings.style.display === 'none', section !== 'settings');
+      assert.equal(seo.style.display === 'none', section !== 'seo');
+      assert.equal(languages.style.display === 'none', section !== 'languages');
       assert.equal(faq.style.display === 'none', section !== 'faq');
     }
     assert(nodes(writing).some((item) => item.props['data-introduction']));
     viewer.help_faq_pending = true; await Vue.nextTick();
     assert.equal(viewer.helpReaderSlot.pending, true); assert.equal(viewer.helpReaderSlot.dirty, true);
-    for (const action of ['save', 'preview', 'insert', 'word', 'autoFix']) assert.equal(viewer.helpReaderSlot[action](), false);
+    for (const action of ['save', 'publish', 'saveDraft', 'preview', 'insert', 'word', 'autoFix']) assert.equal(viewer.helpReaderSlot[action](), false);
     viewer.saveChange(); assert.equal(f.requests.length, 0);
     viewer.help_faq_pending = false; await Vue.nextTick();
     assert.equal(viewer.helpReaderSlot.preview(), true);
@@ -527,7 +609,7 @@ test('Help draft setters validate metadata and reject stale, unauthorized or rea
   assert.equal(reader.setPublished(false), false, 'A scheduled article keeps the native publication guard');
   f.state.helpEditorSection = 'faq';
   assert.equal(reader.setFaqs([{ question: 'Question', answer: '<p>Answer</p>' }]), true);
-  f.state.helpEditorSection = 'settings';
+  f.state.helpEditorSection = 'seo';
   assert.equal(reader.setStructures([{ '@type': 'FAQPage' }]), true);
   assert.equal(reader.setFaqs([]), false, 'A delayed FAQ callback cannot mutate a hidden section');
   const before = plain(f.state.article);
@@ -1885,6 +1967,99 @@ test("the optional reader toolbar preserves native fallback, public reading and 
   assert.match(await render(fixture({ workspace: false, articleType: 'blog' })), /overflow-x-auto/);
   const help = helpReaderFixture();
   assert.equal(help.state.readerToolbarActive, false);
+});
+
+test("official Blog tools reveal only their own panel while preserving mounted modal owners", async () => {
+  const f = officialReaderFixture({ render_state: 'editing' });
+  let images = 0, refreshes = 0;
+  f.state.$refs.editorContainer.findAllImages = () => images++;
+  f.state.$refs.readerSeoEditor = { refresh: () => refreshes++ };
+  const slots = { 'reader-heading': () => Vue.h('h1', 'Article'), 'reader-toolbar': () => Vue.h('header'),
+    'extra-header-options': () => Vue.h('div', { 'data-category-owner': '' }, 'Category selector and mounted dialogs') };
+  for (const panel of ['category', 'schedule', 'seo']) {
+    assert.equal(f.state.readerSlot.toggleSettings(panel), true); f.flush();
+    assert.equal(f.state.readerSlot.settingsPanel, panel);
+    const document = new JSDOM(await render(f, slots)).window.document;
+    for (const name of ['category', 'schedule', 'seo'])
+      assert.equal(document.querySelector(`[data-reader-panel="${name}"]`).style.display, name === panel ? '' : 'none');
+    assert(document.querySelector('[data-category-owner]'), 'Category-owned native dialogs stay mounted across focused panels.');
+  }
+  assert.equal(images, 1); assert.equal(refreshes, 1);
+  assert.equal(f.state.readerSlot.toggleSettings('unknown'), false);
+  assert.equal(f.state.readerSlot.toggleSettings('seo'), true);
+  assert.equal(f.state.readerSlot.settingsOpen, false);
+  assert.equal(f.state.readerSlot.settingsPanel, null);
+});
+
+test("Blog FAQ and schema forms join the article draft and block save or navigation until applied", async () => {
+  for (const pending of ['reader_faq_pending', 'reader_schema_pending']) {
+    const f = officialReaderFixture({ render_state: 'editing', state: 'changed' });
+    f.state.$refs.editorContainer.state = 'no-change';
+    const reader = f.state.readerSlot;
+    f.state[pending] = true;
+    assert.equal(f.state.readerSlot.pending, true);
+    assert.equal(f.state.readerSaveBlocked, true);
+    for (const action of ['preview', 'save', 'importWord', 'openSearch', 'openTimeline', 'toggleSettings', 'autoFix', 'delete'])
+      assert.equal(reader[action](), false, action);
+    f.state.saveChange(); f.state.autoFixArticle();
+    assert.equal(f.requests.length, 0);
+    const faqs = [{ question: 'Payment fails?', answer: '<p>Correct it and <strong>retry</strong>.</p>' }];
+    const structures = [{ '@type': 'LegacyCustomType', unknown: { retained: true } }];
+    assert.equal(reader.setFaqs(faqs), true);
+    assert.equal(reader.setStructures(structures), true);
+    assert.equal(reader.setFaqs({}), false);
+    assert.equal(reader.setStructures(null), false);
+    f.state[pending] = false;
+    assert.equal(f.state.readerSlot.save(), true);
+    assert.deepEqual(plain(f.requests[0].payload.faqs), faqs);
+    assert.deepEqual(plain(f.requests[0].payload.structures), structures);
+  }
+  for (const mutate of [state => { state.article = { ...pack(88).article }; }, state => { state.can_edit = false; },
+    state => { state.active = false; }, state => { state.USER_ID = () => 90; }, state => { state.inLoading = true; }]) {
+    const f = officialReaderFixture({ render_state: 'editing' }); const reader = f.state.readerSlot;
+    mutate(f.state);
+    const before = JSON.stringify(f.state.article);
+    assert.equal(reader.setFaqs([]), false); assert.equal(reader.setStructures([]), false);
+    assert.equal(reader.setCategory('Other'), false);
+    assert.equal(reader.setScheduleAt('2026-12-01T10:00:00Z'), false);
+    assert.equal(JSON.stringify(f.state.article), before);
+  }
+});
+
+test("Blog metadata editors mount only for ready content and leave legacy readers unchanged", async () => {
+  const f = officialReaderFixture({ render_state: 'editing' });
+  const slots = { 'reader-heading': () => Vue.h('h1', 'Article'), 'reader-toolbar': () => Vue.h('header') };
+  const Schema = { props: ['modelValue', 'workspace', 'blog', 'disabled'], render() { return Vue.h('div', { 'data-schema-blog': this.blog, 'data-schema-disabled': this.disabled }); } };
+  let document = new JSDOM(await renderToString(renderApp(f, slots, faqReader(), Vue.createSSRApp, { SArticleStructuredData: Schema }))).window.document;
+  assert(document.querySelector('[data-faqs-blog="true"]'));
+  assert(document.querySelector('[data-schema-blog="true"]'));
+  f.state.inLoading = true;
+  document = new JSDOM(await renderToString(renderApp(f, slots, faqReader(), Vue.createSSRApp, { SArticleStructuredData: Schema }))).window.document;
+  assert.equal(document.querySelector('[data-workspace-faqs]'), null);
+  assert.equal(document.querySelector('[data-schema-blog]'), null);
+  assert.equal(document.querySelector('.s-article-blog-settings'), null);
+  f.state.inLoading = false; f.state.render_state = 'review';
+  document = new JSDOM(await renderToString(renderApp(f, slots, faqReader(), Vue.createSSRApp, { SArticleStructuredData: Schema }))).window.document;
+  assert.equal(document.querySelector('[data-workspace-faqs]'), null);
+  assert.equal(document.querySelector('[data-schema-blog]'), null);
+});
+
+test("Blog reports unmount on denied or unready context and remount for a different actor", async () => {
+  const slots = { 'reader-heading': () => Vue.h('h1', 'Article'), 'reader-toolbar': () => Vue.h('header') };
+  const f = officialReaderFixture({ first_load_seo_audit: true, show_google_tank: true });
+  let document = new JSDOM(await render(f, slots)).window.document;
+  const report = document.querySelector('[data-search-console-blog="true"]');
+  assert(report);
+  const originalKey = report.dataset.searchConsoleKey;
+  f.state.USER_ID = () => 90;
+  document = new JSDOM(await render(f, slots)).window.document;
+  assert.notEqual(document.querySelector('[data-search-console-blog="true"]').dataset.searchConsoleKey, originalKey);
+  for (const mutate of [state => { state.can_edit = false; }, state => { state.USER = () => null; },
+    state => { state.active = false; }, state => { state.inLoading = true; }, state => { state.article = null; }]) {
+    const denied = officialReaderFixture({ first_load_seo_audit: true, show_google_tank: true });
+    mutate(denied.state);
+    assert.doesNotMatch(await render(denied, slots), /data-search-console-blog/);
+  }
 });
 
 test("reader actions recheck article, author, user, permission, active and busy context", () => {

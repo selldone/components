@@ -1,16 +1,18 @@
 <template>
-  <div class="s-article-workspace-faqs text-start">
+  <div class="s-article-workspace-faqs text-start" :class="{ 's-article-workspace-faqs--blog': blog, 's-article-workspace-faqs--single': !preview }">
     <section class="sd-modern-widget s-article-workspace-faqs__list">
       <header class="s-article-workspace-faqs__section-heading">
-        <div><h2>{{ t('questions') }} <span>{{ items.length }}</span></h2><p>{{ t('help') }}</p></div>
+        <div><h2>{{ t(blog ? 'reader_title' : 'questions') }} <span>{{ items.length }}</span></h2><p>{{ blog ? $t('global.article.workspace.faq_subtitle') : t('help') }}</p></div>
         <v-btn ref="addButton" class="sd-modern-button s-article-workspace-faqs__button" variant="outlined" prepend-icon="add" :disabled="!mayEdit" @click="openEditor()">{{ t('add') }}</v-btn>
       </header>
       <div v-if="!items.length" class="sd-modern-empty-state s-article-workspace-faqs__empty"><v-icon size="24" aria-hidden="true">live_help</v-icon><h3>{{ t('empty_title') }}</h3><p>{{ t('empty_description') }}</p></div>
       <div v-for="(faq, index) in items" :key="index" class="s-article-workspace-faqs__row">
         <span class="s-article-workspace-faqs__order">{{ index + 1 }}</span>
         <div class="s-article-workspace-faqs__copy">
-          <h3 dir="auto">{{ faq?.question }}</h3>
-          <v-tooltip :disabled="!truncated[index]" location="top" content-class="sd-modern-tooltip text-start" open-on-click>
+          <button v-if="blog || !preview" type="button" class="s-article-workspace-faqs__question" dir="auto" :aria-expanded="expanded_index === index" :aria-controls="`${dialog_id}-answer-${index}`" @click="toggleAnswer(index)"><span>{{ faq?.question }}</span><v-icon v-if="!preview && !blog" class="s-article-workspace-faqs__chevron" :class="{ 's-article-workspace-faqs__chevron--open': expanded_index === index }" size="16" aria-hidden="true">expand_more</v-icon></button>
+          <h3 v-else dir="auto">{{ faq?.question }}</h3>
+          <div v-if="(blog || !preview) && expanded_index === index" :id="`${dialog_id}-answer-${index}`" class="s-article-workspace-faqs__answer" dir="auto" v-html="safeAnswer(faq?.answer)"></div>
+          <v-tooltip v-else :disabled="!truncated[index]" location="top" content-class="sd-modern-tooltip text-start" open-on-click>
             <template #activator="{ props }"><p v-bind="props" v-overflow-check="(value) => { truncated[index] = value; }" :tabindex="truncated[index] ? 0 : undefined" class="s-article-workspace-faqs__excerpt" dir="auto">{{ answerText(faq?.answer) }}</p></template>{{ answerText(faq?.answer) }}
           </v-tooltip>
         </div>
@@ -21,9 +23,10 @@
           <v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="t('down')" :disabled="!mayEdit || index === items.length - 1" @click="move(index, 1)"><v-icon size="16" aria-hidden="true">arrow_downward</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ t('down') }}</v-tooltip></v-btn>
         </div>
       </div>
+      <p v-if="blog" class="s-article-workspace-faqs__hint s-article-workspace-faqs__schema-hint">{{ $t('global.article.workspace.structure_blog_faq_note') }}</p>
       <p v-if="!editMode" class="s-article-workspace-faqs__readonly">{{ t('read_only') }}</p>
     </section>
-    <aside class="s-article-workspace-faqs__preview">
+    <aside v-if="preview && !blog" class="s-article-workspace-faqs__preview">
       <h2>{{ t('preview_title') }}</h2><p class="s-article-workspace-faqs__subtitle">{{ t('preview_subtitle') }}</p>
       <div class="sd-modern-widget s-article-workspace-faqs__reader">
         <p class="s-article-workspace-faqs__hint">{{ t('preview_hint') }}</p><h2>{{ t('reader_title') }}</h2>
@@ -33,23 +36,23 @@
     </aside>
 
     <v-dialog :model-value="dialog_open && active" max-width="720" :content-props="dialog_content_props" scrollable :aria-labelledby="dialog_id" @update:model-value="(open) => !open && requestClose()" @after-leave="restoreFocus">
-      <v-card class="sd-modern-widget s-article-workspace-faqs__dialog text-start">
+      <v-card class="sd-modern-widget s-article-workspace-faqs__dialog text-start" :class="{ 's-article-workspace-faqs__dialog--blog': blog }">
         <header class="s-article-workspace-faqs__dialog-heading"><div><h2 :id="dialog_id">{{ t(mode === 'remove' ? 'delete_title' : editing_index < 0 ? 'dialog_add' : 'dialog_edit') }}</h2><p>{{ t(mode === 'remove' ? 'delete_message' : 'dialog_subtitle') }}</p></div><v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="t('close')" @click="requestClose"><v-icon size="16" aria-hidden="true">close</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ t('close') }}</v-tooltip></v-btn></header>
         <v-card-text class="s-article-workspace-faqs__dialog-body">
           <p v-if="mode === 'remove'" class="s-article-workspace-faqs__remove-question" dir="auto">{{ original_question }}</p>
           <template v-else>
-            <v-text-field ref="questionInput" v-model="question" :label="t('question')" variant="underlined" class="sd-modern-underlined-field" dir="auto" :disabled="!mayEdit" :error="invalid && !question.trim()" hide-details persistent-placeholder />
+            <v-text-field ref="questionInput" v-model="question" :label="t('question')" :variant="blog ? 'outlined' : 'underlined'" :density="blog ? 'compact' : undefined" class="s-article-workspace-faqs__field" :class="{ 'sd-modern-underlined-field': !blog }" dir="auto" :disabled="!mayEdit" :error="invalid && !question.trim()" hide-details persistent-placeholder />
             <div class="s-article-workspace-faqs__format"><v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="t('bold')" :disabled="!mayEdit" @click="formatAnswer('b')"><v-icon size="16" aria-hidden="true">format_bold</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ t('bold') }}</v-tooltip></v-btn><v-btn class="sd-modern-icon-button" icon variant="text" :aria-label="t('italic')" :disabled="!mayEdit" @click="formatAnswer('i')"><v-icon size="16" aria-hidden="true">format_italic</v-icon><v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ t('italic') }}</v-tooltip></v-btn><span>{{ t('html_answer') }}</span></div>
-            <v-textarea ref="answerInput" v-model="answer" :label="t('answer')" variant="underlined" class="sd-modern-underlined-field" rows="5" auto-grow dir="auto" :disabled="!mayEdit" :error="invalid && !answerText(answer).trim()" hide-details persistent-placeholder />
+            <v-textarea ref="answerInput" v-model="answer" :label="t('answer')" :variant="blog ? 'outlined' : 'underlined'" :density="blog ? 'compact' : undefined" class="s-article-workspace-faqs__field" :class="{ 'sd-modern-underlined-field': !blog }" :rows="blog ? 4 : 5" auto-grow dir="auto" :disabled="!mayEdit" :error="invalid && !answerText(answer).trim()" hide-details persistent-placeholder />
             <p class="s-article-workspace-faqs__hint">{{ t('answer_hint') }}</p>
           </template>
           <p v-if="error" class="sd-modern-notice s-article-workspace-faqs__error" role="alert">{{ error }}</p>
         </v-card-text>
-        <footer class="s-article-workspace-faqs__dialog-footer"><p>{{ t('apply_hint') }}</p><div class="s-article-workspace-faqs__buttons"><v-btn class="sd-modern-button s-article-workspace-faqs__button" variant="text" @click="requestClose">{{ t('cancel') }}</v-btn><v-btn v-if="mode === 'remove'" class="sd-modern-button sd-modern-button--danger s-article-workspace-faqs__button" color="error" variant="elevated" prepend-icon="delete_outline" :disabled="!mayEdit" @click="removeQuestion">{{ t('remove') }}</v-btn><v-btn v-else class="sd-modern-button s-article-workspace-faqs__button" color="primary" variant="flat" prepend-icon="check" :disabled="!mayEdit" @click="apply">{{ t('apply') }}</v-btn></div></footer>
+        <footer class="s-article-workspace-faqs__dialog-footer"><p>{{ blog ? $t('global.article.workspace.article_draft_hint') : t('apply_hint') }}</p><div class="s-article-workspace-faqs__buttons"><v-btn class="sd-modern-button s-article-workspace-faqs__button" variant="text" @click="requestClose">{{ t('cancel') }}</v-btn><v-btn v-if="mode === 'remove'" class="sd-modern-button sd-modern-button--danger s-article-workspace-faqs__button" color="error" variant="elevated" prepend-icon="delete_outline" :disabled="!mayEdit" @click="removeQuestion">{{ t('remove') }}</v-btn><v-btn v-else class="sd-modern-button s-article-workspace-faqs__button" color="primary" variant="flat" prepend-icon="check" :disabled="!mayEdit" @click="apply">{{ t('apply') }}</v-btn></div></footer>
       </v-card>
     </v-dialog>
     <v-dialog :model-value="discard_open && active" max-width="440" :content-props="dialog_content_props" :aria-labelledby="`${dialog_id}-discard`" @update:model-value="(open) => !open && keepEditing()" @after-leave="focusEditor">
-      <v-card class="sd-modern-widget s-article-workspace-faqs__discard text-start"><h2 :id="`${dialog_id}-discard`">{{ t('discard_title') }}</h2><p>{{ t('discard_message') }}</p><div class="s-article-workspace-faqs__buttons"><v-btn class="sd-modern-button s-article-workspace-faqs__button" variant="text" @click="keepEditing">{{ t('keep_editing') }}</v-btn><v-btn class="sd-modern-button s-article-workspace-faqs__button" color="primary" variant="flat" @click="discardChanges">{{ t('discard') }}</v-btn></div></v-card>
+      <v-card class="sd-modern-widget s-article-workspace-faqs__discard text-start" :class="{ 's-article-workspace-faqs__dialog--blog': blog }"><h2 :id="`${dialog_id}-discard`">{{ t('discard_title') }}</h2><p>{{ t('discard_message') }}</p><div class="s-article-workspace-faqs__buttons"><v-btn class="sd-modern-button s-article-workspace-faqs__button" variant="text" @click="keepEditing">{{ t('keep_editing') }}</v-btn><v-btn class="sd-modern-button s-article-workspace-faqs__button" color="primary" variant="flat" @click="discardChanges">{{ t('discard') }}</v-btn></div></v-card>
     </v-dialog>
   </div>
 </template>
@@ -90,8 +93,8 @@ const overflowCheck = {
 export default {
   name: 'SArticleWorkspaceFaqs', directives: { overflowCheck }, emits: ['update:modelValue', 'change', 'pending-change'],
   setup() { return { dialog_id: `article-faq-editor-${useId()}` }; },
-  props: { modelValue: { type: Array, default: () => [] }, editMode: { type: Boolean, default: true }, disabled: { type: Boolean, default: false }, active: { type: Boolean, default: true } },
-  data: () => ({ disposed: false, dialog_open: false, discard_open: false, mode: 'edit', editing_index: -1, question: '', answer: '', original_question: '', original_answer: '', error: '', invalid: false, truncated: {} }),
+  props: { blog: { type: Boolean, default: false }, preview: { type: Boolean, default: true }, modelValue: { type: Array, default: () => [] }, editMode: { type: Boolean, default: true }, disabled: { type: Boolean, default: false }, active: { type: Boolean, default: true } },
+  data: () => ({ disposed: false, dialog_open: false, discard_open: false, mode: 'edit', editing_index: -1, expanded_index: -1, question: '', answer: '', original_question: '', original_answer: '', error: '', invalid: false, truncated: {} }),
   computed: {
     items() { return Array.isArray(this.modelValue) ? this.modelValue : []; },
     dialog_content_props() { return this.$vuetify.display.width <= 580 ? { style: { width: 'calc(100% - 16px)', maxWidth: 'calc(100% - 16px)', margin: '8px' } } : undefined; },
@@ -101,11 +104,13 @@ export default {
   watch: {
     pendingDraft(value) { this.$emit('pending-change', value); },
     active(value) { if (!value) { this.discard_open = false; this._pendingAction = null; } },
+    modelValue() { this.expanded_index = -1; },
   },
   beforeUnmount() { this.disposed = true; this._pendingAction = null; this.$emit('pending-change', false); },
   methods: {
     t(key) { return this.$t(`global.article.workspace.faq_manager.${key}`); },
     safeAnswer: sanitizeFaqAnswer,
+    toggleAnswer(index) { if (this.active && Number.isInteger(index) && index >= 0 && index < this.items.length) this.expanded_index = this.expanded_index === index ? -1 : index; },
     answerText(value) {
       if (typeof document === 'undefined') return String(value ?? '').replace(/<[^>]*>/g, '').replace(/&nbsp;|&#160;/g, ' ');
       const template = document.createElement('template'); template.innerHTML = sanitizeFaqAnswer(value); return template.content.textContent || '';
@@ -213,6 +218,54 @@ export default {
 }
 .s-article-workspace-faqs__discard { padding: 24px; }
 .s-article-workspace-faqs__discard > p { margin-block: 12px 20px; font-size: 13px; line-height: 20px; }
+.s-article-workspace-faqs--single {
+  display: block; max-width: 720px;
+  --sd-modern-border: var(--help-line, rgba(var(--v-theme-on-surface), 0.1));
+  --sd-modern-muted: var(--help-muted, rgba(var(--v-theme-on-surface), 0.64));
+  color: var(--help-ink, rgb(var(--v-theme-on-surface)));
+  .s-article-workspace-faqs__list { padding: 0; border: 0; background: transparent; box-shadow: none; }
+  .s-article-workspace-faqs__section-heading h2 { font-size: 19px !important; line-height: 1.5; }
+  .s-article-workspace-faqs__question { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font-family: inherit; font-size: 14px; font-weight: 500; line-height: 1.7; text-align: start; overflow-wrap: anywhere; cursor: pointer; }
+  .s-article-workspace-faqs__question:focus-visible { outline: 2px solid var(--help-accent, rgb(var(--v-theme-primary))); outline-offset: 3px; border-radius: 3px; }
+  .s-article-workspace-faqs__chevron { flex: 0 0 auto; margin-block-start: 4px; color: var(--sd-modern-muted); }
+  .s-article-workspace-faqs__chevron--open { transform: rotate(180deg); }
+  .s-article-workspace-faqs__answer { color: var(--sd-modern-muted); line-height: 1.85; }
+  .s-article-workspace-faqs__row-actions { flex: 0 0 auto; max-width: none; flex-wrap: nowrap; }
+}
+.s-article-workspace-faqs--blog {
+  display: block; width: 100%; max-width: 660px; margin: 26px auto 0;
+  --sd-modern-border: var(--blog-line, rgba(var(--v-theme-on-surface), 0.1));
+  --sd-modern-muted: var(--blog-muted, rgba(var(--v-theme-on-surface), 0.56));
+  .s-article-workspace-faqs__list { padding: 24px; border: 1px solid var(--sd-modern-border); border-radius: 14px; background: rgb(var(--v-theme-surface)); }
+  h2 { font-size: 18px !important; font-weight: 600; line-height: 1.4; letter-spacing: -0.25px; }
+  .s-article-workspace-faqs__section-heading { margin-block-end: 16px; }
+  .s-article-workspace-faqs__row { gap: 12px; padding-block: 16px; }
+  .s-article-workspace-faqs__order { flex-basis: 14px; padding-block-start: 2px; }
+  .s-article-workspace-faqs__question { padding: 0; border: 0; background: transparent; color: inherit; font-family: inherit; font-size: 13px; font-weight: 500; line-height: 1.65; text-align: start; overflow-wrap: anywhere; cursor: pointer; }
+  .s-article-workspace-faqs__question:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; border-radius: 3px; }
+  .s-article-workspace-faqs__answer { padding-block-start: 7px; font-size: 12px; line-height: 1.8; color: var(--blog-secondary, rgba(var(--v-theme-on-surface), 0.72)); }
+  .s-article-workspace-faqs__excerpt { display: block; white-space: nowrap; font-size: 12px !important; line-height: 1.7; }
+  .s-article-workspace-faqs__row-actions { flex: 0 0 auto; max-width: none; gap: 4px; flex-wrap: nowrap; }
+  .s-article-workspace-faqs__schema-hint { margin-block-start: 18px; }
+}
+.s-article-workspace-faqs--blog, .s-article-workspace-faqs__dialog--blog {
+  .s-article-workspace-faqs__button { min-height: 36px; padding-inline: 12px; border-radius: 10px; font-size: 12px !important; line-height: 20px; }
+  .sd-modern-icon-button { --sd-modern-icon-button-size: 30px; width: 30px; min-width: 30px; height: 30px; padding: 6px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--blog-secondary, rgba(var(--v-theme-on-surface), 0.72)); box-shadow: none; }
+  .sd-modern-icon-button:hover { background: var(--blog-cloud, rgba(var(--v-theme-on-surface), 0.04)); }
+}
+.s-article-workspace-faqs__dialog--blog {
+  --sd-modern-border: var(--blog-line, rgba(var(--v-theme-on-surface), 0.1));
+  --sd-modern-muted: var(--blog-muted, rgba(var(--v-theme-on-surface), 0.56));
+  border: 1px solid var(--sd-modern-border); background: rgb(var(--v-theme-surface)); color: rgb(var(--v-theme-on-surface));
+  &.v-card { border-radius: 16px !important; }
+  h2 { font-size: 18px !important; font-weight: 600; line-height: 1.4; letter-spacing: -0.25px; }
+  .s-article-workspace-faqs__field { margin-block: 16px; }
+  .s-article-workspace-faqs__field :deep(.v-field) { border-radius: 8px; }
+  .s-article-workspace-faqs__field :deep(input), .s-article-workspace-faqs__field :deep(textarea) { font-family: inherit; font-size: 13px !important; line-height: 1.7; }
+  .s-article-workspace-faqs__field :deep(.v-label) { font-size: 12px; }
+  .s-article-workspace-faqs__dialog-heading, .s-article-workspace-faqs__dialog-body { padding: 24px !important; }
+  .s-article-workspace-faqs__dialog-footer > p { font-size: 11px; line-height: 1.7; }
+}
 @media (max-width: 760px) { .s-article-workspace-faqs { grid-template-columns: 1fr; } }
 @media (max-width: 580px) {
   .s-article-workspace-faqs__list, .s-article-workspace-faqs__reader { padding: 18px; }
@@ -222,9 +275,17 @@ export default {
   .s-article-workspace-faqs__dialog .s-article-workspace-faqs__dialog-heading, .s-article-workspace-faqs__dialog .s-article-workspace-faqs__dialog-body { padding: 20px !important; }
   .s-article-workspace-faqs__dialog .s-article-workspace-faqs__dialog-footer { flex-wrap: wrap; padding: 16px 20px; }
   .s-article-workspace-faqs__dialog .sd-modern-underlined-field :deep(input), .s-article-workspace-faqs__dialog .sd-modern-underlined-field :deep(textarea) { font-size: 16px !important; }
+  .s-article-workspace-faqs--blog .s-article-workspace-faqs__list { padding: 20px; }
+  .s-article-workspace-faqs--blog .s-article-workspace-faqs__row-actions { flex: 1 0 100%; justify-content: flex-start; padding-inline-start: 26px; }
+  .s-article-workspace-faqs--single .s-article-workspace-faqs__row-actions { flex: 1 0 100%; justify-content: flex-start; padding-inline-start: 26px; }
 }
 @media (max-width: 580px), (pointer: coarse) {
   .s-article-workspace-faqs .sd-modern-icon-button, .s-article-workspace-faqs__dialog .sd-modern-icon-button { --sd-modern-icon-button-size: 44px; }
   .s-article-workspace-faqs__button { min-height: 44px; height: auto; }
+  .s-article-workspace-faqs--blog .sd-modern-icon-button, .s-article-workspace-faqs__dialog--blog .sd-modern-icon-button { width: 44px; min-width: 44px; height: 44px; }
+  .s-article-workspace-faqs--blog .s-article-workspace-faqs__button, .s-article-workspace-faqs__dialog--blog .s-article-workspace-faqs__button { min-height: 44px; height: auto; }
+  .s-article-workspace-faqs--blog .s-article-workspace-faqs__question { min-height: 44px; }
+  .s-article-workspace-faqs--single .s-article-workspace-faqs__question { min-height: 44px; }
+  .s-article-workspace-faqs__dialog--blog .s-article-workspace-faqs__field :deep(input), .s-article-workspace-faqs__dialog--blog .s-article-workspace-faqs__field :deep(textarea) { font-size: 16px !important; }
 }
 </style>

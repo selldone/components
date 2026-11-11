@@ -4,6 +4,7 @@ import test from "node:test";
 import vm from "node:vm";
 import { compileTemplate, parse } from "@vue/compiler-sfc";
 import * as Vue from "vue";
+import { createMemoryHistory, createRouter } from "vue-router";
 import ts from "typescript";
 
 const { descriptor, errors } = parse(
@@ -65,6 +66,7 @@ vm.runInNewContext(compiled, {
     if (name === "@selldone/core-js")
       return { Article: { Types: { Product: { code: "Product" } } } };
     if (name === "vue") return Vue;
+    if (name.endsWith("/3d.svg")) return { default: "fixture-3d.svg" };
     if (name.includes("NotificationService")) return { default: {
       showErrorAlert: (...args) => notifications.push(["error", ...args]),
       showSuccessAlert: (...args) => notifications.push(["success", ...args]),
@@ -139,7 +141,7 @@ test("Delete is saved-product navigation, separate from ordinary workflow progre
     state.setStepEditor(general, 2);
     const flow = Array.from(state.flowTabs, (tab) => tab.value);
     assert.equal(flow.includes(12), false);
-    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value), [...flow, 12, 13]);
+    assert.deepEqual(Array.from(state.navigationTabs, (tab) => tab.value), [...flow, ...(state.arAvailable ? [16] : []), 12, 13]);
     state.goTo(12);
     component.watch.step.call(state, state.step);
     assert.equal(state.step, 12);
@@ -232,6 +234,107 @@ test("Metadata deep links require a saved non-vendor modern product", () => {
   const state = fixture({ step: 13, replaceHashRoute: true, $router: { replace: (route) => routes.push(route.hash) } });
   component.watch.step.call(state, 13);
   assert.deepEqual(routes, ["#metadata"]);
+});
+
+test("3D / AR belongs to saved shop Edit navigation and cannot submit unrelated product drafts", async () => {
+  const state = fixture({ modern: false, modernGeneral: true, step: 2, visitedSteps: [2] });
+  const general = { draft: "Unsaved product title" };
+  state.setStepEditor(general, 2);
+  const tabs = Array.from(state.navigationTabs, (tab) => tab.value);
+  assert.deepEqual(tabs.slice(-5), [14, 15, 16, 12, 13]);
+  assert.equal(state.flowTabs.some((tab) => tab.value === 16), false, "Immediate saves are outside the product-save progression");
+  state.goTo(16);
+  component.watch.step.call(state, state.step);
+  assert.equal(state.flowCurrentTab.title, "product_ar.tab_title");
+  assert.equal(state.flowSubtitle, "product_ar.subtitle");
+  assert.equal(state.active_editor, null);
+  assert.equal(state.flowSubmitDisabled, true);
+  assert.equal(state.editProduct(), undefined, "Even a stale shared save invocation cannot send a PUT from AR");
+  await state.submitStep();
+  state.nextStep();
+  assert.equal(state.step, 16);
+  state.setStepEditor({ workspaceBusy: true }, 16);
+  assert.equal(state.flowBusy, true);
+  state.goTo(2);
+  assert.equal(state.step, 16, "Pending AR uploads or deletion keep their current authorized workspace");
+  state.active_editor.workspaceBusy = false;
+  state.goTo(2);
+  component.watch.step.call(state, state.step);
+  assert.equal(state.active_editor, general);
+  assert.equal(general.draft, "Unsaved product title");
+  for (const overrides of [
+    { created: false }, { modern: true }, { modernGeneral: false }, { shop: null },
+    { $route: { params: { vendor_id: 16 }, matched: [{ meta: { vendor: true } }], hash: "#ar" } },
+  ]) {
+    const unavailable = fixture({ modern: false, modernGeneral: true, ...overrides });
+    assert.equal(unavailable.arAvailable, false);
+    assert.equal(unavailable.canSelectStep(16), false);
+    assert.equal(unavailable.navigationTabs.some((tab) => tab.value === 16), false);
+  }
+});
+
+test("AR presence includes either format on the main product or a current variant", () => {
+  const state = fixture();
+  assert.equal(state.sidebarHasAr, false);
+  state.$product.ar = { ios: "ios-reference" };
+  assert.equal(state.sidebarHasAr, true);
+  state.$product.ar = null;
+  state.$product.product_variants = [{ id: 1, ar: { src: "glb-reference" } }];
+  assert.equal(state.sidebarHasAr, true);
+  state.$product.product_variants[0].ar = { ios: "ios-reference" };
+  assert.equal(state.sidebarHasAr, true);
+  state.$product.product_variants[0].deleted_at = "2026-11-11";
+  assert.equal(state.sidebarHasAr, false);
+});
+
+test("AR deep links and hash navigation preserve query, scope and active upload guards", () => {
+  const query = { source: "catalog", dir: "category" };
+  const routes = [];
+  const state = fixture({ modern: false, modernGeneral: true, replaceHashRoute: true,
+    $route: { hash: "#ar", params: { shop_id: 42, product_id: 31 }, matched: [], query },
+    $router: { replace: (route) => routes.push(route) } });
+  state.getRenderedOnGoogle = () => {};
+  component.created.call(state);
+  assert.equal(state.step, 16);
+  component.watch["$route.hash"].call(state, "#general");
+  assert.equal(state.step, 2, "Browser hash navigation revisits the retained editor");
+  component.watch.step.call(state, 2);
+  assert.equal(routes.at(-1).hash, "#general");
+  assert.equal(routes.at(-1).query, query);
+  component.watch["$route.hash"].call(state, "#ar");
+  assert.equal(state.step, 16);
+  state.setStepEditor({ workspaceBusy: true }, 16);
+  component.watch["$route.hash"].call(state, "#general");
+  assert.equal(state.step, 16);
+  assert.equal(routes.at(-1).hash, "#ar");
+  assert.equal(routes.at(-1).query, query);
+  const vendor = fixture({ modern: false, modernGeneral: true,
+    $route: { hash: "#ar", params: { vendor_id: 16 }, matched: [{ meta: { vendor: true } }] } });
+  vendor.getRenderedOnGoogle = () => {};
+  component.created.call(vendor);
+  assert.equal(vendor.step, 2, "Unsupported vendor AR deep links cannot mount the shop editor");
+});
+
+test("The legacy shop 3D named route redirects within the same product and permission boundary", async () => {
+  const routeModule = {};
+  const routeSource = readFileSync(new URL("../../../../../../src/Applications/Selldone/router/shuttle/shop/product/ShuttleShopProductRoutes.ts", import.meta.url), "utf8");
+  vm.runInNewContext(ts.transpileModule(routeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, {
+    exports: routeModule,
+    require: () => ({ ShopPermissionRegions: { PRODUCTS: "PRODUCTS" } }),
+  });
+  const productRoute = routeModule.default[0];
+  const router = createRouter({ history: createMemoryHistory(), routes: [{
+    ...productRoute, path: `/shuttle/shop/:shop_id/${productRoute.path}`, component: {},
+    children: Array.from(productRoute.children, (route) => ({ ...route, component: {} })),
+  }] });
+  await router.push("/shuttle/shop/42/product/31/3d?source=legacy&dir=7");
+  assert.equal(router.currentRoute.value.name, "BPageProductEdit");
+  assert.equal(router.currentRoute.value.hash, "#ar");
+  assert.deepEqual(router.currentRoute.value.params, { shop_id: "42", product_id: "31" });
+  assert.deepEqual(router.currentRoute.value.query, { source: "legacy", dir: "7" });
+  assert.equal(router.currentRoute.value.meta.region, "PRODUCTS");
+  await router.push({ name: "BPageProduct3D", params: { shop_id: "43", product_id: "32" }, query: { source: "named" } });
+  assert.equal(router.currentRoute.value.fullPath, "/shuttle/shop/43/product/32/edit?source=named#ar");
 });
 
 test("Delete deep links and verification remain scoped to the modern current product", () => {
@@ -375,6 +478,27 @@ test("Pictures navigation reflects up to three distinct current product images w
   assert.deepEqual(pictures(), ["products/new-main.webp"]);
   state.$product.icon = null;
   assert.deepEqual(pictures(), []);
+});
+
+test("Pictures video count follows uploaded videos and the current linked YouTube video", () => {
+  const state = fixture();
+  assert.equal(state.sidebarVideoCount, 0);
+  state.$product.video = "   ";
+  assert.equal(state.sidebarVideoCount, 0);
+  state.$product.videos = [{ id: 1 }, { id: 2 }];
+  const videos = JSON.stringify(state.$product.videos);
+  assert.equal(state.sidebarVideoCount, 2);
+  assert.equal(JSON.stringify(state.$product.videos), videos);
+  state.$product.video = "youtube-id";
+  assert.equal(state.sidebarVideoCount, 3);
+  state.$product.videos.push({ id: 3 });
+  assert.equal(state.sidebarVideoCount, 4);
+  state.$product.videos.splice(0, 1);
+  assert.equal(state.sidebarVideoCount, 3);
+  state.$product.video = null;
+  assert.equal(state.sidebarVideoCount, 2);
+  state.$product.videos = [];
+  assert.equal(state.sidebarVideoCount, 0);
 });
 
 test("The modern preview blocks underlying saves and navigation until it closes", async () => {
@@ -921,7 +1045,7 @@ test("Description blocks pending or denied saves and ignores stale successful ca
   }
 });
 
-test("the rendered Guided workspace shows only the active editor while retaining drafts and its sole primary action", async () => {
+test("rendered product workspaces retain drafts and isolate immediate-saving AR from the shared Save", async () => {
   const template = compileTemplate({
     source: descriptor.template.content,
     filename: "BProductAddFull.vue",
@@ -936,7 +1060,7 @@ test("the rendered Guided workspace shows only the active editor while retaining
     require: () => Vue,
   });
 
-  const node = (tag, text = "") => ({ tag, text, props: {}, style: {}, children: [], parent: null, scrollTo() {} });
+  const node = (tag, text = "") => ({ tag, text, props: {}, style: {}, children: [], parent: null, scrollTo() {}, scrollIntoView() {} });
   const renderer = Vue.createRenderer({
     createElement: (tag) => node(tag),
     createText: (text) => node("#text", text),
@@ -1041,7 +1165,7 @@ test("the rendered Guided workspace shows only the active editor while retaining
   const productWriteAccess = Vue.ref(true);
   Object.assign(app.config.globalProperties, {
     $route: { params: {}, matched: [], hash: "" },
-    $t: (key) => key,
+    $t: (key, params) => key === "add_product.images_modern.video_count" ? `${params.count} product videos` : key,
     $vuetify: Vue.reactive({ display: { smAndUp: true, lgAndUp: true } }),
     USER: () => null,
     writeShopAccess: (region) => { assert.equal(region, "PRODUCTS"); return productWriteAccess.value; },
@@ -1079,6 +1203,21 @@ test("the rendered Guided workspace shows only the active editor while retaining
     product.product_variants = [];
     await Vue.nextTick();
     assert.equal(variantBadge(), undefined, "An empty product has no redundant count badge");
+    const videoIndicator = () => descendants(host).find((element) => classHas(element, "b-product-add-full__video"));
+    assert.equal(videoIndicator(), undefined, "Products without videos have no video indicator");
+    product.videos = [{ id: 1 }, { id: 2 }];
+    product.video = "youtube-id";
+    await Vue.nextTick();
+    assert.ok(videoIndicator(), "The Pictures tab reacts to uploaded and linked video changes");
+    assert.equal(videoIndicator().props["aria-label"], "3 product videos");
+    assert.equal(videoIndicator().props.tabindex, "0", "The informational tooltip is keyboard reachable");
+    product.videos.splice(0, 1);
+    product.video = null;
+    await Vue.nextTick();
+    assert.equal(videoIndicator().props["aria-label"], "1 product videos");
+    product.videos = [];
+    await Vue.nextTick();
+    assert.equal(videoIndicator(), undefined, "Deleting the final video removes the indicator");
     const previewLauncher = descendants(host).find((element) => classHas(element, "b-product-add-full__preview-launcher"));
     assert.ok(previewLauncher, "Saved products expose the preview utility");
     const main = descendants(host).find((element) => element.tag === "main");
@@ -1301,5 +1440,59 @@ test("the rendered Guided workspace shows only the active editor while retaining
     assert.deepEqual(failures, []);
   } finally {
     app.unmount();
+  }
+
+  const arMounts = [];
+  const arBoundary = Vue.defineComponent({
+    props: { product: Object, shop: Object, modern: Boolean },
+    data: () => ({ workspaceBusy: false }),
+    mounted() { arMounts.push(this); },
+    render() { return Vue.h("section", { "data-ar-workspace": true }); },
+  });
+  const editApp = renderer.createApp({
+    ...component, components: { ...stubs, BProductArTable: arBoundary }, render: rendered.render,
+    methods: { ...component.methods, getRenderedOnGoogle() {} },
+  }, { modernGeneral: true, shop: { id: 42, model: "NORMAL", language: "en" } });
+  for (const name of ["VBtn", "VIcon", "VTooltip", "VDialog", "VExpandTransition", "VCard", "VCardTitle", "VCardText", "VCardActions", "VSpacer", "VRow", "VChip", "VListSubheader", "VAvatar"])
+    editApp.component(name, slotStub(name === "VBtn" ? "button" : "div"));
+  editApp.component("VForm", stubs.VForm);
+  editApp.directive("ctrl", {});
+  Object.assign(editApp.config.globalProperties, app.config.globalProperties, {
+    $route: Vue.reactive({ params: { shop_id: "42", product_id: "31" }, matched: [], hash: "#ar", query: {} }),
+  });
+  editApp.provide("$shop", { id: 42, currencies: ["USD"] });
+  const arProduct = Vue.reactive({ id: 31, type: "PHYSICAL", product_variants: [{ id: 1, ar: { ios: "ios-reference" } }] });
+  editApp.provide("$product", arProduct);
+  const editFailures = [];
+  editApp.config.errorHandler = (error) => editFailures.push(error);
+  editApp.config.warnHandler = (message) => { if (message.includes("not defined on instance")) editFailures.push(message); };
+  const editHost = node("root");
+  const editState = editApp.mount(editHost);
+  try {
+    await Vue.nextTick();
+    const arTab = descendants(editHost).find((element) => element.tag === "button" && element.children.some((child) => text(child) === "product_ar.tab_title"));
+    assert.ok(arTab, "Saved Shop Edit renders the AR navigation entry");
+    assert.equal(arTab.children.find((child) => child.tag === "img").props.src, "fixture-3d.svg");
+    assert.equal(arTab.children.find((child) => child.tag === "img").props.width, "16");
+    assert.ok(descendants(arTab).some((element) => classHas(element, "b-product-add-full__ar-presence")), "Variant-only files light the presence dot");
+    assert.equal(arMounts.length, 1);
+    assert.equal(arMounts[0].product, arProduct);
+    assert.equal(arMounts[0].shop.id, 42);
+    assert.equal(arMounts[0].modern, true);
+    assert.equal(descendants(editHost).some((element) => classHas(element, "sd-modern-button--primary")), false, "Immediate-saving AR has no shared Save action or shortcut");
+    await editState.submitStep();
+    arMounts[0].workspaceBusy = true;
+    await Vue.nextTick();
+    editState.goTo(2);
+    assert.equal(editState.step, 16, "The mounted AR workspace blocks navigation during its actual activity");
+    arMounts[0].workspaceBusy = false;
+    await Vue.nextTick();
+    editState.goTo(2);
+    await Vue.nextTick();
+    await Vue.nextTick();
+    assert.equal(descendants(editHost).some((element) => element.props["data-ar-workspace"]), false, "Leaving AR unmounts its immediate-saving child");
+    assert.deepEqual(editFailures, []);
+  } finally {
+    editApp.unmount();
   }
 });

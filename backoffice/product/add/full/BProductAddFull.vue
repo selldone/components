@@ -249,8 +249,13 @@
                 :disabled="!canSelectStep(tab.value)"
                 @click="goTo(tab.value)"
               >
-                <b-product-edit-info-icon :name="tab.icon" :size="16" />
+                <img v-if="tab.value === TAB_AR" :src="arIcon" class="b-product-add-full__ar-icon no-inv" width="16" height="16" alt="" />
+                <b-product-edit-info-icon v-else :name="tab.icon" :size="16" />
                 <span>{{ tab.title }}</span>
+                <span v-if="tab.value === TAB_AR && sidebarHasAr" class="b-product-add-full__ar-presence" role="img" tabindex="0" :aria-label="$t('product_ar.has_model')" @click.stop>
+                  <i class="sd-modern-status__dot sd-modern-status__dot--success" />
+                  <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-click>{{ $t('product_ar.has_model') }}</v-tooltip>
+                </span>
                 <span v-if="tab.value === TAB_VARIANTS && sidebarVariantCount" class="b-product-add-full__variant-count" role="img" :aria-label="$t('b_product_inventory.variant_count', { count: sidebarVariantCount })">
                   {{ sidebarVariantLabel }}
                   <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('b_product_inventory.variant_count', { count: sidebarVariantCount }) }}</v-tooltip>
@@ -270,6 +275,10 @@
                 <span v-else-if="tab.value === TAB_VARIANTS && isSubscription && !sidebarPlans.length && $product.id" class="b-product-add-full__plans-badge" role="img" :aria-label="$t('b_product_pricing.no_plans_warning')">
                   <v-icon class="no-inv" color="error" size="18" aria-hidden="true">error</v-icon>
                   <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start">{{ $t('b_product_pricing.no_plans_warning') }}</v-tooltip>
+                </span>
+                <span v-if="tab.value === TAB_IMAGES && sidebarVideoCount" class="b-product-add-full__video" role="img" tabindex="0" :aria-label="$t('add_product.images_modern.video_count', { count: sidebarVideoCount }, sidebarVideoCount)" @click.stop>
+                  <v-icon class="no-inv" color="error" size="18" aria-hidden="true">smart_display</v-icon>
+                  <v-tooltip activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-click>{{ $t('add_product.images_modern.video_count', { count: sidebarVideoCount }, sidebarVideoCount) }}</v-tooltip>
                 </span>
                 <span v-if="tab.value === TAB_IMAGES && sidebarPictures.length" class="b-product-add-full__pictures" :data-count="sidebarPictures.length" aria-hidden="true">
                   <img v-for="path in sidebarPictures" :key="path" :src="getShopImagePath(path, 64)" class="hover-scale" alt="" width="24" height="24" :draggable="false" />
@@ -343,10 +352,10 @@
                 {{ $t('add_product.flow.position', { current: flowStepIndex + 1, total: flowTabs.length }) }}
                 <template v-if="type && step !== TAB_TYPE"><span aria-hidden="true">·</span>{{ $t(type.name) }}</template>
               </p>
-              <h2>{{ flowCurrentTab?.title }}</h2>
+              <h2 :class="{ 'b-product-add-full__ar-heading': step === TAB_AR }"><img v-if="step === TAB_AR" :src="arIcon" class="b-product-add-full__ar-icon no-inv" width="23" height="23" alt="" />{{ step === TAB_AR ? $t('product_ar.title') : flowCurrentTab?.title }}</h2>
               <p class="b-product-add-full__subtitle">{{ modernGeneral && step === TAB_GENERAL_INFO ? $t('add_product.edit_info.modern.page_subtitle') : flowSubtitle }}</p>
             </div>
-            <span v-if="modernGeneral && type" class="b-product-add-full__type-label"><b-product-edit-info-icon name="PackageOpen" :size="14" />{{ $t(type.name) }}</span>
+            <span v-if="modernGeneral && type && step !== TAB_AR" class="b-product-add-full__type-label"><b-product-edit-info-icon name="PackageOpen" :size="14" />{{ $t(type.name) }}</span>
             <v-btn v-if="step === TAB_GENERAL_INFO && !$product.id" color="primary" variant="text" class="sd-modern-button sd-modern-button--inline" :disabled="flowBusy" @click="goTo(TAB_TYPE)">
               {{ $t('add_product.flow.change_type') }}
             </v-btn>
@@ -524,6 +533,9 @@
     <div v-if="hasStep__urgency && isStepMounted(TAB_URGENCY)" v-show="step === TAB_URGENCY" :class="modernWorkspace ? 'b-product-add-full__urgency' : undefined">
       <b-product-thresholding :modern="modernWorkspace" />
     </div>
+
+    <!-- Immediate-saving 3D files do not participate in the product draft Save. -->
+    <b-product-ar-table v-if="arAvailable && step === TAB_AR" :key="`${shop.id}:${$product.id}`" :ref="(editor) => setStepEditor(editor, TAB_AR)" :product="$product" :shop="shop" modern />
 
     <!-- ███████████████████████ Product Article ███████████████████████ -->
 
@@ -847,6 +859,8 @@ import BProductEditFeatures from "../../../product/edit/features/BProductEditFea
 import BProductEditPrice from "../../../product/edit/price/BProductEditPrice.vue";
 import BProductEditOutputs from "../../../product/edit/outputs/BProductEditOutputs.vue";
 import BProductEditImages from "../../../product/edit/images/BProductEditImages.vue";
+import BProductArTable from "../../../product/ar/table/BProductArTable.vue";
+import arIcon from "../../../../assets/icons/3d.svg";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import BProductEditExtra from "../../../product/edit/extra/BProductEditExtra.vue";
 
@@ -896,6 +910,7 @@ const TAB_DELETE = 12;
 const TAB_METADATA = 13;
 const TAB_LOCATIONS = 14; // Sales locations (moved here from the Inventory tab)
 const TAB_URGENCY = 15; // Urgency messages: storefront thresholds (moved here from the Inventory tab)
+const TAB_AR = 16; // Edit-only, immediate-saving 3D / AR files.
 
 /**
  * <b-product-add-full>
@@ -922,6 +937,7 @@ export default {
     BProductEditInputs,
     BProductEditExtra,
     BProductEditImages,
+    BProductArTable,
     BProductEditOutputs,
     BProductEditSpec,
     BProductEditPrice,
@@ -961,6 +977,7 @@ export default {
   data: function () {
     return {
       Slugify: Slugify,
+      arIcon,
 
       show_article: true, // For refresh article!
 
@@ -982,6 +999,7 @@ export default {
       TAB_METADATA: TAB_METADATA,
       TAB_LOCATIONS: TAB_LOCATIONS,
       TAB_URGENCY: TAB_URGENCY,
+      TAB_AR,
 
       tabs_name: {
         // use for hash url
@@ -1000,6 +1018,7 @@ export default {
         metadata: TAB_METADATA,
         locations: TAB_LOCATIONS,
         urgency: TAB_URGENCY,
+        ar: TAB_AR,
       },
 
       busy: false, // Add or Edit button busy
@@ -1208,13 +1227,19 @@ export default {
     metadataAvailable() {
       return this.modernWorkspace && !!this.shop?.id && !!this.$product.id && !this.IS_VENDOR_PANEL;
     },
+    arAvailable() {
+      return this.modernGeneral && !this.modern && !!this.shop?.id && !!this.$product?.id && !this.IS_VENDOR_PANEL;
+    },
     navigationTabs() {
       const metadata = this.metadataAvailable
         ? [{ value: TAB_METADATA, icon: 'Braces', title: this.$t('resource_metadata.title'), group: null }]
         : [];
       return this.modernWorkspace && this.$product.id
-        ? [...this.flowTabs, { value: TAB_DELETE, icon: 'Trash2', title: this.$t('global.actions.delete'), group: null }, ...metadata]
+        ? [...this.flowTabs, ...(this.arAvailable ? [{ value: TAB_AR, title: this.$t('product_ar.tab_title'), group: null }] : []), { value: TAB_DELETE, icon: 'Trash2', title: this.$t('global.actions.delete'), group: null }, ...metadata]
         : this.flowTabs;
+    },
+    sidebarHasAr() {
+      return !!(this.$product.ar?.src || this.$product.ar?.ios) || (this.$product.product_variants || []).some((variant) => !variant.deleted_at && !!(variant.ar?.src || variant.ar?.ios));
     },
     sidebarVariantCount() {
       return this.$product.product_variants?.filter((variant) => !variant.deleted_at).length || 0;
@@ -1244,6 +1269,9 @@ export default {
     sidebarPlansLabel() {
       return this.$t('b_product_pricing.plans_billed_by', { providers: this.sidebarPlanGateways.map((gateway) => gateway.name).join(', ') });
     },
+    sidebarVideoCount() {
+      return (this.$product.videos?.length || 0) + (this.$product.video?.trim() ? 1 : 0);
+    },
     sidebarPictures() {
       const gallery = (this.$product.images || [])
         .filter((image) => image.variant_id === null)
@@ -1254,6 +1282,7 @@ export default {
       return this.navigationTabs.find((tab) => tab.value === this.step);
     },
     flowSubtitle() {
+      if (this.step === TAB_AR) return this.$t('product_ar.subtitle');
       if (this.step === TAB_OUTPUTS && this.isService) return this.$t('service_design.refined.subtitle');
       if (this.step === TAB_METADATA) return this.$t('resource_metadata.subtitle');
       if (this.step === TAB_DELETE) return this.$t('add_product.delete_product.modern.subtitle');
@@ -1262,10 +1291,10 @@ export default {
       return this.$t(`add_product.flow.descriptions.${key}`);
     },
     flowBusy() {
-      return this.busy || this.busy_delete || this.validatingStep || !!this.active_editor?.busy || (this.step === TAB_IMAGES && !!this.active_editor?.mediaBusy) || ([TAB_PRICE, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.workspaceBusy) || this.active_editor?.state === 'saving';
+      return this.busy || this.busy_delete || this.validatingStep || !!this.active_editor?.busy || (this.step === TAB_IMAGES && !!this.active_editor?.mediaBusy) || ([TAB_PRICE, TAB_REVIEW_BLOG, TAB_VARIANTS, TAB_AR].includes(this.step) && !!this.active_editor?.workspaceBusy) || this.active_editor?.state === 'saving';
     },
     flowSubmitDisabled() {
-      return [TAB_DELETE, TAB_METADATA].includes(this.step) || this.flowBusy || (this.modernWorkspace && this.show_preview) || !this.type ||
+      return [TAB_DELETE, TAB_METADATA, TAB_AR].includes(this.step) || this.flowBusy || (this.modernWorkspace && this.show_preview) || !this.type ||
         ([TAB_IMAGES, TAB_INPUTS, TAB_OUTPUTS, TAB_PRICE, TAB_PHYSICAL_EXTRA_INFO, TAB_REVIEW_BLOG, TAB_VARIANTS].includes(this.step) && !!this.active_editor?.saveBlocked) ||
         (!this.$product.id && this.step > TAB_GENERAL_INFO) ||
         (this.step === TAB_PRICE && this.active_editor?.calculatePrice < 0);
@@ -1399,6 +1428,13 @@ export default {
     },
   },
   watch: {
+    '$route.hash'(hash) {
+      if (!this.modernGeneral || !this.replaceHashRoute) return;
+      const step = this.tabs_name[hash?.replace('#', '')];
+      if (!step || step === this.step) return;
+      if (this.canSelectStep(step)) this.step = step;
+      else this.$router.replace({ hash: '#' + Object.keys(this.tabs_name).find((key) => this.tabs_name[key] === this.step), query: this.$route.query });
+    },
     '$product.id'() { this.deleteConfirmed = false; },
     '$product.deleted_at'() { this.deleteConfirmed = false; },
     step(step) {
@@ -1435,6 +1471,7 @@ export default {
         if (this.$route.hash !== tab_hash)
           this.$router.replace({
             hash: tab_hash,
+            query: this.$route.query,
           });
       }
     },
@@ -1446,7 +1483,7 @@ export default {
       // console.log("this.$route.hash", this.$route.hash);
       if (this.$route.hash) {
         const hash = this.$route.hash.replace("#", "");
-        if (hash && this.tabs_name[hash] && !(this.modernGeneral && this.tabs_name[hash] === TAB_TYPE) && (this.modernWorkspace || this.tabs_name[hash] !== TAB_DELETE) && (this.tabs_name[hash] !== TAB_METADATA || this.metadataAvailable)) {
+        if (hash && this.tabs_name[hash] && !(this.modernGeneral && this.tabs_name[hash] === TAB_TYPE) && (this.modernWorkspace || this.tabs_name[hash] !== TAB_DELETE) && (this.tabs_name[hash] !== TAB_METADATA || this.metadataAvailable) && (this.tabs_name[hash] !== TAB_AR || this.arAvailable)) {
           this.step = this.tabs_name[hash];
         }
       }
@@ -1736,6 +1773,7 @@ not need!
         });
     },
     editProduct(callback = null) {
+      if (this.step === TAB_AR) return;
       const generalEditor = this.stepEditors[TAB_GENERAL_INFO];
       const imagesEditor = this.step === TAB_IMAGES ? this.stepEditors[TAB_IMAGES] : null;
       const inputsEditor = this.stepEditors[TAB_INPUTS];
@@ -1917,7 +1955,7 @@ not need!
     },
 
     nextStep() {
-      if ([TAB_DELETE, TAB_METADATA].includes(this.step)) return;
+      if ([TAB_DELETE, TAB_METADATA, TAB_AR].includes(this.step)) return;
       if (this.modernWorkspace && this.show_preview) return;
       if (this.modernWorkspace && this.step === TAB_OUTPUTS && this.isService) {
         if (this.flowBusy || this.active_editor?.prepareSave?.() === false) return;
@@ -2104,6 +2142,11 @@ not need!
   .b-product-add-full__nav > button { min-height: 42px; font-weight: 400; }
   .b-product-add-full__nav > button[aria-current] { font-weight: 500; }
   .b-product-add-full__nav > button:disabled { opacity: 0.55; }
+  .b-product-add-full__ar-icon { flex: 0 0 auto; object-fit: contain; }
+  .b-product-add-full__heading h2.b-product-add-full__ar-heading { display: flex; align-items: center; gap: 12px; font-size: 23px; line-height: 31px; letter-spacing: -0.45px; }
+  .b-product-add-full__ar-presence { margin-inline-start: auto; display: inline-flex; }
+  .b-product-add-full__ar-presence:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  .b-product-add-full__ar-presence + .b-product-add-full__saved { margin-inline-start: 0; }
   .b-product-add-full__nav > .b-product-add-full__delete-tab { margin-block-start: 14px; }
   .b-product-add-full__metadata-divider { margin: 9px 10px; border: 0; border-block-start: 1px solid var(--sd-modern-border); }
   .b-product-add-full__variant-count { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; min-width: 20px; height: 18px; margin-inline-start: auto; padding-inline: 4px; border-radius: 4px; background: rgba(var(--v-theme-on-surface), 0.08); color: rgb(var(--v-theme-on-surface)); font-size: 10px; font-weight: 600; line-height: 16px; direction: ltr; unicode-bidi: isolate; }
@@ -2115,6 +2158,10 @@ not need!
   .b-product-add-full__plans-badge + .b-product-add-full__saved { margin-inline-start: 0; }
   .b-product-add-full__nav > .b-product-add-full__pictures-tab { gap: 6px; }
   .b-product-add-full__pictures-tab > span:first-of-type { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .b-product-add-full__video { display: inline-flex; align-items: center; flex: 0 0 auto; margin-inline-start: auto; border-radius: 3px; }
+  .b-product-add-full__video:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
+  .b-product-add-full__video + .b-product-add-full__pictures,
+  .b-product-add-full__video + .b-product-add-full__saved { margin-inline-start: 0; }
   .b-product-add-full__pictures { display: grid; grid-template-columns: 24px; grid-template-rows: 24px; align-items: center; flex: 0 0 auto; gap: 2px; margin-inline-start: auto; }
   .b-product-add-full__pictures[data-count="2"],
   .b-product-add-full__pictures[data-count="3"] { grid-template-columns: 24px 10px; }

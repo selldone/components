@@ -3,6 +3,7 @@ import type {
   ApiDocFlowNode,
   ApiDocFlowEdge,
 } from "./flow-content";
+import { MAX_FLOW_NODES, MAX_FLOW_EDGES } from "./flow-content";
 
 export const FLOWCHART_TAG = "article-flowchart";
 export const MAX_FLOWCHART_BYTES = 65_536;
@@ -67,9 +68,9 @@ export function parseArticleFlowchart(value: unknown): ApiDocFlowBlock | null {
       value.type !== "flow" ||
       !Array.isArray(value.nodes) ||
       value.nodes.length < 2 ||
-      value.nodes.length > 6 ||
+      value.nodes.length > MAX_FLOW_NODES ||
       !Array.isArray(value.edges) ||
-      value.edges.length > 12 ||
+      value.edges.length > MAX_FLOW_EDGES ||
       (Object.hasOwn(value, "animated") && typeof value.animated !== "boolean")
     )
       return null;
@@ -248,7 +249,7 @@ export const ARTICLE_FLOWCHART_SCHEMA = `type Flow = {
   title: string; // required, 1–160 characters
   description?: string; // 0–2000 characters, default ""
   animated?: boolean; // default false; one automatic story under 4 seconds
-  nodes: { // 2–6 nodes; unique IDs
+  nodes: { // 2–${MAX_FLOW_NODES} nodes; unique IDs
     id: string; // /^[A-Za-z][A-Za-z0-9_-]{0,59}$/
     label: string; // required, 1–160 characters
     description?: string; // 0–500 characters, default ""
@@ -256,6 +257,6 @@ export const ARTICLE_FLOWCHART_SCHEMA = `type Flow = {
     caption?: string; // 0–90 characters, default ""
     outcome?: null | { label: string; tone: "success" | "error" | "warning" | "neutral" }; // label 1–80 characters
   }[];
-  edges: { from: string; to: string; label?: string }[]; // 0–12 edges; existing distinct node IDs; label 0–240 characters
+  edges: { from: string; to: string; label?: string }[]; // 0–${MAX_FLOW_EDGES} edges; existing distinct node IDs; label 0–240 characters
 };
 Only these fields are accepted. Use plain text without HTML, SVG or control characters. No URL, href, action, script or style fields. Cycles are supported. Maximum JSON size: 65536 UTF-8 bytes. Maximum eight diagrams per article. Return one JSON object, without Markdown fences or HTML.`;
