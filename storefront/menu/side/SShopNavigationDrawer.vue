@@ -347,15 +347,6 @@ export default {
         });
       }
 
-      // Instagram:
-      if (this.$shop.instagram) {
-        out.push({
-          to: { name: window.$storefront.routes.INSTAGRAM_PAGE },
-          name: this.$t("global.commons.instagram"),
-          src: require("../../../assets/trademark/instagram.svg"),
-        });
-      }
-
       if (
         this.menu_footer &&
         this.menu_footer.menu &&

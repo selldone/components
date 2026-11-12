@@ -139,7 +139,7 @@
 
           <!-- ―――――――――― Extra links ―――――――――― -->
 
-          <template v-if="has_avocado || has_hyper || has_insta">
+          <template v-if="has_avocado || has_hyper">
             <v-row v-if="$shop" class="m-0 pb-4" dense justify="space-around">
               <v-col
                 v-if="has_avocado"
@@ -181,25 +181,7 @@
                   {{ $t("global.commons.hyper") }}
                 </small>
               </v-col>
-              <v-col
-                v-if="has_insta"
-                class="d-flex flex-column align-center"
-                cols="4"
-              >
-                <v-btn
-                  :to="{ name: 'InstagramPage' }"
-                  icon
-                  size="large"
-                  variant="text"
-                >
-                  <img
-                    height="24"
-                    src="../../../../assets/trademark/instagram.svg"
-                    width="24"
-                  />
-                </v-btn>
-                <small>{{ $t("global.commons.instashop") }}</small>
-              </v-col>
+
             </v-row>
           </template>
 
@@ -294,9 +276,6 @@ export default {
     },
     has_hyper() {
       return this.$shop.hyper && this.$shop.hyper.enable;
-    },
-    has_insta() {
-      return this.$shop.instagram;
     },
   },
 

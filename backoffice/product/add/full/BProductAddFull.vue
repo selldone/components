@@ -386,7 +386,6 @@
         :shop="shop"
         has-add-connect-os
         has-add-dropshipping
-        has-add-sku
         @select="(item) => setType(item)"
       ></b-product-edit-type>
     </div>

@@ -52,15 +52,6 @@ export const BEventBusMixin = {
     showShopLinkBuilderDialog(callback, list) {
       EventBus.$emit("show:ShopLinkBuilderDialog", { callback, list });
     },
-
-    // ――――― Instagram ―――――
-
-    showGlobalInstagramProductsSelectDialog(instagram_media, onChange) {
-      EventBus.$emit("show:GlobalInstagramProductsSelectDialog", {
-        instagram_media,
-        onChange,
-      });
-    },
     // ――――― Show My Shops List ―――――
     ShowMyShopsList() {
       EventBus.$emit("show-shops");

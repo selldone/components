@@ -39,11 +39,7 @@
                   name: 'ShopPage',
                 }
               : {
-                  name: channel_entry
-                    ? in_channel_entry_page
-                      ? 'ShopPage'
-                      : channel_entry_page_name
-                    : getCustomHomePage()
+                  name: getCustomHomePage()
                       ? !in_custom_home_page
                         ? getCustomHomePage()
                         : 'ShopPage'
@@ -66,10 +62,6 @@
         </v-avatar>
         <v-icon v-else-if="last_cat" size="24"> folder</v-icon>
         <v-icon v-else-if="last_home_route" size="24">store</v-icon>
-
-        <v-icon v-else-if="channel_entry" size="24"
-          >{{ in_channel_entry_page ? "apps" : channel_entry_page_icon }}
-        </v-icon>
 
         <v-icon v-else size="24"
           >{{
@@ -321,27 +313,6 @@ export default {
       });
 
       return out;
-    },
-
-    // Handle channels:
-    channel_entry() {
-      return this.$store.getters.getChannelEntry;
-    },
-    in_channel_entry_page() {
-      return (
-        this.channel_entry &&
-        this.$route.matched.some(
-          (record) => record.meta.channel === this.channel_entry,
-        )
-      );
-    },
-    channel_entry_page_name() {
-      if (this.channel_entry === "instagram") return "InstagramPage";
-      return null;
-    },
-    channel_entry_page_icon() {
-      if (this.channel_entry === "instagram") return "fa:fab fa-instagram";
-      return null;
     },
   },
 

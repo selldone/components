@@ -70,7 +70,7 @@
               :disabled="busy_add"
               has-add-connect-os
               has-add-dropshipping
-              has-add-sku
+
               @select="setType"
             />
             <p v-if="type" class="b-product-add-studio__type-help">
