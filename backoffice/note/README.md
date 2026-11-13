@@ -1,8 +1,8 @@
 # Shared notes
 
-`BNoteDialog` is the shared notes bottom sheet for products, categories, incentive resources and Admin partnership requests. The current integration has ten instances in nine callers; product callers also serve the vendor workspace. The refined presentation is the shared default and keeps its styles inside the component so Admin and vendor callers do not depend on Backoffice page styles.
+`BNoteDialog` is the shared notes bottom sheet for products, categories and incentive resources. The current integration has ten instances in nine callers; product callers also serve the vendor workspace. The refined presentation is the shared default and keeps its styles inside the component so vendor callers do not depend on Backoffice page styles.
 
-The caller supplies `title`, optional `icon`, `target`, `addUrl()` and `deleteUrl(index)`, and controls visibility through `modelValue` / `update:modelValue`. The `pre-messages` slot remains before the history; Admin uses it for the request, contact details and administrator-only visibility notice. Admin copy stays English; Backoffice retains English/Persian and RTL support.
+The caller supplies `title`, optional `icon`, `target`, `addUrl()` and `deleteUrl(index)`, and controls visibility through `modelValue` / `update:modelValue`. The optional `pre-messages` slot remains before the history. Backoffice retains English/Persian and RTL support.
 
 History uses `target.note` in its original order, retaining author avatars, names, relative/absolute dates and plain-text bodies. Delete sends the original array index immediately. Both operations adopt the full `data.note` array returned by the existing endpoint; they do not sort or reconstruct saved notes locally.
 

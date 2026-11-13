@@ -113,6 +113,24 @@ function faqReader() {
   return { ...scriptExports.default, render: renderExports.render };
 }
 
+test("public article readers do not require the Admin converter while shop/vendor/admin editors keep their endpoints", () => {
+  const publicReader = fixture({ shop_id: null, articleType: "help" });
+  publicReader.state.$route.params = {};
+  publicReader.state.$shop = null;
+  delete publicReader.window.ADMIN_API;
+  assert.equal(publicReader.state.word_converter_url, undefined);
+  publicReader.window.ADMIN_API = {};
+  assert.equal(publicReader.state.word_converter_url, undefined);
+  const officialEditor = fixture({ shop_id: null, articleType: "help" });
+  officialEditor.state.$route.params = {};
+  officialEditor.state.$shop = null;
+  assert.equal(officialEditor.state.word_converter_url, "/POST_OFFICIAL_CONVERTER_WORD_HTML/");
+  assert.equal(fixture({ shop_id: 7 }).state.word_converter_url, "/POST_SHOP_CONVERTER_WORD_HTML/7");
+  const vendor = fixture();
+  vendor.state.$route = { params: { vendor_id: 9 }, matched: [{ meta: { vendor: true } }] };
+  assert.equal(vendor.state.word_converter_url, "/POST_MY_VENDOR_CONVERTER_WORD_HTML/9");
+});
+
 function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp, components = {}) {
   const component = { ...f.component, created() { this._workspaceGeneration = f.state._workspaceGeneration; }, mounted: undefined, beforeUnmount: undefined,
     components: { ...f.component.components, SArticleFaqs: reader || f.component.components.SArticleFaqs,

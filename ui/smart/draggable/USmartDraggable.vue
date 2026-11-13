@@ -19,18 +19,14 @@
 
     <draggable
       v-model="list"
+      :item-key="(element) => isString(element) ? element : JSON.stringify(element)"
       :class="{
         'rounded-list-xl': rounded,
         'border-between-vertical': borderBetween,
       }"
-      :component-data="{
-        tag: 'ul',
-        type: 'transition-group',
-        name: !drag ? 'flip-list' : 'fade',
-      }"
       filter=".ignore"
       style="list-style-type: none"
-      tag="transition-group"
+      tag="ul"
       v-bind="dragOptions"
       @end="drag = false"
       @start="drag = true"
@@ -43,7 +39,6 @@
     >
       <template v-slot:item="{ element }">
         <li
-          :key="isString(element) ? element : JSON.stringify(element)"
           :class="{
             'bg-dark': dark && !transparent,
             'bg-white': !dark && !transparent,

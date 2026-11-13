@@ -49,11 +49,16 @@ export default {
   },
 
   created() {
+    this.getPwaVersion = debounce(this.getPwaVersion, 30000);
     //――――――――――――――――――――――――― Check for new update of Web App ―――――――――――――――――――――――――
     if (this.local_version)
       this.getPwaVersion((need_update) => {
         if (need_update) this.new_version = true;
       });
+  },
+
+  beforeUnmount() {
+    this.getPwaVersion.cancel();
   },
 
   methods: {
@@ -70,30 +75,27 @@ export default {
 
     //―――――――――――――――――――――― Get PWA Version ――――――――――――――――――――
     getPwaVersion(callback_update = null) {
-      const fun = debounce((callback_update = null) => {
-        // debounce : speed up firs load!
-        axios
-          .get("/check/version?v=" + SetupService.PWAVersion())
-          .then(({ data }) => {
-            if (!data.error) {
-              if (data.version !== SetupService.PWAVersion()) {
-                console.style(
-                  '<b="font-size:14px;">--- New Version ---</b> <b="color:blue;"> ☄ ' +
-                    data.version +
-                    "</i>",
-                );
-                if (callback_update) callback_update(true);
-              } else {
-                callback_update(false);
-              }
+      const localVersion = SetupService.PWAVersion();
+      if (!localVersion) return;
+      axios
+        .get("/check/version?v=" + localVersion)
+        .then(({ data }) => {
+          if (!data.error) {
+            if (data.version !== localVersion) {
+              console.style(
+                '<b="font-size:14px;">--- New Version ---</b> <b="color:blue;"> ☄ ' +
+                  data.version +
+                  "</i>",
+              );
+              if (callback_update) callback_update(true);
+            } else {
+              if (callback_update) callback_update(false);
             }
-          })
-          .catch((error) => {
-            NotificationService.showLaravelError(error);
-          });
-      }, 30000);
-
-      fun(callback_update);
+          }
+        })
+        .catch((error) => {
+          NotificationService.showLaravelError(error);
+        });
     },
   },
 };

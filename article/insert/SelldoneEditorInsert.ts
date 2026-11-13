@@ -2685,12 +2685,13 @@ function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
           // If preview is set to true, let the showImage handle the upload start
           if (that.options.preview) {
             previewImg = document.createElement("img");
-            window.URL = window.URL || window.webkitURL;
-            previewImg.src = window.URL.createObjectURL(data.files[0]);
+            const objectURL = window.URL || window.webkitURL;
+            const previewUrl = objectURL.createObjectURL(data.files[0]);
+            previewImg.src = previewUrl;
             previewImg.onload = function () {
               $.proxy(that, "showImage", this.src, data)();
               setTimeout(function () {
-                window.URL.revokeObjectURL(this.src);
+                objectURL.revokeObjectURL(previewUrl);
               });
             };
           } else {

@@ -986,6 +986,47 @@ test("the native Insert label is escaped and its palette opens at the selected e
   }
 });
 
+test("image previews work with a read-only Window.URL and revoke their exact object URL", () => {
+  const nativeScript = ts.transpileModule(readFileSync(new URL('./insert/SelldoneEditorInsert.ts', import.meta.url), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  const dom = new JSDOM('<!doctype html><body><div id="editor"><p class="medium-insert-active"><br></p></div></body>');
+  const { window } = dom, { document } = window, $ = jquery(window), exports = {}, timers = [], revoked = [], shown = [];
+  const objectURL = { createObjectURL: () => 'blob:synthetic-preview', revokeObjectURL: (url) => revoked.push(url) };
+  Object.defineProperty(window, 'URL', { configurable: true, writable: false, value: objectURL });
+  let image;
+  const createElement = document.createElement.bind(document);
+  document.createElement = (...args) => { const element = createElement(...args); if (args[0] === 'img') image = element; return element; };
+  vm.runInNewContext(nativeScript, {
+    exports, window, document, jQuery: $, setTimeout: (callback) => timers.push(callback),
+    XMLHttpRequest: window.XMLHttpRequest,
+    require(name) {
+      if (name === 'jquery') return $;
+      if (name === 'handlebars/runtime') return { default: Handlebars };
+      if (name === 'medium-editor') return { default: { util: {} } };
+      if (name === 'blueimp-file-upload') return {};
+      throw new Error(`Unexpected native Insert dependency: ${name}`);
+    },
+  });
+  window.MediumInsert = exports.MediumInsert;
+  const body = document.querySelector('#editor');
+  $(body).data('plugin_mediumInsert', { getEditor: () => null, hideButtons() {}, moveCaret() {} });
+  $(body).mediumInsertImages({ sorting() {} });
+  const addon = $(body).data('plugin_mediumInsertImages');
+  addon.showImage = (url) => shown.push(url);
+  addon.uploadAdd(null, {
+    autoUpload: true, files: [new window.File(['synthetic'], 'preview.png', { type: 'image/png' })],
+    process() { return { done(callback) { callback(); } }; },
+  });
+  assert.equal(window.URL, objectURL);
+  assert.equal(image.src, 'blob:synthetic-preview');
+  image.onload.call(image);
+  assert.deepEqual(shown, ['blob:synthetic-preview']);
+  timers.forEach((callback) => callback());
+  assert.deepEqual(revoked, ['blob:synthetic-preview']);
+  dom.window.close();
+});
+
 test("product editor renders its title label and live article metadata without changing legacy markup", async () => {
   const dom = new JSDOM("<!doctype html><body></body>"), $ = jquery(dom.window);
   const props = { workspace: true, productWorkspace: true, edit: true, noMediumInsert: true, language: "fa", title: "عنوان", body: "<p>سلام به شما</p>" };
