@@ -694,9 +694,7 @@ export default {
     removeQueueFile(entry) {
       if (!this.queue_active || this.disabled || !this.thumbnail_ready) return;
       // Removing a queue receipt must never revert an image already saved by the server.
-      this.$refs.pond?.removeFile(entry.id, { revert: false }).catch(error => {
-        if (this.queue_active) this.queue_error = this.thumbnailError(error);
-      });
+      this.$refs.pond?.removeFile(entry.id, { revert: false });
     },
     releaseThumbnailPreview() {
       if (this.thumbnail_preview) URL.revokeObjectURL(this.thumbnail_preview);

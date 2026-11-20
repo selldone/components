@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
 import test from "node:test";
-import jquery from "jquery";
+import { jQueryFactory as jquery } from "jquery/factory";
 import { JSDOM } from "jsdom";
 import { parse, compileScript, compileTemplate, compileStyle } from "@vue/compiler-sfc";
 import * as sass from "sass";

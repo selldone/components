@@ -67,7 +67,7 @@ function fixture(props = {}) {
     getFiles: () => [queued],
     getFile: (id) => id === queued.id ? queued : null,
     processFile: async (id) => { calls.push(id); return result(); },
-    removeFile: async (id, options) => { calls.push({ id, options }); },
+    removeFile: (id, options) => { calls.push({ id, options }); return true; },
     removeFiles: (options) => { calls.push(options); },
     browse: () => calls.push("browse"),
     addFile: async (file) => { calls.push(file); },

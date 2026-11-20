@@ -66,7 +66,8 @@ export function installGlobalComponents(app: App) {
 
   app.use(VueNotifications);
 
-  app.use(VueNumerals);
+  // Vite's pre-bundled UMD module can wrap the installer in a default export.
+  app.use(typeof VueNumerals === "function" ? VueNumerals : VueNumerals.default);
   app.component("UCheck", UCheck);
   app.component("u-price", UPrice);
   app.component(ULoadingProgress.name, ULoadingProgress);
@@ -83,10 +84,14 @@ export function installGlobalComponents(app: App) {
   // Define the async component globally
   app.component(
     "apexchart",
-    defineAsyncComponent(
-      () =>
-        import(/* webpackChunkName: "plug-miscellaneous" */ "vue3-apexcharts"),
-    ),
+    defineAsyncComponent(() => {
+      if (typeof window !== "undefined") {
+        // Preserve wheel zoom on charts that enable zoom.
+        const chart = (window.Apex ??= {}).chart ??= {};
+        (chart.zoom ??= {}).allowMouseWheelZoom ??= true;
+      }
+      return import(/* webpackChunkName: "plug-miscellaneous" */ "vue3-apexcharts");
+    }),
   );
 
   // + QR Code:
@@ -121,7 +126,7 @@ export function installGlobalComponents(app: App) {
 
   app.use(VueConfetti);
 
-  app.use(VueTheMask);
+  app.use(typeof VueTheMask === "function" ? VueTheMask : VueTheMask.default);
   app.use(FlagIcon);
   app.component(UButtonCircle.name, UButtonCircle);
   app.component(UTooltipTips.name, UTooltipTips);

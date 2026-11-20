@@ -1253,7 +1253,7 @@
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ author info + Edit / Follow / Save ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
       <v-sheet
-        v-if="!workspace && showAuthorInfo && article?.user_id > 0"
+        v-if="!workspace && showAuthorInfo && article?.user_id > 0 && user?.id && user?.name"
         color="#eee"
         class="s-article-viewer__author my-5 pa-2 overflow-hidden mx-auto"
         rounded="xl"

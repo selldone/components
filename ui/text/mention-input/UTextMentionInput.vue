@@ -49,9 +49,9 @@
         </v-btn>
       </template>
       <EmojiPicker
-        :native="true"
-        disable-skin-tones
-        hide-group-names
+        set="native"
+        skin-tone-position="none"
+        category-headers="none"
         @select="selectEmoji"
       />
     </v-menu>
@@ -224,7 +224,7 @@ export default {
   methods: {
     mergeProps,
     selectEmoji(emoji) {
-      this.$refs.area.$el.insertAtCaret(emoji.i);
+      this.$refs.area.$el.insertAtCaret(emoji.native);
       this.$emit("update:modelValue", this.$refs.area.$el.innerHTML);
     },
   },

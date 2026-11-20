@@ -13,9 +13,11 @@
  */
 
 // ES6 TypeScript module
-import * as $ from "jquery";
+import $ from "jquery";
 import Handlebars from "handlebars/runtime";
 import MediumEditor from "medium-editor";
+// Blueimp uses static helpers removed in jQuery 4.
+import "jquery-migrate";
 import "blueimp-file-upload";
 
 declare let FB: any;
@@ -1029,7 +1031,7 @@ function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
       // Wrap content text in <p></p> to avoid Firefox problems
       const $text = this.$el.contents().filter(function () {
         return (
-          (this.nodeName === "#text" && $.trim($(this).text()) !== "") ||
+          (this.nodeName === "#text" && $(this).text().trim() !== "") ||
           this.nodeName.toLowerCase() === "br"
         );
       });
@@ -1448,7 +1450,7 @@ function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
         }
       });
     };
-  })(jQuery, window, document);
+  })($, window, document);
 
   (function ($, window, document, undefined) {
     /** Default values */
@@ -2345,7 +2347,7 @@ function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
         }
       });
     };
-  })(jQuery, window, document);
+  })($, window, document);
 
   /*global MediumEditor*/
 
@@ -3321,7 +3323,7 @@ function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
         }
       });
     };
-  })(jQuery, window, document, MediumEditor.util);
+  })($, window, document, MediumEditor.util);
 }
 
 //█████████████████████████████████████████████████████████████

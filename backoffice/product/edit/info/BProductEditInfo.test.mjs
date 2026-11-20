@@ -30,7 +30,7 @@ const statuses = Object.fromEntries(
 );
 const plain = (value) => JSON.parse(JSON.stringify(value));
 
-function fixture({ type = "PHYSICAL", created = true, modern = true, vendorPanel = false, product = {}, shop = {} } = {}) {
+function fixture({ type = "PHYSICAL", created = true, modern = true, vendorPanel = false, product = {}, shop = {}, productMixin } = {}) {
   const requests = [];
   const notices = [];
   const notification = Object.fromEntries(
@@ -58,6 +58,7 @@ function fixture({ type = "PHYSICAL", created = true, modern = true, vendorPanel
     },
     require(name) {
       if (name.includes("NotificationService")) return { default: notification };
+      if (name.includes("ProductMixin")) return { default: productMixin };
       if (name.includes("ProductType")) return { ProductType: types };
       if (name.includes("ProductCondition")) return { ProductCondition: conditions };
       if (name.includes("ProductStatus")) return { ProductStatus: statuses };
@@ -99,6 +100,9 @@ function fixture({ type = "PHYSICAL", created = true, modern = true, vendorPanel
     $nextTick: (callback) => Promise.resolve().then(callback),
   };
   state.$shop = state.shop;
+  for (const mixin of component.mixins) {
+    for (const [name, method] of Object.entries(mixin?.methods ?? {})) state[name] = method.bind(state);
+  }
   for (const [name, method] of Object.entries(component.methods)) state[name] = method.bind(state);
   for (const [name, getter] of Object.entries(component.computed))
     Object.defineProperty(state, name, { get: getter.bind(state) });
@@ -482,6 +486,35 @@ for (const vendorPanel of [false, true]) {
     assert.equal(state.busy_set_shortcuts, false);
   });
 }
+
+test("custom pricing calculates the base and preview without falling back to an omitted valuation", () => {
+  const currency = { code: "USD", floats: 2 };
+  const diagnostics = [];
+  const loadModule = (path, require) => {
+    const exports = {};
+    vm.runInNewContext(ts.transpileModule(readFileSync(new URL(path, import.meta.url), "utf8"), {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    }).outputText, { exports, require, console: { error: (...args) => diagnostics.push(args) } });
+    return exports;
+  };
+  const price = loadModule("../../../../../core-js/helper/price/PriceHelper.ts", (name) =>
+    name.endsWith("/Currency") ? { Currency: { USD: currency } } : {});
+  const { default: productMixin } = loadModule("../../../../mixin/product/ProductMixin.ts", (name) =>
+    name.endsWith("/PriceHelper") ? price : {});
+  const { state } = fixture({
+    productMixin,
+    product: {
+      currency: "USD", price: 40, price_input: "custom",
+      valuation: { structure: [{ type: "number", name: "width", pricing: true, factor: 5 }] },
+    },
+  });
+  state.$productEmbedCurrency = currency;
+  state.preview_valuation = { valuation: { width: 3 } };
+
+  assert.equal(state.valuation_price_base, 40);
+  assert.equal(state.valuation_price_preview, 55);
+  assert.deepEqual(diagnostics, []);
+});
 
 test("valuation assignment and removal update only after their own successful save", async () => {
   const { state, requests } = fixture();

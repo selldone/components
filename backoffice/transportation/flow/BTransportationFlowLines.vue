@@ -24,6 +24,7 @@ let mounted = false;
 let frame = 0;
 let sequence = 0;
 let observer: ResizeObserver | undefined;
+let nodeObserver: MutationObserver | undefined;
 const connectors: { key: string; from: HTMLElement; to: HTMLElement; edge: Edge; line: LeaderLine; svg: SVGElement }[] = [];
 
 function hideLines() {
@@ -37,6 +38,10 @@ function removeLines() {
 
 function positionLines() {
   frame = 0;
+  if (root && !root.isConnected) {
+    removeLines();
+    return;
+  }
   if (!root || !Line || !props.active || !root.getClientRects().length) {
     hideLines();
     return;
@@ -129,6 +134,12 @@ onMounted(async () => {
   observer = new ResizeObserver(schedulePosition);
   observer.observe(root);
   if (root.parentElement) observer.observe(root.parentElement);
+  nodeObserver = new MutationObserver(() => {
+    // Remove disconnected endpoints before LeaderLine's own resize frame can measure them.
+    if (connectors.some(({ from, to }) => !from.isConnected || !to.isConnected)) removeLines();
+    schedulePosition();
+  });
+  nodeObserver.observe(root, { childList: true, subtree: true });
   document.addEventListener("scroll", schedulePosition, { capture: true, passive: true });
   window.addEventListener("resize", schedulePosition, { passive: true });
   try {
@@ -152,6 +163,7 @@ onBeforeUnmount(() => {
   mounted = false;
   if (frame) cancelAnimationFrame(frame);
   observer?.disconnect();
+  nodeObserver?.disconnect();
   document.removeEventListener("scroll", schedulePosition, true);
   window.removeEventListener("resize", schedulePosition);
   removeLines();

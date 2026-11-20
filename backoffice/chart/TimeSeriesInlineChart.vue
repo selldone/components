@@ -166,7 +166,6 @@ export default {
               : 0,
         },
 
-        id: Math.random() * 1000,
         chart: {
           id: this.chartId,
           group: this.chartGroup,

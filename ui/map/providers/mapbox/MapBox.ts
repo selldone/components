@@ -17,11 +17,14 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { SetupService } from "@selldone/core-js/server/SetupService";
 
 Mapbox.accessToken = SetupService.MapToken()!;
-Mapbox.setRTLTextPlugin(
-  "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js",
-  (error: Error) => {
-    if (error) console.error(error);
-  },
-);
+// Mapbox GL JS 3.33+ handles RTL text without an external plugin.
+if ("setRTLTextPlugin" in Mapbox && typeof Mapbox.setRTLTextPlugin === "function") {
+  Mapbox.setRTLTextPlugin(
+    "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js",
+    (error: Error) => {
+      if (error) console.error(error);
+    },
+  );
+}
 
 export default Mapbox;

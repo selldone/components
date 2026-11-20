@@ -1985,7 +1985,7 @@ export default {
         this.$product,
         null,
         null,
-        null,
+        this.$product.valuation,
         null,
         null,
       );

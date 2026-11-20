@@ -524,8 +524,12 @@ export default {
           },
         )
         .then(({ data }) => {
-          if (data.error) {
+          if (data?.error) {
             NotificationService.showErrorAlert(null, data.error_msg);
+            return;
+          }
+          if (!Array.isArray(data?.posts)) {
+            NotificationService.showErrorAlert(null, this.$t("global.notification.error_message"));
             return;
           }
           this.posts.push(...data.posts);

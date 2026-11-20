@@ -875,7 +875,12 @@ export default {
 
           if (this.showSearchBox) {
             // Add the control to the map.
-            this.map_box.addControl(new MapboxGeocoder({}));
+            this.map_box.addControl(
+              new MapboxGeocoder({
+                accessToken: Mapbox.accessToken,
+                mapboxgl: Mapbox,
+              }),
+            );
           }
 
           if (!this.hideLocationButtons) {

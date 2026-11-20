@@ -6,7 +6,7 @@ import test from "node:test";
 import * as Vue from "vue";
 import { renderToString } from "@vue/server-renderer";
 import { JSDOM } from "jsdom";
-import jquery from "jquery";
+import { jQueryFactory as jquery } from "jquery/factory";
 import numeral from "numeral";
 import axios from "axios";
 import Handlebars from "handlebars";
@@ -49,7 +49,7 @@ const documentFile = (name = "story.docx", size = 100) => ({ name, size });
 const plain = (value) => JSON.parse(JSON.stringify(value));
 
 function fixture(props = {}, browser) {
-  const exports = {}, requests = [], events = [], notices = [], ticks = [], dispatches = [], apps = [], warnings = [];
+  const exports = {}, requests = [], events = [], notices = [], ticks = [], dispatches = [], apps = [], warnings = [], errors = [];
   const timers = new Map(), placeholders = new Map();
   let timerId = 0;
   const dispatchResult = { forwarded: true };
@@ -67,7 +67,7 @@ function fixture(props = {}, browser) {
     return chain;
   } };
   vm.runInNewContext(script, {
-    exports, window, console: { log() {}, error() {}, warn: (...args) => warnings.push(args) },
+    exports, window, console: { log() {}, error: (...args) => errors.push(args), warn: (...args) => warnings.push(args) },
     FormData: browser?.FormData || class { values = new Map(); append(key, value) { this.values.set(key, value); } get(key) { return this.values.get(key); } },
     setTimeout(callback) { timers.set(++timerId, callback); return timerId; },
     clearTimeout(id) { timers.delete(id); },
@@ -77,6 +77,9 @@ function fixture(props = {}, browser) {
     },
     $: browser?.$ || (() => ({ remove() {}, attr() {}, each() {} })),
     require(name) {
+      if (browser?.loadEditorModule && (name === "medium-editor" || name.endsWith("/SelldoneEditorInsert"))) {
+        return browser.loadEditorModule(name);
+      }
       if (name === "vue") return {
         defineComponent: (component) => component,
         h: (component, props) => ({ component, props }),
@@ -155,10 +158,10 @@ function fixture(props = {}, browser) {
   const finish = (index = requests.length - 1) => requests[index].finish ? requests[index].finish() : requests[index].context.$store.dispatch({ type: "removeUploadingFile", file_id: requests[index].file.name });
   const flush = () => { while (ticks.length) ticks.shift()(); };
   const flushTimers = () => { for (const [id, callback] of [...timers]) { timers.delete(id); callback(); } };
-  const addBlock = (tag) => {
+  const addBlock = (tag, innerHTML = encodeURIComponent("{}")) => {
     const selector = `#${state.MASTER_ID} ${tag}`;
     const element = {
-      innerHTML: encodeURIComponent("{}"),
+      innerHTML,
       closest: () => ({}),
       parentNode: { replaceChild(root) {
         root.isConnected = true;
@@ -168,7 +171,7 @@ function fixture(props = {}, browser) {
     };
     placeholders.set(selector, [...(placeholders.get(selector) || []), element]);
   };
-  return { component, state, requests, events, notices, ticks, dispatches, dispatchResult, window, warnings, finish, flush, flushTimers, addBlock, apps, clicks: () => clicks, directions: () => directions };
+  return { component, state, requests, events, notices, ticks, dispatches, dispatchResult, window, warnings, errors, finish, flush, flushTimers, addBlock, apps, clicks: () => clicks, directions: () => directions };
 }
 
 assert.equal(fixture().component.props.workspace.default, false);
@@ -531,6 +534,60 @@ for (const key of ["onlyView", "edit", "wordConverterUrl", "suffixId", "unmount"
   f.component.methods.refresh.call(f.state);
   assert.equal(f.state.word_import_request, 0, "Legacy editor refresh retains its original full data reset");
 }
+
+test("read-only articles do not load the legacy editor modules", async () => {
+  const imports = [];
+  const f = fixture({ onlyView: true, workspace: true }, { loadEditorModule(name) {
+    imports.push(name);
+    throw new TypeError("Cannot assign to read only property 'URL'");
+  } });
+  await f.component.methods.refresh.call(f.state);
+  assert.deepEqual(imports, []);
+  assert.deepEqual(f.errors, []);
+
+  f.state.onlyView = false;
+  await f.component.methods.refresh.call(f.state);
+  assert(imports.includes("medium-editor"));
+  assert.equal(f.errors.length, 1);
+  assert.equal(f.state.editor_body, null);
+});
+
+test("a pending editor import only initializes an editor that still has write access", async () => {
+  const instances = [];
+  class MediumEditor {
+    constructor(selector) { instances.push(selector); }
+    subscribe() {}
+  }
+  const plugin = { Templates: {} };
+  const f = fixture({ workspace: true, noMediumInsert: true }, {
+    loadEditorModule: (name) => name === "medium-editor" ? { default: MediumEditor } : { MediumInsert: plugin },
+    $: () => ({ attr() {} }),
+  });
+  const staleRefresh = f.component.methods.refresh.call(f.state);
+  f.state.onlyView = true;
+  await staleRefresh;
+  assert.deepEqual(instances, []);
+
+  f.state.onlyView = false;
+  await f.component.methods.refresh.call(f.state);
+  assert.equal(instances.length, 2);
+  assert.equal(f.window.MediumInsert, plugin);
+});
+
+test("malformed legacy add-on placeholders and configured blocks render together", () => {
+  const f = fixture({ onlyView: true });
+  f.addBlock("code-editor", "placeholder");
+  f.addBlock("images-compare", "%bad-escape");
+  f.addBlock("flip-book", "null");
+  f.addBlock("image-overlay-canvas", encodeURIComponent(JSON.stringify({ layers: [] })));
+  f.state.reRenderAll(); f.flush(); f.flushTimers();
+  assert.equal(f.apps.length, 4);
+  assert.deepEqual(plain(f.apps[0].rendered.props.codes), {});
+  assert.deepEqual(plain(f.apps[1].rendered.props.images), {});
+  assert.deepEqual(plain(f.apps[2].rendered.props.pack), {});
+  assert.deepEqual(plain(f.apps[3].rendered.props.pack), { layers: [] });
+  assert.deepEqual(f.errors, []);
+});
 
 {
   const f = fixture({ workspace: true }), other = fixture({ MASTER_ID: "other-editor" });
@@ -953,10 +1010,10 @@ test("the native Insert label is escaped and its palette opens at the selected e
       exports, window, document, jQuery: $, getComputedStyle: window.getComputedStyle.bind(window),
       setTimeout: window.setTimeout.bind(window), clearTimeout: window.clearTimeout.bind(window),
       require(name) {
-        if (name === 'jquery') return $;
+        if (name === 'jquery') return { default: $ };
         if (name === 'handlebars/runtime') return { default: Handlebars };
         if (name === 'medium-editor') return { default: { util: {} } };
-        if (name === 'blueimp-file-upload') return {};
+        if (name === 'jquery-migrate' || name === 'blueimp-file-upload') return {};
         throw new Error(`Unexpected native Insert dependency: ${name}`);
       },
     });
@@ -1001,10 +1058,10 @@ test("image previews work with a read-only Window.URL and revoke their exact obj
     exports, window, document, jQuery: $, setTimeout: (callback) => timers.push(callback),
     XMLHttpRequest: window.XMLHttpRequest,
     require(name) {
-      if (name === 'jquery') return $;
+      if (name === 'jquery') return { default: $ };
       if (name === 'handlebars/runtime') return { default: Handlebars };
       if (name === 'medium-editor') return { default: { util: {} } };
-      if (name === 'blueimp-file-upload') return {};
+      if (name === 'jquery-migrate' || name === 'blueimp-file-upload') return {};
       throw new Error(`Unexpected native Insert dependency: ${name}`);
     },
   });

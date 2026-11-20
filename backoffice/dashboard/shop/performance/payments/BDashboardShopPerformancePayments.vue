@@ -161,7 +161,7 @@
         flat
         hide-details
         small
-        variant="text"
+        variant="plain"
       ></u-currency-input>
     </v-row>
 

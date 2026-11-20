@@ -1954,6 +1954,20 @@ test("native review title and byline remain without the opt-in while edit state 
   assert.equal(editing.requests.length, 0);
 });
 
+test("a historical article without a loaded author still renders the article without an author card", async () => {
+  const article = pack(29, { user: null }).article;
+  const f = fixture({ workspace: false, articleType: "blog", article, render_state: "review" });
+  const html = await renderToString(renderApp(f, {}, null, Vue.createSSRApp, {
+    SArticleEditor: nativeTitleEditor(),
+    SArticleAuthorBox: {
+      props: ["article"], render() { return Vue.h("section", this.article.user.name); },
+    },
+  }));
+  const { document } = new JSDOM(html).window;
+  assert.equal(document.querySelector("#review_title").textContent, "Article 29");
+  assert.equal(document.querySelector(".s-article-viewer__author"), null);
+});
+
 const officialReaderFixture = (props = {}, browser = {}) => fixture({ workspace: false, articleType: "blog", targetId: 94,
   $slots: { "reader-heading": () => [], "reader-toolbar": () => [] }, ...props }, browser);
 
@@ -1965,7 +1979,8 @@ test("the optional reader toolbar preserves native fallback, public reading and 
     "reader-related-before": () => Vue.h("h2", "Related stories"),
     "reader-author-after": () => Vue.h("a", { href: "/author" }, "More from this author"),
   };
-  const f = officialReaderFixture({ render_state: "editing", showComments: true, hasRelatedArticles: true, relatives: [] });
+  const article = pack(94, { user: { id: 3, name: "Ada Writer" } }).article;
+  const f = officialReaderFixture({ article, render_state: "editing", showComments: true, hasRelatedArticles: true, relatives: [] });
   let document = new JSDOM(await render(f, slots)).window.document;
   assert(document.querySelector('[data-reader-tools="true"]'));
   assert.equal(document.querySelector('.overflow-x-auto'), null);

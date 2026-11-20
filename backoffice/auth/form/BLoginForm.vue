@@ -1413,22 +1413,18 @@ export default {
         });
     },
 
-    reCAPTCHA_execute() {
+    async reCAPTCHA_execute() {
       this.recaptcha_response = null;
       const captchaKey = SetupService.GetCaptchaKey();
       if (!captchaKey || typeof grecaptcha === "undefined") return;
 
-      grecaptcha
-        .execute(captchaKey, {
+      try {
+        this.recaptcha_response = await grecaptcha.execute(captchaKey, {
           action: "login",
-        })
-        .then((token) => {
-          //  console.log(token);
-          this.recaptcha_response = token;
-        })
-        .catch(() => {
-          this.recaptcha_response = null;
         });
+      } catch {
+        this.recaptcha_response = null;
+      }
     },
 
     fetchTerms() {

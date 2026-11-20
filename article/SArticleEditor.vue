@@ -221,7 +221,6 @@
 
 <script lang="ts">
 //---------------- Medium Editor --------------
-import MediumEditor from "medium-editor";
 
 import "@selldone/components-vue/article/add-on/code-editor/plugin/ArticleAddonCodeEditorPlugin";
 import "@selldone/components-vue/article/add-on/comparison/plugin/ArticleAddonComparisonPlugin";
@@ -229,7 +228,6 @@ import "@selldone/components-vue/article/add-on/catalog/plugin/ArticleAddonCatal
 import "@selldone/components-vue/article/add-on/canvas/plugin/ArticleAddonCanvasPlugin";
 
 // @ts-ignore
-import { MediumInsert } from "@selldone/components-vue/article/insert/SelldoneEditorInsert";
 import AAddonCodeEditor from "./add-on/code-editor/AAddonCodeEditor.vue";
 
 import { createApp, defineComponent, h } from "vue";
@@ -251,7 +249,14 @@ import AAddonFlowchartDialog from "./add-on/flowchart/AAddonFlowchartDialog.vue"
 import { canUseArticleFlowchart, parseArticleFlowchart, parseArticleFlowchartElement, serializeArticleFlowchart, MAX_ARTICLE_FLOWCHARTS } from "./add-on/flowchart/article-flowchart";
 import { articleAddonContext } from "./add-on/toolbar/article-addon-context";
 
-window.MediumInsert = MediumInsert;
+function parseAddonData(data) {
+  try {
+    return data ? JSON.parse(decodeURIComponent(data)) ?? {} : {};
+  } catch {
+    // Legacy placeholders may have been saved before the block was configured.
+    return {};
+  }
+}
 
 const OPTIONS_TITLE = {
   buttonLabels: "fontawesome",
@@ -1057,15 +1062,7 @@ export default defineComponent({
 
           // Iterate over each element
           codeEditorElements.forEach((element) => {
-            const data = element.innerHTML;
-            let data_json = {};
-            if (data) {
-              try {
-                data_json = JSON.parse(decodeURIComponent(data));
-              } catch (e) {
-                console.error(e);
-              }
-            }
+            const data_json = parseAddonData(element.innerHTML);
 
             const editable =
               element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
@@ -1103,15 +1100,7 @@ export default defineComponent({
 
           // Iterate over each element
           imageCompareElements.forEach((element) => {
-            const data = element.innerHTML;
-            let data_json = {};
-            if (data) {
-              try {
-                data_json = JSON.parse(decodeURIComponent(data));
-              } catch (e) {
-                console.error(e);
-              }
-            }
+            const data_json = parseAddonData(element.innerHTML);
 
             const editable =
               element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
@@ -1150,15 +1139,7 @@ export default defineComponent({
 
           // Iterate over each element
           flipBookElements.forEach((element) => {
-            const data = element.innerHTML;
-            let data_json = {};
-            if (data) {
-              try {
-                data_json = JSON.parse(decodeURIComponent(data));
-              } catch (e) {
-                console.error(e);
-              }
-            }
+            const data_json = parseAddonData(element.innerHTML);
 
             const editable =
               element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
@@ -1197,15 +1178,7 @@ export default defineComponent({
 
           // Iterate over each element
           imageOverlayElements.forEach((element) => {
-            const data = element.innerHTML;
-            let data_json = {};
-            if (data) {
-              try {
-                data_json = JSON.parse(decodeURIComponent(data));
-              } catch (e) {
-                console.error(e);
-              }
-            }
+            const data_json = parseAddonData(element.innerHTML);
 
             const editable =
               element.closest(`#${this.EDITABLE_BODY_ID}`) !== null;
@@ -1352,7 +1325,7 @@ export default defineComponent({
 
     //――――――――――――――――――――――― Update page ―――――――――――――――――――――――
 
-    refresh() {
+    async refresh() {
       console.log(
         "☀ Refresh editor   only view=" + this.onlyView,
         "no tools",
@@ -1363,7 +1336,26 @@ export default defineComponent({
 
       this.setDirection();
 
-      if (this.onlyView) return;
+      if (this.onlyView || this._addonUnmounted) return;
+
+      // The legacy editor polyfills browser globals as soon as it is imported.
+      const refresh = Symbol();
+      this._pendingEditorRefresh = refresh;
+      let MediumEditor;
+      try {
+        const [editor, insert] = await Promise.all([
+          import("medium-editor"),
+          import("./insert/SelldoneEditorInsert"),
+        ]);
+        if (this.onlyView || this._addonUnmounted || this._pendingEditorRefresh !== refresh) return;
+        MediumEditor = editor.default;
+        window.MediumInsert = insert.MediumInsert;
+      } catch (error) {
+        if (!this.onlyView && !this._addonUnmounted && this._pendingEditorRefresh === refresh) {
+          console.error("Failed to load the article editor", error);
+        }
+        return;
+      }
 
       let current_instance = this; // Must save instance for calling function in jquery (belllow)
 
