@@ -71,7 +71,7 @@
     </template>
 
     <!-- ―――――――――――――――――― items ―――――――――――――――――― -->
-    <template v-slot:item="{ props, item }">
+    <template v-slot:item="{ props, internalItem: item }">
       <v-list-item
         :subtitle="item.raw.description?.limitWords(8)"
         :title="item.raw.title"
@@ -105,7 +105,7 @@
     </template>
 
     <!-- ―――――――――――――――――― selection ―――――――――――――――――― -->
-    <template v-slot:chip="{ props, item }">
+    <template v-slot:chip="{ props, internalItem: item }">
       <v-chip
         v-if="multiple"
         :prepend-avatar="

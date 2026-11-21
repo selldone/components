@@ -37,7 +37,7 @@
       />
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item :title="item.raw.category" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <b class="me-2 single-line" style="flex-basis: 48px"

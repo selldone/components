@@ -34,7 +34,7 @@
     multiple
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <template v-slot:chip="{ props, item }">
+    <template v-slot:chip="{ props, internalItem: item }">
       <v-chip
         :color="item.raw.toColor(true)"
         :size="small ? 'small' : undefined"
@@ -46,7 +46,7 @@
       </v-chip>
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item :title="item.raw" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-icon :color="item.raw.toColor(true)" class="me-1" size="small"

@@ -14,7 +14,7 @@ const files = {
 };
 const helperSource = readFileSync(new URL("../../../../../core-js/helper/product/SpecHelper.ts", import.meta.url), "utf8");
 const compile = (source) => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const plain = (value) => JSON.parse(JSON.stringify(value));
 function loadProductEnum(name) {

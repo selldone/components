@@ -9,7 +9,7 @@ const file = new URL("./BBoxesList.vue", import.meta.url);
 const { descriptor, errors } = parse(readFileSync(file, "utf8"));
 assert.deepEqual(errors, []);
 const compiled = ts.transpileModule(descriptor.script.content, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const plain = (value) => JSON.parse(JSON.stringify(value));
 

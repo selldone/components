@@ -369,14 +369,14 @@
               maxWidth: 'calc(100vw - 32px)',
             }"
           >
-            <template #selection="{ item }">
+            <template #selection="{ internalItem: item }">
               <variant-item-mini
                 :product-variant="item.raw"
                 force-enable
                 class="b-product-dropshipping-review__variant-value"
               />
             </template>
-            <template #item="{ item, props }">
+            <template #item="{ internalItem: item, props }">
               <v-list-item v-bind="props" :title="undefined">
                 <template #title>
                   <variant-item-mini

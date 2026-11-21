@@ -11,11 +11,11 @@ const { descriptor, errors } = parse(
 );
 assert.deepEqual(errors, []);
 const compiled = ts.transpileModule(descriptor.script.content, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const logisticExports = {};
 vm.runInNewContext(ts.transpileModule(readFileSync(new URL("../../../../../core-js/enums/logistic/LogisticProfileType.ts", import.meta.url), "utf8"), {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText, { exports: logisticExports });
 const { LogisticProfileType } = logisticExports;
 const types = Object.fromEntries(
@@ -493,7 +493,7 @@ test("custom pricing calculates the base and preview without falling back to an 
   const loadModule = (path, require) => {
     const exports = {};
     vm.runInNewContext(ts.transpileModule(readFileSync(new URL(path, import.meta.url), "utf8"), {
-      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+      compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
     }).outputText, { exports, require, console: { error: (...args) => diagnostics.push(args) } });
     return exports;
   };

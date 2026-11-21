@@ -390,7 +390,7 @@
         "
         variant="underlined"
       >
-        <template v-slot:chip="{ item, props }">
+        <template v-slot:chip="{ internalItem: item, props }">
           <v-chip v-bind="props">
             <img
               :src="FileHelper.GetFileExtensionImage(item.raw)"

@@ -11,7 +11,7 @@ assert.deepEqual(errors, []);
 const compiled = compileScript(descriptor, { id: "author-edit-test" });
 assert.deepEqual(compileTemplate({ source: descriptor.template.content, filename, id: "author-edit-test", compilerOptions: { bindingMetadata: compiled.bindings } }).errors, []);
 for (const style of descriptor.styles) assert.deepEqual(compileStyle({ source: style.content, filename, id: "author-edit-test", scoped: style.scoped, preprocessLang: style.lang }).errors, []);
-const script = ts.transpileModule(descriptor.script.content, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const script = ts.transpileModule(descriptor.script.content, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const settle = () => new Promise((resolve) => setImmediate(resolve));
 const plain = (value) => JSON.parse(JSON.stringify(value));
 

@@ -60,7 +60,7 @@
     :persistentPlaceholder="persistentPlaceholder"
     aria-label="Select Country"
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         v-bind="props"
         :title="getCountryName(item.raw.alpha2)"
@@ -72,7 +72,7 @@
       </v-list-item>
     </template>
 
-    <template v-slot:chip="{ item, props }">
+    <template v-slot:chip="{ internalItem: item, props }">
       <component
         v-bind="props"
         :is="chips ? 'v-chip' : 'span'"

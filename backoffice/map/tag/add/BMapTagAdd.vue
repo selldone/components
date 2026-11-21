@@ -460,7 +460,7 @@ export default {
         shopId = this.shop.id,
         itemId = this.draft.id;
       this.showMap(
-        this.draft.location || { lat: 0, lng: 0 },
+        this.draft.location,
         null,
         this.draft,
         (info) => {

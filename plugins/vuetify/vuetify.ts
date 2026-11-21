@@ -11,7 +11,6 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
-//import "vuetify/styles"; // Import Vuetify styles
 import "./vuetify-override.scss";
 
 import { createVuetify, VuetifyOptions } from "vuetify";
@@ -35,12 +34,16 @@ const vuetifyOptions: VuetifyOptions = {
    // VTreeview,
   },
   directives,
+  display: {
+    thresholds: { md: 960, lg: 1280, xl: 1920, xxl: 2560 },
+  },
 
   theme: {
     defaultTheme: "light", // Set the default theme
     themes: {
       light: {
         dark: false,
+        variables: { "elevation-overlay-color": "transparent" },
         colors: {
           //   'on-background': '#000',
           //   'on-surface': '#000',
@@ -57,6 +60,7 @@ const vuetifyOptions: VuetifyOptions = {
       },
       dark: {
         dark: true,
+        variables: { "elevation-overlay-color": "transparent" },
         colors: {
           // Define primary, secondary, accent, error, info, success, and warning colors.
           primary: SetupService.ColorThemeLight(),

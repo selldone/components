@@ -8,7 +8,7 @@ import { JSDOM } from "jsdom";
 import { parse, compileScript, compileTemplate } from "@vue/compiler-sfc";
 import ts from "typescript";
 
-test("catalog pages render, reorder and remove the selected row through Vue 3 draggable", async () => {
+test("catalog pages render, reorder and remove the selected row through the local sortable list", async () => {
   const dom = new JSDOM('<div id="app"></div>', { pretendToBeVisual: true });
   const previous = new Map();
   for (const key of ['window', 'document', 'navigator', 'Element', 'HTMLElement', 'SVGElement', 'Node', 'getComputedStyle', 'requestAnimationFrame', 'cancelAnimationFrame']) {
@@ -16,6 +16,12 @@ test("catalog pages render, reorder and remove the selected row through Vue 3 dr
     Object.defineProperty(globalThis, key, { configurable: true, value: typeof dom.window[key] === 'function' && ['getComputedStyle', 'requestAnimationFrame', 'cancelAnimationFrame'].includes(key) ? dom.window[key].bind(dom.window) : dom.window[key] });
   }
   const require = createRequire(import.meta.url), Vue = require('vue');
+  const Sortable = require('sortablejs');
+  const sortableModule = {};
+  vm.runInNewContext(ts.transpile(readFileSync(new URL('../sortable/USortableList.ts', import.meta.url), 'utf8'), { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: false }), {
+    exports: sortableModule, window, HTMLElement,
+    require: name => name === 'sortablejs' ? { default: Sortable } : Vue,
+  });
   let app;
   try {
     const url = new URL('./draggableImagesList.vue', import.meta.url), filename = fileURLToPath(url);
@@ -27,7 +33,7 @@ test("catalog pages render, reorder and remove the selected row through Vue 3 dr
     const evaluate = (source) => {
       const exports = {};
       const output = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
-      vm.runInNewContext(output, { exports, require(name) { if (name === 'vue') return { ...Vue, defineAsyncComponent: () => require('vuedraggable') }; return require(name); } });
+      vm.runInNewContext(output, { exports, require(name) { if (name === 'vue') return { ...Vue, defineAsyncComponent: () => sortableModule.default }; return require(name); } });
       return exports;
     };
     const component = evaluate(script.content).default;
@@ -37,17 +43,19 @@ test("catalog pages render, reorder and remove the selected row through Vue 3 dr
     app.config.warnHandler = (warning) => warnings.push(warning);
     app.component('v-btn', { setup(_, { attrs, slots }) { return () => Vue.h('button', attrs, slots.default?.()); } });
     app.component('v-icon', { setup(_, { slots }) { return () => Vue.h('span', slots.default?.()); } });
-    const root = app.mount(dom.window.document.querySelector('#app'));
+    app.mount(dom.window.document.querySelector('#app'));
     await Vue.nextTick();
     const list = () => [...dom.window.document.querySelectorAll('.list-group-item')];
     assert.equal(list().length, 3);
     assert.ok(list()[1].style.backgroundImage.includes('/second.jpg'));
 
-    const draggable = root.$.subTree.component.subTree.component.proxy;
     const dragged = list()[2];
-    draggable.onDragStart({ item: dragged });
-    dragged.parentElement.insertBefore(dragged, list()[0]);
-    draggable.onDragUpdate({ item: dragged, from: dragged.parentElement, oldIndex: 2, newIndex: 0 });
+    const container = dragged.parentElement;
+    const sortable = Sortable.get(container);
+    const event = { item: dragged, from: container, to: container, oldIndex: 2, newIndex: 0, oldDraggableIndex: 2, newDraggableIndex: 0 };
+    sortable.option('onStart')(event);
+    container.insertBefore(dragged, list()[0]);
+    sortable.option('onEnd')(event);
     await Vue.nextTick();
     assert.deepEqual([...images.value], ['/third.jpg', '/first.jpg', '/second.jpg']);
     list()[1].querySelector('button').click();

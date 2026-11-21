@@ -30,7 +30,7 @@ const { descriptor: assetSource, errors: assetErrors } = parse(readFileSync(asse
 assert.deepEqual(assetErrors, []);
 const assetTemplate = compileTemplate({ source: assetSource.template.content, filename: assetFile.pathname, id: "category-filter-asset-test" });
 assert.deepEqual(assetTemplate.errors, []);
-const transpile = (source) => ts.transpileModule(source, { reportDiagnostics: true, compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } });
+const transpile = (source) => ts.transpileModule(source, { reportDiagnostics: true, compilerOptions: { esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } });
 const plain = (value) => JSON.parse(JSON.stringify(value));
 const enabled = (value) => value === true || value === "";
 const prop = (node, key) => node.props[key] ?? node.props[key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)];

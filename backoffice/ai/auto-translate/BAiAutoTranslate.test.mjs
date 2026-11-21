@@ -18,7 +18,7 @@ assert.deepEqual(template.errors, []);
 for (const style of descriptor.styles) assert.deepEqual(compileStyle({ source: style.content,
   filename, id: "auto-translate-test", scoped: true, preprocessLang: style.lang }).errors, []);
 const transpile = source => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 
 function stub(name) {

@@ -60,7 +60,7 @@
     "
     v-model:focused="focused"
   >
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-avatar :size="24" class="me-2">
         <v-img
           v-if="!item.raw.add && item.raw.user_id"
@@ -77,7 +77,7 @@
       >
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar

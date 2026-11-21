@@ -17,7 +17,7 @@ for (const style of descriptor.styles) {
   const compiled = await compileStyleAsync({ source: style.content, filename: filename.pathname, id: 'data-v-vendor-onboarding-test', scoped: style.scoped, preprocessLang: style.lang });
   assert.deepEqual(compiled.errors, []);
 }
-const transpile = source => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = source => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const enumExports = {};
 vm.runInNewContext(transpile(readFileSync(new URL('../../../../core-js/enums/vendor/VendorDocumentType.ts', import.meta.url), 'utf8')), { exports: enumExports });
 const documentTypes = enumExports.default;

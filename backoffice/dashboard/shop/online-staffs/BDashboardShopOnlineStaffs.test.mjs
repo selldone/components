@@ -18,7 +18,7 @@ function evaluate(source, require = () => Vue) {
   const exports = {};
   vm.runInNewContext(
     ts.transpileModule(source, {
-      compilerOptions: { module: ts.ModuleKind.CommonJS },
+      compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS },
     }).outputText,
     {
       exports,

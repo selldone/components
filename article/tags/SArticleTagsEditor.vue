@@ -38,7 +38,7 @@
         }
       "
     >
-      <template v-slot:chip="{ item, props }">
+      <template v-slot:chip="{ internalItem: item, props }">
         <v-chip v-bind="props">
           <v-icon
             class="hover-scale-small"

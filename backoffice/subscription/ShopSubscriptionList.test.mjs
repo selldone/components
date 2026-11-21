@@ -38,6 +38,8 @@ function evaluate(source, require = () => ({})) {
   const result = ts.transpileModule(source, {
     reportDiagnostics: true,
     compilerOptions: {
+      esModuleInterop: false,
+      ignoreDeprecations: "6.0",
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2022,
     },

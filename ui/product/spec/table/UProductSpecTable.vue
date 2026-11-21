@@ -96,11 +96,9 @@
         :class="{ 'border-between-vertical': editable }"
         :component-data="{
           tag: 'ul',
-          type: 'transition-group',
           name: drag ? 'fade' : undefined,
         }"
         :model-value="spec"
-        :press-delay="150"
         style="list-style-type: none"
         tag="transition-group"
         v-bind="dragOptions"
@@ -182,7 +180,7 @@ export default {
     BProductEditInfoIcon,
     USmartToggle,
     BProductSpecRow,
-    draggable: defineAsyncComponent(() => import("vuedraggable")),
+    draggable: defineAsyncComponent(() => import("@selldone/components-vue/ui/sortable/USortableList.ts")),
   },
 
   emits: ["update", "save", "click-delete", "change", "autoSave"],

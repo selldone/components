@@ -5,7 +5,6 @@
     scrollable
     :aria-labelledby="`${uid}-title`"
     @update:model-value="$emit('update:modelValue', $event)"
-    @after-enter="labelEditor"
   >
     <v-card class="a-article-flowchart-dialog text-start">
       <v-card-title class="a-article-flowchart-dialog__heading">
@@ -87,11 +86,14 @@
               class="a-article-flowchart-dialog__label"
               >{{ $t("global.article.flowchart.definition") }}</label
             >
-            <prism-editor
-              ref="definitionEditor"
+            <u-code-editor
+              :id="`${uid}-code`"
               v-model="code"
               :highlight="highlight"
               :readonly="!available"
+              :maxlength="maxDefinitionLength"
+              :aria-describedby="`${uid}-hint${parsed ? '' : ` ${uid}-error`}`"
+              :aria-invalid="!parsed"
               ignore-tab-key
               line-numbers
               class="a-article-flowchart-dialog__code"
@@ -175,8 +177,7 @@
 <script lang="ts">
 import Prism from "prismjs";
 import "prismjs/components/prism-json";
-import { PrismEditor } from "vue-prism-editor";
-import "vue-prism-editor/dist/prismeditor.min.css";
+import UCodeEditor from "@selldone/components-vue/ui/code/editor/UCodeEditor.vue";
 import SArticleFlow from "./SArticleFlow.vue";
 import samples from "./article-flowchart-samples.json";
 import {
@@ -191,7 +192,7 @@ let instances = 0;
 
 export default {
   name: "AAddonFlowchartDialog",
-  components: { PrismEditor, SArticleFlow },
+  components: { UCodeEditor, SArticleFlow },
   props: {
     modelValue: { type: Boolean, default: false },
     definition: { type: [Object, String], default: null },
@@ -201,6 +202,7 @@ export default {
   emits: ["update:modelValue", "apply"],
   data: () => ({
     uid: `article-flowchart-dialog-${++instances}`,
+    maxDefinitionLength: MAX_FLOWCHART_BYTES,
     code: "",
     copyState: "",
     copyGeneration: 0,
@@ -244,9 +246,6 @@ export default {
         this.$emit("update:modelValue", false);
       } else if (value && this.modelValue) this.resetDefinition();
     },
-    parsed() {
-      this.$nextTick(() => this.labelEditor());
-    },
   },
   beforeUnmount() {
     this.copyGeneration++;
@@ -269,7 +268,6 @@ export default {
         : typeof this.definition === "string"
           ? this.definition
           : JSON.stringify(this.definition, null, 2) || "";
-      this.$nextTick(() => this.labelEditor());
     },
     loadSample(id: string) {
       if (!this.modelValue || !this.available) return;
@@ -286,18 +284,6 @@ export default {
         Prism.languages.json,
         "json",
       );
-    },
-    labelEditor() {
-      const textarea =
-        this.$refs.definitionEditor?.$el.querySelector("textarea");
-      if (!textarea) return;
-      textarea.id = `${this.uid}-code`;
-      textarea.maxLength = MAX_FLOWCHART_BYTES;
-      textarea.setAttribute(
-        "aria-describedby",
-        `${this.uid}-hint${this.parsed ? "" : ` ${this.uid}-error`}`,
-      );
-      textarea.setAttribute("aria-invalid", String(!this.parsed));
     },
     async copyPrompt() {
       if (!this.modelValue || !this.available || this.copyState === "copying")

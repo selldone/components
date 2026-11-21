@@ -59,13 +59,13 @@ function fixture(items = Object.values(entries), config = {}) {
     if (name === "vue") return Vue;
     if (name === "lodash-es") return { throttle: callback => callback };
     if (name.endsWith("/RouteMixin.ts")) return { RouteMixin };
-    if (name.endsWith("/DomainMixin.ts")) return { default: DomainMixin };
+    if (name.endsWith("/DomainMixin.ts")) return { __esModule: true, default: DomainMixin };
     if (name.includes("/DomainsHelper")) return { DomainsHelper: { GetShopDomains: () => items } };
     if (name.includes("/ShopLicense")) return { Eligible: { CanEditDomain: () => config.eligible !== false } };
     if (name.includes("/ShopPermissions")) return { ShopPermissionRegions: { SETTINGS: { code: "SETTINGS" } } };
-    if (name.includes("/NotificationService")) return { default: config.notification || {} };
-    if (name.endsWith(".vue")) return { default: leaf(name.split("/").at(-1).replace(".vue", "")) };
-    return { default: {} };
+    if (name.includes("/NotificationService")) return { __esModule: true, default: config.notification || {} };
+    if (name.endsWith(".vue")) return { __esModule: true, default: leaf(name.split("/").at(-1).replace(".vue", "")) };
+    return { __esModule: true, default: {} };
   };
   const exports = {};
   const network = config.http || new Proxy({}, { get() { throw Error("Navigation tests must never make a request"); } });
@@ -415,7 +415,7 @@ new Function("require", "exports", transpile(readFileSync(new URL("../../../mixi
 const nativeToggle = loadOptions("../../../ui/smart/toggle/USmartToggle.vue", name => { throw Error("Unexpected native toggle import: " + name); }).component;
 const nativeMap = loadOptions("./BDomainFlowMap.vue", name => {
   if (name.endsWith("/DomainMixin.ts")) return domainMixin;
-  if (name.endsWith("USmartToggle.vue")) return { default: nativeToggle };
+  if (name.endsWith("USmartToggle.vue")) return { __esModule: true, default: nativeToggle };
   if (name.endsWith("/DateConverter")) return { DateConverter: {} };
   throw Error("Unexpected map import: " + name);
 });

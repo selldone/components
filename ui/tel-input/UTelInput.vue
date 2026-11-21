@@ -66,7 +66,7 @@
             @update:model-value="choose"
             @update:menu="search = ''"
           >
-            <template v-slot:item="{ item, props }">
+            <template v-slot:item="{ internalItem: item, props }">
               <v-list-item
                 :title="item.raw.name"
                 class="text-start"
@@ -91,7 +91,7 @@
               ></v-text-field>
             </template>
 
-            <template v-slot:selection="{ item }">
+            <template v-slot:selection="{ internalItem: item }">
               <flag :iso="item.raw.iso2" :squared="false" style="min-width: 20px" />
               <span class="ms-1">+{{ item.raw.dialCode }}</span>
             </template>

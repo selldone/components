@@ -300,7 +300,7 @@
                   variant="outlined"
 
                 >
-                  <template #item="{ item, props }">
+                  <template #item="{ internalItem: item, props }">
                     <v-list-item v-bind="props" :prepend-icon="item.raw.icon" />
                   </template>
                 </v-select>

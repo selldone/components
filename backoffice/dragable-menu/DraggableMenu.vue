@@ -343,7 +343,7 @@ export default {
   name: "DraggableMenu",
   components: {
     USmartSelect,
-    draggable: defineAsyncComponent(() => import("vuedraggable")),
+    draggable: defineAsyncComponent(() => import("@selldone/components-vue/ui/sortable/USortableList.ts")),
   },
   emits: ["update:modelValue", "add-click", "click:delete"],
   props: {

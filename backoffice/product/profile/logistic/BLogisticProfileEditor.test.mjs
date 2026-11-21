@@ -14,7 +14,7 @@ const template = compileTemplate({ source: descriptor.template.content, filename
   compilerOptions: { bindingMetadata: script.bindings } });
 assert.deepEqual(template.errors, []);
 const transpile = source => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const node = (type, text = "") => ({ type, text, props: {}, children: [], parent: null, querySelector() { return null; } });
 const all = root => [root, ...root.children.flatMap(all)];

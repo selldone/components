@@ -26,7 +26,7 @@ for (const style of descriptor.styles) {
   }).errors, []);
 }
 const script = ts.transpileModule(descriptor.script.content, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const plain = (value) => JSON.parse(JSON.stringify(value));
 const settle = () => new Promise((resolve) => setImmediate(resolve));

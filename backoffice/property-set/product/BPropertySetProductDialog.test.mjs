@@ -12,7 +12,7 @@ const { descriptor, errors } = parse(readFileSync(file, 'utf8'));
 assert.deepEqual(errors, []);
 assert.deepEqual(compileTemplate({ source: descriptor.template.content, filename: file.pathname, id: 'property-set-dialog-test' }).errors, []);
 const compiled = ts.transpileModule(descriptor.script.content, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 
 const makeSet = (id, title = 'Set ' + id) => ({ id, title, variants: [{ code: 'style', name: 'Pattern', icon: 'style' }] });

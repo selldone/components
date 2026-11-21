@@ -50,7 +50,7 @@
       <small v-else-if="modelValue">Loading...</small>
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item v-bind="props">
         <template v-slot:title>
           <v-row align="center" no-gutters>

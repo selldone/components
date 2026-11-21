@@ -16,7 +16,7 @@ for (const style of descriptor.styles) {
   const result = await compileStyleAsync({ source: style.content, filename: filename.pathname, id: "data-v-payout-reverse-test", scoped: style.scoped, preprocessLang: style.lang });
   assert.deepEqual(result.errors, []);
 }
-const transpile = (source) => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = (source) => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const plain = (value) => JSON.parse(JSON.stringify(value));
 const payment = () => ({ id: 17, vendor_id: 5, vendor: { id: 5, name: "Fixture vendor" }, amount: 100, reversal: 20, currency: "USD", option: "bank", meta: { reference: "fixture-ref" }, reversal_detail: [{ amount: 20, reason: "Prior partial reversal", currency: "USD" }] });
 

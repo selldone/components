@@ -734,7 +734,7 @@
                   variant="underlined"
                   hide-details
                 >
-                  <template #selection="{ item }"
+                  <template #selection="{ internalItem: item }"
                     ><span class="b-shop-subscriptions__identity"
                       ><img
                         :src="getShopLicenseIcon(item.raw.code)"
@@ -744,7 +744,7 @@
                       />{{ $t(item.raw.name) }}</span
                     ></template
                   >
-                  <template #item="{ item, props }"
+                  <template #item="{ internalItem: item, props }"
                     ><v-list-item
                       v-bind="props"
                       :prepend-avatar="getShopLicenseIcon(item.raw.code)"

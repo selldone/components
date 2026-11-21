@@ -57,7 +57,7 @@
       {{ live_value?.address }}
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         :subtitle="item.raw.address"
         class="text-start"

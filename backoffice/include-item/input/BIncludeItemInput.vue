@@ -34,7 +34,7 @@
       })
     "
   >
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <div v-if="item.raw" class="py-2 text-start d-flex align-center">
         <v-avatar class="me-2" rounded size="24">
           <img :src="getShopImagePath(item.raw.image)" />
@@ -44,7 +44,7 @@
       </div>
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item :title="item.raw.title" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar rounded="lg" size="24">

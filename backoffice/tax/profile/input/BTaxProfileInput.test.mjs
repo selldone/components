@@ -55,8 +55,10 @@ async function fixture(t, extra = {}, attributes = {}) {
         calls.native = { props, attrs, emit };
         const chosen = props.items.find(item => item.id === (props.returnObject ? props.modelValue?.id : props.modelValue));
         return Vue.h("native-select", attrs, [slots["prepend-inner"]?.(),
-          chosen && slots.selection?.({ item: { raw: chosen } }),
-          ...props.items.map(item => Vue.h("option", { id: item.id }, slots.item?.({ item: { raw: item }, props: { title: item.name } }))),
+          chosen && slots.selection?.({ item: chosen, internalItem: { raw: chosen } }),
+          ...props.items.map(item => Vue.h("option", { id: item.id }, slots.item?.({
+            item, internalItem: { raw: item }, props: { title: item.name },
+          }))),
         ]);
       };
     },

@@ -12,7 +12,7 @@ import { parse, compileTemplate, compileStyleAsync } from '@vue/compiler-sfc';
 const chartFile = new URL('./BProductFileStorageChart.vue', import.meta.url);
 const donutFile = new URL('../../../../../ui/chart/donut-leader/UChartDonutLeader.vue', import.meta.url);
 const paletteFile = new URL('../../../../../ui/chart/donut-leader/donutSlices.ts', import.meta.url);
-const transpile = source => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = source => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const palette = { exports: {} };
 vm.runInNewContext(transpile(readFileSync(paletteFile, 'utf8')), palette);
 

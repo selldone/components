@@ -110,7 +110,7 @@
     @update:model-value="selectCurrency"
     aria-label="Select Currency"
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item :title="$t(item.raw.name)" v-bind="props">
         <template v-slot:prepend>
           <u-currency-icon
@@ -138,7 +138,7 @@
       </v-list-item>
     </template>
 
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <u-currency-icon
         :currency="item.raw"
         :flag="flag || flagMode"

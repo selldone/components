@@ -19,6 +19,8 @@ const dom = new JSDOM(
 for (const name of [
   "window",
   "document",
+  "Document",
+  "ShadowRoot",
   "Element",
   "HTMLElement",
   "SVGElement",
@@ -34,7 +36,6 @@ const Vue = await import("vue");
 const { renderToString } = await import("vue/server-renderer");
 const Prism = (await import("prismjs")).default;
 await import("prismjs/components/prism-json.js");
-const { PrismEditor } = await import("vue-prism-editor");
 const jquery = (await import("jquery")).default;
 const plain = (value) => JSON.parse(JSON.stringify(value));
 
@@ -53,7 +54,10 @@ function load(source, imports = {}, globals = {}) {
       ...globals,
       require(name) {
         assert(name in imports, "Unexpected import: " + name);
-        return imports[name];
+        const dependency = imports[name];
+        return Object.hasOwn(dependency, "default")
+          ? { ...dependency, __esModule: true }
+          : dependency;
       },
     },
   );
@@ -158,13 +162,13 @@ const Addon = await component("./AAddonFlowchart.vue", {
   "../toolbar/article-addon-context": context,
   "./article-flowchart": helpers,
 });
+const CodeEditor = await component("../../../ui/code/editor/UCodeEditor.vue");
 const Dialog = await component(
   "./AAddonFlowchartDialog.vue",
   {
     prismjs: { default: Prism },
     "prismjs/components/prism-json": {},
-    "vue-prism-editor": { PrismEditor },
-    "vue-prism-editor/dist/prismeditor.min.css": {},
+    "@selldone/components-vue/ui/code/editor/UCodeEditor.vue": { default: CodeEditor },
     "./SArticleFlow.vue": { default: SharedFlow },
     "./article-flowchart": helpers,
     "./article-flowchart-samples.json": { default: samples },
@@ -1569,7 +1573,6 @@ test("the real JSON editor previews, preserves invalid draft text, copies the ca
   fixture.dialog.submit();
   assert.equal(fixture.events.filter(([name]) => name === "apply").length, 1);
   assert.deepEqual(fixture.events.at(-1), ["open", false]);
-  // Let Prism's native line-number measurement finish before disposing the dialog host.
   await new Promise((resolve) => setImmediate(resolve));
   fixture.application.unmount();
 });

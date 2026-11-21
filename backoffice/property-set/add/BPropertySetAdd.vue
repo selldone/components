@@ -203,7 +203,7 @@ export default {
     USmartSuggestion,
     USmartSwitch,
     BPropertySetVariantRow,
-    draggable: defineAsyncComponent(() => import("vuedraggable")),
+    draggable: defineAsyncComponent(() => import("@selldone/components-vue/ui/sortable/USortableList.ts")),
   },
   emits: ["add", "edit", "close"],
   props: {

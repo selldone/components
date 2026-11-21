@@ -75,7 +75,7 @@
       </div>
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item v-bind="props">
         <template v-slot:prepend>
           <v-avatar rounded size="32">

@@ -53,7 +53,7 @@
     :multiple="multiple"
     class="v-input-auto-height"
   >
-    <template v-slot:chip="{ item, props }">
+    <template v-slot:chip="{ internalItem: item, props }">
       <v-chip
         v-if="multiple"
         v-bind="props"
@@ -106,7 +106,7 @@
       </div>
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar>

@@ -17,7 +17,7 @@ const template = compileTemplate({ source: descriptor.template.content, filename
   id: "product-tax-profile-test", compilerOptions: { bindingMetadata: script.bindings } });
 assert.deepEqual(template.errors, []);
 const transpile = code => ts.transpileModule(code, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 function dictionary(locale) {
   const exports = {};

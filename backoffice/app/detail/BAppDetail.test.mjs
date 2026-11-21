@@ -15,7 +15,7 @@ const settle = async () => { await Vue.nextTick(); await Vue.nextTick(); await n
 function evaluate(source, globals = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, { exports, self: globals.window || {}, ...globals });
   return exports;
 }

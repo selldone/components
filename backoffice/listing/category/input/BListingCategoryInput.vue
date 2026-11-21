@@ -26,7 +26,7 @@
       <slot name="append-inner" />
     </template>
     <!-- Selected item view -->
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-avatar class="m-2" size="32" color="grey-lighten-4">
         <template v-if="item.raw.icon">
           <img
@@ -66,7 +66,7 @@
     </template>
 
     <!-- Dropdown items -->
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item v-bind="props" class="text-start">
         <template v-slot:prepend>
           <v-avatar class="m-2" size="32" color="grey-lighten-4">

@@ -159,7 +159,7 @@
           </s-state-flag>
         </template>
 
-        <template v-slot:selection="{ item }">
+        <template v-slot:selection="{ internalItem: item }">
           {{ item.raw.name }}
           <span
             v-if="
@@ -181,7 +181,7 @@
             >override
           </v-chip>
         </template>
-        <template v-slot:item="{ item, props }">
+        <template v-slot:item="{ internalItem: item, props }">
           <v-list-item class="text-start" v-bind="props">
             <template v-slot:title>
               <s-state-flag

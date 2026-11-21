@@ -25,7 +25,7 @@ const settle = async () => { await Vue.nextTick(); await new Promise(setImmediat
 function evaluate(source, imports = () => ({}), globals = {}) {
   const output = ts.transpileModule(source, {
     reportDiagnostics: true,
-    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+    compilerOptions: { target: ts.ScriptTarget.ES2022, esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS },
   });
   assert.deepEqual(output.diagnostics, []);
   const exports = {};
@@ -55,11 +55,13 @@ const bundle = await build({
     resolveDir: fileURLToPath(new URL("../../../../../../../", import.meta.url)),
   },
   bundle: true, write: false, format: "cjs", platform: "node", loader: { ".css": "empty" }, external: ["vue"], logLevel: "silent",
+  define: { "process.env.NODE_ENV": JSON.stringify("test") },
 });
 const nativeModule = { exports: {} };
 vm.runInNewContext(bundle.outputFiles[0].text, {
-  module: nativeModule, exports: nativeModule.exports, require, console, process,
+  module: nativeModule, exports: nativeModule.exports, require, console,
   window, document, Node, Element, HTMLElement, HTMLInputElement, HTMLTextAreaElement, SVGElement, ResizeObserver, getComputedStyle,
+  CSS: { supports: () => false },
   setTimeout, clearTimeout, requestAnimationFrame: callback => setTimeout(callback, 0), cancelAnimationFrame: clearTimeout,
 });
 const native = nativeModule.exports;

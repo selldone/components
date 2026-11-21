@@ -31,7 +31,7 @@
     @update:model-value="(val) => $emit('update:modelValue', val)"
     @click:clear="$emit('click:clear')"
   >
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-avatar v-if="item.raw.icon" class="m-2 flex-grow-0" size="32">
         <img :src="getShopImagePath(item.raw.icon)" />
       </v-avatar>
@@ -48,7 +48,7 @@
       </div>
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         :prepend-avatar="
           item.raw.icon ? getShopImagePath(item.raw.icon) : undefined

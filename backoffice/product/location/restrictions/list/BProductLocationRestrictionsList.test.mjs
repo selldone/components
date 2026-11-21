@@ -15,6 +15,7 @@ const exports = {};
 vm.runInNewContext(
   ts.transpileModule(descriptor.script.content, {
     compilerOptions: {
+      esModuleInterop: false,
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2022,
     },

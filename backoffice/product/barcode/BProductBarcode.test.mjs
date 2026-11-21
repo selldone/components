@@ -19,7 +19,7 @@ for (const block of descriptor.styles) {
   const result = await compileStyleAsync({ source: block.content, filename: file.pathname, id: "product-barcode-test", scoped: block.scoped, preprocessLang: block.lang });
   assert.deepEqual(result.errors, []);
 }
-const transpile = (source) => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText;
+const transpile = (source) => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, esModuleInterop: false, module: ts.ModuleKind.CommonJS } }).outputText;
 const element = (type, text = "") => ({ type, text, props: {}, children: [], parent: null });
 const renderer = Vue.createRenderer({
   createElement: (type) => element(type),

@@ -44,7 +44,7 @@ function loadCore(name) {
   coreModules.set(name, exports);
   vm.runInNewContext(ts.transpileModule(
     readFileSync(new URL(`./core/js/${name}.js`, import.meta.url), "utf8"),
-    { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } },
+    { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } },
   ).outputText, { exports, Array, require: (path) => loadCore(path.replace(/^\.\//, "").replace(/\.js$/, "")) });
   return exports;
 }
@@ -58,6 +58,7 @@ function evaluate(source, globals = {}) {
   vm.runInNewContext(
     ts.transpileModule(source, {
       compilerOptions: {
+        esModuleInterop: false,
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2022,
       },

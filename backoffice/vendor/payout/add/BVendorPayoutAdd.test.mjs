@@ -43,7 +43,7 @@ const globals = {
 };
 function evaluate(source) {
   const exports = {};
-  const result = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }, reportDiagnostics: true });
+  const result = ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }, reportDiagnostics: true });
   assert.deepEqual(result.diagnostics, []);
   vm.runInNewContext(result.outputText, { exports, ...globals });
   return exports;

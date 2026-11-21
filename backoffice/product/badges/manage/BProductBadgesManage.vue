@@ -156,7 +156,7 @@
               @update:model-value="addBadge"
             >
               <template #prepend-inner><b-product-edit-info-icon name="Plus" :size="18" /></template>
-              <template #item="{ item, props }">
+              <template #item="{ internalItem: item, props }">
                 <v-list-item :title="item.raw.title" :subtitle="item.raw.link" v-bind="props" class="text-start">
                   <template #prepend>
                     <v-img :src="getShopImagePath(item.raw.image)" class="me-2 flex-grow-0" height="24" width="24" />
@@ -210,7 +210,7 @@
                   variant="solo"
                   @update:model-value="addBadge"
                 >
-                  <template v-slot:item="{ item, props }">
+                  <template v-slot:item="{ internalItem: item, props }">
                     <v-list-item
                       :title="item.raw.title"
                       :subtitle="item.raw.link"
@@ -395,7 +395,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 export default {
   name: "BProductBadgesManage",
   mixins: [],
-  components: { BProductEditInfoIcon, USmartSwitch, USmartDraggable, draggable: defineAsyncComponent(() => import('vuedraggable')) },
+  components: { BProductEditInfoIcon, USmartSwitch, USmartDraggable, draggable: defineAsyncComponent(() => import('@selldone/components-vue/ui/sortable/USortableList.ts')) },
   props: {
     modern: { type: Boolean, default: false },
     product: {

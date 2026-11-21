@@ -18,6 +18,8 @@ const dom = new JSDOM("<!doctype html><body></body>", {
 for (const name of [
   "window",
   "document",
+  "Document",
+  "ShadowRoot",
   "Element",
   "HTMLElement",
   "SVGElement",
@@ -33,7 +35,6 @@ const Vue = await import("vue");
 const Prism = (await import("prismjs")).default;
 for (const grammar of ["c", "cpp", "markup-templating", "php", "python"])
   await import(`prismjs/components/prism-${grammar}.js`);
-const { PrismEditor } = await import("vue-prism-editor");
 const $ = (await import("jquery")).default;
 function load(source, imports = {}, globals = {}) {
   const exports = {};
@@ -49,7 +50,10 @@ function load(source, imports = {}, globals = {}) {
       ...globals,
       require(name) {
         assert(name in imports, "Unexpected import: " + name);
-        return imports[name];
+        const dependency = imports[name];
+        return Object.hasOwn(dependency, "default")
+          ? { ...dependency, __esModule: true }
+          : dependency;
       },
     },
   );
@@ -127,10 +131,10 @@ const Toolbar = await component("../toolbar/AAddonToolbar.vue", {
   "@selldone/components-vue/plugins/notification/NotificationService.ts":
     notification,
 });
+const CodeEditor = await component("../../../ui/code/editor/UCodeEditor.vue", { vue: Vue });
 const commonImports = {
   "prismjs/themes/prism.css": {},
-  "vue-prism-editor": { PrismEditor },
-  "vue-prism-editor/dist/prismeditor.min.css": {},
+  "@selldone/components-vue/ui/code/editor/UCodeEditor.vue": { default: CodeEditor },
 };
 const Viewer = await component("./AAddonCodeEditor.vue", {
   ...commonImports,
@@ -273,6 +277,78 @@ test("selected languages use their real Prism grammar, and unknown sources stay 
       ),
       '&lt;img src=x onerror="alert(1)"> &amp;',
     );
+});
+
+test("local editor keeps native labels, line numbers, editing shortcuts and blur", async () => {
+  const value = Vue.ref("first\r\nsecond\r\n");
+  const readOnly = Vue.ref(false);
+  const previewOnly = Vue.ref(false);
+  const updates = [];
+  const blurEvents = [];
+  const view = mount({
+    render: () => Vue.h(CodeEditor, {
+      id: "sample-source",
+      ariaLabel: "CSS source",
+      ariaDescribedby: "source-help",
+      lineNumbers: true,
+      readonly: readOnly.value,
+      previewOnly: previewOnly.value,
+      modelValue: value.value,
+      highlight: (code) => Prism.highlight(code, Prism.languages.css, "css"),
+      "onUpdate:modelValue": (code) => {
+        updates.push(code);
+        value.value = code;
+      },
+      onBlur: (event) => blurEvents.push(event),
+    }),
+  });
+  try {
+    const input = view.host.querySelector("textarea");
+    const preview = view.host.querySelector("pre");
+    assert.equal(input.id, "sample-source");
+    assert.equal(input.getAttribute("aria-label"), "CSS source");
+    assert.equal(input.getAttribute("aria-describedby"), "source-help");
+    assert.equal(preview.textContent, "first\nsecond\n");
+    assert.equal(view.host.querySelectorAll(".prism-editor__line-number").length, 3);
+    assert.deepEqual(updates, [], "rendering legacy line endings never changes the saved value");
+
+    const key = (key, modifiers = {}) => input.dispatchEvent(
+      new window.KeyboardEvent("keydown", { key, ...modifiers, bubbles: true, cancelable: true }),
+    );
+    input.focus();
+    input.setSelectionRange(0, 12);
+    assert.equal(key("Tab"), false);
+    await settle();
+    assert.equal(value.value, "  first\n  second\n");
+    assert.equal(input.selectionStart, 2);
+    assert.equal(input.selectionEnd, 16);
+    assert.equal(key("Tab", { shiftKey: true }), false);
+    await settle();
+    assert.equal(value.value, "first\nsecond\n");
+    assert.equal(key("m", { ctrlKey: true }), false);
+    assert.equal(key("Tab"), true, "the capture toggle lets keyboard users move focus");
+    key("Escape");
+    assert.equal(blurEvents.length, 1);
+    assert.equal(blurEvents[0].target, input);
+
+    readOnly.value = true;
+    await settle();
+    assert.equal(input.readOnly, true);
+    input.value = "changed";
+    input.dispatchEvent(new window.Event("input", { bubbles: true }));
+    await settle();
+    assert.equal(value.value, "first\nsecond\n");
+    assert.equal(updates.length, 2);
+
+    previewOnly.value = true;
+    await settle();
+    assert.equal(view.host.querySelector("textarea"), null);
+    assert.equal(preview.getAttribute("aria-hidden"), null);
+    assert.equal(preview.tabIndex, 0);
+    assert.equal(preview.textContent, value.value);
+  } finally {
+    view.close();
+  }
 });
 
 test("readonly language/theme controls preserve authored schema and source, without opening edit", async () => {

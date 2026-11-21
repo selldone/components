@@ -58,7 +58,7 @@
     :returnObject="returnObject"
     closable-chips
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         :subtitle="item.raw.country ? $t(item.raw.country) : undefined"
         :title="item.raw.name ? $t(item.raw.name) : undefined"
@@ -91,7 +91,7 @@
       </v-list-item>
     </template>
 
-    <template v-slot:chip="{ item, props }">
+    <template v-slot:chip="{ internalItem: item, props }">
       <v-chip v-bind="props" v-if="chips">
         <flag
           v-if="item.raw.flag"

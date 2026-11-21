@@ -62,7 +62,7 @@ import { defineAsyncComponent } from "vue";
 
 export default {
   name: "draggableImagesList",
-  components: { draggable: defineAsyncComponent(() => import("vuedraggable")) },
+  components: { draggable: defineAsyncComponent(() => import("@selldone/components-vue/ui/sortable/USortableList.ts")) },
   emits: ["update:modelValue", "add-click"],
   props: {
     modelValue: {},

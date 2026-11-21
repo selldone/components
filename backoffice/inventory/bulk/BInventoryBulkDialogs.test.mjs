@@ -34,6 +34,8 @@ function evaluate(source, require, globals = {}) {
   const exports = {};
   const result = ts.transpileModule(source, {
     compilerOptions: {
+      esModuleInterop: false,
+      ignoreDeprecations: "6.0",
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2022,
     },

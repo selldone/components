@@ -203,7 +203,7 @@
               closable-chips
               multiple
               variant="underlined"
-              ><template #append-inner><v-btn v-if="compactMode" class="sd-modern-input-action" icon variant="text" :disabled="readOnly" :aria-label="$t('add_product.inputs_modern.add_choice')" @mousedown.prevent @click.stop="addToken('selects')"><b-product-edit-info-icon name="Plus" :size="16" /><v-tooltip activator="parent" :text="$t('add_product.inputs_modern.add_choice')" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start" /></v-btn></template><template #chip="{ props, item }"
+              ><template #append-inner><v-btn v-if="compactMode" class="sd-modern-input-action" icon variant="text" :disabled="readOnly" :aria-label="$t('add_product.inputs_modern.add_choice')" @mousedown.prevent @click.stop="addToken('selects')"><b-product-edit-info-icon name="Plus" :size="16" /><v-tooltip activator="parent" :text="$t('add_product.inputs_modern.add_choice')" location="top" :open-on-focus="true" content-class="sd-modern-tooltip text-start" /></v-btn></template><template #chip="{ props, internalItem: item }"
                 ><v-chip v-bind="props">{{ item.raw }}</v-chip></template
               ></v-combobox
             >
@@ -460,7 +460,7 @@
                 multiple
                 variant="underlined"
               >
-                <template v-slot:chip="{ props, item }">
+                <template v-slot:chip="{ props, internalItem: item }">
                   <v-chip v-bind="props">
                     {{ item.raw }}
                   </v-chip>
@@ -513,7 +513,7 @@
                 variant="underlined"
                 class="mb-3"
               >
-                <template v-slot:chip="{ props, item }">
+                <template v-slot:chip="{ props, internalItem: item }">
                   <v-chip v-bind="props">
                     {{ item.raw }}
                   </v-chip>

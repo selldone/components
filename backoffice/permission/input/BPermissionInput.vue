@@ -31,7 +31,7 @@
     @update:model-value="(val) => $emit('update:modelValue', val)"
     closable-chips
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         :prepend-avatar="item.raw.src"
         :title="$t(item.raw.text)"
@@ -41,7 +41,7 @@
       </v-list-item>
     </template>
 
-    <template v-slot:chip="{ item,props }">
+    <template v-slot:chip="{ internalItem: item,props }">
       <v-chip v-if="chips" :prepend-avatar="item.raw.src">
         {{ $t(item.raw.text) }}
       </v-chip>

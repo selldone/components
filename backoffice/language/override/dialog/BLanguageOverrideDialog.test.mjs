@@ -30,6 +30,8 @@ function evaluate(source, dependency = () => ({}), globals = {}) {
     reportDiagnostics: true,
     compilerOptions: {
       target: ts.ScriptTarget.ES2022,
+      esModuleInterop: false,
+      ignoreDeprecations: "6.0",
       module: ts.ModuleKind.CommonJS,
     },
   });

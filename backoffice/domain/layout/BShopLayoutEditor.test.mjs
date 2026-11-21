@@ -16,6 +16,7 @@ const repository = new URL("../../../../../", import.meta.url);
 const transpile = (code) =>
   ts.transpileModule(code, {
     compilerOptions: {
+      esModuleInterop: false,
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2022,
     },

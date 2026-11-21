@@ -19,7 +19,7 @@
     @click:clear="onClear"
   >
     <!-- Selected -->
-    <template #selection="{ item }">
+    <template #selection="{ internalItem: item }">
       <b class="small me-1 flex-grow-1 line-height-normal">{{
         item.raw.name
       }}</b>
@@ -37,7 +37,7 @@
     </template>
 
     <!-- Menu items -->
-    <template #item="{ item, props }">
+    <template #item="{ internalItem: item, props }">
       <v-list-item class="text-start" v-bind="props" :title="item.raw.name">
         <template #prepend>
           <u-cube

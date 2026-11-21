@@ -21,7 +21,7 @@ const productSource = ts.createSourceFile("products.ts", readFileSync(new URL(".
 const productHeaders = productSource.statements.filter(ts.isVariableStatement).flatMap((statement) => statement.declarationList.declarations).find((declaration) => declaration.name.getText(productSource) === "ProductsCsvHeaders");
 const productClass = productSource.statements.find((statement) => ts.isClassDeclaration(statement) && statement.name.text === "ProductsCsvFormat");
 const productValidation = `export const ProductsCsvHeaders = ${productHeaders.initializer.getText(productSource)};\n${productClass.getText(productSource)}`;
-const transpile = (source) => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = (source) => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const plain = (value) => JSON.parse(JSON.stringify(value));
 const settle = async () => { await Vue.nextTick(); await new Promise(setImmediate); await Vue.nextTick(); };
 const categoryPacks = Object.fromEntries(["en", "fa"].map((language) => {

@@ -17,7 +17,7 @@ const read = file => readFileSync(new URL(file, import.meta.url), "utf8");
 const plain = value => JSON.parse(JSON.stringify(value));
 const settle = async () => { await Vue.nextTick(); await new Promise(setImmediate); await Vue.nextTick(); };
 function evaluate(source, imports = () => ({}), globals = {}) {
-  const output = ts.transpileModule(source, { reportDiagnostics: true, compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } });
+  const output = ts.transpileModule(source, { reportDiagnostics: true, compilerOptions: { target: ts.ScriptTarget.ES2022, esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS } });
   assert.deepEqual(output.diagnostics, []);
   const exports = {};
   vm.runInNewContext(output.outputText, { exports, require: imports, console, getComputedStyle, ...globals });

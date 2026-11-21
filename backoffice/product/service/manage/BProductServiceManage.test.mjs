@@ -11,7 +11,7 @@ const read = (relative) => readFileSync(new URL(relative, import.meta.url), "utf
 function evaluate(source, dependencies = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, {
     exports, Intl, Date, Set, console, window: {},
     setInterval: () => 1, clearInterval() {},

@@ -83,7 +83,7 @@
 </template>
 
 <script lang="ts">
-import draggable from "vuedraggable";
+import draggable from "@selldone/components-vue/ui/sortable/USortableList.ts";
 
 type FaqItem = {
   id: string;

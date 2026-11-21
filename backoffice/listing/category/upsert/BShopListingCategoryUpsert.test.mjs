@@ -42,6 +42,8 @@ for (const style of descriptor.styles)
   );
 const script = ts.transpileModule(descriptor.script.content, {
   compilerOptions: {
+    esModuleInterop: false,
+    ignoreDeprecations: "6.0",
     module: ts.ModuleKind.CommonJS,
     target: ts.ScriptTarget.ES2022,
   },

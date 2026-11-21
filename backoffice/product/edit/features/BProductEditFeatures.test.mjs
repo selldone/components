@@ -55,7 +55,7 @@ function fixture(name, { vendorPanel = false, readOnly = false, modern = true, p
   vm.runInContext("Array.prototype.unique = function () { return Array.from(new Set(this)); };", context);
   const draft = (value) => vm.runInContext(`(${JSON.stringify(value)})`, context);
   vm.runInContext(ts.transpileModule(descriptor.script.content, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, context);
   const component = context.exports.default;
   const state = {
@@ -90,7 +90,7 @@ function renderedNodes(descriptor, state) {
   assert.deepEqual(output.errors, []);
   const exports = {};
   vm.runInNewContext(ts.transpileModule(output.code, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, { exports, require: () => ({
     ...Vue, resolveComponent: (name) => name, resolveDynamicComponent: (name) => name,
     withDirectives: (node) => node,

@@ -10,7 +10,7 @@ const packageRoot = new URL("../../../../", import.meta.url);
 const coreRoot = new URL("../core-js/", packageRoot);
 const errors = [];
 const transpile = source => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 function evaluate(source, require) {
   const exports = {};

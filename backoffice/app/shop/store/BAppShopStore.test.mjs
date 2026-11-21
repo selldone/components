@@ -8,7 +8,7 @@ import * as Vue from "vue";
 
 const repository = new URL("../../../../../../", import.meta.url);
 const transpile = source => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 function evaluate(source, globals = {}) {
   const exports = {};
@@ -65,7 +65,18 @@ function renderElements(descriptor, state) {
     if (!node || typeof node !== "object") return;
     elements.push({ ...node, type: typeof node.type === "object" ? node.type.name : node.type });
     if (Array.isArray(node.children)) visit(node.children);
-    else if (node.children && typeof node.children === "object") for (const slot of Object.values(node.children)) if (typeof slot === "function") visit(slot({ props: {}, item: { raw: state.categories?.[0] || {} }, items: state.apps?.map(raw => ({ raw, id: raw.id })) || [] }));
+    else if (node.children && typeof node.children === "object") {
+      const item = state.categories?.[0] || {};
+      for (const slot of Object.values(node.children)) {
+        if (typeof slot !== "function") continue;
+        visit(slot({
+          props: {},
+          item,
+          internalItem: { raw: item },
+          items: state.apps?.map(raw => ({ raw, id: raw.id })) || [],
+        }));
+      }
+    }
   };
   visit(render(state, []));
   return elements;

@@ -9,7 +9,7 @@ import ts from "typescript";
 
 const { descriptor, errors } = parse(readFileSync(new URL("./BProductsWindow.vue", import.meta.url), "utf8"));
 assert.deepEqual(errors, []);
-const compile = source => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const compile = source => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const plain = value => JSON.parse(JSON.stringify(value));
 const ProductType = Object.fromEntries(["PHYSICAL", "VIRTUAL", "FILE", "SERVICE", "SUBSCRIPTION"].map(code => [code, { code, name: code, image: `${code}.svg` }]));
 const ProductStatus = Object.fromEntries(["Open", "Close", "Pending", "Rejected", "Unlisted"].map(code => [code, { code, name: code }]));

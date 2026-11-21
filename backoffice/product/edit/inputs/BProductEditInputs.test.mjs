@@ -8,7 +8,7 @@ import { JSDOM } from "jsdom";
 import * as Vue from "vue";
 import ts from "typescript";
 
-const compile = source => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const compile = source => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const plain = value => JSON.parse(JSON.stringify(value));
 const files = { inputs: "./BProductEditInputs.vue", preview: "./BProductInputsPreview.vue", builder: "../../../../ui/form/SFormBuilder.vue", row: "../../../../ui/form/item/SFormBuilderRow.vue" };
 const nativeFields = () => [

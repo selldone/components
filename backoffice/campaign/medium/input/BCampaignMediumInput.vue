@@ -34,7 +34,7 @@
     <template v-slot:prepend-inner>
       <img :src="findIcon(modelValue)" class="me-1" height="16" width="16" />
     </template>
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item :title="item.raw.name" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar

@@ -27,7 +27,7 @@ function fixture(overrides = {}) {
   };
   const imports = name => name === "lodash-es" ? { throttle: fn => fn } : name.includes("NotificationService") ? { default: notification } : {};
   const exports = {};
-  const compiled = ts.transpileModule(descriptor.script.content, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+  const compiled = ts.transpileModule(descriptor.script.content, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   new Function("require", "exports", "axios", "window", compiled)(imports, exports, axios, { API: api });
   const component = exports.default;
   const state = {

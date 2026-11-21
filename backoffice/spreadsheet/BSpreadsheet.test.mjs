@@ -8,7 +8,7 @@ import { parse, compileScript, compileTemplate, compileStyleAsync } from "@vue/c
 
 const sources = new Map();
 const transpile = (source) => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const settle = async () => { await Vue.nextTick(); await new Promise(setImmediate); await Vue.nextTick(); };
 const packs = Object.fromEntries(["en", "fa"].map((language) => {

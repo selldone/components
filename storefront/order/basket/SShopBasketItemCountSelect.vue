@@ -54,7 +54,7 @@
       "
       :item-title="(it)=>it===0?$t('global.commons.remove_item'):it"
     >
-      <template v-slot:item="{ item, props }">
+      <template v-slot:item="{ internalItem: item, props }">
         <v-list-item v-if="item.raw" v-bind="props" class="text-start">
           <template v-slot:title>
             <b class="me-1">{{ item.raw }}</b>
@@ -68,7 +68,7 @@
         </v-list-item>
       </template>
 
-      <template v-slot:selection="{ item }">
+      <template v-slot:selection="{ internalItem: item }">
         <span
           v-if="item.raw && !focus"
           :class="{ 'center-view': noUnit }"

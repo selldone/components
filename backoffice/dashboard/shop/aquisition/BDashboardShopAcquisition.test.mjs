@@ -117,6 +117,7 @@ const req = (name) => {
 const transpile = (src) =>
   ts.transpileModule(src, {
     compilerOptions: {
+      esModuleInterop: false,
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2022,
     },
@@ -905,6 +906,9 @@ async function renderEmptyFixture(
   const nativeContext = {
     w: nativeW,
     graphics: {
+      getTextRects() {
+        return { width: 52 }; // The rendered background adds four pixels per side.
+      },
       drawMarker(x, y, o) {
         const node = element("circle");
         node.setAttribute("cx", x);
@@ -1074,7 +1078,8 @@ async function renderEmptyFixture(
       if (!text) return;
       const rect = element("rect");
       rect.setAttribute("class", point.id);
-      const box = { x: point.x - 30, y: point.y - 22, width: 60, height: 16 };
+      const labelX = Number(text.getAttribute("x"));
+      const box = { x: labelX - 30, y: point.y - 22, width: 60, height: 16 };
       rect.getBBox = () => box;
       root.insertBefore(rect, text);
     });

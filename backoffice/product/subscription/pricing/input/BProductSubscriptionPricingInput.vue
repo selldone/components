@@ -38,7 +38,7 @@
     @update:model-value="(val) => $emit('update:modelValue', val)"
     @click:clear="$emit('click:clear')"
   >
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-list-item
         :class="{ 'img-grayscale': !item.raw.enable }"
         class="text-start"
@@ -71,7 +71,7 @@
         </v-list-item-subtitle>
       </v-list-item>
     </template>
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar size="24">

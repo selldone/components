@@ -76,7 +76,7 @@
       </v-btn>
     </template>
 
-    <template v-slot:chip="{ item }">
+    <template v-slot:chip="{ internalItem: item }">
       <div>
         <v-avatar :color="item.raw.color" class="me-2" size="24">
           <v-img
@@ -111,7 +111,7 @@
       </div>
     </template>
 
-    <template v-slot:item="{ props, item }">
+    <template v-slot:item="{ props, internalItem: item }">
       <v-list-item
         :prepend-avatar="
           item.raw.image ? getShopImagePath(item.raw.image) : null

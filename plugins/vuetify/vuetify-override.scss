@@ -11,9 +11,117 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+@use 'sass:list';
 @use 'sass:map';
-@use 'vuetify' with (
-  $font-size-root: 15px,
-  $body-font-family: ('Inter', sans-serif) // Set Inter as the default font
-  // other overrides
-);
+@use 'sass:math';
+@use './vuetify-settings' as settings;
+@use 'vuetify';
+@use 'vuetify/tools' as tools;
+
+// Retain the reset that existing app styles and authored content are based on.
+@include tools.layer('core.reset') {
+  html { overflow-y: scroll; word-break: normal; }
+  * { margin: 0; padding: 0; }
+  [hidden] { display: none; }
+  hr { height: 0; overflow: visible; }
+  small { font-size: 80%; }
+  code, kbd, pre, samp { font-family: monospace; }
+  pre { font-size: 1em; }
+  sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+  sub { bottom: -.25em; }
+  sup { top: -.5em; }
+  button, input, select, textarea { background-color: transparent; border-style: none; }
+  button, select { text-transform: none; }
+  select { appearance: none; }
+  textarea { overflow: auto; resize: vertical; }
+  legend { display: table; max-width: 100%; white-space: normal; }
+  progress { vertical-align: baseline; }
+}
+
+// Stored layouts and authored pages can contain Vuetify 3 column classes on plain elements.
+$columns: ('.v-col', '.v-col-auto');
+@each $breakpoint in map.keys(settings.$grid-breakpoints) {
+  $infix: tools.breakpoint-infix($breakpoint, settings.$grid-breakpoints);
+  @if $infix != '' {
+    $columns: list.append($columns, '.v-col#{$infix}', comma);
+    $columns: list.append($columns, '.v-col#{$infix}-auto', comma);
+  }
+  @for $size from 1 through settings.$grid-columns {
+    $columns: list.append($columns, '.v-col#{$infix}-#{$size}', comma);
+  }
+}
+
+@include tools.layer('overrides') {
+  $column-gap-x: var(--v-col-gap-x, #{settings.$grid-gutter});
+  $column-gap-y: var(--v-col-gap-y, #{settings.$grid-gutter});
+
+  .v-container.fill-height { display: flex; align-items: center; flex-wrap: wrap; }
+
+  .v-row {
+    gap: 0;
+    margin: calc($column-gap-y * -.5) calc($column-gap-x * -.5);
+  }
+  .v-row + .v-row { margin-top: calc($column-gap-y * .5); }
+  .v-row.v-row--no-gutters { margin: 0; }
+
+  #{$columns} { width: 100%; padding: settings.$grid-gutter * .5; }
+  .v-row > :is(#{$columns}) {
+    padding: calc($column-gap-y * .5) calc($column-gap-x * .5);
+  }
+  .v-col {
+    $width: calc(100% * var(--v-col-size) / var(--v-col-size-columns, #{settings.$grid-columns}));
+    width: var(--v-col-is-size, 100%) var(--v-col-is-auto, auto) var(--v-col-is-grow, 100%);
+    max-width: var(--v-col-is-size, #{$width}) var(--v-col-is-auto, 100%) var(--v-col-is-grow, 100%);
+    flex-basis: var(--v-col-is-size, #{$width}) var(--v-col-is-auto, auto) var(--v-col-is-grow, 0);
+
+    &:where([class*='v-col--offset-']) {
+      margin-inline-start: calc(100% * var(--v-col-offset) / var(--v-col-offset-columns, #{settings.$grid-columns}));
+    }
+  }
+
+  @each $breakpoint in map.keys(settings.$grid-breakpoints) {
+    @include tools.media-breakpoint-up($breakpoint) {
+      $infix: tools.breakpoint-infix($breakpoint, settings.$grid-breakpoints);
+      @if $infix != '' {
+        .v-col#{$infix} { flex: 1 0 0; max-width: 100%; }
+      }
+      .v-col#{$infix}-auto { flex: 0 0 auto; width: auto; max-width: 100%; }
+      @for $size from 1 through settings.$grid-columns {
+        $width: math.percentage(math.div($size, settings.$grid-columns));
+        .v-col#{$infix}-#{$size} { flex: 0 0 $width; max-width: $width; }
+      }
+      @for $offset from 0 through settings.$grid-columns - 1 {
+        .offset#{$infix}-#{$offset} {
+          margin-inline-start: math.percentage(math.div($offset, settings.$grid-columns));
+        }
+      }
+    }
+  }
+}
+
+// Let nested badges extend beyond the button while its interaction layers stay rounded.
+.sd-button-with-badge {
+  overflow: visible;
+
+  > .v-btn__overlay,
+  > .v-btn__underlay,
+  > .v-ripple__container {
+    border-radius: inherit;
+  }
+}
+
+// Keep explicit elevation utilities authoritative over component shadow defaults.
+@for $level from 0 through 24 {
+  .elevation-#{$level}, .hover-elevation-#{$level}:hover {
+    box-shadow: map.get(settings.$shadow-key, $level) !important;
+  }
+}
+
+@include tools.layer('utilities.typography') {
+  @each $breakpoint in map.keys(settings.$grid-breakpoints) {
+    @include tools.media-breakpoint-up($breakpoint) {
+      $infix: tools.breakpoint-infix($breakpoint, settings.$grid-breakpoints);
+      .text#{$infix}-button, .text#{$infix}-overline { text-transform: uppercase; }
+    }
+  }
+}

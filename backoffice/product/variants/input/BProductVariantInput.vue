@@ -22,7 +22,7 @@
     item-value="id"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <variant-item-mini
         :product-variant="item.raw"
         class="py-1"
@@ -31,7 +31,7 @@
       ></variant-item-mini>
     </template>
 
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <variant-item-mini
         :product-variant="item.raw"
         force-enable

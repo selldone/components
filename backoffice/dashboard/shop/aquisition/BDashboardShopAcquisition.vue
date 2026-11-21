@@ -1539,7 +1539,7 @@ export default {
     margin: 0;
   }
 
-  .b-dashboard-acquisition__layout > .v-col-12 {
+  .b-dashboard-acquisition__layout > .v-col--cols-12 {
     min-width: 0;
     width: 100%;
     max-width: none;
@@ -1655,7 +1655,7 @@ export default {
     grid-column: 1 / -1;
   }
 
-  .b-dashboard-acquisition__flow-layout > .v-col-12 {
+  .b-dashboard-acquisition__flow-layout > .v-col--cols-12 {
     width: 100%;
     max-width: none;
     min-width: 0;

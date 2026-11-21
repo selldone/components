@@ -16,7 +16,7 @@ const { descriptor, errors } = parse(readFileSync(file, "utf8"), { filename: fil
 assert.deepEqual(errors, []);
 const script = compileScript(descriptor, { id: "domain-add-test" });
 const transpile = source => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const code = transpile(script.content);
 const template = compileTemplate({

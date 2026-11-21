@@ -34,7 +34,7 @@
       </template>
 
       <!-- Selected -->
-      <template v-slot:selection="{ item }">
+      <template v-slot:selection="{ internalItem: item }">
         <div class="d-flex align-center min-width-0">
           <v-avatar v-if="item?.raw?.logo" size="20" class="me-2 rounded-lg">
             <img :src="getShopImagePath(item.raw.logo)" />
@@ -49,7 +49,7 @@
       </template>
 
       <!-- Item -->
-      <template v-slot:item="{ props, item }">
+      <template v-slot:item="{ props, internalItem: item }">
         <v-list-item v-bind="props">
           <template v-slot:prepend>
             <v-avatar v-if="item?.raw?.logo" size="28" class="rounded-lg">

@@ -101,12 +101,12 @@
       ></u-loading-ellipsis>
       <!-- MAP -->
       <div
-        :id="`map_box${map_id}`"
+        ref="mapCanvas"
         :style="`height: 100%;width: 100%;border-radius: ${radius}px`"
       ></div>
 
       <div
-        v-if="canSelectAddress && !center_clicked"
+        v-if="map_box && canSelectAddress && !center_clicked"
         :class="{ mini: last_selected_position }"
         class="center-map-view"
         @click.stop="getAddressStringOfCenter"
@@ -479,7 +479,7 @@
 </template>
 
 <script lang="ts">
-import { createApp, h } from "vue";
+import { createApp, h, markRaw } from "vue";
 import UMapViewPin from "../../../ui/map/view/market/UMapViewPin.vue";
 import SCountrySelect from "../../../ui/country/select/SCountrySelect.vue";
 
@@ -499,6 +499,16 @@ import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
+function coordinates(position?: { lng?: unknown; lat?: unknown }): [number, number] | null {
+  const values = [position?.lng, position?.lat];
+  if (!values.every(value =>
+    (typeof value === "number" || (typeof value === "string" && value.trim() !== "")) &&
+    Number.isFinite(Number(value)),
+  )) return null;
+
+  const [lng, lat] = values.map(Number);
+  return Math.abs(lat) <= 90 ? [lng, lat] : null;
+}
 
 export default {
   name: "UMapView",
@@ -654,7 +664,8 @@ export default {
   data() {
     return {
       map_box: null,
-      map_id: Math.round(Math.random() * 999999),
+      map_load_timeout: null,
+      map_resize_observer: null,
 
       mode_bottom_card: "default", // search detail default
 
@@ -727,9 +738,10 @@ export default {
     },
 
     center(center) {
-      //console.log("watch center", center);
-      if (!this.map_box) return;
-      this.map_box.flyTo({ center: [center.lng, center.lat], zoom: this.zoom });
+      const nextCenter = coordinates(center);
+      if (this.map_box && nextCenter) {
+        this.map_box.flyTo({ center: nextCenter, zoom: this.zoom });
+      }
     },
 
     markerPosition(markerPosition) {
@@ -861,62 +873,24 @@ export default {
   },
 
   mounted() {
-    if (!this.noMap) {
-      setTimeout(() => {
-        this.$nextTick(() => {
-          //   this.$refs.myMap.mapObject.ANY_LEAFLET_MAP_METHOD();
+    if (this.noMap) return;
+    this.map_load_timeout = setTimeout(() => {
+      const container = this.$refs.mapCanvas as HTMLElement;
+      if (!container) return;
 
-          this.map_box = new Mapbox.Map({
-            container: "map_box" + this.map_id,
-            style: SetupService.MapStyle(),
-            center: this.center ? [this.center.lng, this.center.lat] : [0, 0],
-            zoom: this.zoom,
-          });
+      this.map_resize_observer = new ResizeObserver(() => {
+        if (!container.clientWidth || !container.clientHeight) return;
+        if (this.map_box) this.map_box.resize();
+        else this.initializeMap(container);
+      });
+      this.map_resize_observer.observe(container);
+    }, this.delayLoad);
+  },
 
-          if (this.showSearchBox) {
-            // Add the control to the map.
-            this.map_box.addControl(
-              new MapboxGeocoder({
-                accessToken: Mapbox.accessToken,
-                mapboxgl: Mapbox,
-              }),
-            );
-          }
-
-          if (!this.hideLocationButtons) {
-            // Add geolocate control to the map.
-
-            this.locateControl = new Mapbox.GeolocateControl({
-              positionOptions: {
-                enableHighAccuracy: true,
-              },
-              trackUserLocation: false,
-            });
-            this.map_box.addControl(this.locateControl);
-
-            // Add zoom and rotation controls to the map.
-            if (this.$vuetify.display.mdAndUp) {
-              this.map_box.addControl(new Mapbox.NavigationControl());
-
-              this.map_box.addControl(new Mapbox.FullscreenControl());
-            }
-          }
-
-          this.map_box.on("load", () => {
-            if (this.markerPosition)
-              this.addCurrentToDestinationList(this.markerPosition);
-            else if (this.last_selected_position)
-              this.addCurrentToDestinationList(this.last_selected_position);
-          });
-
-          // Go to my location:
-          /*  if(!this.last_selected_position){
-              console.log("Go to my location!")
-              this.goToMyLocation()
-            }*/
-        });
-      }, this.delayLoad);
-    }
+  beforeUnmount() {
+    clearTimeout(this.map_load_timeout);
+    this.map_resize_observer?.disconnect();
+    this.map_box?.remove();
   },
 
   created() {
@@ -933,6 +907,45 @@ export default {
   },
 
   methods: {
+    initializeMap(container: HTMLElement) {
+      const center = coordinates(this.center) ?? coordinates(this.last_selected_position);
+      const map = markRaw(new Mapbox.Map({
+        container,
+        style: SetupService.MapStyle(),
+        center: center ?? [0, 0],
+        // A street-level view of the default point shows only ocean.
+        zoom: center ? this.zoom : 2,
+      }));
+      this.map_box = map;
+
+      if (this.showSearchBox) {
+        map.addControl(
+          new MapboxGeocoder({
+            accessToken: Mapbox.accessToken,
+            mapboxgl: Mapbox,
+          }),
+        );
+      }
+
+      if (!this.hideLocationButtons) {
+        this.locateControl = new Mapbox.GeolocateControl({
+          positionOptions: { enableHighAccuracy: true },
+          trackUserLocation: false,
+        });
+        map.addControl(this.locateControl);
+
+        if (this.$vuetify.display.mdAndUp) {
+          map.addControl(new Mapbox.NavigationControl());
+          map.addControl(new Mapbox.FullscreenControl());
+        }
+      }
+
+      map.on("load", () => {
+        const position = this.markerPosition ?? this.last_selected_position;
+        if (position) this.addCurrentToDestinationList(position);
+      });
+    },
+
     onMapMouseDown($event) {
       //  console.log($event);
       this.hide_top_bar = true;
@@ -1023,16 +1036,8 @@ export default {
         marker.remove();
       });
 
-      // Zero is a valid latitude/longitude, including on the equator/prime meridian.
-      if (
-        selected_position &&
-        [selected_position.lng, selected_position.lat].every(
-          (value) =>
-            ["number", "string"].includes(typeof value) &&
-            String(value).trim() !== "" &&
-            Number.isFinite(Number(value)),
-        )
-      ) {
+      const position = coordinates(selected_position);
+      if (position) {
         if (this.map_box) {
           const el = document.createElement("div");
 
@@ -1051,7 +1056,7 @@ export default {
 
           const marker = new Mapbox.Marker(el)
             .setOffset([0, -32])
-            .setLngLat([selected_position.lng, selected_position.lat])
+            .setLngLat(position)
             .addTo(this.map_box);
 
           this.current_markers.push(marker);

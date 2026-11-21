@@ -57,7 +57,7 @@
       </div>
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item :title="item.raw.name" class="text-start" :class="{ 'b-logistic-profile-input__option': modern }" :dir="modern ? $attrs.dir : undefined" v-bind="props">
         <p v-if="modern && Array.isArray(item.raw.info?.languages)" class="b-logistic-profile-input__languages">{{ item.raw.info.languages.map(lng => getLanguageName(lng)).join(' · ') }}</p>
         <div

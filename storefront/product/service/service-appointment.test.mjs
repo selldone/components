@@ -17,7 +17,7 @@ class Clock extends Date {
 function evaluate(source, dependencies = {}, globals = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, {
     exports, Date: Clock, Intl, Set, ...globals,
     require: (name) => dependencies[name] || { default: {} },

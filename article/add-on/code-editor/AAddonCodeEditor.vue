@@ -64,7 +64,7 @@
     </div>
 
     <div class="a-article-code__body" @click="showEdit()">
-      <prism-editor
+      <u-code-editor
         :model-value="codes[selected_lang] || ''"
         :highlight="highlighter"
         :language="selected_lang"
@@ -73,18 +73,16 @@
         contenteditable="false"
         line-numbers
         readonly
-        @vue:mounted="labelCodeInput"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-//―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
+//―――――――――――――――――――――― Code highlighting ――――――――――――――――――――
 import "prismjs/themes/prism.css";
 
-import { PrismEditor } from "vue-prism-editor";
-import "vue-prism-editor/dist/prismeditor.min.css";
+import UCodeEditor from "@selldone/components-vue/ui/code/editor/UCodeEditor.vue";
 
 import AAddonToolbar from "../toolbar/AAddonToolbar.vue";
 import { ArticleMixin } from "../../../mixin/article/ArticleMixin.ts";
@@ -96,7 +94,7 @@ import { highlightArticleCode } from "./article-code-highlight";
 export default {
   name: "AAddonCodeEditor",
   mixins: [ArticleMixin],
-  components: { PrismEditor, AAddonToolbar },
+  components: { UCodeEditor, AAddonToolbar },
   props: {
     codes: {},
     editable: {
@@ -145,14 +143,6 @@ export default {
     this.selected_lang = available || this.tabs[0];
   },
   methods: {
-    labelCodeInput(vnode) {
-      vnode.el
-        .querySelector("textarea")
-        ?.setAttribute(
-          "aria-label",
-          this.$t("global.article.code_editor.code_label"),
-        );
-    },
     highlighter(code) {
       return highlightArticleCode(code, this.selected_lang);
     },

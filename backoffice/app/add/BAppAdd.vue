@@ -370,7 +370,7 @@
                 }"
                 :list-props="{ class: 'sd-modern-menu__list' }"
               >
-                <template #item="{ item, props }"
+                <template #item="{ internalItem: item, props }"
                   ><v-list-item
                     v-bind="props"
                     class="b-app-add__scope"
@@ -378,7 +378,7 @@
                     :title="metadataTitle(item.raw)"
                     :subtitle="metadataDescription(item.raw)"
                 /></template>
-                <template #chip="{ item, props }">
+                <template #chip="{ internalItem: item, props }">
                   <v-tooltip
                     location="top"
                     content-class="sd-modern-tooltip text-start"

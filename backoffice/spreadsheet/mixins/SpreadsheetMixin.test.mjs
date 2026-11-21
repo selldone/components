@@ -38,7 +38,7 @@ function environment() {
     throw new Error(`Unexpected conversion dependency: ${name}`);
   };
   const load = (source) => {
-    const result = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }, reportDiagnostics: true });
+    const result = ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }, reportDiagnostics: true });
     assert.deepEqual(result.diagnostics, []);
     const exports = {};
     vm.runInNewContext(result.outputText, { exports, require, window, FormData, File, console });

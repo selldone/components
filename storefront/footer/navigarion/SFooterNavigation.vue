@@ -90,7 +90,7 @@
           name: window.$storefront.routes.BASKET_PAGE,
           params: { type: current_product_type_in_basket },
         }"
-        class="zoomIn delay_200"
+        class="zoomIn delay_200 sd-button-with-badge"
         min-width="60"
         value="basket"
         aria-label="Basket"
@@ -122,7 +122,7 @@
               }
             : undefined
         "
-        class="zoomIn delay_300"
+        class="zoomIn delay_300 sd-button-with-badge"
         floating
         min-width="60"
         value="notification"
@@ -142,7 +142,7 @@
       <!-- ------------------ Profile ------------------ -->
 
       <v-btn
-        class="zoomIn delay_400"
+        class="zoomIn delay_400 sd-button-with-badge"
         min-width="60"
         v-bind="
           USER()

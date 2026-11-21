@@ -17,7 +17,7 @@ assert.deepEqual(compileTemplate({
   compilerOptions: { bindingMetadata: script.bindings },
 }).errors, []);
 const code = ts.transpileModule(script.content, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 
 function eventTarget() {

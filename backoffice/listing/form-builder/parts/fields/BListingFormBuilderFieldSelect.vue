@@ -180,7 +180,7 @@
 </template>
 
 <script lang="ts">
-import draggable from "vuedraggable";
+import draggable from "@selldone/components-vue/ui/sortable/USortableList.ts";
 import USmartToggle from "@selldone/components-vue/ui/smart/toggle/USmartToggle.vue";
 import BListingFormBuilderFieldSelectOption from "./BListingFormBuilderFieldSelectOption.vue";
 

@@ -213,7 +213,7 @@
               hide-details
               single-line
             >
-              <template #selection="{ item }">
+              <template #selection="{ internalItem: item }">
                 <img
                   :src="item.raw.image"
                   width="20"
@@ -223,7 +223,7 @@
                 />
                 <span>{{ item.raw.title }}</span>
               </template>
-              <template #item="{ item, props }">
+              <template #item="{ internalItem: item, props }">
                 <v-list-item
                   v-bind="props"
                   class="text-start b-order-preparation-modern__method-option"

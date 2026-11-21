@@ -26,7 +26,7 @@
     item-title="title"
     item-value="id"
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item :title="item.raw.title" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <b-giftcard-type-icon
@@ -52,7 +52,7 @@
       </v-list-item>
     </template>
 
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-chip v-if="chip" color="#fafafa" variant="flat">
         <b>{{ item.raw.title }}</b>
 

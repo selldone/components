@@ -138,8 +138,8 @@
                   :disabled="control.disabled"
                   hide-details
                 >
-                  <template #selection="{ item }"><v-icon class="me-2" size="16">{{ item.raw.icon }}</v-icon>{{ item.title }}</template>
-                  <template #item="{ props, item }"><v-list-item v-bind="props" :prepend-icon="item.raw.icon" /></template>
+                  <template #selection="{ internalItem: item }"><v-icon class="me-2" size="16">{{ item.raw.icon }}</v-icon>{{ item.title }}</template>
+                  <template #item="{ props, internalItem: item }"><v-list-item v-bind="props" :prepend-icon="item.raw.icon" /></template>
                 </v-select>
                 <!-- Keep the popover mounted while the shared language dialog owns focus. -->
                 <u-language-input v-else ref="workspaceLanguageInput" v-model="workspace_setting_values.language" :label="control.label" variant="underlined" class="sd-modern-underlined-field" max-width="none" :disabled="control.disabled" hide-details @keydown.enter.prevent="openWorkspaceLanguagePicker" @keydown.space.prevent="openWorkspaceLanguagePicker" />

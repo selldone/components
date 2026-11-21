@@ -12,7 +12,7 @@ export function loadListEmptyState() {
   const template = compileTemplate({ source: descriptor.template.content, filename: filename.pathname, id: "list-empty-state-consumer", compilerOptions: { hoistStatic: false } });
   if (template.errors.length) throw template.errors[0];
   const compiled = ts.transpileModule(descriptor.script.content + "\n" + template.code, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
   const exports = {};
   vm.runInNewContext(compiled, {

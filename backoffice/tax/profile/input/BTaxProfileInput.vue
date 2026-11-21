@@ -75,10 +75,10 @@ function externalTaxProviderColor(profile: any) {
     item-value="id"
     @update:model-value="(value) => emit('update:modelValue', value)"
   >
-    <template #selection="{ item }">
+    <template #selection="{ internalItem: item }">
       <span class="b-tax-profile-input__selection">{{ item.raw.name }}</span>
     </template>
-    <template #item="{ item, props: itemProps }">
+    <template #item="{ internalItem: item, props: itemProps }">
       <v-list-item
         v-bind="itemProps"
         class="b-tax-profile-input__option text-start"
@@ -148,7 +148,7 @@ function externalTaxProviderColor(profile: any) {
       </v-chip>
     </template>
 
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <div class="tax-profile-selection d-flex align-center min-width-0 w-100">
         <v-icon v-if="item.raw.icon" class="me-2" color="#333">
           {{ item.raw.icon }}
@@ -200,7 +200,7 @@ function externalTaxProviderColor(profile: any) {
       </div>
     </template>
 
-    <template v-slot:item="{ item, props: itemProps }">
+    <template v-slot:item="{ internalItem: item, props: itemProps }">
       <v-list-item v-bind="itemProps">
         <template v-slot:prepend>
           <v-icon v-if="item.raw.icon" class="me-2" color="#333">

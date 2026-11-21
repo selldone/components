@@ -26,7 +26,7 @@
         :color="unread_count > 0 ? 'amber' : '#eee'"
         :loading="busy"
         :aria-label="$t('notification_repository_menu.title')"
-        class="mx-2"
+        class="mx-2 sd-button-with-badge"
         icon
         size="48"
         v-bind="props"

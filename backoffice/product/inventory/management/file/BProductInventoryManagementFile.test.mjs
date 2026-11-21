@@ -12,7 +12,7 @@ import EmptyState from '../../../../empty-state/BListEmptyState.test-helper.mjs'
 
 const file = new URL('./BProductInventoryManagementFile.vue', import.meta.url);
 const repository = new URL('../../../../../../../', import.meta.url);
-const transpile = source => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = source => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const source = path => readFileSync(new URL(path, repository), 'utf8');
 const helpers = new Map();
 function helper(path) {

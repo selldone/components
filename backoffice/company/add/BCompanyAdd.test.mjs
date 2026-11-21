@@ -27,6 +27,7 @@ assert.deepEqual(errors, []);
 const script = compileScript(descriptor, { id: "company-add-test" });
 const code = ts.transpileModule(script.content, {
   compilerOptions: {
+    esModuleInterop: false,
     module: ts.ModuleKind.CommonJS,
     target: ts.ScriptTarget.ES2022,
   },
@@ -44,6 +45,7 @@ vm.runInNewContext(
     ),
     {
       compilerOptions: {
+        esModuleInterop: false,
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2022,
       },
@@ -193,6 +195,7 @@ async function renderCompany(
   vm.runInNewContext(
     ts.transpileModule(template.code, {
       compilerOptions: {
+        esModuleInterop: false,
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2022,
       },

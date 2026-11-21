@@ -12,7 +12,7 @@ const root = new URL("../../../../", import.meta.url);
 function evaluate(source, require, globals = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, { exports, require, ...globals });
   return exports;
 }

@@ -13,6 +13,7 @@ const { descriptor, errors } = parse(
 assert.deepEqual(errors, []);
 const compiled = ts.transpileModule(descriptor.script.content, {
   compilerOptions: {
+    esModuleInterop: false,
     module: ts.ModuleKind.CommonJS,
     target: ts.ScriptTarget.ES2022,
   },
@@ -318,7 +319,7 @@ test("AR deep links and hash navigation preserve query, scope and active upload 
 test("The legacy shop 3D named route redirects within the same product and permission boundary", async () => {
   const routeModule = {};
   const routeSource = readFileSync(new URL("../../../../../../src/Applications/Selldone/router/shuttle/shop/product/ShuttleShopProductRoutes.ts", import.meta.url), "utf8");
-  vm.runInNewContext(ts.transpileModule(routeSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, {
+  vm.runInNewContext(ts.transpileModule(routeSource, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, {
     exports: routeModule,
     require: () => ({ ShopPermissionRegions: { PRODUCTS: "PRODUCTS" } }),
   });
@@ -1054,7 +1055,7 @@ test("rendered product workspaces retain drafts and isolate immediate-saving AR 
   assert.deepEqual(template.errors, []);
   const rendered = {};
   vm.runInNewContext(ts.transpileModule(template.code, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, {
     exports: rendered,
     require: () => Vue,

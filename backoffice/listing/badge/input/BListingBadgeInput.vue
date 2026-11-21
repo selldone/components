@@ -36,7 +36,7 @@
       <template v-if="$slots['append-inner']" #append-inner>
         <slot name="append-inner" />
       </template>
-      <template #chip="{ item, props }">
+      <template #chip="{ internalItem: item, props }">
         <v-chip
           v-bind="props"
           size="small"
@@ -59,7 +59,7 @@
           }}</span>
         </v-chip>
       </template>
-      <template #item="{ item, props }">
+      <template #item="{ internalItem: item, props }">
         <v-list-item
           v-bind="props"
           class="b-listing-badge-input__option text-start sd-modern-clickable-item"

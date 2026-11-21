@@ -52,7 +52,7 @@ export default {
   components: {
     BValuationFormStructureRow,
 
-    draggable: defineAsyncComponent(() => import("vuedraggable")),
+    draggable: defineAsyncComponent(() => import("@selldone/components-vue/ui/sortable/USortableList.ts")),
   },
   props: {
     modelValue: {},

@@ -14,7 +14,14 @@ const { parse, compileTemplate } = require("@vue/compiler-sfc");
 const browser = new JSDOM("<!doctype html><html><body></body></html>");
 for (const key of ["window", "document", "Element", "HTMLElement", "SVGElement", "Node"])
   globalThis[key] = browser.window[key];
-window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
+window.matchMedia = query => {
+  const minWidth = query.match(/^\(min-width: (\d+)px\)$/)?.[1];
+  return {
+    matches: minWidth !== undefined && window.innerWidth >= Number(minWidth),
+    addEventListener() {},
+    removeEventListener() {},
+  };
+};
 const observers = [];
 globalThis.ResizeObserver = class {
   constructor(callback) { this.callback = callback; this.targets = new Set(); observers.push(this); }
@@ -31,7 +38,7 @@ const realm = vm.createContext({ window, document, console, Date, Intl, ResizeOb
 function evaluate(source, imports = () => ({}), globals = {}) {
   const exports = {};
   const output = ts.transpileModule(source, { reportDiagnostics: true,
-    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } });
+    compilerOptions: { target: ts.ScriptTarget.ES2022, esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS } });
   assert.deepEqual(output.diagnostics, []);
   Object.assign(realm, { moduleExports: exports, moduleImports: imports }, globals);
   vm.runInContext(`(function(exports, require) { ${output.outputText}\n})(moduleExports, moduleImports)`, realm);
@@ -51,10 +58,11 @@ evaluate(read("@selldone/core-js/prototypes/StringPrototypes.ts"));
 const bundle = await build({
   stdin: { contents: 'export { createVuetify } from "vuetify"; export { VDataTableServer } from "vuetify/components/VDataTable";', resolveDir: fileURLToPath(root) },
   bundle: true, write: false, format: "cjs", platform: "node", loader: { ".css": "empty" }, external: ["vue"], logLevel: "silent",
+  define: { "process.env.NODE_ENV": JSON.stringify("test") },
 });
 const native = { exports: {} };
 vm.runInNewContext(bundle.outputFiles[0].text, { module: native, exports: native.exports, require, window, document,
-  Element, HTMLElement, SVGElement, Node, ResizeObserver, console, setTimeout, clearTimeout, requestAnimationFrame, cancelAnimationFrame });
+  Element, HTMLElement, SVGElement, Node, ResizeObserver, CSS: { supports: () => false }, console, setTimeout, clearTimeout, requestAnimationFrame, cancelAnimationFrame });
 const { createVuetify, VDataTableServer } = native.exports;
 const source = readFileSync(new URL("./BShopSmsTemplateList.vue", import.meta.url), "utf8");
 const { descriptor, errors } = parse(source);

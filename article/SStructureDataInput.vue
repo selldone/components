@@ -80,7 +80,7 @@
       @update:model-value="(val) => $emit('update:modelValue', val)"
       :item-title="(item) => fineName(item)"
     >
-      <template v-slot:chip="{ item, props }">
+      <template v-slot:chip="{ internalItem: item, props }">
         <v-chip v-bind="props">
           {{ fineName(item.raw) }}
         </v-chip>

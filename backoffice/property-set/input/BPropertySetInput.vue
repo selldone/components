@@ -39,12 +39,12 @@
     "
     :return-object="returnObject"
   >
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <span :class="{ 'b-property-set-input__selection': modern }">{{ item.raw.title }}<v-tooltip v-if="modern" activator="parent" location="top" content-class="sd-modern-tooltip text-start" open-on-focus open-on-click>{{ item.raw.title }}</v-tooltip></span>
       <img v-for="(it, index) in (modern ? item.raw.products?.slice(0, 3) : item.raw.products)?.map((x) => getShopImagePath(x.icon, 64))" :key="index" :src="it" :alt="item.raw.products?.[index]?.title || item.raw.title" width="20" height="20" class="ms-1 border rounded-sm">
 
     </template>
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         :subtitle="item.raw.description"
         :class="modern ? 'b-property-set-input__option sd-modern-clickable-item text-start' : 'text-start'"

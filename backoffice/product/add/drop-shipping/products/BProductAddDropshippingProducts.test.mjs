@@ -11,7 +11,7 @@ const root = new URL("../../../../../../../", import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), "utf8");
 const plain = (value) => JSON.parse(JSON.stringify(value));
 const transpile = (source) => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 function evaluate(source, require, globals = {}) {
   const exports = {};

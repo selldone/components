@@ -32,15 +32,15 @@ const scopedStyles = descriptor.styles.filter((style) => style.scoped).map((styl
   return compiled.code;
 }).join("\n");
 const script = ts.transpileModule(descriptor.script.content, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const flowchartExports = {};
 const flowContentExports = {};
 vm.runInNewContext(ts.transpileModule(readFileSync(new URL('./add-on/flowchart/flow-content.ts', import.meta.url), 'utf8'), {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText, { exports: flowContentExports });
 vm.runInNewContext(ts.transpileModule(readFileSync(new URL('./add-on/flowchart/article-flowchart.ts', import.meta.url), 'utf8'), {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText, { exports: flowchartExports, TextEncoder, require(name) {
   assert.equal(name, './flow-content');
   return flowContentExports;
@@ -56,7 +56,7 @@ function fixture(props = {}, browser) {
   const window = browser?.window || {};
   const contextExports = {};
   vm.runInNewContext(ts.transpileModule(readFileSync(new URL('./add-on/toolbar/article-addon-context.ts', import.meta.url), 'utf8'), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, { exports: contextExports, $: browser?.$ || (() => ({})) });
   window.axios = { post(url, form, config) {
     let resolve, reject, complete;
@@ -676,7 +676,7 @@ test("workspace Word drop accepts native file drags with an empty MIME then vali
 
 async function renderEditor(f, props, slots = {}) {
   const templateExports = {};
-  vm.runInNewContext(ts.transpileModule(template.code, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, {
+  vm.runInNewContext(ts.transpileModule(template.code, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS } }).outputText, {
     exports: templateExports, require: () => Vue,
   });
   // Render actual template/computed HTML without booting MediumEditor or add-on dialogs.
@@ -999,7 +999,7 @@ test("no article renders a separate bottom Insert action outside the native para
 
 test("the native Insert label is escaped and its palette opens at the selected empty paragraph", async () => {
   const nativeScript = ts.transpileModule(readFileSync(new URL('./insert/SelldoneEditorInsert.ts', import.meta.url), 'utf8'), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
   const rawTemplate = Handlebars.compile(readFileSync(new URL('./insert/templates/core-buttons.hbs', import.meta.url), 'utf8'));
   for (const label of ['Insert content', 'درج محتوا', '<img src=x onerror="unexpected()"> & "Insert"']) {
@@ -1045,7 +1045,7 @@ test("the native Insert label is escaped and its palette opens at the selected e
 
 test("image previews work with a read-only Window.URL and revoke their exact object URL", () => {
   const nativeScript = ts.transpileModule(readFileSync(new URL('./insert/SelldoneEditorInsert.ts', import.meta.url), 'utf8'), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
   const dom = new JSDOM('<!doctype html><body><div id="editor"><p class="medium-insert-active"><br></p></div></body>');
   const { window } = dom, { document } = window, $ = jquery(window), exports = {}, timers = [], revoked = [], shown = [];

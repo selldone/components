@@ -21,7 +21,7 @@ for (const style of descriptor.styles) assert.deepEqual(compileStyle({
   preprocessLang: style.lang,
 }).errors, []);
 const transpile = (source) => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const passthrough = { render() { return Vue.h("div", this.$attrs, this.$slots.default?.()); } };
 const score = { props: ["value"], render() { return Vue.h("i", { "data-score": this.value }); } };

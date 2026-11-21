@@ -6,7 +6,7 @@ import { parse } from "@vue/compiler-sfc";
 import ts from "typescript";
 
 const transpile = (source) => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const helperExports = {};
 vm.runInNewContext(transpile(readFileSync(new URL("../../../../../core-js/helper/embed/ProductEmbedHelper.ts", import.meta.url), "utf8")), {

@@ -6,7 +6,7 @@ import * as Vue from "vue";
 import { parse, compileTemplate, compileStyleAsync } from "@vue/compiler-sfc";
 
 // Exercise actual parent handlers and compiled templates with synthetic records only.
-const compilerOptions = { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 };
+const compilerOptions = { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 };
 function evaluate(source, require = () => ({}), globals = {}) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(source, { compilerOptions }).outputText, {

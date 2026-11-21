@@ -27,7 +27,7 @@
     label="Model"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         :title="$t(item.raw.title)"
         class="text-start"
@@ -41,7 +41,7 @@
       </v-list-item>
     </template>
 
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-avatar rounded="lg" size="24" start>
         <img :src="item.raw.image" />
       </v-avatar>

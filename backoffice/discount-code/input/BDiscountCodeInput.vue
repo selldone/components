@@ -34,7 +34,7 @@
     "
     :return-object="returnObject"
   >
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-avatar class="text-white bg-red m-2 small" size="32">
         %{{ item.raw.percent }}
       </v-avatar>
@@ -51,7 +51,7 @@
         {{ item.raw.max === -1 ? $t("global.commons.infinite") : item.raw.max }}
       </small>
     </template>
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item :title="item.raw.title" class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar class="text-white bg-red m-2 small" size="32">

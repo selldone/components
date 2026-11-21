@@ -7,11 +7,17 @@ import { JSDOM } from "jsdom";
 import { parse, compileTemplate } from "@vue/compiler-sfc";
 import ts from "typescript";
 
-test("smart rows mount, reorder and update through the actual draggable without missing DOM contexts", async () => {
+test("smart rows mount, reorder and refresh through the local sortable list", async () => {
   const dom = new JSDOM('<div id="app"></div>', { pretendToBeVisual: true });
   for (const key of ["window", "document", "Element", "HTMLElement", "SVGElement", "Node", "getComputedStyle", "requestAnimationFrame", "cancelAnimationFrame"])
     globalThis[key] = typeof dom.window[key] === "function" && ["getComputedStyle", "requestAnimationFrame", "cancelAnimationFrame"].includes(key) ? dom.window[key].bind(dom.window) : dom.window[key];
   const require = createRequire(import.meta.url), Vue = require("vue");
+  const Sortable = require("sortablejs");
+  const sortableModule = {};
+  vm.runInNewContext(ts.transpile(readFileSync(new URL("../../sortable/USortableList.ts", import.meta.url), "utf8"), { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: false }), {
+    exports: sortableModule, window, HTMLElement,
+    require: name => name === "sortablejs" ? { default: Sortable } : Vue,
+  });
   const filename = new URL("./USmartDraggable.vue", import.meta.url);
   const { descriptor, errors } = parse(readFileSync(filename, "utf8"));
   assert.deepEqual(errors, []);
@@ -24,7 +30,7 @@ test("smart rows mount, reorder and update through the actual draggable without 
   vm.runInNewContext(output.outputText, {
     exports,
     require(name) {
-      if (name === "vue") return { ...Vue, defineAsyncComponent: () => require("vuedraggable") };
+      if (name === "vue") return { ...Vue, defineAsyncComponent: () => sortableModule.default };
       if (name.includes("USmartMenu")) return { default: { render: () => Vue.h("span") } };
       throw new Error(`Unexpected dependency ${name}`);
     },
@@ -40,17 +46,19 @@ test("smart rows mount, reorder and update through the actual draggable without 
   app.component("v-icon", { render: () => Vue.h("i") });
   app.component("v-list-subheader", { render: () => Vue.h("small") });
   app.component("v-img", { render: () => Vue.h("img") });
-  const root = app.mount(document.querySelector("#app"));
+  app.mount(document.querySelector("#app"));
   try {
     await Vue.nextTick();
     assert.deepEqual(failures, []);
-    const draggable = root.$.subTree.component.subTree.children.find((node) => node.component)?.component.proxy;
     const items = () => [...document.querySelectorAll("li")];
     assert.equal(items().length, 3);
     const dragged = items()[2];
-    draggable.onDragStart({ item: dragged });
-    dragged.parentElement.insertBefore(dragged, items()[0]);
-    draggable.onDragUpdate({ item: dragged, from: dragged.parentElement, oldIndex: 2, newIndex: 0 });
+    const list = dragged.parentElement;
+    const sortable = Sortable.get(list);
+    const event = { item: dragged, from: list, to: list, oldIndex: 2, newIndex: 0, oldDraggableIndex: 2, newDraggableIndex: 0 };
+    sortable.option("onStart")(event);
+    list.insertBefore(dragged, items()[0]);
+    sortable.option("onEnd")(event);
     await Vue.nextTick();
     assert.deepEqual([...rows.value], ["third", "first", "second"]);
     rows.value = ["new", "third"];

@@ -287,7 +287,7 @@
               style="max-width: 230px"
               :variant="modern ? 'underlined' : 'solo'"
             >
-              <template v-slot:selection="{ item }">
+              <template v-slot:selection="{ internalItem: item }">
                 <v-img
                   :src="getShopImagePath(item.raw.delivery_service.icon)"
                   class="me-1 flex-grow-0"
@@ -297,7 +297,7 @@
                 {{ item.raw.delivery_service.name }}
               </template>
 
-              <template v-slot:item="{ item, props }">
+              <template v-slot:item="{ internalItem: item, props }">
                 <v-list-item
                   v-bind="props"
                   :title="item.raw.delivery_service.name"

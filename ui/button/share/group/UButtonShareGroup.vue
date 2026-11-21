@@ -15,23 +15,19 @@
 <template>
   <div class="d-inline-flex flex-row align-center justify-center">
     <div :class="{ '-small': small, '-large': forceLarge }" class="social-btns">
-      <share-network
+      <a
         v-for="item in items"
         :key="item.code"
-        :network="item.code"
-        :url="url"
-        :title="title"
-        :description="description"
-        :quote="quote"
-        :hashtags="hashtags_string"
-        :media="media"
-        :twitterUser="twitter_user"
-        :aria-label="embedMode ? item.code : undefined"
+        :class="`btn ${item.code} share-network-${item.code}`"
+        :href="item.href"
+        target="_blank"
+        rel="noopener noreferrer"
+        :aria-label="item.code"
+        :aria-disabled="item.href ? undefined : 'true'"
+        @click="openShare(item, $event)"
       >
-        <a :class="`btn ${item.code}`" @click="$emit('share', item.code)"
-          ><i :class="item.icon"
-        /></a>
-      </share-network>
+        <i :class="item.icon" aria-hidden="true" />
+      </a>
 
       <component
         :is="embedMode ? 'button' : 'a'"
@@ -64,32 +60,101 @@
 
 <script lang="ts">
 import { SetupService } from "@selldone/core-js/server/SetupService";
-import VueSocialSharing from "vue-social-sharing/src/share-network.js";
+import { defineComponent, type PropType } from "vue";
 
-export default {
+const socialNetworks = [
+  { code: "facebook", icon: "fab fa-facebook" },
+  { code: "twitter", icon: "fab fa-twitter" },
+  { code: "linkedin", icon: "fab fa-linkedin" },
+  { code: "line", icon: "fab fa-line" },
+  { code: "pinterest", icon: "fab fa-pinterest" },
+  { code: "reddit", icon: "fab fa-reddit" },
+  { code: "telegram", icon: "fab fa-telegram" },
+  { code: "whatsapp", icon: "fab fa-whatsapp" },
+  { code: "skype", icon: "fab fa-skype" },
+  { code: "sms", icon: "fas fa-sms" },
+  { code: "email", icon: "fas fa-envelope" },
+] as const;
+
+type SocialNetwork = (typeof socialNetworks)[number]["code"];
+type ShareDetails = {
+  url: string;
+  title: string;
+  description: string;
+  quote: string;
+  hashtags: string;
+  media: string;
+  twitterUser: string;
+};
+
+function webUrl(value: unknown): string | undefined {
+  if (typeof value !== "string") return;
+  try {
+    const url = new URL(value);
+    if ((url.protocol === "http:" || url.protocol === "https:") && !url.username && !url.password) {
+      return url.href;
+    }
+  } catch {
+    return;
+  }
+}
+
+function encodeShareText(text: string): string {
+  // A truncated string can end in half of a surrogate pair.
+  return encodeURIComponent(text.replace(/[\uD800-\uDFFF]/gu, "\uFFFD"));
+}
+
+function shareHref(network: SocialNetwork, details: ShareDetails): string {
+  const url = encodeURIComponent(details.url);
+  const title = encodeShareText(details.title);
+  const description = encodeShareText(details.description);
+  const message = `${title}%0D%0A${url}%0D%0A${description}`;
+
+  switch (network) {
+    case "facebook": {
+      const firstHashtag = details.hashtags.split(",")[0];
+      const hashtag = firstHashtag ? encodeShareText(`#${firstHashtag}`) : "";
+      const quote = encodeShareText(details.quote);
+      return `https://www.facebook.com/sharer/sharer.php?u=${url}&title=${title}&description=${description}&quote=${quote}&hashtag=${hashtag}`;
+    }
+    case "twitter": {
+      const hashtags = details.hashtags ? `&hashtags=${encodeShareText(details.hashtags)}` : "";
+      const via = details.twitterUser ? `&via=${encodeShareText(details.twitterUser)}` : "";
+      return `https://twitter.com/intent/tweet?text=${title}&url=${url}${hashtags}${via}`;
+    }
+    case "linkedin":
+      return `https://www.linkedin.com/shareArticle?url=${url}`;
+    case "line":
+      return `https://line.me/R/msg/text/?${message}`;
+    case "pinterest":
+      return `https://pinterest.com/pin/create/button/?url=${url}&media=${encodeURIComponent(details.media)}&description=${title}`;
+    case "reddit":
+      return `https://www.reddit.com/submit?url=${url}&title=${title}`;
+    case "telegram":
+      return `https://t.me/share/url?url=${url}&text=${title}%0D%0A${description}`;
+    case "whatsapp":
+      return `https://api.whatsapp.com/send?text=${message}`;
+    case "skype":
+      return `https://web.skype.com/share?url=${message}`;
+    case "sms": {
+      const ios = typeof navigator !== "undefined" && /iphone|ipad/i.test(navigator.userAgent);
+      return `sms:${ios ? "&" : "?"}body=${message}`;
+    }
+    case "email": {
+      const subject = encodeShareText(details.title.replace(/[\r\n]+/g, " "));
+      return `mailto:?subject=${subject}&body=${url}%0D%0A${description}`;
+    }
+  }
+}
+
+export default defineComponent({
   name: "UButtonShareGroup",
-  components: {
-    "share-network": VueSocialSharing,
-  },
+  emits: ["share", "embed"],
   props: {
     embedMode: { type: Boolean, default: false },
     networks: {
-      type: Array,
-      default: () => [
-        "facebook",
-        "twitter",
-        "linkedin",
-        "line",
-        "pinterest",
-        "reddit",
-        "telegram",
-        "whatsapp",
-        "skype",
-        "sms",
-        "email",
-        "embed",
-        "copy",
-      ],
+      type: Array as PropType<string[]>,
+      default: () => [...socialNetworks.map(({ code }) => code), "embed", "copy"],
     },
 
     url: {
@@ -129,59 +194,46 @@ export default {
       default: false,
     },
   },
-  data: function () {
-    return {};
-  },
   computed: {
     items() {
-      const out = [];
-      if (this.networks.includes("facebook")) {
-        out.push({ code: "facebook", icon: "fab fa-facebook" });
-      }
-      if (this.networks.includes("twitter")) {
-        out.push({ code: "twitter", icon: "fab fa-twitter" });
-      }
-      if (this.networks.includes("linkedin")) {
-        out.push({ code: "linkedin", icon: "fab fa-linkedin" });
-      }
-      if (this.networks.includes("line")) {
-        out.push({ code: "line", icon: "fab fa-line" });
-      }
-      if (this.networks.includes("pinterest")) {
-        out.push({ code: "pinterest", icon: "fab fa-pinterest" });
-      }
-      if (this.networks.includes("reddit")) {
-        out.push({ code: "reddit", icon: "fab fa-reddit" });
-      }
-      if (this.networks.includes("telegram")) {
-        out.push({ code: "telegram", icon: "fab fa-telegram" });
-      }
-      if (this.networks.includes("whatsapp")) {
-        out.push({ code: "whatsapp", icon: "fab fa-whatsapp" });
-      }
-      if (this.networks.includes("skype")) {
-        out.push({ code: "skype", icon: "fab fa-skype" });
-      }
-      if (this.networks.includes("sms")) {
-        out.push({ code: "sms", icon: "fas fa-sms" });
-      }
-      if (this.networks.includes("email")) {
-        out.push({ code: "email", icon: "fas fa-envelope" });
-      }
-
-      return out;
-    },
-
-    hashtags_string() {
-      return this.hashtags ? this.hashtags.replace(/-/g, "") : "";
-    },
-
-    twitter_user() {
-      return SetupService.GetTwitterAccount(); // Assuming this function returns a string
+      const url = webUrl(this.url);
+      const details = url && {
+        url,
+        title: this.title ?? "",
+        description: String(this.description ?? ""),
+        quote: String(this.quote ?? ""),
+        hashtags: (this.hashtags ?? "").replace(/-/g, ""),
+        media: webUrl(this.media) ?? "",
+        twitterUser: typeof window !== "undefined" && this.networks.includes("twitter")
+          ? SetupService.GetTwitterAccount() ?? ""
+          : "",
+      };
+      return socialNetworks.filter(({ code }) => this.networks.includes(code)).map((item) => ({
+        ...item,
+        href: details ? shareHref(item.code, details) : undefined,
+      }));
     },
   },
-  methods: {},
-};
+  methods: {
+    openShare(item: { code: SocialNetwork; href?: string }, event: MouseEvent) {
+      if (!item.href || event.defaultPrevented) return;
+      this.$emit("share", item.code);
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+
+      if (item.code === "email" || item.code === "sms") {
+        window.open(item.href, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      const width = 626;
+      const height = 436;
+      const left = Math.round(window.screenX + (window.outerWidth - width) / 2);
+      const top = Math.round(window.screenY + (window.outerHeight - height) / 2);
+      window.open(item.href, "_blank", `popup,noopener,noreferrer,width=${width},height=${height},left=${left},top=${top}`);
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>

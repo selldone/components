@@ -13,7 +13,7 @@ const ts = require("typescript");
 const file = new URL("./BDomainProvider.vue", import.meta.url);
 const { descriptor, errors } = parse(readFileSync(file, "utf8"), { filename: file.pathname });
 assert.deepEqual(errors, []);
-const transpile = source => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = source => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const providerExports = {};
 new Function("require", "exports", transpile(readFileSync(new URL("./domain-provider.ts", import.meta.url), "utf8")))(name => {
   assert.ok(name.endsWith(".svg"), "Provider artwork must use an existing local asset");

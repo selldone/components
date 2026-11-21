@@ -34,7 +34,7 @@ function fixture(enabled = false) {
     IsEnableShopMap: shop => !!helper.GetShopMap(shop).enable,
   };
   const result = ts.transpileModule(config, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }, reportDiagnostics: true,
+    compilerOptions: { esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }, reportDiagnostics: true,
   });
   assert.deepEqual(result.diagnostics, []);
   const exports = {};

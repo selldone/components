@@ -24,7 +24,7 @@ for (const style of descriptor.styles) {
   }).errors, []);
 }
 const transpile = (source) => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const script = transpile(descriptor.script.content);
 const templateExports = {};

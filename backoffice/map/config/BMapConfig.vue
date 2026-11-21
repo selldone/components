@@ -73,7 +73,7 @@
         hide-details
         :disabled="busy_set || !canWrite"
       >
-        <template #selection="{ item }"
+        <template #selection="{ internalItem: item }"
           ><img
             :src="item.raw.icon"
             width="24"
@@ -82,7 +82,7 @@
             class="me-2"
           />{{ item.raw.title }}</template
         >
-        <template #item="{ item, props }"
+        <template #item="{ internalItem: item, props }"
           ><v-list-item v-bind="props"
             ><template #prepend
               ><img

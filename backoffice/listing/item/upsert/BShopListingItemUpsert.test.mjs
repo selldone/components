@@ -41,6 +41,8 @@ for (const style of descriptor.styles)
   );
 const script = ts.transpileModule(descriptor.script.content, {
   compilerOptions: {
+    esModuleInterop: false,
+    ignoreDeprecations: "6.0",
     module: ts.ModuleKind.CommonJS,
     target: ts.ScriptTarget.ES2022,
   },
@@ -142,7 +144,7 @@ async function renderedEditor(t, { modern, tab = "general", item = null }) {
   const exports = {};
   vm.runInNewContext(
     ts.transpileModule(template.code, {
-      compilerOptions: { module: ts.ModuleKind.CommonJS },
+      compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS },
     }).outputText,
     {
       exports,
@@ -617,7 +619,7 @@ test("media reports pending drafts and writes reactively, while legacy callers r
   const exports = {};
   vm.runInNewContext(
     ts.transpileModule(descriptor.script.content, {
-      compilerOptions: { module: ts.ModuleKind.CommonJS },
+      compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS },
     }).outputText,
     { exports, require: () => ({ default: {} }) },
   );
@@ -997,7 +999,7 @@ function categoryChild(relativePath, values = {}, globals = {}) {
     emitted = [];
   vm.runInNewContext(
     ts.transpileModule(descriptor.script.content, {
-      compilerOptions: { module: ts.ModuleKind.CommonJS },
+      compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS },
     }).outputText,
     {
       exports,

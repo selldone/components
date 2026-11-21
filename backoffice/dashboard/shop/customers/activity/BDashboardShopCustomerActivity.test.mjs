@@ -79,6 +79,7 @@ function environment({ shop = { id: 7 }, active = true, hidden = false } = {}) {
   vm.runInNewContext(
     ts.transpileModule(descriptor.script.content, {
       compilerOptions: {
+        esModuleInterop: false,
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2022,
       },
@@ -248,6 +249,7 @@ async function html(
   vm.runInNewContext(
     ts.transpileModule(compiled.code, {
       compilerOptions: {
+        esModuleInterop: false,
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2022,
       },

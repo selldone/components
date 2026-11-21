@@ -24,7 +24,7 @@ const productTypes = Object.fromEntries(["PHYSICAL", "VIRTUAL", "FILE", "SERVICE
 function evaluate(source, require) {
   const exports = {};
   const result = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
     reportDiagnostics: true,
   });
   assert.deepEqual(result.diagnostics, []);

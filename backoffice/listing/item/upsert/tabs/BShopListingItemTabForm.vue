@@ -240,7 +240,7 @@
           @update:modelValue="setFieldValue(fieldName(field), $event)"
           @blur="$emit('changed')"
         >
-          <template v-if="modern" #chip="{ item, props }">
+          <template v-if="modern" #chip="{ internalItem: item, props }">
             <v-chip
               v-bind="props"
               size="small"

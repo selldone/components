@@ -27,7 +27,7 @@ const plain = (value) => JSON.parse(JSON.stringify(value));
 const evaluate = (source, globals = {}) => {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, { exports, ...globals });
   return exports;
 };
@@ -108,8 +108,12 @@ function environment({ guided = true, modern = true, shop, showStepper = true } 
         }, [slots.activator?.({ props: {} }), slots.default?.(),
           slots["prepend-inner"]?.(), slots["append-inner"]?.(),
           slots.prepend?.(), slots.title?.(), slots.subtitle?.(), slots.append?.(),
-          name === "VSelect" && attrs.modelValue ? slots.selection?.({ item: { raw: attrs.modelValue } }) : null,
-          name === "VSelect" ? attrs.items?.map((account) => slots.item?.({ item: { raw: account }, props: {} })) : null]);
+          name === "VSelect" && attrs.modelValue
+            ? slots.selection?.({ item: attrs.modelValue, internalItem: { raw: attrs.modelValue } })
+            : null,
+          name === "VSelect"
+            ? attrs.items?.map((account) => slots.item?.({ item: account, internalItem: { raw: account }, props: {} }))
+            : null]);
       };
     },
   });
@@ -755,6 +759,22 @@ test("late quote successes and failures after unmount cannot alter the discarded
     assert.equal(s.creation_fee, null);
     assert.equal(s.creation_fee_error, false);
     assert.equal(e.events.length, 0);
+  }
+});
+
+test("shop settings open an overview for missing and legacy placeholder locations without changing the saved info", () => {
+  for (const [info, expectedCenter] of [
+    [{}, null],
+    [{ location: { lat: 0, lng: 0 } }, null],
+    [{ location: { lat: 0, lng: 32.5 } }, { lat: 0, lng: 32.5 }],
+  ]) {
+    const savedInfo = plain(info);
+    const { state } = environment({
+      guided: false,
+      shop: { id: 41, name: "fixture-studio", info },
+    });
+    assert.deepEqual(plain(state.center), expectedCenter);
+    assert.deepEqual(info, savedInfo);
   }
 });
 

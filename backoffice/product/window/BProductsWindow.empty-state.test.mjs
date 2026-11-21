@@ -12,7 +12,7 @@ const file = new URL("./BProductsWindow.vue", import.meta.url);
 const { descriptor, errors } = parse(readFileSync(file, "utf8"));
 assert.deepEqual(errors, []);
 const transpile = source => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const ProductType = Object.fromEntries(["PHYSICAL", "VIRTUAL", "FILE", "SERVICE", "SUBSCRIPTION"].map(code => [code, { code }]));
 const ProductStatus = Object.fromEntries(["Open", "Close", "Pending", "Rejected", "Unlisted"].map(code => [code, { code }]));

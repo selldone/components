@@ -114,7 +114,7 @@
         <v-btn class="sd-modern-button sd-modern-button--primary b-inventory-filter__done" color="primary" variant="elevated" @click.stop="closeMenu">{{ $t("global.actions.done") }}</v-btn>
       </div>
     </template>
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item v-if="!modern" class="d-flex align-center text-start" v-bind="props">
         <template v-slot:title>
           <span style="display: inline-block; min-width: 58px"
@@ -135,7 +135,7 @@
       </v-list-item>
     </template>
 
-    <template v-slot:chip="{ item, index, props }">
+    <template v-slot:chip="{ internalItem: item, index, props }">
       <template v-if="modern && modelValue?.length > 1">
         <span v-if="index === 0" class="b-inventory-filter__summary">{{
           $t("inventory_filter.modern.active_count", { count: modelValue.length })

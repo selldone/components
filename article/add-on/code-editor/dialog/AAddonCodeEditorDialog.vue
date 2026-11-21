@@ -68,7 +68,7 @@
             </v-btn>
           </div>
           <div class="a-article-code__body">
-            <prism-editor
+            <u-code-editor
               v-model="code"
               :highlight="highlighter"
               :language="language"
@@ -76,7 +76,6 @@
               class="a-article-code__prism scrollable-element-light"
               contenteditable="false"
               line-numbers
-              @vue:mounted="labelCodeInput"
             />
           </div>
         </div>
@@ -105,21 +104,20 @@
 </template>
 
 <script lang="ts">
-//―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
+//―――――――――――――――――――――― Code highlighting ――――――――――――――――――――
 import "prismjs/themes/prism.css";
 
-import "vue-prism-editor/dist/prismeditor.min.css";
 
 import {
   EventBus,
   EventName,
 } from "@selldone/components-vue/utils/events/EventBus.ts";
-import { PrismEditor } from "vue-prism-editor";
+import UCodeEditor from "@selldone/components-vue/ui/code/editor/UCodeEditor.vue";
 import { highlightArticleCode } from "../article-code-highlight";
 
 export default {
   name: "AAddonCodeEditorDialog",
-  components: { PrismEditor },
+  components: { UCodeEditor },
   props: {
     masterId: {
       /*Point which dialog open!*/
@@ -175,14 +173,6 @@ export default {
   },
 
   methods: {
-    labelCodeInput(vnode) {
-      vnode.el
-        .querySelector("textarea")
-        ?.setAttribute(
-          "aria-label",
-          this.$t("global.article.code_editor.code_label"),
-        );
-    },
     highlighter(code) {
       return highlightArticleCode(code, this.language);
     },

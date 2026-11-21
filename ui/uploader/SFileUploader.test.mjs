@@ -16,7 +16,7 @@ const context = {
   },
 };
 vm.runInNewContext(ts.transpileModule(descriptor.script.content, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText, context);
 const processFile = context.exports.default.methods.handleProcessFile;
 

@@ -23,7 +23,7 @@ for (const style of descriptor.styles) assert.deepEqual(compileStyle({
   source: style.content, filename, id: "uploader-test", scoped: style.scoped, preprocessLang: style.lang,
 }).errors, []);
 const transpile = (source) => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const script = transpile(descriptor.script.content);
 const templateExports = {};

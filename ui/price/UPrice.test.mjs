@@ -14,7 +14,7 @@ const modules = {};
 function evaluate(path) {
   const exports = {};
   vm.runInNewContext(ts.transpileModule(readFileSync(new URL(path, import.meta.url), "utf8"), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, {
     exports,
     require(name) {
@@ -37,13 +37,13 @@ modules.mixin = evaluate("../../mixin/currency/CurrencyMixin.ts").default;
 const filename = new URL("./UPrice.vue", import.meta.url).pathname;
 const { descriptor, errors } = parse(readFileSync(new URL("./UPrice.vue", import.meta.url), "utf8"), { filename });
 assert.deepEqual(errors, []);
-const script = ts.transpileModule(descriptor.script.content, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
+const script = ts.transpileModule(descriptor.script.content, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS } }).outputText;
 const componentExports = {};
 vm.runInNewContext(script, { exports: componentExports, require: name => name.includes("CurrencyMixin") ? { default: modules.mixin } : modules.helper });
 const template = compileTemplate({ source: descriptor.template.content, filename, id: "data-v-price-test", scoped: true });
 assert.deepEqual(template.errors, []);
 const templateExports = {};
-vm.runInNewContext(ts.transpileModule(template.code, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: templateExports, require: () => Vue });
+vm.runInNewContext(ts.transpileModule(template.code, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS } }).outputText, { exports: templateExports, require: () => Vue });
 const style = compileStyle({ source: descriptor.styles[0].content, filename, id: "data-v-price-test", scoped: true, preprocessLang: "scss" });
 assert.deepEqual(style.errors, []);
 const component = { ...componentExports.default, __scopeId: "data-v-price-test", render: templateExports.render };

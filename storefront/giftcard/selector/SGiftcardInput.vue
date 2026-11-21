@@ -100,7 +100,7 @@
         "
       ></s-giftcard-add>
     </template>
-    <template v-slot:selection="{ item, index }">
+    <template v-slot:selection="{ internalItem: item, index }">
       <v-chip
         v-if="index === 0"
         class="overflow-visible"
@@ -124,7 +124,7 @@
         {{ $t("global.payment_form.more") }} )</span
       >
     </template>
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item class="text-start" v-bind="props">
         <template v-slot:prepend>
           <img

@@ -91,6 +91,7 @@ function fixture(file = "BDomainWorkspace.vue", item = custom(), withDocument = 
   };
   const script = ts.transpileModule(descriptor.script.content, {
     compilerOptions: {
+      esModuleInterop: false,
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2022,
     },
@@ -299,7 +300,7 @@ test("Overview ends with the exact hosted sitemap link and a read-only copy acti
   const template = compileTemplate({ source: descriptor.template.content, filename: "BDomainWorkspace.vue", id: "overview-sitemap-test" });
   const rendering = {};
   new Function("require", "exports", ts.transpileModule(template.code, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS },
   }).outputText)(() => Vue, rendering);
   const explicit = custom();
   explicit.site_map = "https://store.example.com/sitemap/catalog.xml?locale=fa";
@@ -360,7 +361,7 @@ test("Overview shows the effective layout identity and opens its native read-onl
   const template = compileTemplate({ source: descriptor.template.content, filename: "BDomainWorkspace.vue", id: "overview-layout-test" });
   const rendering = {};
   new Function("require", "exports", ts.transpileModule(template.code, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS },
   }).outputText)(() => Vue, rendering);
   f.allow(false);
   const image = "https://assets.example.test/layout-cover.png";
@@ -905,7 +906,7 @@ test("Overview provider refresh uses the existing explicit HTTPS check and keeps
   const template = compileTemplate({ source: descriptor.template.content, filename: 'BDomainWorkspace.vue', id: 'provider-refresh-test' });
   assert.deepEqual(template.errors, []);
   const rendering = {};
-  new Function('require', 'exports', ts.transpileModule(template.code, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(() => Vue, rendering);
+  new Function('require', 'exports', ts.transpileModule(template.code, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS } }).outputText)(() => Vue, rendering);
   let refresh, flowProps;
   const render = async () => {
     const app = Vue.createSSRApp({ render: () => rendering.render(f.state, []) });
@@ -1132,7 +1133,7 @@ test("DNS and SSL messages render sanitized HTML only in their own Connection se
     "require",
     "exports",
     ts.transpileModule(template.code, {
-      compilerOptions: { module: ts.ModuleKind.CommonJS },
+      compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS },
     }).outputText,
   )(() => Vue, rendering);
   f.state.dnsError = "DNS <b>synthetic</b> detail";
@@ -1243,7 +1244,7 @@ test("new, existing and failed client repairs render complete sanitized server r
   const { descriptor } = parse(f.source);
   const template = compileTemplate({ source: descriptor.template.content, filename: "BDomainWorkspace.vue", id: "repair-feedback-test" });
   const rendering = {};
-  new Function("require", "exports", ts.transpileModule(template.code, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText)(() => Vue, rendering);
+  new Function("require", "exports", ts.transpileModule(template.code, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS } }).outputText)(() => Vue, rendering);
   f.state.section = "settings";
   f.state.settingSection = "oauth";
   for (const { success, client, expectedRole, result } of [
@@ -1521,7 +1522,7 @@ test("customer preview follows saved home types, primary/default inheritance and
 
 test("the real shared preview explains authoritative layout assignments while keeping native home-choice captions", async () => {
   const transpile = (source) => ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText;
   const noNetwork = new Proxy({}, { get() { throw Error('The preview must not request live data'); } });
   const loadScript = (path, imports = {}) => {
@@ -1636,7 +1637,7 @@ test("customer page illustrations render distinct inert layouts without real dat
     "require",
     "exports",
     ts.transpileModule(template.code, {
-      compilerOptions: { module: ts.ModuleKind.CommonJS },
+      compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS },
     }).outputText,
   )(() => Vue, rendering);
   const layouts = new Set();

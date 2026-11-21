@@ -217,7 +217,7 @@
               variant="underlined"
               @update:model-value="$forceUpdate()"
             >
-              <template v-slot:chip="{ item, props }">
+              <template v-slot:chip="{ internalItem: item, props }">
                 <v-chip v-bind="props">
                   {{ item.raw }}
                 </v-chip>

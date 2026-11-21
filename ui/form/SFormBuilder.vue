@@ -165,7 +165,7 @@ import BProductEditInfoIcon from "../../backoffice/product/edit/info/BProductEdi
 export default {
   name: "SFormBuilder",
   components: {
-    draggable: defineAsyncComponent(() => import("vuedraggable")),
+    draggable: defineAsyncComponent(() => import("@selldone/components-vue/ui/sortable/USortableList.ts")),
     SFormBuilderRow,
     BProductEditInfoIcon,
   },

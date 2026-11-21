@@ -58,7 +58,7 @@
       <small v-else-if="modelValue">Loading...</small>
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar v-if="item.raw.icon" rounded size="40">

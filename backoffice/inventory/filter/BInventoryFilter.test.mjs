@@ -121,10 +121,11 @@ async function mounted(modern, selected, options = {}) {
     close: () => { app.unmount(); container.remove(); },
   };
 }
+const submittedSelection = (fixture) => [...fixture.container.querySelectorAll('.v-select input[type="hidden"]')].map((input) => input.value);
 function expectSelection(fixture, expected) {
   assert.deepEqual(plain(fixture.model.value), expected);
   expectVisibleSelection(fixture, expected);
-  assert.deepEqual([...fixture.container.querySelector("select").selectedOptions].map((option) => option.value).sort(), [...expected].sort());
+  assert.deepEqual(submittedSelection(fixture).sort(), [...expected].sort());
   assert.deepEqual(fixture.events, [
     { event: "update", value: expected },
     { event: "change", value: expected, model: expected, rendered: expected.join(",") },
@@ -222,9 +223,7 @@ test("both filters offer exactly five product types and all five statuses regard
     const f = await mounted(modern, [], { needVerify });
     try {
       await open(f);
-      assert.equal(rows().length, 10);
-      for (const code of codes) assert.ok(option(code), `Missing native option: ${code}`);
-      assert.deepEqual([...f.container.querySelector("select").options].map((item) => item.value), codes);
+      assert.deepEqual(rows(), codes.map(option));
       assert.deepEqual(f.errors, []);
     } finally { f.close(); }
   }
@@ -250,7 +249,7 @@ test("modern multi-count keeps every selection removable immediately through the
     const f = await mounted(true, ["PHYSICAL", "VIRTUAL", "Open"], { width, rtl });
     try {
       expectVisibleSelection(f, ["PHYSICAL", "VIRTUAL", "Open"]);
-      assert.deepEqual([...f.container.querySelector("select").selectedOptions].map((item) => item.value), ["PHYSICAL", "VIRTUAL", "Open"]);
+      assert.deepEqual(submittedSelection(f), ["PHYSICAL", "VIRTUAL", "Open"]);
       const summary = f.container.querySelector(".b-inventory-filter__summary");
       summary.dispatchEvent(new dom.window.MouseEvent("mousedown", { bubbles: true, cancelable: true }));
       summary.click();

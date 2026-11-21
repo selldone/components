@@ -17,7 +17,7 @@ const template = compileTemplate({ source: descriptor.template.content, filename
   transformAssetUrls: { includeAbsolute: true } });
 assert.deepEqual(template.errors, []);
 const transpile = code => ts.transpileModule(code, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const plain = value => JSON.parse(JSON.stringify(value));
 function loadModule(path, globals = {}) {

@@ -552,7 +552,6 @@
               ? undefined
               : {
                   tag: 'ul',
-                  type: 'transition-group',
                   name: !drag ? 'flip-list' : 'fade',
                 }
           "
@@ -1166,7 +1165,7 @@ export default {
     UProgressRadial,
     UTextValueBox,
     UChartRadialBar,
-    draggable: defineAsyncComponent(() => import("vuedraggable")),
+    draggable: defineAsyncComponent(() => import("@selldone/components-vue/ui/sortable/USortableList.ts")),
   },
   props: {
     modern: { type: Boolean, default: false },

@@ -40,7 +40,7 @@
       :to="to"
       :variant="isFilled ? 'flat' : 'text'"
       :width="large ? 72 : 38"
-      class="mx-1 mx-sm-2"
+      class="mx-1 mx-sm-2 sd-button-with-badge"
       @click="
         () => {
           onClick();

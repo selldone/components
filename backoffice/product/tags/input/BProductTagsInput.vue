@@ -56,7 +56,7 @@
         variant="underlined"
         @update:model-value="change = true"
       >
-        <template v-slot:chip="{ props, item }">
+        <template v-slot:chip="{ props, internalItem: item }">
           <v-chip
             v-if="modern"
             v-bind="props"

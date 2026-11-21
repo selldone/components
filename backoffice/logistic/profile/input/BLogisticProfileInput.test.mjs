@@ -27,7 +27,7 @@ function fixture(vendor = false, modern = true) {
   });
   const exports = {};
   vm.runInNewContext(ts.transpileModule(descriptor.script.content, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
   }).outputText, { exports,
     require(name) {
       if (name.includes("NotificationService")) return { default: { showLaravelError: error => calls.notices.push(error) } };

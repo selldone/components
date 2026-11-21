@@ -25,7 +25,7 @@
     variant="underlined"
     @update:model-value="(v) => $emit('update:modelValue', v)"
   >
-    <template v-slot:chip="{ item, props }">
+    <template v-slot:chip="{ internalItem: item, props }">
       <v-chip v-bind="props" variant="tonal">
         <template v-if="is_color">
           <u-color-circle

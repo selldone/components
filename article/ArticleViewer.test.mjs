@@ -21,7 +21,7 @@ for (const style of descriptor.styles.filter((style) => style.scoped)) assert.de
   source: style.content, filename, id: "article-viewer-test", scoped: true, preprocessLang: style.lang,
 }).errors, []);
 const transpile = (source) => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 const script = transpile(descriptor.script.content), templateExports = {};
 const shortcutScript = transpile(readFileSync(new URL('../directives/keyboard/DirectiveCtrlKeydown.ts', import.meta.url), 'utf8'));
@@ -188,7 +188,7 @@ function renderApp(f, slots = {}, reader = null, createApp = Vue.createSSRApp, c
   app.component("v-select", { props: ["items", "modelValue", "label", "disabled"], render() {
     const raw = this.items.find((item) => item.value === this.modelValue);
     return Vue.h("label", { "data-field": this.label, "data-disabled": this.disabled },
-      this.$slots.selection?.({ item: { raw, title: raw.title } }));
+      this.$slots.selection?.({ item: raw, internalItem: { raw, title: raw.title } }));
   } });
   return app;
 }

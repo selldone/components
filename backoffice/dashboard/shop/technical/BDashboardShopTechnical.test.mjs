@@ -17,7 +17,7 @@ for (const style of descriptor.styles) {
   assert.deepEqual(result.errors, []);
 }
 const transpile = source => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 
 // Mount the real wrapper/list and real Guided-mode selection; UI and network boundaries stay local.

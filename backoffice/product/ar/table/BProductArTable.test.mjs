@@ -8,7 +8,7 @@ import * as Vue from "vue";
 import ts from "typescript";
 
 const compile = (source) => ts.transpileModule(source, {
-  compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText;
 
 function fixture(name = "row", overrides = {}) {

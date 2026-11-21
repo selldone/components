@@ -132,14 +132,14 @@
           hide-details
           @update:model-value="onCreationWalletChange"
         >
-          <template #selection="{ item }">
+          <template #selection="{ internalItem: item }">
             <span class="b-shop-add__wallet-value">
               <u-currency-icon :currency="GetCurrency(item.raw.currency)" small />
               <span dir="ltr">{{ item.raw.currency }} · {{ item.raw.account_number }}</span>
               <span class="b-shop-add__wallet-name">{{ item.raw.account_name }}</span>
             </span>
           </template>
-          <template #item="{ item, props }">
+          <template #item="{ internalItem: item, props }">
             <v-list-item v-bind="props" class="text-start">
               <template #prepend><u-currency-icon :currency="GetCurrency(item.raw.currency)" small class="me-3" /></template>
               <template #subtitle>
@@ -994,7 +994,7 @@ export default {
     // ---------- Address map ----------
     map_model: null,
     map_dialog: false,
-    center: { lat: 0, lng: 0 },
+    center: null,
     startup_mode_map_dialog: "default", // detail
 
     map_location: {},
@@ -1470,12 +1470,12 @@ export default {
 
         this.selected_country_obj = { alpha2: this.info.country_code };
 
-        if (this.info.location) {
-          this.center.lat = this.info.location.lat;
-          this.center.lng = this.info.location.lng;
-        } else {
-          this.info.location = { lat: 0, lng: 0 };
-        }
+        const location = this.info.location;
+        // Earlier versions wrote (0, 0) when the shop had no location.
+        this.center =
+          location && (Number(location.lat) !== 0 || Number(location.lng) !== 0)
+            ? { ...location }
+            : null;
 
         this.icon_pic = this.shop.icon;
         this.fav_pic = this.shop.fav ? this.shop.fav : this.shop.icon; // Load default!

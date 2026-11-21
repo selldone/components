@@ -308,7 +308,7 @@
         </v-progress-circular>
       </template>
 
-      <template v-slot:item="{ item, props }">
+      <template v-slot:item="{ internalItem: item, props }">
         <v-list-item class="text-start" v-bind="props">
           <template v-slot:prepend>
             <v-avatar
@@ -334,7 +334,7 @@
         </v-list-item>
       </template>
 
-      <template v-slot:selection="{ item }">
+      <template v-slot:selection="{ internalItem: item }">
         <img
           :src="getShopImagePath(item.raw.image, IMAGE_SIZE_SMALL)"
           class="rounded"

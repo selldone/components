@@ -412,7 +412,7 @@
               prepend-inner-icon="fa:fas fa-calendar-week"
               variant="underlined"
             >
-              <template v-slot:chip="{ item, props }">
+              <template v-slot:chip="{ internalItem: item, props }">
                 <v-chip
                   :class="
                     modern
@@ -453,7 +453,7 @@
               prepend-inner-icon="fa:fas fa-clock"
               variant="underlined"
             >
-              <template v-slot:chip="{ item, props }">
+              <template v-slot:chip="{ internalItem: item, props }">
                 <v-chip v-bind="props">
                   <v-avatar class="m-0">
                     <v-img :src="item.raw.icon" />

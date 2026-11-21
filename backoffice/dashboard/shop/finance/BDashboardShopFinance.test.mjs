@@ -45,6 +45,7 @@ function fixture({
   const transpile = (text) =>
     ts.transpileModule(text, {
       compilerOptions: {
+        esModuleInterop: false,
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2022,
       },

@@ -37,7 +37,7 @@
     :placeholder="$t('global.placeholders.select_wallet')"
     prepend-inner-icon="wallet"
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         class="text-start b-account-input__option"
         density="compact"
@@ -94,7 +94,7 @@
       </v-list-item>
     </template>
 
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-chip v-if="chip" color="#fafafa">
         <b class="text-subtitle-2">{{ formatCard(item.raw.account_number) }}</b>
 

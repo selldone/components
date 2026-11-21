@@ -17,7 +17,7 @@ function compile(name) {
 }
 const { script, template } = compile("./BShopProductsImportProcessing.vue");
 const iconSource = compile("./BShopProductsImportProcessingIcon.vue");
-const transpile = (source) => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = (source) => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const settle = async () => { await Vue.nextTick(); await new Promise(setImmediate); await Vue.nextTick(); };
 const element = (type, text = "") => ({ type, text, props: {}, style: {}, children: [], parent: null });
 const remove = (node) => { if (node.parent) node.parent.children.splice(node.parent.children.indexOf(node), 1); node.parent = null; };

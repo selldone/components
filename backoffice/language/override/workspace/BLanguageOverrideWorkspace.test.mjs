@@ -19,7 +19,7 @@ const read = file => readFileSync(new URL(file, import.meta.url), "utf8");
 const settle = async () => { await Vue.nextTick(); await new Promise(setImmediate); await Vue.nextTick(); };
 const plain = value => JSON.parse(JSON.stringify(value));
 function evaluate(source, imports = () => ({})) {
-  const output = ts.transpileModule(source, { reportDiagnostics: true, compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } });
+  const output = ts.transpileModule(source, { reportDiagnostics: true, compilerOptions: { target: ts.ScriptTarget.ES2022, esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS } });
   assert.deepEqual(output.diagnostics, []);
   const exports = {};
   vm.runInNewContext(output.outputText, { exports, require: imports, console, setTimeout, clearTimeout });
@@ -36,9 +36,10 @@ const { Language } = evaluate(read("../../../../../core-js/enums/language/Langua
 const bundle = await build({
   stdin: { contents: 'export { createVuetify } from "vuetify"; export { VTable } from "vuetify/components/VTable"; export { VPagination } from "vuetify/components/VPagination";', resolveDir: process.cwd() },
   bundle: true, write: false, format: "cjs", platform: "node", loader: { ".css": "empty" }, external: ["vue"], logLevel: "silent",
+  define: { "process.env.NODE_ENV": JSON.stringify("test") },
 });
 const native = { exports: {} };
-vm.runInNewContext(bundle.outputFiles[0].text, { module: native, exports: native.exports, require, console, window, document, Node, Element, HTMLElement, SVGElement, ResizeObserver, setTimeout, clearTimeout });
+vm.runInNewContext(bundle.outputFiles[0].text, { module: native, exports: native.exports, require, console, window, document, Node, Element, HTMLElement, SVGElement, ResizeObserver, CSS: { supports: () => false }, setTimeout, clearTimeout });
 const { createVuetify, VTable, VPagination } = native.exports;
 const leaf = Vue.defineComponent({ inheritAttrs: false, setup: (_, { attrs, slots }) => () => Vue.h("div", attrs, [slots.activator?.({ props: {} }), slots.default?.()]) });
 const button = Vue.defineComponent({ props: ["disabled"], setup: (props, { attrs, slots }) => () => Vue.h("button", { ...attrs, disabled: props.disabled }, slots.default?.()) });

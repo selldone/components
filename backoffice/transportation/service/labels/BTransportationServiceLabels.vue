@@ -276,7 +276,7 @@
             variant="solo"
             density="compact"
           >
-            <template v-slot:item="{ item, props }">
+            <template v-slot:item="{ internalItem: item, props }">
               <v-list-item v-bind="props" title="">
                 <b-transportation-service-rate
                   :rate="item.raw"
@@ -284,7 +284,7 @@
               </v-list-item>
             </template>
 
-            <template v-slot:selection="{ item }">
+            <template v-slot:selection="{ internalItem: item }">
               <b-transportation-service-rate
                 :rate="item.raw"
               ></b-transportation-service-rate>

@@ -21,8 +21,9 @@
         You can use public CDNs/Repositories.
       </div>
     </v-list-subheader>
-    <prism-editor
+    <u-code-editor
       v-model="code"
+      :aria-label="$t('global.article.code_editor.code_label')"
       :highlight="highlighter"
       class="light-code scrollable-element-light mb-5"
       language="html"
@@ -33,17 +34,16 @@
 </template>
 
 <script lang="ts">
-//―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
-import "prismjs";
+//―――――――――――――――――――――― Code highlighting ――――――――――――――――――――
+import Prism from "prismjs";
 import "prismjs/themes/prism.css";
 
-import { PrismEditor } from "vue-prism-editor";
-import "vue-prism-editor/dist/prismeditor.min.css";
+import UCodeEditor from "@selldone/components-vue/ui/code/editor/UCodeEditor.vue";
 
 
 export default {
   name: "BShopHtmlEditor",
-  components: { PrismEditor },
+  components: { UCodeEditor },
   emits: ["update:modelValue"],
   props: {
     modelValue: {},
@@ -70,7 +70,7 @@ export default {
 
   methods: {
     highlighter(code) {
-      return Prism.highlight(code, Prism.languages.html);
+      return Prism.highlight(code, Prism.languages.html, "html");
     },
   },
 };

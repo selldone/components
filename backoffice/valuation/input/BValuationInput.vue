@@ -33,7 +33,7 @@
       })
     "
   >
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <span class="b-valuation-input__selection">
         <v-avatar size="24" class="me-2" aria-hidden="true">
           <v-img
@@ -73,7 +73,7 @@
       </div>
     </template>
 
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item class="text-start" v-bind="props">
         <template v-slot:prepend>
           <v-avatar size="32" class="me-3" aria-hidden="true">

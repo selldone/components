@@ -7,7 +7,7 @@ import ts from "typescript";
 import { parse, compileScript, compileTemplate, compileStyleAsync } from "@vue/compiler-sfc";
 import { baseParse, compile } from "@vue/compiler-dom";
 
-const transpile = (source) => ts.transpileModule(source, { reportDiagnostics: true, compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } });
+const transpile = (source) => ts.transpileModule(source, { reportDiagnostics: true, compilerOptions: { esModuleInterop: false, ignoreDeprecations: "6.0", module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } });
 const plain = (value) => JSON.parse(JSON.stringify(value));
 const settle = async () => { await Vue.nextTick(); await new Promise(setImmediate); await Vue.nextTick(); };
 const enabled = (value) => value === true || value === "";

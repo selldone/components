@@ -21,8 +21,9 @@
         option if you are not an expert in CSS.
       </div>
     </v-list-subheader>
-    <prism-editor
+    <u-code-editor
       v-model="code"
+      :aria-label="$t('global.article.code_editor.code_label')"
       :highlight="highlighter"
       class="light-code scrollable-element-light mb-5"
       language="css"
@@ -55,18 +56,17 @@
 </template>
 
 <script lang="ts">
-//―――――――――――――――――――――― vue-prism-editor ――――――――――――――――――――
-import "prismjs";
+//―――――――――――――――――――――― Code highlighting ――――――――――――――――――――
+import Prism from "prismjs";
 import "prismjs/themes/prism.css";
 
-import "vue-prism-editor/dist/prismeditor.min.css";
 
 import ShopCss from "@selldone/core-js/enums/shop/ShopCss";
-import { PrismEditor } from "vue-prism-editor";
+import UCodeEditor from "@selldone/components-vue/ui/code/editor/UCodeEditor.vue";
 
 export default {
   name: "BShopCssEditor",
-  components: { PrismEditor },
+  components: { UCodeEditor },
   emits: ["update:modelValue"],
   props: {
     modelValue: {},

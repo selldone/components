@@ -34,7 +34,7 @@
           : 'Add one or more URLs. Press Enter after each link.'
       "
     >
-      <template #chip="{ item, props, index }">
+      <template #chip="{ internalItem: item, props, index }">
         <v-chip
           v-bind="props"
           label

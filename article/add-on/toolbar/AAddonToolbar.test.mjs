@@ -23,7 +23,7 @@ for (const relative of files) {
   }
   scripts.set(relative, descriptor.script.content);
 }
-const transpile = (source) => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = (source) => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 
 function fixture() {
   const dom = new JSDOM('<div class="editor-host"><div id="editable_body" class="medium-editor-element" contenteditable="true"><p>Before</p><div class="flip-book a-article-addon--editable" contenteditable="false"><div class="a-article-addon-tools"></div></div><p>After</p></div></div>');

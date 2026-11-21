@@ -37,6 +37,7 @@ function load(name, globals = {}) {
     "Array.prototype.insert = function(index, value) { this.splice(index, 0, value); };\n" +
       ts.transpileModule(descriptor.script.content, {
         compilerOptions: {
+          esModuleInterop: false,
           module: ts.ModuleKind.CommonJS,
           target: ts.ScriptTarget.ES2022,
         },
@@ -88,6 +89,7 @@ function load(name, globals = {}) {
   vm.runInNewContext(
     ts.transpileModule(compiled.code, {
       compilerOptions: {
+        esModuleInterop: false,
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2022,
       },

@@ -948,7 +948,7 @@
 
             <v-btn
               v-if="item.chat && item.chat.length"
-              class="mx-1 b-process-center-list__chat"
+              class="mx-1 b-process-center-list__chat sd-button-with-badge"
               :aria-label="$t('global.commons.chat')"
               color="#111"
               icon
@@ -1047,7 +1047,7 @@
 
       <template v-if="modernMarketplace" v-slot:item.actions="{ item }">
         <div class="b-process-center-list__marketplace-actions" @click.stop>
-          <v-btn v-if="item.chat?.length" icon variant="text" class="sd-modern-icon-button b-process-center-list__chat" :aria-label="$t('global.commons.chat')" @click.stop="showChat(item)">
+          <v-btn v-if="item.chat?.length" icon variant="text" class="sd-modern-icon-button b-process-center-list__chat sd-button-with-badge" :aria-label="$t('global.commons.chat')" @click.stop="showChat(item)">
             <v-badge :model-value="!item.chat[item.chat.length - 1].officer" color="error" dot>
               <v-icon aria-hidden="true">chat</v-icon>
             </v-badge>

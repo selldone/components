@@ -38,7 +38,7 @@
       :variant="modern ? 'underlined' : 'outlined'"
       :hide-details="modern ? 'auto' : undefined"
     >
-      <template v-slot:item="{ item, props }">
+      <template v-slot:item="{ internalItem: item, props }">
         <v-list-item v-if="item?.raw" class="text-start" v-bind="props">
           <template v-slot:prepend>
             <img
@@ -57,7 +57,7 @@
         </v-list-item>
       </template>
 
-      <template v-slot:selection="{ item }">
+      <template v-slot:selection="{ internalItem: item }">
         <div v-if="item?.raw">
           <img
             :src="

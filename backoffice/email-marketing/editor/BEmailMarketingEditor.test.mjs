@@ -187,17 +187,14 @@ async function renderNative(view, definition, props, data = {}) {
       setup(_props, { attrs, slots }) {
         return () => {
           records.push({ name, attrs: { ...attrs } });
+          const raw = name === "VCombobox"
+            ? Object.assign(new String("Inter"), { toColor: () => "#777777" })
+            : "Inter";
           const children = Object.values(slots).flatMap((slot) =>
             slot({
               props: {},
-              item: {
-                raw:
-                  name === "VCombobox"
-                    ? Object.assign(new String("Inter"), {
-                        toColor: () => "#777777",
-                      })
-                    : "Inter",
-              },
+              item: raw,
+              internalItem: { raw },
               element: { type: "SUBSCRIBED", subscribed: true },
               index: 0,
             }),

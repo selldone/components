@@ -878,11 +878,11 @@
               :label="$t('domains_modern.connection.provider')"
               variant="underlined"
               class="sd-modern-underlined-field b-domain-add-modern__provider"
-              ><template #selection="{ item }"
+              ><template #selection="{ internalItem: item }"
                 ><img :src="item.raw.icon" alt="" width="20" height="20" class="me-2" />{{
                   item.raw.title
                 }}</template
-              ><template #item="{ item, props }"
+              ><template #item="{ internalItem: item, props }"
                 ><v-list-item v-bind="props" :title="item.title" class="text-start"
                   ><template #prepend
                     ><img
@@ -1511,7 +1511,7 @@
                     messages="DNS / CDN providers configuration guide"
                     variant="plain"
                   >
-                    <template v-slot:item="{ item, props }">
+                    <template v-slot:item="{ internalItem: item, props }">
                       <v-list-item
                         :title="item.title"
                         class="text-start"
@@ -1527,7 +1527,7 @@
                         </template>
                       </v-list-item>
                     </template>
-                    <template v-slot:selection="{ item }">
+                    <template v-slot:selection="{ internalItem: item }">
                       <img
                         :src="item.raw.icon"
                         class="me-2"

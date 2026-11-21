@@ -29,7 +29,7 @@
     item-value="category"
     @update:modelValue="(v) => $emit('update:modelValue', v)"
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item :title="item.raw.category" v-bind="props" class="text-start">
         <template v-slot:prepend>
           <v-avatar v-if="item.raw.icon" class="me-2" rounded size="28"
@@ -38,7 +38,7 @@
         </template>
       </v-list-item>
     </template>
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-avatar v-if="item.raw.icon" class="me-2" rounded size="28"
         ><img :src="getShopImagePath(item.raw.icon)"
       /></v-avatar>

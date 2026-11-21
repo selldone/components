@@ -480,7 +480,7 @@
                 multiple
                 variant="underlined"
               >
-                <template v-slot:chip="{ item, props }">
+                <template v-slot:chip="{ internalItem: item, props }">
                   <v-chip v-bind="props">
                     <v-icon :color="item.raw.toColor(true)" start
                       >circle</v-icon
@@ -489,7 +489,7 @@
                   </v-chip>
                 </template>
 
-                <template v-slot:item="{ item, props }">
+                <template v-slot:item="{ internalItem: item, props }">
                   <v-list-item :title="item.raw" v-bind="props">
                     <template v-slot:prepend>
                       <v-icon
@@ -614,7 +614,7 @@ export default {
     SCountrySelect,
     UNumberInput,
     UDateInput,
-    draggable: defineAsyncComponent(() => import("vuedraggable")),
+    draggable: defineAsyncComponent(() => import("@selldone/components-vue/ui/sortable/USortableList.ts")),
   },
   emits: ["update:modelValue"],
   props: {

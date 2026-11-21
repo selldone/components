@@ -65,10 +65,10 @@
           variant="underlined"
           @update:model-value="selectCustomFont"
         >
-          <template #selection="{ item }">
+          <template #selection="{ internalItem: item }">
             <span :style="customFontPreviewStyle(item.raw)">{{ item.raw.name }}</span>
           </template>
-          <template #item="{ item, props }">
+          <template #item="{ internalItem: item, props }">
             <v-list-item v-bind="props" class="text-start">
               <template #prepend>
                 <v-avatar class="me-2 rounded-lg" :style="customFontPreviewStyle(item.raw)">Aa</v-avatar>

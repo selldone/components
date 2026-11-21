@@ -12,7 +12,7 @@ assert.deepEqual(errors, []);
 const script = compileScript(descriptor, { id: "category-add-test" });
 const template = compileTemplate({ source: descriptor.template.content, filename: file.pathname, id: "category-add-test", compilerOptions: { bindingMetadata: script.bindings } });
 assert.deepEqual(template.errors, []);
-const transpile = (source) => ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = (source) => ts.transpileModule(source, { compilerOptions: { esModuleInterop: false, module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
 const plain = (value) => value === undefined ? undefined : JSON.parse(JSON.stringify(value));
 const settle = async () => { await Vue.nextTick(); await new Promise(setImmediate); await Vue.nextTick(); };
 const enabled = (value) => value === true || value === "";

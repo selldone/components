@@ -215,7 +215,7 @@ import { defineAsyncComponent } from "vue";
 
 export default {
   name: "UTasksEditor",
-  components: { draggable: defineAsyncComponent(() => import("vuedraggable")) },
+  components: { draggable: defineAsyncComponent(() => import("@selldone/components-vue/ui/sortable/USortableList.ts")) },
   props: {
     modern: { type: Boolean, default: false },
     modelValue: {},

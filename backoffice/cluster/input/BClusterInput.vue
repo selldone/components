@@ -59,7 +59,7 @@
     </template>
 
     <!-- ―――――――――――――――――― items ―――――――――――――――――― -->
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         :title="item.raw.name"
         class="text-start"
@@ -91,7 +91,7 @@
 
     <!-- ―――――――――――――――――― selection ―――――――――――――――――― -->
 
-    <template v-slot:chip="{ item, selected, parent }">
+    <template v-slot:chip="{ internalItem: item, selected, parent }">
       <v-chip
         v-if="multiple"
         :model-value="selected"

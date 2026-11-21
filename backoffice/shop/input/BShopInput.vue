@@ -39,7 +39,7 @@
     item-value="id"
     @update:model-value="(val) => $emit('update:modelValue', val)"
   >
-    <template v-slot:item="{ item, props }">
+    <template v-slot:item="{ internalItem: item, props }">
       <v-list-item
         :subtitle="`@${item.raw.name}`"
         :title="item.raw.title"
@@ -73,7 +73,7 @@
       </v-list-item>
     </template>
 
-    <template v-slot:selection="{ item }">
+    <template v-slot:selection="{ internalItem: item }">
       <v-avatar class="avatar-gradient -thin -shop me-2" size="32">
         <v-img :src="getShopIcon(item.raw.id, 96)" />
       </v-avatar>

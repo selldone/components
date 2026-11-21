@@ -62,10 +62,10 @@
                   :placeholder="$t('app_store_catalog.all_categories')" :aria-label="$t('global.commons.category')"
                   class="b-app-store__category" item-value="code" bg-color="transparent"
                   clearable hide-details single-line variant="plain">
-          <template #item="{ item, props }">
+          <template #item="{ internalItem: item, props }">
             <v-list-item v-bind="props" :prepend-icon="item.raw.icon" :title="$t(item.raw.name)" class="text-start" />
           </template>
-          <template #selection="{ item }"><span>{{ $t(item.raw.name) }}</span></template>
+          <template #selection="{ internalItem: item }"><span>{{ $t(item.raw.name) }}</span></template>
         </v-select>
       </div>
 

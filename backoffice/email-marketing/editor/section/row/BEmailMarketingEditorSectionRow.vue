@@ -233,7 +233,7 @@
         @blur="onSelectFont(modern ? option.object[option.key] : $event)"
         @keydown.enter="onSelectFont(modern ? option.object[option.key] : $event)"
       >
-        <template v-slot:item="{ item, props }">
+        <template v-slot:item="{ internalItem: item, props }">
           <v-list-item
             :style="`font-family:${item.raw}`"
             :title="item.raw"

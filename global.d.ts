@@ -12,12 +12,12 @@
  * Tread carefully, for you're treading on dreams.
  */
 
-import { VueRouter } from "vue-router/types/router";
+import type { Router } from "vue-router";
 import { Store } from "vuex";
 
 declare global {
   interface Window {
-    $global_router: VueRouter;
+    $global_router: Router;
     $global_store: Store<any>;
     $global_vuetify: any; // Important! used by page build dynamic component generator!  USE THIS NOW: vuetify=Vue.prototype.$vuetify
     $i18n_global: any; // Important! used by styler!

@@ -18,7 +18,7 @@
     v-model="new_version"
     :timeout="60000"
     :vertical="$vuetify.display.smAndDown"
-    multi-line
+    min-height="68"
     @click="new_version = false"
   >
     {{ $t("global.notification.new_pwa_version") }}

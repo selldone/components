@@ -35,6 +35,19 @@ declare global {
 }
 
 export class GtagEcommerce {
+  private static productAnalyticsPrice(
+      shop: Shop,
+      product: Product,
+      variant: ProductVariant | null,
+      currency: keyof typeof Currency
+  ): number | null {
+    // Skip priced telemetry when the shop has no usable rate for the item.
+    const fromCurrency = variant?.pricing ? variant.currency : product.currency;
+    const rate = Number(PriceHelper.getExchangeRateValue(shop, fromCurrency, currency));
+    if (!Number.isFinite(rate) || rate <= 0) return null;
+    return PriceHelper.priceProductByCurrency(shop, product, variant, currency);
+  }
+
   /**
    * Helper method to send an event to Facebook Pixel if available.
    *
@@ -100,12 +113,8 @@ export class GtagEcommerce {
           const list = _list ? _list : `${category_name} Gallery`;
 
           try {
-            const price = PriceHelper.priceProductByCurrency(
-                shop,
-                product,
-                null,
-                currency
-            );
+            const price = this.productAnalyticsPrice(shop, product, null, currency);
+            if (price === null) return;
             products_list.push({
               name: product.title, // Name or ID is required.
               id: product.id,
@@ -170,12 +179,8 @@ export class GtagEcommerce {
             : "Home";
 
     try {
-      const price = PriceHelper.priceProductByCurrency(
-          shop,
-          product,
-          null,
-          currency
-      );
+      const price = this.productAnalyticsPrice(shop, product, null, currency);
+      if (price === null) return;
 
       // Push click event to dataLayer (Google Tag Manager)
       window.dataLayer.push({
@@ -245,12 +250,8 @@ export class GtagEcommerce {
     }[] = [];
 
     try {
-      const price = PriceHelper.priceProductByCurrency(
-          shop,
-          product,
-          null,
-          currency
-      );
+      const price = this.productAnalyticsPrice(shop, product, null, currency);
+      if (price === null) return;
 
       products_list.push({
         name: product.title,
@@ -310,12 +311,8 @@ export class GtagEcommerce {
     const category_name = product.category ? product.category.title : "Home";
 
     try {
-      const price = PriceHelper.priceProductByCurrency(
-          shop,
-          product,
-          variant,
-          currency
-      );
+      const price = this.productAnalyticsPrice(shop, product, variant, currency);
+      if (price === null) return;
 
       const products_list = [
         {
@@ -380,12 +377,8 @@ export class GtagEcommerce {
     const category_name = product.category ? product.category.title : "Home";
 
     try {
-      const price = PriceHelper.priceProductByCurrency(
-          shop,
-          product,
-          variant,
-          currency
-      );
+      const price = this.productAnalyticsPrice(shop, product, variant, currency);
+      if (price === null) return;
 
       const products_list = [
         {

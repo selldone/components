@@ -85,7 +85,7 @@
           variant="underlined"
           @update:model-value="engine_changed = true"
         >
-          <template v-slot:chip="{ props, item }">
+          <template v-slot:chip="{ props, internalItem: item }">
             <u-chip-tag :tag="item.raw" v-bind="props"></u-chip-tag>
           </template>
         </v-combobox>

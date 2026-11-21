@@ -14,7 +14,12 @@ const globals = ['window', 'document', 'Node', 'Element', 'HTMLElement', 'SVGEle
 const previousGlobals = new Map(globals.map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)]));
 for (const name of globals) Object.defineProperty(globalThis, name, { configurable: true, writable: true, value: dom.window[name] });
 const Vue = await import('vue');
-const { default: Draggable } = await import('vuedraggable');
+const { default: Sortable } = await import('sortablejs');
+const sortableModule = {};
+vm.runInNewContext(ts.transpile(readFileSync(new URL('../../../../../ui/sortable/USortableList.ts', import.meta.url), 'utf8'), { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: false }), {
+  exports: sortableModule, window, HTMLElement,
+  require: name => name === 'sortablejs' ? { default: Sortable } : Vue,
+});
 after(() => {
   dom.window.close();
   for (const name of globals) {
@@ -26,7 +31,7 @@ after(() => {
 
 const componentFile = new URL('./BProductInventoryManagementFile.vue', import.meta.url);
 const repository = new URL('../../../../../../../', import.meta.url);
-const transpile = text => ts.transpileModule(text, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+const transpile = text => ts.transpileModule(text, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: false } }).outputText;
 const helpers = new Map();
 function helper(path) {
   if (helpers.has(path)) return helpers.get(path);
@@ -60,7 +65,7 @@ function load(onUploaderMounted) {
   vm.runInNewContext(transpile(descriptor.script.content + '\n' + template.code), {
     exports, console, setInterval, clearInterval, FormData, window: { API: endpoint, VAPI: endpoint },
     require(name) {
-      if (name === 'vue') return { ...Vue, defineAsyncComponent: () => Draggable };
+      if (name === 'vue') return { ...Vue, defineAsyncComponent: () => sortableModule.default };
       if (name === 'lodash-es') return { throttle };
       if (name.includes('DateMixin')) return helper('@selldone/components-vue/mixin/date/DateMixin.ts');
       if (name.includes('ShopOptionsHelper')) return helper('@selldone/core-js/helper/shop/ShopOptionsHelper.ts');
@@ -76,7 +81,7 @@ function load(onUploaderMounted) {
   return { ...exports.default, render: exports.render };
 }
 
-test('actual vuedraggable mounts nonempty file rows with live Sortable contexts and lets the custom uploader finish mounting', async t => {
+test('the local sortable list mounts nonempty file rows and lets the custom uploader finish mounting', async t => {
   let uploaderMounts = 0;
   const failures = [], component = load(() => uploaderMounts++);
   const product = Vue.reactive({ id: 9, shop_id: 3, vendor_id: 4, files: [
@@ -91,32 +96,32 @@ test('actual vuedraggable mounts nonempty file rows with live Sortable contexts 
   t.after(() => { app.unmount(); assert.deepEqual(failures, []); });
   const manager = app.mount('#files');
   await Vue.nextTick();
-  const assertContexts = ids => {
+  const assertRows = ids => {
     const list = document.querySelector('ul.b-product-files__list');
-    assert.ok(list, 'the real Sortable list mounted');
+    assert.ok(Sortable.get(list), 'the real Sortable list mounted');
     const rows = [...list.children];
     assert.equal(rows.length, ids.length);
     rows.forEach((row, index) => {
       assert.equal(row.tagName, 'LI');
-      assert.equal(row.__draggable_context?.element.id, ids[index], 'each real row has the correct underlying record');
-      assert.equal(row.__draggable_context?.index, index);
+      assert.ok(row.hasAttribute('data-sortable-item'));
+      assert.ok(row.textContent.includes(product.files.find(file => file.id === ids[index]).name));
     });
   };
-  assertContexts([1, 2]);
+  assertRows([1, 2]);
   assert.equal(uploaderMounts, 1, 'a row-context error must not interrupt the custom uploader mount queue');
   assert.ok(document.querySelector('time').getAttribute('title'), 'the full manager used its real DateMixin');
   const sizeHeading = [...document.querySelectorAll('[role="columnheader"]')].find(heading => heading.textContent.includes('global.commons.size'));
   sizeHeading.querySelector('button').click();
-  await Vue.nextTick(); assertContexts([2, 1]);
+  await Vue.nextTick(); assertRows([2, 1]);
   assert.deepEqual(product.files.map(file => file.id), [1, 2], 'real draggable view sorting keeps saved order intact');
   assert.equal(sizeHeading.getAttribute('aria-sort'), 'ascending');
   assert.ok([...document.querySelectorAll('.b-product-files__drag')].every(button => button.disabled));
   document.querySelector('.b-product-files__sort-reset').click();
-  await Vue.nextTick(); assertContexts([1, 2]);
+  await Vue.nextTick(); assertRows([1, 2]);
   assert.ok([...document.querySelectorAll('.b-product-files__drag')].every(button => !button.disabled));
   manager.files = [product.files[1], product.files[0]];
-  await Vue.nextTick(); assertContexts([2, 1]);
+  await Vue.nextTick(); assertRows([2, 1]);
   manager.files = [];
-  await Vue.nextTick(); assertContexts([]);
+  await Vue.nextTick(); assertRows([]);
   assert.deepEqual(failures, []);
 });

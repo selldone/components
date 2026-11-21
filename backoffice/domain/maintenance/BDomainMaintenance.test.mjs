@@ -74,6 +74,7 @@ function execute(source, imports = {}, globals = {}) {
   vm.runInNewContext(
     ts.transpileModule(source, {
       compilerOptions: {
+        esModuleInterop: false,
         module: ts.ModuleKind.CommonJS,
         target: ts.ScriptTarget.ES2022,
       },
