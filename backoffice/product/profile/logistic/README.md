@@ -53,8 +53,8 @@ submitted.
 
 Confirm updates the local ID and bounded summary together; General Discard
 restores both through its existing snapshot. Product create/update requests
-still send only the four assignment IDs. The shared backend
-`ProductController::GetProductInfoFull()` supplies `id`, `type`, `name`, `info`
+still send only the four assignment IDs. The product response supplies
+`id`, `type`, `name` and `info`
 from each attached profile, constrained to the permitted shop and expected
 profile type. Existing product lists and article endpoints stay unchanged.
 Articles and private profile metadata are not loaded in the product response.
@@ -98,20 +98,8 @@ insertion add-ons, uploads and HTTP were isolated. No authenticated shop save,
 upload, translation or deletion was submitted. No production build, server
 restart or cache operation was run.
 
-The summary refinement adds isolated SQLite coverage in
-`Backend/tests/Unit/Storefront/Product/ProductLogisticProfileSummaryTest.php`:
-13 tests / 86 assertions cover all four relations, shop/vendor reads,
-unassigned/orphan IDs, foreign-shop and wrong-type rejection, bounded columns
-and unchanged plain product queries. Run from `Backend` without Laravel boot:
+The product summary can contain any of the four profile relations. The interface handles unassigned or missing profiles.
 
-```powershell
-php vendor/phpunit/phpunit/phpunit --no-configuration tests/Unit/Storefront/Product/ProductLogisticProfileSummaryTest.php
-```
-
-Refinement files: `Backend/app/Http/Controllers/Shop/Product/ProductController.php`
-and the new test above; `BProductProfileLogistic.vue` and its existing test;
-`backoffice/product/edit/info/BProductEditInfo.vue` and its existing test;
-translation `dashboard/en.ts` / `dashboard/fa.ts`; and this README.
 
 Task files: this README; `BProductProfileLogistic.vue` and its test;
 `BLogisticProfileEditor.vue` and its test;

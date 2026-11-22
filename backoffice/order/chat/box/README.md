@@ -86,8 +86,4 @@ start (`0x800705AA`). No message, email or guest link was created in the running
 - `backoffice/process-center/list/BProcessCenterList.test.mjs`: focused dialog
   boundary, lifecycle and appearance regressions alongside the native list checks.
 - `dashboard/en.ts` and `dashboard/fa.ts` in translate.
-- `BPageOrderPhysical.vue`, `BPageOrderVirtual.vue`, `BPageOrderFile.vue`,
-  `BPageOrderService.vue`, `BPageOrderSubscription.vue` and each corresponding
-  `chat/BPageOrder…Chat.vue` in the Backoffice application.
-- The shared disabled `sd-modern-button` rule in `modern-design.scss` overrides
-  Vuetify's theme-color utility so unavailable actions retain their neutral style.
+- Unavailable actions retain the shared neutral disabled style.

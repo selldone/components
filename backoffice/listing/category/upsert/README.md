@@ -24,5 +24,4 @@ Verified: 65 focused Listing tests pass, five changed Vue components and their s
 
 - Shared category input and editor: `../input/BListingCategoryInput.vue`, `BShopListingCategoryUpsert.vue`, `BShopListingCategoryUpsert.test.mjs` and this README.
 - Shared item editor: `../../item/upsert/BShopListingItemUpsert.vue`, `../../item/upsert/tabs/BShopListingItemTabGeneral.vue`, `../../item/upsert/BShopListingItemUpsert.test.mjs` and `../../item/upsert/README.md`.
-- Main workspace: `src/Applications/Backoffice/pages/shop/listing/categories/BShopListingCategoriesList.vue` and `src/Applications/Backoffice/pages/shop/listing/README.md`.
 - Dashboard dictionaries: `@selldone/translate/dashboard/en.ts` and `fa.ts`.

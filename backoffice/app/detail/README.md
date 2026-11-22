@@ -32,7 +32,6 @@ The exact-fidelity pass also compares the approved mockup and real source at equ
 - `@selldone/components-vue/backoffice/app/config/dialog/BAppConfigDialog.vue`: lets the detail's approved 18px corners control the native sheet.
 - `@selldone/components-vue/backoffice/app/detail/gallery/BAppDetailGallery.vue`: compact mosaic and native fullscreen viewer.
 - `@selldone/components-vue/backoffice/app/comments/BAppComments.vue`: compact review presentation and native Vue 3 pagination event.
-- `src/Applications/Selldone/pages/app-store/pages/AppStore_App.vue`: public caller loading/readiness, current-scope responses and retry.
 - `@selldone/translate/dashboard/en.ts` and `fa.ts`: English/Persian detail, gallery and loading/error text.
 - `@selldone/components-vue/backoffice/app/detail/BAppDetail.test.mjs` and `gallery/BAppDetailGallery.test.mjs`: focused regression checks.
 - This `README.md`: feature behavior, validation and handoff.

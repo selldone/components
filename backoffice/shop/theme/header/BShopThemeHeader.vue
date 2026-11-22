@@ -78,88 +78,89 @@
       </div>
 
       <div class="sd-modern-widget b-shop-theme-header__settings">
-      <section class="b-shop-theme-header__logo">
-        <u-widget-header
-          class="sd-modern-form-header"
-          icon="photo"
-          :title="$t('b_shop_theme_header.logo.title')"
-        ></u-widget-header>
-        <p class="sd-modern-subtitle b-shop-theme-header__subtitle">
-          {{ $t("b_shop_theme_header.logo.subtitle") }}
-        </p>
+        <section class="b-shop-theme-header__row">
+          <div>
+            <u-widget-header
+              class="sd-modern-form-header b-shop-theme-header__heading"
+              icon="photo"
+              :title="$t('b_shop_theme_header.logo.title')"
+            />
+            <p class="sd-modern-subtitle b-shop-theme-header__subtitle">
+              {{ $t("b_shop_theme_header.logo.subtitle") }}
+            </p>
+          </div>
 
-        <s-image-uploader
-          :image="getShopImagePath(logo ? logo : $shop.icon)"
-          :server="window.API.UPLOAD_SHOP_IMAGE_LOGO($shop.id)"
-          auto-compact
-          clearable
-          :label="$t('b_shop_theme_header.inputs.logo.label')"
-          maxFileSize="1MB"
-          @onClear="$emit('update:logo', null)"
-          @new-path="(path) => $emit('update:logo', path)"
-          :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-        />
-
-        <v-row>
-          <v-col cols="6">
-            <u-dimension-input
-              class="sd-modern-underlined-field"
-              :model-value="logoH"
-              @update:model-value="(v) => $emit('update:logoH', v)"
-              :label="$t('b_shop_theme_header.inputs.height.label')"
+          <div class="b-shop-theme-header__logo-controls">
+            <s-image-uploader
+              :image="getShopImagePath(logo ? logo : $shop.icon)"
+              :server="window.API.UPLOAD_SHOP_IMAGE_LOGO($shop.id)"
+              auto-compact
+              clearable
+              dense
+              modern
+              :label="$t('b_shop_theme_header.inputs.logo.label')"
+              maxFileSize="1MB"
+              @onClear="$emit('update:logo', null)"
+              @new-path="(path) => $emit('update:logo', path)"
               :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-            ></u-dimension-input>
-          </v-col>
-          <v-col cols="6">
-            <u-dimension-input
-              class="sd-modern-underlined-field"
-              :model-value="logoW"
-              @update:model-value="(v) => $emit('update:logoW', v)"
-              :label="$t('b_shop_theme_header.inputs.width.label')"
+            />
+
+            <div class="b-shop-theme-header__dimensions">
+              <u-dimension-input
+                class="sd-modern-underlined-field"
+                :model-value="logoH"
+                @update:model-value="(v) => $emit('update:logoH', v)"
+                :label="$t('b_shop_theme_header.inputs.height.label')"
+                :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+              />
+              <u-dimension-input
+                class="sd-modern-underlined-field"
+                :model-value="logoW"
+                @update:model-value="(v) => $emit('update:logoW', v)"
+                :label="$t('b_shop_theme_header.inputs.width.label')"
+                :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class="b-shop-theme-header__row">
+          <div>
+            <u-widget-header
+              class="sd-modern-form-header b-shop-theme-header__heading"
+              icon="edit_square"
+              :title="$t('b_shop_theme_header.header_title.title')"
+            />
+            <p class="sd-modern-subtitle b-shop-theme-header__subtitle">
+              {{ $t("b_shop_theme_header.header_title.subtitle") }}
+            </p>
+          </div>
+
+          <div class="b-shop-theme-header__title-controls">
+            <v-text-field
+              class="sd-modern-underlined-field b-shop-theme-header__title-input"
+              :model-value="title"
+              @update:model-value="(v) => $emit('update:title', v)"
+              hide-details
+              :label="$t('b_shop_theme_header.inputs.title.label')"
+              variant="underlined"
               :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-            ></u-dimension-input>
-          </v-col>
-        </v-row>
-      </section>
-
-      <section class="b-shop-theme-header__title">
-        <u-widget-header
-          class="sd-modern-form-header"
-          icon="edit_square"
-          :title="$t('b_shop_theme_header.header_title.title')"
-        ></u-widget-header>
-
-        <p class="sd-modern-subtitle b-shop-theme-header__subtitle">
-          {{ $t("b_shop_theme_header.header_title.subtitle") }}
-        </p>
-
-        <v-text-field
-          class="sd-modern-underlined-field"
-          :model-value="title"
-          @update:model-value="(v) => $emit('update:title', v)"
-          hide-details
-          :label="$t('b_shop_theme_header.inputs.title.label')"
-          variant="underlined"
-          :disabled="!writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-          clearable
-          persistent-placeholder
-          :placeholder="$t('shop_theme.studio.hide_shop_name')"
-        ></v-text-field>
-        <div
-          v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
-          class="text-end mb-3"
-        >
-          <v-btn
-            class="sd-modern-button sd-modern-button--inline"
-            size="small"
-            variant="text"
-            @click="$emit('update:title', '')"
-          >
-            <v-icon start>space_bar</v-icon>
-            {{ $t("b_shop_theme_header.inputs.title.set_empty") }}
-          </v-btn>
-        </div>
-      </section>
+              clearable
+              persistent-placeholder
+              :placeholder="$t('shop_theme.studio.hide_shop_name')"
+            />
+            <v-btn
+              v-if="writeShopAccess(ShopPermissionRegions.SETTINGS.code)"
+              class="sd-modern-button sd-modern-button--inline"
+              size="small"
+              variant="text"
+              @click="$emit('update:title', '')"
+            >
+              <v-icon start aria-hidden="true">space_bar</v-icon>
+              {{ $t("b_shop_theme_header.inputs.title.set_empty") }}
+            </v-btn>
+          </div>
+        </section>
       </div>
     </div>
   </div>
@@ -298,16 +299,30 @@ export default defineComponent({
   gap: 22px;
   min-width: 0;
 
-  &__subtitle { padding: 0; margin-block: 0 20px; min-height: 0; }
+  &__heading.sd-modern-form-header { margin-block-end: 6px; }
+  &__subtitle { padding: 0; margin: 0; }
   &__store-title { font-size: 15px; font-weight: 500; line-height: 22px; }
   &__modes, &__default { width: min(760px, 100%); margin-inline: auto; }
   &__default { display: grid; gap: 22px; min-width: 0; }
-  &__settings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 28px; }
-  &__logo, &__title { min-width: 0; }
   &__preview { min-width: 0; }
+  &__settings { container: header-settings / inline-size; }
+  &__row { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; gap: 14px; }
+  &__row + &__row { border-block-start: 1px solid var(--sd-modern-border); margin-block-start: 20px; padding-block-start: 20px; }
+  &__logo-controls { display: grid; gap: 10px; min-width: 0; }
+  &__dimensions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+    gap: 8px 16px;
+  }
+  &__title-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 6px 12px; min-width: 0; }
+  &__title-input { flex: 1 1 12rem; min-width: 0; }
+  &__title-controls > .v-btn { margin-inline-start: auto; }
 
-  @media (max-width: 700px) {
-    &__settings { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  @container header-settings (min-width: 540px) {
+    &__row { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 24px; }
+  }
+  @media (max-width: 640px), (pointer: coarse) {
+    &__title-controls > .v-btn { min-height: 44px; }
   }
 }
 </style>

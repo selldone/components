@@ -40,6 +40,7 @@
         :placeholder="modern ? $t('global.commons.cluster') : '*.*'"
         :single-line="modern"
         show-settings-button
+        :toolbar-filter="modern"
         :title="$t('admin_shop.blogs.list.modern.cluster_filter')"
         :variant="modern ? 'plain' : 'solo'"
         :menu-props="
@@ -1142,16 +1143,12 @@ export default {
     margin-block-end: 13px;
   }
 
-  .b-blogs-list__cluster {
-    flex: 0 1 260px;
-    max-width: 300px;
-  }
   .b-blogs-list__search {
     flex: 0 1 240px;
     max-width: 240px;
   }
 
-  .b-blogs-list__tools :deep(.v-field) {
+  .b-blogs-list__search :deep(.v-field) {
     font-family: inherit;
     font-size: 13px;
     line-height: 20px;
@@ -1161,31 +1158,24 @@ export default {
     --v-field-padding-end: 0px;
   }
 
-  .b-blogs-list__tools :deep(.v-field__input) {
+  .b-blogs-list__search :deep(.v-field__input) {
     min-height: 40px;
     padding-block: 8px;
     font-size: 13px;
     line-height: 20px;
   }
-  .b-blogs-list__tools :deep(.v-label) {
+  .b-blogs-list__search :deep(.v-label) {
     font-size: 13px;
     line-height: 20px;
   }
-  .b-blogs-list__tools :deep(.v-field__prepend-inner > .v-icon) {
+  .b-blogs-list__search :deep(.v-field__prepend-inner > .v-icon) {
     font-size: 17px;
   }
-  .b-blogs-list__tools :deep(.v-field__prepend-inner > .v-avatar) {
-    width: 24px !important;
-    height: 24px !important;
-  }
-  .b-blogs-list__tools :deep(.v-field__prepend-inner > .v-avatar .v-icon) {
-    font-size: 17px;
-  }
-  .b-blogs-list__tools :deep(.v-field__prepend-inner) {
+  .b-blogs-list__search :deep(.v-field__prepend-inner) {
     padding-block-start: 8px;
     align-self: center;
   }
-  .b-blogs-list__tools :deep(.v-field__append-inner) {
+  .b-blogs-list__search :deep(.v-field__append-inner) {
     padding-block-start: 8px;
     align-self: center;
   }
@@ -1501,7 +1491,7 @@ export default {
       gap: 4px 14px;
     }
     .b-blogs-list__cluster {
-      flex-basis: 220px;
+      --b-cluster-filter-width: 220px;
     }
     .b-blogs-list__search {
       flex: 1 1 130px;
@@ -1601,8 +1591,7 @@ export default {
 @media (max-width: 480px) {
   .b-blogs-list--modern {
     .b-blogs-list__cluster {
-      max-width: 100%;
-      flex: 1 1 100%;
+      --b-cluster-filter-width: 100%;
     }
     .b-blogs-list__search {
       max-width: none;
@@ -1611,7 +1600,7 @@ export default {
     .b-blogs-list__tools > .v-spacer {
       display: none;
     }
-    .b-blogs-list__tools :deep(.v-field__input),
+    .b-blogs-list__search :deep(.v-field__input),
     .b-blogs-list__mobile-sort :deep(.v-field__input) {
       font-size: 16px;
       min-height: 44px;
@@ -1639,7 +1628,7 @@ export default {
     .b-blogs-list__metric-sort {
       min-height: 44px;
     }
-    .b-blogs-list__tools :deep(.v-field__input) {
+    .b-blogs-list__search :deep(.v-field__input) {
       font-size: 16px;
     }
   }

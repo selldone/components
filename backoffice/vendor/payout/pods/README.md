@@ -18,8 +18,6 @@
 - For an external bank payment, the owner transfers first and then records it. Recording makes no bank transfer or Stripe request.
 - Both successful connected transfers and recorded bank payments create Selldone payment history and a negative wallet payout entry. Only the recorded amount is deducted; the remaining balance need not be zero. Refunds/reversals retain their separate accounting and provider effects.
 
-Source references: `Backend/app/Storefront/Vendors/VendorOrder.php` (fulfillment grouping/paid flow), `VendorAccount.php` (credit, Connect eligibility, payment record/debit, refunds and reversals), and `Backend/app/Gateway/Stripe/service/traits/shops/StripeServiceShopPayoutTrait.php` (connected-account transfers, separate from bank payouts). This change does not alter those implementations.
-
 ## Presentation and verification
 
 The application font is retained: node titles 14px/22px medium, captions/help 13px/20px and introduction 14px/22px. Neutral opaque nodes use 14px corners. Container queries adapt to the component's actual width, including nested dialogs: four main nodes on wide layouts, a two-row route below 760px, and a readable vertical route below 460px. Settlement branches stack on narrow containers. Help on every node and connection uses the shared top tooltip with hover, focus, tap and Escape behavior. Canonical shop/Stripe images stay intact.

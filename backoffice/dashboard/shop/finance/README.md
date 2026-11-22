@@ -8,13 +8,13 @@ The approved dense refinement uses currency headings of at least 44px with 6px v
 
 Each monetary history opts into `SChartFunnelFinance`'s existing modern path: an independent display currency and included-source selection, real recorded-period labels, current-rate estimated totals and canonical currency identities. Missing rates/data stay distinct from observed zero; signed amounts retain the existing signed chart. Chart construction, exact-value details, resize handling and the report's date scope remain native. English and Persian copy lives in the dashboard translation dictionaries.
 
-Focused checks:
+Run the focused checks from the components-vue repository root.
 
 ```powershell
-node --test '@selldone/components-vue/backoffice/dashboard/shop/finance/BDashboardShopFinance.test.mjs' '@selldone/components-vue/backoffice/chart/funnel/finance/SChartFunnelFinance.test.mjs' 'src/Applications/Backoffice/pages/shop/dashboard/BPageShopDashboard.test.mjs'
+node --test backoffice/dashboard/shop/finance/BDashboardShopFinance.test.mjs backoffice/chart/funnel/finance/SChartFunnelFinance.test.mjs
 ```
 
-These cover component/template/scoped-style compilation, more than 100 services, immutable grouping, statuses/types/routes, multiple measures, independent currency selections, six count series, empty recovery, legacy behavior, readiness and monetary edge cases. Use the user's existing HMR session for visual verification; no production build or backend/cache operation is required.
+These cover component/template/scoped-style compilation, more than 100 services, immutable grouping, statuses/types/routes, multiple measures, independent currency selections, six count series, empty recovery, legacy behavior, readiness and monetary edge cases.
 
 Local HMR verification covered 1353px desktop, 390px mobile and 320px narrow layouts, no page overflow or console errors, native Enter/click disclosure and independent live chart selectors. The two legacy template branches were compared with the original source. No store settings or payment configuration were changed.
 

@@ -20,7 +20,7 @@ The compact layout uses an 18px/26px medium heading, 14px/23px supporting text, 
 
 ## Verification
 
-Run `node --test @selldone/components-vue/backoffice/empty-state/BListEmptyState.test.mjs` from the repository root. It renders the real component with English/Persian copy, all subject families, overrides and native action slots, and checks inert artwork, fallback behavior, scoped geometry and finite/reduced motion. Ordinary HMR/source verification requires no production build, cache mutation or real resource creation.
+Run `node --test backoffice/empty-state/BListEmptyState.test.mjs` from the components-vue repository root. It renders the real component with English/Persian copy, all subject families, overrides and native action slots, and checks inert artwork, fallback behavior, scoped geometry and finite/reduced motion. Ordinary HMR/source verification requires no production build, cache mutation or real resource creation.
 
 The product workspace retains its approved specialized placeholder and data-readiness/last-row confirmation behavior in `product/window/BProductsWindow.vue`. This shared addition does not replace that workflow.
 
@@ -28,102 +28,7 @@ Final verification: all **635 cases across 55 affected regression files pass** t
 
 Representative local Light browser checks cover coupons, campaigns and customers at desktop widths of 1280px/1447px and a 390px mobile layout: readable 18px/14px hierarchy, 180px/160px artwork and no document-level horizontal overflow. English/Persian text, kind families, finite/reduced-motion CSS and native action slots are tested with real component rendering. Visual Dark/Smart invert and RTL inspection was not performed, and the remaining resource pages were checked through source and isolated behavior tests. No real resource creation, provider changes, permission grants, cache mutation, extra Laravel server or production build was used.
 
-## Rollout inventory
-
-118 owning Vue lists use the shared component (128 state presentations). This inventory records task-related production consumers; it does not change their route or permission contracts.
-
-### src/Applications/Backoffice (88)
-
-- `src/Applications/Backoffice/pages/account/shops/BPageAccountShops.vue`
-- `src/Applications/Backoffice/pages/account/transactions/BPageAccountTransactions.vue`
-- `src/Applications/Backoffice/pages/affiliate/orders/BPageAffiliateOrders.vue`
-- `src/Applications/Backoffice/pages/affiliate/payments/BPageAffiliatePayments.vue`
-- `src/Applications/Backoffice/pages/affiliator/orders/BPageAffiliatorOrders.vue`
-- `src/Applications/Backoffice/pages/affiliator/payments/BPageAffiliatorPayouts.vue`
-- `src/Applications/Backoffice/pages/cashback/orders/BPageCashbackOrders.vue`
-- `src/Applications/Backoffice/pages/club/customers/BPageClubCustomers.vue`
-- `src/Applications/Backoffice/pages/club/orders/BPageClubOrders.vue`
-- `src/Applications/Backoffice/pages/connect/logs/ShopConnectPage_Logs.vue`
-- `src/Applications/Backoffice/pages/connect/products/BPageConnectProducts.vue`
-- `src/Applications/Backoffice/pages/coupon/orders/BPageCouponOrders.vue`
-- `src/Applications/Backoffice/pages/customer/wallet/BCustomerWalletTransactions.vue`
-- `src/Applications/Backoffice/pages/discount-code/orders/BPageDiscountCodeOrders.vue`
-- `src/Applications/Backoffice/pages/gateway/transactions/BPageGatewayTransactions.vue`
-- `src/Applications/Backoffice/pages/giftcard/cards/AdminGiftCardManagementPage.vue`
-- `src/Applications/Backoffice/pages/giftcard/orders/AdminGiftcardPage_Orders.vue`
-- `src/Applications/Backoffice/pages/marketplace/accounts/BPageMarketplaceWallets.vue`
-- `src/Applications/Backoffice/pages/marketplace/payouts/BPageMarketplacePayouts.vue`
-- `src/Applications/Backoffice/pages/marketplace/pricing/BPageMarketplacePricings.vue`
-- `src/Applications/Backoffice/pages/marketplace/products/BPageMarketplaceProducts.vue`
-- `src/Applications/Backoffice/pages/marketplace/requests/BPageMarketplaceRequests.vue`
-- `src/Applications/Backoffice/pages/marketplace/vendors/BPageMarketplaceVendors.vue`
-- `src/Applications/Backoffice/pages/offer/orders/BPageOfferOrders.vue`
-- `src/Applications/Backoffice/pages/product/cross-selling/BPageProductCrossSelling.vue`
-- `src/Applications/Backoffice/pages/product/membership/BPageProductMembership.vue`
-- `src/Applications/Backoffice/pages/product/vendors/BPageProductVendors.vue`
-- `src/Applications/Backoffice/pages/review/dashboard/BShopReviewsList.vue`
-- `src/Applications/Backoffice/pages/shop/applications/metaverse/BPageShopApplicationsMetaverse.vue`
-- `src/Applications/Backoffice/pages/shop/automation/ai-agents/BPageShopAutomationAiAgentLogs.vue`
-- `src/Applications/Backoffice/pages/shop/automation/ai-agents/BPageShopAutomationAiAgents.vue`
-- `src/Applications/Backoffice/pages/shop/automation/logging/BShopAutomationLogging.vue`
-- `src/Applications/Backoffice/pages/shop/automation/notifications/BShopAutomationNotifications.vue`
-- `src/Applications/Backoffice/pages/shop/blogs/workspace/BShopArticleComments.vue`
-- `src/Applications/Backoffice/pages/shop/channels/connect/BPageShopChannelConnect.vue`
-- `src/Applications/Backoffice/pages/shop/classification/categories/BPageShopClassificationCategories.vue`
-- `src/Applications/Backoffice/pages/shop/classification/clusters/BPageShopClassificationClusters.vue`
-- `src/Applications/Backoffice/pages/shop/community/categories/BPageShopCommunityCategories.vue`
-- `src/Applications/Backoffice/pages/shop/community/comments/BPageShopCommunityComments.vue`
-- `src/Applications/Backoffice/pages/shop/community/posts/BPageShopCommunityPosts.vue`
-- `src/Applications/Backoffice/pages/shop/community/topics/BPageShopCommunityTopics.vue`
-- `src/Applications/Backoffice/pages/shop/crm/comments/BPageShopCrmComments.vue`
-- `src/Applications/Backoffice/pages/shop/crm/customers/BPageShopCrmCustomers.vue`
-- `src/Applications/Backoffice/pages/shop/crm/reviews/BPageShopCrmReviews.vue`
-- `src/Applications/Backoffice/pages/shop/dashboard/components/BShopDashboardAiAgents.vue`
-- `src/Applications/Backoffice/pages/shop/finance/customer-wallets/BPageShopFinanceCustomerWallets.vue`
-- `src/Applications/Backoffice/pages/shop/finance/gateway/BPageShopFinanceGateways.vue`
-- `src/Applications/Backoffice/pages/shop/finance/reseller-fulfillment/BPageShopFinanceResellerFulfillment.vue`
-- `src/Applications/Backoffice/pages/shop/finance/reseller-wallets/BPageShopFinanceResellerWallets.vue`
-- `src/Applications/Backoffice/pages/shop/finance/valuations/BPageShopFinanceValuations.vue`
-- `src/Applications/Backoffice/pages/shop/incentives/cashback/BPageShopIncentivesCashback.vue`
-- `src/Applications/Backoffice/pages/shop/incentives/coupon/BPageShopIncentivesCoupon.vue`
-- `src/Applications/Backoffice/pages/shop/incentives/discount-code/BPageShopIncentivesDiscountCode.vue`
-- `src/Applications/Backoffice/pages/shop/incentives/gift-card/BPageShopIncentivesGiftcard.vue`
-- `src/Applications/Backoffice/pages/shop/incentives/lottery/BPageShopIncentivesLottery.vue`
-- `src/Applications/Backoffice/pages/shop/incentives/offer/BPageShopIncentivesOffer.vue`
-- `src/Applications/Backoffice/pages/shop/listing/badges/BShopListingBadgesList.vue`
-- `src/Applications/Backoffice/pages/shop/listing/categories/BShopListingCategoriesList.vue`
-- `src/Applications/Backoffice/pages/shop/listing/companies/BShopListingCompaniesList.vue`
-- `src/Applications/Backoffice/pages/shop/listing/designs/BShopListingDesignsList.vue`
-- `src/Applications/Backoffice/pages/shop/listing/items/BShopListingItemsList.vue`
-- `src/Applications/Backoffice/pages/shop/listing/messages/BShopListingMessagesList.vue`
-- `src/Applications/Backoffice/pages/shop/listing/supervision/BShopListingSupervisionList.vue`
-- `src/Applications/Backoffice/pages/shop/logistic/includes/BPageShopLogisticIncludes.vue`
-- `src/Applications/Backoffice/pages/shop/logistic/print/BPageShopLogisticPrint.vue`
-- `src/Applications/Backoffice/pages/shop/logistic/property-set/BPageShopLogisticPropertySets.vue`
-- `src/Applications/Backoffice/pages/shop/logistic/shipping/BPageShopLogisticShipping.vue`
-- `src/Applications/Backoffice/pages/shop/marketing/affiliate/BPageShopMarketingAffiliate.vue`
-- `src/Applications/Backoffice/pages/shop/marketing/campaign/BPageShopMarketingCampaign.vue`
-- `src/Applications/Backoffice/pages/shop/marketing/email/BPageShopMarketingEmail.vue`
-- `src/Applications/Backoffice/pages/shop/pages/landings/BPageShopPagesLandings.vue`
-- `src/Applications/Backoffice/pages/shop/pages/popups/BPageShopPagesPopups.vue`
-- `src/Applications/Backoffice/pages/shop/permission/personnel/BPageShopPermissionStaff.vue`
-- `src/Applications/Backoffice/pages/shop/permission/role/BPageShopPermissionRoles.vue`
-- `src/Applications/Backoffice/pages/shop/setting/advance/verifications/BShopSettingAdvanceVerifications.vue`
-- `src/Applications/Backoffice/pages/shuttle/affiliate/BPageShuttleAffiliate.vue`
-- `src/Applications/Backoffice/pages/shuttle/companies/BPageShuttleCompanies.vue`
-- `src/Applications/Backoffice/pages/shuttle/deals/BPageShuttleDeals.vue`
-- `src/Applications/Backoffice/pages/shuttle/expert/BPageShuttleExpert.vue`
-- `src/Applications/Backoffice/pages/shuttle/roles/BPageShuttleRoles.vue`
-- `src/Applications/Backoffice/pages/shuttle/shops/BPageShuttleShops.vue`
-- `src/Applications/Backoffice/pages/shuttle/wallet/accounts/BPageShuttleWalletAccounts.vue`
-- `src/Applications/Backoffice/pages/shuttle/wallet/components/BShuttleWalletGiftsHistory.vue`
-- `src/Applications/Backoffice/pages/transportation/couriers/BPageTransportationCouriers.vue`
-- `src/Applications/Backoffice/pages/transportation/pickups/BPageTransportationPickups.vue`
-- `src/Applications/Backoffice/pages/transportation/services/BPageTransportationServices.vue`
-- `src/Applications/Backoffice/pages/wholesaler/requests/BPageWholesalerRequests.vue`
-- `src/Applications/Backoffice/pages/wholesaler/shops/BPageWholesalerShops.vue`
-
-### @selldone/components-vue/backoffice (28)
+## Components-vue consumers
 
 - `@selldone/components-vue/backoffice/account/charge/list/BAccountChargesList.vue`
 - `@selldone/components-vue/backoffice/app/shop/store/BAppShopStore.vue`
@@ -154,31 +59,10 @@ Representative local Light browser checks cover coupons, campaigns and customers
 - `@selldone/components-vue/backoffice/vendor/account/transactions/list/BVendorAccountTransactionsList.vue`
 - `@selldone/components-vue/backoffice/vendor/documents/list/BVendorDocumentsList.vue`
 
-### src/Applications/Selldone/components (2)
-
-- `src/Applications/Selldone/components/auth/shop-client/BAuthShopClients.vue`
-- `src/Applications/Selldone/components/faq/FaqRequestsList.vue`
-
-Other task-related files: the shared component/test/test-helper and this README; the new page/shared-list readiness suites; the existing consumer regression tests updated to render the real child; dashboard EN/FA dictionaries; `.ai-agent/guides/selldone-product-ui-design.md`; and the feature-local parent `src/Applications/Backoffice/pages/shop/listing/supervision/BShopListingSupervision.vue`, which passes successful-read readiness to its existing child. No global provider or middleware is changed.
-
-### Task-related regression files
+### Components-vue regression tests
 
 - `@selldone/components-vue/backoffice/empty-state.shared-lists.test.mjs`
 - `@selldone/components-vue/backoffice/empty-state/BListEmptyState.test.mjs`
 - `@selldone/components-vue/backoffice/logistic/profile/list/BLogisticProfilesList.test.mjs`
 - `@selldone/components-vue/backoffice/process-center/list/BProcessCenterList.test.mjs`
 - `@selldone/components-vue/backoffice/subscription/ShopSubscriptionList.test.mjs`
-- `src/Applications/Backoffice/pages/account/history/BPageAccountHistory.test.mjs`
-- `src/Applications/Backoffice/pages/dashboard-empty-state.readiness.test.mjs`
-- `src/Applications/Backoffice/pages/marketplace/payouts/BPageMarketplacePayouts.test.mjs`
-- `src/Applications/Backoffice/pages/marketplace/pricing/BPageMarketplacePricings.test.mjs`
-- `src/Applications/Backoffice/pages/marketplace/requests/BPageMarketplaceRequests.test.mjs`
-- `src/Applications/Backoffice/pages/shop/automation/notifications/BShopAutomationNotifications.test.mjs`
-- `src/Applications/Backoffice/pages/shop/blogs/workspace/BShopArticleComments.test.mjs`
-- `src/Applications/Backoffice/pages/shop/classification/clusters/BPageShopClassificationClusters.test.mjs`
-- `src/Applications/Backoffice/pages/shop/crm/faq/BPageShopCrmFaq.test.mjs`
-- `src/Applications/Backoffice/pages/shuttle/affiliate/BPageShuttleAffiliate.test.mjs`
-- `src/Applications/Backoffice/pages/shuttle/expert/BPageShuttleExpert.test.mjs`
-- `src/Applications/Backoffice/pages/shuttle/roles/BPageShuttleRoles.test.mjs`
-- `src/Applications/Backoffice/pages/shuttle/shops/BPageShuttleShops.test.mjs`
-- `src/Applications/Selldone/components/auth/shop-client/BAuthShopClients.test.mjs`

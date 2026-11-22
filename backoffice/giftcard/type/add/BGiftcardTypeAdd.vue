@@ -172,10 +172,6 @@
         <div class="widget-box mb-5 sd-modern-incentive-group">
           <u-widget-header
             class="sd-modern-incentive-group__header"
-            :to="{ name: 'BPageShopClassificationClusters' }"
-            add-caption="Management"
-            add-icon="settings"
-            add-text
             icon="workspaces"
             title="Cluster"
           ></u-widget-header>
@@ -191,6 +187,7 @@
             clearable
             icon="workspaces_filled"
             no-home
+            show-settings-button
           ></b-cluster-input>
         </div>
         <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->

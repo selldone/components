@@ -1504,6 +1504,7 @@ export default {
       required: true,
       type: String,
     },
+    editorUrls: { type: Object, default: null },
 
     // Product : owner of this article
     productId: {
@@ -1978,7 +1979,7 @@ export default {
         return window.ARTICLE_API.UPLOAD_ARTICLE_BLOG_IMAGE(this.shop_id);
       }
 
-      return window.ARTICLE_API.UPLOAD_ARTICLE_IMAGE(this.articleType, null);
+      return this.editorUrls?.upload ?? null;
     },
 
     word_converter_url() {
@@ -2000,9 +2001,14 @@ export default {
       return !this.inLoading && !this.NOT_FOUND_ARTICLE && !this.NEED_LOGIN;
     },
 
+    requiresEditorUrls() {
+      return this.articleType === Article.Types.SelldoneBlog.code ||
+        this.articleType === Article.Types.SelldoneHelp.code;
+    },
     canEdit() {
       return (
-        this.article && this.can_edit //this.article.user_id === this.USER_ID() && this.owner
+        this.article && this.can_edit &&
+        (!this.requiresEditorUrls || !!this.editorUrls?.edit)
       );
     },
     canFollow() {
@@ -2016,6 +2022,7 @@ export default {
       return (
         this.USER() &&
         this.article &&
+        (!this.requiresEditorUrls || !!this.editorUrls?.remove) &&
         this.article.user_id !== this.USER_ID() &&
         this.HasPermission /*Available only in official selldone*/ &&
         this.HasPermission(
@@ -2448,6 +2455,8 @@ export default {
       if (this.flowchart_pending) return;
       if (this.helpReaderActive && (!this.helpReaderContextValid(this.captureHelpReaderContext()) || !this.in_edit_mode || this.helpReaderPending || !this.$refs.editorContainer)) return;
       if (this.hasReaderHeading && (!this.readerContextValid(this.captureReaderContext()) || !this.in_edit_mode || this.readerPending || !this.$refs.editorContainer)) return;
+      const editorUrl = this.requiresEditorUrls ? this.editorUrls?.edit : null;
+      if (this.requiresEditorUrls && !editorUrl) return;
       const generation = this._workspaceGeneration, sourceArticle = this.article, shopId = this.shop_id;
       const helpContext = this.captureHelpReaderContext();
       const readerContext = this.captureReaderContext();
@@ -2481,7 +2490,7 @@ export default {
                 this.$route.params.vendor_id,
                 this.articleType,
               )
-            : window.ARTICLE_API.POST_ADD_EDIT_ARTICLE(this.articleType),
+            : editorUrl ?? window.ARTICLE_API.POST_ADD_EDIT_ARTICLE(this.articleType),
           {
             type: this.articleType,
             article_id: this.article.id,
@@ -2920,6 +2929,10 @@ export default {
       const readerContext = this.captureReaderContext();
       if (readerContext && (!this.readerContextValid(readerContext) || this.isNew)) return;
       if (helpContext && (!this.helpReaderContextValid(helpContext) || this.isNew)) return;
+      const editorUrl = this.requiresEditorUrls
+        ? this.editorUrls?.remove?.replace("__article_id__", encodeURIComponent(this.article.id))
+        : null;
+      if (this.requiresEditorUrls && !editorUrl) return;
       axios
         .delete(
           this.IS_VENDOR_PANEL /*🟢 Vendor Panel 🟢*/
@@ -2928,7 +2941,7 @@ export default {
                 this.articleType,
                 this.article.id,
               )
-            : window.ARTICLE_API.DELETE_ARTICLE(
+            : editorUrl ?? window.ARTICLE_API.DELETE_ARTICLE(
                 this.articleType,
                 this.article.id,
               ),

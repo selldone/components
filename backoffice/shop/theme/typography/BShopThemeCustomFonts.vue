@@ -5,32 +5,22 @@
   -->
 <template>
   <div class="b-shop-theme-fonts sd-modern-widget text-start s-table-loading" :aria-busy="busy_fetch">
-    <u-widget-header
-      class="sd-modern-form-header"
-      icon="font_download"
-      :title="$t('b_shop_theme_typography.custom_fonts.title')"
-    >
-      <template #append-title>
-        <span class="sd-modern-status sd-modern-status--plain ms-2">
-          {{ quota.used }} / {{ quota.limit }}
-        </span>
-      </template>
-      <template #append-actions>
-        <v-btn :disabled="!can_add" :loading="busy_fetch" color="primary"
-               class="sd-modern-button sd-modern-button--primary b-shop-theme-fonts__add" prepend-icon="add"
-               @click="openCreateDialog">
-          {{ $t('b_shop_theme_typography.custom_fonts.actions.add') }}
-        </v-btn>
-      </template>
-    </u-widget-header>
-
-    <p class="sd-modern-subtitle b-shop-theme-fonts__subtitle">
-      {{ $t("b_shop_theme_typography.custom_fonts.subtitle") }}
-    </p>
-    <p class="b-shop-theme-fonts__quota">
-      {{ quota_caption }}
-      <span v-if="!can_write"> · {{ $t('error.no_write_access') }}</span>
-      <span v-else-if="!can_add"> · {{ $t('b_shop_theme_typography.custom_fonts.quota_reached') }}</span>
+    <header class="b-shop-theme-fonts__heading">
+      <div>
+        <h3>
+          {{ $t('b_shop_theme_typography.custom_fonts.title') }}
+          <span>{{ quota_caption }}</span>
+        </h3>
+        <p>{{ $t('b_shop_theme_typography.custom_fonts.subtitle') }}</p>
+      </div>
+      <v-btn :disabled="!can_add" :loading="busy_fetch" variant="outlined"
+             class="sd-modern-button b-shop-theme-fonts__add" prepend-icon="add"
+             @click="openCreateDialog">
+        {{ $t('b_shop_theme_typography.custom_fonts.actions.add') }}
+      </v-btn>
+    </header>
+    <p v-if="!can_write || (!busy_fetch && !quota.can_add)" class="b-shop-theme-fonts__quota">
+      {{ $t(can_write ? 'b_shop_theme_typography.custom_fonts.quota_reached' : 'error.no_write_access') }}
     </p>
 
     <b-list-loading-state v-if="busy_fetch && fonts.length" kind="content" compact class="sd-modern-list-refresh" />
@@ -39,67 +29,65 @@
     <v-list
       v-else-if="fonts.length"
       :inert="busy_fetch ? true : undefined"
-      class="b-shop-theme-fonts__list border-between-vertical bg-transparent"
-      lines="three"
+      class="b-shop-theme-fonts__list bg-transparent"
     >
       <v-list-item
         v-for="font in fonts"
         :key="font.id"
-        :class="{ 'sd-modern-clickable-item': can_write, disabled: busy_delete === font.id }"
-        @click="can_write ? openEditDialog(font) : undefined"
       >
         <template #prepend>
-          <v-avatar
-            class="me-2 rounded-lg"
-            color="grey-lighten-4"
-            :style="fontPreviewStyle(font)"
-          >
+          <v-avatar class="b-shop-theme-fonts__avatar" size="38" :style="fontPreviewStyle(font)" aria-hidden="true">
             Aa
           </v-avatar>
         </template>
 
         <template #title>
-          <div class="d-flex align-center flex-wrap ga-1">
-            <span class="b-shop-theme-fonts__name">{{ font.name }}</span>
-            <v-chip
-              v-for="(face, faceIndex) in font.faces || []"
-              :key="`${font.id}-${face.weight}-${face.style}-${faceIndex}`"
-              label
-              size="x-small"
-              variant="text"
-            >
-              {{ face.weight }}
-              <span v-if="face.style && face.style !== 'normal'" class="ms-1">
-                {{ fontStyleTitle(face.style) }}
-              </span>
-            </v-chip>
+          <div class="b-shop-theme-fonts__identity">
+            <strong>{{ font.name }}</strong>
+            <span v-if="isSelectedFont(font)" class="b-shop-theme-fonts__selected">
+              {{ $t('b_shop_theme_typography.custom_fonts.selected') }}
+            </span>
           </div>
         </template>
 
         <template #subtitle>
-          <div class="b-shop-theme-fonts__sample" :style="fontPreviewStyle(font)">
-            {{ $t('b_shop_theme_typography.main_font.preview_title') }}
-          </div>
           <div class="b-shop-theme-fonts__metadata">
+            <span v-for="(face, faceIndex) in font.faces || []" :key="faceIndex">
+              {{ font_weights.find(({ value }) => value === Number(face.weight))?.title ?? face.weight }}<template v-if="face.style && face.style !== 'normal'"> {{ fontStyleTitle(face.style) }}</template>
+            </span>
             <span v-for="format in fontFormats(font)" :key="format">
               {{ format.toUpperCase() }}
             </span>
           </div>
-          <details class="b-shop-theme-fonts__css" @click.stop @keydown.stop>
-            <summary>{{ $t('b_shop_theme_typography.custom_fonts.css_name') }}</summary>
-            <p>{{ $t('b_shop_theme_typography.custom_fonts.css_name_hint') }}</p>
-            <code v-copy="cssFamily(font.family, font.fallback)" dir="ltr">
-              {{ cssFamily(font.family, font.fallback) }}
-            </code>
-          </details>
         </template>
 
         <template #append>
-          <u-smart-menu
-            :items="fontMenuItems(font)"
-            :loading="busy_delete === font.id"
-            @click.stop
-          />
+          <v-menu content-class="rounded-lg sd-modern-menu text-start" location="bottom end" min-width="168">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" :id="`shop-theme-font-manage-${font.id}`"
+                     :loading="busy_delete === font.id" variant="text" append-icon="expand_more"
+                     class="sd-modern-button b-shop-theme-fonts__manage"
+                     :aria-label="$t('b_shop_theme_typography.custom_fonts.actions.manage_named', { name: font.name })">
+                {{ $t('b_shop_theme_typography.custom_fonts.actions.manage') }}
+              </v-btn>
+            </template>
+            <v-list class="sd-modern-menu__list text-start">
+              <v-list-item prepend-icon="edit" density="compact"
+                           :disabled="!can_write || readOnly || busy_delete === font.id"
+                           @click="openEditDialog(font)">
+                {{ $t('global.actions.edit') }}
+              </v-list-item>
+              <v-list-item v-if="font.family" prepend-icon="content_copy" density="compact"
+                           @click="copyToClipboard(cssFamily(font.family, font.fallback))">
+                {{ $t('b_shop_theme_typography.custom_fonts.actions.copy_css') }}
+              </v-list-item>
+              <v-list-item prepend-icon="delete" density="compact"
+                           :disabled="!can_write || readOnly || busy_delete === font.id"
+                           @click="deleteFont(font)">
+                {{ $t('global.actions.delete') }}
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
       </v-list-item>
     </v-list>
@@ -428,6 +416,7 @@
           <v-btn
             class="sd-modern-button sd-modern-button--primary"
             color="primary"
+            :disabled="!can_write || readOnly"
             :loading="busy_save"
             :prepend-icon="editing ? 'save' : 'add'"
             variant="flat"
@@ -450,9 +439,7 @@ import BListEmptyState from "@selldone/components-vue/backoffice/empty-state/BLi
 import BListLoadingState from "@selldone/components-vue/backoffice/loading-state/BListLoadingState.vue";
 import { defineComponent } from "vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
-import USmartMenu from "@selldone/components-vue/ui/smart/menu/USmartMenu.vue";
 import { ShopPermissionRegions } from "@selldone/core-js/enums/permission/ShopPermissions.ts";
 import { FontLoader } from "@selldone/core-js/helper/font/FontLoader.ts";
 
@@ -481,7 +468,9 @@ export default defineComponent({
   name: "BShopThemeCustomFonts",
   components: {
     BListLoadingState,
-    BListEmptyState, ULoadingProgress, USmartMenu, UWidgetHeader },
+    BListEmptyState,
+    ULoadingProgress,
+  },
   emits: ["update:modelValue", "delete"],
   props: {
     shop: {
@@ -492,6 +481,8 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
+    activeFamily: String,
+    readOnly: Boolean,
   },
   data() {
     return {
@@ -529,6 +520,7 @@ export default defineComponent({
     can_add(): boolean {
       return (
         this.can_write &&
+        !this.readOnly &&
         this.quota.can_add !== false &&
         this.quota.limit > this.fonts.length
       );
@@ -668,8 +660,10 @@ export default defineComponent({
       this.dialog = true;
     },
     openEditDialog(font: any) {
-      if (!this.can_write) return;
-      this.dialogTrigger = typeof document === "undefined" ? null : document.activeElement as HTMLElement;
+      if (!this.can_write || this.readOnly) return;
+      this.dialogTrigger = typeof document === "undefined"
+        ? null
+        : document.getElementById(`shop-theme-font-manage-${font.id}`);
       this.editing = true;
       this.form_error = null;
       this.form = {
@@ -847,7 +841,7 @@ export default defineComponent({
       return formData;
     },
     saveFont() {
-      if (this.busy_save || !this.can_write || !this.validateForm()) return;
+      if (this.busy_save || !this.can_write || this.readOnly || !this.validateForm()) return;
       this.busy_save = true;
       const formData = this.buildFormData();
       const request =
@@ -895,7 +889,7 @@ export default defineComponent({
         });
     },
     deleteFont(font: any) {
-      if (!this.can_write || !font?.id) return;
+      if (!this.can_write || this.readOnly || !font?.id) return;
       NotificationService.openDangerAlert(
         this.$t("b_shop_theme_typography.custom_fonts.delete.title"),
         this.$t("b_shop_theme_typography.custom_fonts.delete.message", {
@@ -930,21 +924,16 @@ export default defineComponent({
         },
       );
     },
-    fontMenuItems(font: any) {
-      return [
-        {
-          title: this.$t("global.actions.edit"),
-          icon: "edit",
-          disabled: !this.can_write,
-          click: () => this.openEditDialog(font),
-        },
-        {
-          title: this.$t("global.actions.delete"),
-          icon: "delete",
-          disabled: !this.can_write,
-          click: () => this.deleteFont(font),
-        },
-      ];
+    isSelectedFont(font: any) {
+      if (!this.activeFamily) return false;
+      const familyName = (value: string | null | undefined) => (value || "")
+        .replace(/^\s*font-family\s*:/i, "")
+        .split(",")[0]
+        .trim()
+        .replace(/^['"]|['"]$/g, "")
+        .toLocaleLowerCase();
+      const active = familyName(this.activeFamily);
+      return active === familyName(font.family) || active === familyName(FontLoader.GetCustomFontFamilyValue(font));
     },
     fileFormat(file: File): string {
       const extension = file.name?.split(".").pop()?.toLowerCase();
@@ -1008,23 +997,71 @@ export default defineComponent({
 <style lang="scss" scoped>
 .b-shop-theme-fonts {
   min-width: 0;
-  &__subtitle { padding: 0; margin: 0; min-height: 0; }
-  &__quota { margin: 8px 0 20px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
-  &__list :deep(.v-list-item) { padding: 16px 12px; }
-  &__list :deep(.v-list-item-subtitle) { display: block; opacity: 1; -webkit-line-clamp: unset; }
-  &__name { font-size: 14px; font-weight: 500; line-height: 21px; overflow-wrap: anywhere; }
-  &__sample { margin-top: 6px; color: rgb(var(--v-theme-on-surface)); font-size: 18px; line-height: 28px; overflow-wrap: anywhere; }
-  &__metadata { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; }
-  &__css { margin-top: 4px; }
-  &__css > summary { width: fit-content; min-height: 32px; padding-block: 6px; cursor: pointer; color: var(--sd-modern-muted); font-size: 12px; line-height: 20px; }
-  &__css > summary:focus-visible { border-radius: 4px; outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
-  &__css p { margin: 4px 0 8px; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
-  &__css code { display: block; padding: 8px 12px; color: inherit; background: var(--sd-modern-inset); border-radius: 8px; font-size: 12px; line-height: 20px; overflow-wrap: anywhere; white-space: normal; }
-
-  @media (max-width: 600px), (pointer: coarse) {
-    &__css > summary { min-height: 44px; padding-block: 12px; }
+  &.sd-modern-widget { padding: clamp(16px, 2.4vw, 24px); }
+  &__heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    > div { flex: 1 1 220px; min-width: 0; }
+    h3 { margin: 0; font-family: inherit; font-size: 16px; font-weight: 650; line-height: 21.6px; }
+    h3 span { margin-inline-start: 5px; color: var(--sd-modern-muted); font-size: 12px; font-weight: 400; white-space: nowrap; }
+    p { margin: 4px 0 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 19.5px; }
   }
-  @media (max-width: 600px) { &__add { margin-block-start: 12px; } }
+  &__quota { margin: 8px 0 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 18px; }
+  &__add.sd-modern-button,
+  &__manage.sd-modern-button {
+    min-height: 38px;
+    min-width: 0;
+    max-width: 100%;
+    padding-inline: 11px;
+    margin: 0;
+    border-radius: 9px;
+    font-size: 13px;
+    line-height: 1.2;
+    :deep(.v-btn__content) { white-space: normal; }
+    :deep(.v-icon) { font-size: 16px; }
+  }
+  &__add.sd-modern-button { border-color: var(--sd-modern-border); }
+  &__manage.sd-modern-button {
+    padding-inline: 7px;
+    color: var(--sd-modern-muted);
+    font-size: 12px;
+    :deep(.v-btn__append) { margin-inline-start: 5px; margin-inline-end: 0; }
+    :deep(.v-icon) { font-size: 14px; }
+  }
+  &__list {
+    --v-list-prepend-gap: 11px;
+    margin-block-start: 13px;
+    padding: 0;
+    :deep(.v-list-item) {
+      min-height: 0;
+      grid-template-columns: max-content minmax(0, 1fr) auto;
+      padding: 13px 0 0;
+      border-block-start: 1px solid var(--sd-modern-border);
+    }
+    :deep(.v-list-item + .v-list-item) { margin-block-start: 13px; }
+    :deep(.v-list-item-title) { white-space: normal; }
+    :deep(.v-list-item-subtitle) { display: block; opacity: 1; -webkit-line-clamp: unset; }
+  }
+  &__avatar { background: rgba(var(--v-theme-on-surface), .045); border-radius: 9px; font-size: 15px; font-weight: 650; }
+  &__identity {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    line-height: 19.5px;
+    overflow-wrap: anywhere;
+    strong { font-size: 13px; font-weight: 600; }
+  }
+  &__selected { color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; white-space: nowrap; }
+  &__metadata { display: flex; flex-wrap: wrap; gap: 0 8px; color: var(--sd-modern-muted); font-size: 12px; line-height: 18px; }
+
+  @media (pointer: coarse) {
+    &__add.sd-modern-button,
+    &__manage.sd-modern-button { min-height: 44px; }
+  }
 }
 
 .b-shop-theme-fonts-dialog {

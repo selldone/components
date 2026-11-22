@@ -660,18 +660,6 @@
               :class="modern ? 'b-affiliate-edit__group' : 'widget-box mb-5'"
             >
               <u-widget-header
-                :to="
-                  modern
-                    ? undefined
-                    : { name: 'BPageShopClassificationClusters' }
-                "
-                :add-caption="
-                  modern
-                    ? undefined
-                    : $t('affiliate_edit.cluster.manage_action')
-                "
-                add-icon="settings"
-                add-text
                 :icon="modern ? undefined : 'workspaces'"
                 :title="
                   $t(
@@ -698,9 +686,12 @@
                 clearable
                 icon="workspaces_filled"
                 no-home
+                :disabled="modern && !canWrite"
+                :show-settings-button="!modern || canWrite"
               ></b-cluster-input>
+              <!-- Keep management reachable when the assignment chooser is disabled. -->
               <v-btn
-                v-if="modern"
+                v-if="modern && !canWrite"
                 :to="{ name: 'BPageShopClassificationClusters' }"
                 class="sd-modern-button sd-modern-button--inline"
                 variant="text"

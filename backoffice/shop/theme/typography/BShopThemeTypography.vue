@@ -12,156 +12,129 @@
   - Tread carefully, for you're treading on dreams.
   -->
 <template>
-  <div class="b-shop-theme-typography sd-modern-widget text-start">
-    <u-widget-header
-      class="sd-modern-form-header"
-      icon="format_size"
-      :title="$t('b_shop_theme_typography.main_font.title')"
-    ></u-widget-header>
+  <section class="b-shop-theme-typography text-start" aria-labelledby="shop-theme-typography-title">
+    <header class="b-shop-theme-typography__heading">
+      <h2 id="shop-theme-typography-title">{{ $t('shop_theme.typography') }}</h2>
+      <p>{{ $t('b_shop_theme_typography.main_font.subtitle') }}</p>
+    </header>
 
-    <p class="sd-modern-subtitle b-shop-theme-typography__subtitle">
-      {{ $t("b_shop_theme_typography.main_font.subtitle") }}
-    </p>
+    <div class="b-shop-theme-typography__panel sd-modern-widget">
+      <div class="b-shop-theme-typography__layout">
+        <div class="b-shop-theme-typography__controls">
+          <p id="shop-theme-font-source" class="b-shop-theme-typography__label">
+            {{ $t('b_shop_theme_typography.main_font.source_title') }}
+          </p>
+          <u-smart-select
+            class="sd-modern-smart-select b-shop-theme-typography__sources"
+            :model-value="activeFontSource"
+            :items="fontSources"
+            aria-labelledby="shop-theme-font-source"
+            item-value="id"
+            item-text="title"
+            border accessible force-show-all
+            :disabled="!can_edit"
+            :readonly="!can_edit"
+            @update:model-value="setFontSource"
+          />
 
-    <u-smart-select
-      class="sd-modern-smart-select sd-modern-smart-select--columns b-shop-theme-typography__sources"
-      :model-value="activeFontSource"
-      :items="fontSources"
-      :aria-label="$t('b_shop_theme_typography.main_font.source_title')"
-      item-value="id"
-      item-text="title"
-      item-description="description"
-      item-icon="icon"
-      border accessible force-show-all
-      :disabled="!can_edit"
-      :readonly="!can_edit"
-      @update:model-value="setFontSource"
-    />
-
-    <div class="b-shop-theme-typography__layout">
-      <section class="b-shop-theme-typography__controls">
-        <h3 class="b-shop-theme-typography__section-title">
-          {{ $t('b_shop_theme_typography.main_font.source_title') }}
-        </h3>
-        <p class="b-shop-theme-typography__guidance">
-          {{ $t(activeFontSource === 'uploaded'
-            ? 'b_shop_theme_typography.main_font.uploaded_help'
-            : 'b_shop_theme_typography.main_font.external_help') }}
-        </p>
-        <template v-if="activeFontSource === 'uploaded'">
-        <v-autocomplete
-          v-if="customFonts.length"
-          class="sd-modern-underlined-field"
-          clearable
-          :disabled="!can_edit"
-          :items="customFonts"
-          item-title="name"
-          item-value="id"
-          :label="$t('b_shop_theme_typography.main_font.custom_font')"
-          :messages="$t('b_shop_theme_typography.main_font.custom_font_message')"
-          :model-value="selectedCustomFontId"
-          persistent-placeholder
-          prepend-inner-icon="font_download"
-          variant="underlined"
-          @update:model-value="selectCustomFont"
-        >
-          <template #selection="{ internalItem: item }">
-            <span :style="customFontPreviewStyle(item.raw)">{{ item.raw.name }}</span>
-          </template>
-          <template #item="{ internalItem: item, props }">
-            <v-list-item v-bind="props" class="text-start">
-              <template #prepend>
-                <v-avatar class="me-2 rounded-lg" :style="customFontPreviewStyle(item.raw)">Aa</v-avatar>
-              </template>
-              <template #title>
+          <div v-if="activeFontSource === 'uploaded'" class="b-shop-theme-typography__fields">
+            <label for="shop-theme-uploaded-font" class="b-shop-theme-typography__label">
+              {{ $t('b_shop_theme_typography.main_font.custom_font') }}
+            </label>
+            <v-autocomplete
+              id="shop-theme-uploaded-font"
+              class="b-shop-theme-typography__field"
+              clearable
+              :disabled="!can_edit || !customFonts.length"
+              :items="customFonts"
+              item-title="name"
+              item-value="id"
+              :messages="$t(customFonts.length
+                ? 'b_shop_theme_typography.main_font.managed_message'
+                : 'b_shop_theme_typography.custom_fonts.empty_title')"
+              :model-value="selectedCustomFontId"
+              density="compact"
+              persistent-placeholder
+              variant="outlined"
+              @update:model-value="selectCustomFont"
+            >
+              <template #selection="{ internalItem: item }">
                 <span :style="customFontPreviewStyle(item.raw)">{{ item.raw.name }}</span>
               </template>
-            </v-list-item>
-          </template>
-        </v-autocomplete>
-
-        <v-btn class="sd-modern-button b-shop-theme-typography__add-font"
-               variant="outlined" prepend-icon="add" :disabled="!can_edit" @click="addCustomFont">
-          {{ $t('b_shop_theme_typography.custom_fonts.actions.add') }}
-        </v-btn>
-        <p v-if="selectedCustomFont" class="b-shop-theme-typography__managed">
-          <v-icon size="18" aria-hidden="true">link</v-icon>
-          {{ $t('b_shop_theme_typography.main_font.managed_message') }}
-        </p>
-        </template>
-        <template v-else>
-          <v-text-field
-            class="sd-modern-underlined-field"
-            :model-value="fontFamily"
-            @update:model-value="setExternalFontFamily"
-            :label="$t('b_shop_theme_typography.inputs.font_family.label')"
-            :messages="$t('b_shop_theme_typography.inputs.font_family.message')"
-            persistent-placeholder
-            placeholder="'Maven Pro', sans-serif"
-            @blur="fixFontFamily"
-            variant="underlined"
-            :disabled="!can_edit"
-            dir="ltr"
-          >
-            <template #append-inner>
-              <v-tooltip v-if="font_family_name" location="top" content-class="sd-modern-tooltip text-start">
-                <template #activator="{ props }">
-                  <v-btn v-bind="props"
-                         :href="`https://fonts.google.com/?query=${encodeURIComponent(font_family_name)}`"
-                         class="sd-modern-icon-button sd-modern-input-action"
-                         icon="north_east" variant="text" target="_blank" rel="noopener noreferrer"
-                         :aria-label="$t('shop_theme.studio.find_font')" />
-                </template>
-                {{ $t('shop_theme.studio.find_font') }}
-              </v-tooltip>
-            </template>
-          </v-text-field>
-          <div class="b-shop-theme-typography__family-help">
-            <div class="b-shop-theme-typography__examples">
-              <p class="b-shop-theme-typography__example-label">{{ $t('b_shop_theme_typography.main_font.family_examples') }}</p>
-              <code dir="ltr">'Maven Pro', sans-serif</code>
-            </div>
-            <a class="sd-modern-inline-action" href="https://fonts.google.com"
-               target="_blank" rel="noopener noreferrer">
-              Google Fonts<v-icon size="14" class="ms-1" aria-hidden="true">north_east</v-icon>
-            </a>
+              <template #item="{ internalItem: item, props }">
+                <v-list-item v-bind="props" class="text-start">
+                  <template #prepend>
+                    <v-avatar class="me-2 rounded-lg" :style="customFontPreviewStyle(item.raw)">Aa</v-avatar>
+                  </template>
+                  <template #title>
+                    <span :style="customFontPreviewStyle(item.raw)">{{ item.raw.name }}</span>
+                  </template>
+                </v-list-item>
+              </template>
+            </v-autocomplete>
           </div>
-        </template>
-      </section>
+          <div v-else class="b-shop-theme-typography__fields">
+            <label for="shop-theme-external-font" class="b-shop-theme-typography__label">
+              {{ $t('b_shop_theme_typography.inputs.font_family.label') }}
+            </label>
+            <v-text-field
+              id="shop-theme-external-font"
+              class="b-shop-theme-typography__field"
+              :model-value="fontFamily"
+              @update:model-value="setExternalFontFamily"
+              @blur="fixFontFamily"
+              persistent-placeholder
+              placeholder="'Maven Pro', sans-serif"
+              :disabled="!can_edit"
+              variant="outlined"
+              density="compact"
+              hide-details
+              dir="ltr"
+            />
+            <a class="b-shop-theme-typography__font-link"
+               :href="font_family_name ? `https://fonts.google.com/?query=${encodeURIComponent(font_family_name)}` : 'https://fonts.google.com'"
+               target="_blank" rel="noopener noreferrer">
+              <span>{{ $t('b_shop_theme_typography.main_font.browse_fonts') }}<v-icon size="13" aria-hidden="true">north_east</v-icon></span>
+            </a>
+            <div class="b-shop-theme-typography__font-resource">
+              <slot name="font-resource" />
+            </div>
+          </div>
+        </div>
 
-      <section class="b-shop-theme-typography__preview">
-        <div class="b-shop-theme-typography__preview-label">
-          {{ $t('b_shop_theme_typography.main_font.preview') }}
+        <figure class="b-shop-theme-typography__preview">
+          <figcaption>
+            <span>{{ $t('b_shop_theme_typography.main_font.preview') }}</span>
+            <span>{{ selectedCustomFont?.name || font_family_name || $t('b_shop_theme_typography.main_font.default_family') }}</span>
+          </figcaption>
+          <div class="b-shop-theme-typography__specimen"
+               :style="{ fontFamily: selectedCustomFont ? customFontFamilyValue(selectedCustomFont) : fontFamily || undefined }">
+            <p class="b-shop-theme-typography__sample-title">{{ $t('b_shop_theme_typography.main_font.preview_title') }}</p>
+            <p class="b-shop-theme-typography__sample-body">{{ $t('b_shop_theme_typography.main_font.preview_body') }}</p>
+            <div class="b-shop-theme-typography__characters" dir="ltr">Aa Bb Cc · 0123456789</div>
+          </div>
+          <p v-if="activeFontSource === 'external'" class="b-shop-theme-typography__preview-note">
+            {{ $t('b_shop_theme_typography.main_font.preview_note') }}
+          </p>
+        </figure>
+      </div>
+
+      <details v-if="activeFontSource === 'uploaded' && selectedCustomFont" class="b-shop-theme-typography__details">
+        <summary>
+          <v-icon size="16" aria-hidden="true">code</v-icon>
+          <span>{{ $t('b_shop_theme_typography.main_font.details') }}</span>
+          <v-icon size="16" aria-hidden="true">expand_more</v-icon>
+        </summary>
+        <dl>
+          <dt>{{ $t('b_shop_theme_typography.inputs.font_family.label') }}</dt>
+          <dd><code dir="ltr">{{ fontFamily }}</code></dd>
+        </dl>
+        <div class="b-shop-theme-typography__font-resource">
+          <slot name="font-resource" />
         </div>
-        <div class="b-shop-theme-typography__specimen"
-             :style="{ fontFamily: selectedCustomFont ? customFontFamilyValue(selectedCustomFont) : fontFamily || undefined }">
-          <h3>{{ $t('b_shop_theme_typography.main_font.preview_title') }}</h3>
-          <p>{{ $t('b_shop_theme_typography.main_font.preview_body') }}</p>
-          <div class="b-shop-theme-typography__characters" dir="ltr">Aa Bb Cc · 0123456789</div>
-        </div>
-        <div class="b-shop-theme-typography__preview-family">
-          {{ selectedCustomFont?.name || font_family_name || $t('b_shop_theme_typography.main_font.default_family') }}
-        </div>
-        <p class="b-shop-theme-typography__preview-note">
-          {{ $t('b_shop_theme_typography.main_font.preview_note') }}
-        </p>
-      </section>
+      </details>
     </div>
-
-    <details v-if="activeFontSource === 'uploaded' && selectedCustomFont" class="b-shop-theme-typography__examples b-shop-theme-typography__family-metadata">
-      <summary>{{ $t('b_shop_theme_typography.custom_fonts.css_name') }}</summary>
-      <v-text-field
-                    class="sd-modern-underlined-field"
-                    :model-value="fontFamily"
-                    :label="$t('b_shop_theme_typography.inputs.font_family.label')"
-                    :disabled="!can_edit"
-                    readonly variant="underlined" dir="ltr" />
-    </details>
-
-    <div v-if="activeFontSource === 'external' || selectedCustomFont" class="b-shop-theme-typography__font-resource">
-      <slot name="font-resource" />
-    </div>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -176,7 +149,7 @@ export default defineComponent({
   name: "BShopThemeTypography",
   components: { USmartSelect },
 
-  emits: ["update:fontFamily", "update:fontRes", "add-font"],
+  emits: ["update:fontFamily", "update:fontRes"],
   props: {
     fontFamily: {},
     fontRes: {},
@@ -187,7 +160,6 @@ export default defineComponent({
     },
   },
   data: () => ({
-    ShopPermissionRegions: ShopPermissionRegions,
     fontSource: null as FontSource | null,
     uploadedFontId: null as number | null,
     externalDraft: { fontFamily: null, fontRes: null } as {
@@ -205,8 +177,8 @@ export default defineComponent({
     },
     fontSources() {
       return [
-        { id: "uploaded", title: this.$t('b_shop_theme_typography.main_font.source_uploaded'), description: this.$t('b_shop_theme_typography.main_font.source_uploaded_description'), icon: "font_download" },
-        { id: "external", title: this.$t('b_shop_theme_typography.main_font.source_external'), description: this.$t('b_shop_theme_typography.main_font.source_external_description'), icon: "language" },
+        { id: "uploaded", title: this.$t("b_shop_theme_typography.main_font.source_uploaded") },
+        { id: "external", title: this.$t("b_shop_theme_typography.main_font.source_external") },
       ];
     },
     font_family_name() {
@@ -267,9 +239,6 @@ export default defineComponent({
         this.$emit("update:fontRes", this.externalDraft.fontRes);
       }
     },
-    addCustomFont() {
-      if (this.can_edit) this.$emit("add-font");
-    },
     setExternalFontFamily(value: unknown) {
       if (this.can_edit && this.activeFontSource === "external") this.$emit("update:fontFamily", value);
     },
@@ -325,36 +294,141 @@ export default defineComponent({
 <style scoped lang="scss">
 .b-shop-theme-typography {
   min-width: 0;
+  container-type: inline-size;
 
-  &__subtitle { padding: 0; margin-block: 0 20px; min-height: 0; }
-  &__sources { margin-bottom: 28px; }
-  &__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); align-items: start; gap: 32px; }
-  &__controls { min-width: 0; }
-  &__section-title { margin: 0 0 16px; font-size: 14px; font-weight: 500; line-height: 21px; }
-  &__guidance { margin: 0 0 18px; color: var(--sd-modern-muted); font-size: 13px; line-height: 21px; }
-  &__add-font { margin-top: 12px; }
-  &__managed { display: flex; align-items: flex-start; gap: 8px; margin: 16px 0 0; font-size: 12px; line-height: 19px; color: var(--sd-modern-muted); }
-  &__managed .v-icon { flex-shrink: 0; margin-top: 1px; }
-  &__family-help { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin-top: 8px; }
-  &__family-help > a { flex-shrink: 0; font-size: 12px; }
-  &__preview { min-width: 0; padding: 24px; background: var(--sd-modern-inset); border-radius: 16px; }
-  &__preview-label { margin-bottom: 24px; color: var(--sd-modern-muted); font-size: 11px; line-height: 17px; }
-  &__specimen h3 { margin: 0; font-family: inherit; font-size: 30px; font-weight: 500; line-height: 1.25; letter-spacing: -.5px; overflow-wrap: anywhere; }
-  &__specimen p { margin: 14px 0 24px; font-size: 14px; line-height: 1.7; }
-  &__characters { color: var(--sd-modern-muted); font-size: 15px; line-height: 24px; overflow-wrap: anywhere; }
-  &__preview-family { margin-top: 24px; font-size: 12px; font-weight: 500; line-height: 19px; overflow-wrap: anywhere; }
-  &__preview-note { margin: 6px 0 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
-  &__family-metadata { margin-top: 16px; }
-  &__font-resource { margin-top: 28px; }
-  &__examples > summary { width: fit-content; min-height: 44px; padding-block: 12px; cursor: pointer; font-size: 12px; font-weight: 500; line-height: 20px; }
-  &__examples > summary:focus-visible { border-radius: 4px; outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
-  &__examples { min-width: 0; }
-  &__example-label { margin: 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 19px; }
-  code { display: block; margin-block: 6px 12px; padding: 10px 12px; background: var(--sd-modern-inset); border-radius: 8px; font-size: 12px; line-height: 20px; overflow-wrap: anywhere; white-space: normal; }
+  &__heading {
+    margin-block-end: 15px;
+    h2 { margin: 0; font-family: inherit; font-size: 24px; font-weight: 650; line-height: 30px; letter-spacing: -.6px; }
+    p { margin: 4px 0 0; color: var(--sd-modern-muted); font-size: 13px; line-height: 19.5px; }
+  }
+  &__panel.sd-modern-widget { padding: clamp(16px, 2.4vw, 24px); }
+  &__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: clamp(14px, 2.4vw, 26px); }
+  &__controls { min-width: 0; padding-block: 3px; }
+  &__label { display: block; margin: 0 0 7px; font-size: 13px; font-weight: 600; line-height: 19.5px; }
+  &__sources.sd-modern-smart-select {
+    :deep(.rounded-card) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
+      padding: 4px;
+      background: rgba(var(--v-theme-on-surface), .045);
+      border-color: transparent !important;
+      border-radius: 11px !important;
+    }
+    :deep(.rounded-card > .pp[role="radio"]) {
+      min-width: 0;
+      padding: 0 7px !important;
+      background-color: transparent !important;
+      border: 0 !important;
+      border-radius: 8px !important;
+    }
+    :deep(.rounded-card > .pp[aria-checked="true"]) {
+      background-color: rgb(var(--v-theme-surface)) !important;
+      box-shadow: 0 1px 4px rgba(var(--v-theme-on-surface), .1);
+    }
+    :deep(.mnh) { justify-content: center; min-height: 34px; gap: 7px; overflow-wrap: anywhere; }
+    :deep(.mnh > div) { flex-grow: 0 !important; margin-inline: 0 !important; }
+    :deep(.mnh > div:first-child > .text-center) { width: 19px !important; }
+    :deep(.mnh > div:first-child .v-icon) { font-size: 17px; }
+    :deep(.circle-check) { width: 15px; height: 15px; }
+    :deep([aria-checked="true"] b) { font-weight: 600; }
+  }
+  &__fields { margin-block-start: 20px; }
+  &__field {
+    --v-input-control-height: 42px;
+    :deep(.v-field) { border-radius: 9px; font-family: inherit; font-size: 14px; }
+    :deep(.v-field__input) { font-size: inherit; }
+    :deep(.v-field:not(.v-field--focused):not(.v-field--error) .v-field__outline) {
+      --v-field-border-opacity: 1;
+      color: var(--sd-modern-border);
+    }
+    :deep(.v-input__details) { padding: 8px 0 0; }
+    :deep(.v-messages) { color: var(--sd-modern-muted); font-size: 12px; }
+    :deep(.v-messages__message) { line-height: 18px; }
+  }
+  &__font-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    color: rgb(var(--v-theme-primary));
+    font-size: 12px;
+    text-decoration: none;
+    span { display: inline-flex; align-items: center; gap: 4px; border-block-end: 1px solid currentColor; }
+  }
+  &__preview {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 26px;
+    min-width: 0;
+    min-height: 250px;
+    margin: 0;
+    padding: clamp(15px, 2.2vw, 24px);
+    border-radius: 12px;
+    background: rgba(var(--v-theme-on-surface), .045);
+    figcaption {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 3px 12px;
+      color: var(--sd-modern-muted);
+      font-size: 12px;
+      line-height: 18px;
+      overflow-wrap: anywhere;
+      span + span { color: rgb(var(--v-theme-on-surface)); font-weight: 600; }
+    }
+  }
+  &__specimen { overflow-wrap: anywhere; }
+  &__sample-title { max-inline-size: 11ch; margin: 0; font-size: clamp(28px, 4.25vw, 45px); font-weight: 700; line-height: 1.04; letter-spacing: -.055em; }
+  &__sample-body { margin: 12px 0 0; font-size: 13px; line-height: 1.45; }
+  &__characters { margin-block-start: 15px; color: var(--sd-modern-muted); font-size: 12px; line-height: 18px; letter-spacing: .035em; }
+  &__preview-note { margin: 0; color: var(--sd-modern-muted); font-size: 12px; line-height: 18px; }
+  &__details {
+    margin-block-start: 14px;
+    border-block-start: 1px solid var(--sd-modern-border);
+    font-size: 13px;
+    line-height: 19.5px;
+    &:not([open]) { margin-block-end: -11px; }
+    > summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 6px 2px 0;
+      list-style: none;
+      cursor: pointer;
+      &::-webkit-details-marker { display: none; }
+      &:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 2px; border-radius: 4px; }
+      span { flex: 1; min-inline-size: 0; overflow-wrap: anywhere; }
+    }
+    &[open] > summary > .v-icon:last-child { transform: rotate(180deg); }
+    dl { display: grid; grid-template-columns: minmax(100px, .52fr) minmax(0, 1fr); gap: 9px 16px; margin: 9px 0 0; }
+    dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+  }
+  &__font-resource {
+    :deep(.b-shop-theme-code-summary) { grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px; padding-block: 8px 0; }
+    :deep(.b-shop-theme-code-summary > .v-icon) { display: none; }
+    :deep(.b-shop-theme-code-summary h3) { font-size: 13px; font-weight: 600; line-height: 19.5px; }
+    :deep(.b-shop-theme-code-summary p) { margin-block-start: 2px; line-height: 18px; }
+    :deep(.b-shop-theme-code-summary__meta) { margin-block-start: 4px; gap: 4px 10px; }
+    :deep(.b-shop-theme-code-summary__edit) { grid-column: auto; margin-block-start: -3px; }
+  }
 
-  @media (max-width: 700px) {
-    &__layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-    &__preview { padding: 20px; }
+  @container (max-width: 525px) {
+    &__layout { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    &__preview { min-height: 216px; gap: 20px; }
+  }
+  @container (max-width: 330px) {
+    &__font-resource {
+      :deep(.b-shop-theme-code-summary) { grid-template-columns: minmax(0, 1fr); }
+      :deep(.b-shop-theme-code-summary__edit) { justify-self: start; }
+    }
+  }
+  @media (pointer: coarse) {
+    &__sources.sd-modern-smart-select :deep(.mnh),
+    &__font-link,
+    &__details > summary { min-height: 44px; }
   }
 }
 </style>

@@ -89,8 +89,7 @@ Reduced-motion preferences disable the illustration and queue transitions.
 Verification: `node --test @selldone/components-vue/backoffice/product/inventory/management/file/BProductInventoryManagementFile.test.mjs`
 and `node --test @selldone/components-vue/backoffice/product/inventory/management/file/BProductFileStorageChart.test.mjs`,
 plus `node --test @selldone/components-vue/backoffice/product/inventory/management/file/ProductFileUploadQueue.test.mjs`,
-`node --test @selldone/components-vue/backoffice/product/inventory/management/file/BProductFileUploader.test.mjs`
-and `node --test src/Applications/Backoffice/pages/product/inventory/BPageProductInventory.test.mjs`.
+`node --test @selldone/components-vue/backoffice/product/inventory/management/file/BProductFileUploader.test.mjs`.
 These use isolated requests and real Vue/SFC/style compilation, without uploading
 or deleting application files. GB tests pass native File bodies without allocating
 GB buffers. Real multi-GB cloud transfer must be checked by a human in a named test

@@ -31,15 +31,14 @@ Complex staff calendars, capacity locking, reminders and calendar sync require t
 
 An explicit `outputs.timezone` enables a dated appointment request: `preferences.appointment = { date, hour }`. The server validates it against the weekly schedule and blocked dates, rejects past and ambiguous/nonexistent DST hours, and snapshots its trusted time zone. Unchanged requests preserve that snapshot. Legacy configurations without a zone keep `preferences.days`. A request does not reserve staff capacity or set `reserved_at`; the merchant's existing confirmation UI remains responsible for confirmation.
 
-Booking/rental draft ranges may be incomplete; checkout requires a valid future ordered range. Backend pricing uses its forward day count, and clearing a range restores the base multiplier. See `Backend/app/Storefront/Product/service/README.md` in the application repository for the complete backend boundary contract.
+Booking/rental draft ranges may be incomplete; checkout requires a valid future ordered range. Backend pricing uses its forward day count, and clearing a range restores the base multiplier.
 
 ## Focused verification
 
-From the application repository root:
+Run the focused checks from the components-vue repository root.
 
 ```powershell
-node --test '@selldone/components-vue/backoffice/product/service/manage/BProductServiceManage.test.mjs' '@selldone/components-vue/backoffice/product/add/full/BProductAddFull.test.mjs' '@selldone/components-vue/ui/date/service-availability/service-controls.test.mjs' '@selldone/components-vue/storefront/product/service/service-appointment.test.mjs'
-php Backend/vendor/bin/phpunit --no-configuration --bootstrap Backend/vendor/autoload.php Backend/tests/Unit/Storefront/Product/ServiceConfigurationTest.php
+node --test backoffice/product/service/manage/BProductServiceManage.test.mjs backoffice/product/add/full/BProductAddFull.test.mjs ui/date/service-availability/service-controls.test.mjs storefront/product/service/service-appointment.test.mjs
 ```
 
 These local source/DOM tests do not boot the database or make live requests. Browser visual verification additionally needs the user's existing HMR session at `http://localhost:9000`.

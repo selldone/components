@@ -22,14 +22,14 @@ The optional `stage-decoration` slot receives measured node `boxes`, stage `size
 
 Resize-observer measurements are coalesced into an animation frame and cancelled on unmount, keeping geometry writes outside observer delivery. Explicit/intersection measurements and the finite story remain unchanged. Outcome markers and product action-border layers use the existing Smart invert protection without counter-inverting neutral tile surfaces.
 
-The visible “Text version of the diagram” disclosure is opt-in through the runtime `showTextVersion` prop, enabled by Help/official Blog, their editor preview and API Docs. Product and dashboard flows omit that disclosure by default while retaining node descriptions and connection lists for screen readers. This presentation choice is not part of the stored article definition or Admin MCP contract.
+The visible “Text version of the diagram” disclosure is opt-in through the runtime `showTextVersion` prop, enabled by Help/official Blog, their editor preview and API Docs. Product and dashboard flows omit that disclosure by default while retaining node descriptions and connection lists for screen readers. The prop affects rendering only.
 
 The optional runtime `railColumns` prop lets a linear workspace flow use more columns when its container has enough room. Domain Overview requests its current node count; measured narrow-width routing and the default article rail and branching layout remain unchanged. This is not a stored article field.
 
 The optional runtime `compact` prop is for dense product workspaces such as the product dashboard purchase flow. Tiles stack the icon over a two-line label with the step number in a corner, and the measured stage fits as many 84px tiles with 20px gaps as possible (`compactRailColumns`), capped by `railColumns`. When they don't all fit, the tiles spread evenly over the fewest rows. Below 480px the flow still stacks into one column, using shorter tiles and 24px gaps. Article callers never set it; it is not a stored field.
 
-Run the isolated authoring and API regression suites from the repository root:
+Run the flowchart regression suite from the component repository root:
 
 ```powershell
-node --test @selldone/components-vue/article/add-on/flowchart/article-flowchart.test.mjs src/Applications/Selldone/pages/api-doc/components/ApiDocContent.test.mjs
+node --test article/add-on/flowchart/article-flowchart.test.mjs
 ```

@@ -54,12 +54,10 @@ is never presented as proof of delivery. Previewing never sends an SMS.
 
 ## Local checks
 
-From the main repository root:
+Run the focused checks from the components-vue repository root.
 
 ```powershell
-node --test src/Applications/Backoffice/pages/shop/setting/sms/BPageShopSettingSms.test.mjs
-node --test @selldone/components-vue/backoffice/shop/sms/provider/BShopSmsProvider.test.mjs
-node --test @selldone/components-vue/backoffice/shop/sms/template/editor/BShopSmsTemplateEditor.test.mjs
+node --test backoffice/shop/sms/provider/BShopSmsProvider.test.mjs backoffice/shop/sms/template/editor/BShopSmsTemplateEditor.test.mjs
 node --test @selldone/components-vue/backoffice/shop/sms/template/list/BShopSmsTemplateList.test.mjs
 ```
 

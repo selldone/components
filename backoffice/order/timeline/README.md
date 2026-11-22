@@ -63,13 +63,10 @@ exposes a named multiline textbox.
 
 ## Local checks
 
-Run from the application repository:
+Run the focused checks from the components-vue repository root.
 
 ```text
-node @selldone/components-vue/backoffice/order/timeline/timelinePresentation.test.mjs
-node @selldone/components-vue/backoffice/order/timeline/BOrderTimeline.test.mjs
-node src/Applications/Backoffice/pages/order-physical/timeline/BPageOrderTimeline.test.mjs
-node src/Applications/Backoffice/pages/order-physical/BPageOrderPhysicalDashboard.test.mjs
+node --test backoffice/order/timeline/timelinePresentation.test.mjs backoffice/order/timeline/BOrderTimeline.test.mjs
 ```
 
 The tests use isolated data and mocked transports. Browser review uses the
@@ -77,7 +74,7 @@ existing HMR application at `http://localhost:9000`; it must not submit notes,
 pin/delete real records, resend notifications or update order state. No server,
 cache rebuild or production build is required.
 
-## Change manifest
+## Package source and translations
 
 - This folder: `BOrderTimeline.vue`, `BOrderTimelineGrouped.vue`,
   `BOrderTimelineEvent.vue`, `timelinePresentation.ts`,
@@ -91,25 +88,3 @@ cache rebuild or production build is required.
   textbox/multiline/name attributes on the existing contenteditable.
 - `@selldone/translate/global/en.ts` and `fa.ts`: generic
   `global.actions.add_emoji` label.
-- `src/Applications/Backoffice/pages/order-physical/README.md`: feature link.
-- `.ai-agent/guides/selldone-product-ui-design.md`: the cross-order timeline
-  adoption rule, including supported vendor routes.
-- `src/Applications/Backoffice/pages/order-physical/timeline/BPageOrderTimeline.test.mjs`:
-  main/vendor rendering, exact route gates and unchanged native API flags.
-- Parent/window and timeline wrapper pairs under
-  `src/Applications/Backoffice/pages/`:
-
-| Folder | Parent | Timeline wrapper |
-| --- | --- | --- |
-| `order-physical` | `BPageOrderPhysical.vue` | `timeline/BPageOrderPhysicalTimeline.vue` |
-| `order-virtual` | `BPageOrderVirtual.vue` | `timeline/BPageOrderVirtualTimeline.vue` |
-| `order-file` | `BPageOrderFile.vue` | `timeline/ShopProcessCenterFileOrderPage_Timeline.vue` |
-| `order-service` | `BPageOrderService.vue` | `timeline/BPageOrderServiceTimeline.vue` |
-| `order-subscription` | `BPageOrderSubscription.vue` | `timeline/BPageOrderSubscriptionTimeline.vue` |
-| `order-pos` | `BPageOrderPos.vue` | `timeline/BPageOrderPosTimeline.vue` |
-| `order-fulfillment` | `BPageOrderFulfillment.vue` | `timeline/BPageOrderFulfillmentTimeline.vue` |
-| `order-avocado` | `BPageOrderAvocado.vue` | `timeline/BPageOrderAvocadoTimeline.vue` |
-| `order-hyper` | `BPageOrderHyper.vue` | `timeline/BPageOrderHyperTimeline.vue` |
-
-Existing tracked edits stay unstaged; only new task files are staged for the
-local Git review. No commit or remote publication is performed.

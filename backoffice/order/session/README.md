@@ -27,10 +27,10 @@ and rejects absent, blank, nonnumeric and nonfinite coordinates.
 
 ## Verification
 
-Run from the application root:
+Run the focused check from the components-vue repository root.
 
 ```powershell
-node @selldone/components-vue/backoffice/order/session/BOrderSession.test.mjs
+node --test backoffice/order/session/BOrderSession.test.mjs
 ```
 
 The isolated test runs the actual component/watchers with synthetic sessions and
@@ -49,10 +49,7 @@ zoom and fullscreen were checked. Missing-data cases and clipboard contents were
 verified with synthetic tests rather than modifying order data. No production
 build, real geolocation permission request or server mutation was performed.
 
-## Files changed for this implementation
-
-Paths below are relative to the application repository root. Existing tracked
-edits remain unstaged; only this new README and the new test are staged.
+## Package source and translations
 
 - `@selldone/components-vue/backoffice/order/session/BOrderSession.vue`
 - `@selldone/components-vue/backoffice/order/session/BOrderSession.test.mjs` (new)
@@ -60,19 +57,3 @@ edits remain unstaged; only this new README and the new test are staged.
 - `@selldone/components-vue/ui/map/view/UMapView.vue`
 - `@selldone/translate/dashboard/en.ts`
 - `@selldone/translate/dashboard/fa.ts`
-- `src/Applications/Backoffice/pages/order-physical/BPageOrderPhysical.vue`
-- `src/Applications/Backoffice/pages/order-physical/track/BPageOrderPhysicalTrack.vue`
-- `src/Applications/Backoffice/pages/order-virtual/BPageOrderVirtual.vue`
-- `src/Applications/Backoffice/pages/order-virtual/track/BPageOrderVirtualTrack.vue`
-- `src/Applications/Backoffice/pages/order-file/BPageOrderFile.vue`
-- `src/Applications/Backoffice/pages/order-file/track/ShopProcessCenterFileOrderPage_Track.vue`
-- `src/Applications/Backoffice/pages/order-service/BPageOrderService.vue`
-- `src/Applications/Backoffice/pages/order-service/track/BPageOrderServiceTrack.vue`
-- `src/Applications/Backoffice/pages/order-subscription/BPageOrderSubscription.vue`
-- `src/Applications/Backoffice/pages/order-subscription/track/BPageOrderSubscriptionTrack.vue`
-- `src/Applications/Backoffice/pages/order-avocado/BPageOrderAvocado.vue`
-- `src/Applications/Backoffice/pages/order-avocado/track/BPageOrderAvocadoTrack.vue`
-- `src/Applications/Backoffice/pages/order-hyper/BPageOrderHyper.vue`
-- `src/Applications/Backoffice/pages/order-hyper/track/BPageOrderHyperTrack.vue`
-- `src/Applications/Backoffice/pages/order-fulfillment/BPageOrderFulfillment.vue`
-- `src/Applications/Backoffice/pages/order-fulfillment/track/BPageOrderFulfillmentTrack.vue`

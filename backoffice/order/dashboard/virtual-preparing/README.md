@@ -36,12 +36,8 @@ Files:
   route, stage, timestamp and rendered-state checks, plus SFC/template/SCSS checks.
   It resolves the real enum module and renders through the existing DateMixin.
 
-The complete native Virtual dashboard integration also reaches:
+Related components and public translations include the following.
 
-- `src/Applications/Backoffice/pages/order-virtual/BPageOrderVirtual.vue` and
-  `dashboard/BPageOrderVirtualDashboard.vue`: explicit native route opt-in and the
-  existing wrapper event flow. `BPageOrderVirtualDashboard.test.mjs` verifies the
-  native integration and its request/event boundary.
 - Shared components `backoffice/order/dashboard/BOrderDashboard.vue`,
   `storefront/order/delivery-state/SOrderDeliveryState.vue`,
   `backoffice/order/cart/BOrderCart.vue` and
@@ -50,18 +46,11 @@ The complete native Virtual dashboard integration also reaches:
   wording and existing Form access.
 - `@selldone/translate/dashboard/en.ts` and `fa.ts`: localized digital labels and
   guidance.
-- `.ai-agent/guides/selldone-product-ui-design.md`: the user-approved shared
-  structure across order types, with each type reviewed separately.
 
-Unqualified preparation filenames are local; other component paths are relative
-to `@selldone/components-vue`. Application and translation paths are relative to
-the main repository.
-
-Run from the repository root:
+Run the focused check from the components-vue repository root.
 
 ```powershell
-node @selldone/components-vue/backoffice/order/dashboard/virtual-preparing/BOrderDashboardVirtualPreparing.test.mjs
-node src/Applications/Backoffice/pages/order-virtual/dashboard/BPageOrderVirtualDashboard.test.mjs
+node --test backoffice/order/dashboard/virtual-preparing/BOrderDashboardVirtualPreparing.test.mjs
 ```
 
 The focused check makes no requests and does not change order data. Live stage

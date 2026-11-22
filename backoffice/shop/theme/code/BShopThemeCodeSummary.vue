@@ -13,7 +13,8 @@
       </div>
     </div>
     <v-btn variant="text" class="sd-modern-button b-shop-theme-code-summary__edit" :disabled="disabled"
-           :aria-label="$t('shop_theme.studio.edit_code_label', { section: $t(section.title) })" @click="$emit('edit', $event)">
+           :aria-label="section.readOnly ? $t('shop_theme.studio.view_code') : $t('shop_theme.studio.edit_code_label', { section: $t(section.title) })"
+           @click="$emit('edit', $event)">
       <v-icon start size="16" aria-hidden="true">{{ section.readOnly ? 'visibility' : 'edit' }}</v-icon>
       {{ $t(section.readOnly ? 'shop_theme.studio.view_code' : section.hasCode ? 'shop_theme.studio.edit_code' : 'shop_theme.studio.add_code') }}
     </v-btn>

@@ -37,9 +37,9 @@ donut; only audience and activity maps keep playback and the polar area.
 
 A day's row also carries device counters, so the map is given its countries only.
 
-Focused checks, run from the main repository root:
+Run the focused checks from the components-vue repository root.
 
 ```sh
-node --test @selldone/components-vue/backoffice/session/map/BSessionsMap.test.mjs
-node @selldone/components-vue/backoffice/dashboard/shop/aquisition/BDashboardShopAcquisition.test.mjs
+node --test backoffice/session/map/BSessionsMap.test.mjs
+node backoffice/dashboard/shop/aquisition/BDashboardShopAcquisition.test.mjs
 ```

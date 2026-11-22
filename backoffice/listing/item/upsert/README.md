@@ -30,7 +30,7 @@ The modern badge picker is one native underlined `VAutocomplete` with multiple s
 
 The picker exposes an `append-inner` slot. General supplies a compact, accessibly named **Manage badges** icon link inside the field for the current shop, with `target="_blank"`, `rel="noopener noreferrer"`, the standard new-tab arrow and localized help. It requires Backoffice Categories write access and is hidden for vendors. Opening it retains the item editor and its draft in the original tab.
 
-This compact-picker refinement changes `backoffice/listing/badge/input/BListingBadgeInput.vue`, this editor's `tabs/BShopListingItemTabGeneral.vue`, `BShopListingItemUpsert.test.mjs`, this README and the main workspace's `src/Applications/Backoffice/style/modern-design.scss`. The shared underlined-field wrapping rule now includes multiple autocompletes, and the picker reuses the existing `v-input-auto-height` hook so wrapped chip labels grow without overlapping. The existing localized labels and management tooltip are reused. Focused checks cover ID/object output, deduplication, clear/disabled behavior, local filtering, current-shop management routing, permissions and vendor/legacy exclusions. Selected labels resolve from the fetched badge collection even while native filtering hides options. Browser review uses the existing shop's badges without saving an item or editing a badge.
+This compact-picker refinement changes `backoffice/listing/badge/input/BListingBadgeInput.vue`, this editor's `tabs/BShopListingItemTabGeneral.vue`, `BShopListingItemUpsert.test.mjs` and this README. The shared underlined-field wrapping rule now includes multiple autocompletes, and the picker reuses the existing `v-input-auto-height` hook so wrapped chip labels grow without overlapping. The existing localized labels and management tooltip are reused. Focused checks cover ID/object output, deduplication, clear/disabled behavior, local filtering, current-shop management routing, permissions and vendor/legacy exclusions. Selected labels resolve from the fetched badge collection even while native filtering hides options. Browser review uses the existing shop's badges without saving an item or editing a badge.
 
 ## Verification
 
@@ -38,7 +38,7 @@ The compact-tab refinement bounds modern Contact URL chips to one line with elli
 
 Modern Opening Hours uses 48px time fields/toggle targets and 4px vertical desktop row insets (about 56px per weekday), with a two-column touch layout on mobile. Presets, time values and export behavior are unchanged. Media places its existing image-upload panel, URL-media panel and library in three independent neutral cards with 16px gaps; native expansion, upload, type selection, filters and record actions remain intact. Filenames are bounded and media identities can shrink around trailing actions.
 
-This refinement changes `links/input/BListingLinksInput.vue`, `opening-hours/input/BListingOpeningHoursInput.vue`, `item/upsert/tabs/BShopListingItemTabForm.vue`, `item/upsert/tabs/BShopListingItemTabMedia.vue`, `item/upsert/BShopListingItemUpsert.test.mjs`, this README and the main workspace's `.ai-agent/guides/selldone-product-ui-design.md`. Paths before `item/`, `links/` and `opening-hours/` share the `backoffice/listing/` prefix. The design guide records the user-approved default review of long chip values; no route, API, storage, model or translation contract changes.
+This refinement changes `links/input/BListingLinksInput.vue`, `opening-hours/input/BListingOpeningHoursInput.vue`, `item/upsert/tabs/BShopListingItemTabForm.vue`, `item/upsert/tabs/BShopListingItemTabMedia.vue`, `item/upsert/BShopListingItemUpsert.test.mjs` and this README. Paths before `item/`, `links/` and `opening-hours/` share the `backoffice/listing/` prefix.
 
 From the main workspace:
 
@@ -55,5 +55,4 @@ Verification covers editor save/navigation contracts plus the existing Items/Opt
 - `BShopListingItemUpsert.vue`, this README and `BShopListingItemUpsert.test.mjs`.
 - `tabs/BShopListingItemTabGeneral.vue`, `BShopListingItemTabDescription.vue`, `BShopListingItemTabPricing.vue`, `BShopListingItemTabContact.vue`, `BShopListingItemTabLocation.vue`, `BShopListingItemTabHours.vue`, `BShopListingItemTabForm.vue` and `BShopListingItemTabMedia.vue`.
 - Shared Listing inputs: `links/input/BListingLinksInput.vue`, `opening-hours/input/BListingOpeningHoursInput.vue` and `badge/input/BListingBadgeInput.vue`.
-- Main workspace: `src/Applications/Backoffice/pages/shop/listing/items/BShopListingItemsList.vue`, `src/Applications/Backoffice/pages/shop/listing/README.md` and `src/Applications/Backoffice/style/modern-design.scss`.
 - Dashboard dictionaries: `@selldone/translate/dashboard/en.ts` and `fa.ts`.

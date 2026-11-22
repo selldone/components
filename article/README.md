@@ -1,5 +1,9 @@
 # Shared article content
 
+An editor host can supply `editorUrls` for its save and image upload requests.
+The removal URL uses `__article_id__` for the selected article ID. The viewer
+continues to check the active editing context before making these requests.
+
 ## Official Blog editing tools
 
 The approved Blog editor keeps Category, Schedule and Search & sharing in
@@ -17,12 +21,9 @@ properties and read-only JSON. Unsupported saved schema types retain JSON and
 delete actions. FAQPage is derived from the FAQ collection rather than authored
 as a separate schema. Existing Help/shop consumers keep their default styles.
 
-Apply updates only the current article draft; the native article Save persists
+Apply updates only the current article draft. The native article Save persists
 it. Unapplied FAQ/schema forms block Save, Preview and other reader actions.
-Permission, actor, article identity and busy-state checks still apply, including
-late callbacks. The stored `faqs`/`structures` formats and unknown fields remain
-unchanged. See the repository's `Backend/app/Admin/Mcp/OfficialContent/README.md`
-for the narrower MCP FAQ proposal contract and bounded schema reads.
+The stored `faqs`/`structures` formats retain unknown fields.
 
 The Blog search report reuses the installed ApexCharts line renderer and a local
 SVG distribution. It shows the returned daily clicks/impressions, fraction CTR
@@ -31,26 +32,15 @@ Country/search-appearance percentages use only the returned rows. Native query,
 country, date and appearance tables remain available. No synthetic fallback,
 extra API dimension, comparison period or new dependency is introduced.
 
-Implementation: `ArticleViewer.vue`, `faq/SArticleWorkspaceFaqs.vue`,
+The shared components and helpers are `ArticleViewer.vue`, `faq/SArticleWorkspaceFaqs.vue`,
 `SArticleStructuredData.vue`, `SStructureDataInput.vue`,
-`seo/SArticleSearchConsole.vue`, `seo/article-search-console.ts`, the official
-`OPageBlogsView.vue` caller and their focused tests. EN/FA labels live in the
+`seo/SArticleSearchConsole.vue` and `seo/article-search-console.ts`. EN/FA labels live in the
 existing global translation modules; the category input retains native disabled
 behavior.
 
-Validation covers native draft/save payloads, stale/denied actions, pending-form
-guards, recursive/unknown schema preservation, real SFC/template/Sass compilation,
-runtime asset compilation and synthetic report ingestion. Local HMR browser
-checks cover focused panels, publication/privacy help, the retained translation
-dialog, required FAQ validation, native HowTo/JSON controls and 320/360px plus
-desktop layouts. Forms were canceled without changing article content. Live
-Search Console data is unavailable locally; no Google request or production
-build is part of this verification.
-
-2026-11-11 validation: 163 focused frontend tests and 36 isolated backend tests
-(2,183 assertions) passed. EN/FA translation syntax and scoped whitespace checks
-also passed. Existing tracked changes remain unstaged; only the new feature-local
-`seo/article-search-console.ts` helper is staged, without a commit.
+The focused component tests cover draft/save payloads, stale actions,
+pending-form guards, schema preservation, template/Sass compilation and
+synthetic report ingestion.
 
 The follow-up sample preview renders this actual component with native Vuetify
 and ApexCharts in an isolated development harness; its synthetic fetch never
@@ -69,25 +59,6 @@ Official Help/Blog comment typography is scoped through the existing
 uses restrained body/identity/time sizes and regular placeholder text, retaining
 the exact existing comment structure, transitions, action positions and script.
 Storefront/Product comments keep their existing presentation.
-
-The official Blog Share dialog in `OPageBlogsView.vue` keeps the native social
-sharing group, adds a separate labeled Copy action through CoreMixin and a
-bounded public-path link. It never shares editor queries/hashes. Social targets
-stay aligned at 44px, including mobile. Recommendation cards own 20px of real
-padding inside their hover surface; their native routes and content remain.
-The page test exercises the real clipboard owner against an isolated browser
-clipboard boundary. These Blog refinements are local to that page; the shared
-share-group component is unchanged.
-
-2026-11-11 Help/Blog refinement verification: 151 focused frontend tests and
-12 isolated Help MCP tests (254 assertions) passed. The Blog suite was rerun
-after the edit-only Word import refinement (12 passing tests). The comment SFC,
-template and Sass compile, and its script remains unchanged. Local browser
-checks covered FAQ disclosure, focused Help tabs, status/visibility drafts,
-pending-form guards, Share alignment, card insets and official comment type.
-Help layouts fit 320/360/600/768/1024/1337px; Blog Share and Word import fit 320px
-and desktop. No article/comment save, publication or live Google request was
-performed for this refinement.
 
 `SArticleEditor` owns both the inline edit and read-only body. Its global style
 imports `article-content.scss`, so the same restrained prose treatment reaches
@@ -151,5 +122,4 @@ build or article save was run.
 
 Source changes for the prose polish: `article-content.scss`, its test, this
 README, the global style block in `SArticleEditor.vue`, and broad heading/ink
-defaults in `Article.scss`. The repository product UI guide records the user's
-global/inherited-font rule. No article APIs, stored bodies or editor logic change.
+defaults in `Article.scss`.

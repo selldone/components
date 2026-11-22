@@ -42,7 +42,6 @@ English/Persian help lives under `bulk_price_dialog.modern` and `inventory_list.
 - `../list/BInventoryList.vue`: modern Inventory opts both operations into the shared presentation.
 - `BInventoryBulkDialogs.test.mjs` and `../list/BInventoryList.test.mjs`: isolated behavior, rendering and caller checks.
 - `../../../../translate/dashboard/en.ts` and `../../../../translate/dashboard/fa.ts`: matching help and state copy.
-- `../../../../../.ai-agent/guides/selldone-product-ui-design.md`: durable shared Inventory bulk-update decision; this README records the feature-specific behavior and measurements.
 
 ## Local verification
 

@@ -29,6 +29,11 @@ vm.runInNewContext(transpile(template.code), { exports: templateExports, require
 const types = Object.fromEntries([["Blog", "shop-blog"], ["Product", "product"],
   ["SelldoneBlog", "blog"], ["SelldoneHelp", "help"]].map(([key, code]) => [key, { code }]));
 const plain = (value) => JSON.parse(JSON.stringify(value));
+const hostEditorUrls = {
+  edit: "/editor/save",
+  upload: "/editor/upload",
+  remove: "/editor/remove/__article_id__",
+};
 const settle = () => new Promise((resolve) => setImmediate(resolve));
 const passthrough = { render() { return Vue.h("div", this.$attrs, this.$slots.default?.()); } };
 const pack = (id = 12, extra = {}) => ({
@@ -76,6 +81,7 @@ function fixture(props = {}, browser = {}) {
   const defaults = Object.fromEntries(Object.entries(component.props).map(([key, value]) => [key, value.default]));
   const state = {
     ...defaults, ...component.data(), workspace: true, workspaceSection: "edit", articleType: "shop-blog",
+    editorUrls: ["blog", "help"].includes(props.articleType) ? hostEditorUrls : null,
     can_edit: true, article: pack().article, ...props, _workspaceGeneration: 1,
     $shop: { id: 7, name: "test-store", language: "fa" },
     $route: { params: { shop_id: 7 }, matched: [] },
@@ -235,6 +241,27 @@ test("Help saves serialize selected and cleared icons only when icon metadata is
   }
 });
 
+test("host-provided editor URLs never fall back to the merchant SDK", () => {
+  for (const articleType of ["blog", "help"]) {
+    const unavailable = fixture({ workspace: false, articleType, editorUrls: null });
+    assert.equal(unavailable.state.canEdit, false);
+    assert.equal(unavailable.state.upload_url, null);
+    unavailable.state.saveChange();
+    unavailable.state.deleteArticle();
+    assert.deepEqual(unavailable.requests, []);
+
+    const available = fixture({ workspace: false, articleType });
+    assert.equal(available.state.canEdit, true);
+    assert.equal(available.state.upload_url, hostEditorUrls.upload);
+    available.state.saveChange();
+    available.state.deleteArticle();
+    assert.deepEqual(available.requests.map(({ method, url }) => [method, url]), [
+      ["post", hostEditorUrls.edit],
+      ["delete", "/editor/remove/12"],
+    ]);
+  }
+});
+
 const helpReaderFixture = (props = {}) => fixture({
   workspace: false, articleType: "help", targetId: 8,
   $slots: { "help-reader": () => [] }, ...props,
@@ -320,7 +347,7 @@ test('Help publishes an unscheduled draft publicly in one native save and keeps 
   assert.equal(f.state.helpReaderSlot.canPublish, true);
   assert.equal(f.state.helpReaderSlot.publish(), true);
   assert.equal(f.requests.length, 1);
-  assert.equal(f.requests[0].url, '/POST_ADD_EDIT_ARTICLE/help');
+  assert.equal(f.requests[0].url, hostEditorUrls.edit);
   assert.equal(f.requests[0].payload.published, true);
   assert.equal(f.requests[0].payload.private, false);
   assert.equal(f.requests[0].payload.schedule_at, null);
