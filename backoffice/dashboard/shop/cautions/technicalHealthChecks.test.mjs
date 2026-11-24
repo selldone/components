@@ -532,11 +532,13 @@ test("email and SMS recorded error warnings use real custom providers and the ex
         byCode(checks({ [field]: service(driver, { enable }) }), code).length,
         0,
       );
-    for (const driver of [undefined, null, "", "default", "unknown-provider"])
+    for (const driver of [undefined, null, "", "default"])
       assert.equal(
         byCode(checks({ [field]: service(driver) }), code).length,
         0,
       );
+    // Email and SMS providers come from backend catalogs: a driver missing from the bundled list is still a custom provider.
+    assert.equal(byCode(checks({ [field]: service("catalog-only-provider") }), code).length, 1);
     for (const invalid of [null, undefined, [], "custom", false, {}])
       assert.equal(byCode(checks({ [field]: invalid }), code).length, 0);
   }

@@ -19,14 +19,16 @@
   >
     <v-btn
       class="sd-modern-button sd-modern-button--form b-shop-email-template-editor__button"
-      variant="outlined"
+      :class="{ 'sd-modern-button--primary': primary }"
+      :color="primary ? 'primary' : undefined"
+      :variant="primary ? 'elevated' : 'outlined'"
       prepend-icon="edit"
       @click="dialog = true"
       :loading="busy"
     >
       {{ $t("b_shop_email_template_editor.customize") }}
       <span
-        v-if="mail_template?.enable"
+        v-if="mail_template?.enable && !primary"
         class="sd-modern-status sd-modern-status--plain b-shop-email-template-editor__custom ms-2"
       >
         <v-avatar
@@ -441,6 +443,8 @@ export default {
     },
     code: {},
     params: {}, // Extra dynamic contents
+    // The launcher is the view's main action; its host shows the custom/default state itself.
+    primary: Boolean,
   },
 
   data: () => ({
@@ -715,6 +719,7 @@ export default {
   font-size: 13px;
   font-weight: 500;
   line-height: 20px;
+  text-transform: none;
 
   &.v-btn--variant-outlined {
     border-color: var(--sd-modern-border);

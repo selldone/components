@@ -3,8 +3,6 @@ import type { Domain } from "@selldone/core-js/models/shop/domain/domain.model";
 import type { ShopGateway } from "@selldone/core-js/models/shop/gateway/shop-gateway.model";
 import type { Gateway } from "@selldone/core-js/models/shop/gateway/gateway.model";
 import { Currency } from "@selldone/core-js/enums/payment/Currency";
-import { EmailProviders } from "@selldone/core-js/enums/email/EmailProviders";
-import { SmsProviders } from "@selldone/core-js/enums/sms/SmsProviders";
 import { ShopCautionHelper } from "@selldone/core-js/helper/shop/ShopCautionHelper";
 
 type DomainStatus = Partial<
@@ -164,22 +162,17 @@ export function getTechnicalCautions(
   }
 
   for (const [code, service, providers, route] of [
-    [
-      "email_errors",
-      shop.mail_service,
-      EmailProviders,
-      "BPageShopSettingEmail",
-    ],
-    ["sms_errors", shop.sms_service, SmsProviders, "BPageShopSettingSms"],
+    // Email and SMS providers come from backend catalogs: any configured driver other than "default" is a custom provider.
+    ["email_errors", shop.mail_service, null, "BPageShopSettingEmail"],
+    ["sms_errors", shop.sms_service, null, "BPageShopSettingSms"],
   ] as const) {
-    if (
-      service?.enable !== true ||
-      !providers.some(
-        (provider) =>
-          provider.driver !== "default" && provider.driver === service.driver,
-      )
-    )
-      continue;
+    const custom = providers
+      ? providers.some(
+          (provider) =>
+            provider.driver !== "default" && provider.driver === service?.driver,
+        )
+      : !!service?.driver && service.driver !== "default";
+    if (service?.enable !== true || !custom) continue;
     if (
       typeof service.errors !== "number" &&
       !(typeof service.errors === "string" && service.errors.trim())

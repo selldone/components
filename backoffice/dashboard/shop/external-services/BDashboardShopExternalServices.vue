@@ -317,7 +317,14 @@ export default {
     },
     sms_provider() {
       const driver = this.sms_service ? this.sms_service.driver : "default";
-      return SmsProviders.find((i) => i.driver === driver);
+      // A provider missing from the bundled list (the backend catalog grows) still shows by its key.
+      return (
+        SmsProviders.find((i) => i.driver === driver) || {
+          driver,
+          title: driver,
+          icon: null,
+        }
+      );
     },
 
     mail_service() {

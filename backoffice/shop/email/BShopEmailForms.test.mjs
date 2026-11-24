@@ -43,9 +43,10 @@ const dialog = Vue.defineComponent({ inheritAttrs: false, props: ["modelValue"],
 const tooltip = Vue.defineComponent({ inheritAttrs: false, setup: (_, { slots }) => () => slots.activator?.({ props: {} }) });
 const field = tag => Vue.defineComponent({
   inheritAttrs: false, props: ["modelValue", "label", "type", "disabled", "items"], emits: ["update:modelValue", "click:append-inner"],
-  setup: (props, { attrs, emit }) => () => Vue.h("label", { ...attrs, "data-field": props.label }, [
+  setup: (props, { attrs, emit, slots }) => () => Vue.h("label", { ...attrs, "data-field": props.label }, [
     props.label,
     Vue.h(tag, { value: props.modelValue ?? "", type: props.type || "text", disabled: props.disabled, onInput: event => emit("update:modelValue", event.target.value) }),
+    slots.append?.(),
   ]),
 });
 const smartSelect = Vue.defineComponent({
@@ -83,6 +84,7 @@ async function fixture(t, source, props = {}) {
     window: {
       API: {
         GET_SHOP_MAIL_SERVICE: id => `/fixture/shops/${id}/mail-service`,
+        GET_SHOP_EMAIL_PROVIDERS: id => `/fixture/shops/${id}/email-providers`,
         POST_SET_SHOP_MAIL_SERVICE: id => `/fixture/shops/${id}/mail-service/set`,
         POST_RESET_SHOP_MAIL_SERVICE: id => `/fixture/shops/${id}/mail-service/reset`,
         POST_SHOP_MAIL_SERVICE_TEST: id => `/fixture/shops/${id}/mail-service/test`,
@@ -120,7 +122,7 @@ async function fixture(t, source, props = {}) {
   app.directive("copy", {});
   const tags = new Set([source, toggleSource].flatMap(item => [...item.template.code.matchAll(/_resolveComponent\("([^"]+)"\)/g)].map(match => match[1])));
   for (const tag of tags)
-    app.component(tag, tag === "v-btn" ? button : tag === "v-dialog" ? dialog : tag === "v-tooltip" ? tooltip : tag === "v-text-field" ? field("input") : tag === "v-textarea" ? field("textarea") : tag === "v-select" ? smartSelect : leaf);
+    app.component(tag, tag === "v-btn" ? button : tag === "v-dialog" ? dialog : tag === "v-tooltip" ? tooltip : tag === "v-text-field" || tag === "v-combobox" ? field("input") : tag === "v-textarea" ? field("textarea") : tag === "v-select" ? smartSelect : leaf);
   const host = document.createElement("div"); document.body.append(host); app.mount(host); await settle();
   t.after(() => { app.unmount(); host.remove(); assert.deepEqual(errors, []); assert.deepEqual(warnings, []); });
   return {
@@ -131,95 +133,215 @@ async function fixture(t, source, props = {}) {
     async input(label, value) { const input = [...host.querySelectorAll("[data-field]")].find(node => node.dataset.field === label)?.querySelector("input,textarea,select"); assert.ok(input, `Field ${label} is rendered`); input.value = value; input.dispatchEvent(new dom.window.Event(input.tagName === "SELECT" ? "change" : "input", { bubbles: true })); await settle(); },
   };
 }
-async function providerFixture(t, value = service()) { const f = await fixture(t, provider); await f.readComplete({ mail_service: value }); return f; }
 async function editorFixture(t, props = {}, value = savedTemplate()) {
   const f = await fixture(t, editor, { code: "order-payment", template: { title: "Fixture order template" }, params: ["order_id"], ...props });
   await f.readComplete({ mail_template: value, default: defaults });
   f.state.dialog = true; await settle(); return f;
 }
 
+const catalogField = (key, title, extra = {}) => ({ key, title, hint: null, type: "text", secret: false, required: true, options: [], default: null, suggestions: [], max: 255, ...extra });
+const catalogSecret = (key, title, extra = {}) => catalogField(key, title, { type: "secret", secret: true, ...extra });
+const smtpFields = (host, port, encryption, required = true, passwordTitle = "Password") => [
+  catalogField("host", "SMTP server", { default: host, suggestions: host ? ["smtp-relay.example.test"] : [] }),
+  catalogField("port", "Port", { type: "number", default: port }),
+  catalogField("encryption", "Encryption", { type: "select", options: ["tls", "ssl", "none"], default: encryption }),
+  catalogField("username", "Email address", { required }),
+  catalogSecret("password", passwordTitle, { required }),
+];
+const catalog = () => ({
+  recommended: ["sendgrid", "gmail", "smtp"],
+  providers: [
+    { key: "sendgrid", title: "SendGrid", description: "API delivery", kind: "api", group: "delivery", logo: null, url: "https://sendgrid.test", docs_url: "https://docs.sendgrid.test",
+      fields: [catalogSecret("api", "API key", { hint: "Mail Send access" }), catalogField("endpoint", "Data region", { type: "select", options: ["global", "eu"], default: "global" })] },
+    { key: "mailpace", title: "MailPace", description: "Private delivery", kind: "api", group: "delivery", logo: "/fixture/mailpace.svg", url: null, docs_url: null, fields: [catalogSecret("api", "Server token")] },
+    { key: "gmail", title: "Gmail", description: "Google mailbox", kind: "smtp", group: "mailbox", logo: null, url: null, docs_url: "https://gmail.test/guide", fields: smtpFields("smtp.gmail.com", 587, "tls", true, "App password") },
+    { key: "zoho_mail", title: "Zoho Mail", description: "Zoho mailbox", kind: "smtp", group: "mailbox", logo: null, url: null, docs_url: null, fields: smtpFields("smtp.zoho.com", 465, "ssl") },
+    { key: "smtp", title: "Custom SMTP", description: "Any server", kind: "smtp", group: "custom", logo: "/fixture/smtp.svg", url: null, docs_url: null, fields: smtpFields(null, 587, "tls", false) },
+  ],
+});
+// A saved service as the backend returns it: secret values never come back, only their stored/missing status.
+const savedService = (extra = {}) => ({ driver: "smtp", enable: true, host: "smtp.example.test", port: 587, from: "shop@example.test", from_name: "Fixture sender", username: "fixture-user", endpoint: null, encryption: "tls", errors: 0, error: null, credentials_status: { api: "missing", password: "stored" }, ...extra });
+async function providerFixture(t, value = savedService(), props = {}) {
+  const f = await fixture(t, provider, props);
+  await f.readComplete({ mail_service: value });
+  if (!props.catalog) { f.requests[1].resolve({ data: catalog() }); await settle(); }
+  return f;
+}
+const captions = f => [...f.host.querySelectorAll(".b-shop-email-provider__picker-caption")].map(node => node.textContent.trim());
+const rows = f => [...f.host.querySelectorAll(".b-shop-email-provider__option-select")].map(node => node.dataset.driver);
+const choose = async (f, driver) => { f.host.querySelector(`.b-shop-email-provider__option-select[data-driver="${driver}"]`).click(); await settle(); };
+const inputValue = (f, label) => [...f.host.querySelectorAll("[data-field]")].find(node => node.dataset.field === label)?.querySelector("input,select")?.value;
+const saveButton = f => f.host.querySelector(".b-shop-email-provider__action");
+
 test("provider and editor templates, scripts and scoped Sass compile with production asset handling", async () => {
   for (const source of [provider, editor]) for (const style of source.descriptor.styles) {
     const output = await compileStyleAsync({ source: style.content, filename: source.file, id: "email-forms-test", scoped: style.scoped, preprocessLang: style.lang });
     assert.deepEqual(output.errors, []);
+    assert.equal(/(^|[\s,}])\.(smart-invert|v-locale--is-rtl)\s*\{|:global\(/.test(output.code), false, "No rule escapes the component scope");
   }
 });
 
-test("all four providers retain their exact configuration fields and common encryption/sender controls", async t => {
+test("the saved provider is a card; Change opens an always-open picker grouped by kind that searches", async t => {
   const f = await providerFixture(t);
-  const expected = { mailgun: ["Domain", "API Key", "Endpoint"], postmark: ["API Key", "Stream ID"], ses: ["Secret Key", "Region", "Key"], smtp: ["SMTP Host", "SMTP Port", "SMTP Username", "SMTP Password"] };
-  for (const [driver, labels] of Object.entries(expected)) {
-    await f.input("shop_email_provider.provider", driver);
-    const actual = [...f.host.querySelectorAll("[data-field]")].map(node => node.dataset.field);
-    for (const label of labels) assert.ok(actual.includes(label), `${driver} retains ${label}`);
-    assert.deepEqual(actual.filter(label => !label.startsWith("shop_email_provider.")).sort(), [...labels].sort(), `${driver} does not expose another provider's fields`);
-    assert.ok(actual.includes("shop_email_provider.inputs.from.label"));
-    assert.ok(actual.includes("shop_email_provider.inputs.from_name.label"));
-    assert.ok(actual.includes("shop_email_provider.encryption.title"));
-    const secure = f.host.querySelector('input[type="password"]');
-    assert.ok(secure, `${driver} keeps private entry hidden`);
-  }
+  assert.deepEqual(f.requests.slice(0, 2).map(r => r.url), ["/fixture/shops/7/mail-service", "/fixture/shops/7/email-providers"]);
+  const card = f.host.querySelector(".b-shop-email-provider__current");
+  assert.match(card.textContent, /Custom SMTP/);
+  assert.equal(card.querySelector(".b-shop-email-provider__status").dataset.status, "active");
+  assert.equal(card.querySelector('[data-kind="smtp"]').textContent.trim(), "shop_email_provider.catalog.kind_smtp");
+  assert.match(card.textContent, /shop@example\.test/);
+  assert.equal(f.host.querySelector(".b-shop-email-provider__picker"), null);
+
+  await f.action("shop_email_provider.catalog.change");
+  assert.deepEqual(captions(f), ["shop_email_provider.catalog.recommended", "shop_email_provider.catalog.group_delivery", "shop_email_provider.catalog.group_mailbox"]);
+  assert.deepEqual(rows(f), ["sendgrid", "gmail", "smtp", "mailpace", "zoho_mail"], "Recommended first, then the rest by group");
+  assert.ok(f.host.querySelector('.b-shop-email-provider__option--active .b-shop-email-provider__option-select[data-driver="smtp"]'));
+
+  f.state.search = "zoho"; await settle();
+  assert.deepEqual(rows(f), ["zoho_mail"]);
+  f.state.search = "google"; await settle();
+  assert.deepEqual(rows(f), ["gmail"], "Descriptions are searched too");
+  f.state.search = "nothing-like-this"; await settle();
+  assert.deepEqual(rows(f), []);
+  assert.match(f.host.querySelector(".b-shop-email-provider__picker-empty").textContent, /catalog\.no_results/);
+
+  await f.action("shop_email_provider.catalog.cancel_change");
+  assert.ok(f.host.querySelector(".b-shop-email-provider__current"));
+  assert.equal(f.state.search, "");
 });
 
-test("provider Save retains the complete enable/configuration/sender payload and applies success", async t => {
+test("a known SMTP provider prefills its server; Save waits for the login and sends only that provider's values", async t => {
   const f = await providerFixture(t);
-  await f.input("SMTP Host", "draft-smtp.example.test");
-  await f.input("shop_email_provider.inputs.from_name.label", "Draft sender");
-  await f.action("global.actions.save");
+  await f.action("shop_email_provider.catalog.change");
+  await choose(f, "gmail");
+  assert.equal(inputValue(f, "SMTP server *"), "smtp.gmail.com");
+  assert.equal(inputValue(f, "Port *"), "587");
+  assert.equal(inputValue(f, "Encryption *"), "tls");
+  assert.equal(inputValue(f, "Email address *"), "", "The previous provider's login is not carried over");
+  assert.match(f.host.textContent, /catalog\.prefilled \{"provider":"Gmail"\}/);
+  assert.match(f.host.textContent, /catalog\.switch_notice \{"from":"Custom SMTP"\}/);
+  assert.match(f.host.querySelector(".b-shop-email-provider__missing").textContent, /Email address, App password/);
+  assert.equal(saveButton(f).disabled, true);
+  assert.equal(f.host.querySelector('[data-field="App password *"] input').type, "password");
+  assert.equal(f.host.querySelector(".b-shop-email-provider__link").getAttribute("href"), "https://gmail.test/guide");
+
+  await f.input("Email address *", "store@example.test");
+  await f.input("App password *", "app-secret");
+  assert.equal(f.host.querySelector(".b-shop-email-provider__missing"), null);
+  saveButton(f).click(); await settle();
+  assert.equal(f.requests.length, 2, "Switching from a saved provider asks first");
+  assert.match(f.host.querySelector('[role="dialog"]').textContent, /switch_body/);
+  await f.action("shop_email_provider.catalog.switch_continue");
+
   const request = f.requests.at(-1);
   assert.equal(request.url, "/fixture/shops/7/mail-service/set");
-  assert.deepEqual(plain(request.body), { enable: true, driver: "smtp", host: "draft-smtp.example.test", port: 587, from: "shop@example.test", from_name: "Draft sender", api: "fixture-api", username: "fixture-user", password: "fixture-password", endpoint: "fixture-endpoint", encryption: "tls" });
-  assert.equal(f.state.busy_set, true); assert.equal(f.shop.mail_service, null);
-  const saved = { ...service(), ...plain(request.body) };
+  assert.deepEqual(plain(request.body), { enable: true, driver: "gmail", from: "shop@example.test", from_name: "Fixture sender", host: "smtp.gmail.com", port: 587, encryption: "tls", username: "store@example.test", password: "app-secret" });
+  const saved = savedService({ driver: "gmail", host: "smtp.gmail.com", username: "store@example.test", credentials_status: { api: "missing", password: "stored" } });
   request.resolve({ data: { mail_service: saved } }); await settle();
-  assert.equal(f.state.busy_set, false); assert.deepEqual(plain(f.shop.mail_service), saved);
-  assert.ok(f.notices.some(([method]) => method === "showSuccessAlert"));
+  assert.deepEqual(plain(f.shop.mail_service), saved);
+  assert.equal(f.state.changing, false);
+  assert.match(f.host.querySelector(".b-shop-email-provider__current").textContent, /Gmail/);
+  assert.ok(f.notices.some(([method, args]) => method === "showSuccessAlert" && args[1] === "shop_email_provider.messages.saved"));
 });
 
-test("provider failures retain drafts and release Save, and no service remains a usable unsaved form", async t => {
-  const f = await providerFixture(t, null);
-  assert.equal(f.state.busy, false); assert.equal(f.state.mail_service, null);
-  await f.input("shop_email_provider.provider", "smtp");
-  await f.input("SMTP Host", "retained.example.test");
-  await f.action("global.actions.save");
-  f.requests.at(-1).resolve({ data: { error: true, error_msg: "Fixture denied" } }); await settle();
-  assert.equal(f.state.host, "retained.example.test"); assert.equal(f.state.busy_set, false);
-  await f.action("global.actions.save");
+test("stored secrets are never shown: an edit keeps them, Replace sends a new one", async t => {
+  const f = await providerFixture(t);
+  const stored = f.host.querySelector('.b-shop-email-provider__stored[data-field="password"]');
+  assert.match(stored.textContent, /catalog\.stored/);
+  assert.equal(f.host.querySelector('input[type="password"]'), null);
+  assert.equal(saveButton(f).disabled, true, "Nothing to save yet");
+
+  await f.input("SMTP server *", "smtp2.example.test");
+  saveButton(f).click(); await settle();
+  assert.deepEqual(plain(f.requests.at(-1).body), { enable: true, driver: "smtp", from: "shop@example.test", from_name: "Fixture sender", host: "smtp2.example.test", port: 587, encryption: "tls", username: "fixture-user" }, "An untouched stored password stays out of the request");
+  f.requests.at(-1).resolve({ data: { mail_service: savedService({ host: "smtp2.example.test" }) } }); await settle();
+
+  await f.action("shop_email_provider.catalog.replace");
+  await f.input("Password", "new-password");
+  saveButton(f).click(); await settle();
+  assert.equal(plain(f.requests.at(-1).body).password, "new-password");
   f.requests.at(-1).reject(new Error("Fixture offline")); await settle();
-  assert.equal(f.state.host, "retained.example.test"); assert.equal(f.state.busy_set, false);
+  f.state.cancelReplace("password"); await settle();
+  assert.ok(f.host.querySelector('.b-shop-email-provider__stored[data-field="password"]'));
+});
+
+test("an API provider shows its key and region select, and a switch drops the SMTP values", async t => {
+  const f = await providerFixture(t);
+  await f.action("shop_email_provider.catalog.change");
+  await choose(f, "sendgrid");
+  assert.equal(inputValue(f, "Data region *"), "global");
+  assert.deepEqual([...f.host.querySelectorAll('[data-field="Data region *"] option')].map(o => o.value), ["global", "eu"]);
+  assert.equal(f.host.querySelector(".b-shop-email-provider__help"), null, "SMTP port help only for SMTP providers");
+  await f.input("API key *", "SG.fixture");
+  await f.input("Data region *", "eu");
+  saveButton(f).click(); await settle();
+  await f.action("shop_email_provider.catalog.switch_continue");
+  assert.deepEqual(plain(f.requests.at(-1).body), { enable: true, driver: "sendgrid", from: "shop@example.test", from_name: "Fixture sender", api: "SG.fixture", endpoint: "eu" });
+
+  // Back to the saved provider: its stored values return.
+  await choose(f, "smtp");
+  assert.equal(inputValue(f, "SMTP server *"), "smtp.example.test");
+  assert.ok(f.host.querySelector('.b-shop-email-provider__stored[data-field="password"]'));
+});
+
+test("without a saved service the picker opens at once; failures keep the draft and release Save", async t => {
+  const f = await providerFixture(t, null);
+  assert.equal(f.host.querySelector(".b-shop-email-provider__current"), null);
+  assert.ok(rows(f).length);
+  await choose(f, "smtp");
+  await f.input("SMTP server *", "retained.example.test");
+  await f.input("shop_email_provider.inputs.from.label *", "store@example.test");
+  await f.input("shop_email_provider.inputs.from_name.label *", "Store");
+  saveButton(f).click(); await settle();
+  assert.equal(f.state.confirm_switch, false, "A first provider needs no switch confirmation");
+  f.requests.at(-1).resolve({ data: { error: true, error_msg: "Fixture denied" } }); await settle();
+  assert.equal(f.state.values.host, "retained.example.test"); assert.equal(f.state.busy_set, false);
+  saveButton(f).click(); await settle();
+  f.requests.at(-1).reject(new Error("Fixture offline")); await settle();
+  assert.equal(f.state.values.host, "retained.example.test"); assert.equal(f.state.busy_set, false);
   assert.equal(f.shop.mail_service, null);
   assert.ok(f.notices.some(([method]) => method === "showErrorAlert"));
   assert.ok(f.notices.some(([method]) => method === "showLaravelError"));
 });
 
-test("disabling a provider keeps its configuration editable and saves the disabled flag", async t => {
-  const f = await providerFixture(t);
-  f.host.querySelector('button[role="switch"]').click(); await settle();
-  assert.equal(f.state.enable, false);
-  assert.ok(f.host.querySelector('[data-field="SMTP Host"] input'));
-  assert.ok(![...f.host.querySelectorAll("button")].some(node => node.textContent.includes("shop_email_provider.actions.send_test_email")));
-  await f.action("global.actions.save");
-  const request = f.requests.at(-1);
-  assert.equal(request.body.enable, false); assert.equal(request.body.host, "smtp.example.test");
-  request.resolve({ data: { mail_service: { ...service(), enable: false } } }); await settle();
-  assert.equal(f.shop.mail_service.enable, false);
-});
-
-test("provider test sends only the existing signed-in-account request and error reset updates counts", async t => {
-  const f = await providerFixture(t, { ...service(), errors: 12, error: "Fixture delivery error" });
-  assert.match(f.host.textContent, /account@example\.test/);
+test("the test email uses the saved settings only, and error reset updates the counters", async t => {
+  const f = await providerFixture(t, savedService({ errors: 12, error: "Fixture delivery error" }));
+  assert.match(f.host.querySelector(".b-shop-email-provider__errors").textContent, /Fixture delivery error/);
   await f.action("shop_email_provider.actions.send_test_email");
+  assert.match(f.host.querySelector('[role="dialog"]').textContent, /account@example\.test/);
+  await f.action("shop_email_provider.catalog.test_send");
   const testRequest = f.requests.at(-1);
   assert.equal(testRequest.url, "/fixture/shops/7/mail-service/test");
   assert.equal(testRequest.body, undefined, "No arbitrary recipient is added to the API");
-  testRequest.resolve({ data: {} }); await settle();
-  assert.equal(f.state.busy_send_test, false);
+  testRequest.resolve({ data: { success: true, to: "account@example.test" } }); await settle();
+  assert.match(f.host.querySelector('[role="dialog"]').textContent, /catalog\.test_accepted/);
+
   await f.action("shop_email_provider.actions.reset_errors");
   const reset = f.requests.at(-1);
   assert.equal(reset.url, "/fixture/shops/7/mail-service/reset"); assert.equal(reset.body, undefined);
-  reset.resolve({ data: { mail_service: service() } }); await settle();
-  assert.equal(f.state.busy_reset, false); assert.equal(f.state.mail_service.errors, 0);
-  assert.equal(f.host.querySelector('[role="alert"]'), null);
+  reset.resolve({ data: { mail_service: savedService() } }); await settle();
+  assert.equal(f.state.mail_service.errors, 0);
+  assert.equal(f.host.querySelector(".b-shop-email-provider__errors"), null);
+
+  await f.input("SMTP server *", "unsaved.example.test");
+  const testButton = [...f.host.querySelectorAll("button")].find(node => node.textContent.includes("shop_email_provider.actions.send_test_email"));
+  assert.equal(testButton.disabled, true, "A test always uses saved settings");
+  assert.match(f.host.textContent, /catalog\.test_save_first/);
+});
+
+test("read-only staff see the saved provider without any edit control", async t => {
+  const f = await providerFixture(t, savedService(), { readOnly: true });
+  assert.ok(f.host.querySelector(".b-shop-email-provider__read-only"));
+  assert.ok(f.host.querySelector(".b-shop-email-provider__current"));
+  assert.equal(f.host.querySelector(".b-shop-email-provider__current-actions"), null);
+  assert.equal(f.host.querySelector(".b-shop-email-provider__picker"), null);
+  assert.equal(f.host.querySelector(".b-shop-email-provider__connection"), null);
+  assert.equal(saveButton(f), null);
+});
+
+test("a catalog passed by the page is used without another request", async t => {
+  const f = await providerFixture(t, savedService(), { catalog: catalog() });
+  assert.deepEqual(f.requests.map(r => r.url), ["/fixture/shops/7/mail-service"]);
+  assert.match(f.host.querySelector(".b-shop-email-provider__current").textContent, /Custom SMTP/);
 });
 
 test("editor sends unchanged multipart fields and files, updates images and closes only after success", async t => {
@@ -318,4 +440,17 @@ test("Workspace navigation and custom/default toggling retain text, native image
   assert.equal(f.state.header_image, "shops/7/workspace-header.png"); assert.equal(f.state.header_image_file, headerFile);
   assert.equal(f.state.header_logo, false);
   assert.equal(f.requests.length, 1, "Local navigation and toggles do not save or upload files");
+});
+
+test("the editor launcher can be a view's primary action without repeating the custom state", async t => {
+  const launcher = f => f.host.querySelector(".b-shop-email-template-editor__launcher button");
+  const standard = await editorFixture(t);
+  assert.equal(launcher(standard).getAttribute("variant"), "outlined");
+  assert.equal(launcher(standard).getAttribute("color"), null);
+  assert.ok(launcher(standard).querySelector(".b-shop-email-template-editor__custom"), "A standalone launcher still shows the custom state");
+  const primary = await editorFixture(t, { primary: true });
+  assert.equal(launcher(primary).getAttribute("variant"), "elevated");
+  assert.equal(launcher(primary).getAttribute("color"), "primary");
+  assert.ok(launcher(primary).classList.contains("sd-modern-button--primary"));
+  assert.equal(launcher(primary).querySelector(".b-shop-email-template-editor__custom"), null, "The host page states custom/default itself");
 });
