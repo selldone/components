@@ -942,7 +942,7 @@ export default {
       });
       out.push({
         title: this.$t("community.tips.need_nominate"),
-        check: this.profile.verified || this.profile.nominated_id,
+        check: this.profile?.verified || this.profile?.nominated_id, // A storefront code sign-in has no global profile.
       });
 
       return out;
