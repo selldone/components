@@ -1350,6 +1350,9 @@ function factory($: JQuery, Handlebars: any, MediumEditor: IMediumEditor) {
       const sel = window.getSelection();
       const el = $el.get(0);
 
+      // An add-on clicked without an active paragraph finds no next element.
+      if (!el) return;
+
       if (!el.childNodes.length) {
         const textEl = document.createTextNode(" ");
         el.appendChild(textEl);

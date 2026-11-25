@@ -1487,7 +1487,8 @@ export default {
     border-radius: 14px;
     scrollbar-gutter: stable;
   }
-  .sms-provider__picker-caption { position: sticky; top: -4px; z-index: 1; margin: 0; padding: 10px 10px 6px; background: rgb(var(--v-theme-surface)); font-size: 10px; line-height: 15px; letter-spacing: .09em; }
+  // Above the rows' raised content (z-index 1), so scrolled rows slide under the caption.
+  .sms-provider__picker-caption { position: sticky; top: -4px; z-index: 2; margin: 0; padding: 10px 10px 6px; background: rgb(var(--v-theme-surface)); font-size: 10px; line-height: 15px; letter-spacing: .09em; }
   // A row selects as a whole (its full-size button sits underneath); the name and the flags open the details.
   .sms-provider__option {
     position: relative;

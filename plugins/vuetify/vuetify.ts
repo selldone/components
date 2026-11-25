@@ -11,6 +11,7 @@
  * Our journey is not just about reaching a destination, but about creating a masterpiece.
  * Tread carefully, for you're treading on dreams.
  */
+import "./array-copy-polyfill";
 import "./vuetify-override.scss";
 
 import { createVuetify, VuetifyOptions } from "vuetify";
