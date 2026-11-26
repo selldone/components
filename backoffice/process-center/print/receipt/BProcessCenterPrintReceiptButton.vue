@@ -79,7 +79,6 @@
 
           <template v-slot:title>
             <b>Standard Receipt</b>
-            <v-chip size="x-small" class="ma-1" label>English</v-chip>
           </template>
         </v-list-item>
       </v-list>
