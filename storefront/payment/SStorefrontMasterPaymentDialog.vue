@@ -299,16 +299,6 @@ export default {
             this.exist_payment_form = true;
           }
 
-          // ▀▀▀▀▀▀▀▀▀ 🥶 Guest ▀▀▀▀▀▀▀▀▀
-          if (!this.USER()) {
-            // Save array of guest codes in local storage:
-            StorefrontLocalStorages.AddCurrentGuestCodeToHistory(
-              type,
-              bill.order_id,
-              code,
-            );
-          }
-
           //console.log("======payment-form=========",'acceptCOD',acceptCOD);
         },
         800,
@@ -797,6 +787,15 @@ export default {
           this.keeped_data_to_callback = null;
 
           if (!data.error) {
+            // Keep access to the submitted guest order before any redirect or cart refresh.
+            if (!this.USER() && data.code) {
+              StorefrontLocalStorages.AddCurrentGuestCodeToHistory(
+                data.order_type,
+                data.basket_id,
+                data.code,
+              );
+            }
+
             // * Fill payment form:
             this.fillPaymentForm(data);
 
