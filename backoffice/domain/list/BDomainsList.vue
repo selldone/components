@@ -56,8 +56,17 @@
         </template>
 
         <template #item.url="{ item }">
-          <div class="b-domains-list__address"><b-domain-provider :item="item" /><router-link :to="domainRoute(item)" class="b-domains-list__domain-link" @click.stop="cacheRouteState(domainKey(item))"><bdi dir="ltr">{{ item.url.replace(/^https?:\/\//, '') }}</bdi></router-link><BShopLicenseBlockIcon v-if="item.domain && !can_edit_domain(item.domain)" /></div>
-          <div class="b-domains-list__meta"><v-icon v-if="item.primary" size="13">star_border</v-icon>{{ item.primary ? $t('domains_modern.list.primary') : item.official === 'local' ? $t('domains_modern.list.store_address') : item.domain?.externally_hosted ? $t('admin_shop.dashboard.info.table.externally_hosted') : 'HTTPS' }}</div>
+          <div class="b-domains-list__inline">
+            <div class="b-domains-list__address">
+              <b-domain-provider :item="item" />
+              <router-link :to="domainRoute(item)" class="b-domains-list__domain-link" @click.stop="cacheRouteState(domainKey(item))"><bdi dir="ltr">{{ item.url.replace(/^https?:\/\//, '') }}</bdi></router-link>
+              <BShopLicenseBlockIcon v-if="item.domain && !can_edit_domain(item.domain)" />
+            </div>
+            <span v-if="item.primary || item.official === 'local' || item.domain?.externally_hosted" class="b-domains-list__meta">
+              <v-icon v-if="item.primary" size="13" aria-hidden="true">star_border</v-icon>
+              {{ $t(item.primary ? 'domains_modern.list.primary' : item.official === 'local' ? 'domains_modern.list.store_address' : 'admin_shop.dashboard.info.table.externally_hosted') }}
+            </span>
+          </div>
           <b-domain-layout-mark :summary="item.layout_summary" :shop-id="shop.id" :domain-key="domainKey(item)" />
         </template>
         <template #item.home="{ item }">
@@ -71,17 +80,21 @@
         <template #item.connection="{ item }">
           <router-link v-if="!item.domain?.externally_hosted && (item.error || !item.ssl)"
                        :to="domainRoute(item, 'BPageDomainConnection', 'ssl')"
-                       class="b-domains-list__status-action"
+                       class="b-domains-list__status-action b-domains-list__inline"
                        :aria-label="`${$t('domains_modern.list.connection_details')} · ${item.domain?.domain || item.url}`"
                        @click.stop="cacheRouteState(domainKey(item))">
             <span class="sd-modern-status sd-modern-status--plain b-domains-list__connection"><span class="sd-modern-status__dot" :class="item.error ? 'sd-modern-status__dot--error' : 'sd-modern-status__dot--warning'" />{{ $t('domains_modern.list.attention') }}</span>
             <span v-if="item.approved !== undefined" class="b-domains-list__meta">{{ $t(item.error ? 'domains_modern.list.connection_error' : item.approved ? 'domains_modern.list.verified' : 'domains_modern.list.pending') }}</span>
             <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t('domains_modern.list.connection_details') }}</v-tooltip>
           </router-link>
-          <template v-else>
-          <span class="sd-modern-status sd-modern-status--plain b-domains-list__connection"><span class="sd-modern-status__dot" :class="{ 'bg-warning': item.error || (!item.ssl && !item.domain?.externally_hosted), 'bg-success': item.ssl && !item.error && !item.domain?.externally_hosted && item.official !== 'local' }" />{{ item.domain?.externally_hosted ? $t('domains_modern.list.external') : item.error || !item.ssl ? $t('domains_modern.list.attention') : item.official === 'local' ? $t('domains_modern.list.store_address') : 'HTTPS' }}</span>
-          <div v-if="item.approved !== undefined && !item.domain?.externally_hosted" class="b-domains-list__meta">{{ $t(item.error ? 'domains_modern.list.connection_error' : item.approved ? 'domains_modern.list.verified' : 'domains_modern.list.pending') }}</div>
-          </template>
+          <div v-else class="b-domains-list__inline">
+            <span class="sd-modern-status sd-modern-status--plain b-domains-list__connection">
+              <v-icon v-if="!item.domain?.externally_hosted && item.official !== 'local'" size="14" color="success" class="no-inv" aria-hidden="true">lock</v-icon>
+              <span v-else class="sd-modern-status__dot" :class="{ 'sd-modern-status__dot--warning': item.error }" />
+              {{ item.domain?.externally_hosted ? $t('domains_modern.list.external') : item.official === 'local' ? $t('domains_modern.list.store_address') : 'HTTPS' }}
+            </span>
+            <span v-if="item.approved !== undefined && !item.domain?.externally_hosted" class="b-domains-list__meta">{{ $t(item.approved ? 'domains_modern.list.verified' : 'domains_modern.list.pending') }}</span>
+          </div>
           <v-tooltip :model-value="sslHelp === domainKey(item)" location="top" open-on-focus open-on-click content-class="sd-modern-tooltip text-start"
                      @update:model-value="sslHelp = $event ? domainKey(item) : null">
             <template #activator="{ props }">
@@ -104,8 +117,10 @@
             <v-tooltip activator="parent" location="top" open-on-focus content-class="sd-modern-tooltip text-start">{{ $t(item.enable ? 'domains_modern.list.disable_action' : 'domains_modern.list.enable_action') }}</v-tooltip>
           </button>
           <span v-else class="sd-modern-status sd-modern-status--plain"><span class="sd-modern-status__dot" :class="!item.enable ? 'sd-modern-status__dot--error' : maintenanceEnabled(item) ? 'sd-modern-status__dot--warning' : 'sd-modern-status__dot--success'" />{{ $t(!item.enable ? 'domains_modern.list.disabled' : maintenanceEnabled(item) ? 'domains_modern.maintenance.status' : 'domains_modern.list.enabled') }}</span>
-          <div v-if="maintenanceEnabled(item)" class="b-domains-list__meta">{{ $t(item.enable ? 'domains_modern.maintenance.all_paths' : 'domains_modern.maintenance.configured_disabled') }}</div>
-          <div v-if="item.official !== 'local'" class="b-domains-list__meta">{{ $t(item.indexed ? 'domains_modern.list.index_allowed' : 'domains_modern.list.index_off') }}</div>
+          <div v-if="item.official !== 'local'" class="b-domains-list__meta b-domains-list__visibility-meta">
+            <span v-if="maintenanceEnabled(item)">{{ $t(item.enable ? 'domains_modern.maintenance.all_paths' : 'domains_modern.maintenance.configured_disabled') }}</span>
+            <span>{{ $t(item.indexed ? 'domains_modern.list.index_allowed' : 'domains_modern.list.index_off') }}</span>
+          </div>
         </template>
         <template #item.actions="{ item, internalItem, isExpanded, toggleExpand }">
           <div class="b-domains-list__row-actions">
@@ -1205,9 +1220,9 @@ export default {
     refinedHeaders() {
       return [
         { title: this.$t('domains_modern.list.domain'), key: 'url', value: 'url', sortable: false },
-        { title: this.$t('domains_modern.list.home'), key: 'home', value: 'home', sortable: false, width: '23%' },
-        { title: this.$t('domains_modern.list.connection'), key: 'connection', value: 'connection', sortable: false, width: '18%' },
-        { title: this.$t('domains_modern.list.visibility'), key: 'visibility', value: 'visibility', sortable: false, width: '15%' },
+        { title: this.$t('domains_modern.list.home'), key: 'home', value: 'home', sortable: false, width: '17%' },
+        { title: this.$t('domains_modern.list.connection'), key: 'connection', value: 'connection', sortable: false, width: '22%' },
+        { title: this.$t('domains_modern.list.visibility'), key: 'visibility', value: 'visibility', sortable: false, width: '14%' },
         { title: '', key: 'actions', value: 'actions', sortable: false, width: '168px', align: 'end' },
       ];
     },
@@ -1647,9 +1662,12 @@ export default {
   .b-domains-list__refined-table :deep(.v-table__wrapper) { overflow: visible; }
   .b-domains-list__refined-table :deep(table) { width: 100%; table-layout: fixed; }
   .b-domains-list__refined-table :deep(thead th) { padding: 15px 12px 9px !important; }
-  .b-domains-list__refined-table :deep(tbody > tr:not(.b-domains-list__expanded) > td) { padding: 15px 12px !important; font-size: 12px; font-weight: 400; line-height: 19px; }
+  .b-domains-list__refined-table :deep(tbody > tr.v-data-table__tr > td) { padding: 8px 12px !important; font-size: 12px; font-weight: 400; line-height: 19px; }
+  .b-domains-list__inline { display: flex; align-items: center; flex-wrap: wrap; gap: 2px 8px; min-width: 0; }
+  .b-domains-list__inline > .b-domains-list__meta { margin-block-start: 0; }
   .b-domains-list__address { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; line-height: 20px; min-width: 0; overflow-wrap: anywhere; }
   .b-domains-list__meta { display: flex; align-items: center; gap: 5px; margin-block-start: 3px; color: var(--sd-modern-muted); font-size: 11px; font-weight: 400; line-height: 17px; overflow-wrap: anywhere; }
+  .b-domains-list__visibility-meta { flex-wrap: wrap; row-gap: 2px; }
   .b-domains-list__ssl-manager { max-width: 100%; padding: 0; border: 0; border-radius: 3px; background: transparent; font-family: inherit; text-align: start; cursor: help; }
   .b-domains-list__ssl-manager:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
   .b-domains-list__destination, .b-domains-list__destination-static { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; font-weight: 400; line-height: 19px; text-align: start; min-width: 0; }
@@ -1657,7 +1675,7 @@ export default {
   .b-domains-list__destination :deep(.v-btn__content) { white-space: normal; justify-content: flex-start; gap: 7px; text-align: start; min-width: 0; }
   .b-domains-list__destination .v-icon, .b-domains-list__destination-static > .v-icon { margin-block-start: 2px; color: var(--sd-modern-muted); }
   .b-domains-list__connection { white-space: normal; }
-  .b-domains-list__status-action { display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; max-width: 100%; min-height: 28px; padding: 0; border: 0; border-radius: 3px; background: transparent; color: inherit; font: inherit; text-align: start; text-decoration: none; cursor: pointer; }
+  .b-domains-list__status-action { display: inline-flex; align-items: center; max-width: 100%; min-height: 28px; padding: 0; border: 0; border-radius: 3px; background: transparent; color: inherit; font: inherit; text-align: start; text-decoration: none; cursor: pointer; }
   .b-domains-list__status-action:not(:disabled):hover > .sd-modern-status { text-decoration: underline; text-underline-offset: 3px; }
   .b-domains-list__status-action:focus-visible { outline: 2px solid rgb(var(--v-theme-primary)); outline-offset: 3px; }
   .b-domains-list__status-action:disabled { cursor: wait; }
@@ -1693,7 +1711,7 @@ export default {
     .b-domains-list__search { width: 100%; max-width: none; margin-inline-start: 0; }
     .b-domains-list__refined-table :deep(table) { table-layout: auto; }
     .b-domains-list__refined-table :deep(.v-data-table__tr--mobile) { display: grid; grid-template-columns: minmax(0, 1fr); padding-inline: 12px; }
-    .b-domains-list__refined-table :deep(tbody > tr:not(.b-domains-list__expanded) > td) { padding: 10px 0 !important; }
+    .b-domains-list__refined-table :deep(.v-table__wrapper > table > tbody > tr.v-data-table__tr--mobile > td) { padding: 8px 0 !important; }
     .b-domains-list__refined-table :deep(.v-data-table__td-value) { min-width: 0; max-width: 100%; }
     .b-domains-list__details { padding: 18px 13px; border-radius: 16px; }
     .b-domains-list__scope-action, .b-domains-list__status-action, .b-domains-list__advanced > summary { min-height: 44px; }

@@ -229,6 +229,7 @@ test("only a successful current read opens the same empty state at root/category
 test("failed reads, including a failed refresh after cached empty data, never masquerade as an empty catalog", async () => {
   for (const cached of [false, true]) {
     const f = fixture();
+    f.state.current_dir_id = 7;
     await load(f);
     assert.equal(f.state.showCatalogEmpty, true);
     f.state.fetchData(true);
@@ -240,6 +241,17 @@ test("failed reads, including a failed refresh after cached empty data, never ma
     assert.equal(f.state.catalogReadContext, null);
     assert.equal(f.state.showCatalogEmpty, false);
     assert.equal(f.notices.length, 1);
+
+    f.state.fetchData();
+    assert.equal(f.requests.length, 3, "A failed read must allow the same query to retry without force");
+    assert.equal(f.requests.at(-1).params.dir, 7);
+    f.requests.at(-1).resolve(response({ products: [{ id: 8 }], total: 1 }));
+    await setImmediate();
+    assert.equal(f.state.products[0].id, 8);
+    assert.equal(f.state.busy_fetch, false);
+
+    f.state.fetchData();
+    assert.equal(f.requests.length, 3, "A successful read still deduplicates the same query");
   }
 });
 
@@ -395,6 +407,8 @@ test("older success/cache/failure/finally callbacks cannot overwrite a newer loc
     assert.equal(f.state.catalogReadContext, null);
     assert.deepEqual(plain(f.state.folders), []);
     assert.equal(f.notices.length, 0);
+    f.state.fetchData();
+    assert.equal(f.requests.length, 2, "An older failure must not release the pending query's duplicate guard");
     current.resolve(response({ parent: { id: 7, title: "Current category" } }));
     await setImmediate();
     assert.equal(f.state.busy_fetch, false);

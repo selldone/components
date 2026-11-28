@@ -408,7 +408,7 @@
         {{ $t('product_panel.workspace.list_view.back_to', { title: parent_folders.parent?.title || $t('global.commons.home') }) }}
       </v-btn>
     </section>
-    <v-row v-if="!showCatalogEmpty && !showCatalogLoading" id="manage-panel" dense>
+    <v-row v-if="!showCatalogEmpty && !showCatalogLoading" id="manage-panel" density="compact">
       <v-fade-transition
         group
         hide-on-leave
@@ -578,7 +578,9 @@
               <b-product-window-category-mini
                 v-if="mini"
                 :category="category"
+                :gray-on-clicked="false"
                 :class="{
+                  disabled: busy_fetch && loading_cat === category,
                   'not-drop-able': current_dragged_folder === category,
                   'now-drop-enter': current_drop_enter_folder === category,
                 }"
@@ -600,7 +602,7 @@
                   'now-drop-enter': current_drop_enter_folder === category,
                 }"
                 :compact-mode="compactMode"
-                :loading="loading_cat === category"
+                :loading="busy_fetch && loading_cat === category"
                 :show-edit-button="showEditButton"
                 class="item h-100"
                 @select="selectFolder(category)"
@@ -882,7 +884,7 @@
 
         <!-- ⬬⬬⬬ Add Mode ⬬⬬⬬ -->
         <v-row
-          dense
+          density="compact"
           class="b-products-window__tool-row"
           v-if="
             CAN_ADD_PRODUCT &&
@@ -3344,6 +3346,10 @@ export default {
         return;
       }
       this.loading_cat = category;
+      if (!this.busy_fetch && this.LAST_QUERY_PARAMS === null && category?.id === this.current_dir_id) {
+        this.fetchData();
+        return;
+      }
       this.$router.push({
         /*hash: this.hash,*/ query: { dir: category?.id, "no-scroll": true },
       }); // Dont scroll up!
@@ -3484,14 +3490,18 @@ export default {
         .then(handleSuccessResponse)
         .catch((error) => {
           if (!isCurrentRequest()) return;
-          if (importRequestId !== null && (importRequestId !== this.importRequestId || error === undefined)) return;
+          if (importRequestId !== null && importRequestId !== this.importRequestId) return;
           this.catalogReadContext = null;
+          if (importRequestId !== null && error === undefined) return;
           if (this.isSpecImport) this.importLoadError = true;
           NotificationService.showLaravelError(error);
         })
         .finally(() => {
           if (!isCurrentRequest()) return;
           if (importRequestId !== null && importRequestId !== this.importRequestId) return;
+          // A failed read must remain retryable even when its query is unchanged.
+          if (!this.catalogReadContext) this.LAST_QUERY_PARAMS = null;
+          this.loading_cat = null;
           this.busy_fetch = false;
         });
     },

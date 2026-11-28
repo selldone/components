@@ -188,6 +188,9 @@ test("maintenance stays explicit in custom-domain visibility, with disabled acce
     const status = f.document.querySelector('td:nth-child(4) .sd-modern-status');
     assert.equal(status.textContent, enabled ? 'domains_modern.maintenance.status' : 'domains_modern.list.disabled');
     assert(status.querySelector(enabled ? '.sd-modern-status__dot--warning' : '.sd-modern-status__dot--error'));
+    const visibility = status.closest('td').textContent;
+    assert.ok(visibility.includes(enabled ? 'domains_modern.maintenance.all_paths' : 'domains_modern.maintenance.configured_disabled'));
+    assert.ok(visibility.includes('domains_modern.list.index_allowed'));
     assert.match(f.document.querySelector('.b-domains-list__details .sd-modern-notice').textContent, enabled ? /maintenance.serving_hint/ : /maintenance.configured_disabled/);
     assert.equal(f.document.querySelector('.b-domains-list__details').textContent.includes('maintenance.missing_html'), nested, 'missing HTML never falls through to a normal-store claim');
     assert.equal(f.document.querySelector('.b-domains-list__details .b-domain-storefront-preview'), null, 'the compact list does not duplicate the customer-view preview');
@@ -222,6 +225,38 @@ test("connection rows explain configured SSL management independently of the pub
     assert.equal(manager.textContent.trim(), `SSL · domains_modern.map.${managed ? 'selldoneEdge' : 'externalEdge'}`);
     assert.ok(connection.textContent.includes(`domains_modern.connection.${managed ? 'sslSecureHint' : 'sslOwnHint'}`));
     assert.equal(f.pushes.length, 0);
+  }
+});
+
+test("the domain identity omits duplicate HTTPS and the connection locks only a healthy HTTPS status", async () => {
+  const cases = [
+    { item: { ...entries.custom, primary: true, approved: true }, note: 'domains_modern.list.primary', status: 'HTTPS', detail: 'verified' },
+    { item: entries.sub, status: 'HTTPS' },
+    { item: entries.local, note: 'domains_modern.list.store_address', status: 'domains_modern.list.store_address' },
+    {
+      item: { ...entries.custom, domain: { ...entries.custom.domain, externally_hosted: true } },
+      note: 'admin_shop.dashboard.info.table.externally_hosted', status: 'domains_modern.list.external',
+    },
+    { item: { ...entries.custom, ssl: false, approved: false }, status: 'domains_modern.list.attention', detail: 'pending' },
+    { item: { ...entries.custom, approved: true, error: 'Fixture connection failed' }, status: 'domains_modern.list.attention', detail: 'connection_error' },
+  ];
+  const { document } = await renderRefined(cases.map(({ item }) => item));
+  const rows = [...document.querySelectorAll('tbody > tr')];
+  for (const [index, { note, status, detail }] of cases.entries()) {
+    const [domain, , connection] = rows[index].cells;
+    const addressNote = domain.querySelector('.b-domains-list__meta');
+    assert.equal(!!addressNote, !!note);
+    if (note) assert.ok(addressNote.textContent.includes(note));
+    assert.doesNotMatch(domain.textContent, /\bHTTPS\b/);
+    const connectionStatus = connection.querySelector('.b-domains-list__connection');
+    const lock = connectionStatus.querySelector('[color="success"]');
+    assert.equal(!!lock, status === 'HTTPS');
+    if (lock) {
+      assert.equal(lock.textContent, 'lock');
+      assert.equal(lock.getAttribute('aria-hidden'), 'true');
+    }
+    assert.ok(connectionStatus.textContent.includes(status));
+    if (detail) assert.ok(connection.textContent.includes(`domains_modern.list.${detail}`));
   }
 });
 

@@ -541,7 +541,6 @@ export default {
 }
 
 .tooltip-con {
-  display: none;
   z-index: 1;
 
   .tooltip {

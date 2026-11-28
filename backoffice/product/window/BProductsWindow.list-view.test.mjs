@@ -4,6 +4,7 @@ import test, { after } from "node:test";
 import vm from "node:vm";
 import { baseParse, compile } from "@vue/compiler-dom";
 import { parse, compileTemplate, compileStyle } from "@vue/compiler-sfc";
+import { JSDOM } from "jsdom";
 import * as Vue from "vue";
 import ts from "typescript";
 
@@ -352,6 +353,29 @@ test("catalog template and component-scoped presentation Sass compile", () => {
       }).errors,
       [],
     );
+});
+
+test("file and folder cards remain visible with their compiled component styles", () => {
+  const cardFile = new URL("./product/mini/BProductWindowProductMini.vue", import.meta.url);
+  const { descriptor: card } = parse(readFileSync(cardFile, "utf8"));
+  const root = baseParse(card.template.content).children.find((node) => node.tag === "div");
+  const classes = root.props.find((prop) => prop.name === "class").value.content;
+  const style = card.styles[0];
+  const { code, errors } = compileStyle({
+    source: style.content,
+    filename: cardFile.pathname,
+    id: "data-v-file-card",
+    scoped: style.scoped,
+    preprocessLang: style.lang,
+  });
+  assert.deepEqual(errors, []);
+  const { window } = new JSDOM(`<style>${code}</style><div class="${classes}" data-v-file-card>Sample product</div>`);
+  try {
+    const cardElement = window.document.body.firstElementChild;
+    assert.notEqual(window.getComputedStyle(cardElement).display, "none");
+  } finally {
+    window.close();
+  }
 });
 
 test("modern catalog groups never animate browsing in either view or loading state", () => {
@@ -760,6 +784,33 @@ test("modern folder navigation never requests scrolling in either view, while le
             { "no-scroll": true },
           ]);
         }
+});
+
+test("a folder whose read failed can be opened again in either catalog view", async () => {
+  for (const mini of [false, true]) {
+    const f = fixture({ mini });
+    const name = mini ? "b-product-window-category-mini" : "b-product-window-category-large";
+    const folderCard = () => nodes(f.view(), name)[0].node;
+    const folder = prop(folderCard(), "category");
+    folderCard().props.onSelect();
+    f.state.$route.query = f.routes[0].query;
+    f.component.watch["$route.query"].call(f.state, f.state.$route.query);
+    assert.equal(f.requests[0].params.dir, folder.id);
+    assert.equal(mini ? /\bdisabled\b/.test(folderCard().props.class) : prop(folderCard(), "loading"), true);
+
+    f.requests[0].reject(new Error("Synthetic folder read failure"));
+    await settle();
+    assert.equal(mini ? /\bdisabled\b/.test(folderCard().props.class) : prop(folderCard(), "loading"), false);
+    if (mini) assert.equal(prop(folderCard(), "grayOnClicked"), false);
+    folderCard().props.onSelect();
+    assert.equal(f.requests.length, 2);
+    assert.equal(f.routes.length, 1, "Retry the current folder without pushing the same route");
+    const products = [product(201)];
+    f.requests[1].resolve({ products, folders: [], total: 1, parent: folder });
+    await settle();
+    assert.equal(f.state.products, products);
+    assert.equal(f.state.busy_fetch, false);
+  }
 });
 
 test("every modern breadcrumb preserves scroll without changing named routes, hierarchy or current-folder guards", () => {
